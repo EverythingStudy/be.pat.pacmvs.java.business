@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.SpecialReclaimMapper">
+
+    <resultMap type="cn.staitech.anno.domain.special.SpecialReclaim" id="SpecialReclaimResult">
+        <result property="specialReclaimId" column="special_reclaim_id"/>
+        <result property="specialId" column="special_id"/>
+        <result property="projectNum" column="project_num"/>
+        <result property="slideNum" column="slide_num"/>
+        <result property="reclaimTime" column="reclaim_time"/>
+        <result property="reclaimBy" column="reclaim_by"/>
+        <result property="expireTime" column="expire_time"/>
+    </resultMap>
+
+    <sql id="selectList">
+        select special_reclaim_id
+             , special_id
+             , project_num
+             , slide_num
+             , reclaim_time
+             , reclaim_by
+             , expire_time
+        from tb_special_reclaim
+    </sql>
+
+
+    <select id="selectList" parameterType="Long" resultMap="SpecialReclaimResult">
+        <include refid="selectList"/>
+    </select>
+
+
+    <select id="selectById" parameterType="Long" resultMap="SpecialReclaimResult">
+        <include refid="selectList"/>
+        <where>
+            <if test="specialId != null and specialId != ''">
+                special_id = #{specialId}
+            </if>
+        </where>
+        ORDER BY reclaim_time DESC LIMIT 1
+    </select>
+
+    <!--    根据专题id查询列表,按照时间排序,并取出第一条数据-->
+    <select id="selectOne" parameterType="cn.staitech.anno.domain.special.SpecialReclaim"
+            resultMap="SpecialReclaimResult">
+        <include refid="selectList"/>
+        <where>
+            <if test="specialId != null and specialId != 0">
+                special_id = #{specialId}
+            </if>
+            <if test="reclaimTimeParams != null">
+                <if test="reclaimTimeParams.beginTime != null and reclaimTimeParams.beginTime != ''">
+                    AND date_format(reclaim_time,'%y%m%d') &gt;= date_format(#{reclaimTimeParams.beginTime},'%y%m%d')
+                </if>
+                <if test="reclaimTimeParams.endTime != null and reclaimTimeParams.endTime != ''">
+                    AND date_format(reclaim_time,'%y%m%d') &lt;= date_format(#{reclaimTimeParams.endTime},'%y%m%d')
+                </if>
+            </if>
+            <if test="expirationTimeParams != null">
+                <if test="expirationTimeParams.beginTime != null and expirationTimeParams.beginTime != ''">
+                    AND date_format(expire_time,'%y%m%d') &gt;= date_format(#{expirationTimeParams.beginTime},'%y%m%d')
+                </if>
+                <if test="expirationTimeParams.endTime != null and expirationTimeParams.endTime != ''">
+                    AND date_format(expire_time,'%y%m%d') &lt;= date_format(#{expirationTimeParams.endTime},'%y%m%d')
+                </if>
+            </if>
+
+
+
+
+
+        </where>
+        ORDER BY reclaim_time DESC LIMIT 1
+    </select>
+
+    <insert id="insert" parameterType="cn.staitech.anno.domain.special.SpecialReclaim" useGeneratedKeys="true"
+            keyProperty="specialReclaimId">
+        insert into tb_special_reclaim (
+        <if test="specialId != null and specialId != '' ">special_id,</if>
+        <if test="projectNum != null and projectNum != '' ">project_num,</if>
+        <if test="slideNum != null and slideNum != '' ">slide_num,</if>
+        <if test="reclaimBy != null and reclaimBy != ''">reclaim_by ,</if>
+        <if test="expireTime != null and expireTime != '' ">expire_time,</if>
+        reclaim_time
+        )values(
+        <if test="specialId != null and specialId != ''">#{specialId},</if>
+        <if test="projectNum != null and projectNum != ''">#{projectNum},</if>
+        <if test="slideNum != null and slideNum != ''">#{slideNum},</if>
+        <if test="reclaimBy != null and reclaimBy != ''">#{reclaimBy},</if>
+        <if test="expireTime != null and expireTime != ''">#{expireTime},</if>
+        sysdate()
+        )
+    </insert>
+
+
+</mapper>

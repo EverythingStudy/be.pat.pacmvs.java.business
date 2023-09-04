@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.ProjectMemberMapper">
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.ProjectMember">
+        <id column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="project_id" jdbcType="BIGINT" property="projectId"/>
+        <result column="role_id" jdbcType="BIGINT" property="roleId"/>
+        <result column="role_type" jdbcType="INTEGER" property="roleType"/>
+        <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"  />
+    </resultMap>
+    <sql id="Base_Column_List">
+        pm.user_id, pm.project_id, pm.role_id, pr.role_type, pr.role_name,u.user_name
+    </sql>
+    <select id="selectByProjectId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_project_member pm
+        left join sys_project_role pr on pm.role_id = pr.role_id
+        left join sys_user u on pm.user_id = u.user_id
+        where pm.project_id = #{ProjectId,jdbcType=BIGINT}
+    </select>
+    <select id="select" parameterType="cn.staitech.anno.domain.ProjectMember" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_project_member pm
+        left join sys_project_role pr on pm.role_id = pr.role_id
+        left join sys_user u on pm.user_id = u.user_id
+        <where>
+            <if test="projectId != null">
+                AND pm.project_id = #{projectId,jdbcType=BIGINT}
+            </if>
+            <if test="roleId != null">
+                AND pm.role_id = #{roleId,jdbcType=BIGINT}
+            </if>
+            <if test="roleType != null">
+                AND pr.role_type = #{roleType,jdbcType=INTEGER}
+            </if>
+            <if test="userId != null">
+                AND pm.user_id = #{userId,jdbcType=BIGINT}
+            </if>
+            <if test="userName != null and userName != ''">
+                AND u.user_name like concat('%', #{userName}, '%')
+            </if>
+        </where>
+    </select>
+    <select id="selectBy" parameterType="cn.staitech.anno.domain.ProjectMember" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_project_member pm
+        left join sys_project_role pr on pm.role_id = pr.role_id
+        left join sys_user u on pm.user_id = u.user_id
+        <where>
+            <if test="projectId != null">
+                AND pm.project_id = #{projectId,jdbcType=BIGINT}
+            </if>
+            <if test="roleId != null">
+                AND pm.role_id = #{roleId,jdbcType=BIGINT}
+            </if>
+            <if test="roleType != null">
+                AND pr.role_type = #{roleType,jdbcType=INTEGER}
+            </if>
+            <if test="userId != null">
+                AND pm.user_id = #{userId,jdbcType=BIGINT}
+            </if>
+            <if test="userName != null and userName != ''">
+                AND u.user_name like concat('%', #{userName}, '%')
+            </if>
+        </where>
+    </select>
+    <select id="selectByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_project_member pm
+        left join sys_project_role pr on pm.role_id = pr.role_id
+        left join sys_user u on pm.user_id = u.user_id
+        where pm.user_id = #{UserId,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete
+        from tb_project_member
+        where user_id = #{userId,jdbcType=BIGINT}
+    </delete>
+    <delete id="delete" parameterType="cn.staitech.anno.domain.ProjectMember">
+        delete
+        from tb_project_member
+        where user_id = #{userId,jdbcType=BIGINT}
+          and project_id = #{projectId,jdbcType=BIGINT}
+    </delete>
+
+    <insert id="insert" parameterType="cn.staitech.anno.domain.ProjectMember">
+        insert into tb_project_member (user_id, project_id, role_id, create_by, create_time)
+        values (#{userId,jdbcType=BIGINT},
+                #{projectId,jdbcType=BIGINT},
+                #{roleId,jdbcType=BIGINT},
+                #{createBy},
+                sysdate()
+                )
+    </insert>
+    <insert id="insertSelective" parameterType="cn.staitech.anno.domain.ProjectMember">
+        insert into tb_project_member
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="projectId != null">
+                project_id,
+            </if>
+            <if test="roleId != null">
+                role_id,
+            </if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="projectId != null">
+                #{projectId,jdbcType=BIGINT},
+            </if>
+            <if test="roleId != null">
+                #{roleId,jdbcType=BIGINT},
+            </if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            sysdate()
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.ProjectMember">
+        update tb_project_member
+        <set>
+            <if test="projectId != null">
+                project_id = #{projectId,jdbcType=BIGINT},
+            </if>
+            <if test="roleId != null">
+                role_id = #{roleId,jdbcType=BIGINT},
+            </if>
+            update_by  = #{updateBy},
+            update_time = sysdate()
+        </set>
+        where user_id = #{userId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="cn.staitech.anno.domain.ProjectMember">
+        update tb_project_member
+        set project_id = #{projectId,jdbcType=BIGINT},
+            role_id    = #{roleId,jdbcType=BIGINT},
+            update_by  = #{updateBy},
+            update_time = sysdate()
+        where user_id = #{userId,jdbcType=BIGINT}
+    </update>
+
+    <update id="update"  parameterType="cn.staitech.anno.domain.ProjectMember">
+        update tb_project_member
+        set role_id = #{roleId,jdbcType=BIGINT},
+            update_by  = #{updateBy,jdbcType=BIGINT},
+            update_time = sysdate()
+        where user_id = #{userId,jdbcType=BIGINT}
+          and project_id = #{projectId,jdbcType=BIGINT}
+    </update>
+
+    <select id="selectByPrimaryKey" parameterType="cn.staitech.anno.domain.ProjectMember" resultMap="BaseResultMap">
+        select distinct user_id
+        from tb_project_member
+        <where>
+            <if test="roleId != null">
+                AND role_id = #{roleId,jdbcType=BIGINT}
+            </if>
+        </where>
+    </select>
+    
+    <select id="selectProject" parameterType="cn.staitech.anno.domain.ProjectMember" resultMap="BaseResultMap">
+        select *
+        from tb_project_member
+        where user_id = #{userId,jdbcType=BIGINT}
+          and project_id = #{projectId,jdbcType=BIGINT}
+    </select>
+</mapper>

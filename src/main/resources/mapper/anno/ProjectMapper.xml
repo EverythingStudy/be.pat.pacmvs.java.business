@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.ProjectMapper">
+
+    <resultMap id="ProjectResult" type="cn.staitech.anno.domain.Project">
+        <result property="projectId" column="project_id"/>
+        <result property="projectName" column="project_name"/>
+        <result property="editMode" column="edit_mode"/>
+        <result property="imageTotal" column="image_total"/>
+        <result property="annotationTotal" column="annotation_total"/>
+        <result property="markType" column="mark_type"/>
+        <result property="examinationFlag" column="examination_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="description" column="description"/>
+        <result property="indicatorId" column="indicator_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="managerId" column="manager_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="projectStatus" column="project_status"/>
+    </resultMap>
+
+    <resultMap id="ProjectMessage" type="cn.staitech.anno.domain.vo.ProjectListVO">
+        <result property="projectId" column="project_id"/>
+        <result property="projectName" column="project_name"/>
+        <result property="editMode" column="edit_mode"/>
+        <result property="imageTotal" column="image_total"/>
+        <result property="annotationTotal" column="annotation_total"/>
+        <result property="markType" column="mark_type"/>
+        <result property="examinationFlag" column="examination_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="description" column="description"/>
+        <result property="indicatorId" column="indicator_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="managerId" column="manager_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="indicatorName" column="indicator_name"/>
+        <result property="imageName" column="image_name"/>
+        <result property="slideId" column="slide_id"/>
+        <result property="projectStatus" column="project_status"/>
+        <result property="dictLabel" column="dict_label"/>
+        <result property="dictCode" column="dict_code"/>
+    </resultMap>
+
+    <resultMap id="SlideAnnotationResult" type="cn.staitech.anno.domain.SlideAnnotationResult">
+        <result property="slideId" column="slide_id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="processFlag" column="process_flag"/>
+        <result property="sum" column="sum"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap id="annotationSum" type="cn.staitech.anno.domain.vo.AnnotationsAddVO">
+        <result property="projectId" column="project_id"/>
+        <result property="slideId" column="slide_id"/>
+        <result property="createBy" column="create_by"/>
+        <result property="sum" column="sum"/>
+    </resultMap>
+
+    <resultMap id="projectStatistic" type="cn.staitech.anno.domain.vo.statistic.StatisticProjectListOutVO">
+        <result property="projectId" column="project_id"/>
+        <result property="projectName" column="project_name"/>
+        <result property="indicatorId" column="indicator_id"/>
+    </resultMap>
+
+
+    <resultMap type="cn.staitech.anno.domain.vo.ImageMessageVO" id="ImageResult">
+        <result property="imageId" column="image_id"/>
+        <result property="imageName" column="image_name"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="imagePath" column="image_path"/>
+        <result property="thumbUrl" column="thumb_url"/>
+        <result property="macroUrl" column="macro_url"/>
+        <result property="labelUrl" column="label_url"/>
+        <result property="format" column="format"/>
+        <result property="width" column="width"/>
+        <result property="height" column="height"/>
+        <result property="depth" column="depth"/>
+        <result property="size" column="size"/>
+        <result property="globalSize" column="global_size"/>
+        <result property="resolvingPower" column="resolving_power"/>
+        <result property="tileCountList" column="tile_count_list"/>
+        <result property="levelCount" column="level_count"/>
+        <result property="chunkTotal" column="chunk_total"/>
+        <result property="md5" column="md5"/>
+        <result property="resolutionX" column="resolution_x"/>
+        <result property="resolutionY" column="resolution_y"/>
+        <result property="sourceLens" column="source_lens"/>
+        <result property="processFlag" column="process_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="slideId" column="slide_id"/>
+    </resultMap>
+
+    <resultMap id="projectIdList" type="cn.staitech.anno.domain.vo.ProjectIdListVO">
+        <result property="projectId" column="project_id"/>
+    </resultMap>
+
+    <resultMap id="DictDataResult"
+               type="cn.staitech.anno.domain.vo.VisceraVO">
+        <result property="dictCode" column="dict_code"/>
+        <result property="dictLabel" column="dict_label"/>
+    </resultMap>
+
+    <sql id="selectProjectVo">
+        select p.project_id,
+               p.project_name,
+               p.project_status,
+               p.edit_mode,
+               p.image_total,
+               p.annotation_total,
+               p.mark_type,
+               p.examination_flag,
+               p.create_by,
+               p.description,
+               p.indicator_id,
+               p.create_time,
+               p.update_by,
+               p.update_time,
+               p.manager_id,
+               u.user_name,
+               i.indicator_name,
+               s.dict_label,
+               s.dict_code
+        from tb_project p
+                 left join sys_user u on p.create_by = u.user_id
+                 left join tb_pathological_indicator i on p.indicator_id = i.indicator_id
+                left join sys_dict_data s on p.dict_code=s.dict_code
+    </sql>
+
+    <sql id="selectProjectBy">
+        select project_id,
+               project_name,
+               edit_mode,
+               image_total,
+               annotation_total,
+               mark_type,
+               examination_flag,
+               create_by,
+               description,
+               indicator_id,
+               create_time,
+               update_by,
+               manager_id
+        from tb_project
+    </sql>
+
+    <select id="selectPrimKey" parameterType="java.lang.Long" resultMap="ProjectResult">
+        <include refid="selectProjectBy"/>
+        where project_id = #{projectId}
+    </select>
+
+    <select id="selectProjectById" parameterType="java.lang.Long" resultMap="ProjectMessage">
+        <include refid="selectProjectVo"/>
+        where project_id = #{projectId}
+    </select>
+
+    <select id="selectProjectByName" parameterType="string" resultMap="ProjectResult">
+        <include refid="selectProjectVo"/>
+        where project_name = #{projectName}
+    </select>
+
+    <select id="selectProjectStatisticList"
+            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticProjectListOutVO" resultMap="projectStatistic">
+        select project_id, project_name, indicator_id
+        from tb_project
+        order by project_id desc
+    </select>
+
+    <!--条件查询项目和病理信息1-->
+    <select id="selectProjectList" parameterType="cn.staitech.anno.domain.Project" resultMap="ProjectMessage">
+        <include refid="selectProjectVo"/>
+        <where>
+            <if test="projectName != null and projectName != ''">
+                AND p.project_name like concat('%', #{projectName}, '%')
+            </if>
+            <if test="indicatorId != null and indicatorId != ''">
+                AND p.indicator_id = #{indicatorId}
+            </if>
+            <if test="description != null and description != ''">
+                AND p.description like concat('%', #{description}, '%')
+            </if>
+            <if test="createBy != null and createBy != ''">
+                AND p.create_by = #{createBy}
+            </if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(p.create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(p.create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+        </where>
+        order by update_time desc
+    </select>
+
+    <insert id="insertProject" parameterType="cn.staitech.anno.domain.Project" useGeneratedKeys="true"
+            keyProperty="projectId">
+        insert into tb_project (
+        <if test="projectName != null and projectName != '' ">project_name,</if>
+        <if test="createBy != null and createBy != '' ">create_by,</if>
+        <if test="tissueID != null and tissueID != '' ">tissue_id,</if>
+        <if test="indicatorId != null and indicatorId != ''">indicator_id,</if>
+        <if test="description != null and description != ''">description,</if>
+        <if test="dictCode != null and dictCode != ''">dict_code,</if>
+        create_time,
+        image_total,
+        update_time
+        )values(
+        <if test="projectName != null and projectName != ''">#{projectName},</if>
+        <if test="createBy != null and createBy != '' ">#{createBy},</if>
+        <if test="tissueID != null and tissueID != ''">#{tissueID},</if>
+        <if test="indicatorId != null and indicatorId != ''">#{indicatorId},</if>
+        <if test="description != null and description != ''">#{description},</if>
+        <if test="dictCode != null and dictCode != ''">#{dictCode},</if>
+        sysdate(),
+        0,
+        sysdate()
+        )
+    </insert>
+
+    <update id="updateProject" parameterType="cn.staitech.anno.domain.Project">
+        update tb_project
+        <set>
+            <if test="projectName != null and projectName != ''">project_name = #{projectName},</if>
+            <if test="indicatorId != null and indicatorId != ''">indicator_id = #{indicatorId},</if>
+            <if test="dictCode != null and dictCode != ''">dict_code = #{dictCode},</if>
+            image_total=(select count(*) from tb_slide where project_id=#{projectId}),
+            update_time = sysdate(),
+            update_by=#{updateBy}
+        </set>
+        where project_id = #{projectId}
+    </update>
+
+    <update id="updateProjectDescription" parameterType="cn.staitech.anno.domain.Project" useGeneratedKeys="true"
+            keyProperty="projectId">
+        update tb_project
+        <set>
+            description = #{description},
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where project_id = #{projectId}
+    </update>
+
+    <delete id="deleteProjectById" parameterType="java.lang.Long">
+        delete
+        from tb_project
+        where project_id = #{projectId}
+    </delete>
+
+
+    <select id="selectProjectInfo" resultMap="ProjectResult">
+        select project_id, project_name
+        from tb_project
+        where indicator_id = #{indicatorId}
+    </select>
+
+
+    <select id="selectProjectName" parameterType="cn.staitech.anno.domain.vo.ProjectGetVO" resultMap="ProjectResult">
+        select *
+        from tb_project
+        where project_id !=#{projectId}
+          and project_name=#{projectName}
+    </select>
+
+
+    <select id="selectUserMessage" parameterType="cn.staitech.anno.domain.vo.SlideCategoryProcessFlagVO"
+            resultMap="SlideAnnotationResult">
+        select sum(sum) as sum from tb_slide_annotation_result where category_id =0
+        <if test="slideId != null and slideId != ''">
+            AND slide_id = #{slideId}
+        </if>
+        <if test="processFlag != null and processFlag != ''">
+            AND process_flag = #{processFlag}
+        </if>
+
+    </select>
+
+
+    <select id="selectMessageBySlideId" parameterType="java.lang.Long" resultMap="SlideAnnotationResult">
+        select *
+        from tb_slide_annotation_result
+        where slide_id = #{slideId}
+    </select>
+
+    <!--根据标注类别查询标注数量1-->
+    <select id="selectByCategoryId" parameterType="cn.staitech.anno.domain.vo.SlideCategoryProcessFlagVO"
+            resultMap="SlideAnnotationResult">
+        select sum(sum) as sum from tb_slide_annotation_result where 1=1
+        <if test="slideId != null and slideId != ''">
+            AND slide_id = #{slideId}
+        </if>
+        <if test="categoryId != null and categoryId != ''">
+            AND category_id = #{categoryId}
+        </if>
+        <if test="updateBy != null and updateBy != ''">
+            AND update_by = #{updateBy}
+        </if>
+    </select>
+
+    <!--项目获取图片列表-->
+    <select id="getImageList" parameterType="cn.staitech.anno.domain.image.in.ImageAllVO" resultMap="ImageResult">
+        select *
+        from tb_image
+        where process_flag = 2
+        <if test="imageName != null and imageName != ''">
+            AND image_name like concat('%', #{imageName}, '%')
+        </if>
+        <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+            AND date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+            AND date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+        </if>
+        order by image_id desc
+    </select>
+
+    <update id="updateCategory" parameterType="java.lang.Long" useGeneratedKeys="true"
+            keyProperty="annotationId">
+        update tb_annotation
+        set category_id=0
+        where project_id = #{projectId}
+          and category_id !=1
+    </update>
+
+    <delete id="deleteBySlideId" parameterType="java.lang.Long">
+        delete
+        from tb_slide_annotation_result
+        where slide_id = #{slideId}
+    </delete>
+
+    <select id="selectSumByProjectId" parameterType="cn.staitech.anno.domain.vo.AnnotationsAddVO"
+            resultMap="annotationSum">
+        select count(*) as sum from tb_annotation where 1=1
+        <if test="slideId != null and slideId != '' ">
+            AND slide_id = #{slideId}
+        </if>
+        <if test="createBy != null and createBy != '' ">
+            AND create_by = #{createBy}
+        </if>
+        <if test="projectId != null and projectId != '' ">
+            AND project_id = #{projectId}
+        </if>
+        <if test="categoryId != null">
+            AND category_id = #{categoryId}
+        </if>
+    </select>
+
+    <select id="selectCategorySum" parameterType="cn.staitech.anno.domain.vo.SlideCategoryProcessFlagVO"
+            resultType="java.lang.Integer">
+        select sum(sum)
+        from tb_slide_annotation_result
+        where not ISNULL(category_id)
+        <if test="slideId != null and slideId != '' ">
+            AND slide_id = #{slideId}
+        </if>
+        <if test="updateBy != null and updateBy != ''">
+            AND update_by = #{updateBy}
+        </if>
+    </select>
+
+    <update id="updateProjectHumanAnnotationQuantity" parameterType="cn.staitech.anno.domain.vo.ProjectAnnotationVO">
+        update tb_project
+        <set>
+            <if test="sum != null">
+                annotation_total = #{sum}
+            </if>
+        </set>
+        where
+        <if test="projectId != null and projectId != '' ">
+            project_id = #{projectId}
+        </if>
+    </update>
+
+    <update id="updateProjectIndicator" parameterType="cn.staitech.anno.domain.Project">
+        update tb_project
+        <set>
+            <if test="projectName != null and projectName != ''">project_name = #{projectName},</if>
+            indicator_id=null,
+            update_time = sysdate(),
+            update_by=#{updateBy},
+        </set>
+        where project_id = #{projectId}
+    </update>
+
+    <select id="selectProjectDetails" parameterType="cn.staitech.anno.domain.vo.ProjectInforImageVO"
+            resultMap="ProjectMessage">
+        SELECT DISTINCT
+        s.project_id,
+        p.project_name,
+        p.annotation_total,
+        i.image_name,
+        s.slide_id,
+        s.update_time
+        FROM
+        tb_slide AS s
+        LEFT JOIN tb_project AS p ON s.project_id = p.project_id
+        LEFT JOIN tb_image AS i ON s.image_id = i.image_id
+        <where>
+            <if test="processFlag != null">
+                AND s.process_flag = #{processFlag}
+            </if>
+            <if test="imageName != null and imageName != '' ">
+                AND i.image_name like concat('%', #{imageName}, '%')
+            </if>
+            <if test="projectId != null and projectId != '' ">
+                AND s.project_id = #{projectId}
+            </if>
+        </where>
+        order by s.update_time desc
+    </select>
+
+    <select id="selectCategoryTotal" parameterType="cn.staitech.anno.domain.vo.SlideCategoryProcessFlagVO"
+            resultType="java.lang.Integer">
+        select sum(sum) from tb_slide_annotation_result
+        <where>
+            <if test="slideId != null and slideId != '' ">
+                AND slide_id = #{slideId}
+            </if>
+            <if test="updateBy != null and updateBy != ''">
+                AND update_by = #{updateBy}
+            </if>
+            and (category_id !=1 or category_id is null)
+        </where>
+    </select>
+
+    <update id="updateProjectStatus" parameterType="cn.staitech.anno.domain.vo.ProjectStatusVO">
+        update tb_project
+        <set>
+            <if test="projectStatus != null">project_status=#{projectStatus},</if>
+            update_by=#{updateBy},
+            update_time = sysdate(),
+        </set>
+        where project_id=#{projectId}
+    </update>
+
+    <select id="selectAnnotationNumber" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        SELECT human_annotation_total
+        FROM `tb_slide`
+        WHERE slide_id = #{slideId}
+    </select>
+
+    <select id="selectProjectCreateBy" resultMap="ProjectResult">
+        select distinct create_by
+        from tb_project
+    </select>
+
+
+    <!-- 查询所有未添加项目角色的项目ID -->
+    <select id="selectProjectIdNotInProjectRole" resultMap="projectIdList">
+        SELECT DISTINCT project_id
+        FROM tb_project
+        WHERE project_id
+                  NOT IN (SELECT project_id
+                          FROM sys_project_role)
+        ORDER BY project_id;
+    </select>
+
+    <!--根据projectId 和 createBy查询slideId-->
+    <select id="selectSlideId" parameterType="cn.staitech.anno.domain.vo.ProjectInforImageVO" resultMap="annotationSum">
+        select distinct slide_id from tb_annotation
+        <where>
+            <if test="projectId != null and projectId != '' ">
+                AND project_id = #{projectId}
+            </if>
+            <if test="createBy != null and createBy != ''">
+                AND create_by = #{createBy}
+            </if>
+            <if test="categoryId != null and categoryId != ''">
+                AND category_id = #{categoryId}
+            </if>
+        </where>
+    </select>
+
+    <!--根据ProjectId查询用户-->
+    <select id="selectProjectTagger" parameterType="java.lang.Long" resultMap="ProjectMessage">
+        select distinct u.user_name, a.create_by
+        from tb_annotation as a
+                 left join sys_user as u on
+            a.create_by = u.user_id
+        where a.category_id !=1 and a.project_id=#{projectId}
+    </select>
+
+    <!--查询所有脏器组织-->
+    <select id="selectAllViscera" resultMap="DictDataResult">
+        select dict_code, dict_label
+        from sys_dict_data
+        where dict_type = "sys_viscera_organization"
+    </select>
+
+    <!--将将项目组织改为null-->
+    <update id="updateProjectViscera" parameterType="cn.staitech.anno.domain.Project">
+        update tb_project
+        <set>
+            <if test="projectName != null and projectName != ''">project_name = #{projectName},</if>
+            dict_code=null,
+            update_time = sysdate(),
+            update_by=#{updateBy},
+        </set>
+        where project_id = #{projectId}
+    </update>
+
+    <!--查询专题下项目的总数-->
+    <select id="selectProjectCount" parameterType="Long" resultType="int">
+        select count(project_id)
+        from tb_project
+        <where>
+            del_flag = 0
+            <if test="specialId !=null and specialId != 0">
+                AND special_id = #{specialId}
+            </if>
+        </where>
+    </select>
+
+</mapper>

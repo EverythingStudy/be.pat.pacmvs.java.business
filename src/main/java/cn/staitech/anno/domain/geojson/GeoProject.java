@@ -1,0 +1,14 @@
+package cn.staitech.anno.domain.geojson;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+@Data
+public class GeoProject {
+
+    @ApiModelProperty(value = "项目id")
+    private Long project_id;
+
+    @ApiModelProperty(value = "项目名称")
+    private String project_name;
+}

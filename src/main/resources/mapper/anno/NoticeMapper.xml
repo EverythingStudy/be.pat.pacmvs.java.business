@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.NoticeMapper">
+    <select id="selectReadList" resultType="cn.staitech.anno.domain.notice.Notice">
+        select notice_id noticeId, notice_content noticeContent
+        from sys_notice
+        where notice_type = '1'
+          and status = '1'
+          and recipient = #{recipient}
+
+    </select>
+    <update id="batchUpdate">
+        update sys_notice
+        set status='1'
+        where notice_id=#{noticeId}
+    </update>
+
+</mapper>

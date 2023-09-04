@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.SystemDictMapper">
+
+    <resultMap type="cn.staitech.anno.domain.project.out.SystemDictOut" id="SystemDictResult">
+        <result property="dictId" column="dict_id"/>
+        <result property="dictName" column="dict_name"/>
+    </resultMap>
+
+
+    <select id="selectSystemDict" resultMap="SystemDictResult">
+        select dict_id, dict_name, parent_id
+        from tb_system_dict
+    </select>
+
+    <select id="selectFirst" resultMap="SystemDictResult">
+        select dict_id, dict_name
+        from tb_system_dict
+        where parent_id = #{parentId}
+    </select>
+
+    <!--如果需要筛选时间加上即可sql：select ts.special_number specialNumber, ts.special_name specialName, tsr.expire_time expireTime
+        from tb_special_reclaim tsr
+                 left join tb_special ts
+                           on tsr.special_id = ts.special_id
+        where tsr.reclaim_by = 1
+        and special_reclaim_id in (select max(mid.special_reclaim_id) from tb_special_reclaim mid  group by mid.special_id )
+        and datediff(tsr.expire_time,now())<=7;-->
+    <select id="selectList" resultType="cn.staitech.anno.domain.notice.out.NoticeQueryOut">
+        select special_number specialNumber, special_name specialName, expire_time expireTime
+        from tb_special_reclaim tsr
+                 left join tb_special ts
+                           on tsr.special_id = ts.special_id
+        where reclaim_by = #{reclaimBy}
+        and datediff(tsr.expire_time,now())&lt;=7
+        order by tsr.reclaim_time
+    </select>
+
+
+</mapper>

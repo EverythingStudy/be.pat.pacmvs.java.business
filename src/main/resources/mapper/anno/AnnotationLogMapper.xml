@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.AnnotationLogMapper">
+    
+    <resultMap type="cn.staitech.anno.domain.AnnotationLog" id="AnnotationLogResult">
+        <result property="annotationLogId" column="annotation_log_id"/>
+        <result property="annotationId" column="annotation_id"/>
+        <result property="measure" column="measure"/>
+        <result property="perimeter" column="perimeter"/>
+        <result property="annotationType" column="annotation_type"/>
+        <result property="description" column="description"/>
+        <result property="attribute" column="attribute"/>
+        <result property="locationType" column="location_type"/>
+        <result property="location" column="location"/>
+        <result property="projectId" column="project_id"/>
+        <result property="imageId" column="image_id"/>
+        <result property="slideId" column="slide_id"/>
+        <result property="tileId" column="tile_id"/>
+        <result property="examinationFlag" column="examination_flag "/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="x" column="x"/>
+        <result property="y" column="y"/>
+        <result property="createByLog" column="create_by_log"/>
+        <result property="createTimeLog" column="create_time_log"/>
+        <result property="status" column="status"/>
+    </resultMap>
+    
+    <sql id="selectAnnotationLogVo">
+        select annotation_log_id
+             , annotation_id
+             , measure
+             , perimeter
+             , create_time
+             , annotation_type
+             , examination_flag
+             , description
+             , attribute
+             , location_type
+             , ST_ASTEXT(location) as location
+             , image_id
+             , create_by
+             , update_by
+             , update_time
+             , slide_id
+             , category_id
+             , create_by_log
+             , create_time_log
+             , status
+        from tb_annotation_log
+    </sql>
+    
+    
+    <select id="selectAnnotationLogById" parameterType="Long" resultMap="AnnotationLogResult">
+        <include refid="selectAnnotationLogVo"/>
+        where annotation_id = #{annotationId}
+        ORDER BY create_time_log desc
+    </select>
+    
+    <select id="selectAnnotationLog" resultMap="AnnotationLogResult">
+        <include refid="selectAnnotationLogVo"/>
+        ORDER BY create_time_log desc
+    </select>
+    
+    
+    <insert id="insertAnnotationLog" parameterType="cn.staitech.anno.domain.AnnotationLog" useGeneratedKeys="true"
+        keyProperty="annotationLogId">
+        insert into tb_annotation_log (
+        <if test="annotationId != null and annotationId != '' ">annotation_id,</if>
+        <if test="measure != null and measure != '' ">measure,</if>
+        <if test="perimeter != null and perimeter != '' ">perimeter,</if>
+        <if test="annotationType != null and annotationType != '' ">annotation_type,</if>
+        <if test="examinationFlag != null and examinationFlag != ''">examination_flag ,</if>
+        <if test="description != null and description != '' ">description,</if>
+        <if test="attribute != null and attribute != '' ">attribute,</if>
+        <if test="locationType != null and locationType != '' ">location_type,</if>
+        <if test="location != null and location != ''">location,</if>
+        <if test="imageId != null and imageId != ''">image_id,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        <if test="createTime != null and createTime != ''">create_time,</if>
+        <if test="updateBy != null and updateBy != ''">update_by,</if>
+        <if test="updateTime != null and updateTime != ''">update_time,</if>
+        <if test="slideId != null and slideId != ''">slide_id,</if>
+        <if test="projectId != null and projectId != ''">project_id,</if>
+        <if test="categoryId != null and categoryId != ''">category_id,</if>
+        <if test="createByLog != null and createByLog != ''">create_by_log,</if>
+        <if test="status != null and status != ''">status,</if>
+        create_time_Log
+        )values(
+        <if test="annotationId != null and annotationId != ''">#{annotationId},</if>
+        <if test="measure != null and measure != ''">#{measure},</if>
+        <if test="perimeter != null and perimeter != ''">#{perimeter},</if>
+        <if test="annotationType != null and annotationType != ''">#{annotationType},</if>
+        <if test="examinationFlag != null and examinationFlag != ''">#{examinationFlag},</if>
+        <if test="description != null and description != ''">#{description},</if>
+        <if test="attribute != null and attribute != ''">#{attribute},</if>
+        <if test="locationType != null and locationType != ''">#{locationType},</if>
+        <if test="location != null and location != ''">ST_GEOMFROMTEXT(#{location}),</if>
+        <if test="imageId != null and imageId != ''">#{imageId},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        <if test="createTime != null and createTime != ''">#{createTime},</if>
+        <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+        <if test="updateTime != null and updateTime != ''">#{updateTime},</if>
+        <if test="slideId != null and slideId != ''">#{slideId},</if>
+        <if test="projectId != null and projectId != ''">#{projectId},</if>
+        <if test="categoryId != null and categoryId != ''">#{categoryId},</if>
+        <if test="createByLog != null and createByLog != ''">#{createByLog},</if>
+        <if test="status != null and status != ''">#{status},</if>
+        sysdate()
+        )
+    </insert>
+    
+    <insert id="insertAnnotationLogList" useGeneratedKeys="true"
+        keyProperty="annotationLogId">
+        insert into tb_annotation_log (
+        measure,
+        perimeter,
+        annotation_type,
+        examination_flag ,
+        description,
+        attribute,
+        location_type,
+        location,
+        image_id,
+        create_by,
+        update_by,
+        slide_id,
+        project_id,
+        category_id,
+        create_time,
+        update_time,
+        create_by_log,
+        status,
+        create_time_log
+        )
+        values
+        <foreach collection="annotationLogList" item="annotationLog" separator=",">
+            (
+            #{annotationLog.measure},
+            #{annotationLog.perimeter},
+            #{annotationLog.annotationType},
+            #{annotationLog.examinationFlag},
+            #{annotationLog.description},
+            #{annotationLog.attribute},
+            #{annotationLog.locationType},
+            ST_GEOMFROMTEXT(#{annotationLog.location}),
+            #{annotationLog.imageId},
+            #{annotationLog.createBy},
+            #{annotationLog.updateBy},
+            #{annotationLog.slideId},
+            #{annotationLog.projectId},
+            #{annotationLog.categoryId},
+            #{annotationLog.createTime},
+            #{annotationLog.updateTime},
+            #{annotationLog.createByLog},
+            #{annotationLog.status},
+            sysdate()
+            )
+        </foreach>
+    </insert>
+
+</mapper>

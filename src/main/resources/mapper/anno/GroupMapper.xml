@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.GroupMapper">
+  <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.Group">
+    <id column="group_id" jdbcType="BIGINT" property="groupId" />
+    <result column="group_name" jdbcType="INTEGER" property="groupName" />
+    <result column="gender" jdbcType="INTEGER" property="gender" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
+    <result column="special_id" jdbcType="BIGINT" property="specialId" />
+  </resultMap>
+
+  <resultMap id="BaseResult" type="cn.staitech.anno.domain.vo.GroupListVO">
+    <id column="group_id" jdbcType="BIGINT" property="groupId" />
+    <result column="group_name" jdbcType="INTEGER" property="groupName" />
+    <result column="gender" jdbcType="INTEGER" property="gender" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="reasons" jdbcType="INTEGER" property="reasons" />
+    <result column="dosage" jdbcType="VARCHAR" property="dosage" />
+  </resultMap>
+
+  <resultMap id="ProjectGroupResult" type="cn.staitech.anno.domain.vo.ProjectGroupAddVO">
+    <id column="group_id" jdbcType="BIGINT" property="groupId" />
+    <id column="project_id" jdbcType="BIGINT" property="projectId" />
+    <id column="create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+
+  <resultMap id="ProjectResult" type="cn.staitech.anno.domain.vo.ProjectGroupAddVO">
+    <id column="project_id" jdbcType="BIGINT" property="projectId" />
+    <result column="slide_total" jdbcType="INTEGER" property="slideTotal" />
+  </resultMap>
+
+  <!--添加分组-->
+  <insert id="insertSelective" keyColumn="group_id" keyProperty="groupId" parameterType="cn.staitech.anno.domain.Group" useGeneratedKeys="true">
+    insert into tb_group
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="groupName != null">
+        group_name,
+      </if>
+      <if test="gender != null">
+        gender,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="specialId != null">
+        special_id,
+      </if>
+      <if test="reasons != null">
+        reasons,
+      </if>
+      <if test="dosage != null">
+        dosage,
+      </if>
+        create_time
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="groupName != null">
+        #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        #{gender,jdbcType=INTEGER},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="specialId != null">
+        #{specialId,jdbcType=BIGINT},
+      </if>
+      <if test="reasons != null">
+        #{reasons,jdbcType=BIGINT},
+      </if>
+      <if test="dosage != null">
+        #{dosage,jdbcType=VARCHAR},
+      </if>
+    sysdate()
+    </trim>
+  </insert>
+
+  <!--条件查询非本专题下的分组数量-->
+  <select id="selectGroup" parameterType="cn.staitech.anno.domain.Group" resultType="java.lang.Integer">
+    select count(*) from tb_group
+    <where>
+      <if test="groupName != null and groupName != ''">
+        AND group_name=#{groupName}
+      </if>
+      <if test="gender != null">
+        AND gender=#{gender}
+      </if>
+      <if test="groupId != null and groupId != ''">
+        AND group_id!=#{groupId}
+      </if>
+      <if test="specialId != null and specialId != ''">
+        AND special_id =#{specialId}
+      </if>
+      <if test="reasons != null and reasons != ''">
+        AND reasons =#{reasons}
+      </if>
+      <if test="dosage != null and dosage != ''">
+        AND dosage =#{dosage}
+      </if>
+        and del_flag=0
+    </where>
+  </select>
+
+  <!--查询全部-->
+  <select id="selectAllGroup" parameterType="cn.staitech.anno.domain.Group" resultMap="BaseResult">
+    select * from tb_group
+    <where>
+      <if test="delFlag != null">
+        AND del_flag=#{delFlag}
+      </if>
+      <if test="specialId != null">
+        AND special_id=#{specialId}
+      </if>
+      <if test="groupName != null and groupName != ''">
+        AND group_name=#{groupName}
+      </if>
+      <if test="gender != null">
+        AND gender=#{gender}
+      </if>
+      <if test="groupId != null and groupId != ''">
+        AND group_id=#{groupId}
+      </if>
+      <if test="reasons != null">
+        AND reasons=#{reasons}
+      </if>
+      <if test="dosage != null">
+        AND dosage=#{dosage}
+      </if>
+
+    </where>
+    order by  CAST(SUBSTRING(group_name,6)as decimal)
+  </select>
+
+  <!--更新分组信息-->
+  <update id="updateGroup"  parameterType="cn.staitech.anno.domain.vo.GroupVO" useGeneratedKeys="true"
+          keyProperty="groupId">
+    update tb_group
+    <set>
+    <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+    <if test="gender != null">gender = #{gender},</if>
+    <if test="delFlag != null and delFlag != ''">del_flag = #{delFlag},</if>
+    <if test="groupName != null and groupName != ''">group_name = #{groupName},</if>
+    <if test="description != null and description != ''">description = #{description},</if>
+    <if test="reasons != null and reasons != ''">reasons = #{reasons},</if>
+    <if test="dosage != null and dosage != ''">dosage = #{dosage},</if>
+    update_time = sysdate(),
+  </set>
+    where group_id = #{groupId}
+  </update>
+
+  <!--项目分组表添加数据-->
+  <insert id="insertBatch">
+    INSERT INTO tb_project_group (project_id,group_id, create_by, create_time) VALUES
+    <foreach collection="list" separator="," item="item">
+      (#{item.projectId},#{item.groupId},#{item.createBy},sysdate())
+    </foreach>
+  </insert>
+
+  <!--查询项目表-->
+  <select id="selectProject" parameterType="java.lang.Long" resultMap="ProjectResult">
+    select project_id from tb_project where special_id=#{speicalId} and del_flag=0
+  </select>
+
+  <!--分表单条查询-->
+  <select id="selectOneGroup" parameterType="cn.staitech.anno.domain.Group" resultType="cn.staitech.anno.domain.vo.GroupListVO">
+    select * from tb_group where group_id=#{groupId}
+  </select>
+
+  <!--查询分组关联切片数-->
+  <select id="selectSlide" parameterType="java.lang.Long" resultType="java.lang.Integer">
+    select count(*) from tb_slide where group_id=#{groupId} and is_delete=0 ;
+  </select>
+
+  <select id="selectProjectGroup" parameterType="cn.staitech.anno.domain.vo.ProjectGroupAddVO" resultMap="ProjectResult">
+    select * from tb_project_group
+    <where>
+      <if test="groupId != null">
+        AND group_id=#{groupId}
+      </if>
+        AND del_flag=0
+    </where>
+  </select>
+
+
+
+
+
+
+
+
+</mapper>

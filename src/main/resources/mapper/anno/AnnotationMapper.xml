@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.AnnotationMapper">
+
+    <resultMap type="cn.staitech.anno.domain.Annotation" id="AnnotationResult">
+        <result property="annotationId" column="annotation_id"/>
+        <result property="measure" column="measure"/>
+        <result property="perimeter" column="perimeter"/>
+        <result property="annotationType" column="annotation_type"/>
+        <result property="description" column="description"/>
+        <result property="attribute" column="attribute"/>
+        <result property="locationType" column="location_type"/>
+        <result property="location" column="location"/>
+        <result property="projectId" column="project_id"/>
+        <result property="imageId" column="image_id"/>
+        <result property="slideId" column="slide_id"/>
+        <result property="tileId" column="tile_id"/>
+        <result property="examinationFlag" column="examination_flag "/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="x" column="x"/>
+        <result property="y" column="y"/>
+        <result property="annoType" column="anno_type"/>
+        <result property="createCategoryId" column="create_category_id"/>
+
+    </resultMap>
+
+    <resultMap type="cn.staitech.anno.domain.vo.AnnotationBroadcastVO" id="sendMessage">
+        <result property="annotationId" column="annotation_id"/>
+        <result property="slideId" column="slide_id"/>
+        <result property="createCategoryName" column="create_category_name"/>
+        <result property="measure" column="measure"/>
+        <result property="perimeter" column="perimeter"/>
+        <result property="description" column="description"/>
+        <result property="createTime" column="create_time"/>
+        <result property="locationType" column="location_type"/>
+        <result property="location" column="location"/>
+        <result property="userName" column="user_name"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="color" column="color"/>
+        <result property="updateName" column="update_name"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap type="cn.staitech.anno.domain.vo.AnnotationJsonVO" id="AnnotationJsonResult">
+        <result property="annotationId" column="annotation_id"/>
+        <result property="coordinates" column="coordinates"/>
+        <result property="color" column="color"/>
+        <result property="categoryName" column="category_name"/>
+    </resultMap>
+
+    <resultMap type="cn.staitech.anno.domain.SlideViewer" id="ImageViewerResult">
+        <result property="slideId" column="slide_id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="imageId" column="image_id"/>
+        <result property="humanAnnotationTotal" column="human_annotation_total"/>
+        <result property="processFlag" column="process_flag"/>
+        <result property="examinationFlag" column="examination_flag"/>
+        <result property="imageName" column="image_name"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="imagePath" column="image_path"/>
+        <result property="thumbUrl" column="thumb_url"/>
+        <result property="macroUrl" column="macro_url"/>
+        <result property="labelUrl" column="label_url"/>
+        <result property="format" column="format"/>
+        <result property="width" column="width"/>
+        <result property="height" column="height"/>
+        <result property="depth" column="depth"/>
+        <result property="size" column="size"/>
+        <result property="globalSize" column="global_size"/>
+        <result property="resolvingPower" column="resolving_power"/>
+        <result property="tileCountList" column="tile_count_list"/>
+        <result property="levelCount" column="level_count"/>
+        <result property="chunkTotal" column="chunk_total"/>
+        <result property="md5" column="md5"/>
+        <result property="resolutionX" column="resolution_x"/>
+        <result property="resolutionY" column="resolution_y"/>
+        <result property="sourceLens" column="source_lens"/>
+    </resultMap>
+
+    <sql id="selectImageVo">
+        SELECT s.slide_id,
+               s.project_id,
+               s.image_id,
+               s.process_flag,
+               s.human_annotation_total,
+               s.examination_flag,
+               i.image_name,
+               i.image_url,
+               i.image_path,
+               i.thumb_url,
+               i.macro_url,
+               i.label_url,
+               i.format,
+               i.width,
+               i.height,
+               i.depth,
+               i.size,
+               i.global_size,
+               i.resolving_power,
+               i.tile_count_list,
+               i.level_count,
+               i.chunk_total,
+               i.md5,
+               i.resolution_x,
+               i.resolution_y,
+               i.source_lens
+        FROM tb_slide s
+                 LEFT JOIN tb_image i ON i.image_id = s.image_id
+    </sql>
+
+    <sql id="annotationCountSql">
+        select count(anno.annotation_id)
+        from tb_annotation as anno
+                 left join sys_user as u on u.user_id = anno.create_by
+                 left join tb_pathological_indicator_category as cate on cate.category_id = anno.category_id
+    </sql>
+
+    <select id="annotationCount" parameterType="java.lang.Long" resultType="int">
+        <include refid="annotationCountSql"/>
+        where anno.slide_id = #{slideId}
+    </select>
+
+    <sql id="selectAnnotationVo">
+        select annotation_id
+             , measure
+             , perimeter
+             , create_time
+             , annotation_type
+             , examination_flag
+             , description
+             , attribute
+             , location_type
+             , ST_ASTEXT(location) as location
+             , image_id
+             , create_by
+             , update_by
+             , project_id
+             , update_time
+             , slide_id
+             , tile_id
+             , category_id
+             , x
+             , y
+             , anno_type
+             , create_category_id
+        from tb_annotation
+    </sql>
+
+    <sql id="annotationUserCategory">
+        select anno.annotation_id
+             , anno.slide_id
+             , anno.measure
+             , anno.perimeter
+             , anno.create_time
+             , anno.description
+             , anno.location_type
+             , anno.update_time         as update_time
+             , ST_ASTEXT(anno.location) as location
+             , anno.category_id
+             , u.user_name
+             , cate.category_name
+             , cate.color
+             , t.user_name              as update_name
+             , c.user_name              as create_category_name
+        from tb_annotation as anno
+                 left join sys_user as u on u.user_id = anno.create_by
+                 left join sys_user as t on t.user_id = anno.update_by
+                 left join sys_user as c on c.user_id = anno.create_category_id
+                 left join tb_pathological_indicator_category as cate on cate.category_id = anno.category_id
+    </sql>
+
+    <select id="annotationUserCategory" parameterType="cn.staitech.anno.domain.vo.AnnotationPageVO"
+            resultMap="sendMessage">
+        <include refid="annotationUserCategory"/>
+        where slide_id = #{slideId}
+        and anno.category_id = #{categoryId}
+        order by cate.order_number desc
+    </select>
+
+    <select id="annoUserCategory" parameterType="java.lang.Long"
+            resultMap="sendMessage">
+        <include refid="annotationUserCategory"/>
+        where annotation_id = #{annotationId}
+    </select>
+
+    <sql id="selectAnnotationJsonVo">
+        SELECT a.annotation_id,
+               pic.category_name,
+               pic.color,
+               ST_ASTEXT(location) AS coordinates
+        FROM tb_annotation a
+                 LEFT JOIN tb_pathological_indicator_category pic ON pic.category_id = a.category_id
+    </sql>
+
+    <select id="selectAnnotationById" parameterType="java.lang.Long" resultMap="AnnotationResult">
+        --
+        <include refid="selectAnnotationVo"/>
+        where annotation_id = #{annotationId}
+    </select>
+
+    <insert id="insertAnnotation" parameterType="cn.staitech.anno.domain.Annotation" useGeneratedKeys="true"
+            keyProperty="annotationId">
+        insert into tb_annotation (
+        <if test="measure != null and measure != '' ">measure,</if>
+        <if test="perimeter != null and perimeter != '' ">perimeter,</if>
+        <if test="annotationType != null and annotationType != '' ">annotation_type,</if>
+        <if test="examinationFlag != null and examinationFlag != ''">examination_flag ,</if>
+        <if test="description != null and description != '' ">description,</if>
+        <if test="attribute != null and attribute != '' ">attribute,</if>
+        <if test="locationType != null and locationType != '' ">location_type,</if>
+        <if test="location != null and location != ''">location,</if>
+        <if test="imageId != null and imageId != ''">image_id,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        <if test="updateBy != null and updateBy != ''">update_by,</if>
+        <if test="slideId != null and slideId != ''">slide_id,</if>
+        <if test="projectId != null and projectId != ''">project_id,</if>
+        <if test="categoryId != null and categoryId != ''">category_id,</if>
+        <if test="createCategoryId != null and createCategoryId != ''">create_category_id,</if>
+        create_time,
+        update_time
+        )values(
+        <if test="measure != null and measure != ''">#{measure},</if>
+        <if test="perimeter != null and perimeter != ''">#{perimeter},</if>
+        <if test="annotationType != null and annotationType != ''">#{annotationType},</if>
+        <if test="examinationFlag != null and examinationFlag != ''">#{examinationFlag},</if>
+        <if test="description != null and description != ''">#{description},</if>
+        <if test="attribute != null and attribute != ''">#{attribute},</if>
+        <if test="locationType != null and locationType != ''">#{locationType},</if>
+        <if test="location != null and location != ''">ST_GEOMFROMTEXT(#{location}),</if>
+        <if test="imageId != null and imageId != ''">#{imageId},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+        <if test="slideId != null and slideId != ''">#{slideId},</if>
+        <if test="projectId != null and projectId != ''">#{projectId},</if>
+        <if test="categoryId != null and categoryId != ''">#{categoryId},</if>
+        <if test="createCategoryId != null and createCategoryId != ''">#{createCategoryId},</if>
+        sysdate(),
+        sysdate()
+        )
+    </insert>
+
+    <update id="updateAnnotation" parameterType="cn.staitech.anno.domain.Annotation" useGeneratedKeys="true"
+            keyProperty="annotationId">
+        update tb_annotation
+        <set>
+            <if test="measure != null and measure != ''">measure = #{measure},</if>
+            <if test="perimeter != null and perimeter != ''">perimeter = #{perimeter},</if>
+            <if test="annotationType != null and annotationType != ''">annotation_type = #{annotationType},</if>
+            <if test="examinationFlag  != null and examinationFlag != ''">examination_flag = #{examinationFlag},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
+            <if test="attribute != null and attribute != ''">attribute = #{attribute},</if>
+            <if test="locationType != null and locationType != ''">location_type = #{locationType},</if>
+            <if test="location != null and location != ''">location = ST_GEOMFROMTEXT(#{location}),</if>
+            <if test="imageId != null and imageId != ''">image_id = #{imageId},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="createCategoryId != null and createCategoryId != ''">create_category_id = #{createCategoryId},
+            </if>
+            category_id = #{categoryId},
+            update_time = sysdate()
+        </set>
+        where annotation_id = #{annotationId}
+    </update>
+
+    <update id="updateAnnotationDescription" parameterType="cn.staitech.anno.domain.Annotation" useGeneratedKeys="true"
+            keyProperty="annotationId">
+        update tb_annotation
+        <set>
+            description = #{description},
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where annotation_id = #{annotationId}
+    </update>
+
+    <insert id="deleteAnnotationById" parameterType="java.lang.Long" useGeneratedKeys="true"
+            keyProperty="annotationId">
+        delete
+        from tb_annotation
+        where annotation_id = #{annotationId}
+    </insert>
+
+    <select id="selectAnnotationCount" resultType="java.lang.Integer">
+        select count(*)
+        from tb_annotation
+        where anno_type = 0
+          and slide_id = #{slideId}
+    </select>
+
+    <!--查询图像信息-->
+    <select id="selectImageBySlideId" parameterType="java.lang.Long"
+            resultMap="ImageViewerResult">
+        <include refid="selectImageVo"/>
+        where slide_id = #{slideId}
+        ORDER BY s.slide_id DESC
+    </select>
+
+    <!--修改标注状态-->
+    <update id="updateViewerAnnotation" parameterType="cn.staitech.anno.domain.vo.AnnotationStateVO">
+        update tb_slide
+        set process_flag = #{processFlag}
+        where slide_id = #{slideId}
+    </update>
+
+    <select id="selectAnnotationJson" parameterType="java.lang.Long"
+            resultMap="AnnotationJsonResult">
+        <include refid="selectAnnotationJsonVo"/>
+        <where>
+            <if test="slideId !=null and slideId != ''"></if>
+            a.slide_id = #{slideId}
+        </where>
+    </select>
+
+    <!--根据项目id查询创建者-->
+    <select id="selectByProjectId" parameterType="java.lang.Long" resultMap="AnnotationResult">
+        select distinct(create_by)
+        from tb_annotation
+        where project_id = #{projectId}
+          and create_by !=0
+    </select>
+
+    <select id="selectByCondition" parameterType="cn.staitech.anno.domain.Annotation" resultMap="AnnotationResult">
+        select * from tb_annotation
+        <where>
+            1 = 1
+            <if test="slideId != null and slideId != ''">
+                AND slide_id = #{slideId}
+            </if>
+            <if test="categoryId != null and categoryId != ''">
+                AND category_id = #{categoryId}
+            </if>
+            <if test="createBy != null and createBy != ''">
+                AND create_by = #{createBy}
+            </if>
+        </where>
+        order by annotation_id desc
+    </select>
+
+    <!--查询已导入的标注-->
+    <select id="queryUploadAnnotation" parameterType="cn.staitech.anno.domain.Annotation" resultMap="AnnotationResult">
+        SELECT
+        annotation_id,
+        location
+        FROM
+        `tb_annotation`
+        <where>
+            <if test="slideId != null and slideId != ''">
+                AND slide_id = #{slideId}
+            </if>
+            <if test="projectId != null and projectId != ''">
+                AND project_id = #{projectId}
+            </if>
+            AND perimeter IS NULL
+            AND location_type IS NULL
+        </where>
+    </select>
+
+    <insert id="insertAnnotationList" useGeneratedKeys="true"
+            keyProperty="annotationId">
+        insert into tb_annotation (
+        measure,
+        perimeter,
+        annotation_type,
+        examination_flag ,
+        description,
+        attribute,
+        location_type,
+        location,
+        image_id,
+        create_by,
+        update_by,
+        slide_id,
+        project_id,
+        category_id,
+        create_time,
+        update_time,
+        anno_type
+        )
+        values
+        <foreach collection="annotationList" item="annotation" separator=",">
+            (
+            #{annotation.measure},
+            #{annotation.perimeter},
+            #{annotation.annotationType},
+            #{annotation.examinationFlag},
+            #{annotation.description},
+            #{annotation.attribute},
+            #{annotation.locationType},
+            ST_GEOMFROMTEXT(#{annotation.location}),
+            #{annotation.imageId},
+            #{annotation.createBy},
+            #{annotation.updateBy},
+            #{annotation.slideId},
+            #{annotation.projectId},
+            #{annotation.categoryId},
+            sysdate(),
+            sysdate(),
+            #{annotation.annoType}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="batchDeleteRoi" parameterType="java.lang.Long" useGeneratedKeys="true"
+            keyProperty="annotationId">
+        delete
+        from tb_annotation
+        where slide_id = #{slideId}
+          AND category_id = 1
+          AND anno_type = 1
+    </insert>
+
+    <select id="selectAnnotationRoi" parameterType="java.lang.Long" resultMap="AnnotationResult">
+        <include refid="selectAnnotationVo"/>
+        where slide_id = #{slideId}
+        AND category_id = 1
+    </select>
+
+    <update id="shutDownIndex">
+        ALTER TABLE tb_annotation DISABLE KEYS;
+    </update>
+
+    <update id="openItIndex">
+        ALTER TABLE tb_annotation ENABLE KEYS;
+    </update>
+
+    <!--通过项目ID，用户名批量删除标注 -->
+    <delete id="deleteAnnotationByProjectIdAndUserId" parameterType="cn.staitech.anno.domain.Annotation">
+        delete
+        from tb_annotation
+        where project_id = #{projectId}
+          AND (create_by = #{createBy} OR update_by = #{updateBy})
+    </delete>
+
+    <select id="selectAnnotationByProjectIdAndUserId" parameterType="cn.staitech.anno.domain.Annotation"
+            resultMap="AnnotationResult">
+        select slide_id, create_by, category_id
+        from tb_annotation
+        where project_id = #{projectId}
+          AND create_by = #{createBy}
+    </select>
+
+    <select id="selectSlideBy" parameterType="java.lang.Long" resultMap="AnnotationResult">
+        <include refid="selectAnnotationVo"/>
+        where slide_id = #{slideId}
+    </select>
+</mapper>

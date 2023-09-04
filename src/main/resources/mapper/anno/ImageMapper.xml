@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.ImageMapper">
+    <resultMap type="cn.staitech.anno.domain.Image" id="ImageResult">
+        <result property="imageId" column="image_id"/>
+        <result property="imageName" column="image_name"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="imagePath" column="image_path"/>
+        <result property="thumbUrl" column="thumb_url"/>
+        <result property="macroUrl" column="macro_url"/>
+        <result property="labelUrl" column="label_url"/>
+        <result property="format" column="format"/>
+        <result property="width" column="width"/>
+        <result property="height" column="height"/>
+        <result property="depth" column="depth"/>
+        <result property="size" column="size"/>
+        <result property="globalSize" column="global_size"/>
+        <result property="resolvingPower" column="resolving_power"/>
+        <result property="tileCountList" column="tile_count_list"/>
+        <result property="levelCount" column="level_count"/>
+        <result property="chunkTotal" column="chunk_total"/>
+        <result property="md5" column="md5"/>
+        <result property="resolutionX" column="resolution_x"/>
+        <result property="resolutionY" column="resolution_y"/>
+        <result property="sourceLens" column="source_lens"/>
+        <result property="processFlag" column="process_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="imageCode" column="image_code"/>
+        <result property="topicId" column="topic_id"/>
+        <result property="topicName" column="topic_name"/>
+        <result property="status" column="status"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+    <resultMap type="cn.staitech.anno.domain.image.in.ImageListVO" id="ImageSlide">
+        <result property="imageId" column="image_id"/>
+        <result property="imageName" column="image_name"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="imagePath" column="image_path"/>
+        <result property="thumbUrl" column="thumb_url"/>
+        <result property="macroUrl" column="macro_url"/>
+        <result property="labelUrl" column="label_url"/>
+        <result property="format" column="format"/>
+        <result property="width" column="width"/>
+        <result property="height" column="height"/>
+        <result property="depth" column="depth"/>
+        <result property="size" column="size"/>
+        <result property="globalSize" column="global_size"/>
+        <result property="resolvingPower" column="resolving_power"/>
+        <result property="tileCountList" column="tile_count_list"/>
+        <result property="levelCount" column="level_count"/>
+        <result property="chunkTotal" column="chunk_total"/>
+        <result property="md5" column="md5"/>
+        <result property="resolutionX" column="resolution_x"/>
+        <result property="resolutionY" column="resolution_y"/>
+        <result property="sourceLens" column="source_lens"/>
+        <result property="processFlag" column="process_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="slideId" column="slide_id"/>
+        <result property="humanAnnotationTotal" column="human_annotation_total"/>
+        <result property="description" column="description"/>
+        <result property="imageCode" column="image_code"/>
+        <result property="topicId" column="topic_id"/>
+        <result property="topicName" column="topic_name"/>
+        <result property="status" column="status"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+    <sql id="selectImageVo">
+        select image_id,
+               image_name,
+               image_url,
+               image_path,
+               thumb_url,
+               width,
+               height, size, global_size, source_lens, process_flag, create_by, create_time, update_by, update_time, image_code, topic_id, topic_name, status, delete_flag
+        from
+            tb_image
+    </sql>
+
+
+    <!-- 根据项目ID查所有对应的图片 -->
+    <select id="selectImageListByPorjectId" parameterType="Long" resultMap="ImageSlide">
+        select
+        i.image_id,
+        i.image_name,
+        i.image_url,
+        i.image_path,
+        i.thumb_url,
+        i.macro_url,
+        i.label_url,
+        i.format,
+        i.width,
+        i.height,
+        i.depth,
+        i.size,
+        i.global_size,
+        i.resolving_power,
+        i.tile_count_list,
+        i.level_count,
+        i.chunk_total,
+        i.md5,
+        i.resolution_x,
+        i.resolution_y,
+        i.source_lens,
+        i.process_flag,
+        i.create_by,
+        i.create_time,
+        i.update_by,
+        i.update_time,
+        i.topic_id,
+        i.topic_name,
+        i.status,
+        i.delete_flag,
+        s.slide_id,
+        s.human_annotation_total,
+        s.description
+        from tb_slide s
+        left join tb_image i on i.image_id = s.image_id
+        <where>
+            <if test="projectId != null and projectId != ''">
+                and s.project_id = #{projectId}
+            </if>
+        </where>
+        order by
+        s.update_time desc
+    </select>
+
+    <!--查询单个图像信息-->
+    <select id="selectById" parameterType="java.lang.Long" resultMap="ImageResult">
+        <include refid="selectImageVo"/>
+        <where>
+            <if test="imageId != null and imageId != ''">
+                and image_id = #{imageId}
+            </if>
+        </where>
+    </select>
+
+    <!--通过图片ID查询切片-->
+    <select id="selectSlideCountByImageId" parameterType="cn.staitech.anno.domain.Image" resultType="java.lang.Integer">
+        select count(*) from `tb_slide`
+        <where>
+            <if test="imageId != null and imageId != ''">
+                and image_id = #{imageId}
+            </if>
+        </where>
+    </select>
+
+    <!-- 切片管理 - 切片列表 - 图像列表 -->
+    <!--
+    根据实际情况不应该为上传失败，优化成上传时不显示信息，上传完显示，或者更好的方式 http://jira.shengtong.com/browse/PS-304
+    process_flag 处理状态，不可用原因共三种，0上传失败（MD5校验不通过），1解析中，2解析失败（不能获得缩略图）
+    -->
+    <select id="selectList" parameterType="cn.staitech.anno.domain.Image" resultMap="ImageResult">
+        <include refid="selectImageVo"></include>
+        <where>
+            delete_flag = 1 and process_flag != 0
+            <if test="imageId != null and imageId != ''"><!-- 切片（图像）ID -->
+                and image_id = #{imageId}
+            </if>
+            <if test="topicId != null and topicId != ''"><!-- 专题ID -->
+                and topic_id = #{topicId}
+            </if>
+            <if test="status != null"><!-- 切片状态 -->
+                and status = #{status}
+            </if>
+            <if test="imageName != null and imageName != ''"><!-- 图像名称 -->
+                and image_name like concat('%', #{imageName}, '%')
+            </if>
+            <if test="imageCode != null and imageCode != ''"><!-- 切片（图像）编号 -->
+                and image_code like concat('%', #{imageCode}, '%')
+            </if>
+            <if test="topicName != null and topicName != ''"><!-- 专题名称 -->
+                and topic_name like concat('%', #{topicName}, '%')
+            </if>
+            <if test="createTimeParams != null">
+                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''"><!-- 开始时间检索 -->
+                    and date_format(create_time,'%y%m%d') &gt;= date_format(#{createTimeParams.beginTime},'%y%m%d')
+                </if>
+                <if test="createTimeParams.endTime != null and createTimeParams.endTime != ''"><!-- 结束时间检索 -->
+                    and date_format(create_time,'%y%m%d') &lt;= date_format(#{createTimeParams.endTime},'%y%m%d')
+                </if>
+            </if>
+        </where>
+        order by image_id desc
+    </select>
+
+    <!--标注组选片入口预览图像列表-->
+    <select id="selectImageChooseList" parameterType="cn.staitech.anno.domain.Image" resultMap="ImageResult">
+        <include refid="selectImageVo"></include>
+        <where>
+            delete_flag = 1
+            <if test="imageId != null and imageId != ''">
+                and image_id = #{imageId}
+            </if>
+            <if test="imageCode != null and imageCode != ''">
+                and image_code like concat('%', #{imageCode}, '%')
+            </if>
+            <if test="imageName != null and imageName != ''">
+                and image_name like concat('%', #{imageName}, '%')
+            </if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                and date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+        </where>
+        order by image_id desc
+    </select>
+
+    <!--标注组图像列表-->
+    <select id="selectImageAnnotationList" parameterType="cn.staitech.anno.domain.Image" resultMap="ImageResult">
+        <include refid="selectImageVo"></include>
+        <where>
+            delete_flag = 1
+            <if test="imageId != null and imageId != ''">
+                and image_id = #{imageId}
+            </if>
+            <if test="imageName != null and imageName != ''">
+                and image_name like concat('%', #{imageName}, '%')
+            </if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                and date_format(update_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and date_format(update_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+        </where>
+        order by
+        update_time desc
+    </select>
+
+
+    <!-- 通过切片ID批量修改专题 -->
+    <update id="updateBatchIds" parameterType="cn.staitech.anno.domain.image.in.ImageTopicBatchIdsVO">
+        update tb_image
+        <set>
+            topic_id = #{topicId},
+            topic_name = #{topicName},
+            update_time = sysdate(),
+            update_by=#{updateBy}
+        </set>
+        where image_id in
+        <foreach collection="imageIdList" item="imageId" open="(" separator="," close=")">
+            #{imageId}
+        </foreach>
+    </update>
+
+
+    <update id="updateProcessFlagByIdList" parameterType="java.util.List">
+        update tb_image
+        <if test="processFlag != null and processFlag != ''">
+            <set>
+                process_flag = #{processFlag},
+                update_time = sysdate(),
+                update_by=#{updateBy}
+            </set>
+        </if>
+        where image_id in
+        <if test="imageIdList.size() != 0 and imageIdList != '' ">
+            <foreach collection="imageIdList" item="imageId" open="(" separator="," close=")">
+                #{imageId}
+            </foreach>
+        </if>
+    </update>
+
+    <!--逻辑删除图像-->
+    <update id="updateDeleteFlagById" parameterType="java.lang.Long">
+        <if test="imageId != null and imageId != ''">
+            update tb_image
+            set delete_flag = 0,
+            update_time = sysdate(),
+            update_by=#{updateBy}
+            where image_id = #{imageId}
+        </if>
+    </update>
+
+
+    <!-- 通过切片ID批量 逻辑删除图像 -->
+    <update id="updateDeleteFlagBatchIds" parameterType="cn.staitech.anno.domain.image.in.ImageBatchIdsVO">
+        update tb_image
+        <set>
+            delete_flag = 0,
+            update_time = sysdate(),
+            update_by=#{updateBy}
+        </set>
+        where image_id in
+        <foreach collection="imageIdList" item="imageId" open="(" separator="," close=")">
+            #{imageId}
+        </foreach>
+    </update>
+
+
+    <!--物理删除图像-->
+    <delete id="deleteById" parameterType="java.lang.Long">
+        <if test="imageId != null and imageId != ''">
+            delete
+            from tb_image
+            where delete_flag = 0 and image_id = #{imageId}
+        </if>
+    </delete>
+
+</mapper>

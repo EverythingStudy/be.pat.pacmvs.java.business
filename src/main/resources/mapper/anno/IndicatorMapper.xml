@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.IndicatorMapper">
+    
+    <resultMap type="cn.staitech.anno.domain.Indicator" id="IndicatorResult">
+        <result property="indicatorId" column="indicator_id"/>
+        <result property="indicatorName" column="indicator_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="projectTotal" column="project_total"/>
+        <result property="annotationCategoryTotal" column="annotation_category_total"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="createBy" column="create_by"/>
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="number" column="number"/>
+        <result property="delFlag" column="del_flag"/>
+    </resultMap>
+    
+    <resultMap type="cn.staitech.anno.domain.vo.statistic.StatisticIndicatorListOutVO" id="SysIndicatorStatisticResult">
+        <result property="indicatorId"       column="indicator_id"       />
+        <result property="indicatorName"    column="indicator_name"    />
+    </resultMap>
+    
+    <sql id="selectIndicatorVo">
+        select i.indicator_id,
+               i.indicator_name,
+               i.create_time,
+               i.project_total,
+               i.annotation_category_total,
+               i.create_by,
+               i.update_by,
+               i.update_time,
+               i.number,
+               u.user_id,
+               u.user_name
+        from tb_pathological_indicator i left join sys_user u on i.create_by=u.user_id
+    </sql>
+    
+    <insert id="insertIndicator" parameterType="cn.staitech.anno.domain.Indicator" useGeneratedKeys="true"
+        keyProperty="indicatorId">
+        insert into tb_pathological_indicator(
+        <if test="indicatorName != null and indicatorName != '' ">indicator_name,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        number,
+        create_time,
+        project_total,
+        annotation_category_total
+        )values (
+        <if test="indicatorName != null and indicatorName != ''">#{indicatorName},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        <if test="number != null and number != ''">#{number},</if>
+        sysdate(),
+        0,
+        0
+        )
+    </insert>
+    
+    
+    <select id="selectIndicatorList" parameterType="cn.staitech.anno.domain.Indicator" resultMap="IndicatorResult">
+        <include refid="selectIndicatorVo"/>
+        <where>
+            <if test="indicatorName != null and indicatorName != ''">
+                AND i.indicator_name like concat('%', #{indicatorName}, '%')
+            </if>
+            <if test="createBy != null and createBy != ''">
+                AND i.create_by like concat('%', #{createBy}, '%')
+            </if>
+            <if test="userName != null and userName != ''">
+                AND u.user_name like concat('%', #{userName}, '%')
+            </if>
+            <if test="params != null">
+                <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                    AND date_format(i.create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+                </if>
+                <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                    AND date_format(i.create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+                </if>
+            </if>
+            and i.del_flag=0
+        </where>
+        order by i.create_time desc
+    
+    
+    </select>
+    
+    <!--根据病理指标查询病理信息1-->
+    <select id="selectIndicatorById" parameterType="java.lang.Long" resultMap="IndicatorResult">
+        select pa.indicator_id,
+               pa.indicator_name,
+               pa.create_time,
+               pa.project_total,
+               pa.annotation_category_total,
+               pa.create_by,
+               pa.update_time,
+               pa.update_by,
+               u.user_id,
+               u.user_name
+        from tb_pathological_indicator pa left join sys_user u on pa.create_by=u.user_id
+        where pa.indicator_id = #{indicatorId}
+    
+    </select>
+    
+    <select id="selectIndicatorStatisticList" parameterType="Integer" resultMap="SysIndicatorStatisticResult">
+        select distinct(pi.indicator_id), pi.indicator_name
+        from tb_pathological_indicator as pi
+        left join tb_project as p on p.indicator_id = pi.indicator_id
+        <if test="projectIdList.size() != 0 and projectIdList != '' ">
+            where p.project_id in
+            <foreach collection="projectIdList" item="project_id" open="(" separator="," close=")">
+                #{project_id}
+            </foreach>
+        </if>
+        Group by pi.indicator_id
+        order by pi.indicator_id desc
+    </select>
+    
+    <update id="updateIndicator" parameterType="map">
+        update tb_pathological_indicator
+        <set>
+            <if test="indicatorName != null and indicatorName != ''">indicator_name = #{indicatorName},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            annotation_category_total = (select count(*)from tb_pathological_indicator_category where indicator_id=#{indicatorId} and del_flag=0),
+            project_total =(select count(*) from tb_project where indicator_id=#{indicatorId} and del_flag=0),
+            update_time = sysdate()
+        </set>
+        where indicator_id = #{indicatorId}
+    </update>
+    
+    
+    <insert id="addIndicatorsName" useGeneratedKeys="true" keyColumn="indicatorId" keyProperty="indicatorId">
+        insert into tb_pathological_indicator(indicator_name, create_time) value (#{projectName}, sysdate())
+    </insert>
+    
+    <update id="delIndicator" parameterType="java.lang.Long">
+        update tb_pathological_indicator
+        set del_flag=1
+        where indicator_id = #{indicatorId}
+    </update>
+    
+    <select id="selectIndicatorInformation" resultMap="IndicatorResult">
+        select * from tb_pathological_indicator where del_flag=0 order by indicator_id desc
+    </select>
+    
+    <select id="selectIndicator" parameterType="cn.staitech.anno.domain.Indicator" resultMap="IndicatorResult">
+        select * from tb_pathological_indicator where indicator_name=#{indicatorName} and del_flag=0
+    </select>
+    
+    <select id="selectIndicatorName" parameterType="cn.staitech.anno.domain.vo.IndicatorGetVO" resultMap="IndicatorResult">
+        select * from tb_pathological_indicator where indicator_id!=#{indicatorId} and indicator_name=#{indicatorName}
+    </select>
+
+    <!--查询病理总数-->
+    <select id="selectIndicatorNum" resultType="java.lang.Integer">
+        select count(*) from tb_pathological_indicator
+    </select>
+
+    <!--查询专题数量-->
+    <select id="selectSpecial" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        select count(*) from tb_special where del_flag!=2 and indicator_id=#{indicatorId}
+    </select>
+
+
+</mapper>

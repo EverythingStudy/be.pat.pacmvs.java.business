@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.ImageVisitedMapper">
+
+    <resultMap type="cn.staitech.anno.domain.ImageVisited" id="ImageVisitedResult">
+        <result property="imageVisitedId" column="image_visited_id"/>
+        <result property="recentlyVisitedId" column="recently_visited_id"/>
+        <result property="imageName" column="image_name"/>
+        <result property="thumbUrl" column="thumb_url"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="selectRecentlyVisited">
+        select image_visited_id
+             , recently_visited_id
+             , image_name
+             , thumb_url
+             , create_time
+        from tb_image_visited
+    </sql>
+
+
+    <select id="selectList" parameterType="Long" resultMap="ImageVisitedResult">
+        <include refid="selectRecentlyVisited"/>
+        where recently_visited_id = #{recentlyVisitedId}
+        ORDER BY create_time DESC
+    </select>
+
+
+</mapper>

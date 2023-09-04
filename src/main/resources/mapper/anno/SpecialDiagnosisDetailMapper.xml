@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.SpecialDiagnosisDetailMapper">
+	<resultMap id="BaseResultMap"
+		type="cn.staitech.anno.domain.diagnosis.SpecialDiagnosisDetail">
+		<id column="special_diagnosis_detail_id" jdbcType="BIGINT"
+			property="specialDiagnosisDetailId" />
+		<result column="special_diagnosis_id" jdbcType="BIGINT"
+			property="specialDiagnosisId" />
+		<result column="dict_type" jdbcType="VARCHAR" property="dictType" />
+		<result column="tags" jdbcType="VARCHAR" property="tags" />
+		<result column="tag_name" jdbcType="VARCHAR" property="tagName" />
+		<result column="customize_tag_name" jdbcType="VARCHAR" property="customizeTagName" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		special_diagnosis_detail_id, special_diagnosis_id,
+		dict_type, tags, create_time,tag_name,customize_tag_name
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_special_diagnosis_detail
+		where special_diagnosis_detail_id =
+		#{specialDiagnosisDetailId,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from
+		tb_special_diagnosis_detail
+		where special_diagnosis_detail_id =
+		#{specialDiagnosisDetailId,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert"
+		parameterType="cn.staitech.anno.domain.diagnosis.SpecialDiagnosisDetail">
+		insert into tb_special_diagnosis_detail
+		(special_diagnosis_detail_id,
+		special_diagnosis_id,
+		dict_type, tags,
+		create_time
+		)
+		values (#{specialDiagnosisDetailId,jdbcType=BIGINT},
+		#{specialDiagnosisId,jdbcType=BIGINT},
+		#{dictType,jdbcType=VARCHAR},
+		#{tags,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+		)
+	</insert>
+	<insert id="insertSelective"
+		parameterType="cn.staitech.anno.domain.diagnosis.SpecialDiagnosisDetail" useGeneratedKeys="true" keyProperty="specialDiagnosisDetailId">
+		insert into tb_special_diagnosis_detail
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="specialDiagnosisDetailId != null">
+				special_diagnosis_detail_id,
+			</if>
+			<if test="specialDiagnosisId != null">
+				special_diagnosis_id,
+			</if>
+			<if test="dictType != null">
+				dict_type,
+			</if>
+			<if test="tags != null">
+				tags,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="tagName != null">
+				tag_name,
+			</if>
+			<if test="customizeTagName != null">
+				customize_tag_name,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="specialDiagnosisDetailId != null">
+				#{specialDiagnosisDetailId,jdbcType=BIGINT},
+			</if>
+			<if test="specialDiagnosisId != null">
+				#{specialDiagnosisId,jdbcType=BIGINT},
+			</if>
+			<if test="dictType != null">
+				#{dictType,jdbcType=VARCHAR},
+			</if>
+			<if test="tags != null">
+				#{tags,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="tagName != null">
+				#{tagName,jdbcType=VARCHAR},
+			</if>
+			<if test="customizeTagName != null">
+				#{customizeTagName,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="cn.staitech.anno.domain.diagnosis.SpecialDiagnosisDetail">
+		update tb_special_diagnosis_detail
+		<set>
+			<if test="specialDiagnosisId != null">
+				special_diagnosis_id =
+				#{specialDiagnosisId,jdbcType=BIGINT},
+			</if>
+			<if test="dictType != null">
+				dict_type = #{dictType,jdbcType=VARCHAR},
+			</if>
+			<if test="tags != null">
+				tags = #{tags,jdbcType=VARCHAR},
+			</if>
+			<if test="tagName != null">
+				tag_name = #{tagName,jdbcType=VARCHAR},
+			</if>
+			<if test="customizeTagName != null">
+				customize_tag_name = #{customizeTagName,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where special_diagnosis_detail_id =
+		#{specialDiagnosisDetailId,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="cn.staitech.anno.domain.diagnosis.SpecialDiagnosisDetail">
+		update tb_special_diagnosis_detail
+		set
+		special_diagnosis_id = #{specialDiagnosisId,jdbcType=BIGINT},
+		dict_type = #{dictType,jdbcType=VARCHAR},
+		tags =
+		#{tags,jdbcType=VARCHAR},
+		create_time =
+		#{createTime,jdbcType=TIMESTAMP}
+		where special_diagnosis_detail_id =
+		#{specialDiagnosisDetailId,jdbcType=BIGINT}
+	</update>
+
+	<select id="getSpecialDiagnosisDetailListByParm" parameterType="map"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_special_diagnosis_detail 
+		<where>
+			<if test="specialDiagnosisId != null">
+				AND special_diagnosis_id =	#{specialDiagnosisId}
+			</if>
+			<if test="dictType != null">
+				AND dict_type = #{dictType}
+			</if>
+			<if test="tags != null">
+				AND tags = #{tags}
+			</if>
+			<if test="createTime != null">
+				AND create_time = #{createTime}
+			</if>
+		</where>
+	</select>
+</mapper>
