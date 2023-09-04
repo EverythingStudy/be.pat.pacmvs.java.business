@@ -5,7 +5,7 @@
     <parent>
         <groupId>cn.staitech</groupId>
         <artifactId>staitech-modules</artifactId>
-        <version>4.5.0</version>
+        <version>1.0.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -347,83 +347,20 @@
         </plugins>
     </build>
 
-    <!--配置测试开发生产环境-->
+    <!--配置profiles环境-->
     <profiles>
         <profile>
-            <!--108线上测试环境-->
-            <id>public</id>
-            <!-- 加了这个，默认选中 -->
+            <!--108线开发环境-->
+            <id>patsaasdev</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <activatedProperties>public</activatedProperties>
-                <!-- public 对应的命名空间id 默认public 为空 -->
-                <nacosNamespace></nacosNamespace>
-                <nacosAddress>http://192.168.52.119:8848</nacosAddress>
-                <nacosGroup>DEFAULT_GROUP</nacosGroup>
-                <serverAddr>192.168.52.119:8848</serverAddr>
-            </properties>
-        </profile>
-       <profile>
-            <id>dev</id>
-            <properties>
-                <activatedProperties>dev</activatedProperties>
-                <nacosNamespace>781e02d9-1721-4c78-9922-2bc05530c954</nacosNamespace>
-                <nacosAddress>http://127.0.0.1:8848</nacosAddress>
-                <nacosGroup>DEFAULT_GROUP</nacosGroup>
-                <serverAddr>127.0.0.1:8848</serverAddr>
-            </properties>
-        </profile>
-
-        <profile>
-            <!--108线上测试环境-->
-            <id>dev2</id>
-            <!-- 加了这个，默认选中 -->
-           <!--  <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation> -->
-            <properties>
-                <activatedProperties>dev2</activatedProperties>
-                <nacosNamespace>dd8beb88-1d10-4753-8968-4247efee9199</nacosNamespace>
+                <activatedProperties>patsaasdev</activatedProperties>
+                <nacosNamespace>9db07238-8e80-49f9-b665-5afa03e8d569</nacosNamespace>
                 <nacosAddress>http://192.168.52.108:8848</nacosAddress>
                 <nacosGroup>DEFAULT_GROUP</nacosGroup>
                 <serverAddr>192.168.52.108:8848</serverAddr>
-            </properties>
-        </profile>
-        <profile>
-            <!--本地开发环境-->
-            <id>localdev2</id>
-            <properties>
-                <activatedProperties>localdev2</activatedProperties>
-                <!-- dev对应的命名空间id 默认public 为空 -->
-                <nacosNamespace>1dbcf4e0-256a-43c7-bff2-3f29a9208440</nacosNamespace>
-                <nacosAddress>http://127.0.0.1:8848</nacosAddress>
-                <nacosGroup>DEFAULT_GROUP</nacosGroup>
-                <serverAddr>127.0.0.1:8848</serverAddr>
-            </properties>
-        </profile>
-        <!--114测试环境-->
-        <profile>
-            <id>test2</id>
-            <properties>
-                <activatedProperties>test2</activatedProperties>
-                <nacosNamespace>467d32e4-daca-4a1a-93a3-198db7f0904f</nacosNamespace>
-                <nacosAddress>http://192.168.52.114:8848</nacosAddress>
-                <nacosGroup>DEFAULT_GROUP</nacosGroup>
-                <serverAddr>192.168.52.114:8848</serverAddr>
-            </properties>
-        </profile>
-
-        <!-- 拉取192.168.52.184预生产环境配置信息,请勿改动-->
-        <profile>
-            <id>preproduct</id>
-            <properties>
-                <activatedProperties>preproduct</activatedProperties>
-                <nacosNamespace>e9c44a97-aa29-4b77-b3a4-958b68f7d4ba</nacosNamespace>
-                <nacosAddress>http://192.168.52.184:8848</nacosAddress>
-                <nacosGroup>DEFAULT_GROUP</nacosGroup>
-                <serverAddr>192.168.52.184:8848</serverAddr>
             </properties>
         </profile>
     </profiles>
