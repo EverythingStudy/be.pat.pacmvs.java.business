@@ -1,3 +1,4 @@
+/*
 package cn.staitech.anno.consumer;
 
 import java.io.IOException;
@@ -21,14 +22,17 @@ public class RabbitMqConsumer {
 
 
 
-	/**
+	*/
+/**
 	 * 全脏器切图通知
 	 *
 	 * @param message
 	 * @param channel
 	 * @throws IOException
-	 */
-	/*@RabbitListener(queues = "slide.annotation.slideViscer.queue")
+	 *//*
+
+	*/
+/*@RabbitListener(queues = "slide.annotation.slideViscer.queue")
 //   @RabbitListener(queues = "organ_callback")
     public void callBackSlideViscer(Message message, Channel channel,List<CallBackAnnAddIn>  list) throws IOException {
     	String sc = JSONUtil.toJsonStr(list);
@@ -37,17 +41,20 @@ public class RabbitMqConsumer {
     	// 消息的标识，false只确认当前一个消息收到，true确认所有consumer获得的消息
     	channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
     	log.info("专题-算法切图处理 - 队列 {} 消费成功", "special.thumbnail.queue");
-    }*/
+    }*//*
 
 
 
-	/**
+
+	*/
+/**
 	 * 全脏器切图回调
 	 *
 	 * @param message
 	 * @param channel
 	 * @throws IOException
-	 */
+	 *//*
+
 	@RabbitListener(queues = "slide.annotation.organ.queue")
 	public void callBackAnnoResult(Message message, Channel channel) throws IOException {
 		String jsonStr = new String(message.getBody());
@@ -61,3 +68,4 @@ public class RabbitMqConsumer {
 
 }
 
+*/

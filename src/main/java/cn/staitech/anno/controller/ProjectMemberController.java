@@ -1,6 +1,5 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.constant.AnnotationConstant;
 import cn.staitech.anno.domain.Annotation;
 import cn.staitech.anno.domain.ProjectMember;
 import cn.staitech.anno.domain.SlideAnnotationResult;
@@ -23,7 +22,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +37,7 @@ import static cn.staitech.anno.constant.ProjectMemberConstant.*;
 
 /**
  * 项目成员配置
+ *
  * @author wangfeng
  * @date 2023/04/04 10:30
  */
@@ -56,8 +55,8 @@ public class ProjectMemberController extends BaseController {
     @Resource
     private AnnotationService annotationService;
     
-    @Resource
-    private RabbitTemplate rabbitTemplate;
+/*    @Resource
+    private RabbitTemplate rabbitTemplate;*/
 
     @Log(title = "项目成员表增加", businessType = BusinessType.INSERT)
     @ApiOperation(value = "项目成员表增加")
@@ -70,16 +69,16 @@ public class ProjectMemberController extends BaseController {
         Long roleId = projectMemberAddVO.getRoleId();
         SysProjectRole sysProjectRole = projectRoleService.selectProjectRole(roleId);
         Integer roleType = sysProjectRole.getRoleType();
-    
+
         ProjectMember projectMemberBy = projectMemberService.getLoginUserProjectRoleType(projectId);
-    
+
         // 查询项目中是否添加当前用户
-        if(projectMemberBy == null){
+        if (projectMemberBy == null) {
             return R.fail(DISALLOW_PROJECT_NOT_EXIST + SecurityUtils.getUsername());
         }
 
         // 项目贡献者没有查询、添加、删除、修改成员的权限
-        if(projectMemberService.checkLonginUserRoleType(projectMemberBy.getRoleType(),ProjectMemberRoleType.CONTRIBUTOR.getValue())){
+        if (projectMemberService.checkLonginUserRoleType(projectMemberBy.getRoleType(), ProjectMemberRoleType.CONTRIBUTOR.getValue())) {
             return R.fail(DISALLOW_CONTRIBUTOR);
         }
 
@@ -130,16 +129,16 @@ public class ProjectMemberController extends BaseController {
     public R delProjectMember(@RequestBody ProjectMemberDeleteVO deleteVO) {
         // 获取项目ID
         Long projectId = deleteVO.getProjectId();
-    
+
         ProjectMember projectMemberBy = projectMemberService.getLoginUserProjectRoleType(projectId);
-    
+
         // 查询项目中是否添加当前用户
-        if(projectMemberBy == null){
+        if (projectMemberBy == null) {
             return R.fail(DISALLOW_PROJECT_NOT_EXIST + SecurityUtils.getUsername());
         }
 
         // 项目贡献者没有查询、添加、删除、修改成员的权限
-        if(projectMemberService.checkLonginUserRoleType(projectMemberBy.getRoleType(),ProjectMemberRoleType.CONTRIBUTOR.getValue())){
+        if (projectMemberService.checkLonginUserRoleType(projectMemberBy.getRoleType(), ProjectMemberRoleType.CONTRIBUTOR.getValue())) {
             return R.fail(DISALLOW_CONTRIBUTOR);
         }
 
@@ -148,7 +147,7 @@ public class ProjectMemberController extends BaseController {
         // 遍历删除
         for (Long userId : deleteVO.getUserIds()) {
             // 查询是否是项目代表，项目代表不能删除
-            if (projectMemberService.representationCount(projectId,userId)>0){
+            if (projectMemberService.representationCount(projectId, userId) > 0) {
                 isHaveRepresentation = true;
                 continue;
             }
@@ -158,7 +157,7 @@ public class ProjectMemberController extends BaseController {
                     .userId(userId)
                     .build();
 
-            if(projectMemberService.delete(projectMember)>0){
+            if (projectMemberService.delete(projectMember) > 0) {
                 //更新项目时间
                 ProjectUtils.updateProjectStatus(projectId);
                 // 删除该用户在项目创建的所有标注
@@ -167,42 +166,42 @@ public class ProjectMemberController extends BaseController {
                         .createBy(userId)
                         .updateBy(userId)
                         .build();
-    
+
                 List<Annotation> annotationList = annotationService.selectAnnotationByProjectIdAndUserId(annotation);
                 annotationService.deleteAnnotationByProjectIdAndUserId(annotation);
-                
+
                 List<SlideAnnotationResult> slideAnnotationResultVOList = new ArrayList<>();
-                for(Annotation annotation1:annotationList){
+                for (Annotation annotation1 : annotationList) {
                     SlideAnnotationResult slideAnnotationResultVO = new SlideAnnotationResult();
                     slideAnnotationResultVO.setSlideId(annotation1.getSlideId());
                     slideAnnotationResultVO.setUpdateBy(annotation1.getCreateBy());
                     slideAnnotationResultVO.setCategoryId(annotation1.getCategoryId());
-                    if(!slideAnnotationResultVOList.contains(slideAnnotationResultVO)){
+                    if (!slideAnnotationResultVOList.contains(slideAnnotationResultVO)) {
                         slideAnnotationResultVOList.add(slideAnnotationResultVO);
                     }
                 }
-                for (SlideAnnotationResult slideAnnotationResultVO:slideAnnotationResultVOList){
+/*                for (SlideAnnotationResult slideAnnotationResultVO:slideAnnotationResultVOList){
                     rabbitTemplate.convertAndSend(AnnotationConstant.ANNO_DIRECT_EXCHANGE,
                             AnnotationConstant.SLIDE_ANNOTATION_RESULT_ROUTING, slideAnnotationResultVO);
-                }
+                }*/
             }
         }
 
-        if (deleteVO.getUserIds().length == 1 && isHaveRepresentation){
+        if (deleteVO.getUserIds().length == 1 && isHaveRepresentation) {
             return R.ok(DISALLOW_DELETE_REPRESENTATION);
         }
 
-        if (isHaveRepresentation){
-            return R.ok(DELETE_SUCCESS+DISALLOW_DELETE_REPRESENTATION);
+        if (isHaveRepresentation) {
+            return R.ok(DELETE_SUCCESS + DISALLOW_DELETE_REPRESENTATION);
         }
 
         return R.ok(DELETE_SUCCESS);
     }
 
     /**
-     * @Validated
      * @param projectMemberUpdateVO
      * @return
+     * @Validated
      */
     @Log(title = "项目成员表修改", businessType = BusinessType.UPDATE)
     @ApiOperation(value = "项目成员表修改")
@@ -210,16 +209,16 @@ public class ProjectMemberController extends BaseController {
     public R updateProjectMember(@RequestBody ProjectMemberUpdateVO projectMemberUpdateVO) {
         // 获取项目ID
         Long projectId = projectMemberUpdateVO.getProjectId();
-    
+
         ProjectMember projectMemberBy = projectMemberService.getLoginUserProjectRoleType(projectId);
-    
+
         // 查询项目中是否添加当前用户
-        if(projectMemberBy == null){
+        if (projectMemberBy == null) {
             return R.fail(DISALLOW_PROJECT_NOT_EXIST + SecurityUtils.getUsername());
         }
 
         // 项目贡献者没有查询、添加、删除、修改成员的权限
-        if(projectMemberService.checkLonginUserRoleType(projectMemberBy.getRoleType(),ProjectMemberRoleType.CONTRIBUTOR.getValue())){
+        if (projectMemberService.checkLonginUserRoleType(projectMemberBy.getRoleType(), ProjectMemberRoleType.CONTRIBUTOR.getValue())) {
             return R.fail(DISALLOW_CONTRIBUTOR);
         }
 
@@ -229,7 +228,7 @@ public class ProjectMemberController extends BaseController {
         Integer roleType = sysProjectRole.getRoleType();
 
         // 查询当前项目项目代表总数，项目代表至少保留1名  http://jira.shengtong.com/browse/ANNO-709
-        if (projectMemberService.representationCount(projectId)==1){
+        if (projectMemberService.representationCount(projectId) == 1) {
             return R.fail(REPRESENTATION_MUST_HAS_ONE);
         }
 
@@ -247,10 +246,10 @@ public class ProjectMemberController extends BaseController {
                 .projectId(projectId)
                 .build();
         // 查询修改前的成员信息内容
-        List<ProjectMember>  projectMembers = projectMemberService.select(getProjectMember);
+        List<ProjectMember> projectMembers = projectMemberService.select(getProjectMember);
         // 不允许直接修改项目贡献者角色为项目代表角色
-        if(projectMembers.get(0).getRoleType() == ProjectMemberRoleType.CONTRIBUTOR.getValue()
-            && roleType == ProjectMemberRoleType.REPRESENTATION.getValue()){
+        if (projectMembers.get(0).getRoleType() == ProjectMemberRoleType.CONTRIBUTOR.getValue()
+                && roleType == ProjectMemberRoleType.REPRESENTATION.getValue()) {
             return R.fail(DISALLOW_REPRESENTATION_TO_CONTRIBUTOR);
         }
 
@@ -275,21 +274,21 @@ public class ProjectMemberController extends BaseController {
     public R<List<ProjectMember>> selectProjectMember(@RequestBody ProjectMemberSelectVO projectMemberSelectVO) {
         // 获取项目ID
         Long projectId = projectMemberSelectVO.getProjectId();
-    
+
         ProjectMember projectMemberBy = projectMemberService.getLoginUserProjectRoleType(projectId);
-        
+
         // 查询项目中是否添加当前用户
-        if(projectMemberBy == null){
+        if (projectMemberBy == null) {
             return R.fail(DISALLOW_PROJECT_NOT_EXIST + SecurityUtils.getUsername());
         }
 
         // 项目贡献者没有查询、添加、删除、修改成员的权限
-        if(projectMemberService.checkLonginUserRoleType(projectMemberBy.getRoleType(),ProjectMemberRoleType.CONTRIBUTOR.getValue())){
+        if (projectMemberService.checkLonginUserRoleType(projectMemberBy.getRoleType(), ProjectMemberRoleType.CONTRIBUTOR.getValue())) {
             return R.fail(DISALLOW_CONTRIBUTOR);
         }
 
         // 构造查询条件 ProjectMember
-        ProjectMember projectMember =  ProjectMember.builder()
+        ProjectMember projectMember = ProjectMember.builder()
                 .projectId(projectId)
                 .roleId(projectMemberSelectVO.getRoleId())
                 .userName(projectMemberSelectVO.getUserName())
@@ -299,45 +298,43 @@ public class ProjectMemberController extends BaseController {
         List<ProjectMember> projectMemberList = projectMemberService.select(projectMember);
         return R.ok(projectMemberList);
     }
-    
+
     @ApiOperation(value = "项目成员表列表")
     @PostMapping("/selectProjectMemberList")
     public R<List<ProjectMember>> selectProjectMemberList(@RequestBody ProjectMemberSelectVO projectMemberSelectVO) {
         // 获取项目ID
         Long projectId = projectMemberSelectVO.getProjectId();
-        
+
         // 构造查询条件 ProjectMember
-        ProjectMember projectMember =  ProjectMember.builder()
+        ProjectMember projectMember = ProjectMember.builder()
                 .projectId(projectId)
                 .roleId(projectMemberSelectVO.getRoleId())
                 .userName(projectMemberSelectVO.getUserName())
                 .build();
-        
+
         // 查询
         List<ProjectMember> projectMemberList = projectMemberService.select(projectMember);
         return R.ok(projectMemberList);
     }
-    
-    
+
+
     @ApiOperation(value = "查询项目当前用户")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "projectId", value = "项目id", required = true, dataType = "Long", paramType = "query")})
     @PostMapping("/selectProjectMemberBy")
     public R<ProjectMember> selectProjectMemberBy(Long projectId) {
-    
+
         if (!Optional.ofNullable(projectId).isPresent()) {
             return R.fail(DISALLOW_NOT_PROJECT);
         }
         ProjectMember projectMemberBy = projectMemberService.getLoginUserProjectRoleType(projectId);
-        
+
         // 查询项目中是否添加当前用户
-        if(projectMemberBy == null){
+        if (projectMemberBy == null) {
             return R.fail(DISALLOW_PROJECT_NOT_EXIST + SecurityUtils.getUsername());
         }
         return R.ok(projectMemberBy);
     }
-    
-    
 
 
 }
