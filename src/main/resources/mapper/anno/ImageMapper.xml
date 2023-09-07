@@ -35,6 +35,7 @@
         <result property="topicName" column="topic_name"/>
         <result property="status" column="status"/>
         <result property="deleteFlag" column="delete_flag"/>
+        <result property="organizationId" column="organization_id"/>
     </resultMap>
 
     <resultMap type="cn.staitech.anno.domain.image.in.ImageListVO" id="ImageSlide">
@@ -72,6 +73,7 @@
         <result property="topicName" column="topic_name"/>
         <result property="status" column="status"/>
         <result property="deleteFlag" column="delete_flag"/>
+        <result property="organizationId" column="organization_id"/>
     </resultMap>
 
     <sql id="selectImageVo">
@@ -81,7 +83,7 @@
                image_path,
                thumb_url,
                width,
-               height, size, global_size, source_lens, process_flag, create_by, create_time, update_by, update_time, image_code, topic_id, topic_name, status, delete_flag
+               height, size, global_size, source_lens, process_flag, create_by, create_time, update_by, update_time, image_code, topic_id, topic_name, status, delete_flag,organization_id
         from
             tb_image
     </sql>

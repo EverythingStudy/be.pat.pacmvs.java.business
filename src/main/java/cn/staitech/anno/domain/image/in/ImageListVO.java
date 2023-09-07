@@ -186,4 +186,9 @@ public class ImageListVO extends Pager implements Serializable {
     @ApiModelProperty(value = "创建时间-查询入参")
     private Map<String, Object> createTimeParams;
 
+    @ApiModelProperty(value = "机构编号")
+    private Long organizationId;
+    @ApiModelProperty(value = "机构名称")
+    private String organizationName;
+
 }

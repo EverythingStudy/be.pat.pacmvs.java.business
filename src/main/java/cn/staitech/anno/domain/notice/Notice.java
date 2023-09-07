@@ -1,5 +1,7 @@
 package cn.staitech.anno.domain.notice;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -14,6 +16,8 @@ import java.util.Date;
 @Data
 @TableName("sys_notice")
 public class Notice {
+    /** NoticeId */
+    @TableId(value = "notice_id", type = IdType.AUTO)
     private Long noticeId ;
     /** 公告标题 */
     @ApiModelProperty(name = "公告标题",notes = "")

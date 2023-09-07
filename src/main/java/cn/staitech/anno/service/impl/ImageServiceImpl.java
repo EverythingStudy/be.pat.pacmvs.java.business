@@ -12,6 +12,7 @@ import cn.staitech.anno.mapper.ImageMapper;
 import cn.staitech.anno.mapper.SpecialImageMapper;
 import cn.staitech.anno.mapper.TopicMapper;
 import cn.staitech.anno.service.ImageService;
+import cn.staitech.anno.service.SysOrganizationService;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.utils.date.DateUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
@@ -25,6 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 切片列表（原图像）服务层实现
@@ -43,6 +47,12 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     @Resource
     private SpecialImageMapper specialImageMapper;
 
+    @Resource
+    private SysOrganizationService sysOrganizationService;
+
+    // 创建线程池
+    // ExecutorService executorService = Executors.newFixedThreadPool(4);
+
     /**
      * 切片列表（原图像）
      *
@@ -50,16 +60,24 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
      * @return
      */
     @Override
-    public PageMaster<ImageListOutVO> selectList(ImageListVO vo) {
+    public PageMaster<ImageListOutVO> selectList(ImageListVO vo) throws ExecutionException, InterruptedException {
         // 分页
         PageHelper.startPage(vo.getPageNum(), vo.getPageSize()).setReasonable(true);
 
         Image image = new Image();
         BeanUtils.copyProperties(vo, image);
-        // 查询
-        List<Image> list = imageMapper.selectList(image);
-        List<ImageListOutVO> respList = new ArrayList<>();
+        // 异步查询图像列表
+        // Future<List<Image>> listFuture = executorService.submit(() -> imageMapper.selectList(image));
+        CompletableFuture<List<Image>> listFuture = CompletableFuture.supplyAsync(() -> imageMapper.selectList(image));
 
+        // 异步查询所有的机构Map
+        // Future<Map<Long, String>> mapFuture = executorService.submit(() -> sysOrganizationService.selectMap());
+        CompletableFuture<Map<Long, String>> mapFuture = CompletableFuture.supplyAsync(() -> sysOrganizationService.selectMap());
+
+        List<Image> list = listFuture.get();
+        Map<Long, String> map = mapFuture.get();
+
+        List<ImageListOutVO> respList = new ArrayList<>();
         // 数据格式化
         for (Image in : list) {
             ImageListOutVO out = new ImageListOutVO();
@@ -74,6 +92,9 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
             } else {
                 out.setProcessFlagName("");
             }
+
+            // 匹配机构名称
+            out.setOrganizationName(map.get(in.getOrganizationId()).toString());
 
             respList.add(out);
         }

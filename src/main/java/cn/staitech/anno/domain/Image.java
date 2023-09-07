@@ -24,7 +24,7 @@ import java.util.Map;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName(value ="tb_image")
+@TableName(value = "tb_image")
 public class Image extends BaseEntity {
 
     /**
@@ -38,7 +38,7 @@ public class Image extends BaseEntity {
      * 图像名称
      */
     @TableField(value = "image_name")
-    @ApiModelProperty(value = "文件名称（文件名）",hidden = true)
+    @ApiModelProperty(value = "文件名称（文件名）", hidden = true)
     private String imageName;
 
     /**
@@ -188,7 +188,7 @@ public class Image extends BaseEntity {
     private Long createBy;
 
     @TableField(value = "create_time")
-    @ApiModelProperty(value = "上传时间 - 创建时间",hidden = true)
+    @ApiModelProperty(value = "上传时间 - 创建时间", hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
@@ -221,7 +221,7 @@ public class Image extends BaseEntity {
     private Integer status;
 
     @TableField(value = "delete_flag")
-    @ApiModelProperty(value = "逻辑删除状态:（0删除，1未删除）",hidden = true)
+    @ApiModelProperty(value = "逻辑删除状态:（0删除，1未删除）", hidden = true)
     private Integer deleteFlag;
 
 
@@ -230,5 +230,12 @@ public class Image extends BaseEntity {
 
     @ApiModelProperty(hidden = true)
     private Map<String, Object> params;
+
+    @ApiModelProperty(value = "机构编号")
+    @TableField(value = "organization_id")
+    private Long organizationId;
+    @ApiModelProperty(value = "机构名称")
+    @TableField(exist = false)
+    private String organizationName;
 
 }

@@ -14,6 +14,7 @@ import org.apache.ibatis.annotations.Param;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 图像 服务层
@@ -29,7 +30,7 @@ public interface ImageService extends IService<Image> {
      * @param image
      * @return
      */
-    PageMaster<ImageListOutVO> selectList(ImageListVO image);
+    PageMaster<ImageListOutVO> selectList(ImageListVO image) throws ExecutionException, InterruptedException;
 
     /**
      * 查询单个切片信息

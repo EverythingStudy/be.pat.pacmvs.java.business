@@ -29,13 +29,13 @@ import java.util.TimeZone;
 @EnableDiscoveryClient
 @EnableTransactionManagement
 @MapperScan("cn.staitech.anno.mapper")
-@EnableElasticsearchRepositories(basePackages = {"cn.staitech.common.log.elasticsearchRepositories","cn.staitech.anno.elasticsearchRepositories"})
+@EnableElasticsearchRepositories(basePackages = {"cn.staitech.common.log.elasticsearchRepositories", "cn.staitech.anno.elasticsearchRepositories"})
 public class StaiTechAnnoApplication {
 
-    public StaiTechAnnoApplication(MessageSource messageSource){
+    public StaiTechAnnoApplication(MessageSource messageSource) {
         LocaleMessageSourceUtil.init(messageSource);
     }
-    
+
     public static void main(String[] args) {
         //jvm参数设置时间 -Duser.timezone="Asia/Shanghai"
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Shanghai"));
