@@ -60,6 +60,8 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
      * @return
      */
     @Override
+    @SuppressWarnings("checkstyle:MissingJavadocMethod")
+    @Transactional(rollbackFor = Exception.class)
     public PageMaster<ImageListOutVO> selectList(ImageListVO vo) throws ExecutionException, InterruptedException {
         // 分页
         PageHelper.startPage(vo.getPageNum(), vo.getPageSize()).setReasonable(true);
@@ -75,30 +77,33 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         CompletableFuture<Map<Long, String>> mapFuture = CompletableFuture.supplyAsync(() -> sysOrganizationService.selectMap());
 
         List<Image> list = listFuture.get();
+
         Map<Long, String> map = mapFuture.get();
 
         List<ImageListOutVO> respList = new ArrayList<>();
-        // 数据格式化
-        for (Image in : list) {
-            ImageListOutVO out = new ImageListOutVO();
-            BeanUtils.copyProperties(in, out);
 
-            // 提取处理状态文本描述并赋值
-            Integer status = in.getStatus();
-            out.setFileStatus(ImageConstant.IMAGE_STATUS_MAP.get(status));
+        if (list.size() > 0) {
+            // 数据格式化
+            for (Image in : list) {
+                ImageListOutVO out = new ImageListOutVO();
+                BeanUtils.copyProperties(in, out);
 
-            if (status == 0) {
-                out.setProcessFlagName(ImageConstant.IMAGE_PROCESS_MAP.get(in.getProcessFlag()));
-            } else {
-                out.setProcessFlagName("");
+                // 提取处理状态文本描述并赋值
+                Integer status = in.getStatus();
+                out.setFileStatus(ImageConstant.IMAGE_STATUS_MAP.get(status));
+
+                if (status == 0) {
+                    out.setProcessFlagName(ImageConstant.IMAGE_PROCESS_MAP.get(in.getProcessFlag()));
+                } else {
+                    out.setProcessFlagName("");
+                }
+
+                // 匹配机构名称
+                out.setOrganizationName(map.get(in.getOrganizationId()).toString());
+
+                respList.add(out);
             }
-
-            // 匹配机构名称
-            out.setOrganizationName(map.get(in.getOrganizationId()).toString());
-
-            respList.add(out);
         }
-
         PageMaster pageMaster = new PageMaster<>(list);
         pageMaster.setList(respList);
 
