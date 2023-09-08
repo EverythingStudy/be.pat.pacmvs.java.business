@@ -19,14 +19,13 @@
         <result property="createTime" column="create_time"/>
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
-        <result property="text1" column="text_1"/>
-        <result property="text2" column="text_2"/>
+        <result property="organizationId" column="organization_id"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         project_id
         , project_name, special_id, system_code, viscus_code, slide_total, del_flag,
-        create_by, create_time, update_by, update_time, text_1, text_2
+        create_by, create_time, update_by, update_time, text_1, text_2,organization_id
     </sql>
 
     <select id="selectProjectList" parameterType="cn.staitech.anno.domain.project.ProjectExt" resultMap="ProjectMap">
@@ -104,7 +103,8 @@
                update_by,
                update_time,
                text_1,
-               text_2
+               text_2,
+               organization_id
         from tb_project
         where project_id = #{projectId}
     </select>
@@ -146,12 +146,6 @@
             <if test="updateTime != null">
                 update_time,
             </if>
-            <if test="text1 != null">
-                text_1,
-            </if>
-            <if test="text2 != null">
-                text_2,
-            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="projectId != null">
@@ -186,12 +180,6 @@
             </if>
             <if test="updateTime != null">
                 #{updateTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="text1 != null">
-                #{text1,jdbcType=VARCHAR},
-            </if>
-            <if test="text2 != null">
-                #{text2,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
@@ -228,12 +216,6 @@
             </if>
             <if test="updateTime != null">
                 update_time = #{updateTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="text1 != null">
-                text_1 = #{text1,jdbcType=VARCHAR},
-            </if>
-            <if test="text2 != null">
-                text_2 = #{text2,jdbcType=VARCHAR},
             </if>
         </set>
         where project_id = #{projectId,jdbcType=BIGINT}

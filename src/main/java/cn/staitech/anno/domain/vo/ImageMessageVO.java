@@ -191,4 +191,8 @@ public class ImageMessageVO extends BaseEntity {
     @ApiModelProperty(value = "逻辑删除状态:（0删除，1未删除）")
     private Integer deleteFlag;
 
+    @ApiModelProperty(value = "机构编号")
+    private Long organizationId;
+    @ApiModelProperty(value = "机构名称")
+    private String organizationName;
 }

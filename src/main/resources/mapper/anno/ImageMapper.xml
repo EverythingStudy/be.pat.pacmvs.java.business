@@ -174,6 +174,9 @@
             <if test="status != null"><!-- 切片状态 -->
                 and status = #{status}
             </if>
+            <if test="organizationId != null and organizationId != ''"><!-- 组织机构编号 -->
+                and organization_id = #{organizationId},
+            </if>
             <if test="imageName != null and imageName != ''"><!-- 图像名称 -->
                 and image_name like concat('%', #{imageName}, '%')
             </if>

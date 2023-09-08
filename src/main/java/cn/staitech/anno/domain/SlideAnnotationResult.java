@@ -11,38 +11,45 @@ import java.util.Date;
  */
 @Data
 public class SlideAnnotationResult {
-    
+
     /**
      * 切片ID
      */
     @ApiModelProperty(hidden = true)
     private Long slideId;
-    
+
     /**
      * 标注类别ID
      */
     @ApiModelProperty(hidden = true)
     private Long categoryId;
-    
+
     /**
      * 标注状态 (0未开始 1标注中 2标注完成 3已提交复核)
      */
     @ApiModelProperty(hidden = true)
     private Integer processFlag;
-    
+
     /**
      * 数量
      */
     @ApiModelProperty(hidden = true)
     private Integer sum;
-    
+
     /**
      * 用户ID
      */
     @ApiModelProperty(hidden = true)
     private Long updateBy;
-    
+
     @ApiModelProperty(hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
+
+
+    @ApiModelProperty(value = "机构编号")
+    private Long organizationId;
+    @ApiModelProperty(value = "机构名称")
+    private String organizationName;
+
 }

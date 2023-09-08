@@ -20,8 +20,6 @@
         <result column="create_time" property="createTime"/>
         <result column="update_by" property="updateBy"/>
         <result column="update_time" property="updateTime"/>
-        <result column="text_1" property="text1"/>
-        <result column="text_2" property="text2"/>
     </resultMap>
 
     <sql id="Base_Column_List">

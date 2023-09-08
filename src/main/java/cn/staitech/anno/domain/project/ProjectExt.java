@@ -1,5 +1,6 @@
 package cn.staitech.anno.domain.project;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -53,13 +54,12 @@ public class ProjectExt implements Serializable,Cloneable {
 
     @ApiModelProperty(value = "起始创建时间")
     private Date beginTime;
-
     @ApiModelProperty(value = "终止创建时间")
     private Date endTime;
-
-    @ApiModelProperty(name = "备用字段1", notes = "")
-    private String text1;
-
-    @ApiModelProperty(name = "备用字段2", notes = "")
-    private String text2;
+    @ApiModelProperty(value = "机构编号")
+    @TableField(value = "organization_id")
+    private Long organizationId;
+    @ApiModelProperty(value = "机构名称")
+    @TableField(exist = false)
+    private String organizationName;
 }

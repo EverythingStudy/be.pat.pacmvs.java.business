@@ -56,13 +56,7 @@ public class ProjectAllVO {
 
     @ApiModelProperty(value = "起始创建时间")
     private Date beginTime;
-
     @ApiModelProperty(value = "终止创建时间")
     private Date endTime;
 
-    @ApiModelProperty(name = "备用字段1")
-    private String text1;
-
-    @ApiModelProperty(name = "备用字段2")
-    private String text2;
 }

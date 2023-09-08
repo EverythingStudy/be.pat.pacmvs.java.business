@@ -6,6 +6,9 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * @author wangf
+ */
 @Data
 public class ProjectGroup implements Serializable, Cloneable {
 
@@ -50,10 +53,4 @@ public class ProjectGroup implements Serializable, Cloneable {
 
     @ApiModelProperty(value = "更新时间" )
     private Date updateTime;
-
-    @ApiModelProperty(value = "备用字段1" )
-    private String text1;
-
-    @ApiModelProperty(value = "备用字段2" )
-    private String text2;
 }

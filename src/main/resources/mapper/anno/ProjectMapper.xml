@@ -21,6 +21,7 @@
         <result property="updateTime" column="update_time"/>
         <result property="updateBy" column="update_by"/>
         <result property="projectStatus" column="project_status"/>
+        <result property="organizationId" column="organization_id"/>
     </resultMap>
 
     <resultMap id="ProjectMessage" type="cn.staitech.anno.domain.vo.ProjectListVO">
@@ -45,6 +46,7 @@
         <result property="projectStatus" column="project_status"/>
         <result property="dictLabel" column="dict_label"/>
         <result property="dictCode" column="dict_code"/>
+        <result property="organizationId" column="organization_id"/>
     </resultMap>
 
     <resultMap id="SlideAnnotationResult" type="cn.staitech.anno.domain.SlideAnnotationResult">
@@ -54,6 +56,7 @@
         <result property="sum" column="sum"/>
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
+        <result property="organizationId" column="organization_id"/>
     </resultMap>
 
     <resultMap id="annotationSum" type="cn.staitech.anno.domain.vo.AnnotationsAddVO">
@@ -98,6 +101,7 @@
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
         <result property="slideId" column="slide_id"/>
+        <result property="organizationId" column="organization_id"/>
     </resultMap>
 
     <resultMap id="projectIdList" type="cn.staitech.anno.domain.vo.ProjectIdListVO">
@@ -126,6 +130,7 @@
                p.update_by,
                p.update_time,
                p.manager_id,
+               p.organization_id,
                u.user_name,
                i.indicator_name,
                s.dict_label,
@@ -149,7 +154,8 @@
                indicator_id,
                create_time,
                update_by,
-               manager_id
+               manager_id,
+               organization_id
         from tb_project
     </sql>
 

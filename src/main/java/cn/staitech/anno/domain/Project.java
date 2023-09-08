@@ -2,6 +2,7 @@ package cn.staitech.anno.domain;
 
 import cn.staitech.common.core.annotation.Excel;
 import cn.staitech.common.core.web.domain.BaseEntity;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -158,4 +159,13 @@ public class Project extends BaseEntity {
 
     @ApiModelProperty(value = "脏器组织id")
     private Long dictCode;
+
+
+    @ApiModelProperty(value = "机构编号")
+    @TableField(value = "organization_id")
+    private Long organizationId;
+    @ApiModelProperty(value = "机构名称")
+    @TableField(exist = false)
+    private String organizationName;
+
 }
