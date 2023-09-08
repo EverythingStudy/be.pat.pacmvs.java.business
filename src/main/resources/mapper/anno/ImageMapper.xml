@@ -165,17 +165,17 @@
         <include refid="selectImageVo"></include>
         <where>
             delete_flag = 1 and process_flag != 0
-            <if test="imageId != null and imageId != ''"><!-- 切片（图像）ID -->
+            <if test="imageId != null"><!-- 切片（图像）ID -->
                 and image_id = #{imageId}
             </if>
-            <if test="topicId != null and topicId != ''"><!-- 专题ID -->
+            <if test="topicId != null"><!-- 专题ID -->
                 and topic_id = #{topicId}
             </if>
             <if test="status != null"><!-- 切片状态 -->
                 and status = #{status}
             </if>
-            <if test="organizationId != null and organizationId != ''"><!-- 组织机构编号 -->
-                and organization_id = #{organizationId},
+            <if test="organizationId != null"><!-- 组织机构编号 -->
+                and organization_id = #{organizationId}
             </if>
             <if test="imageName != null and imageName != ''"><!-- 图像名称 -->
                 and image_name like concat('%', #{imageName}, '%')
