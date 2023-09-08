@@ -58,7 +58,7 @@ public class FileManagerController {
             File[] fileArray = file.listFiles();
             for (File f : fileArray) {
                 String type = f.isDirectory() ? "dir" : "file";
-                FileNode node = new FileNode(f.getName(), f.getAbsolutePath(), type);
+                FileNode node = new FileNode(f.getName(), f.getAbsolutePath(), type, f.length());
                 fileNodeList.add(node);
             }
         }

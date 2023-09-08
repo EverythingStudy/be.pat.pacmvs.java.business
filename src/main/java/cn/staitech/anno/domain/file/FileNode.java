@@ -5,10 +5,10 @@ package cn.staitech.anno.domain.file;
  * @author wangf
  */
 public class FileNode {
-
     private String name;
     private String path;
     private String type;
+    private Long size;
 
     public String getName() {
         return name;
@@ -34,9 +34,18 @@ public class FileNode {
         this.type = type;
     }
 
-    public FileNode(String name, String path, String type) {
+    public Long getSize() {
+        return size;
+    }
+
+    public void setSize(Long size) {
+        this.size = size;
+    }
+
+    public FileNode(String name, String path, String type,Long size) {
         this.name = name;
         this.path = path;
         this.type = type;
+        this.size = size;
     }
 }
