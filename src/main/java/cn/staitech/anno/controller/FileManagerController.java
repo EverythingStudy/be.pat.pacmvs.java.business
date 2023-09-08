@@ -3,6 +3,7 @@ package cn.staitech.anno.controller;
 import cn.staitech.anno.domain.file.FileNode;
 import cn.staitech.anno.domain.file.PathVO;
 import cn.staitech.common.core.domain.R;
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
  * @author admin
  */
 @Slf4j
+@Api(value = "文件管理器", tags = "文件管理器")
 @RestController
 @RequestMapping("/filemanager")
 public class FileManagerController {
@@ -27,6 +29,7 @@ public class FileManagerController {
 
     /**
      * 查询目录下的文件夹和文件列表
+     *
      * @param vo
      * @return
      */
@@ -54,11 +57,9 @@ public class FileManagerController {
         if (file.isDirectory()) {
             File[] fileArray = file.listFiles();
             for (File f : fileArray) {
-                if (f.isDirectory()) {
-                    String type = f.isDirectory() ? "dir" : "file";
-                    FileNode node = new FileNode(f.getName(), f.getAbsolutePath(), type);
-                    fileNodeList.add(node);
-                }
+                String type = f.isDirectory() ? "dir" : "file";
+                FileNode node = new FileNode(f.getName(), f.getAbsolutePath(), type);
+                fileNodeList.add(node);
             }
         }
 
