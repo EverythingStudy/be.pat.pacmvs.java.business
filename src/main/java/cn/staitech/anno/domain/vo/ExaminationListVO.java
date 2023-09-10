@@ -21,13 +21,13 @@ public class ExaminationListVO extends BaseEntity {
     /**
      * 项目ID
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long projectId;
 
     /**
      * 图像ID
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long imageId;
 
     /**
@@ -39,7 +39,7 @@ public class ExaminationListVO extends BaseEntity {
     /**
      * 标注状态 (0未开始 1标注中 2标注完成 3已提交复核)
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Integer processFlag;
 
     /**
@@ -48,7 +48,7 @@ public class ExaminationListVO extends BaseEntity {
     @ApiModelProperty(value = "复核状态 (0提交复核(未复核) 1开始复核(复核中) 2复核通过(已复核) 3复核未通过 4交付)")
     private Integer examinationFlag;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private String examinationFlagName;
 
     /**
@@ -67,13 +67,13 @@ public class ExaminationListVO extends BaseEntity {
     /**
      * 图像地址
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private String imageUrl;
 
     /**
      * 图片绝对路径
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private String imagePath;
 
     /**
@@ -91,7 +91,7 @@ public class ExaminationListVO extends BaseEntity {
     /**
      * 病理指标ID
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long indicatorId;
 
     /**

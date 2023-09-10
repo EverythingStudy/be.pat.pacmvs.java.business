@@ -27,7 +27,7 @@ public class SubImageVo extends SubImage {
      * 图像id
      */
     @TableId(value = "image_id", type = IdType.AUTO)
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long imageId;
 
     private String projectNames;

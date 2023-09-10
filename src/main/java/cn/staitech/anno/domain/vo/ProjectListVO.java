@@ -18,7 +18,7 @@ public class ProjectListVO extends BaseEntity {
      * 项目ID
      */
     @Excel(name = "项目ID", cellType = Excel.ColumnType.NUMERIC, prompt = "项目ID")
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long projectId;
 
     /**

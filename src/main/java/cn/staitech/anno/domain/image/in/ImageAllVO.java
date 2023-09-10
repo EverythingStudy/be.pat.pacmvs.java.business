@@ -15,20 +15,20 @@ public class ImageAllVO extends BaseEntity {
     @ApiModelProperty(value = "文件名称（文件名）")
     private String imageName;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private String searchValue;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long createBy;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long updateBy;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private String remark;
 
     @ApiModelProperty(hidden = true,value = "项目id")

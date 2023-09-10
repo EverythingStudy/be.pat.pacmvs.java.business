@@ -25,6 +25,6 @@ public class StatisticCategoryListOutVO {
     /**
      * 数量
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Integer sum;
 }

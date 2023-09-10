@@ -17,19 +17,19 @@ public class ExaminationSubmitVO {
     /**
      * 标注状态 0未开始 1标注中 2标注完成 3已提交复核
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Integer processFlag;
 
     /**
      * 复核状态 (1已提交复核(未复核) 2复核通过 3驳回 4交付)
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Integer examinationFlag;
 
     /**
      * 更新者
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long updateBy;
 }
 

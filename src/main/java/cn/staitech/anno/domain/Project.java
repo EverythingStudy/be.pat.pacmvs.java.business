@@ -21,7 +21,7 @@ public class Project extends BaseEntity {
      * 项目ID
      */
     @Excel(name = "项目ID", cellType = Excel.ColumnType.NUMERIC, prompt = "项目ID")
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long projectId;
 
     /**
@@ -35,52 +35,52 @@ public class Project extends BaseEntity {
      * 组织ID
      */
     @Excel(name = "组织ID")
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long tissueID;
 
     /**
      * 编辑模式
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private String editMode;
 
     /**
      * 图象数
      */
     @Excel(name = "图像数")
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long imageTotal;
 
     /**
      * 标注类型
      */
     @Excel(name = "标注类型")
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long markType;
 
     /**
      * 审核状态
      */
     @Excel(name = "审核状态", readConverterExp = "0=未审核,1= 已审核")
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long examinationFlag;
 
     /**
      * 描述
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private String examinationFlagName;
 
     /**
      * 已审核的标注数量
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Integer examinationNum;
 
     /**
      * 描述
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private String description;
 
 
@@ -112,7 +112,7 @@ public class Project extends BaseEntity {
     /**
      * 人工标注数
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Integer annotationTotal;
 
     /**
@@ -124,13 +124,13 @@ public class Project extends BaseEntity {
     /**
      * 创建者名称
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private String createByName;
 
     /**
      * 更新者id
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long updateBy;
 
     /**
@@ -143,15 +143,15 @@ public class Project extends BaseEntity {
     /**
      * 修改时间 update_time
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private String searchValue;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private String remark;
 
     @ApiModelProperty(value = "项目状态")

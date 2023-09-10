@@ -15,15 +15,15 @@ public class ProjectDelVO {
     /**
      * 通过项目id查询对应的图像列表
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private int pageNum;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private int pageSize;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private boolean flag;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private List<ProjectListOutVO> result;
 }

@@ -106,6 +106,6 @@ public interface ImageService extends IService<Image> {
      */
     void updateProcessFlagByIdList(List imageIdList);
 
-    int updateTopicOrganization(ImageTopicVO vo) throws Exception;
+    int updateById(ImageTopicVO vo) throws Exception;
 
 }

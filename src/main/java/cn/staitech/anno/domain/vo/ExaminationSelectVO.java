@@ -31,17 +31,17 @@ public class ExaminationSelectVO extends BaseEntity {
     @ApiModelProperty(value = "所属项目")
     private String projectName;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private String searchValue;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long createBy;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long updateBy;
 
     /**
@@ -50,10 +50,10 @@ public class ExaminationSelectVO extends BaseEntity {
     @ApiModelProperty(value = "用户")
     private String userName;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private String remark;
 }

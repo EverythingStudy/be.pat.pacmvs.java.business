@@ -13,7 +13,7 @@ public class ProjectInforImageVO  {
     /**
      * 切片ID
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long slideId;
 
     /**
@@ -67,14 +67,14 @@ public class ProjectInforImageVO  {
     @ApiModelProperty(value = "每页记录数", required = true)
     private int pageSize;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long createBy;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long updateBy;
 
     @ApiModelProperty("更新时间")

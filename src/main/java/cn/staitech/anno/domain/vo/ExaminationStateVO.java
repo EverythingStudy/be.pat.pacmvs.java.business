@@ -18,7 +18,7 @@ public class ExaminationStateVO {
     /**
      * 标注状态 0未开始 1标注中 2标注完成 3已提交复核
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Integer processFlag;
 
     /**

@@ -12,6 +12,7 @@ import cn.staitech.anno.mapper.ImageMapper;
 import cn.staitech.anno.mapper.SpecialImageMapper;
 import cn.staitech.anno.mapper.TopicMapper;
 import cn.staitech.anno.service.ImageService;
+import cn.staitech.anno.service.RoundService;
 import cn.staitech.anno.service.SysOrganizationService;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.utils.date.DateUtils;
@@ -50,6 +51,9 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     @Resource
     private SysOrganizationService sysOrganizationService;
 
+    @Resource
+    private RoundService roundService;
+
     // 创建线程池
     // ExecutorService executorService = Executors.newFixedThreadPool(4);
 
@@ -68,6 +72,12 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
         Image image = new Image();
         BeanUtils.copyProperties(vo, image);
+
+        // 业务类型 1 原始切片 2 预测切片
+        Integer bussinessType = image.getBusinessType();
+        // 所有的轮次Map
+        Map<Long, String> roundMap = null;
+
         // 异步查询图像列表
         // Future<List<Image>> listFuture = executorService.submit(() -> imageMapper.selectList(image));
         CompletableFuture<List<Image>> listFuture = CompletableFuture.supplyAsync(() -> imageMapper.selectList(image));
@@ -76,10 +86,16 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         // Future<Map<Long, String>> mapFuture = executorService.submit(() -> sysOrganizationService.selectMap());
         CompletableFuture<Map<Long, String>> mapFuture = CompletableFuture.supplyAsync(() -> sysOrganizationService.selectMap());
 
-        List<Image> list = listFuture.get();
+        // 异步查询所有的轮次Map
+        if (bussinessType.equals(2)) {
+            CompletableFuture<Map<Long, String>> roundFuture = CompletableFuture.supplyAsync(() -> roundService.selectMap());
+            roundMap = roundFuture.get();
+        }
 
+        List<Image> list = listFuture.get();
         Map<Long, String> map = mapFuture.get();
 
+        // response List
         List<ImageListOutVO> respList = new ArrayList<>();
 
         if (list.size() > 0) {
@@ -100,6 +116,11 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
                 // 匹配机构名称
                 out.setOrganizationName(map.get(in.getOrganizationId()).toString());
+
+                // 匹配轮次
+                if (bussinessType.equals(2)) {
+                    out.setRoundName(roundMap.get(in.getRoundId()).toString());
+                }
 
                 respList.add(out);
             }
@@ -244,7 +265,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public int updateTopicOrganization(ImageTopicVO vo) throws Exception {
+    public int updateById(ImageTopicVO vo) throws Exception {
         Image image = new Image();
         BeanUtils.copyProperties(vo, image);
 

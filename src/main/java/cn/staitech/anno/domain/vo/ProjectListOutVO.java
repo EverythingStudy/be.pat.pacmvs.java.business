@@ -85,6 +85,6 @@ public class ProjectListOutVO {
     /**
      * 大小
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private String size;
 }

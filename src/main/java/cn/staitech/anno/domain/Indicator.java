@@ -40,7 +40,7 @@ public class Indicator extends BaseEntity {
     private Long updateBy;
     
     @ApiModelProperty(hidden = true, value = "更新时间")
-    //    @ApiModelProperty(hidden = true)
+    //    @ApiModelProperty(value = "", hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
     

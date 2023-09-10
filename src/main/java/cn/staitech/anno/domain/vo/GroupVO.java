@@ -36,20 +36,20 @@ public class GroupVO {
     /**
      * 组别描述
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     @Size(min = 0, max = 100, message = "描述不可超过100字段")
     private String description;
 
     /**
      * 更新者id
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long updateBy;
 
     /**
      * 1删除，默认为0"
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Integer delFlag;
 
     /**

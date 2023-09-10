@@ -4,6 +4,8 @@ import cn.staitech.anno.domain.round.Round;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 
 /**
  * @author: wangfeng
@@ -13,4 +15,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface RoundService extends IService<Round> {
 
+    Map<Long, String> selectMap();
 }

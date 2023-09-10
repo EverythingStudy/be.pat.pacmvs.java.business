@@ -53,7 +53,7 @@ public class OrganizationSelectResVo {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private String expirationTime;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private String statusName;
 
 

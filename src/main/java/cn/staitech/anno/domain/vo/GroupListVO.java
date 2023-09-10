@@ -37,20 +37,20 @@ public class GroupListVO {
     /**
      * 更新者id
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long updateBy;
 
     /**
      * 更新时间
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
     /**
      * 创建者id
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long createBy;
 
     /**
@@ -63,7 +63,7 @@ public class GroupListVO {
     /**
      * 1删除，默认为0"
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Integer delFlag;
 
     /**

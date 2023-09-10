@@ -27,25 +27,25 @@ public class PorjectVO {
     /**
      * 病理指标名称
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private String indicatorName;
     
     /**
      * 创建时间 create_time
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Date createTime;
     
     /**
      * 更新者
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long updateBy;
     
     /**
      * 管理者
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private String managerId;
     
     /**

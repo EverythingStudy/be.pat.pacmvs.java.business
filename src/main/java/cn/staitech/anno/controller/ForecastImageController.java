@@ -27,32 +27,32 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
- * 切片管理-切片信息表、原始切片
+ * 切片管理-预测图片
  *
  * @author wangfeng
  * @date 2023/09/10
  */
-@Api(value = "切片信息表、原始切片", tags = "切片信息表、原始切片")
+@Api(value = "预测图片", tags = "预测图片")
 @RestController
-@RequestMapping("/image")
+@RequestMapping("/forecastImage")
 @Slf4j
-public class ImageController extends BaseController {
+public class ForecastImageController extends BaseController {
     @Resource
     private ImageService imageService;
 
     /**
      * 切片列表 .
      */
-    // @RequiresPermissions("anno:image:list")
+    // @RequiresPermissions("anno:forecastimage:list")
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "切片列表", notes = "切片列表 - 王峰")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageNum", value = "当前记录起始索引", dataTypeClass = Integer.class, paramType = "query", example = "1"),
             @ApiImplicitParam(name = "pageSize", value = "每页显示记录数", dataTypeClass = Integer.class, paramType = "query", example = "10")})
-    @Log(title = "查询切片列表", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.QUERY)
+    @Log(title = "查询切片列表", menu = "切片管理", subMenu = "预测图片", businessType = BusinessType.QUERY)
     @PostMapping("/list")
     public R<PageMaster<ImageListOutVO>> list(@Validated @RequestBody ImageListVO image) throws ExecutionException, InterruptedException {
-        image.setBusinessType(1);
+        image.setBusinessType(2);
         PageMaster<ImageListOutVO> page = imageService.selectList(image);
         return R.ok(page);
     }
@@ -61,10 +61,10 @@ public class ImageController extends BaseController {
      * 单个切片详细信息 .
      */
     @SneakyThrows
-    // @RequiresPermissions("anno:image:selectbyid")
+    // @RequiresPermissions("anno:forecastimage:selectbyid")
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "单个切片", notes = "单个切片 - 王峰")
-    @Log(title = "查询单个切片", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.QUERY)
+    @Log(title = "查询单个切片", menu = "切片管理", subMenu = "预测图片", businessType = BusinessType.QUERY)
     @GetMapping("/{imageId}")
     public R<Image> selectById(@PathVariable("imageId") @ApiParam(value = "图像ID") Long imageId) {
         Image image = imageService.selectById(imageId);
@@ -75,9 +75,9 @@ public class ImageController extends BaseController {
      * 删除单个切片 .
      */
     @SneakyThrows
-    // @RequiresPermissions("anno:image:delete")
+    // @RequiresPermissions("anno:forecastimage:delete")
     @ApiOperationSupport(author = "wangfeng")
-    @Log(title = "删除", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.DELETE)
+    @Log(title = "删除", menu = "切片管理", subMenu = "预测图片", businessType = BusinessType.DELETE)
     @ApiOperation(value = "逻辑删除单个切片")
     @GetMapping("/deleteById/{imageId}")
     @Transactional
@@ -97,7 +97,7 @@ public class ImageController extends BaseController {
      * @param request 主键ID列表(不能为 null 以及 empty)
      */
     @ApiOperationSupport(author = "wangfeng")
-    @Log(title = "删除切片", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.DELETE)
+    @Log(title = "删除切片", menu = "切片管理", subMenu = "预测图片", businessType = BusinessType.DELETE)
     @ApiOperation(value = "逻辑批量删除切片")
     @PostMapping("/deleteBatchIds")
     public R<List<Long>> updateDeleteFlagBatchIds(@Validated @RequestBody ImageBatchIdsVO request) {
@@ -113,7 +113,7 @@ public class ImageController extends BaseController {
      * @param request 主键ID列表(不能为 null 以及 empty)
      */
     @ApiOperationSupport(author = "wangfeng")
-    @Log(title = "批量分专题", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.UPDATE)
+    @Log(title = "批量分专题", menu = "切片管理", subMenu = "预测图片", businessType = BusinessType.UPDATE)
     @ApiOperation(value = "批量添加专题")
     @PostMapping("/updateBatchIds")
     public R updateBatchIds(@Validated @RequestBody ImageTopicBatchIdsVO request) {
@@ -132,9 +132,9 @@ public class ImageController extends BaseController {
      * @param request 主键ID列表(不能为 null 以及 empty)
      */
     @ApiOperationSupport(author = "wangfeng")
-    @Log(title = "批量分专题", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.UPDATE)
-    @ApiOperation(value = "单个图像添加专题")
-    @PostMapping("/updateTopic")
+    @Log(title = "编辑", menu = "切片管理", subMenu = "预测图片", businessType = BusinessType.UPDATE)
+    @ApiOperation(value = "编辑")
+    @PostMapping("/update")
     public R updateBatchIds(@Validated @RequestBody ImageTopicVO request) throws Exception {
 
         int result = imageService.updateById(request);

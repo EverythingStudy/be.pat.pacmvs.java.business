@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class SubRelationAnn {
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value = "", hidden = true)
     private Long imageId;
 
     
