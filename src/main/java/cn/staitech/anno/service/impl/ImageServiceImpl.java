@@ -54,9 +54,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     @Resource
     private RoundService roundService;
 
-    // 创建线程池
-    // ExecutorService executorService = Executors.newFixedThreadPool(4);
-
     /**
      * 切片列表（原图像）
      *
@@ -79,13 +76,9 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         Map<Long, String> roundMap = null;
 
         // 异步查询图像列表
-        // Future<List<Image>> listFuture = executorService.submit(() -> imageMapper.selectList(image));
         CompletableFuture<List<Image>> listFuture = CompletableFuture.supplyAsync(() -> imageMapper.selectList(image));
-
         // 异步查询所有的机构Map
-        // Future<Map<Long, String>> mapFuture = executorService.submit(() -> sysOrganizationService.selectMap());
         CompletableFuture<Map<Long, String>> mapFuture = CompletableFuture.supplyAsync(() -> sysOrganizationService.selectMap());
-
         // 异步查询所有的轮次Map
         if (bussinessType.equals(2)) {
             CompletableFuture<Map<Long, String>> roundFuture = CompletableFuture.supplyAsync(() -> roundService.selectMap());
@@ -94,7 +87,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
         List<Image> list = listFuture.get();
         Map<Long, String> map = mapFuture.get();
-
         // response List
         List<ImageListOutVO> respList = new ArrayList<>();
 
