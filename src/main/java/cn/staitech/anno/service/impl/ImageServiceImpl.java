@@ -238,7 +238,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     }
 
     /**
-     * 关联切片和专题，没有专题则新添加
+     * 关联切片与专题、组织ID，没有专题则新添加
      *
      * @param vo
      * @return
@@ -250,7 +250,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
         Long uid = SecurityUtils.getLoginUser().getUserid();
         image.setUpdateBy(uid);
-        // image.setStatus(1);
 
         String time = DateUtils.getCurrentHHmmssString("yyyy-MM-dd HH:mm:ss");
 
