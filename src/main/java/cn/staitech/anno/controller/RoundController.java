@@ -10,6 +10,7 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,7 +40,7 @@ public class RoundController extends BaseController {
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "轮次列表", notes = "轮次列表 - 王峰")
     @Log(title = "查询轮次列表", menu = "图片管理", subMenu = "轮次列表", businessType = BusinessType.QUERY)
-    @PostMapping("/list")
+    @GetMapping("/list")
     public R<List<Round>> list() throws ExecutionException, InterruptedException {
         List<Round> list = roundService.list();
         return R.ok(list);
