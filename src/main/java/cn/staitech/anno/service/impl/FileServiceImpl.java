@@ -1,18 +1,13 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.file.Chunk;
 import cn.staitech.anno.service.FileService;
 import cn.staitech.anno.utils.FileUtils;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.tools.DiagnosticListener;
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Map;
 
 @Service
 public class FileServiceImpl implements FileService {
@@ -32,7 +27,7 @@ public class FileServiceImpl implements FileService {
         //切片文件夹
         // 创建空文件夹
         File zipFile = new File(zipUrl);
-        if(!zipFile.exists()){
+        if (!zipFile.exists()) {
             FileUtils.createFolder(zipUrl);
         }
 

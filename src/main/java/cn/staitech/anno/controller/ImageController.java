@@ -30,7 +30,7 @@ import java.util.concurrent.ExecutionException;
  * 图像 信息操作处理
  *
  * @author wangfeng
- * @date 2023/06/01
+ * @date 2023/09/10
  */
 @Api(value = "切片列表（原图像管理）", tags = "切片列表（原图像管理）")
 @RestController
@@ -136,7 +136,7 @@ public class ImageController extends BaseController {
     @PostMapping("/updateTopic")
     public R updateBatchIds(@Validated @RequestBody ImageTopicVO request) throws Exception {
 
-        int result = imageService.updateTopic(request);
+        int result = imageService.updateTopicOrganization(request);
         if (result > 0) {
             return R.ok(ImageConstant.OPERATE_SUCCEED);
         }

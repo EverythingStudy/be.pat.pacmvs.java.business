@@ -244,7 +244,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public int updateTopic(ImageTopicVO vo) throws Exception {
+    public int updateTopicOrganization(ImageTopicVO vo) throws Exception {
         Image image = new Image();
         BeanUtils.copyProperties(vo, image);
 
@@ -254,6 +254,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
         String time = DateUtils.getCurrentHHmmssString("yyyy-MM-dd HH:mm:ss");
 
+        // 处理Topic逻辑，有则修改，无则添加
         if (image.getTopicId().equals(999999999L)) {
             // 如果存在逻辑删除的Topic：insert会报错，insert前查询，如果有修改defFlag = 1
             QueryWrapper<Topic> qWrapper = new QueryWrapper<>();

@@ -7,12 +7,8 @@ import cn.staitech.anno.domain.image.in.ImageTopicBatchIdsVO;
 import cn.staitech.anno.domain.image.in.ImageTopicVO;
 import cn.staitech.anno.domain.image.out.ImageListOutVO;
 import cn.staitech.anno.utils.PageMaster;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.apache.ibatis.annotations.Param;
 
-import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -110,6 +106,6 @@ public interface ImageService extends IService<Image> {
      */
     void updateProcessFlagByIdList(List imageIdList);
 
-    int updateTopic(ImageTopicVO vo) throws Exception;
+    int updateTopicOrganization(ImageTopicVO vo) throws Exception;
 
 }

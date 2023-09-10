@@ -31,4 +31,8 @@ public class ImageTopicVO {
 
     @ApiModelProperty(value = "修改人", required = false, hidden = true)
     private Long updateBy;
+
+    @ApiModelProperty(value = "机构编号")
+    private Long organizationId;
+
 }
