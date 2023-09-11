@@ -52,7 +52,7 @@ public class ForecastImageController extends BaseController {
     @Log(title = "查询切片列表", menu = "切片管理", subMenu = "预测图片", businessType = BusinessType.QUERY)
     @PostMapping("/list")
     public R<PageMaster<ImageListOutVO>> list(@Validated @RequestBody ImageListVO image) throws ExecutionException, InterruptedException {
-        image.setBizTpye(2);
+        image.setBizType(2);
         PageMaster<ImageListOutVO> page = imageService.selectList(image);
         return R.ok(page);
     }
