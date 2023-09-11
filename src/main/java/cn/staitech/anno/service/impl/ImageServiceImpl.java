@@ -67,6 +67,8 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     @Transactional(rollbackFor = Exception.class)
     public PageMaster<ImageListOutVO> selectList(ImageListVO vo) throws ExecutionException, InterruptedException {
 
+        System.out.println("111------------------------SecurityUtils.getUserId() = " + SecurityUtils.getUserId());
+
         Image image = new Image();
         BeanUtils.copyProperties(vo, image);
 
