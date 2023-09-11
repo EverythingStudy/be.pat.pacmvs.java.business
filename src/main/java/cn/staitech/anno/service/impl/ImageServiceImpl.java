@@ -75,22 +75,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         // 所有的轮次Map
         Map<Long, String> roundMap = null;
 
-        /**
-         *
-         * public CompletableFuture<PageInfo<JobExecuResultVo>> queryJobReport(JobReportQuery jobReportQuery) {
-         *         CompletableFuture<PageInfo<JobExecuResultVo>> future = CompletableFuture.supplyAsync(() -> {
-         *             PageHelper.startPage(jobReportQuery.getPageNum(), jobReportQuery.getPageSize());
-         *             List<JobExecuResultVo> list = snapReportRecordMapper.queryRecord(jobReportQuery);
-         *             PageInfo<JobExecuResultVo> pageInfo = new PageInfo<>(list);
-         *             return pageInfo;
-         *         });
-         *         return future;
-         *     }
-         *
-         *
-         */
-
-
         // 异步查询图像列表
         CompletableFuture<PageMaster<Image>> listFuture = CompletableFuture.supplyAsync(() -> {
             // 分页
