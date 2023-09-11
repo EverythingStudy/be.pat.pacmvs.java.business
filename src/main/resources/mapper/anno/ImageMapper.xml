@@ -131,7 +131,7 @@
         i.organization_id,
         i.round_id,
         i.business_type,
-        i.source
+        i.source,
         s.slide_id,
         s.human_annotation_total,
         s.description

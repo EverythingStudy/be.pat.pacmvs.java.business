@@ -135,7 +135,7 @@ public class ForecastImageController extends BaseController {
     @Log(title = "编辑", menu = "切片管理", subMenu = "预测图片", businessType = BusinessType.UPDATE)
     @ApiOperation(value = "编辑")
     @PostMapping("/update")
-    public R updateBatchIds(@Validated @RequestBody ImageUpdateVO request) throws Exception {
+    public R update(@Validated @RequestBody ImageUpdateVO request) throws Exception {
 
         int result = imageService.updateById(request);
         if (result > 0) {
