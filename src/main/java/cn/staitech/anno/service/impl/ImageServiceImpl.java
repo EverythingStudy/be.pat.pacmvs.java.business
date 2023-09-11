@@ -75,8 +75,24 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         // 所有的轮次Map
         Map<Long, String> roundMap = null;
 
+        /**
+         *
+         * public CompletableFuture<PageInfo<JobExecuResultVo>> queryJobReport(JobReportQuery jobReportQuery) {
+         *         CompletableFuture<PageInfo<JobExecuResultVo>> future = CompletableFuture.supplyAsync(() -> {
+         *             PageHelper.startPage(jobReportQuery.getPageNum(), jobReportQuery.getPageSize());
+         *             List<JobExecuResultVo> list = snapReportRecordMapper.queryRecord(jobReportQuery);
+         *             PageInfo<JobExecuResultVo> pageInfo = new PageInfo<>(list);
+         *             return pageInfo;
+         *         });
+         *         return future;
+         *     }
+         *
+         *
+         */
+
+
         // 异步查询图像列表
-        CompletableFuture<PageMaster<ImageListOutVO>> listFuture = CompletableFuture.supplyAsync(() -> {
+        CompletableFuture<PageMaster<Image>> listFuture = CompletableFuture.supplyAsync(() -> {
             // 分页
             PageHelper.startPage(vo.getPageNum(), vo.getPageSize()).setReasonable(true);
             log.info("分页参数：{} {}", vo.getPageNum(), vo.getPageSize());
@@ -92,39 +108,44 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
             roundMap = roundFuture.get();
         }
 
-        PageMaster<ImageListOutVO> pageMaster = listFuture.get();
-
+        PageMaster<Image> pageMaster = listFuture.get();
+        List<Image> list = pageMaster.getList();
         Map<Long, String> map = mapFuture.get();
         // response List
-        List<ImageListOutVO> respList = pageMaster.getList();
+        List<ImageListOutVO> respList = new ArrayList<>();
 
-        if (respList.size() > 0) {
+        if (list.size() > 0) {
             // 数据格式化
-            for (ImageListOutVO out : respList) {
+            for (Image in : list) {
+                ImageListOutVO out = new ImageListOutVO();
+                BeanUtils.copyProperties(in, out);
 
                 // 提取处理状态文本描述并赋值
-                Integer status = out.getStatus();
+                Integer status = in.getStatus();
                 out.setFileStatus(ImageConstant.IMAGE_STATUS_MAP.get(status));
 
                 if (status == 0) {
-                    out.setProcessFlagName(ImageConstant.IMAGE_PROCESS_MAP.get(out.getProcessFlag()));
+                    out.setProcessFlagName(ImageConstant.IMAGE_PROCESS_MAP.get(in.getProcessFlag()));
                 } else {
                     out.setProcessFlagName("");
                 }
 
                 // 匹配机构名称
-                out.setOrganizationName(map.get(out.getOrganizationId()).toString());
+                out.setOrganizationName(map.get(in.getOrganizationId()).toString());
 
                 // 匹配轮次
                 if (bussinessType.equals(2)) {
-                    out.setRoundName(roundMap.get(out.getRoundId()).toString());
+                    out.setRoundName(roundMap.get(in.getRoundId()).toString());
                 }
+
+                respList.add(out);
             }
         }
 
+        PageMaster<ImageListOutVO> respPageMaster = new PageMaster<>(respList);
         //清除分页缓存
         PageHelper.clearPage();
-        return pageMaster;
+        return respPageMaster;
     }
 
 
