@@ -117,6 +117,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                 if (bizType.equals(2)) {
                     if (roundMap.size() > 0 && in.getRoundId() != 0 && in.getRoundId() != null) {
                         out.setRoundName(roundMap.get(in.getRoundId()).toString());
+
                     }
                 }
 
