@@ -64,7 +64,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
      */
     @Override
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
-    @Transactional(rollbackFor = Exception.class)
+    // @Transactional(rollbackFor = Exception.class)
     public PageMaster<ImageListOutVO> selectList(ImageListVO vo) throws ExecutionException, InterruptedException {
         // 分页
         PageHelper.startPage(vo.getPageNum(), vo.getPageSize()).setReasonable(true);
