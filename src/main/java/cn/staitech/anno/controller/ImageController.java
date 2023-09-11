@@ -52,6 +52,7 @@ public class ImageController extends BaseController {
     @Log(title = "查询切片列表", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.QUERY)
     @PostMapping("/list")
     public R<PageMaster<ImageListOutVO>> list(@Validated @RequestBody ImageListVO image) throws ExecutionException, InterruptedException {
+        log.info("----------ImageListVO:{}",image);
         image.setBusinessType(1);
         PageMaster<ImageListOutVO> page = imageService.selectList(image);
         return R.ok(page);
