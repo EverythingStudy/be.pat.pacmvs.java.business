@@ -131,7 +131,7 @@ public class ImageController extends BaseController {
     @ApiOperationSupport(author = "wangfeng")
     @Log(title = "批量分专题", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.UPDATE)
     @ApiOperation(value = "单个图像添加专题")
-    @PostMapping("/updateTopic")
+    @PostMapping("/update")
     public R update(@Validated @RequestBody ImageUpdateVO request) throws Exception {
 
         int result = imageService.updateById(request);
