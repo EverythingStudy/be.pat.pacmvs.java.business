@@ -142,10 +142,14 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
             }
         }
 
-        PageMaster<ImageListOutVO> respPageMaster = new PageMaster<>(respList);
+        PageMaster<ImageListOutVO> resp = new PageMaster<>(respList);
+        resp.setTotal(pageMaster.getTotal());
+        resp.setPages(pageMaster.getPages());
+        resp.setPageNum(pageMaster.getPageNum());
+        resp.setPageSize(pageMaster.getPageSize());
         //清除分页缓存
         PageHelper.clearPage();
-        return respPageMaster;
+        return resp;
     }
 
 
