@@ -37,7 +37,7 @@
         <result property="deleteFlag" column="delete_flag"/>
         <result property="organizationId" column="organization_id"/>
         <result property="roundId" column="round_id"/>
-        <result property="businessType" column="business_type"/>
+        <result property="bizType" column="biz_type"/>
         <result property="source" column="source"/>
     </resultMap>
 
@@ -78,7 +78,7 @@
         <result property="deleteFlag" column="delete_flag"/>
         <result property="organizationId" column="organization_id"/>
         <result property="roundId" column="round_id"/>
-        <result property="businessType" column="business_type"/>
+        <result property="bizType" column="biz_type"/>
         <result property="source" column="source"/>
     </resultMap>
 
@@ -89,7 +89,7 @@
                image_path,
                thumb_url,
                width,
-               height, size, global_size, source_lens, process_flag, create_by, create_time, update_by, update_time, image_code, topic_id, topic_name, status, delete_flag, organization_id, round_id, business_type, source
+               height, size, global_size, source_lens, process_flag, create_by, create_time, update_by, update_time, image_code, topic_id, topic_name, status, delete_flag, organization_id, round_id, biz_type, source
         from
             tb_image
     </sql>
@@ -130,7 +130,7 @@
         i.delete_flag,
         i.organization_id,
         i.round_id,
-        i.business_type,
+        i.biz_type,
         i.source,
         s.slide_id,
         s.human_annotation_total,
@@ -190,8 +190,8 @@
             <if test="roundId != null"><!--轮次编号 -->
                 and round_id = #{roundId}
             </if>
-            <if test="businessType != null"><!-- 业务类型编号 -->
-                and business_type = #{businessType}
+            <if test="bizType != null"><!-- 业务类型编号 -->
+                and biz_type = #{bizType}
             </if>
             <if test="source != null"><!-- 图像来源：上传方式 -->
                 and source = #{source}

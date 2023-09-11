@@ -141,7 +141,7 @@ public class Image extends BaseEntity {
     @TableField(exist = false)
     private String roundName;
     @ApiModelProperty(value = "业务类型:1原始切片（默认）、2预测切片")
-    private Integer businessType;
+    private Integer bizType;
     @ApiModelProperty(value = "业务类型名称:1原始切片（默认）、2预测切片")
     @TableField(exist = false)
     private String businessTypeName;

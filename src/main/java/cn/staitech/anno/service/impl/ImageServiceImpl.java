@@ -67,7 +67,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         BeanUtils.copyProperties(vo, image);
 
         // 业务类型 1 原始切片 2 预测切片
-        Integer bussinessType = image.getBusinessType();
+        Integer bizType = image.getBizType();
         // 所有的轮次Map
         Map<Long, String> roundMap = null;
 
@@ -83,7 +83,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         // 异步查询所有的机构Map
         CompletableFuture<Map<Long, String>> mapFuture = CompletableFuture.supplyAsync(() -> sysOrganizationService.selectMap());
         // 异步查询所有的轮次Map
-        if (bussinessType.equals(2)) {
+        if (bizType.equals(2)) {
             CompletableFuture<Map<Long, String>> roundFuture = CompletableFuture.supplyAsync(() -> roundService.selectMap());
             roundMap = roundFuture.get();
         }
@@ -114,7 +114,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                 out.setOrganizationName(map.get(in.getOrganizationId()).toString());
 
                 // 匹配轮次
-                if (bussinessType.equals(2)) {
+                if (bizType.equals(2)) {
                     if (roundMap.size() > 0) {
                         out.setRoundName(roundMap.get(in.getRoundId()).toString());
                     }

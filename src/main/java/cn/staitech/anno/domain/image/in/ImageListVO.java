@@ -95,7 +95,7 @@ public class ImageListVO extends Pager implements Serializable {
     @ApiModelProperty(value = "轮次ID-1到10")
     private Long roundId;
     @ApiModelProperty(value = "业务类型:1原始切片（默认）、2预测切片", hidden = true)
-    private Integer businessType;
+    private Integer bizTpye;
     @ApiModelProperty(value = "图像来源(1前端上传，2目录选片，3TCP客户端上传)", hidden = true)
     private Integer source;
 }
