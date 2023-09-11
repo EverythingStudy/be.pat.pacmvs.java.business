@@ -66,11 +66,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
     // @Transactional(rollbackFor = Exception.class)
     public PageMaster<ImageListOutVO> selectList(ImageListVO vo) throws ExecutionException, InterruptedException {
-        // 分页
-        PageHelper.startPage(vo.getPageNum(), vo.getPageSize()).setReasonable(true);
-
-        log.info("分页参数：{} {}", vo.getPageNum(), vo.getPageSize());
-
 
         Image image = new Image();
         BeanUtils.copyProperties(vo, image);
@@ -81,7 +76,14 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         Map<Long, String> roundMap = null;
 
         // 异步查询图像列表
-        CompletableFuture<List<Image>> listFuture = CompletableFuture.supplyAsync(() -> imageMapper.selectList(image));
+        CompletableFuture<PageMaster<ImageListOutVO>> listFuture = CompletableFuture.supplyAsync(() -> {
+            // 分页
+            PageHelper.startPage(vo.getPageNum(), vo.getPageSize()).setReasonable(true);
+            log.info("分页参数：{} {}", vo.getPageNum(), vo.getPageSize());
+            List<Image> list = imageMapper.selectList(image);
+            PageMaster pageMaster = new PageMaster<>(list);
+            return pageMaster;
+        });
         // 异步查询所有的机构Map
         CompletableFuture<Map<Long, String>> mapFuture = CompletableFuture.supplyAsync(() -> sysOrganizationService.selectMap());
         // 异步查询所有的轮次Map
@@ -90,44 +92,38 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
             roundMap = roundFuture.get();
         }
 
-        List<Image> list = listFuture.get();
+        PageMaster<ImageListOutVO> pageMaster = listFuture.get();
+
         Map<Long, String> map = mapFuture.get();
         // response List
-        List<ImageListOutVO> respList = new ArrayList<>();
+        List<ImageListOutVO> respList = pageMaster.getList();
 
-        if (list.size() > 0) {
+        if (respList.size() > 0) {
             // 数据格式化
-            for (Image in : list) {
-                ImageListOutVO out = new ImageListOutVO();
-                BeanUtils.copyProperties(in, out);
+            for (ImageListOutVO out : respList) {
 
                 // 提取处理状态文本描述并赋值
-                Integer status = in.getStatus();
+                Integer status = out.getStatus();
                 out.setFileStatus(ImageConstant.IMAGE_STATUS_MAP.get(status));
 
                 if (status == 0) {
-                    out.setProcessFlagName(ImageConstant.IMAGE_PROCESS_MAP.get(in.getProcessFlag()));
+                    out.setProcessFlagName(ImageConstant.IMAGE_PROCESS_MAP.get(out.getProcessFlag()));
                 } else {
                     out.setProcessFlagName("");
                 }
 
                 // 匹配机构名称
-                out.setOrganizationName(map.get(in.getOrganizationId()).toString());
+                out.setOrganizationName(map.get(out.getOrganizationId()).toString());
 
                 // 匹配轮次
                 if (bussinessType.equals(2)) {
-                    out.setRoundName(roundMap.get(in.getRoundId()).toString());
+                    out.setRoundName(roundMap.get(out.getRoundId()).toString());
                 }
-
-                respList.add(out);
             }
         }
-        PageMaster pageMaster = new PageMaster<>(list);
-        pageMaster.setList(respList);
 
         //清除分页缓存
         PageHelper.clearPage();
-
         return pageMaster;
     }
 
