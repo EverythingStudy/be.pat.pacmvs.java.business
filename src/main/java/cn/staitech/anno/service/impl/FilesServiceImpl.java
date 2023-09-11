@@ -11,6 +11,7 @@ import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -23,6 +24,10 @@ import java.util.concurrent.ExecutionException;
 @Service
 public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         implements FilesService {
+
+    @Resource
+    FilesMapper filesMapper;
+
     @Override
     public PageMaster<Files> selectList(FilesListVO vo) throws ExecutionException, InterruptedException {
         // 分页
@@ -32,7 +37,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         BeanUtils.copyProperties(vo, files);
         QueryWrapper<Files> queryWrapper = new QueryWrapper<>(files);
         // 异步查询图像列表
-        List<Files> list =  this.baseMapper.selectList(queryWrapper);
+        List<Files> list =  filesMapper.selectList(queryWrapper);
         PageMaster pageMaster = new PageMaster<>(list);
         pageMaster.setList(list);
         return pageMaster;

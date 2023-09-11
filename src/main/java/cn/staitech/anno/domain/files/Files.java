@@ -1,6 +1,5 @@
 package cn.staitech.anno.domain.files;
 
-import cn.staitech.common.core.web.domain.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -11,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
@@ -24,7 +24,7 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Files extends BaseEntity {
+public class Files implements Serializable {
 
     /**
      * 文件ID
@@ -179,10 +179,4 @@ public class Files extends BaseEntity {
     @ApiModelProperty(value = "", hidden = true)
     @TableField(exist = false)
     private Map<String, Object> params;
-    @TableField(exist = false)
-    @ApiModelProperty(hidden = true)
-    private String remark;
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
-
 }
