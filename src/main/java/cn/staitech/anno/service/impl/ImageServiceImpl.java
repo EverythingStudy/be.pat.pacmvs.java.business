@@ -66,9 +66,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
     @Transactional(rollbackFor = Exception.class)
     public PageMaster<ImageListOutVO> selectList(ImageListVO vo) throws ExecutionException, InterruptedException {
-
-        System.out.println("111------------------------SecurityUtils.getUserId() = " + SecurityUtils.getUserId());
-
         Image image = new Image();
         BeanUtils.copyProperties(vo, image);
 
@@ -280,9 +277,12 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         Long loginUser = SecurityUtils.getUserId();
         image.setUpdateBy(loginUser);
 
+
+/*
         String time = DateUtils.getCurrentHHmmssString("yyyy-MM-dd HH:mm:ss");
 
         // 处理Topic逻辑，有则修改，无则添加
+
         if (image.getTopicId().equals(999999999L)) {
             // 如果存在逻辑删除的Topic：insert会报错，insert前查询，如果有修改defFlag = 1
             QueryWrapper<Topic> qWrapper = new QueryWrapper<>();
@@ -312,7 +312,8 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
             image.setTopicId(topic.getTopicId());
             image.setTopicName(topic.getTopicName());
-        }
+        }*/
+
         return imageMapper.updateById(image);
     }
 }
