@@ -9,6 +9,9 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
+/**
+ * @author wangf
+ */
 @Data
 public class ImageListVO extends Pager implements Serializable {
     @ApiModelProperty(value = "图像ID", hidden = true)

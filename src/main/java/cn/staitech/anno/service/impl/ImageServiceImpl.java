@@ -20,6 +20,7 @@ import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,7 @@ import java.util.concurrent.ExecutionException;
  * @author wangfeng
  * @date 2023/06/01
  */
+@Slf4j
 @Service
 public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements ImageService {
     @Resource
@@ -66,6 +68,9 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     public PageMaster<ImageListOutVO> selectList(ImageListVO vo) throws ExecutionException, InterruptedException {
         // 分页
         PageHelper.startPage(vo.getPageNum(), vo.getPageSize()).setReasonable(true);
+
+        log.info("分页参数：{} {}", vo.getPageNum(), vo.getPageSize());
+
 
         Image image = new Image();
         BeanUtils.copyProperties(vo, image);
@@ -119,6 +124,9 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         }
         PageMaster pageMaster = new PageMaster<>(list);
         pageMaster.setList(respList);
+
+        //清除分页缓存
+        PageHelper.clearPage();
 
         return pageMaster;
     }
