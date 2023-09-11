@@ -1254,7 +1254,7 @@ public class ProjectExtController extends BaseController {
                         return R.fail(IMAGE_NOT_EXIST);
                     }
                     slideList.forEach(t -> {
-                        Long userId = SecurityUtils.getLoginUser().getUserid();
+                        Long userId = SecurityUtils.getUserId();
                         annotation.setProjectId(projectId);
                         annotation.setSlideId(t.getSlideId());
                         annotation.setImageId(t.getImageId());

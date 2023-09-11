@@ -274,9 +274,9 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         Image image = new Image();
         BeanUtils.copyProperties(vo, image);
 
-        Long uid = SecurityUtils.getLoginUser().getUserid();
-        log.info("uid -------------- {} ", uid);
-        image.setUpdateBy(uid);
+        // 获取当前登录用户Id
+        Long loginUser = SecurityUtils.getUserId();
+        image.setUpdateBy(loginUser);
 
         String time = DateUtils.getCurrentHHmmssString("yyyy-MM-dd HH:mm:ss");
 
@@ -288,7 +288,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
             Topic topic = topicMapper.selectOne(qWrapper);
             if (topic != null) {
-                topic.setUpdateBy(uid);
+                topic.setUpdateBy(loginUser);
                 topic.setUpdateTime(time);
                 topic.setDelFlag(1);
 
@@ -297,8 +297,8 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                 // construct a new Topic object
                 topic = Topic.builder()
                         .topicName(vo.getTopicName())
-                        .createBy(uid)
-                        .updateBy(uid)
+                        .createBy(loginUser)
+                        .updateBy(loginUser)
                         .createTime(time)
                         .updateTime(time)
                         .delFlag(1)

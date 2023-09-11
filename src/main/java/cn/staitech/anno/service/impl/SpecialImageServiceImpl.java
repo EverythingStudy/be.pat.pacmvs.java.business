@@ -354,7 +354,7 @@ public class SpecialImageServiceImpl implements SpecialImageService {
             SubImage image = new SubImage();
             image.setSpecialId(record.getSpecialId());
             image.setSpecialAnnotationId(anno.getSliceAnnotationId());
-            //			Long userId = SecurityUtils.getLoginUser().getUserid();
+            //			Long userId = SecurityUtils.getUserId();
             String imageName = hisImage.getImageName();
             String format = imageName;
             imageName = imageName.substring(0, imageName.lastIndexOf('.')) + "-" + index;

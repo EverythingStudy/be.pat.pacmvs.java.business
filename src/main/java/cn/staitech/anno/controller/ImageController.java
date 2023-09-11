@@ -98,7 +98,7 @@ public class ImageController extends BaseController {
     @ApiOperation(value = "逻辑批量删除切片")
     @PostMapping("/deleteBatchIds")
     public R<List<Long>> updateDeleteFlagBatchIds(@Validated @RequestBody ImageBatchIdsVO request) {
-        Long uid = SecurityUtils.getLoginUser().getUserid();
+        Long uid = SecurityUtils.getUserId();
         request.setUpdateBy(uid);
         List<Long> data = imageService.updateDeleteFlagBatchIds(request);
         return R.ok(data, ImageConstant.OPERATE_SUCCEED);
@@ -114,7 +114,7 @@ public class ImageController extends BaseController {
     @ApiOperation(value = "批量添加专题")
     @PostMapping("/updateBatchIds")
     public R updateBatchIds(@Validated @RequestBody ImageTopicBatchIdsVO request) {
-        Long uid = SecurityUtils.getLoginUser().getUserid();
+        Long uid = SecurityUtils.getUserId();
         request.setUpdateBy(uid);
         int result = imageService.updateBatchIds(request);
         if (result > 0) {

@@ -550,7 +550,7 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
 		SubImage image = new SubImage();
 		image.setSpecialId(specialId);
 		image.setSpecialAnnotationId(Long.valueOf(i+""));
-        Long userId = SecurityUtils.getLoginUser().getUserid();
+        Long userId = SecurityUtils.getUserId();
         // 确定文件名称提取所属专题名称、文件编号的规则有确定好的吗？
         String imageName = image.getImageName()+"_"+System.currentTimeMillis();
         image.setParentImageCode(hisImage.getImageCode());

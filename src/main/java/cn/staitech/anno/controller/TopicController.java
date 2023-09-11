@@ -65,7 +65,7 @@ public class TopicController {
     @PostMapping("/add")
     public R add(@Validated @RequestBody TopicInsert req) throws Exception {
 
-        Long uid = SecurityUtils.getLoginUser().getUserid();
+        Long uid = SecurityUtils.getUserId();
         String time = DateUtils.getCurrentHHmmssString("yyyy-MM-dd HH:mm:ss");
         Topic topic = Topic.builder()
                 .topicName(req.getTopicName().trim().toString())
