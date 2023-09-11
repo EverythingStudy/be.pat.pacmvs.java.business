@@ -1,10 +1,7 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.Image;
-import cn.staitech.anno.domain.image.in.ImageBatchIdsVO;
-import cn.staitech.anno.domain.image.in.ImageListVO;
-import cn.staitech.anno.domain.image.in.ImageTopicBatchIdsVO;
-import cn.staitech.anno.domain.image.in.ImageTopicVO;
+import cn.staitech.anno.domain.image.in.*;
 import cn.staitech.anno.domain.image.out.ImageListOutVO;
 import cn.staitech.anno.utils.PageMaster;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -106,6 +103,6 @@ public interface ImageService extends IService<Image> {
      */
     void updateProcessFlagByIdList(List imageIdList);
 
-    int updateById(ImageTopicVO vo) throws Exception;
+    int updateById(ImageUpdateVO vo) throws Exception;
 
 }

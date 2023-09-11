@@ -6,7 +6,7 @@ import cn.staitech.anno.domain.Topic;
 import cn.staitech.anno.domain.image.in.ImageBatchIdsVO;
 import cn.staitech.anno.domain.image.in.ImageListVO;
 import cn.staitech.anno.domain.image.in.ImageTopicBatchIdsVO;
-import cn.staitech.anno.domain.image.in.ImageTopicVO;
+import cn.staitech.anno.domain.image.in.ImageUpdateVO;
 import cn.staitech.anno.domain.image.out.ImageListOutVO;
 import cn.staitech.anno.mapper.ImageMapper;
 import cn.staitech.anno.mapper.SpecialImageMapper;
@@ -64,7 +64,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
      */
     @Override
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
-    // @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public PageMaster<ImageListOutVO> selectList(ImageListVO vo) throws ExecutionException, InterruptedException {
 
         Image image = new Image();
@@ -81,9 +81,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
             PageHelper.startPage(vo.getPageNum(), vo.getPageSize()).setReasonable(true);
             log.info("分页参数：{} {}", vo.getPageNum(), vo.getPageSize());
             List<Image> list = imageMapper.selectList(image);
-
-            System.out.println("list.size() ====================== " + list.size());
-
             PageMaster pageMaster = new PageMaster<>(list);
             return pageMaster;
         });
@@ -273,11 +270,12 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public int updateById(ImageTopicVO vo) throws Exception {
+    public int updateById(ImageUpdateVO vo) throws Exception {
         Image image = new Image();
         BeanUtils.copyProperties(vo, image);
 
         Long uid = SecurityUtils.getLoginUser().getUserid();
+        log.info("uid -------------- {} ", uid);
         image.setUpdateBy(uid);
 
         String time = DateUtils.getCurrentHHmmssString("yyyy-MM-dd HH:mm:ss");

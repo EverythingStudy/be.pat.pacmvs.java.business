@@ -31,11 +31,8 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         Files files = new Files();
         BeanUtils.copyProperties(vo, files);
         QueryWrapper<Files> queryWrapper = new QueryWrapper<>(files);
-
         // 异步查询图像列表
-        CompletableFuture<List<Files>> listFuture = CompletableFuture.supplyAsync(() -> this.baseMapper.selectList(queryWrapper));
-        List<Files> list = listFuture.get();
-
+        List<Files> list =  this.baseMapper.selectList(queryWrapper);
         PageMaster pageMaster = new PageMaster<>(list);
         pageMaster.setList(list);
         return pageMaster;

@@ -2,10 +2,7 @@ package cn.staitech.anno.controller;
 
 import cn.staitech.anno.constant.ImageConstant;
 import cn.staitech.anno.domain.Image;
-import cn.staitech.anno.domain.image.in.ImageBatchIdsVO;
-import cn.staitech.anno.domain.image.in.ImageListVO;
-import cn.staitech.anno.domain.image.in.ImageTopicBatchIdsVO;
-import cn.staitech.anno.domain.image.in.ImageTopicVO;
+import cn.staitech.anno.domain.image.in.*;
 import cn.staitech.anno.domain.image.out.ImageListOutVO;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.utils.PageMaster;
@@ -52,7 +49,6 @@ public class ImageController extends BaseController {
     @Log(title = "查询切片列表", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.QUERY)
     @PostMapping("/list")
     public R<PageMaster<ImageListOutVO>> list(@Validated @RequestBody ImageListVO image) throws ExecutionException, InterruptedException {
-        log.info("----------ImageListVO:{}",image);
         image.setBusinessType(1);
         PageMaster<ImageListOutVO> page = imageService.selectList(image);
         return R.ok(page);
@@ -136,7 +132,7 @@ public class ImageController extends BaseController {
     @Log(title = "批量分专题", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.UPDATE)
     @ApiOperation(value = "单个图像添加专题")
     @PostMapping("/updateTopic")
-    public R updateBatchIds(@Validated @RequestBody ImageTopicVO request) throws Exception {
+    public R update(@Validated @RequestBody ImageUpdateVO request) throws Exception {
 
         int result = imageService.updateById(request);
         if (result > 0) {

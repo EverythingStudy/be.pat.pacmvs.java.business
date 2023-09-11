@@ -5,7 +5,7 @@ import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.image.in.ImageBatchIdsVO;
 import cn.staitech.anno.domain.image.in.ImageListVO;
 import cn.staitech.anno.domain.image.in.ImageTopicBatchIdsVO;
-import cn.staitech.anno.domain.image.in.ImageTopicVO;
+import cn.staitech.anno.domain.image.in.ImageUpdateVO;
 import cn.staitech.anno.domain.image.out.ImageListOutVO;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.utils.PageMaster;
@@ -135,7 +135,7 @@ public class ForecastImageController extends BaseController {
     @Log(title = "编辑", menu = "切片管理", subMenu = "预测图片", businessType = BusinessType.UPDATE)
     @ApiOperation(value = "编辑")
     @PostMapping("/update")
-    public R updateBatchIds(@Validated @RequestBody ImageTopicVO request) throws Exception {
+    public R updateBatchIds(@Validated @RequestBody ImageUpdateVO request) throws Exception {
 
         int result = imageService.updateById(request);
         if (result > 0) {
