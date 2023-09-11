@@ -81,6 +81,9 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
             PageHelper.startPage(vo.getPageNum(), vo.getPageSize()).setReasonable(true);
             log.info("分页参数：{} {}", vo.getPageNum(), vo.getPageSize());
             List<Image> list = imageMapper.selectList(image);
+
+            System.out.println("list.size() ====================== " + list.size());
+
             PageMaster pageMaster = new PageMaster<>(list);
             return pageMaster;
         });
