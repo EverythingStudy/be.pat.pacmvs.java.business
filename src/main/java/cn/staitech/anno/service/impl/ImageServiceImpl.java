@@ -2,7 +2,6 @@ package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.constant.ImageConstant;
 import cn.staitech.anno.domain.Image;
-import cn.staitech.anno.domain.Topic;
 import cn.staitech.anno.domain.image.in.ImageBatchIdsVO;
 import cn.staitech.anno.domain.image.in.ImageListVO;
 import cn.staitech.anno.domain.image.in.ImageTopicBatchIdsVO;
@@ -15,9 +14,7 @@ import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.RoundService;
 import cn.staitech.anno.service.SysOrganizationService;
 import cn.staitech.anno.utils.PageMaster;
-import cn.staitech.anno.utils.date.DateUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -118,7 +115,9 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
                 // 匹配轮次
                 if (bussinessType.equals(2)) {
-                    out.setRoundName(roundMap.get(in.getRoundId()).toString());
+                    if (roundMap.size() > 0) {
+                        out.setRoundName(roundMap.get(in.getRoundId()).toString());
+                    }
                 }
 
                 respList.add(out);
