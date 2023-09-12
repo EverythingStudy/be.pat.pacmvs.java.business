@@ -25,7 +25,13 @@ import java.util.stream.Collectors;
 @RequestMapping("/filemanager")
 public class FileManagerController {
 
-    private String baseDir = "/home/uploadPath/big";
+    private String baseDir = "/home/pat_saas";
+
+    /**
+     * /home/pat_saas/Data
+     * /home/pat_saas/Slides
+     * /home/pat_saas/Upload
+     */
 
     /**
      * 查询目录下的文件夹和文件列表
