@@ -3,6 +3,7 @@ package cn.staitech.anno.controller;
 import cn.staitech.anno.constant.ImageConstant;
 import cn.staitech.anno.domain.files.Files;
 import cn.staitech.anno.domain.files.in.FilesListVO;
+import cn.staitech.anno.service.FileUploadService;
 import cn.staitech.anno.service.FilesService;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
@@ -16,8 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -33,6 +36,38 @@ import java.util.concurrent.ExecutionException;
 public class FilesController extends BaseController {
     @Resource
     private FilesService filesService;
+    @Resource
+    private FileUploadService fileUploadService;
+
+    /**
+     * 上传文件-仅用于上传
+     */
+    // @RequiresPermissions("anno:files:upload")
+    @ApiOperationSupport(author = "wangfeng")
+    @ApiOperation(value = "文件上传", notes = "文件列表 - 王峰")
+    @Log(title = "文件上传", menu = "文件上传", subMenu = "文件上传", businessType = BusinessType.IMPORT)
+    @PostMapping("/upload")
+    public R<Files> upload(@RequestParam("file") MultipartFile file) throws IOException {
+        return R.ok(fileUploadService.upload(file));
+    }
+
+    /**
+     * 上传文件-仅用于上传
+     */
+    // @RequiresPermissions("anno:files:upload")
+    @ApiOperationSupport(author = "wangfeng")
+    @ApiOperation(value = "文件上传并处理下游业务逻辑", notes = "文件上传并处理下游业务逻辑 - 王峰")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "file", value = "MultipartFile文件", required = true, dataType = "file"),
+            @ApiImplicitParam(name = "businessType", value = "businessType", required = true, dataType = "Integer")
+    })
+    @Log(title = "文件上传并处理下游业务逻辑", menu = "文件上传并处理下游业务逻辑", subMenu = "文件上传并处理下游业务逻辑", businessType = BusinessType.IMPORT)
+    @PostMapping("/uploadBusiness")
+    public R<Files> uploadBusiness(@RequestParam("file") MultipartFile file, @RequestParam(value = "businessType") Integer businessType) throws IOException {
+        return R.ok(fileUploadService.uploadAndProcessBusiness(file,businessType));
+    }
+
+
 
     /**
      * 切片信息列表 .
