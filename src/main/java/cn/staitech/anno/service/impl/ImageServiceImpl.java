@@ -115,9 +115,9 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
                 // 匹配轮次
                 if (bizType.equals(2)) {
-                    if (roundMap.size() > 0 && in.getRoundId() != 0 && in.getRoundId() != null) {
+                    if (roundMap.size() > 0 && in.getRoundId() !=null &&  in.getRoundId() > 0) {
+                        System.out.println("-----------------------in.getRoundId() = " + in.getRoundId());
                         out.setRoundName(roundMap.get(in.getRoundId()).toString());
-
                     }
                 }
 
