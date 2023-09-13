@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.ImageCsvMapper">
+    <resultMap type="cn.staitech.anno.domain.ImageCsv" id="ImageResult">
+        <result property="imageId" column="image_id"/>
+        <result property="imageName" column="image_name"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="imagePath" column="image_path"/>
+        <result property="thumbUrl" column="thumb_url"/>
+        <result property="macroUrl" column="macro_url"/>
+        <result property="labelUrl" column="label_url"/>
+        <result property="format" column="format"/>
+        <result property="width" column="width"/>
+        <result property="height" column="height"/>
+        <result property="depth" column="depth"/>
+        <result property="size" column="size"/>
+        <result property="globalSize" column="global_size"/>
+        <result property="resolvingPower" column="resolving_power"/>
+        <result property="tileCountList" column="tile_count_list"/>
+        <result property="levelCount" column="level_count"/>
+        <result property="chunkTotal" column="chunk_total"/>
+        <result property="md5" column="md5"/>
+        <result property="resolutionX" column="resolution_x"/>
+        <result property="resolutionY" column="resolution_y"/>
+        <result property="sourceLens" column="source_lens"/>
+        <result property="processFlag" column="process_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="imageCode" column="image_code"/>
+        <result property="topicId" column="topic_id"/>
+        <result property="topicName" column="topic_name"/>
+        <result property="status" column="status"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <result property="organizationId" column="organization_id"/>
+        <result property="roundId" column="round_id"/>
+        <result property="bizType" column="biz_type"/>
+        <result property="source" column="source"/>
+    </resultMap>
+
+    <resultMap type="cn.staitech.anno.domain.image.in.ImageListVO" id="ImageSlide">
+        <result property="imageId" column="image_id"/>
+        <result property="imageName" column="image_name"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="imagePath" column="image_path"/>
+        <result property="thumbUrl" column="thumb_url"/>
+        <result property="macroUrl" column="macro_url"/>
+        <result property="labelUrl" column="label_url"/>
+        <result property="format" column="format"/>
+        <result property="width" column="width"/>
+        <result property="height" column="height"/>
+        <result property="depth" column="depth"/>
+        <result property="size" column="size"/>
+        <result property="globalSize" column="global_size"/>
+        <result property="resolvingPower" column="resolving_power"/>
+        <result property="tileCountList" column="tile_count_list"/>
+        <result property="levelCount" column="level_count"/>
+        <result property="chunkTotal" column="chunk_total"/>
+        <result property="md5" column="md5"/>
+        <result property="resolutionX" column="resolution_x"/>
+        <result property="resolutionY" column="resolution_y"/>
+        <result property="sourceLens" column="source_lens"/>
+        <result property="processFlag" column="process_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="slideId" column="slide_id"/>
+        <result property="humanAnnotationTotal" column="human_annotation_total"/>
+        <result property="description" column="description"/>
+        <result property="imageCode" column="image_code"/>
+        <result property="topicId" column="topic_id"/>
+        <result property="topicName" column="topic_name"/>
+        <result property="status" column="status"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <result property="organizationId" column="organization_id"/>
+        <result property="roundId" column="round_id"/>
+        <result property="bizType" column="biz_type"/>
+        <result property="source" column="source"/>
+    </resultMap>
+
+    <sql id="selectImageVo">
+        select image_id,
+               image_name,
+               image_url,
+               image_path,
+               thumb_url,
+               width,
+               height, size, global_size, source_lens, process_flag, create_by, create_time, update_by, update_time, image_code, topic_id, topic_name, status, delete_flag, organization_id, round_id, biz_type, source
+        from
+            tb_image
+    </sql>
+
+
+</mapper>

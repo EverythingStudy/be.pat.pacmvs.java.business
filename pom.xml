@@ -277,6 +277,12 @@
             <version>2.33</version>
         </dependency>
 
+        <!-- csv文件解析 -->
+<!--        <dependency>
+            <groupId>net.sourceforge.javacsv</groupId>
+            <artifactId>javacsv</artifactId>
+            <version>2.0</version>
+        </dependency>-->
     </dependencies>
 
 
@@ -358,6 +364,17 @@
             <properties>
                 <activatedProperties>patsaasdev</activatedProperties>
                 <nacosNamespace>9db07238-8e80-49f9-b665-5afa03e8d569</nacosNamespace>
+                <nacosAddress>http://192.168.52.108:8848</nacosAddress>
+                <nacosGroup>DEFAULT_GROUP</nacosGroup>
+                <serverAddr>192.168.52.108:8848</serverAddr>
+            </properties>
+        </profile>
+        <profile>
+            <!--108线开发环境2-->
+            <id>patsaasdev2</id>
+            <properties>
+                <activatedProperties>patsaasdev2</activatedProperties>
+                <nacosNamespace>11a701e9-f4f3-4232-ad0e-fb5ba9c9e36a</nacosNamespace>
                 <nacosAddress>http://192.168.52.108:8848</nacosAddress>
                 <nacosGroup>DEFAULT_GROUP</nacosGroup>
                 <serverAddr>192.168.52.108:8848</serverAddr>
