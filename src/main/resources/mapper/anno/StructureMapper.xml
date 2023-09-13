@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.StructureMapper">
+    <resultMap type="cn.staitech.anno.domain.structure.Structure" id="StructureResult">
+        <result property="key" column="key"/>
+        <result property="value" column="value"/>
+    </resultMap>
+
+    <sql id="selectList">
+        select key, value
+        from tb_structure
+    </sql>
+</mapper>
