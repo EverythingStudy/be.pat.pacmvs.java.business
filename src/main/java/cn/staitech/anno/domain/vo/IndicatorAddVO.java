@@ -3,21 +3,19 @@ package cn.staitech.anno.domain.vo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-
+/**
+ * 添加结构指标
+ *
+ * @author wangf
+ */
 @Data
 public class IndicatorAddVO {
-    
-    @NotBlank(message = "病例指标名称不能为空字符串")
-    @Size(min = 0, max = 60, message = "名称不能超过60个字符")
-    @ApiModelProperty(value = "病例指标名称", required = true)
-    private String indicatorName;
-    
-    @ApiModelProperty(hidden = true, value = "创建者id")
-    private Long userId;
-    
-    @ApiModelProperty(hidden = true, value = "创建者")
-    private String createBy;
-    
+    @ApiModelProperty(value = "种属编号")
+    private Integer speciesId;
+    @ApiModelProperty(value = "种属名称")
+    private Integer speciesName;
+    @ApiModelProperty(value = "脏器编号")
+    private String organId;
+    @ApiModelProperty(value = "脏器名称")
+    private String organName;
 }

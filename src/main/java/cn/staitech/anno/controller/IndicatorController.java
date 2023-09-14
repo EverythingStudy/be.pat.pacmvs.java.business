@@ -28,12 +28,11 @@ import java.util.Optional;
 
 
 /**
- *
- * @author zmj
- * @Date 2023/5/30 16:42
- * @desc 病理指标
+ * @author wangfeng
+ * @Date 2023/09/14 15:50
+ * @desc 结构指标
  */
-@Api(value = "病例指标接口", tags = "病例指标")
+@Api(value = "结构指标接口", tags = "结构指标")
 @RestController
 @RequestMapping("indicator")
 public class IndicatorController extends BaseController {
@@ -49,43 +48,35 @@ public class IndicatorController extends BaseController {
 
 
     /**
-     * 添加病例指标 .
+     * 添加结构指标 .
      */
     @SneakyThrows
-    @ApiOperation(value = "添加病例指标接", notes = "ZMJ")
+    @ApiOperation(value = "添加结构指标", notes = "wangfeng")
     @RequiresPermissions("special:pathology:add")
-    @Log(title = "病理指标添加", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.INSERT)
+    @Log(title = "添加结构指标", menu = "结构指标", subMenu = "结构指标", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     public R<String> add(@Validated @RequestBody IndicatorAddVO req) {
-        String indicatorName = req.getIndicatorName();
         Indicator indicator = new Indicator();
-        indicator.setIndicatorName(indicatorName);
-        //查询病理名称是否存在
+        BeanUtils.copyProperties(req, indicator);
+
+        //查询结构指标是否存在
         List<Indicator> indicatorList = indicatorService.selectIndicator(indicator);
         if (!indicatorList.isEmpty()) {
             return R.fail(IndicatorResponseConstant.INDICATOR_EXIST);
         }
-        indicator.setCreateBy(SecurityUtils.getUserId());
-        Integer num = indicatorService.selectIndicatorNum();
-        String number;
-        if (num < 10) {
-            number = "P0" + (num + 1);
-        } else {
-            number = "P" + (num + 1);
-        }
-        indicator.setNumber(number);
-        //添加病理指标
+
+        //添加结构指标
         indicatorService.insertIndicator(indicator);
-        return R.ok(null, ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(ResponseConstant.OPERATE_SUCCEED);
     }
 
 
     /**
-     * 获取指标列表 .
+     * 获取结构指标列表 .
      */
-    @ApiOperation(value = "获取病例指标列表接口/条件查询接口", notes = "ZMJ")
+    @ApiOperation(value = "查询结构指标接口", notes = "wangfeng")
     @RequiresPermissions("special:pathology:query")
-    @Log(title = "病理指标列表", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.QUERY)
+    @Log(title = "结构指标列表", menu = "结构指标", subMenu = "结构指标", businessType = BusinessType.QUERY)
     @PostMapping("/allIndicator")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageNum", value = "当前记录起始索引", dataTypeClass = Integer.class, paramType = "query", example = "1"),
@@ -190,8 +181,6 @@ public class IndicatorController extends BaseController {
         }
         return R.ok(1);
     }
-
-
 
 
 }

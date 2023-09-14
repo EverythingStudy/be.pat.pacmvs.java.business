@@ -10,6 +10,7 @@ import cn.staitech.anno.service.IndicatorService;
 import cn.staitech.anno.service.OrganService;
 import cn.staitech.anno.service.SpeciesService;
 import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.domain.SysUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +39,10 @@ public class IndicatorServicelmpl implements IndicatorService {
      */
     @Override
     public int insertIndicator(Indicator indicator) {
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+        indicator.setCreateBy(sysUser.getUserId());
+        indicator.setUpdateBy(sysUser.getUserId());
+        indicator.setOrganizationId(sysUser.getOrganizationId());
         return indicatorMapper.insertIndicator(indicator);
     }
 
@@ -63,7 +68,6 @@ public class IndicatorServicelmpl implements IndicatorService {
         */
 
         indicator.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-
 
         List<Indicator> list = indicatorMapper.selectIndicatorList(indicator);
         for (Indicator obj : list) {
