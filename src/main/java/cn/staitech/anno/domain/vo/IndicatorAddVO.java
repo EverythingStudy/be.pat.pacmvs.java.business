@@ -13,7 +13,7 @@ public class IndicatorAddVO {
     @ApiModelProperty(value = "种属编号")
     private Integer speciesId;
     @ApiModelProperty(value = "种属名称")
-    private Integer speciesName;
+    private String speciesName;
     @ApiModelProperty(value = "脏器编号")
     private String organId;
     @ApiModelProperty(value = "脏器名称")
