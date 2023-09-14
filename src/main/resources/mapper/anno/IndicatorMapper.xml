@@ -11,13 +11,15 @@
         <result property="annotationCategoryTotal" column="annotation_category_total"/>
         <result property="speciesId" column="species_id"/>
         <result property="organId" column="organ_id"/>
-        <result property="updateBy" column="update_by"/>
-        <result property="createBy" column="create_by"/>
         <result property="userId" column="user_id"/>
         <result property="userName" column="user_name"/>
-        <result property="updateTime" column="update_time"/>
         <result property="number" column="number"/>
+        <result property="organizationId" column="organization_id"/>
         <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
     </resultMap>
 
     <resultMap type="cn.staitech.anno.domain.vo.statistic.StatisticIndicatorListOutVO" id="SysIndicatorStatisticResult">
@@ -37,6 +39,7 @@
                i.update_by,
                i.update_time,
                i.number,
+               i.organization_id,
                u.user_id,
                u.user_name
         from tb_pathological_indicator i
@@ -69,18 +72,27 @@
             <if test="indicatorName != null and indicatorName != ''">
                 AND i.indicator_name like concat('%', #{indicatorName}, '%')
             </if>
+            <if test="speciesId != null and speciesId != ''"><!-- 种属编码 -->
+                AND i.species_id like concat('%', #{speciesId}, '%')
+            </if>
+            <if test="organId != null and organId != ''"><!-- 脏器编码 -->
+                AND i.organ_id like concat('%', #{organId}, '%')
+            </if>
+            <if test="organizationId != null and organizationId != ''"><!-- 机构ID -->
+                AND i.organization_id like concat('%', #{organizationId}, '%')
+            </if>
             <if test="createBy != null and createBy != ''">
                 AND i.create_by like concat('%', #{createBy}, '%')
             </if>
             <if test="userName != null and userName != ''">
                 AND u.user_name like concat('%', #{userName}, '%')
             </if>
-            <if test="params != null">
-                <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
-                    AND date_format(i.create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            <if test="createTimeParams != null">
+                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''"><!-- 开始时间检索 -->
+                    AND date_format(i.create_time,'%y%m%d') &gt;= date_format(#{createTimeParams.beginTime},'%y%m%d')
                 </if>
-                <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
-                    AND date_format(i.create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+                <if test="createTimeParams.endTime != null and createTimeParams.endTime != ''"><!-- 结束时间检索 -->
+                    AND date_format(i.create_time,'%y%m%d') &lt;= date_format(#{createTimeParams.endTime},'%y%m%d')
                 </if>
             </if>
             and i.del_flag=0

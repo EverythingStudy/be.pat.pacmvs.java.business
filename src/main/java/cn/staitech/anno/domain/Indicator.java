@@ -60,19 +60,17 @@ public class Indicator extends BaseEntity {
     private String organName;
     @ApiModelProperty(hidden = true, value = "更新者")
     private Long updateBy;
-
+    @ApiModelProperty(hidden = true, value = "机构ID")
+    private Long organizationId;
     @ApiModelProperty(hidden = true, value = "更新时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
-
     @ApiModelProperty(hidden = true, value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
-
     @ApiModelProperty(value = "请求参数")
     @TableField(exist = false)
-    private Map<String, Object> params;
-
+    private Map<String, Object> createTimeParams;
     @ApiModelProperty(hidden = true, value = "备注")
     private String remark;
 
@@ -82,7 +80,6 @@ public class Indicator extends BaseEntity {
 
     @ApiModelProperty(value = "病例指标编号")
     private String number;
-
     @ApiModelProperty(hidden = true, value = "删除状态")
     private Integer delFlag;
 }

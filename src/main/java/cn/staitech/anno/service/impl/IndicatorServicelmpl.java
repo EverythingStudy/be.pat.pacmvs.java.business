@@ -9,6 +9,7 @@ import cn.staitech.anno.mapper.IndicatorMapper;
 import cn.staitech.anno.service.IndicatorService;
 import cn.staitech.anno.service.OrganService;
 import cn.staitech.anno.service.SpeciesService;
+import cn.staitech.common.security.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -52,6 +53,17 @@ public class IndicatorServicelmpl implements IndicatorService {
         Map<Integer, String> sepeciesMap = speciesService.selectMap();
         // 脏器
         Map<String, String> organMap = organService.selectMap();
+
+        //LoginUser loginUser = getLoginUser();
+        // 判断用户为admin或者超级管理员
+        /*
+                if(SysUser.isAdmin(SecurityUtils.getUserId()) || loginUser.getSysUser().getRoleId() == 1L){
+
+                }
+        */
+
+        indicator.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+
 
         List<Indicator> list = indicatorMapper.selectIndicatorList(indicator);
         for (Indicator obj : list) {
