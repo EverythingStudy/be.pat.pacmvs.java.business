@@ -10,6 +10,8 @@
         <result property="createTime" column="create_time"/>
         <result property="projectTotal" column="project_total"/>
         <result property="annotationCategoryTotal" column="annotation_category_total"/>
+        <result property="speciesId" column="species_id"/>
+        <result property="organId" column="organ_id"/>
         <result property="updateBy" column="update_by"/>
         <result property="createBy" column="create_by"/>
         <result property="userId" column="user_id"/>
@@ -30,6 +32,8 @@
                i.create_time,
                i.project_total,
                i.annotation_category_total,
+               i.species_id,
+               i.organ_id,
                i.create_by,
                i.update_by,
                i.update_time,

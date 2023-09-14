@@ -7,9 +7,4 @@
         <result property="speciesId" column="species_id"/>
         <result property="name" column="name"/>
     </resultMap>
-
-    <!--    <sql id="selectList">
-            select key, value
-            from tb_species
-        </sql>-->
 </mapper>

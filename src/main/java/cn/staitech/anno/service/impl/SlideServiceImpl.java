@@ -388,25 +388,25 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper,Slide> implements 
         //（5）人工诊断：依据各分组内的切片列表后的状态对应显示
         //（6）当没有算法可以匹配的模型时，便只能人工诊断，此时前端显示参考（列表最后一行）
         list.forEach(vo->{
-            vo.addTask(ImmutableMap.of("code","1","name","待分析","isFinish","true","color","blue"));
+            vo.addTask(ImmutableMap.of("code","1","name","待分析","isFinish","true","Color","blue"));
             int aiAnalyzed = vo.getAiAnalyzed();
             if (aiAnalyzed == 1){
-                vo.addTask(ImmutableMap.of("code","2","name","AI分析中","isFinish","true","color","blue"));
-                vo.addTask(ImmutableMap.of("code","3","name","AI分析成功","isFinish","true","color","grey"));
+                vo.addTask(ImmutableMap.of("code","2","name","AI分析中","isFinish","true","Color","blue"));
+                vo.addTask(ImmutableMap.of("code","3","name","AI分析成功","isFinish","true","Color","grey"));
             }else if(aiAnalyzed == 2){
-                vo.addTask(ImmutableMap.of("code","2","name","AI分析中","isFinish","true","color","blue"));
-                vo.addTask(ImmutableMap.of("code","3","name","AI分析成功","isFinish","true","color","green"));
+                vo.addTask(ImmutableMap.of("code","2","name","AI分析中","isFinish","true","Color","blue"));
+                vo.addTask(ImmutableMap.of("code","3","name","AI分析成功","isFinish","true","Color","green"));
             }else if(aiAnalyzed == 3){
-                vo.addTask(ImmutableMap.of("code","2","name","AI分析中","isFinish","true","color","blue"));
-                vo.addTask(ImmutableMap.of("code","4","name","AI分析失败","isFinish","true","color","red"));
+                vo.addTask(ImmutableMap.of("code","2","name","AI分析中","isFinish","true","Color","blue"));
+                vo.addTask(ImmutableMap.of("code","4","name","AI分析失败","isFinish","true","Color","red"));
             }
             int diagnosis = vo.getDiagnosis();
             if (diagnosis == 1){
-                vo.addTask(ImmutableMap.of("code","5","name","已诊断","isFinish","true","color","yellow"));
+                vo.addTask(ImmutableMap.of("code","5","name","已诊断","isFinish","true","Color","yellow"));
             }else{
-                vo.addTask(ImmutableMap.of("code","2","name","AI分析中","isFinish","true","color","grey"));
-                vo.addTask(ImmutableMap.of("code","3","name","AI分析成功","isFinish","true","color","grey"));
-                vo.addTask(ImmutableMap.of("code","5","name","未诊断","isFinish","true","color","grey"));
+                vo.addTask(ImmutableMap.of("code","2","name","AI分析中","isFinish","true","Color","grey"));
+                vo.addTask(ImmutableMap.of("code","3","name","AI分析成功","isFinish","true","Color","grey"));
+                vo.addTask(ImmutableMap.of("code","5","name","未诊断","isFinish","true","Color","grey"));
             }
         });
         //构建分页对象

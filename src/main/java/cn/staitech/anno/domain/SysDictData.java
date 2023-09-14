@@ -87,7 +87,7 @@ public class SysDictData{
 	@ApiModelProperty(name = "filter" , value = "过滤条件")
 	private String filter;
     
-	@ApiModelProperty(name = "color" , value = "色值 如：rgba(217,128,95,1)")
+	@ApiModelProperty(name = "Color" , value = "色值 如：rgba(217,128,95,1)")
 	private String color;
 
 }

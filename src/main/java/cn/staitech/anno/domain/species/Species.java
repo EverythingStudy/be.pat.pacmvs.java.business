@@ -22,9 +22,9 @@ public class Species {
     /**
      * 种属key
      */
-    @TableId(value = "species_id", type = IdType.NONE)
+    @TableId(value = "species_id", type = IdType.AUTO)
     @ApiModelProperty(value = "种属ID", hidden = true)
-    private String speciesId;
+    private Integer speciesId;
 
     /**
      * 种属value

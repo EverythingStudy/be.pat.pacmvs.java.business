@@ -2,7 +2,6 @@ package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.species.Species;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
@@ -14,5 +13,5 @@ import java.util.Map;
  */
 public interface SpeciesService extends IService<Species> {
 
-    Map<String, String> selectMap();
+    Map<Integer, String> selectMap();
 }

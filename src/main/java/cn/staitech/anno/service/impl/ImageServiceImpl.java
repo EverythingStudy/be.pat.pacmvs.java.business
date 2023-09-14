@@ -111,16 +111,14 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                 }
 
                 // 匹配机构名称
-                out.setOrganizationName(map.get(in.getOrganizationId()).toString());
-
-                // 匹配轮次
-                if (bizType.equals(2)) {
-                    if (roundMap.size() > 0 && in.getRoundId() !=null &&  in.getRoundId() > 0) {
-                        System.out.println("-----------------------in.getRoundId() = " + in.getRoundId());
-                        out.setRoundName(roundMap.get(in.getRoundId()).toString());
-                    }
+                if (map.containsKey(in.getOrganizationId())) {
+                    out.setOrganizationName(map.get(in.getOrganizationId()).toString());
                 }
 
+                // 匹配轮次
+                if (bizType.equals(2) && roundMap.containsKey(in.getRoundId())) {
+                    out.setRoundName(roundMap.get(in.getRoundId()).toString());
+                }
                 respList.add(out);
             }
         }
