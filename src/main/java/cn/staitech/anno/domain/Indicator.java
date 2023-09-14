@@ -24,12 +24,9 @@ import java.util.Map;
 @TableName("tb_pathological_indicator")
 @Api(value = "病例指标", tags = "病例指标")
 public class Indicator extends BaseEntity {
-
-    private static final long serialVersionUID = 1L;
     @ApiModelProperty(hidden = true, value = "病例指标id")
     @TableId(value = "indicator_id", type = IdType.AUTO)
     private Integer indicatorId;
-
     @ApiModelProperty(value = "病例指标名称")
     private String indicatorName;
 
