@@ -50,21 +50,21 @@
             keyProperty="indicatorId">
         insert into tb_pathological_indicator(
         <if test="indicatorName != null and indicatorName != '' ">indicator_name,</if>
-        <if test="speciesId != null and speciesId != '' ">species_id,</if><!-- 种属编号 -->
-        <if test="organId != null and organId != '' ">organ_id,</if><!-- 脏器编号-->
+        <if test="speciesId != null">species_id,</if><!-- 种属编号 -->
+        <if test="organId != null">organ_id,</if><!-- 脏器编号-->
         <if test="createBy != null and createBy != ''">create_by,</if>
-        <if test="organizationId != null and organizationId != ''">organization_id,</if><!-- 机构编号-->
+        <if test="organizationId != null">organization_id,</if><!-- 机构编号-->
         number,
         create_time,
         project_total,
         annotation_category_total
         )values (
         <if test="indicatorName != null and indicatorName != ''">#{indicatorName},</if>
-        <if test="speciesId != null and speciesId != '' ">#{speciesId},</if><!-- 种属编号 -->
-        <if test="organId != null and organId != '' ">#{organId},</if><!-- 脏器编号-->
+        <if test="speciesId != null">#{speciesId},</if><!-- 种属编号 -->
+        <if test="organId != null">#{organId},</if><!-- 脏器编号-->
         <if test="createBy != null and createBy != ''">#{createBy},</if>
         <if test="number != null and number != ''">#{number},</if>
-        <if test="organizationId != null and organizationId != ''">#{organizationId},</if><!-- 机构编号-->
+        <if test="organizationId != null">#{organizationId},</if><!-- 机构编号-->
         sysdate(),
         0,
         0
