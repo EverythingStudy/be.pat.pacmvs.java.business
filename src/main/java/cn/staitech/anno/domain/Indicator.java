@@ -77,7 +77,6 @@ public class Indicator extends BaseEntity {
     @ApiModelProperty(hidden = true, value = "搜索值")
     @TableField(exist = false)
     private String searchValue;
-
     @ApiModelProperty(value = "病例指标编号")
     private String number;
     @ApiModelProperty(hidden = true, value = "删除状态")
