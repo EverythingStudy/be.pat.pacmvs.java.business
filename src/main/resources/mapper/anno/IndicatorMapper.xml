@@ -50,7 +50,7 @@
             keyProperty="indicatorId">
         insert into tb_pathological_indicator(
         <if test="indicatorName != null and indicatorName != '' ">indicator_name,</if>
-        <if test="speciesId != null and speciesId != '' ">species_d,</if><!-- 种属编号 -->
+        <if test="speciesId != null and speciesId != '' ">species_id,</if><!-- 种属编号 -->
         <if test="organId != null and organId != '' ">organ_id,</if><!-- 脏器编号-->
         <if test="createBy != null and createBy != ''">create_by,</if>
         <if test="organizationId != null and organizationId != ''">organization_id,</if><!-- 机构编号-->
