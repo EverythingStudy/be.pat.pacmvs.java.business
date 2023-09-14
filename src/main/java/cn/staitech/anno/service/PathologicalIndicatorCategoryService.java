@@ -15,7 +15,7 @@ public interface PathologicalIndicatorCategoryService {
      * @param Pathological 标签ID
      * @return 标签信息
      */
-    String insertSelective(PathologicalIndicatorCategory Pathological);
+    int insertSelective(PathologicalIndicatorCategory Pathological);
 
     /**
      * 修改标签信息

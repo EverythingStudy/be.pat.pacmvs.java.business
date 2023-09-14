@@ -4,8 +4,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
+/**
+ * @author wangf
+ */
 @Data
 public class LabelListVO {
 
@@ -14,9 +18,18 @@ public class LabelListVO {
 
     @ApiModelProperty(required = true, value = "病理指标id")
     private Long indicatorId;
-
-    @ApiModelProperty(value = "颜色值")
+    @ApiModelProperty(required = true, value = "结构ID")
+    private String structureId;
+    @NotBlank(message = "颜色名称备用")
     private String color;
+    @NotBlank(message = "颜色值不可为空")
+    private String rgb;
+
+    @ApiModelProperty(required = true, value = "颜色值HEX")
+    private String hex;
+
+    @ApiModelProperty(hidden = true, value = "机构ID")
+    private Long organizationId;
 
     @ApiModelProperty(value = "创建者id")
     private Long createBy;

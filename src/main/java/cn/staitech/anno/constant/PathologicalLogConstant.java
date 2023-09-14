@@ -23,7 +23,7 @@ public class PathologicalLogConstant {
 
     public static final String USED = "当前标签正在被使用中，禁止删除";
 
-    public static final String INDICATOR_ABSENT = "indicatorId不存在";
+    public static final String INDICATOR_ABSENT = "结构指标不存在";
 
 
     

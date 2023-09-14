@@ -465,7 +465,7 @@ public class ViewerController {
             //根据标注id获取标注类别详情
             PathologicalIndicatorCategory categoryBy = pathologicalIndicatorCategoryService.selectByPrimaryKey(req.getCategory_id());
             if (categoryBy != null) {
-                label_color = categoryBy.getColor();
+                label_color = categoryBy.getHex();
                 label_name = categoryBy.getCategoryName();
                 measure_full_name += label_name;
             }
@@ -603,7 +603,7 @@ public class ViewerController {
             //根据标注id获取标注类别详情
             PathologicalIndicatorCategory categoryBy = pathologicalIndicatorCategoryService.selectByPrimaryKey(markingBy.getCategory_id());
             if (categoryBy != null) {
-                label_color = categoryBy.getColor();
+                label_color = categoryBy.getHex();
                 label_name = categoryBy.getCategoryName();
             }
         }
@@ -715,7 +715,7 @@ public class ViewerController {
         PathologicalIndicatorCategory categoryBy1 = pathologicalIndicatorCategoryService.selectByPrimaryKey(markingBy.getCategory_id());
         String label_color = null;
         if (categoryBy1 != null) {
-            label_color = categoryBy1.getColor();
+            label_color = categoryBy1.getHex();
         }
         String label_name = null;
         if (req.getCategory_id() != null) {
@@ -728,7 +728,7 @@ public class ViewerController {
                 }
             }
             if (categoryBy != null) {
-                label_color = categoryBy.getColor();
+                label_color = categoryBy.getHex();
                 label_name = categoryBy.getCategoryName();
                 String res1 = String.valueOf(measureFullName.charAt(measureFullName.length() - 1));
                 if (res1.equals("_")) {

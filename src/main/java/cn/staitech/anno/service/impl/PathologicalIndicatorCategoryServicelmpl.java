@@ -8,6 +8,8 @@ import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListOutVO;
 import cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
+import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.domain.SysUser;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -22,22 +24,21 @@ public class PathologicalIndicatorCategoryServicelmpl implements PathologicalInd
      * 添加标签
      */
     @Override
-    public String insertSelective(PathologicalIndicatorCategory Pathological) {
-
-        // 判断执行sql时true或者false
-        if (pathologicalIndicatorCategoryMapper.insertSelective(Pathological) > 0) {
-            return "添加成功";
-        } else {
-            return "添加失败";
-        }
+    public int insertSelective(PathologicalIndicatorCategory pathologicalIndicatorCategory) {
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+        pathologicalIndicatorCategory.setCreateBy(sysUser.getUserId());
+        pathologicalIndicatorCategory.setUpdateBy(sysUser.getUserId());
+        pathologicalIndicatorCategory.setOrganizationId(sysUser.getOrganizationId());
+        pathologicalIndicatorCategory.setCreateBy(SecurityUtils.getUserId());
+        return pathologicalIndicatorCategoryMapper.insertSelective(pathologicalIndicatorCategory);
     }
 
     /**
      * 修改标签
      */
     @Override
-    public String updateByPrimaryKeySelective(PathologicalIndicatorCategory Pathological) {
-        if (pathologicalIndicatorCategoryMapper.updateByPrimaryKeySelective(Pathological) > 0) {
+    public String updateByPrimaryKeySelective(PathologicalIndicatorCategory indicator) {
+        if (pathologicalIndicatorCategoryMapper.updateByPrimaryKeySelective(indicator) > 0) {
             return "修改成功";
         } else {
             return "该标签不存在";
@@ -156,17 +157,17 @@ public class PathologicalIndicatorCategoryServicelmpl implements PathologicalInd
 
     /**
      * 根据indicatorId查询标注类别（不包含unLabel）
-     * */
+     */
     @Override
-    public List<LabelListVO> selectByIndicator(LabelVO labelVO){
+    public List<LabelListVO> selectByIndicator(LabelVO labelVO) {
         return pathologicalIndicatorCategoryMapper.selectByIndicator(labelVO);
     }
 
     /**
      * 查询标签在标注中的使用数量
-     * */
+     */
     @Override
-    public Integer selectLabelNum(Long categoryId){
+    public Integer selectLabelNum(Long categoryId) {
         return pathologicalIndicatorCategoryMapper.selectLabelNum(categoryId);
     }
 }

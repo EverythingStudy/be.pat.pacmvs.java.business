@@ -7,6 +7,7 @@ import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.vo.*;
 import cn.staitech.anno.service.IndicatorService;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
+import cn.staitech.anno.service.StructureService;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.log.annotation.Log;
@@ -26,14 +27,14 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * @author zmj .
- * @Date 2023/5/30 16:42
+ * @author wangfeng .
+ * @Date 2023/9/14 17:28
  * @desc 配置标签
  */
 @Slf4j
 @Api(tags = "标签接口")
 @RestController
-@RequestMapping("category")
+@RequestMapping("/category")
 public class PathologicalController {
     @Resource
     private PathologicalIndicatorCategoryService pathologicalIndicatorCategoryService;
@@ -41,50 +42,59 @@ public class PathologicalController {
     @Resource
     private IndicatorService indicatorService;
 
+    @Resource
+    private StructureService structureService;
+
     /**
      * 配置标签-新增标签.
+     * 新增标签接口：[POST]	/anno/category/add
+     * 5个参数
+     * 结构编号	structureId
+     * RGB	rgb
+     * HEX	hex
+     * 图层顺序 orderNumber
+     * 结构指标ID	indicatorId
      */
-    @ApiOperation(value = "标签添加接口",notes ="ZMJ")
+    @ApiOperation(value = "标签添加接口", notes = "ZMJ")
     @RequiresPermissions("special:pathology:tabadd")
     @Log(title = "配置标签-新增标签", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.INSERT)
     @PostMapping("/add")
-    public R<String> add(@Validated @RequestBody PathologicalIndicatorCategoryVO annotationCategory) {
-        Indicator indicator=indicatorService.selectIndicatorsById(annotationCategory.getIndicatorId());
-        if (indicator==null){
+    public R<String> add(@Validated @RequestBody PathologicalIndicatorCategoryVO vo) {
+        // 查询Indicator信息
+        Indicator indicator = indicatorService.selectIndicatorsById(vo.getIndicatorId());
+        if (indicator == null) {
             return R.fail(PathologicalLogConstant.INDICATOR_ABSENT);
         }
-        PathologicalIndicatorCategory category=new PathologicalIndicatorCategory();
-        BeanUtils.copyProperties(annotationCategory,category);
-        String checkCategory=checkCategory(category);
-        if (!checkCategory.equals("1")){
+
+        PathologicalIndicatorCategory category = new PathologicalIndicatorCategory();
+        BeanUtils.copyProperties(vo, category);
+
+        // 验证标签名称、颜色、图层顺序、是否存在、是否关联切片2.0
+        String checkCategory = checkCategory(category);
+        if (!checkCategory.equals("1")) {
             return R.fail(checkCategory);
         }
-        annotationCategory.setCreateBy(SecurityUtils.getUserId());
-        PathologicalIndicatorCategory pathologicalIndicatorCategory = new PathologicalIndicatorCategory();
-        BeanUtils.copyProperties(annotationCategory, pathologicalIndicatorCategory);
-        //查询标签数量
-        Integer categoryNumber=pathologicalIndicatorCategoryService.selectCategoryNumber(annotationCategory.getIndicatorId());
-        String number;
-        if(categoryNumber<10){
-            number="L0"+(categoryNumber+1);
-            pathologicalIndicatorCategory.setNumber(number);
-        }else{
-            number="L"+(categoryNumber+1);
-            pathologicalIndicatorCategory.setNumber(number);
-        }
-        //添加标注类别
-        pathologicalIndicatorCategoryService.insertSelective(pathologicalIndicatorCategory);
-        IndicatorReviseVO indicatorReviseVO =IndicatorReviseVO.builder().indicatorId(annotationCategory.getIndicatorId().intValue()).build();
-        //更新病理表数据
+
+        // 获取structureName
+        String structureName = structureService.getById(vo.getStructureId()).getName();
+        // 生成categoryName
+        String categoryName = indicator.getIndicatorName() + structureName;
+        category.setCategoryName(categoryName);
+        // 生成完整编码
+        category.setNumber(indicator.getNumber() + "" + vo.getStructureId());
+        // 添加标注类别
+        pathologicalIndicatorCategoryService.insertSelective(category);
+        IndicatorReviseVO indicatorReviseVO = IndicatorReviseVO.builder().indicatorId(vo.getIndicatorId().intValue()).build();
+        // 更新病理表数据
         indicatorService.updateIndicator(indicatorReviseVO);
-        return R.ok(null,ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(ResponseConstant.OPERATE_SUCCEED);
     }
 
 
     /**
      * 配置标签-标签列表 .
      */
-    @ApiOperation(value = "获取标注类别列表接口",notes ="ZMJ")
+    @ApiOperation(value = "获取标注类别列表接口", notes = "ZMJ")
     @RequiresPermissions("special:pathology:tablist")
     @Log(title = "配置标签-标签列表", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.QUERY)
     @PostMapping("/all")
@@ -97,12 +107,10 @@ public class PathologicalController {
     }
 
 
-
-
     /**
      * 标签详细 .
      */
-    @ApiOperation(value = "获取标签详情接口",notes ="ZMJ")
+    @ApiOperation(value = "获取标签详情接口", notes = "ZMJ")
     @GetMapping(value = "/details")
     public R<PathologicalIndicatorCategory> getInfo(
             @RequestParam @ApiParam(name = "categoryId", value = "标注类别id", required = true) Long categoryId) {
@@ -115,7 +123,7 @@ public class PathologicalController {
     /**
      * 配置标签-编辑 .
      */
-    @ApiOperation(value = "标注类别修改接口",notes ="ZMJ")
+    @ApiOperation(value = "标注类别修改接口", notes = "ZMJ")
     @RequiresPermissions("special:pathology:tabedit")
     @Log(title = "配置标签-编辑", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.UPDATE)
     @PutMapping("/edit")
@@ -123,67 +131,67 @@ public class PathologicalController {
         if (annotationCategory.getCategoryId() == null || annotationCategory.getIndicatorId() == null) {
             return R.fail(PathologicalLogConstant.MISSING_REQUIRED_VALUE);
         }
-        String checkCategory=checkCategory(annotationCategory);
-        if (!checkCategory.equals("1")){
+        String checkCategory = checkCategory(annotationCategory);
+        if (!checkCategory.equals("1")) {
             return R.fail(checkCategory);
         }
         annotationCategory.setUpdateBy(SecurityUtils.getUserId());
         //修改标注类别信息
         pathologicalIndicatorCategoryService.updateByPrimaryKeySelective(annotationCategory);
-        return R.ok(null,ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null, ResponseConstant.OPERATE_SUCCEED);
     }
 
     /**
      * 配置标签-删除 .
      */
-    @ApiOperation(value = "标签删除接口",notes ="ZMJ")
+    @ApiOperation(value = "标签删除接口", notes = "ZMJ")
     @RequiresPermissions("special:pathology:tabremove")
     @Log(title = "配置标签-删除", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.DELETE)
     @PostMapping("/del")
     public R<String> del(@RequestBody CategoryVO categoryVO) {
         //查询标注是否关联标签
-        Integer num= pathologicalIndicatorCategoryService.selectLabelNum(categoryVO.getCategoryId());
-        if(0<num){
+        Integer num = pathologicalIndicatorCategoryService.selectLabelNum(categoryVO.getCategoryId());
+        if (0 < num) {
             return R.fail(PathologicalLogConstant.USED);
         }
         //查询标签数据
         PathologicalIndicatorCategory category = pathologicalIndicatorCategoryService.selectCategoryAll(categoryVO.getCategoryId());
-        PathologicalIndicatorCategory Pathological=PathologicalIndicatorCategory.builder().categoryId(categoryVO.getCategoryId()).delFlag(1).build();
+        PathologicalIndicatorCategory Pathological = PathologicalIndicatorCategory.builder().categoryId(categoryVO.getCategoryId()).delFlag(1).build();
         //删除标注类别
         pathologicalIndicatorCategoryService.updateByPrimaryKeySelective(Pathological);
-        IndicatorReviseVO indicatorReviseVO =IndicatorReviseVO.builder().indicatorId(category.getIndicatorId().intValue()).build();
+        IndicatorReviseVO indicatorReviseVO = IndicatorReviseVO.builder().indicatorId(category.getIndicatorId().intValue()).build();
         //更新病理表数据
         indicatorService.updateIndicator(indicatorReviseVO);
-        return R.ok(null,ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null, ResponseConstant.OPERATE_SUCCEED);
     }
 
 
     /**
      * 验证标签名称、颜色、图层顺序、是否存在、是否关联切片2.0
-     * */
-    public String checkCategory(PathologicalIndicatorCategory annotationCategory){
-        PathologicalIndicatorCategory category =PathologicalIndicatorCategory.builder().categoryId(annotationCategory.getCategoryId())
+     */
+    public String checkCategory(PathologicalIndicatorCategory annotationCategory) {
+        PathologicalIndicatorCategory category = PathologicalIndicatorCategory.builder().categoryId(annotationCategory.getCategoryId())
                 .categoryName(annotationCategory.getCategoryName()).indicatorId(annotationCategory.getIndicatorId()).build();
         //获取病理下的标注类别名称是否存在
         List<PathologicalIndicatorCategory> categoryList = pathologicalIndicatorCategoryService.selectIndicatorMessage(
                 category);
         category.setCategoryName(null);
-        category.setColor(annotationCategory.getColor());
+        category.setHex(annotationCategory.getHex());
         //查询病理下的标注类别颜色是否存在
         List<PathologicalIndicatorCategory> categories = pathologicalIndicatorCategoryService.selectIndicatorMessage(
                 category);
-        category.setColor(null);
+        category.setHex(null);
         category.setOrderNumber(annotationCategory.getOrderNumber());
         //查询图层顺序是否已存在
         List<PathologicalIndicatorCategory> orderNumber = pathologicalIndicatorCategoryService.selectIndicatorMessage(
                 category);
-            if(!categoryList.isEmpty()) {
+        if (!categoryList.isEmpty()) {
             return PathologicalLogConstant.CATEGORY_NAME_EXIST;
         } else if (!categories.isEmpty()) {
             return PathologicalLogConstant.COLOR_NAME_EXIST;
-        } else if(!orderNumber.isEmpty()) {
+        } else if (!orderNumber.isEmpty()) {
             return PathologicalLogConstant.LAYER_ALREADY_EXISTS;
-        }else{
+        } else {
             return PathologicalLogConstant.ONE;
         }
     }

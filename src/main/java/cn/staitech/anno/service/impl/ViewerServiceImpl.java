@@ -98,7 +98,7 @@ public class ViewerServiceImpl implements ViewerService {
             //根据标注id获取标注类别详情
             PathologicalIndicatorCategory categoryBy = pathologicalIndicatorCategoryMapper.selectByPrimaryKey(req.getCategory_id());
             if (categoryBy != null) {
-                properties.setLabel_color(categoryBy.getColor());
+                properties.setLabel_color(categoryBy.getHex());
                 properties.setLabel_name(categoryBy.getCategoryName());
                 measure_full_name += categoryBy.getCategoryName();
             }
@@ -138,7 +138,7 @@ public class ViewerServiceImpl implements ViewerService {
             //根据标注id获取标注类别详情
             PathologicalIndicatorCategory categoryBy = pathologicalIndicatorCategoryMapper.selectByPrimaryKey(req.getCategory_id());
             if (categoryBy != null) {
-                properties.setLabel_color(categoryBy.getColor());
+                properties.setLabel_color(categoryBy.getHex());
                 properties.setLabel_name(categoryBy.getCategoryName());
                 String res1 = String.valueOf(measureFullName.charAt(measureFullName.length() - 1));
                 if (res1.equals("_")) {

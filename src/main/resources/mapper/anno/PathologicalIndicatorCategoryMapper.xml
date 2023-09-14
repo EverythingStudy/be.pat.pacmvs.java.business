@@ -95,8 +95,17 @@
             <if test="indicatorId != null">
                 indicator_id,
             </if>
-            <if test="color != null">
-                color,
+            <if test="structureId != null">
+                structure_id,
+            </if>
+            <if test="rgb != null">
+                rgb,
+            </if>
+            <if test="hex != null">
+                hex,
+            </if>
+            <if test="organizationId != null">
+                organization_id,
             </if>
             <if test="createBy != null">
                 create_by,
@@ -122,8 +131,17 @@
             <if test="indicatorId != null">
                 #{indicatorId,jdbcType=BIGINT},
             </if>
-            <if test="color != null">
-                #{color,jdbcType=VARCHAR},
+            <if test="structureId != null">
+                #{structureId,jdbcType=VARCHAR},
+            </if>
+            <if test="rgb != null">
+                #{rgb,jdbcType=VARCHAR},
+            </if>
+            <if test="hex != null">
+                #{hex,jdbcType=VARCHAR},
+            </if>
+            <if test="organizationId != null">
+                #{organizationId,jdbcType=BIGINT},
             </if>
             <if test="createBy != null">
                 #{createBy,jdbcType=BIGINT},
