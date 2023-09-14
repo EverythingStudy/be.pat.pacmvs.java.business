@@ -2,6 +2,7 @@ package cn.staitech.anno.domain;
 
 import cn.staitech.common.core.web.domain.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -25,7 +26,6 @@ import java.util.Map;
 public class Indicator extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
-
     @ApiModelProperty(hidden = true, value = "病例指标id")
     @TableId(value = "indicator_id", type = IdType.AUTO)
     private Integer indicatorId;
@@ -48,6 +48,16 @@ public class Indicator extends BaseEntity {
     @ApiModelProperty(hidden = true, value = "用户id")
     private Long userId;
 
+    @ApiModelProperty(hidden = true, value = "种属ID")
+    private Integer speciesId;
+    @ApiModelProperty(hidden = true, value = "种属名称")
+    @TableField(exist = false)
+    private String speciesName;
+    @ApiModelProperty(hidden = true, value = "脏器ID")
+    private String organId;
+    @ApiModelProperty(hidden = true, value = "脏器名称")
+    @TableField(exist = false)
+    private String organName;
     @ApiModelProperty(hidden = true, value = "更新者")
     private Long updateBy;
 
@@ -60,12 +70,14 @@ public class Indicator extends BaseEntity {
     private Date createTime;
 
     @ApiModelProperty(value = "请求参数")
+    @TableField(exist = false)
     private Map<String, Object> params;
 
     @ApiModelProperty(hidden = true, value = "备注")
     private String remark;
 
     @ApiModelProperty(hidden = true, value = "搜索值")
+    @TableField(exist = false)
     private String searchValue;
 
     @ApiModelProperty(value = "病例指标编号")
@@ -73,5 +85,4 @@ public class Indicator extends BaseEntity {
 
     @ApiModelProperty(hidden = true, value = "删除状态")
     private Integer delFlag;
-
 }

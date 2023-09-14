@@ -380,5 +380,16 @@
                 <serverAddr>192.168.52.108:8848</serverAddr>
             </properties>
         </profile>
+        <profile>
+            <!--108线开发环境3-->
+            <id>patsaasdev3</id>
+            <properties>
+                <activatedProperties>patsaasdev3</activatedProperties>
+                <nacosNamespace>d46e90a7-0f09-4c81-80b8-9b7a37ea5dd0</nacosNamespace>
+                <nacosAddress>http://192.168.52.108:8848</nacosAddress>
+                <nacosGroup>DEFAULT_GROUP</nacosGroup>
+                <serverAddr>192.168.52.108:8848</serverAddr>
+            </properties>
+        </profile>
     </profiles>
 </project>

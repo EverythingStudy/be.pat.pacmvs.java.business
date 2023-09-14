@@ -1,24 +1,34 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.Indicator;
-import cn.staitech.anno.domain.vo.*;
+import cn.staitech.anno.domain.vo.IndicatorGetVO;
+import cn.staitech.anno.domain.vo.IndicatorReviseVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticIndicatorListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticIndicatorListOutVO;
 import cn.staitech.anno.mapper.IndicatorMapper;
 import cn.staitech.anno.service.IndicatorService;
+import cn.staitech.anno.service.OrganService;
+import cn.staitech.anno.service.SpeciesService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
+@Slf4j
 @Service
 public class IndicatorServicelmpl implements IndicatorService {
-    
+
     @Resource
     private IndicatorMapper indicatorMapper;
 
-    
-    
+    @Resource
+    private SpeciesService speciesService;
+
+    @Resource
+    private OrganService organService;
+
     /**
      * 添加病例指标
      *
@@ -29,7 +39,7 @@ public class IndicatorServicelmpl implements IndicatorService {
     public int insertIndicator(Indicator indicator) {
         return indicatorMapper.insertIndicator(indicator);
     }
-    
+
     /**
      * 展示病例指标
      *
@@ -38,9 +48,23 @@ public class IndicatorServicelmpl implements IndicatorService {
      */
     @Override
     public List<Indicator> selectIndicatorList(Indicator indicator) {
-        return indicatorMapper.selectIndicatorList(indicator);
+        // 种属
+        Map<Integer, String> sepeciesMap = speciesService.selectMap();
+        // 脏器
+        Map<String, String> organMap = organService.selectMap();
+
+        List<Indicator> list = indicatorMapper.selectIndicatorList(indicator);
+        for (Indicator obj : list) {
+            if (sepeciesMap.containsKey(obj.getSpeciesId())) {
+                obj.setSpeciesName(sepeciesMap.get(obj.getSpeciesId()));
+            }
+            if (organMap.containsKey(obj.getOrganId())) {
+                obj.setOrganName(organMap.get(obj.getOrganId()));
+            }
+        }
+        return list;
     }
-    
+
     /**
      * 展示病例指标详情
      *
@@ -49,8 +73,9 @@ public class IndicatorServicelmpl implements IndicatorService {
      */
     @Override
     public Indicator selectIndicatorsById(Long indicatorId) {
-        return indicatorMapper.selectIndicatorById(indicatorId);}
-    
+        return indicatorMapper.selectIndicatorById(indicatorId);
+    }
+
     /**
      * 修改
      *
@@ -61,7 +86,7 @@ public class IndicatorServicelmpl implements IndicatorService {
     public int updateIndicator(IndicatorReviseVO indicator) {
         return indicatorMapper.updateIndicator(indicator);
     }
-    
+
     /**
      * 删除
      *
@@ -72,7 +97,7 @@ public class IndicatorServicelmpl implements IndicatorService {
     public int delIndicator(Long indicatorId) {
         return indicatorMapper.delIndicator(indicatorId);
     }
-    
+
     /**
      * 展示指定的统计病例指标列表
      *
@@ -81,11 +106,11 @@ public class IndicatorServicelmpl implements IndicatorService {
      */
     @Override
     public List<StatisticIndicatorListOutVO> selectIndicatorStatisticList(StatisticIndicatorListInVO projectIdList) {
-        
+
         return indicatorMapper.selectIndicatorStatisticList(projectIdList);
     }
-    
-    
+
+
     /**
      * 查询指标列表
      *
@@ -96,7 +121,7 @@ public class IndicatorServicelmpl implements IndicatorService {
     public List<Indicator> selectIndicatorInformation() {
         return indicatorMapper.selectIndicatorInformation();
     }
-    
+
     /**
      * 查询指标列表
      *
@@ -107,7 +132,7 @@ public class IndicatorServicelmpl implements IndicatorService {
     public List<Indicator> selectIndicator(Indicator indicator) {
         return indicatorMapper.selectIndicator(indicator);
     }
-    
+
     /**
      * 根据病理id和名字查询信息
      *
@@ -121,17 +146,17 @@ public class IndicatorServicelmpl implements IndicatorService {
 
     /**
      * 查询所有的病理数量
-     * */
+     */
     @Override
-    public Integer selectIndicatorNum(){
+    public Integer selectIndicatorNum() {
         return indicatorMapper.selectIndicatorNum();
     }
 
     /**
      * 查询专题数量
-     * */
+     */
     @Override
-    public Integer selectSpecial(Long indicatorId){
+    public Integer selectSpecial(Long indicatorId) {
         return indicatorMapper.selectSpecial(indicatorId);
     }
 

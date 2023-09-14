@@ -38,7 +38,7 @@ public class SpeciesController extends BaseController {
     // @RequiresPermissions("anno:round:list")
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "种属列表", notes = "种属列表 - 王峰")
-    // @Log(title = "种属列表", menu = "种属", subMenu = "种属列表", businessType = BusinessType.QUERY)
+    @Log(title = "种属列表", menu = "种属", subMenu = "种属列表", businessType = BusinessType.QUERY)
     @GetMapping("/list")
     public R<List<Species>> list() throws ExecutionException, InterruptedException {
         List<Species> list = speciesService.list();
