@@ -23,14 +23,8 @@ public class RecentlyVisited {
     @ApiModelProperty(value = "项目id")
     private Long projectId;
 
-    @ApiModelProperty(value = "专题id")
-    private Long specialId;
-
     @ApiModelProperty(value = "项目名称")
     private String projectName;
-
-    @ApiModelProperty(value = "专题名称")
-    private String specialName;
 
     @ApiModelProperty(value = "图像名称")
     private String imageName;
@@ -45,9 +39,6 @@ public class RecentlyVisited {
     @ApiModelProperty(value = "更新时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private String updateTime;
-
-    @ApiModelProperty(value = "分组id")
-    private Long groupId;
 
 
 }

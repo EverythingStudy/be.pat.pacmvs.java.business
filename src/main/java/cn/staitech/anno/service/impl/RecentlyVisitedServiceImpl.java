@@ -55,7 +55,6 @@ public class RecentlyVisitedServiceImpl implements RecentlyVisitedService {
                 ImageVisited imageVisited = new ImageVisited();
                 imageVisited.setImageName(recentlyVisited2.getImageName());
                 imageVisited.setThumbUrl(recentlyVisited2.getThumbUrl());
-                imageVisited.setGroupId(recentlyVisited2.getGroupId());
                 imageVisited.setSlideId(recentlyVisited2.getSlideId());
                 imageVisited.setCreateTime(recentlyVisited2.getCreateTime());
                 imageVisitedList.add(imageVisited);
@@ -63,8 +62,6 @@ public class RecentlyVisitedServiceImpl implements RecentlyVisitedService {
             recentlyVisitedSelectVO.setRecentlyVisitedId(recentlyVisited1.getRecentlyVisitedId());
             recentlyVisitedSelectVO.setProjectName(recentlyVisited1.getProjectName());
             recentlyVisitedSelectVO.setProjectId(recentlyVisited1.getProjectId());
-            recentlyVisitedSelectVO.setSpecialId(recentlyVisited1.getSpecialId());
-            recentlyVisitedSelectVO.setSpecialName(recentlyVisited1.getSpecialName());
             recentlyVisitedSelectVO.setVisitTime(recentlyVisited1.getUpdateTime());
             recentlyVisitedSelectVO.setImageVisited(imageVisitedList);
             recentlyVisitedSelectVO.setUserId(recentlyVisited1.getUserId());
@@ -77,42 +74,32 @@ public class RecentlyVisitedServiceImpl implements RecentlyVisitedService {
 
     @Override
     public String selectBy(Long slideId) {
-        // 根据切片构建信息
+        // 根据切片查询项目、图片、切片信息
         RecentlyVisited req = recentlyVisitedMapper.selectBy(slideId);
         long userId = SecurityUtils.getUserId();
-        // 添加时间根据用户id项目id和专题id查询表中
         RecentlyVisited recentlyVisited = new RecentlyVisited();
         recentlyVisited.setUserId(userId);
         recentlyVisited.setProjectId(req.getProjectId());
-        recentlyVisited.setSpecialId(req.getSpecialId());
-        //如果结果数量小于3  直接添加
-        List<RecentlyVisited> recentlyVisiteds = recentlyVisitedMapper.selectList(recentlyVisited);
+        // 添加时间根据用户id项目id和专题id查询表中 ，如果结果数量小于3  直接添加
+        List<RecentlyVisited> recentlyVisitedLIst = recentlyVisitedMapper.selectList(recentlyVisited);
         // 添加时将该专题下的更新时间清空
         recentlyVisited.setSlideId(slideId);
         recentlyVisitedMapper.updateTime(recentlyVisited);
+        // 根据用户项目切片查询记录
         RecentlyVisited recentlyVisitedQuery = recentlyVisitedMapper.selectQueryBy(recentlyVisited);
         // 判断数据是否存在
         if (recentlyVisitedQuery != null) {
-            // 更新创建和更新时间
+            // 如果存在,更新创建和更新时间即可
             recentlyVisitedMapper.update(recentlyVisitedQuery.getRecentlyVisitedId());
         } else {
-            // 如果存在，查询出时间最小的那条数据进行更新
-            if (recentlyVisiteds.size() > 2) {
-                // 删除时间最小的
+            // 如果不存在
+            if (recentlyVisitedLIst.size() > 3) {
+                // 根据项目和用户为条件删除时间最早的一条数据
                 recentlyVisitedMapper.deleteMinCreateTime(recentlyVisited);
             }
             // 添加数据
             req.setUserId(userId);
             recentlyVisitedMapper.insert(req);
-        }
-        // 添加之后根据用户和专题查询 如果大于十条，根据专题删除 信息
-        List<RecentlyVisited> recentlyVisitedList = recentlyVisitedMapper.selectSpecial(recentlyVisited);
-        if (recentlyVisitedList.size() > 10) {
-            // 找出时间最小的一条数据
-            RecentlyVisited recentlyVisited1 = recentlyVisitedList.stream().min(Comparator.comparing(RecentlyVisited::getUpdateTime)).get();
-            recentlyVisited.setProjectId(recentlyVisited1.getProjectId());
-            recentlyVisited.setUserId(userId);
-            recentlyVisitedMapper.deleteMinCreateTime(recentlyVisited);
         }
         return "ok";
     }

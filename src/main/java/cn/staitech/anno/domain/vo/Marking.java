@@ -1,6 +1,5 @@
-package cn.staitech.anno.domain.marking;
+package cn.staitech.anno.domain.vo;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.Data;
@@ -8,12 +7,11 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 /**
  * <p>
- *
+ * 
  * </p>
  *
  * @author gjt
@@ -31,12 +29,12 @@ public class Marking implements Serializable {
      * 主键自增id
      */
     @TableId(value = "marking_id", type = IdType.AUTO)
-    private Long marking_id;
+    private Long markingId;
 
     /**
      * 标注id
      */
-    private String annotation_id;
+    private String annotationId;
 
     /**
      * 面积
@@ -56,32 +54,32 @@ public class Marking implements Serializable {
     /**
      * 标签id
      */
-    private Long category_id;
+    private Integer categoryId;
 
     /**
      * 不同标注标注序号
      */
-    private Integer number;
+    private Long number;
 
     /**
      * 测量轮廓类型(0:正常,表示有关系,默认为0")
      */
-    private Integer measure_type;
+    private Integer measureType;
 
     /**
      * 测量关系
      */
-    private String measure_relation;
+    private String measureRelation;
 
     /**
      * 测量轮廓表示名称:L
      */
-    private String measure_name;
+    private String measureName;
 
     /**
      * 测量轮廓标识：1
      */
-    private Integer measure_number;
+    private Integer measureNumber;
 
     /**
      * 周长（圆）
@@ -91,80 +89,69 @@ public class Marking implements Serializable {
     /**
      * 平均间距
      */
-    private Double mean_distance;
+    private Double meanDistance;
 
     /**
      * 最大间距
      */
-    private Double max_distance;
+    private Double maxDistance;
 
     /**
      * 最小间距
      */
-    private Double min_distance;
+    private Double minDistance;
 
     /**
      * 内角
      */
-    private String inner_angle;
+    private String innerAngle;
 
     /**
      * 外角
      */
-    private String exterior_angle;
+    private String exteriorAngle;
 
     /**
      * 创建者
      */
-    private Long create_by;
+    private Integer createBy;
 
     /**
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)
-    private Date create_time;
+    private Date createTime;
 
     /**
      * 标注类型(AI表示AI算出的标注，Draw表示前端绘制的标注，Measure表示测量工具数据)
      */
-    private String annotation_type;
+    private String annotationType;
 
     /**
      * 标注数据类型(LineString,Polygon,point,pc,p,L)
      */
-    private String location_type;
+    private String locationType;
 
     /**
      * 切片id
      */
-    private Long slide_id;
+    private Integer slideId;
 
     /**
      * 中心
      */
-    private String center_point;
+    private String centerPoint;
 
     /**
      * 不同标签点的总数
      */
-    private Long point_count;
+    private Integer pointCount;
 
     /**
      * 标注数据
      */
     @TableField(typeHandler = JacksonTypeHandler.class)
-    private JSONObject geometry;
-
-    /**
-     * 更新者
-     */
-    private Long update_by;
-
-    /**
-     * 更新时间
-     */
-    @TableField(fill = FieldFill.INSERT)
-    private Date update_time;
+    private Object geometry;
 
 
 }

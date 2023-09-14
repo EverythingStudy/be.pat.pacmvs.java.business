@@ -36,17 +36,13 @@
 
     <sql id="selectBy">
         SELECT s.slide_id,
-               s.group_id,
                i.image_name,
                i.thumb_url,
                p.project_id,
                p.project_name,
-               sp.special_id,
-               sp.special_name
         FROM tb_slide AS s
-                 LEFT JOIN tb_sub_image AS i ON s.image_id = i.image_id
+                 LEFT JOIN tb_image AS i ON s.image_id = i.image_id
                  LEFT JOIN tb_project AS p ON p.project_id = s.project_id
-                 LEFT JOIN tb_special AS sp ON sp.special_id = p.special_id
     </sql>
 
 
@@ -61,9 +57,6 @@
         </if>
         <if test="projectId != null">
             AND project_id = #{projectId}
-        </if>
-        <if test="specialId != null">
-            AND special_id = #{specialId}
         </if>
         order by create_time desc
     </select>
@@ -85,9 +78,6 @@
         </if>
         <if test="projectId != null">
             AND project_id = #{projectId}
-        </if>
-        <if test="specialId != null">
-            AND special_id = #{specialId}
         </if>
         <if test="userId != null">
             AND user_id = #{userId}
@@ -122,9 +112,6 @@
         where
         <if test="projectId != null">
             project_id = #{projectId}
-        </if>
-        <if test="specialId != null">
-            AND special_id = #{specialId}
         </if>
         <if test="userId != null">
             AND user_id = #{userId}
