@@ -28,7 +28,7 @@ class StructureServiceImpl extends ServiceImpl<StructureMapper, Structure> imple
 
         List<Structure> list = structureMapper.selectList();
         Map<String, String> map = list.stream()
-                .collect(Collectors.toMap(Structure::getKey, Structure::getValue));
+                .collect(Collectors.toMap(Structure::getStructureId, Structure::getName));
         return map;
     }
 }

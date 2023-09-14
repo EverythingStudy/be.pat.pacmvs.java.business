@@ -8,8 +8,8 @@
         <result property="roundName" column="round_name"/>
     </resultMap>
 
-    <sql id="selectList">
+<!--    <select id="selectList">
         select round_id, round_name
         from tb_round
-    </sql>
+    </select>-->
 </mapper>

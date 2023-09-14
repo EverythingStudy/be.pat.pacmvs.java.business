@@ -22,7 +22,7 @@ import java.util.concurrent.ExecutionException;
  */
 @Api(value = "颜色类型", tags = "颜色类型")
 @RestController
-@RequestMapping("/colorType")
+@RequestMapping("/color")
 @Slf4j
 public class ColorController {
 
@@ -32,8 +32,8 @@ public class ColorController {
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "颜色类型", notes = "颜色类型 - 王峰")
     @Log(title = "颜色类型", menu = "颜色类型", subMenu = "颜色类型", businessType = BusinessType.QUERY)
-    @GetMapping("/list")
-    public R<Map<Integer, String>> list() throws ExecutionException, InterruptedException {
+    @GetMapping("/colorType")
+    public R<Map<Integer, String>> colorType() throws ExecutionException, InterruptedException {
         Map<Integer, String> map = ColorConstant.COLOR_TYPE;
         return R.ok(map);
     }

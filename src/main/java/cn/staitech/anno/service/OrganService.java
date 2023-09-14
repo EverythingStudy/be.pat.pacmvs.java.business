@@ -12,7 +12,6 @@ import java.util.Map;
  * @create: 2023-09-10 13:10:18
  * @Description: 脏器
  */
-@Service
 public interface OrganService extends IService<Organ> {
 
     Map<String, String> selectMap();

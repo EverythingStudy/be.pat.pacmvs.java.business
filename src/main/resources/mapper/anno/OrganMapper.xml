@@ -4,12 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.OrganMapper">
     <resultMap type="cn.staitech.anno.domain.organ.Organ" id="OrganResult">
-        <result property="key" column="key"/>
-        <result property="value" column="value"/>
+        <result property="organId" column="organ_id"/>
+        <result property="name" column="name"/>
     </resultMap>
 
-    <sql id="selectList">
-        select key, value
+<!--    <select id="selectList">
+        select organ_id, name
         from tb_organ
-    </sql>
+    </select>-->
 </mapper>

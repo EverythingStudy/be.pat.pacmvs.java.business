@@ -12,7 +12,6 @@ import java.util.Map;
  * @create: 2023-09-10 13:10:18
  * @Description: 种属
  */
-@Service
 public interface SpeciesService extends IService<Species> {
 
     Map<String, String> selectMap();

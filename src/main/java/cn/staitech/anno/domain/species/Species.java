@@ -22,13 +22,13 @@ public class Species {
     /**
      * 种属key
      */
-    @TableId(value = "key", type = IdType.INPUT)
-    @ApiModelProperty(value = "种属key", hidden = true)
-    private String key;
+    @TableId(value = "species_id", type = IdType.NONE)
+    @ApiModelProperty(value = "种属ID", hidden = true)
+    private String speciesId;
 
     /**
      * 种属value
      */
-    @ApiModelProperty(value = "种属value", required = true)
-    private String value;
+    @ApiModelProperty(value = "种属名称", required = true)
+    private String name;
 }

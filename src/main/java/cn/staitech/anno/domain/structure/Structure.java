@@ -19,15 +19,15 @@ import lombok.NoArgsConstructor;
 @TableName("tb_structure")
 public class Structure {
     /**
-     * 结构key
+     * 结构ID
      */
-    @TableId(value = "key", type = IdType.INPUT)
-    @ApiModelProperty(value = "结构key", hidden = true)
-    private String key;
+    @TableId(value = "structure_id", type = IdType.NONE)
+    @ApiModelProperty(value = "结构ID", hidden = true)
+    private String structureId;
 
     /**
-     * 结构value
+     * 结构名称
      */
-    @ApiModelProperty(value = "结构value", required = true)
-    private String value;
+    @ApiModelProperty(value = "结构名称", required = true)
+    private String name;
 }

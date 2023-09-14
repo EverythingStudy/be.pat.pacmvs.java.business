@@ -28,7 +28,7 @@ class SpeciesServiceImpl extends ServiceImpl<SpeciesMapper, Species> implements 
 
         List<Species> list = speciesMapper.selectList();
         Map<String, String> map = list.stream()
-                .collect(Collectors.toMap(Species::getKey, Species::getValue));
+                .collect(Collectors.toMap(Species::getSpeciesId, Species::getName));
         return map;
     }
 }

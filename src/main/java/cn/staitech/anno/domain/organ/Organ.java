@@ -21,13 +21,13 @@ public class Organ {
     /**
      * 脏器key
      */
-    @TableId(value = "key", type = IdType.INPUT)
-    @ApiModelProperty(value = "脏器key", hidden = true)
-    private String key;
+    @TableId(value = "organ_id", type = IdType.NONE)
+    @ApiModelProperty(value = "脏器ID", hidden = true)
+    private String organId;
 
     /**
      * 脏器value
      */
-    @ApiModelProperty(value = "脏器value", required = true)
-    private String value;
+    @ApiModelProperty(value = "脏器名称", required = true)
+    private String name;
 }

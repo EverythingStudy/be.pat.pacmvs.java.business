@@ -6,6 +6,7 @@ import cn.staitech.anno.service.RoundService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -18,10 +19,14 @@ import java.util.stream.Collectors;
  */
 @Service
 class RoundServiceImpl extends ServiceImpl<RoundMapper, Round> implements RoundService {
+
+    @Resource
+    private RoundMapper roundMapper;
+
     @Override
     public Map<Long, String> selectMap() {
 
-        List<Round> list = this.baseMapper.selectList();
+        List<Round> list = roundMapper.selectList();
         Map<Long, String> map = list.stream()
                 .collect(Collectors.toMap(Round::getRoundId, Round::getRoundName));
         return map;
