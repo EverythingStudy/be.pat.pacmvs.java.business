@@ -40,9 +40,9 @@ public class IndicatorServicelmpl implements IndicatorService {
     @Override
     public int insertIndicator(Indicator indicator) {
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-        indicator.setCreateBy(sysUser.getUserId());
-        indicator.setUpdateBy(sysUser.getUserId());
         indicator.setOrganizationId(sysUser.getOrganizationId());
+        indicator.setCreateBy(sysUser.getUserId());
+        indicator.setNumber(indicator.getSpeciesId() + indicator.getOrganId());
         return indicatorMapper.insertIndicator(indicator);
     }
 

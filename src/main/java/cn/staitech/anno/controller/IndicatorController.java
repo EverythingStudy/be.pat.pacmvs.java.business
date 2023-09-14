@@ -58,6 +58,7 @@ public class IndicatorController extends BaseController {
     public R<String> add(@Validated @RequestBody IndicatorAddVO req) {
         Indicator indicator = new Indicator();
         BeanUtils.copyProperties(req, indicator);
+        indicator.setIndicatorName(indicator.getSpeciesName() + indicator.getOrganName());
 
         //查询结构指标是否存在
         List<Indicator> indicatorList = indicatorService.selectIndicator(indicator);

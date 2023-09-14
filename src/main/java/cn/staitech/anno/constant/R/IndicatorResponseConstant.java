@@ -4,7 +4,7 @@ package cn.staitech.anno.constant.R;
  * @author admin
  */
 public class IndicatorResponseConstant {
-    public static final String INDICATOR_EXIST = "指标已经存在，请更换名称进行重试";
+    public static final String INDICATOR_EXIST = "指标已经存在";
 
     public static final String INDICATOR_ID_NOTNULL = "尚未选择病理指标";
 
