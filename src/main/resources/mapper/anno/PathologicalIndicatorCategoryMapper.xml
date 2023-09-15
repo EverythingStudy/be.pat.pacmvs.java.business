@@ -225,8 +225,11 @@
         <if test="categoryId != null and categoryId != ''">
             AND category_id != #{categoryId}
         </if>
-        <if test="color != null and color != ''">
-            AND color = #{color}
+        <if test="rgb != null">
+            AND rgb = #{rgb}
+        </if>
+        <if test="hex != null">
+            AND hex = #{hex}
         </if>
         <if test="number != null and number != ''">
             AND number = #{number}
