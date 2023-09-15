@@ -110,12 +110,16 @@
     <select id="selectIndicatorById" parameterType="java.lang.Long" resultMap="IndicatorResult">
         select pa.indicator_id,
                pa.indicator_name,
-               pa.create_time,
                pa.project_total,
                pa.annotation_category_total,
+               pa.species_id,
+               pa.organ_id,
+               pa.organization_id,
+               pa.number,
                pa.create_by,
-               pa.update_time,
                pa.update_by,
+               pa.create_time,
+               pa.update_time,
                u.user_id,
                u.user_name
         from tb_pathological_indicator pa

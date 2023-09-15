@@ -70,7 +70,6 @@ public class Indicator extends BaseEntity {
     private Map<String, Object> createTimeParams;
     @ApiModelProperty(hidden = true, value = "备注")
     private String remark;
-
     @ApiModelProperty(hidden = true, value = "搜索值")
     @TableField(exist = false)
     private String searchValue;
