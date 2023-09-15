@@ -231,6 +231,9 @@
         <if test="hex != null">
             AND hex = #{hex}
         </if>
+        <if test="structureId != null">
+            AND structure_id = #{structureId}
+        </if>
         <if test="organizationId != null">
             AND organization_id = #{organizationId}
         </if>

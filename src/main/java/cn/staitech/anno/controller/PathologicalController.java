@@ -70,10 +70,21 @@ public class PathologicalController {
         PathologicalIndicatorCategory category = new PathologicalIndicatorCategory();
         BeanUtils.copyProperties(vo, category);
 
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+        // 机构ID
+        category.setOrganizationId(sysUser.getOrganizationId());
+
         // 验证标签名称、颜色、图层顺序、是否存在、是否关联切片2.0
-        String checkCategory = checkCategory(category);
+/*        String checkCategory = checkCategory(category);
         if (!checkCategory.equals("1")) {
             return R.fail(checkCategory);
+        }*/
+
+        // 验证是否存在该条件的记录
+        List<PathologicalIndicatorCategory> list = pathologicalIndicatorCategoryService.selectIndicatorMessage(category);
+        log.info("-------------------{}", list);
+        if (list.size() > 0) {
+            return R.fail(PathologicalLogConstant.CATEGORY_NAME_EXIST);
         }
 
         // 获取structureName
@@ -200,5 +211,4 @@ public class PathologicalController {
             return PathologicalLogConstant.ONE;
         }
     }
-
 }
