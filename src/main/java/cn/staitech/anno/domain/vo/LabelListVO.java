@@ -20,7 +20,7 @@ public class LabelListVO {
     private String structureId;
     @ApiModelProperty(value = "结构名称")
     private String structureName;
-    @NotBlank(message = "颜色名称备用")
+
     private String color;
     @NotBlank(message = "颜色值不可为空")
     private String rgb;

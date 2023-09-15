@@ -25,10 +25,9 @@ public class PathologicalIndicatorCategory {
     private Long indicatorId;
     @ApiModelProperty(required = true, value = "结构ID")
     @NotBlank(message = "结构ID不能为空!")
-    @NotBlank(message = "结构ID不能为空!")
     private String structureId;
 
-    @NotBlank(message = "颜色名称备用")
+
     private String color;
     @ApiModelProperty(value = "颜色值RGB")
     @NotBlank(message = "RGB颜色值不可为空")

@@ -19,7 +19,8 @@ public class StatisticCategoryListOutVO {
 
     @ApiModelProperty(required = true, value = "结构ID")
     private String structureId;
-    @NotBlank(message = "颜色名称备用")
+
+
     private String color;
     @NotBlank(message = "颜色值不可为空")
     private String rgb;

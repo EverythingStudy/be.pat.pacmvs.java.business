@@ -74,12 +74,6 @@ public class PathologicalController {
         // 机构ID
         category.setOrganizationId(sysUser.getOrganizationId());
 
-        // 验证标签名称、颜色、图层顺序、是否存在、是否关联切片2.0
-/*        String checkCategory = checkCategory(category);
-        if (!checkCategory.equals("1")) {
-            return R.fail(checkCategory);
-        }*/
-
         // 验证是否存在该条件的记录    A：必填项校验。B：结构编码在当前列表内不可重复；C：结构名称在当前列表内不可重复。D：图层顺序在当前列表内不可重复；E：颜色值在当前列表不可重复
         List<PathologicalIndicatorCategory> list = pathologicalIndicatorCategoryService.selectIndicatorMessage(category);
         if (list.size() > 0) {
@@ -93,6 +87,7 @@ public class PathologicalController {
         category.setCategoryName(categoryName);
         // 生成完整编码
         category.setNumber(indicator.getNumber() + "" + vo.getStructureId());
+
         // 添加标注类别
         pathologicalIndicatorCategoryService.insertSelective(category);
         IndicatorReviseVO indicatorReviseVO = IndicatorReviseVO.builder().indicatorId(vo.getIndicatorId().intValue()).build();
@@ -121,7 +116,7 @@ public class PathologicalController {
     /**
      * 标签详细 .
      */
-    @ApiOperation(value = "获取标签详情接口", notes = "ZMJ")
+    @ApiOperation(value = "获取标签详情接口", notes = "wangfeng")
     @GetMapping(value = "/details")
     public R<PathologicalIndicatorCategory> getInfo(
             @RequestParam @ApiParam(name = "categoryId", value = "标注类别id", required = true) Long categoryId) {
@@ -134,22 +129,48 @@ public class PathologicalController {
     /**
      * 配置标签-编辑 .
      */
-    @ApiOperation(value = "标注类别修改接口", notes = "ZMJ")
+    @ApiOperation(value = "标注类别修改接口", notes = "wangfeng")
     @RequiresPermissions("special:pathology:tabedit")
     @Log(title = "配置标签-编辑", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.UPDATE)
     @PutMapping("/edit")
-    public R<String> edit(@Validated @RequestBody PathologicalIndicatorCategory annotationCategory) {
-        if (annotationCategory.getCategoryId() == null || annotationCategory.getIndicatorId() == null) {
+    public R<String> edit(@Validated @RequestBody PathologicalIndicatorCategory category) {
+        if (category.getCategoryId() == null || category.getIndicatorId() == null) {
             return R.fail(PathologicalLogConstant.MISSING_REQUIRED_VALUE);
         }
-        String checkCategory = checkCategory(annotationCategory);
-        if (!checkCategory.equals("1")) {
-            return R.fail(checkCategory);
+
+        // 查询Indicator信息
+        Indicator indicator = indicatorService.selectIndicatorsById(category.getIndicatorId());
+        if (indicator == null) {
+            return R.fail(PathologicalLogConstant.INDICATOR_ABSENT);
         }
-        annotationCategory.setUpdateBy(SecurityUtils.getUserId());
+
+
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+        // 机构ID
+        category.setOrganizationId(sysUser.getOrganizationId());
+
+        // 获取structureName
+        String structureName = structureService.getById(category.getStructureId()).getName();
+        // 生成categoryName
+        String categoryName = indicator.getIndicatorName() + structureName;
+        category.setCategoryName(categoryName);
+        // 生成完整编码
+        category.setNumber(indicator.getNumber() + "" + category.getStructureId());
+
+
+        // 验证是否存在该条件的记录    A：必填项校验。B：结构编码在当前列表内不可重复；C：结构名称在当前列表内不可重复。D：图层顺序在当前列表内不可重复；E：颜色值在当前列表不可重复
+        List<PathologicalIndicatorCategory> list = pathologicalIndicatorCategoryService.selectIndicatorMessage(category);
+        if (list.size() > 0) {
+            return R.fail(PathologicalLogConstant.CATEGORY_NAME_EXIST);
+        }
+
+
+        category.setUpdateBy(SecurityUtils.getUserId());
+
+
         //修改标注类别信息
-        pathologicalIndicatorCategoryService.updateByPrimaryKeySelective(annotationCategory);
-        return R.ok(null, ResponseConstant.OPERATE_SUCCEED);
+        pathologicalIndicatorCategoryService.updateByPrimaryKeySelective(category);
+        return R.ok(ResponseConstant.OPERATE_SUCCEED);
     }
 
     /**
@@ -179,6 +200,10 @@ public class PathologicalController {
 
     /**
      * 验证标签名称、颜色、图层顺序、是否存在、是否关联切片2.0
+     * String checkCategory = checkCategory(category);
+     * if (!checkCategory.equals("1")) {
+     * return R.fail(checkCategory);
+     * }
      */
     public String checkCategory(PathologicalIndicatorCategory annotationCategory) {
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();

@@ -40,7 +40,7 @@
 
     <sql id="Base_Column_List">
         category_id
-        , indicator_id, color, create_by, create_time, update_by, update_time, category_name,order_number
+        , indicator_id, rgb , hex, structure_id, create_by, create_time, update_by, update_time, category_name,order_number,organization_id,number
     </sql>
 
     <!--  根据主键查询单条标注信息-->
@@ -183,12 +183,12 @@
             </if>
         </set>
         <where>
-        <if test="categoryId != null and categoryId != '' ">
-          AND  category_id = #{categoryId}
-        </if>
-        <if test="indicatorId != null and indicatorId != '' ">
-           AND indicator_id = #{indicatorId}
-        </if>
+            <if test="categoryId != null and categoryId != '' ">
+                AND category_id = #{categoryId}
+            </if>
+            <if test="indicatorId != null and indicatorId != '' ">
+                AND indicator_id = #{indicatorId}
+            </if>
         </where>
     </update>
 
@@ -271,7 +271,8 @@
     <select id="selectCategoryNumber" parameterType="java.lang.Long" resultType="java.lang.Integer">
         select count(*)
         from tb_pathological_indicator_category
-        where indicator_id = #{indicatorId} and del_flag=0
+        where indicator_id = #{indicatorId}
+          and del_flag = 0
     </select>
 
     <select id="selectProjectCategory" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -315,7 +316,9 @@
     </select>
 
     <select id="selectLabelNum" parameterType="java.lang.Long" resultType="java.lang.Integer">
-        select count(*) from tb_special_annotation where category_id=#{categoryId}
+        select count(*)
+        from tb_special_annotation
+        where category_id = #{categoryId}
     </select>
 
 </mapper>
