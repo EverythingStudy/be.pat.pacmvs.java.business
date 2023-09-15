@@ -13,6 +13,12 @@ import java.io.Serializable;
  * @create: 2023-09-10 17:52:35
  * @Description: 查询Files
  * 切片信息列表-上传信息表-查询 ：切片编号、专题号、机构ID、上传时间-开始时间、上传时间-结束时间
+ *
+ * 文件名称
+ * 专题号
+ * 机构
+ * 请选择
+ * 上传时间
  */
 @Data
 public class FilesListVO extends Pager implements Serializable {

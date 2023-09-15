@@ -80,7 +80,7 @@ public class PathologicalController {
             return R.fail(checkCategory);
         }*/
 
-        // 验证是否存在该条件的记录
+        // 验证是否存在该条件的记录    A：必填项校验。B：结构编码在当前列表内不可重复；C：结构名称在当前列表内不可重复。D：图层顺序在当前列表内不可重复；E：颜色值在当前列表不可重复
         List<PathologicalIndicatorCategory> list = pathologicalIndicatorCategoryService.selectIndicatorMessage(category);
         if (list.size() > 0) {
             return R.fail(PathologicalLogConstant.CATEGORY_NAME_EXIST);
