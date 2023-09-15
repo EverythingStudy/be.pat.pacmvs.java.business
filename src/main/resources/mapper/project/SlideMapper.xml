@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.project.mapper.SlideMapperV1">
+
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.project.domain.Slide">
+        <id property="slideId" column="slide_id" jdbcType="BIGINT"/>
+        <result property="projectId" column="project_id" jdbcType="INTEGER"/>
+        <result property="imageId" column="image_id" jdbcType="INTEGER"/>
+        <result property="humanAnnotationTotal" column="human_annotation_total" jdbcType="INTEGER"/>
+        <result property="algorithmAnnotationTotal" column="algorithm_annotation_total" jdbcType="INTEGER"/>
+        <result property="examinationSlideTotal" column="examination_slide_total" jdbcType="INTEGER"/>
+        <result property="processFlag" column="process_flag" jdbcType="SMALLINT"/>
+        <result property="examinationFlag" column="examination_flag" jdbcType="SMALLINT"/>
+        <result property="createBy" column="create_by" jdbcType="BIGINT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="groupId" column="group_id" jdbcType="INTEGER"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+        <result property="aiCheck" column="ai_check" jdbcType="SMALLINT"/>
+        <result property="aiAnalyzed" column="ai_analyzed" jdbcType="SMALLINT"/>
+        <result property="diagnosis" column="diagnosis" jdbcType="SMALLINT"/>
+        <result property="geojsonUrl" column="geojson_url" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="pageSlides" resultType="cn.staitech.anno.project.vo.SlideVO"
+            parameterType="cn.staitech.anno.project.vo.SlideQueryIN">
+        select s.*, i.thumb_url, i.image_code, c.group_name, c.gender, c.species, c.product_series
+        from tb_slide s
+        left join tb_image i on s.image_id = i.image_id
+        left join tb_image_csv c on s.image_id = c.image_id
+        <where>
+            <if test="params.userId!= null">
+                AND s.create_by = #{params.userId}
+            </if>
+            <if test="params.imageCode!= null">
+                AND i.image_code like CONCAT('%',#{params.imageCode},'%')
+            </if>
+            <if test="params.remark!= null">
+                AND s.remark like CONCAT('%',#{params.remark},'%')
+            </if>
+            <if test="params.status!= null">
+                AND s.status = #{params.status}
+            </if>
+            <if test="params.annoUser!= null">
+                AND EXISTS(select u.slide_id from tb_slide_attr u where u.slide_id = s.slide_id and u.attr_type = '1'
+                and u.attr_id = #{params.annoUser})
+            </if>
+            <if test="params.annoCategory!= null">
+                AND EXISTS(select c.slide_id from tb_slide_attr c where c.slide_id = s.slide_id and c.attr_type = '2'
+                and c.attr_id = #{params.annoCategory})
+            </if>
+            <if test="params.saveStart != null">
+                and date_format(s.create_time,'%y%m%d') &gt;= date_format(#{params.saveStart},'%y%m%d')
+            </if>
+            <if test="params.saveEnd != null">
+                and date_format(s.create_time,'%y%m%d') &lt;= date_format(#{params.saveEnd},'%y%m%d')
+            </if>
+            <if test="params.updateStart != null">
+                and date_format(s.update_time,'%y%m%d') &gt;= date_format(#{params.updateStart},'%y%m%d')
+            </if>
+            <if test="params.updateEnd != null">
+                and date_format(s.update_time,'%y%m%d') &lt;= date_format(#{params.updateEnd},'%y%m%d')
+            </if>
+        </where>
+    </select>
+    <select id="querySlides" resultType="cn.staitech.anno.project.vo.SlideExportVO"
+            parameterType="cn.staitech.anno.project.vo.SlideQueryIN">
+        select s.*, i.thumb_url, i.image_code, c.group_name, c.gender, c.species, c.product_series,p.project_name
+        from tb_slide s
+        left join tb_image i on s.image_id = i.image_id
+        left join tb_image_csv c on s.image_id = c.image_id
+        left join tb_project p on s.project_id = p.project_id
+        <where>
+            <if test="params.userId!= null">
+                AND s.create_by = #{params.userId}
+            </if>
+            <if test="params.imageCode!= null">
+                AND i.image_code like CONCAT('%',#{params.imageCode},'%')
+            </if>
+            <if test="params.remark!= null">
+                AND s.remark like CONCAT('%',#{params.remark},'%')
+            </if>
+            <if test="params.status!= null">
+                AND s.status = #{params.status}
+            </if>
+            <if test="params.projectId!= null">
+                AND s.project_id = #{params.projectId}
+            </if>
+            <if test="params.annoUser!= null">
+                AND EXISTS(select u.slide_id from tb_slide_attr u where u.slide_id = s.slide_id and u.attr_type = '1'
+                and u.attr_id = #{params.annoUser})
+            </if>
+            <if test="params.annoCategory!= null">
+                AND EXISTS(select c.slide_id from tb_slide_attr c where c.slide_id = s.slide_id and c.attr_type = '2'
+                and c.attr_id = #{params.annoCategory})
+            </if>
+            <if test="params.saveStart != null">
+                and date_format(s.create_time,'%y%m%d') &gt;= date_format(#{params.saveStart},'%y%m%d')
+            </if>
+            <if test="params.saveEnd != null">
+                and date_format(s.create_time,'%y%m%d') &lt;= date_format(#{params.saveEnd},'%y%m%d')
+            </if>
+            <if test="params.updateStart != null">
+                and date_format(s.update_time,'%y%m%d') &gt;= date_format(#{params.updateStart},'%y%m%d')
+            </if>
+            <if test="params.updateEnd != null">
+                and date_format(s.update_time,'%y%m%d') &lt;= date_format(#{params.updateEnd},'%y%m%d')
+            </if>
+        </where>
+    </select>
+</mapper>
