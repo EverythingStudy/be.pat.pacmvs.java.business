@@ -13,7 +13,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -23,7 +22,7 @@ import java.util.List;
  * @date 2023/9/15 13:06:04
  */
 @Slf4j
-@Api(value = "项目接口", tags = "项目接口")
+@Api(value = "评审接口", tags = "项目接口")
 @RestController("review")
 @Validated
 @RestControllerAdvice
@@ -44,5 +43,11 @@ public class ReviewContoller {
     @GetMapping("/queryReview")
     public R<List<Review>> queryReview(@RequestParam("slideId") @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId){
         return R.ok(reviewService.list(Wrappers.query(Review.builder().slideId(slideId).build())));
+    }
+    @ApiOperation(value = "按切片id查询评审列表")
+    @GetMapping("/exportReview")
+    public void exportReview(@RequestParam("projectId") @ApiParam(name = "projectId", value = "项目id", required = false) Long projectId,
+                             @RequestParam("slideId") @ApiParam(name = "slideId", value = "切片id", required = false) Long slideId)throws Exception{
+        reviewService.exportReview(projectId,slideId);
     }
 }

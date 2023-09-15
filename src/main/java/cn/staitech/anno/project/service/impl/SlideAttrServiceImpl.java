@@ -48,9 +48,7 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
         Integer count = annotationMapperV1.selectCount(queryWrapper);
         if (count==0){
             List<SlideAttr> slideAttrs = queryAttr(slideId,USER,userIds);
-            if (slideAttrs!=null&&!slideAttrs.isEmpty()){
-                int i = getBaseMapper().deleteBatchIds(slideAttrs);
-            }
+            delete(slideAttrs);
         }
         return true;
     }
@@ -70,9 +68,7 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
         Integer count = annotationMapperV1.selectCount(queryWrapper);
         if (count==0){
             List<SlideAttr> slideAttrs = queryAttr(slideId,CATEGORY,categoryIds);
-            if (slideAttrs!=null&&!slideAttrs.isEmpty()){
-                int i = getBaseMapper().deleteBatchIds(slideAttrs);
-            }
+            delete(slideAttrs);
         }
         return true;
     }
@@ -122,6 +118,24 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
             }
         });
         return saveBatch(resp);
+    }
+
+    /**
+     * 删除
+     * @param slideAttrs
+     * @return
+     * @throws Exception
+     */
+    private Integer delete(List<SlideAttr> slideAttrs)throws Exception{
+        Integer i = 0;
+        if (slideAttrs!=null&&!slideAttrs.isEmpty()){
+            List<Long> ids = new ArrayList<>();
+            slideAttrs.forEach(slideAttr -> {
+                ids.add(slideAttr.getAttrId());
+            });
+            i = getBaseMapper().deleteBatchIds(ids);
+        }
+        return i;
     }
 
 }

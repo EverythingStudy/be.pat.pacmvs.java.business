@@ -10,6 +10,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Date;
 
 /**
  * @author mugw
@@ -23,10 +24,15 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class ReviewVO {
     @NotBlank(message="[详情]不能为空")
-    @Size(max= 200,message="编码长度不能超过200")
     @ApiModelProperty("详情")
-    @Length(max= 200,message="编码长度不能超过200")
     private String details;
+    @NotNull(message="[分值]不能为空")
+    @ApiModelProperty("分值")
+    private Long score;
+    @ApiModelProperty("创建者名称")
+    private String createName;
+    @ApiModelProperty("创建时间")
+    private Date createTime;
     /**
      * 评审人
      */
@@ -35,6 +41,21 @@ public class ReviewVO {
     @ApiModelProperty("评审人")
     @Length(max= 255,message="编码长度不能超过255")
     private String reviewPeople;
+
+    @ApiModelProperty("项目名称")
+    private String projectName;
+
+    @ApiModelProperty("切片编号")
+    private String imageCode;
+
+    @ApiModelProperty("评审内容")
+    private String content;
+    @ApiModelProperty("专题编号")
+    private String topic;
+    @ApiModelProperty("组别编号")
+    private String group;
+    @ApiModelProperty("轮次")
+    private String round;
     /**
      * 切片id
      */
