@@ -28,7 +28,7 @@ import java.util.TimeZone;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableTransactionManagement
-@MapperScan("cn.staitech.anno.mapper")
+@MapperScan({"cn.staitech.anno.mapper","cn.staitech.anno.project.mapper"})
 @EnableElasticsearchRepositories(basePackages = {"cn.staitech.common.log.elasticsearchRepositories", "cn.staitech.anno.elasticsearchRepositories"})
 public class StaiTechAnnoApplication {
 

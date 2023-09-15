@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.project.mapper.AnnotationMapperV1">
+
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.project.domain.Annotation">
+            <id property="annotationId" column="annotation_id" jdbcType="BIGINT"/>
+            <result property="measure" column="measure" jdbcType="DECIMAL"/>
+            <result property="perimeter" column="perimeter" jdbcType="DECIMAL"/>
+            <result property="annotationType" column="annotation_type" jdbcType="SMALLINT"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="attribute" column="attribute" jdbcType="VARCHAR"/>
+            <result property="locationType" column="location_type" jdbcType="VARCHAR"/>
+            <result property="location" column="location" jdbcType="OTHER"/>
+            <result property="projectId" column="project_id" jdbcType="BIGINT"/>
+            <result property="imageId" column="image_id" jdbcType="BIGINT"/>
+            <result property="slideId" column="slide_id" jdbcType="BIGINT"/>
+            <result property="tileId" column="tile_id" jdbcType="INTEGER"/>
+            <result property="examinationFlag" column="examination_flag" jdbcType="SMALLINT"/>
+            <result property="createBy" column="create_by" jdbcType="BIGINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="categoryId" column="category_id" jdbcType="INTEGER"/>
+            <result property="x" column="x" jdbcType="VARCHAR"/>
+            <result property="y" column="y" jdbcType="VARCHAR"/>
+            <result property="annoType" column="anno_type" jdbcType="INTEGER"/>
+            <result property="createCategoryId" column="create_category_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        annotation_id,measure,perimeter,
+        annotation_type,description,attribute,
+        location_type,location,project_id,
+        image_id,slide_id,tile_id,
+        examination_flag,create_by,create_time,
+        update_by,update_time,category_id,
+        x,y,anno_type,
+        create_category_id
+    </sql>
+</mapper>
