@@ -29,7 +29,7 @@ import java.util.List;
 @RestController("ProjectControllerV1")
 @Validated
 @RestControllerAdvice
-@RequestMapping("/project_v1")
+@RequestMapping("/intelligentAnno/project_v1")
 public class ProjectController {
     @Resource
     private ProjectService projectService;

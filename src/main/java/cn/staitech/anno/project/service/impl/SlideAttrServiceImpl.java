@@ -48,7 +48,9 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
         Integer count = annotationMapperV1.selectCount(queryWrapper);
         if (count==0){
             List<SlideAttr> slideAttrs = queryAttr(slideId,USER,userIds);
-            int i = getBaseMapper().deleteBatchIds(slideAttrs);
+            if (slideAttrs!=null&&!slideAttrs.isEmpty()){
+                int i = getBaseMapper().deleteBatchIds(slideAttrs);
+            }
         }
         return true;
     }
@@ -68,7 +70,9 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
         Integer count = annotationMapperV1.selectCount(queryWrapper);
         if (count==0){
             List<SlideAttr> slideAttrs = queryAttr(slideId,CATEGORY,categoryIds);
-            int i = getBaseMapper().deleteBatchIds(slideAttrs);
+            if (slideAttrs!=null&&!slideAttrs.isEmpty()){
+                int i = getBaseMapper().deleteBatchIds(slideAttrs);
+            }
         }
         return true;
     }
