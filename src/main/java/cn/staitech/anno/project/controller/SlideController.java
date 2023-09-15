@@ -33,7 +33,7 @@ import java.util.*;
 @RestController("SlideControllerV1")
 @Validated
 @RestControllerAdvice
-@RequestMapping("/slide_v1")
+@RequestMapping("/intelligentAnno/slide_v1")
 public class SlideController {
     private static final Map<String, String> STATUS = MapUtil.builder(new HashMap<String, String>())
             .put("1", "未开始").put("2", "标注中")

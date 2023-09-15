@@ -31,7 +31,7 @@ import java.util.List;
 @RestController
 @Validated
 @RestControllerAdvice
-@RequestMapping("/opt")
+@RequestMapping("/intelligentAnno/opt")
 public class OptController {
     @Resource
     private OptService optService;

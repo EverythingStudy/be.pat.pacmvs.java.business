@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.project.mapper.ReviewMapper">
+
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.project.domain.Review">
+            <id property="reviewId" column="review_id" jdbcType="BIGINT"/>
+            <result property="score" column="score" jdbcType="BIGINT"/>
+            <result property="details" column="details" jdbcType="VARCHAR"/>
+            <result property="reviewPeople" column="review_people" jdbcType="VARCHAR"/>
+            <result property="reviewTime" column="review_time" jdbcType="TIMESTAMP"/>
+            <result property="slideId" column="slide_id" jdbcType="BIGINT"/>
+            <result property="reviewContent" column="review_content" jdbcType="VARCHAR"/>
+            <result property="reviewRound" column="review_round" jdbcType="BIGINT"/>
+            <result property="specialNumber" column="special_number" jdbcType="VARCHAR"/>
+            <result property="groupId" column="group_id" jdbcType="BIGINT"/>
+            <result property="createName" column="create_name" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="createBy" column="create_by" jdbcType="BIGINT"/>
+            <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="projectId" column="project_id" jdbcType="BIGINT"/>
+    </resultMap>
+    <select id="exportReview" parameterType="Map" resultType="cn.staitech.anno.project.vo.ReviewVO">
+        select r.*,p.project_name,i.image_code,
+        from tb_review r
+            left join tb_project p on r.project_id = p.project_id
+            left join tb_slide s on r.slide_id = s.slide_id
+            left join tb_image i on s.image_id = i.image_id
+        <where>
+            <if test="params.projectId!= null">
+                AND s.project_id = #{params.projectId}
+            </if>
+            <if test="params.slideId!= null">
+                AND s.slide_id = #{params.slideId}
+            </if>
+        </where>
+    </select>
+
+</mapper>
