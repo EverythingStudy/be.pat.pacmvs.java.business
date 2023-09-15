@@ -223,13 +223,16 @@
             AND category_name = #{categoryName}
         </if>
         <if test="categoryId != null and categoryId != ''">
-            AND category_id != #{categoryId}
+            AND category_id = #{categoryId}
         </if>
         <if test="rgb != null">
             AND rgb = #{rgb}
         </if>
         <if test="hex != null">
             AND hex = #{hex}
+        </if>
+        <if test="organizationId != null">
+            AND organization_id = #{organizationId}
         </if>
         <if test="number != null and number != ''">
             AND number = #{number}

@@ -14,6 +14,7 @@ import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.domain.SysUser;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -170,6 +171,10 @@ public class PathologicalController {
      * 验证标签名称、颜色、图层顺序、是否存在、是否关联切片2.0
      */
     public String checkCategory(PathologicalIndicatorCategory annotationCategory) {
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+        // 机构ID
+        annotationCategory.setOrganizationId(sysUser.getOrganizationId());
+
         PathologicalIndicatorCategory category = PathologicalIndicatorCategory.builder().categoryId(annotationCategory.getCategoryId())
                 .categoryName(annotationCategory.getCategoryName()).indicatorId(annotationCategory.getIndicatorId()).build();
         //获取病理下的标注类别名称是否存在
