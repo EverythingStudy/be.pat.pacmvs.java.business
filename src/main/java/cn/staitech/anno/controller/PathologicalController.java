@@ -56,7 +56,7 @@ public class PathologicalController {
      * 图层顺序 orderNumber
      * 结构指标ID	indicatorId
      */
-    @ApiOperation(value = "标签添加接口", notes = "ZMJ")
+    @ApiOperation(value = "标签添加接口", notes = "wangfeng")
     @RequiresPermissions("special:pathology:tabadd")
     @Log(title = "配置标签-新增标签", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.INSERT)
     @PostMapping("/add")
@@ -82,7 +82,6 @@ public class PathologicalController {
 
         // 验证是否存在该条件的记录
         List<PathologicalIndicatorCategory> list = pathologicalIndicatorCategoryService.selectIndicatorMessage(category);
-        log.info("-------------------{}", list);
         if (list.size() > 0) {
             return R.fail(PathologicalLogConstant.CATEGORY_NAME_EXIST);
         }
@@ -106,7 +105,7 @@ public class PathologicalController {
     /**
      * 配置标签-标签列表 .
      */
-    @ApiOperation(value = "获取标注类别列表接口", notes = "ZMJ")
+    @ApiOperation(value = "获取标注类别列表接口", notes = "wangfeng")
     @RequiresPermissions("special:pathology:tablist")
     @Log(title = "配置标签-标签列表", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.QUERY)
     @PostMapping("/all")
