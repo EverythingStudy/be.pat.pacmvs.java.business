@@ -165,8 +165,14 @@
     <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.PathologicalIndicatorCategory">
         update tb_pathological_indicator_category
         <set>
-            <if test="color != null">
-                color = #{color,jdbcType=VARCHAR},
+            <if test="structureId != null">
+                structure_id = #{structureId,jdbcType=VARCHAR},
+            </if>
+            <if test="rgb != null">
+                rgb = #{rgb,jdbcType=VARCHAR},
+            </if>
+            <if test="hex != null">
+                rgb = #{hex,jdbcType=VARCHAR},
             </if>
             <if test="updateBy != null">
                 update_by = #{updateBy,jdbcType=BIGINT},
@@ -174,6 +180,9 @@
             update_time = sysdate() ,
             <if test="categoryName != null">
                 category_name = #{categoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="number != null">
+                number = #{number,jdbcType=VARCHAR},
             </if>
             <if test="orderNumber != null">
                 order_number = #{orderNumber,jdbcType=VARCHAR},
@@ -188,6 +197,9 @@
             </if>
             <if test="indicatorId != null and indicatorId != '' ">
                 AND indicator_id = #{indicatorId}
+            </if>
+            <if test="organizationId != null and organizationId != '' ">
+                AND organization_id = #{organizationId}
             </if>
         </where>
     </update>
