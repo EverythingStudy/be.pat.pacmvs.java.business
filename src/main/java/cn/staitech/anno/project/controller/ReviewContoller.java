@@ -24,7 +24,7 @@ import java.util.List;
  */
 @Slf4j
 @Api(value = "项目接口", tags = "项目接口")
-@RestController("ProjectControllerV1")
+@RestController("review")
 @Validated
 @RestControllerAdvice
 @RequestMapping("/intelligentEvaluation/review")
