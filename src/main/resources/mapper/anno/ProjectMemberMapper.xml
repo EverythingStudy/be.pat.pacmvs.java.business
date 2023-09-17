@@ -50,7 +50,7 @@
                 AND pm.user_id = #{userId,jdbcType=BIGINT}
             </if>
             <if test="organizationId != null">
-                AND u.organization_id = #{organizationId,jdbcType=BIGINT}
+                AND pm.organization_id = #{organizationId,jdbcType=BIGINT}
             </if>
             <if test="userName != null and userName != ''">
                 AND u.user_name like concat('%', #{userName}, '%')
@@ -64,14 +64,14 @@
         select
         <include refid="Base_Column_List"/>
         from tb_project_member pm
-        left join sys_role pr on pm.role_id = pr.role_id
         left join sys_user u on pm.user_id = u.user_id
+        left join sys_role pr on u.role_id = pr.role_id
         <where>
             <if test="projectId != null">
                 AND pm.project_id = #{projectId,jdbcType=BIGINT}
             </if>
             <if test="roleId != null">
-                AND pm.role_id = #{roleId,jdbcType=BIGINT}
+                AND u.role_id = #{roleId,jdbcType=BIGINT}
             </if>
             <if test="userId != null">
                 AND pm.user_id = #{userId,jdbcType=BIGINT}
@@ -85,8 +85,8 @@
         select
         <include refid="Base_Column_List"/>
         from tb_project_member pm
-        left join sys_role pr on pm.role_id = pr.role_id
         left join sys_user u on pm.user_id = u.user_id
+        left join sys_role pr on u.role_id = pr.role_id
         where pm.user_id = #{UserId,jdbcType=BIGINT}
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
@@ -102,12 +102,12 @@
     </delete>
 
     <insert id="insert" parameterType="cn.staitech.anno.domain.ProjectMember">
-        insert into tb_project_member (user_id, project_id, create_by, create_time)
+        insert into tb_project_member (user_id, project_id, organization_id, create_by, create_time)
         values (#{userId,jdbcType=BIGINT},
                 #{projectId,jdbcType=BIGINT},
+                #{organizationId,jdbcType=BIGINT},
                 #{createBy},
-                sysdate()
-                )
+                sysdate())
     </insert>
     <insert id="insertSelective" parameterType="cn.staitech.anno.domain.ProjectMember">
         insert into tb_project_member

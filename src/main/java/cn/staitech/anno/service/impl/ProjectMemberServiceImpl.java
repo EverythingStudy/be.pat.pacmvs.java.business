@@ -36,9 +36,6 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 
     @Override
     public int save(ProjectMember projectMember) {
-        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-        projectMember.setCreateBy(sysUser.getUserId());
-        projectMember.setOrganizationId(sysUser.getOrganizationId());
         return projectMemberMapper.insert(projectMember);
     }
 
@@ -74,8 +71,6 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 
     @Override
     public List<ProjectMember> select(ProjectMember projectMember) {
-        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-        projectMember.setOrganizationId(sysUser.getOrganizationId());
         List<ProjectMember> projectMemberList = projectMemberMapper.select(projectMember);
         return projectMemberList;
     }

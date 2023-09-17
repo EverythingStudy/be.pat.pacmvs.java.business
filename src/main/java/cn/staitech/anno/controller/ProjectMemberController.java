@@ -17,6 +17,7 @@ import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysProjectRole;
+import cn.staitech.system.api.domain.SysUser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -58,9 +59,12 @@ public class ProjectMemberController extends BaseController {
     @PostMapping("/addProjectMember")
     public R addProjectMember(@RequestBody ProjectMemberAddVO projectMemberAddVO) {
 
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+
         ProjectMember projectMember = ProjectMember.builder()
                 .projectId(projectMemberAddVO.getProjectId())
                 .userId(projectMemberAddVO.getUserId())
+                .organizationId(sysUser.getOrganizationId())
                 .build();
 
         List<ProjectMember> list = projectMemberService.select(projectMember);
@@ -69,13 +73,13 @@ public class ProjectMemberController extends BaseController {
             return R.fail(INSERT_FAILURE_HAD_USER);
         }
 
+        projectMember.setCreateBy(sysUser.getUserId());
         if (projectMemberService.save(projectMember) > 0) {
             //更新项目时间
             ProjectUtils.updateProjectStatus(projectMemberAddVO.getProjectId());
             return R.ok(INSERT_SUCCESS);
         }
         return R.fail(INSERT_FAILURE);
-
     }
 
     @Log(title = "项目成员表删除", businessType = BusinessType.DELETE)
