@@ -72,52 +72,52 @@ import static cn.staitech.anno.constant.R.MeasureResponseConstant.*;
 @RestController
 @RequestMapping("/projectExt")
 public class ProjectExtController extends BaseController {
-    
+
     @Resource
     private ProjectService projectService;
-    
+
     @Resource
     private IndicatorService indicatorService;
-    
+
     @Resource
     private ImageService imageService;
-    
+
     @Resource
     private PathologicalIndicatorCategoryService pathologicalIndicatorCategoryService;
-    
+
     @Resource
     private GetUserInformationService getUserInformationService;
-    
+
     @Resource
     private SlideService slideService;
-    
+
     @Resource
     private AnnotationService annotationService;
-    
+
     @Resource
     private SlideAnnotationResultService slideAnnotationResultService;
-    
+
     @Resource
     private ICache iCache;
-    
+
     @Resource
     private ProjectMemberService projectMemberService;
-    
+
     @Resource
     private SlideManage slideManage;
-    
+
     @Resource
     private ProjectRoleService projectRoleService;
-    
+
     @Resource
     private ProjectMenuService projectMenuService;
-    
+
     @Resource
     private ProjectRoleMenuService projectRoleMenuService;
-    
+
     @Value("${jsonZipFilePath}")
     private String zipPath;
-    
+
     /**
      * 修改项目描述接口
      *
@@ -126,7 +126,7 @@ public class ProjectExtController extends BaseController {
      */
     @ApiOperation(value = "修改项目描述接口")
     @PostMapping("/descriptionUpdate")
-    @Log(title = "项目",menu = "专题管理",subMenu = "项目管理",businessType = BusinessType.UPDATE)
+    @Log(title = "项目", menu = "专题管理", subMenu = "项目管理", businessType = BusinessType.UPDATE)
     @RequiresPermissions("anno:project:description")
     public R<String> descriptionUpdate(@Validated @RequestBody ProjectDescription req) {
         Project project = new Project();
@@ -141,7 +141,7 @@ public class ProjectExtController extends BaseController {
             return R.fail("项目描述修改失败");
         }
     }
-    
+
     /**
      * 更新更换病理前后，病理关联的数据
      */
@@ -161,19 +161,21 @@ public class ProjectExtController extends BaseController {
         }
         return 0;
     }
-    
+
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
     @ApiOperation(value = "添加项目")
     @RequiresPermissions("anno:project:addproject")
-    @Log(title = "添加项目",menu = "专题管理",subMenu = "项目管理", businessType = BusinessType.INSERT)
+    @Log(title = "添加项目", menu = "专题管理", subMenu = "项目管理", businessType = BusinessType.INSERT)
     @PostMapping("/addProject")
     @Transactional
     public R<String> addProject(@Validated @RequestBody InsertProjectVO req) {
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
         // 获取当前登录用户Id
-        Long loginUser = SecurityUtils.getUserId();
-        
+        Long loginUser = sysUser.getUserId();
+        Long organizationId = sysUser.getOrganizationId();
+
         String name = req.getProjectName();
-        
+
         //根据项目名称查询，用来判断项目名称是否被使用
         Project projectByName = projectService.selectProjectByName(name);
         if (projectByName != null) {
@@ -189,7 +191,6 @@ public class ProjectExtController extends BaseController {
         project.setProjectName(name);
         project.setDescription(req.getDescription());
         project.setCreateBy(loginUser);
-        project.setDictCode(req.getDictCode());
         if (status.equals(ProjectConstant.NOT_INDICATOR_STATUS)) {
             Indicator indicatorMessage = new Indicator();
             indicatorMessage.setIndicatorName(name);
@@ -206,26 +207,26 @@ public class ProjectExtController extends BaseController {
                 return R.fail(ProjectConstant.ADD_INDICATOR_ERROR);
             }
             project.setIndicatorId(Long.valueOf(indicator.getIndicatorId()));
-            
+
         } else if (status.equals(ProjectConstant.INDICATOR_STATUS)) {
-            project.setIndicatorId(req.getIndicatorsId());
+            project.setIndicatorId(req.getIndicatorId());
         }
-        
+
         //添加项目
         int i = projectService.insertProject(project);
         // 获取当前项目Id
         Long currentProjectId = project.getProjectId();
-        
+
         // 添加项目默认3个角色
         List<SysProjectRole> projectRoleList = projectRoleService.addProjectRoles(currentProjectId, loginUser);
         // 取第1条给当前用户 项目代表
         Optional<SysProjectRole> projectRole = projectRoleList.stream().findFirst();
-        
+
         //添加当前项目成员
         ProjectMember projectMember = ProjectMember.builder().userId(loginUser).projectId(currentProjectId)
                 .roleId(projectRole.get().getRoleId()).createBy(loginUser).build();
         projectMemberService.save(projectMember);
-        
+
         // 如果当前用户非admin ,user_id =1 ,【成员配置】非admin用户创建项目时默认所属人员要添加admin为项目代表
         // http://jira.shengtong.com/browse/ANNO-708
         if (loginUser != 1L) {
@@ -233,7 +234,7 @@ public class ProjectExtController extends BaseController {
                     .roleId(projectRole.get().getRoleId()).createBy(loginUser).build();
             projectMemberService.save(admin);
         }
-        
+
         List<Long> roleList = new ArrayList<>();
         for (SysProjectRole sysProjectRole : projectRoleList) {
             if (sysProjectRole.getRoleType() == 2) {
@@ -278,7 +279,7 @@ public class ProjectExtController extends BaseController {
         }
         return R.fail(ResponseConstant.OPERATE_ERROR);
     }
-    
+
     /**
      * 获取项目列表 .
      */
@@ -294,7 +295,7 @@ public class ProjectExtController extends BaseController {
             CacheUtils.ProjectCache(project);
             return R.ok();
         }
-        
+
         Long userId = SecurityUtils.getUserId();
         List<Long> projectIdList = new ArrayList<>();
         List<ProjectMember> projectMemberList = null;
@@ -304,13 +305,13 @@ public class ProjectExtController extends BaseController {
                 projectIdList.add(projectMember.getProjectId());
             }
         }
-        
+
         startPage();
-        
+
         Page<Object> localPage = PageMethod.getLocalPage();
         int pageNum = localPage.getPageNum();
         int pageSize = localPage.getPageSize();
-        
+
         List<ProjectListVO> collect = allFromMap.stream().map(e -> {
             Object key = e.getKey();
             ProjectListVO value = (ProjectListVO) e.getValue();
@@ -362,7 +363,7 @@ public class ProjectExtController extends BaseController {
             }
             return true;
         }).sorted(Comparator.comparing(ProjectListVO::getUpdateTime).reversed()).collect(Collectors.toList());
-        
+
         List<ProjectListVO> projectList = collect.stream().skip((long) (pageNum - 1) * pageSize).limit(pageSize)
                 .collect(Collectors.toList());
         for (ProjectListVO projectListVO : projectList) {
@@ -371,7 +372,7 @@ public class ProjectExtController extends BaseController {
             if (projectMember == null) {
                 projectListVO.setRoleType(null);
             } else {
-                projectListVO.setRoleType(projectMember.getRoleType());
+                //  projectListVO.setRoleType(projectMember.getRoleType());
             }
         }
         //根据条件查询项目
@@ -380,7 +381,7 @@ public class ProjectExtController extends BaseController {
         pageMaster.setTotal(collect.size());
         return R.ok(pageMaster);
     }
-    
+
     /**
      * 查看项目详情接口 .
      */
@@ -388,7 +389,7 @@ public class ProjectExtController extends BaseController {
     @RequiresPermissions("anno:project:query")
     @GetMapping(value = "/{projectId}")
     public R<ProjectListVO> getInfo(@PathVariable Long projectId) {
-        
+
         //获取项目详情
         ProjectListVO list = projectService.selectProjectById(projectId);
         if (list == null) {
@@ -402,13 +403,13 @@ public class ProjectExtController extends BaseController {
             Map<String, Object> userMap = new HashMap<>();
             Long userId = projectMember.getUserId();
             String userName = getUserInformationService.selectById(userId).getUserName();
-            
+
             userNameList.add(userName);
             userMap.put("userId", userId);
             userMap.put("userName", userName);
             //userMap.put("roleName", ProjectMemberEnum.getEnumLabelByValue(projectMember.getRoleId()));
             userMap.put("roleName", projectMember.getRoleId()); // 通地roleId获取角色名称
-            
+
             userNames.add(userMap);
         }
         list.setUserNames(userNameList.stream().toArray(String[]::new));
@@ -435,7 +436,7 @@ public class ProjectExtController extends BaseController {
         }
         return R.ok(list);
     }
-    
+
     /**
      * 获取可以添加到项目中的图片 .
      */
@@ -468,9 +469,9 @@ public class ProjectExtController extends BaseController {
         //分页
         PageMaster<ImageMessageVO> pageMaster = new PageMaster<>(imageList);
         return R.ok(pageMaster);
-        
+
     }
-    
+
     /**
      * 通过切片ID查询对应的图像列表 .
      */
@@ -492,7 +493,7 @@ public class ProjectExtController extends BaseController {
         List<ImageListVO> image = imageService.selectImageListByPorjectId(projectId);
         return R.ok(image);
     }
-    
+
     /**
      * 通过项目ID查询对应的图像列表.
      *
@@ -574,7 +575,7 @@ public class ProjectExtController extends BaseController {
             //获取状态名称
             String enumStatusByValue = ProjectImageEnum.getEnumStatusByValue(processFlag);
             String description = slide.getDescription();
-            
+
             //查询每个图片的人工标注总数
             projectListOutVO.setSlideId(slideId);
             projectListOutVO.setImageName(imageName);
@@ -593,7 +594,7 @@ public class ProjectExtController extends BaseController {
         // 判断taggerId,categoryId是否为空
         if (taggerId != null || categoryId != null) {
             for (ProjectListOutVO i : new ArrayList<>(projectListOutVOList)) {
-                
+
                 ProjectInforImageVO projectInforImageVO = new ProjectInforImageVO();
                 projectInforImageVO.setProjectId(projectInforImage.getProjectId());
                 if (taggerId != null) {
@@ -617,7 +618,7 @@ public class ProjectExtController extends BaseController {
                 }
             }
         }
-        
+
         ProjectDelVO projectDelVO = ProjectUtils.paging(projectInforImage);
         int pageSize = projectDelVO.getPageSize();
         int pageNum = projectDelVO.getPageNum();
@@ -637,7 +638,7 @@ public class ProjectExtController extends BaseController {
         pageMaster.setTotal(projectListOutVOList.size());
         return R.ok(pageMaster);
     }
-    
+
     private List<Map<String, String>> transformation(Map<String, Long> map) {
         List<Map.Entry<String, Long>> list = new ArrayList<>(map.entrySet());
         List<Map<String, String>> resultList = new ArrayList<>();
@@ -657,18 +658,18 @@ public class ProjectExtController extends BaseController {
         }
         return resultList;
     }
-    
+
     /**
      * 删除项目图像 .
      *
      * @return tureOrFalse
      */
     @RequiresPermissions("anno:project:removeimage")
-    @Log(title = "项目图像删除",menu = "专题管理",subMenu = "项目管理", businessType = BusinessType.DELETE)
+    @Log(title = "项目图像删除", menu = "专题管理", subMenu = "项目管理", businessType = BusinessType.DELETE)
     @ApiOperation(value = "项目批量删除图片-删除切片")
     @PostMapping("/del")
     public R<String> delImage(@Validated @RequestBody SlideVO req) throws Exception {
-        
+
         Long[] slideIdList = req.getSlideId();
         boolean empty = ArrayUtil.isEmpty(slideIdList);
         if (empty) {
@@ -676,22 +677,22 @@ public class ProjectExtController extends BaseController {
         }
         //删除图片
         boolean flag = slideService.deleteProjectImage(slideIdList);
-        
+
         CacheUtils.ProjectCache(new Project());
-        
+
         if (flag) {
             return R.ok(ResponseConstant.OPERATE_SUCCEED);
         }
         return R.fail(ResponseConstant.OPERATE_ERROR);
-        
+
     }
-    
+
     /**
      * 修改项目 .
      */
     @ApiOperation(value = "修改项目接口")
     @RequiresPermissions("anno:project:edit")
-    @Log(title = "修改项目",menu = "专题管理",subMenu = "项目管理",businessType = BusinessType.UPDATE)
+    @Log(title = "修改项目", menu = "专题管理", subMenu = "项目管理", businessType = BusinessType.UPDATE)
     @PutMapping("/put")
     public R<Integer> edit(@Validated @RequestBody PorjectVO project) {
         String projectName = project.getProjectName();
@@ -714,9 +715,6 @@ public class ProjectExtController extends BaseController {
         projectMessage.setProjectId(projectId);
         projectMessage.setProjectName(projectName);
         projectMessage.setUpdateBy(SecurityUtils.getUserId());
-        if (project.getDictCode() != null) {
-            projectMessage.setDictCode(project.getDictCode());
-        }
         SlideSelectVO slideSelectVO = new SlideSelectVO();
         slideSelectVO.setProjectId(projectId);
         slideSelectVO.setProcessFlag(3);
@@ -791,13 +789,13 @@ public class ProjectExtController extends BaseController {
         updateIndicatorMessage(project, project1);
         return R.ok(0);
     }
-    
+
     /**
      * 修改项目病理 .
      */
     @ApiOperation(value = "修改项目病理")
     @RequiresPermissions("anno:project:edit")
-    @Log(title = "修改项目病理",menu = "专题管理",subMenu = "项目管理", businessType = BusinessType.UPDATE)
+    @Log(title = "修改项目病理", menu = "专题管理", subMenu = "项目管理", businessType = BusinessType.UPDATE)
     @PutMapping("/editIndicator")
     public R<String> editIndicator(@Validated @RequestBody ProjectEditVO project) {
         final Long projectId = project.getProjectId();
@@ -870,13 +868,13 @@ public class ProjectExtController extends BaseController {
         }
         return R.ok(ResponseConstant.OPERATE_SUCCEED);
     }
-    
+
     /**
      * 删除项目接口 .
      */
     @ApiOperation(value = "删除项目接口")
     @RequiresPermissions("anno:project:remove")
-    @Log(title = "项目删除",menu = "专题管理",subMenu = "项目管理", businessType = BusinessType.UPDATE)
+    @Log(title = "项目删除", menu = "专题管理", subMenu = "项目管理", businessType = BusinessType.UPDATE)
     @PostMapping("/projectDel")
     public R<String> logicalDel(@Validated @RequestBody ProjectDelVO projectInformation) {
         Long projectId = projectInformation.getProjectId();
@@ -902,7 +900,7 @@ public class ProjectExtController extends BaseController {
         }
         //删除项目
         projectService.deleteProjectById(projectId);
-        iCache.removeKeysFromMap(CacheConstant.PROJECT_CACHE_KEY, new String[] {projectId + ""});
+        iCache.removeKeysFromMap(CacheConstant.PROJECT_CACHE_KEY, new String[]{projectId + ""});
         //更新病理表数据
         if (Objects.nonNull(projectMessage.getIndicatorId())) {
             indicatorService.updateIndicator(indicatorReviseVO);
@@ -910,7 +908,7 @@ public class ProjectExtController extends BaseController {
         }
         return R.ok(null, ResponseConstant.OPERATE_SUCCEED);
     }
-    
+
     /**
      * 管理者下拉列表
      *
@@ -929,7 +927,7 @@ public class ProjectExtController extends BaseController {
         }
         return R.ok(createByList);
     }
-    
+
     /**
      * 项目切片excel导出.
      *
@@ -968,7 +966,7 @@ public class ProjectExtController extends BaseController {
         List<Integer> categoryIdList = new ArrayList<>();
         //存储用户id
         List<Long> userIdList = new ArrayList<>();
-        
+
         List<StatisticCategoryListOutVO> categoryList = pathologicalIndicatorCategoryService.selectByProjectId(
                 projectId);
         //添加标注类别表头
@@ -1011,7 +1009,7 @@ public class ProjectExtController extends BaseController {
                     user.getUpdateBy().toString() + PROPORTION);
             titleList.add(mapPercentage);
         }
-        
+
         //行内数据
         List<Map<String, String>> rowList = new ArrayList<>();
         // 创建一个数值格式化对象
@@ -1059,7 +1057,7 @@ public class ProjectExtController extends BaseController {
             slideCategoryProcessFlagVO1.setSlideId(projectListVO.getSlideId());
             Integer totalSum = projectService.selectCategoryTotal(slideCategoryProcessFlagVO1);
             for (Long user : userIdList) {
-                
+
                 slideCategoryProcessFlagVO1.setUpdateBy(user.longValue());
                 Integer userAnnotationNum = projectService.selectCategoryTotal(slideCategoryProcessFlagVO1);
                 if (userAnnotationNum == null) {
@@ -1078,20 +1076,20 @@ public class ProjectExtController extends BaseController {
             }
             rowList.add(m);
         }
-        
+
         ExcelTool excelTool = new ExcelTool(PROJECT_SLICE_DATA, 15, 20);
         List<Column> titleData = excelTool.columnTransformer(titleList);
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("utf-8");
         excelTool.exportExcel(titleData, rowList, response.getOutputStream(), true, false);
     }
-    
+
     /**
      * 项目批量添加图片接口（去重） .
      */
     @RequiresPermissions("anno:project:addimage")
     @ApiOperation(value = "项目批量添加图片接口")
-    @Log(title = "项目批量添加图片接口",menu = "专题管理",subMenu = "项目管理", businessType = BusinessType.INSERT)
+    @Log(title = "项目批量添加图片接口", menu = "专题管理", subMenu = "项目管理", businessType = BusinessType.INSERT)
     @PostMapping("/addProjectImage")
     public R<String> add(@Validated @RequestBody ProjectImageVO pro) {
         if (pro.getProjectId() != null && pro.getImageIdList() != null) {
@@ -1132,13 +1130,13 @@ public class ProjectExtController extends BaseController {
         }
         return R.fail(ProjectConstant.NO_DATA_TRANSFERRED);
     }
-    
+
     /**
      * 修改项目状态 .
      */
     @ApiOperation(value = "修改项目状态接口")
     @RequiresPermissions("anno:project:editstatus")
-    @Log(title = "修改项目状态",menu = "专题管理",subMenu = "项目管理", businessType = BusinessType.UPDATE)
+    @Log(title = "修改项目状态", menu = "专题管理", subMenu = "项目管理", businessType = BusinessType.UPDATE)
     @PutMapping("/editStatus")
     public R<String> editStatus(@Validated @RequestBody ProjectStatusVO project) {
         //查询项目信息
@@ -1154,7 +1152,7 @@ public class ProjectExtController extends BaseController {
         CacheUtils.ProjectCache(new Project());
         return R.ok(null, "修改成功");
     }
-    
+
     /**
      * 获取项目下的标注类别 .
      */
@@ -1166,7 +1164,7 @@ public class ProjectExtController extends BaseController {
                 projectId);
         return R.ok(category);
     }
-    
+
     /**
      * 获取项目下的标注类别 .
      */
@@ -1177,7 +1175,7 @@ public class ProjectExtController extends BaseController {
         List<ProjectListVO> projectTagger = projectService.selectProjectTagger(projectId);
         return R.ok(projectTagger);
     }
-    
+
     /**
      * 获取脏器组织列表
      *
@@ -1190,7 +1188,7 @@ public class ProjectExtController extends BaseController {
         List<VisceraVO> visceraVOS = projectService.selectAllViscera();
         return R.ok(visceraVOS);
     }
-    
+
     /**
      * 项目列表JSON文件导入
      *
@@ -1202,7 +1200,7 @@ public class ProjectExtController extends BaseController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "multipartFile", value = "图像标注JSON文件", required = true, dataType = "file")})
     public R<String> upload(@RequestParam("multipartFile") MultipartFile multipartFile,
-            @RequestParam(value = "projectId") @ApiParam(name = "projectId", value = "项目ID", required = true) Long projectId)
+                            @RequestParam(value = "projectId") @ApiParam(name = "projectId", value = "项目ID", required = true) Long projectId)
             throws IOException {
         // 参数校验
         Project project = projectService.selectPrimKey(projectId);
@@ -1212,7 +1210,7 @@ public class ProjectExtController extends BaseController {
         if (multipartFile.isEmpty()) {
             return R.fail("", NO_FILE);
         }
-        
+
         // 获取项目下所有图像
         SlideSelectVO slideSelectVO = new SlideSelectVO();
         slideSelectVO.setProjectId(projectId);
@@ -1220,21 +1218,21 @@ public class ProjectExtController extends BaseController {
         if (projectListOutVOS.isEmpty()) {
             return R.fail(IMAGE_NOT_EXIST);
         }
-        
+
         // 获取原始文件名
         String originalFileName = multipartFile.getOriginalFilename();
-        
+
         // 获取后缀名
         String suffixName = originalFileName.substring(originalFileName.lastIndexOf("."));
-        
+
         // 将json文件转为字符串类型
         File file = new File("/" + originalFileName);
-        
+
         try {
             //将MultipartFile类型转换为File类型
             FileUtils.copyInputStreamToFile(multipartFile.getInputStream(), file);
             String jsonString = FileUtils.readFileToString(file, CHARACTER_SET);
-            
+
             //如果是json文件
             if (suffixName.equals(FILE_SUFFIX)) {
                 //将json字符串转为实体类
@@ -1261,14 +1259,14 @@ public class ProjectExtController extends BaseController {
                         annotation.setCreateBy(userId);
                         annotation.setUpdateBy(userId);
                     });
-                    
+
                     // 校验JSON文件是否重复上传
                     List<Annotation> annotationList = annotationService.queryUploadAnnotation(annotation);
                     JSONArray regions = viaImgMetadataJsonObject.getJSONArray(REGIONS);
                     if (ObjectUtil.isNotEmpty(annotationList)) {
                         return R.fail(filename + IMAGE_UPLOADED_ANNOTATION);
                     }
-                    
+
                     HashMap<Long, String> mapCategoryName = new HashMap<>();
                     HashMap<Long, Long> mapCreateBy = new HashMap<>();
                     // 校验标注类别
@@ -1280,7 +1278,7 @@ public class ProjectExtController extends BaseController {
                             return R.fail(ANNOTATION_CATEGORY + categoryName + NON_EXISTENT);
                         }
                     }
-                    
+
                     for (int i = 0; i < regions.size(); i++) {
                         //  获取标注ID
                         ProjectUtils.queryCategoryByProjectId(projectId, mapCategoryName, mapCreateBy);
@@ -1296,15 +1294,15 @@ public class ProjectExtController extends BaseController {
                         } else {
                             annotation.setCategoryId(NOT_AUDIT);
                         }
-                        
+
                         // 解析X Y
                         JSONObject shapeAttributesJSONObject = JSONObject.parseObject(
                                 regions.getJSONObject(i).getString(SHAPE_ATTRIBUTES));
-                        
+
                         // 格式化X Y
                         StringBuilder shapeAttributesFormatXY = ProjectUtils.formatXY(shapeAttributesJSONObject);
                         String locationType = shapeAttributesJSONObject.getString(NAME);
-                        
+
                         StringBuilder location = new StringBuilder();
                         if (locationType.equalsIgnoreCase(POLYGON)) {
                             location.append(locationType.toUpperCase()).append("((").append(shapeAttributesFormatXY)
@@ -1314,7 +1312,7 @@ public class ProjectExtController extends BaseController {
                             location.append(locationType.toUpperCase()).append("(").append(shapeAttributesFormatXY)
                                     .append(")");
                         }
-                        
+
                         // 解析children_cnts
                         if (locationType.equalsIgnoreCase(POLYGON_WITH_HOLES)) {
                             JSONArray childrenCntsJSONArray = shapeAttributesJSONObject.getJSONArray(CHILDREN_CNTS);
@@ -1340,7 +1338,7 @@ public class ProjectExtController extends BaseController {
                             }
                         }
                         annotation.setLocation(location.toString());
-                        
+
                         // 添加导入标注
                         annotationService.insertAnnotation(annotation);
                         // 更新切片、项目的人工标注数
@@ -1361,7 +1359,7 @@ public class ProjectExtController extends BaseController {
         }
         return R.ok("", UPLOAD_SUCCESS);
     }
-    
+
     /**
      * 项目下载json文件
      */
@@ -1386,7 +1384,7 @@ public class ProjectExtController extends BaseController {
             FileOutputStream fileOutputStream = new FileOutputStream(zipPath + File.separator + projectName + ".zip");
             ZipOutputStream zos = new ZipOutputStream(fileOutputStream);
             ByteArrayInputStream bais;
-            
+
             for (ProjectListOutVO projectListOutVO : projectListOutVOList) {
                 Long slideId = projectListOutVO.getSlideId();
                 String imageName = projectListOutVO.getImageName();
@@ -1399,13 +1397,13 @@ public class ProjectExtController extends BaseController {
                 //对每个图片中的数据进行转换
                 JSONObject jsonObject0 = ProjectUtils.jsonExportMethod(annotationList, imageName, size, project1);
                 zos.putNextEntry(new ZipEntry(imageName.split("\\.")[0] + "_" + slideId + FILE_SUFFIX));
-                
+
                 //json数据转为输入流
                 bais = new ByteArrayInputStream(jsonObject0.toString().getBytes(CHARACTER_SET));
-                
+
                 int len = 0;
                 byte[] buf = new byte[1024];
-                
+
                 //从输入流中读取数据，写入到zip输出流
                 while ((len = bais.read(buf)) != -1) {
                     zos.write(buf, 0, len);
@@ -1417,7 +1415,7 @@ public class ProjectExtController extends BaseController {
             zos.close();
             File zip = new File(zipPath + File.separator + projectName + ".zip");
             long zipLength = zip.length();
-            
+
             // 获取文件名
             String filename = zip.getName();
             // 将文件写入输入流

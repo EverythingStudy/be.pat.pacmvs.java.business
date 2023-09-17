@@ -132,6 +132,13 @@ public class Files implements Serializable {
     private Long organizationId;
 
     /**
+     * 机构名称
+     */
+    @TableField(exist = false)
+    @ApiModelProperty(value = "机构名称")
+    private String organizationName;
+
+    /**
      * 业务类型(1原始切片，2预测图片，3切片信息表CSV，4待定)
      */
 

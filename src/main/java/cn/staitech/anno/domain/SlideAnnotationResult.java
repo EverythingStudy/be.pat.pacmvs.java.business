@@ -46,9 +46,9 @@ public class SlideAnnotationResult {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
-
     @ApiModelProperty(value = "机构编号")
     private Long organizationId;
+
     @ApiModelProperty(value = "机构名称")
     private String organizationName;
 

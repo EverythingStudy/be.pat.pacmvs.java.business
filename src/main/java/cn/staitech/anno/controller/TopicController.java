@@ -42,8 +42,10 @@ public class TopicController {
     @ApiOperation(value = "切片专题列表 - 无分页版", notes = "切片专题目列表 - 王峰")
     @GetMapping("/list")
     public R<List<Topic>> list() {
+        // 组织ID
+        Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
         QueryWrapper<Topic> qw = new QueryWrapper();
-        qw.eq("del_flag", 1).orderByDesc("topic_id");
+        qw.eq("organization_id", organizationId).eq("del_flag", 1).orderByDesc("topic_id");
         List<Topic> list = topicService.list(qw);
         return R.ok(list);
     }

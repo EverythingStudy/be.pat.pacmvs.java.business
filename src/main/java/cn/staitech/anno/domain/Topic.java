@@ -38,6 +38,13 @@ public class Topic implements Serializable {
     private String topicName;
 
     /**
+     * 组织ID .
+     */
+    @TableField(value = "organization_id")
+    private Long organizationId;
+
+
+    /**
      * 创建者 .
      */
     @TableField(value = "create_by")

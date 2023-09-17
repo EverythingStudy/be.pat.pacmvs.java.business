@@ -19,7 +19,7 @@ public class OrganizationSelectVo  {
     private String contactName;
 
     @ApiModelProperty(value = "联系方式")
-    private String phoneNumber;
+    private String phonenumber;
 
     @ApiModelProperty(value = "状态")
     private Long status;

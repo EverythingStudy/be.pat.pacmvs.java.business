@@ -3,25 +3,29 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.ProjectMapper">
-
     <resultMap id="ProjectResult" type="cn.staitech.anno.domain.Project">
         <result property="projectId" column="project_id"/>
-        <result property="projectName" column="project_name"/>
+        <result property="projectName" column="project_name"/><!--项目名称-->
         <result property="editMode" column="edit_mode"/>
         <result property="imageTotal" column="image_total"/>
         <result property="annotationTotal" column="annotation_total"/>
         <result property="markType" column="mark_type"/>
         <result property="examinationFlag" column="examination_flag"/>
         <result property="createBy" column="create_by"/>
-        <result property="description" column="description"/>
-        <result property="indicatorId" column="indicator_id"/>
+        <result property="description" column="description"/><!-- 描述 -->
+        <result property="indicatorId" column="indicator_id"/><!--关联结构指标-->
         <result property="createTime" column="create_time"/>
         <result property="managerId" column="manager_id"/>
         <result property="userName" column="user_name"/>
         <result property="updateTime" column="update_time"/>
         <result property="updateBy" column="update_by"/>
         <result property="projectStatus" column="project_status"/>
-        <result property="organizationId" column="organization_id"/>
+        <result property="colorType" column="color_type"/><!-- 染色类型 -->
+        <result property="speciesId" column="species_id"/><!-- 种属 -->
+        <result property="productSeriesId" column="product_series_id"/><!-- 品系 -->
+        <result property="projectType" column="project_type"/><!-- 项目类型 -->
+        <result property="topicId" column="topic_id"/><!-- 专题 -->
+        <result property="organizationId" column="organization_id"/><!-- 机构 -->
     </resultMap>
 
     <resultMap id="ProjectMessage" type="cn.staitech.anno.domain.vo.ProjectListVO">
@@ -46,7 +50,12 @@
         <result property="projectStatus" column="project_status"/>
         <result property="dictLabel" column="dict_label"/>
         <result property="dictCode" column="dict_code"/>
-        <result property="organizationId" column="organization_id"/>
+        <result property="colorType" column="color_type"/><!-- 染色类型 -->
+        <result property="speciesId" column="species_id"/><!-- 种属 -->
+        <result property="productSeriesId" column="product_series_id"/><!-- 品系 -->
+        <result property="projectType" column="project_type"/><!-- 项目类型 -->
+        <result property="topicId" column="topic_id"/><!-- 专题 -->
+        <result property="organizationId" column="organization_id"/><!-- 机构 -->
     </resultMap>
 
     <resultMap id="SlideAnnotationResult" type="cn.staitech.anno.domain.SlideAnnotationResult">
@@ -130,6 +139,11 @@
                p.update_by,
                p.update_time,
                p.manager_id,
+               p.color_type,
+               p.species_id,
+               p.product_series_id,
+               p.project_type,
+               p.topic_id,
                p.organization_id,
                u.user_name,
                i.indicator_name,
@@ -138,7 +152,7 @@
         from tb_project p
                  left join sys_user u on p.create_by = u.user_id
                  left join tb_pathological_indicator i on p.indicator_id = i.indicator_id
-                left join sys_dict_data s on p.dict_code=s.dict_code
+                 left join sys_dict_data s on p.dict_code = s.dict_code
     </sql>
 
     <sql id="selectProjectBy">
@@ -155,6 +169,11 @@
                create_time,
                update_by,
                manager_id,
+               color_type,
+               species_id,
+               product_series_id,
+               project_type,
+               topic_id,
                organization_id
         from tb_project
     </sql>
@@ -212,20 +231,32 @@
         insert into tb_project (
         <if test="projectName != null and projectName != '' ">project_name,</if>
         <if test="createBy != null and createBy != '' ">create_by,</if>
-        <if test="tissueID != null and tissueID != '' ">tissue_id,</if>
         <if test="indicatorId != null and indicatorId != ''">indicator_id,</if>
-        <if test="description != null and description != ''">description,</if>
+        <if test="colorType != null">color_type,</if>
+        <if test="speciesId != null">species_id,</if>
+        <if test="productSeriesId != null">product_series_id,</if>
+        <if test="projectType != null">project_type,</if>
+        <if test="description != null">description,</if>
+        <if test="topicId != null">topic_id,</if>
+        <if test="specialId != null">special_id,</if>
         <if test="dictCode != null and dictCode != ''">dict_code,</if>
+        <if test="organizationId != null">organization_id,</if>
         create_time,
         image_total,
         update_time
         )values(
         <if test="projectName != null and projectName != ''">#{projectName},</if>
         <if test="createBy != null and createBy != '' ">#{createBy},</if>
-        <if test="tissueID != null and tissueID != ''">#{tissueID},</if>
         <if test="indicatorId != null and indicatorId != ''">#{indicatorId},</if>
-        <if test="description != null and description != ''">#{description},</if>
+        <if test="colorType != null">#{colorType},</if>
+        <if test="speciesId != null">#{speciesId},</if>
+        <if test="productSeriesId != null">#{productSeriesId},</if>
+        <if test="projectType != null">#{projectType},</if>
+        <if test="description != null">#{description},</if>
+        <if test="topicId != null">#{topicId},</if>
+        <if test="specialId != null">#{specialId},</if>
         <if test="dictCode != null and dictCode != ''">#{dictCode},</if>
+        <if test="organizationId != null">#{organizationId},</if>
         sysdate(),
         0,
         sysdate()

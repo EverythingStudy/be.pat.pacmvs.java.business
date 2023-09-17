@@ -1,6 +1,7 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.files.Files;
+import cn.staitech.anno.domain.files.in.FileUploadVO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -15,5 +16,5 @@ public interface FileUploadService {
 
     Files upload(MultipartFile file) throws IOException;
 
-    Files uploadAndProcessBusiness(MultipartFile file, Integer businessType) throws IOException;
+    Files uploadAndProcessBusiness(FileUploadVO vo) throws IOException;
 }

@@ -3,29 +3,19 @@ package cn.staitech.anno.service.impl;
 import cn.staitech.anno.constant.ProjectConstant;
 import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.Group;
+import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.po.ProjectPo;
 import cn.staitech.anno.domain.project.ProjectExt;
 import cn.staitech.anno.domain.project.in.OperateProjectIn;
 import cn.staitech.anno.domain.project.in.ProjectListQueryIn;
 import cn.staitech.anno.domain.project.in.ProjectRemoveIn;
-import cn.staitech.anno.domain.project.out.CreateStatusOut;
-import cn.staitech.anno.domain.project.out.InterGroupReportOut;
-import cn.staitech.anno.domain.project.out.NavigationBarQueryOut;
-import cn.staitech.anno.domain.project.out.ProjectInfoOut;
-import cn.staitech.anno.domain.project.out.ProjectListQueryOut;
-import cn.staitech.anno.domain.project.out.ProjectWithGroupsVo;
-import cn.staitech.anno.domain.project.out.SystemDictOut;
-import cn.staitech.anno.domain.project.out.ViscusQueryOut;
+import cn.staitech.anno.domain.project.out.*;
 import cn.staitech.anno.domain.project.out.data.NavigationBarData;
 import cn.staitech.anno.domain.project.out.data.NavigationBarDataOut;
 import cn.staitech.anno.domain.projectgroup.ProjectGroup;
 import cn.staitech.anno.domain.special.Special;
 import cn.staitech.anno.enums.ReasonsEnum;
-import cn.staitech.anno.mapper.GroupMapper;
-import cn.staitech.anno.mapper.ProjectExtMapper;
-import cn.staitech.anno.mapper.ProjectGroupMapper;
-import cn.staitech.anno.mapper.SpecialMapper;
-import cn.staitech.anno.mapper.SystemDictMapper;
+import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.service.ProjectExtService;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
@@ -36,6 +26,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.slf4j.Logger;
@@ -47,12 +38,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StopWatch;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -61,7 +47,7 @@ import java.util.stream.Collectors;
  * @desc: 项目模块业务层
  */
 @Service
-public class ProjectExtServiceImpl implements ProjectExtService {
+public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> implements ProjectExtService {
 
     private static final Logger log = LoggerFactory.getLogger(ProjectExtServiceImpl.class);
     private static final String CHECK_FLAG = "1";

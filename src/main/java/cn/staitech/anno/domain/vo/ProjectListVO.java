@@ -2,11 +2,12 @@ package cn.staitech.anno.domain.vo;
 
 import cn.staitech.common.core.annotation.Excel;
 import cn.staitech.common.core.web.domain.BaseEntity;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -28,12 +29,6 @@ public class ProjectListVO extends BaseEntity {
     @ApiModelProperty(value = "项目名称")
     private String projectName;
 
-    /**
-     * 组织ID
-     */
-    @Excel(name = "组织ID")
-    @ApiModelProperty(value = "组织ID")
-    private Long tissueID;
 
     /**
      * 编辑模式
@@ -153,7 +148,7 @@ public class ProjectListVO extends BaseEntity {
     /**
      *
      */
-//    @ApiModelProperty(value = "用户名称列表")
+    @ApiModelProperty(value = "用户名称列表", hidden = true)
     private String[] userNames;
 
     /**
@@ -193,6 +188,29 @@ public class ProjectListVO extends BaseEntity {
     private Integer roleType;
 
 
+    /**
+     * 种属ID
+     */
+    @ApiModelProperty("种属ID")
+    private Integer speciesId;
+
+    @ApiModelProperty("染色类型（1RGB，2HEX）")
+    private Integer colorType;
+
+    /**
+     * 品系ID
+     */
+    @ApiModelProperty("品系ID")
+    private Integer productSeriesId;
+    /**
+     * 项目类型:1标注2评审3标准训练集
+     */
+    @Size(max = 255, message = "编码长度不能超过255")
+    @ApiModelProperty("项目类型:1标注2评审3标准训练集")
+    @Length(max = 255, message = "编码长度不能超过255")
+    private String projectType;
+    @ApiModelProperty("专题ID")
+    private Integer topicId;
     @ApiModelProperty(value = "机构编号")
     private Long organizationId;
     @ApiModelProperty(value = "机构名称")

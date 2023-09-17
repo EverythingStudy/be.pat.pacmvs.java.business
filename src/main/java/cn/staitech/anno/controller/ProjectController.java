@@ -1,18 +1,19 @@
 package cn.staitech.anno.controller;
 
 import cn.staitech.anno.constant.ProjectConstant;
+import cn.staitech.anno.constant.R.ResponseConstant;
+import cn.staitech.anno.domain.Project;
+import cn.staitech.anno.domain.ProjectMember;
 import cn.staitech.anno.domain.po.ProjectPo;
 import cn.staitech.anno.domain.project.in.OperateProjectIn;
 import cn.staitech.anno.domain.project.in.ProjectListQueryIn;
 import cn.staitech.anno.domain.project.in.ProjectRemoveIn;
-import cn.staitech.anno.domain.project.out.CreateStatusOut;
-import cn.staitech.anno.domain.project.out.InterGroupReportOut;
-import cn.staitech.anno.domain.project.out.NavigationBarQueryOut;
-import cn.staitech.anno.domain.project.out.ProjectInfoOut;
-import cn.staitech.anno.domain.project.out.ProjectListQueryOut;
-import cn.staitech.anno.domain.project.out.SystemDictOut;
+import cn.staitech.anno.domain.project.out.*;
 import cn.staitech.anno.domain.projectgroup.ProjectGroup;
+import cn.staitech.anno.domain.vo.InsertProjectVO;
 import cn.staitech.anno.service.ProjectExtService;
+import cn.staitech.anno.service.ProjectMemberService;
+import cn.staitech.anno.service.ProjectService;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
@@ -21,12 +22,20 @@ import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.annotation.RequiresSpecialPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
-import io.swagger.annotations.*;
+import cn.staitech.system.api.domain.SysUser;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +50,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/project")
 public class ProjectController extends BaseController {
-
+    @Resource
+    private ProjectService projectService;
+    @Resource
+    private ProjectMemberService projectMemberService;
     @Autowired
     private ProjectExtService projectExtService;
 
@@ -140,7 +152,7 @@ public class ProjectController extends BaseController {
     public R queryGroupByProjectId(@RequestParam(required = false, name = "projectId") Long projectId,
                                    @RequestParam(required = false, name = "groupName") String groupName) {
         try {
-            return projectExtService.queryGroupByProjectId(projectId, groupName,null);
+            return projectExtService.queryGroupByProjectId(projectId, groupName, null);
         } catch (Exception e) {
             return R.fail(e.getMessage());
         }
@@ -151,7 +163,7 @@ public class ProjectController extends BaseController {
     @GetMapping("/queryGroupByProjectIdCustom")
     @Log(title = "智能阅片", menu = "智能阅片", subMenu = "切片列表", businessType = BusinessType.QUERY)
     public R queryGroupByProjectIdCustom(@RequestParam(required = false, name = "projectId") Long projectId, @RequestParam(required = false, name = "reasons") Long reasons,
-                                   @RequestParam(required = false, name = "groupName") String groupName) {
+                                         @RequestParam(required = false, name = "groupName") String groupName) {
         try {
             if (reasons == null) {
                 //添加移走原因,'1给药结束安乐死、2恢复期结束安乐死'
@@ -167,8 +179,8 @@ public class ProjectController extends BaseController {
                 temp.add(pg1);
                 temp.add(pg2);
                 return R.ok(temp);
-            }else{
-                return projectExtService.queryGroupByProjectId(projectId, groupName,reasons);
+            } else {
+                return projectExtService.queryGroupByProjectId(projectId, groupName, reasons);
             }
         } catch (Exception e) {
             return R.fail(e.getMessage());
@@ -241,4 +253,33 @@ public class ProjectController extends BaseController {
         return projectExtService.getCreateSt(specialId);
     }
 
+
+    // ------------------------------------------------------------------
+
+    @SuppressWarnings("checkstyle:MissingJavadocMethod")
+    @ApiOperationSupport(author = "wangfeng")
+    @ApiOperation(value = "添加项目")
+    @RequiresPermissions("anno:project:addproject")
+    @Log(title = "添加项目", menu = "专题管理", subMenu = "项目管理", businessType = BusinessType.INSERT)
+    @PostMapping("/add")
+    @Transactional
+    public R<String> addProject(@Validated @RequestBody InsertProjectVO req) {
+        Project project = new Project();
+        BeanUtils.copyProperties(req, project);
+
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+        project.setCreateBy(sysUser.getUserId());
+        project.setOrganizationId(sysUser.getOrganizationId());
+
+        if (projectService.insertProject(project) > 0) {
+            // 获取当前项目Id
+            Long projectId = project.getProjectId();
+            // 向项目成员表添加当前用户
+            ProjectMember projectMember = ProjectMember.builder().userId(sysUser.getUserId()).projectId(projectId)
+                    .roleId(sysUser.getRoleId()).createBy(sysUser.getUserId()).build();
+            projectMemberService.save(projectMember);
+            return R.ok(ResponseConstant.OPERATE_SUCCEED);
+        }
+        return R.fail(ResponseConstant.OPERATE_ERROR);
+    }
 }

@@ -4,6 +4,8 @@ import cn.staitech.anno.domain.files.Files;
 import cn.staitech.anno.domain.files.in.FilesListVO;
 import cn.staitech.anno.mapper.FilesMapper;
 import cn.staitech.anno.service.FilesService;
+import cn.staitech.anno.service.SysOrganizationService;
+import cn.staitech.anno.service.TopicService;
 import cn.staitech.anno.utils.PageMaster;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -13,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -24,20 +26,51 @@ import java.util.concurrent.ExecutionException;
 @Service
 public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         implements FilesService {
+    @Resource
+    private FilesMapper filesMapper;
+    @Resource
+    private SysOrganizationService organizationService;
 
     @Resource
-    FilesMapper filesMapper;
+    private TopicService topicService;
 
     @Override
-    public PageMaster<Files> selectList(FilesListVO vo) throws ExecutionException, InterruptedException {
+    public PageMaster<Files> selectList(FilesListVO req) throws ExecutionException, InterruptedException {
         // 分页
-        PageHelper.startPage(vo.getPageNum(), vo.getPageSize()).setReasonable(true);
+        PageHelper.startPage(req.getPageNum(), req.getPageSize()).setReasonable(true);
 
         Files files = new Files();
-        BeanUtils.copyProperties(vo, files);
+        BeanUtils.copyProperties(req, files);
+
         QueryWrapper<Files> queryWrapper = new QueryWrapper<>(files);
-        // 异步查询图像列表
-        List<Files> list =  filesMapper.selectList(queryWrapper);
+        if (req.getTopicName() != null && req.getTopicName() != "" && req.getTopicName() != "null") {
+            queryWrapper.like("topic_name", req.getTopicName());
+        }
+        if (req.getCreateTimeParams() != null && req.getCreateTimeParams().containsKey("beginTime")) {
+            queryWrapper.ge("create_time", req.getCreateTimeParams().get("beginTime"));
+        }
+        if (req.getCreateTimeParams() != null && req.getCreateTimeParams().containsKey("endTime")) {
+            queryWrapper.le("create_time", req.getCreateTimeParams().get("endTime"));
+        }
+
+        //  查询图像列表
+        List<Files> list = filesMapper.selectList(queryWrapper);
+        // 机构列表
+        Map<Long, String> organizationMap = organizationService.selectMap();
+        // 专题列表
+        Map<Long, String> topicMap = topicService.selectMap();
+
+        for (Files obj : list) {
+            // 机构名称
+            if (organizationMap.containsKey(obj.getOrganizationId())) {
+                obj.setOrganizationName(organizationMap.get(obj.getOrganizationId()));
+            }
+            // 专题名称
+            if (topicMap.containsKey(obj.getTopicId())) {
+                obj.setTopicName(topicMap.get(obj.getTopicId()));
+            }
+        }
+
         PageMaster pageMaster = new PageMaster<>(list);
         pageMaster.setList(list);
         return pageMaster;

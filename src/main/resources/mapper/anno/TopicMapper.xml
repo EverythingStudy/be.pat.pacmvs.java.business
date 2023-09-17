@@ -6,17 +6,23 @@
     <resultMap type="cn.staitech.anno.domain.Topic" id="SpecialResult">
         <result property="topicId" column="topic_id"/>
         <result property="topicName" column="topic_name"/>
+        <result property="organizationId" column="organization_id"/>
         <result property="createBy" column="create_by"/>
         <result property="createTime" column="create_time"/>
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
         <result property="delFlag" column="del_flag"/>
+    </resultMap>
 
+    <resultMap type="cn.staitech.anno.domain.topic.TopicIdName" id="topicIdNameResult">
+        <result property="topicId" column="topic_id"/>
+        <result property="topicName" column="topic_name"/>
     </resultMap>
 
     <sql id="selectList">
         select topic_id
              , topic_name
+             , organization_id
              , create_by
              , create_time
              , update_by
@@ -25,6 +31,10 @@
         from tb_topic
     </sql>
 
-
-
+    <!--查询专题表IdNameList-->
+    <select id="selectIdNameList" resultMap="topicIdNameResult">
+        select distinct topic_id, topic_name
+        from tb_topic
+        order by topic_id asc;
+    </select>
 </mapper>

@@ -6,14 +6,14 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
- *
  * @author: wangfeng
  * @create: 2023-09-10 17:52:35
  * @Description: 查询Files
  * 切片信息列表-上传信息表-查询 ：切片编号、专题号、机构ID、上传时间-开始时间、上传时间-结束时间
- *
+ * <p>
  * 文件名称
  * 专题号
  * 机构
@@ -79,4 +79,6 @@ public class FilesListVO extends Pager implements Serializable {
     @ApiModelProperty(value = "业务类型(1原始切片，2预测图片，3切片信息表CSV，4待定)")
     private Integer businessType;
 
+    @ApiModelProperty(value = "创建时间-查询入参")
+    private Map<String, Object> createTimeParams;
 }

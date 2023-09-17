@@ -26,7 +26,7 @@ public class OrganizationInsertVo {
     @NotNull(message = "联系方式不可为空!")
     @Pattern(regexp = "^1[3-9]\\d{9}$",message = "请输入正确的手机号码")
     @ApiModelProperty(value = "联系方式", required = true)
-    private String phoneNumber;
+    private String phonenumber;
 
     @NotNull(message = "授权用户人数不可为空!")
     @ApiModelProperty(value = "授权用户人数")

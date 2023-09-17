@@ -34,7 +34,7 @@ public class ProjectIN {
     private Integer productSeriesId;
 
     @Size(max= 255,message="编码长度不能超过255")
-    @ApiModelProperty("项目类型:1标注2评审")
+    @ApiModelProperty("项目类型:1标注2评审3标准训练集")
     @Length(max= 255,message="编码长度不能超过255")
     private String projectType;
 

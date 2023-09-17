@@ -21,7 +21,7 @@ public class OrganizationSelectResVo {
     private String contactName;
 
     @ApiModelProperty(value = "联系方式")
-    private String phoneNumber;
+    private String phonenumber;
 
     @ApiModelProperty(value = "帐号状态(0正常开启 1禁用)")
     private Long status;

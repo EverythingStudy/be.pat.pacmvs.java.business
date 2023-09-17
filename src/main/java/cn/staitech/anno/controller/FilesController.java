@@ -2,6 +2,7 @@ package cn.staitech.anno.controller;
 
 import cn.staitech.anno.constant.ImageConstant;
 import cn.staitech.anno.domain.files.Files;
+import cn.staitech.anno.domain.files.in.FileUploadVO;
 import cn.staitech.anno.domain.files.in.FilesListVO;
 import cn.staitech.anno.service.FileUploadService;
 import cn.staitech.anno.service.FilesService;
@@ -48,6 +49,7 @@ public class FilesController extends BaseController {
     @Log(title = "文件上传", menu = "文件上传", subMenu = "文件上传", businessType = BusinessType.IMPORT)
     @PostMapping("/upload")
     public R<Files> upload(@RequestParam("file") MultipartFile file) throws IOException {
+
         return R.ok(fileUploadService.upload(file));
     }
 
@@ -63,10 +65,9 @@ public class FilesController extends BaseController {
     })
     @Log(title = "文件上传并处理下游业务逻辑", menu = "文件上传并处理下游业务逻辑", subMenu = "文件上传并处理下游业务逻辑", businessType = BusinessType.IMPORT)
     @PostMapping("/uploadBusiness")
-    public R<Files> uploadBusiness(@RequestParam("file") MultipartFile file, @RequestParam(value = "businessType") Integer businessType) throws IOException {
-        return R.ok(fileUploadService.uploadAndProcessBusiness(file,businessType));
+    public R<Files> uploadBusiness(FileUploadVO fileUploadVO) throws IOException {
+        return R.ok(fileUploadService.uploadAndProcessBusiness(fileUploadVO));
     }
-
 
 
     /**
@@ -93,26 +94,26 @@ public class FilesController extends BaseController {
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "单个文件详情", notes = "单个文件详情 - 王峰")
     @Log(title = "查询单个文件详情", menu = "单个文件详情", subMenu = "文件信息", businessType = BusinessType.QUERY)
-    @GetMapping("/{imageId}")
+    @GetMapping("/{fileId}")
     public R<Files> selectById(@PathVariable("fileId") @ApiParam(value = "图像ID") Long fileId) {
         Files files = filesService.getById(fileId);
         return R.ok(files);
     }
 
     /**
-     * 删除单个文件 .
+     * 物理删除单个文件 .
      */
     @SneakyThrows
     // @RequiresPermissions("anno:files:delete")
     @ApiOperationSupport(author = "wangfeng")
-    @Log(title = "删除单个文件记录", menu = "删除单个文件记录", subMenu = "删除单个文件记录", businessType = BusinessType.DELETE)
+    @Log(title = "物理删除单个文件记录", menu = "物理删除单个文件记录", subMenu = "物理删除单个文件记录", businessType = BusinessType.DELETE)
     @ApiOperation(value = "删除单个文件记录")
-    @GetMapping("/deleteById/{imageId}")
+    @GetMapping("/deleteById/{filesId}")
     @Transactional
-    public R deleteById(@PathVariable("fileId") @ApiParam(value = "图像ID") Long fileId) {
+    public R deleteById(@PathVariable("filesId") @ApiParam(value = "文件ID") Long filesId) {
         Files files = new Files();
-        files.setFilesId(fileId);
-        if (filesService.updateById(files)) {
+        files.setFilesId(filesId);
+        if (files.getFilesId() > 0 && filesService.removeById(files)) {
             return R.ok(ImageConstant.OPERATE_SUCCEED);
         }
         return R.fail(ImageConstant.IMAGE_USING_FORBID_DELETE);
@@ -130,7 +131,8 @@ public class FilesController extends BaseController {
     @ApiOperation(value = "编辑单个文件")
     @PostMapping("/update")
     public R updateBatchIds(@Validated @RequestBody Files files) {
-        if (filesService.save(files)) {
+        //  if (files.getFilesId() > 0 && filesService.save(files)) {
+        if (files.getFilesId() > 0 && filesService.updateById(files)) {
             return R.ok(ImageConstant.OPERATE_SUCCEED);
         }
         return R.fail(ImageConstant.OPERATE_ERROR);

@@ -1,6 +1,7 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.Topic;
+import cn.staitech.anno.domain.topic.TopicIdName;
 import cn.staitech.anno.domain.topic.in.TopicQueryIn;
 import cn.staitech.anno.mapper.TopicMapper;
 import cn.staitech.anno.service.TopicService;
@@ -10,7 +11,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -20,6 +24,17 @@ import java.util.List;
  */
 @Service
 public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements TopicService {
+
+    @Resource
+    private TopicMapper topicMapper;
+
+    @Override
+    public Map<Long, String> selectMap() {
+        List<TopicIdName> list = topicMapper.selectIdNameList();
+        Map<Long, String> map = list.stream()
+                .collect(Collectors.toMap(TopicIdName::getTopicId, TopicIdName::getTopicName));
+        return map;
+    }
 
     /**
      * 列表查询

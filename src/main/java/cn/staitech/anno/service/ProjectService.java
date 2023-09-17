@@ -5,6 +5,7 @@ import cn.staitech.anno.domain.SlideAnnotationResult;
 import cn.staitech.anno.domain.image.in.ImageAllVO;
 import cn.staitech.anno.domain.vo.*;
 import cn.staitech.anno.domain.vo.statistic.StatisticProjectListOutVO;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
  *
  * @author staitech
  */
-public interface ProjectService {
+public interface ProjectService extends IService<Project> {
 
     /**
      * 根据主键查询项目详情
@@ -220,10 +221,12 @@ public interface ProjectService {
 
     /**
      * 查询所有脏器组织
-     * */
-    public List<VisceraVO>selectAllViscera();
+     */
+    public List<VisceraVO> selectAllViscera();
 
-    /**将项目的组织改为null*/
+    /**
+     * 将项目的组织改为null
+     */
     public Integer updateProjectViscera(Project project);
 
 

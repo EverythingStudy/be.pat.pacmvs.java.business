@@ -86,10 +86,10 @@ public class Project implements Serializable {
     @ApiModelProperty("删除标志（0代表存在 1代表删除）")
     private String delFlag;
     /**
-     * 项目类型:1标注2评审
+     * 项目类型:1标注2评审3标准训练集
      */
     @Size(max= 255,message="编码长度不能超过255")
-    @ApiModelProperty("项目类型:1标注2评审")
+    @ApiModelProperty("项目类型:1标注2评审3标准训练集")
     @Length(max= 255,message="编码长度不能超过255")
     private String projectType;
     /**

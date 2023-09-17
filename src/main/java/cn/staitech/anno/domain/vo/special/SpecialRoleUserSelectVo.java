@@ -24,7 +24,7 @@ public class SpecialRoleUserSelectVo {
     private String nickName;
 
     @ApiModelProperty(value = "手机号码")
-    private String phoneNumber;
+    private String phonenumber;
 
     @ApiModelProperty(value = "专题角色id")
     private Long specialRoleId;

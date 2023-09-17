@@ -8,6 +8,9 @@ import cn.staitech.anno.domain.vo.statistic.StatisticProjectListOutVO;
 import cn.staitech.anno.mapper.ProjectMapper;
 import cn.staitech.anno.mapper.ProjectMemberMapper;
 import cn.staitech.anno.service.ProjectService;
+import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.domain.SysUser;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -19,13 +22,14 @@ import java.util.List;
  * @author staitech
  */
 @Service
-public class ProjectServiceImpl implements ProjectService {
+public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> implements ProjectService {
 
     @Resource
     private ProjectMapper projectMapper;
 
     @Resource
     private ProjectMemberMapper projectMemberMapper;
+
     /**
      * 根据主键查询项目详情
      *
@@ -75,7 +79,7 @@ public class ProjectServiceImpl implements ProjectService {
 //        }
 //            return projectListVOList;
 //    }
-       return projectList;
+        return projectList;
     }
 
     /**
@@ -325,15 +329,17 @@ public class ProjectServiceImpl implements ProjectService {
 
     /**
      * 查询所有脏器组织
-     * */
+     */
     @Override
-    public List<VisceraVO>selectAllViscera(){
+    public List<VisceraVO> selectAllViscera() {
         return projectMapper.selectAllViscera();
     }
 
-    /**将项目的组织改为null*/
+    /**
+     * 将项目的组织改为null
+     */
     @Override
-    public Integer updateProjectViscera(Project project){
+    public Integer updateProjectViscera(Project project) {
         return projectMapper.updateProjectViscera(project);
     }
 }

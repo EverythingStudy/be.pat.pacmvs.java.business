@@ -86,7 +86,7 @@ public class ProjectUtils {
         projectStatusVO.setProjectId(projectId);
         projectStatusVO.setUpdateBy(SecurityUtils.getUserId());
         projectUtils.projectService.updateProjectStatus(projectStatusVO);
-        CacheUtils.ProjectCache(new Project());
+//        CacheUtils.ProjectCache(new Project());
 //        return 0;
     }
 

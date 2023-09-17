@@ -23,8 +23,5 @@ public class ProjectMemberAddVO {
     private Long projectId;
     @NotNull(message = "用户id列表不能为空")
     @ApiModelProperty(value = "用户id列表", required = true)
-    private Long[] userIds;
-    @NotNull(message = "角色id不能为空")
-    @ApiModelProperty(value = "角色名称", required = true)
-    private Long roleId;
+    private Long userId;
 }

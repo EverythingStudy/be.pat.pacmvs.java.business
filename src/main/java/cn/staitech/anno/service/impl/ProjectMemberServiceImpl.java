@@ -1,17 +1,14 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.ProjectMember;
-import cn.staitech.anno.enums.ProjectMemberRoleType;
 import cn.staitech.anno.mapper.ProjectMemberMapper;
 import cn.staitech.anno.service.ProjectMemberService;
-import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.domain.SysUser;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-
-import static cn.staitech.anno.constant.ProjectMemberConstant.DISALLOW_CONTRIBUTOR;
 
 /**
  * 项目 服务层实现
@@ -38,10 +35,11 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
     }
 
     @Override
-    public int save(ProjectMember record) {
-        // TODO： 项目代表只能有一个项目代表  synchronized
-        int insert = projectMemberMapper.insert(record);
-        return insert;
+    public int save(ProjectMember projectMember) {
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+        projectMember.setCreateBy(sysUser.getUserId());
+        projectMember.setOrganizationId(sysUser.getOrganizationId());
+        return projectMemberMapper.insert(projectMember);
     }
 
     @Override
@@ -76,6 +74,8 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 
     @Override
     public List<ProjectMember> select(ProjectMember projectMember) {
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+        projectMember.setOrganizationId(sysUser.getOrganizationId());
         List<ProjectMember> projectMemberList = projectMemberMapper.select(projectMember);
         return projectMemberList;
     }
@@ -88,26 +88,25 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 
     /**
      * 查询用户id（结果去重的）
-     * */
-   @Override
-   public List<ProjectMember> selectByPrimaryKey(ProjectMember projectMember){
+     */
+    @Override
+    public List<ProjectMember> selectByPrimaryKey(ProjectMember projectMember) {
         return projectMemberMapper.selectByPrimaryKey(projectMember);
     }
 
 
-
     /**
      * 查询对应项目ID、用户ID是否项目代表总
+     *
      * @param projectId 项目ID
-     * @param userId 用户ID
+     * @param userId    用户ID
      * @return 符合条件的记录总数
      */
     @Override
-    public int representationCount(Long projectId,Long userId){
+    public int representationCount(Long projectId, Long userId) {
         ProjectMember representationMember = ProjectMember.builder()
                 .projectId(projectId)
                 .userId(userId)
-                .roleType(ProjectMemberRoleType.REPRESENTATION.getValue())
                 .build();
 
         List<ProjectMember> memberList = projectMemberMapper.select(representationMember);
@@ -117,14 +116,14 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 
     /**
      * 查询对应项目ID项目代表总数
+     *
      * @param projectId 项目ID
      * @return 符合条件的记录总数
      */
     @Override
-    public int representationCount(Long projectId){
+    public int representationCount(Long projectId) {
         ProjectMember representationMember = ProjectMember.builder()
                 .projectId(projectId)
-                .roleType(ProjectMemberRoleType.REPRESENTATION.getValue())
                 .build();
 
         List<ProjectMember> memberList = projectMemberMapper.select(representationMember);
@@ -134,33 +133,34 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 
     /**
      * 获取当前登录用户在某项目的角色
+     *
      * @param projectId 项目ID
-     * @return  角色类型值
+     * @return 角色类型值
      */
     @Override
-    public ProjectMember getLoginUserProjectRoleType(Long projectId){
+    public ProjectMember getLoginUserProjectRoleType(Long projectId) {
 
         ProjectMember representationMember = ProjectMember.builder()
                 .projectId(projectId)
                 .userId(SecurityUtils.getUserId())
                 .build();
-        
-        return  projectMemberMapper.selectBy(representationMember);
-    }
 
+        return projectMemberMapper.selectBy(representationMember);
+    }
 
     /**
      * 检查登录用户是否匹配对应角色
-     * @param projectId 项目ID
+     *
+     * @param userRoleType
      * @param roleType
      * @return
      */
     @Override
-    public boolean checkLonginUserRoleType(int userRoleType,int roleType){
+    public boolean checkLonginUserRoleType(int userRoleType, int roleType) {
         // 项目贡献者没有添加成员的权限
-        return  userRoleType == roleType ? true : false;
+        return userRoleType == roleType ? true : false;
     }
-    
+
     @Override
     public List<ProjectMember> selectProject(ProjectMember projectMember) {
         return projectMemberMapper.selectProject(projectMember);

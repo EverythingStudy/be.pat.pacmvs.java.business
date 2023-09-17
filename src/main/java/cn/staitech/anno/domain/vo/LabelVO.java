@@ -19,7 +19,7 @@ public class LabelVO {
     @ApiModelProperty(value = "结构名称")
     private String structureName;
     @ApiModelProperty(value = "机构ID")
-    private String organizationId;
+    private Long organizationId;
     @ApiModelProperty("请求参数（开始和结束时间）")
     private Map<String, Object> createTimeParams;
 

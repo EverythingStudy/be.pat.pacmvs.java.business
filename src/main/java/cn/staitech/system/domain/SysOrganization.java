@@ -35,7 +35,7 @@ public class SysOrganization {
      * 联系方式
      */
     @ApiModelProperty(value = "联系方式")
-    private String phoneNumber;
+    private String phonenumber;
 
     /**
      * 帐号状态(0正常开启 1禁用)

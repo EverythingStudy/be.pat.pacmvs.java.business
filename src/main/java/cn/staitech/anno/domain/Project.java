@@ -3,10 +3,14 @@ package cn.staitech.anno.domain;
 import cn.staitech.common.core.annotation.Excel;
 import cn.staitech.common.core.web.domain.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -14,8 +18,9 @@ import java.util.Date;
  *
  * @author staitech
  */
+@TableName(value = "tb_project")
 @Data
-public class Project extends BaseEntity {
+public class Project extends BaseEntity implements Serializable {
 
     /**
      * 项目ID
@@ -30,13 +35,6 @@ public class Project extends BaseEntity {
     @Excel(name = "项目名称")
     @ApiModelProperty(value = "项目名称")
     private String projectName;
-
-    /**
-     * 组织ID
-     */
-    @Excel(name = "组织ID")
-    @ApiModelProperty(value = "", hidden = true)
-    private Long tissueID;
 
     /**
      * 编辑模式
@@ -157,15 +155,43 @@ public class Project extends BaseEntity {
     @ApiModelProperty(value = "项目状态")
     private String projectStatus;
 
-    @ApiModelProperty(value = "脏器组织id")
-    private Long dictCode;
+    /**
+     * 种属ID
+     */
+    @ApiModelProperty("种属ID")
+    private Integer speciesId;
 
+    @ApiModelProperty("染色类型（1RGB，2HEX）")
+    private Integer colorType;
 
+    /**
+     * 品系ID
+     */
+    @ApiModelProperty("品系ID")
+    private Integer productSeriesId;
+
+    /**
+     * 项目类型:1标注2评审3标准训练集
+     */
+    @Size(max = 255, message = "编码长度不能超过255")
+    @ApiModelProperty("项目类型:1标注2评审3标准训练集")
+    @Length(max = 255, message = "编码长度不能超过255")
+    private String projectType;
+
+    @ApiModelProperty("专题ID")
+    private Integer topicId;
+
+    @ApiModelProperty(value = "专题ID-旧", hidden = true)
+    private Integer specialId;
     @ApiModelProperty(value = "机构编号")
     @TableField(value = "organization_id")
     private Long organizationId;
     @ApiModelProperty(value = "机构名称")
     @TableField(exist = false)
     private String organizationName;
+
+    @ApiModelProperty(required = false, hidden = true, value = "脏器组织id-未使用")
+    @TableField(exist = false)
+    private Long dictCode;
 
 }

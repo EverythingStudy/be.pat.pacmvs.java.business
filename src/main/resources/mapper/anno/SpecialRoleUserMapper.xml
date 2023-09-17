@@ -22,7 +22,7 @@
         <result property="roleId" column="role_id"/>
         <result property="nickName" column="nick_name"/>
         <result property="sex" column="sex"/>
-        <result property="phoneNumber" column="phonenumber"/>
+        <result property="phonenumber" column="phonenumber"/>
         <result property="roleName" column="role_name"/>
         <result property="specialRoleName" column="special_role_name"/>
         <result property="specialRoleId" column="special_role_id"/>
@@ -117,8 +117,8 @@
             <if test="nickName != null and nickName != ''">
                 AND u.nick_name like concat('%', #{nickName}, '%')
             </if>
-            <if test="phoneNumber != null and phoneNumber != ''">
-                AND u.phonenumber like concat('%', #{phoneNumber}, '%')
+            <if test="phonenumber != null and phonenumber != ''">
+                AND u.phonenumber like concat('%', #{phonenumber}, '%')
             </if>
             <if test="specialRoleId != null and specialRoleId != ''">
                 AND sr.role_id = #{specialRoleId}

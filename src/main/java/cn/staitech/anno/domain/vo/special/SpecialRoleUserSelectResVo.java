@@ -31,7 +31,7 @@ public class SpecialRoleUserSelectResVo {
     private String sex;
 
     @ApiModelProperty(value = "手机号码")
-    private String phoneNumber;
+    private String phonenumber;
 
     @ApiModelProperty(value = "专题角色")
     private String specialRoleName;

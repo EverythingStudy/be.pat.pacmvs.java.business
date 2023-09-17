@@ -25,9 +25,6 @@ public class ProjectMemberSelectOutVO {
     @ApiModelProperty(value = "角色id")
     private Long roleId;
 
-    @ApiModelProperty(value = "角色类型")
-    private Integer roleType;
-
     @ApiModelProperty(value = "角色名称")
     private String roleName;
 

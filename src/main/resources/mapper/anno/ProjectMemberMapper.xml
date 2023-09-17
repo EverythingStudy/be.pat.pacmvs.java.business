@@ -6,42 +6,57 @@
         <id column="user_id" jdbcType="BIGINT" property="userId"/>
         <result column="project_id" jdbcType="BIGINT" property="projectId"/>
         <result column="role_id" jdbcType="BIGINT" property="roleId"/>
-        <result column="role_type" jdbcType="INTEGER" property="roleType"/>
         <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
         <result column="user_name" jdbcType="VARCHAR" property="userName"  />
+        <result column="nick_name" jdbcType="VARCHAR" property="nickName"  />
+        <result column="sex" jdbcType="INTEGER" property="sex"  />
+        <result column="phonenumber" jdbcType="VARCHAR" property="phonenumber"  />
+        <result column="role_id" jdbcType="BIGINT" property="roleId"  />
+        <result column="role_name" jdbcType="VARCHAR" property="roleName"  />
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"  />
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"  />
+        <result column="create_time" jdbcType="VARCHAR" property="createTime"  />
+        <result column="update_time" jdbcType="VARCHAR" property="updateTime"  />
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"  />
     </resultMap>
     <sql id="Base_Column_List">
-        pm.user_id, pm.project_id, pm.role_id, pr.role_type, pr.role_name,u.user_name
+        pm.user_id, pm.project_id, u.role_id,pr.role_name,u.user_name,u.nick_name,u.sex,u.phonenumber,u.organization_id,pm.create_by,pm.update_by,pm.create_time,pm.update_time
     </sql>
     <select id="selectByProjectId" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from tb_project_member pm
-        left join sys_project_role pr on pm.role_id = pr.role_id
         left join sys_user u on pm.user_id = u.user_id
+        left join sys_role pr on u.role_id = pr.role_id
         where pm.project_id = #{ProjectId,jdbcType=BIGINT}
     </select>
     <select id="select" parameterType="cn.staitech.anno.domain.ProjectMember" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from tb_project_member pm
-        left join sys_project_role pr on pm.role_id = pr.role_id
         left join sys_user u on pm.user_id = u.user_id
+        left join sys_role pr on u.role_id = pr.role_id
         <where>
             <if test="projectId != null">
                 AND pm.project_id = #{projectId,jdbcType=BIGINT}
             </if>
             <if test="roleId != null">
-                AND pm.role_id = #{roleId,jdbcType=BIGINT}
+                AND u.role_id = #{roleId,jdbcType=BIGINT}
             </if>
-            <if test="roleType != null">
-                AND pr.role_type = #{roleType,jdbcType=INTEGER}
+            <if test="sex != null">
+                AND u.sex = #{sex,jdbcType=INTEGER}
             </if>
             <if test="userId != null">
                 AND pm.user_id = #{userId,jdbcType=BIGINT}
             </if>
+            <if test="organizationId != null">
+                AND u.organization_id = #{organizationId,jdbcType=BIGINT}
+            </if>
             <if test="userName != null and userName != ''">
                 AND u.user_name like concat('%', #{userName}, '%')
+            </if>
+            <if test="nickName != null and nickName != ''">
+                AND u.nick_name like concat('%', #{nickName}, '%')
             </if>
         </where>
     </select>
@@ -49,7 +64,7 @@
         select
         <include refid="Base_Column_List"/>
         from tb_project_member pm
-        left join sys_project_role pr on pm.role_id = pr.role_id
+        left join sys_role pr on pm.role_id = pr.role_id
         left join sys_user u on pm.user_id = u.user_id
         <where>
             <if test="projectId != null">
@@ -57,9 +72,6 @@
             </if>
             <if test="roleId != null">
                 AND pm.role_id = #{roleId,jdbcType=BIGINT}
-            </if>
-            <if test="roleType != null">
-                AND pr.role_type = #{roleType,jdbcType=INTEGER}
             </if>
             <if test="userId != null">
                 AND pm.user_id = #{userId,jdbcType=BIGINT}
@@ -73,7 +85,7 @@
         select
         <include refid="Base_Column_List"/>
         from tb_project_member pm
-        left join sys_project_role pr on pm.role_id = pr.role_id
+        left join sys_role pr on pm.role_id = pr.role_id
         left join sys_user u on pm.user_id = u.user_id
         where pm.user_id = #{UserId,jdbcType=BIGINT}
     </select>
@@ -90,10 +102,9 @@
     </delete>
 
     <insert id="insert" parameterType="cn.staitech.anno.domain.ProjectMember">
-        insert into tb_project_member (user_id, project_id, role_id, create_by, create_time)
+        insert into tb_project_member (user_id, project_id, create_by, create_time)
         values (#{userId,jdbcType=BIGINT},
                 #{projectId,jdbcType=BIGINT},
-                #{roleId,jdbcType=BIGINT},
                 #{createBy},
                 sysdate()
                 )
@@ -107,9 +118,6 @@
             <if test="projectId != null">
                 project_id,
             </if>
-            <if test="roleId != null">
-                role_id,
-            </if>
             <if test="createBy != null and createBy != ''">create_by,</if>
             create_time
         </trim>
@@ -119,9 +127,6 @@
             </if>
             <if test="projectId != null">
                 #{projectId,jdbcType=BIGINT},
-            </if>
-            <if test="roleId != null">
-                #{roleId,jdbcType=BIGINT},
             </if>
             <if test="createBy != null and createBy != ''">#{createBy},</if>
             sysdate()
