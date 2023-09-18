@@ -99,12 +99,15 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
         }
         Review reviewBy = reviewMapper.selectSlide(req.getSlideId());
         Review review = new Review();
+        BeanUtils.copyProperties(reviewBy, review);
         review.setCreateName(SecurityUtils.getUsername());
         review.setCreateBy(SecurityUtils.getUserId());
         review.setCreateTime(new Date());
+        review.setReviewPeople(SecurityUtils.getUsername());
+        review.setReviewTime(new Date());
         review.setUpdateBy(SecurityUtils.getUserId());
-        BeanUtils.copyProperties(reviewBy, review);
-        reviewMapper.insert(review);
+        review.setScore(req.getScore());
+        review.setDetails(req.getDetails());
         return reviewMapper.insert(review);
     }
 
@@ -121,6 +124,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
         review.setReviewId(req.getReviewId());
         review.setDetails(req.getDetails());
         review.setScore(req.getScore());
+        review.setUpdateBy(SecurityUtils.getUserId());
         review.setUpdateTime(new Date());
         return reviewMapper.updateById(review);
     }

@@ -23,7 +23,7 @@ import java.util.List;
  * @date 2023/9/15 13:06:04
  */
 @Slf4j
-@Api(value = "评审接口", tags = "项目接口")
+@Api(value = "评审接口", tags = "项目评审接口")
 @RestController("review")
 @Validated
 @RestControllerAdvice
@@ -33,21 +33,21 @@ public class ReviewController {
     @Resource
     private ReviewService reviewService;
 
-    @ApiOperation(value = "新增评审")
+    @ApiOperation(value = "viewer新增评审")
     @PostMapping("/insertReview")
-    public R<Boolean> insertReview(@Validated @RequestBody ReviewIN reviews) throws Exception {
+    public R<String> insertReview(@Validated @RequestBody ReviewIN reviews) throws Exception {
         reviewService.insert(reviews);
-        return R.ok();
+        return R.ok("操作成功");
     }
 
-    @ApiOperation(value = "新增评审")
+    @ApiOperation(value = "viewer编辑评审")
     @PutMapping("/updateReview")
-    public R<Boolean> updateReview(@Validated @RequestBody ReviewUP reviews) throws Exception {
+    public R<String> updateReview(@Validated @RequestBody ReviewUP reviews) throws Exception {
         reviewService.update(reviews);
-        return R.ok();
+        return R.ok("操作成功");
     }
 
-    @ApiOperation(value = "按切片id查询评审列表")
+    @ApiOperation(value = "viewer按切片id查询评审列表")
     @GetMapping("/queryReview")
     public R<List<Review>> queryReview(@RequestParam("slideId") @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId){
         return R.ok(reviewService.list(Wrappers.query(Review.builder().slideId(slideId).build())));

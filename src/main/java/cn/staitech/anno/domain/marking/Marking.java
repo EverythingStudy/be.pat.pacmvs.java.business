@@ -177,5 +177,20 @@ public class Marking implements Serializable {
      */
     private String annotation_update_owner;
 
+    /**
+     * 项目id
+     */
+    private Long project_id;
+
+    /**
+     * 标注更新者
+     */
+    private Long image_id;
+
+    /**
+     * 标注更新者
+     */
+    private String image_url;
+
 
 }

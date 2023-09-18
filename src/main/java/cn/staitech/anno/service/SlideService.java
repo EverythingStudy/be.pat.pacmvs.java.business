@@ -163,4 +163,6 @@ public interface SlideService extends IService<Slide> {
      */
     R<PageMaster<SlideReportVo>> pageSlideStatistics(Map params);
 
+    void jsonExport(List<Long> slideList, Long projectId, Integer status) throws Exception;
+
 }

@@ -1,5 +1,6 @@
 package cn.staitech.anno.service.impl;
 
+import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.geojson.*;
 import cn.staitech.anno.domain.geojson.Properties;
@@ -11,10 +12,7 @@ import cn.staitech.anno.domain.marking.SlideRes;
 import cn.staitech.anno.domain.vo.BroadcastVO;
 import cn.staitech.anno.domain.vo.file.SlideFileName;
 import cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo;
-import cn.staitech.anno.mapper.MarkingMapper;
-import cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper;
-import cn.staitech.anno.mapper.SlideMapper;
-import cn.staitech.anno.mapper.SysUserMapper;
+import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.netty.websocket.NioWebSocketHandler;
 import cn.staitech.anno.project.service.SlideAttrService;
 import cn.staitech.anno.service.FileService;
@@ -69,6 +67,9 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Resource
     private FileService fileService;
+
+    @Resource
+    private ImageMapper imageMapper;
 
     @Resource
     private SysUserMapper userMapper;
@@ -154,6 +155,12 @@ public class MarkingServiceImpl implements MarkingService {
             if (markingBy.getNumber() != null) {
                 number += markingBy.getNumber();
             }
+        }
+        marking.setProject_id(slideBy.getProjectId());
+        Image image = imageMapper.selectById(slideBy.getImageId());
+        if(image != null){
+            marking.setImage_id(image.getImageId());
+            marking.setImage_url(image.getImageUrl());
         }
         marking.setNumber(number);
         // 添加数据库，添加后返回自增id

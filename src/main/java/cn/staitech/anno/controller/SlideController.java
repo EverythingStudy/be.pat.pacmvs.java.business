@@ -22,9 +22,7 @@ import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.validation.annotation.Validated;
@@ -43,7 +41,7 @@ import java.util.Optional;
  * @author staitech
  */
 @Slf4j
-@Api(value = "切片管理接口")
+@Api(value = "切片管理接口", tags = "切片管理接口")
 @RestController
 @RequestMapping("/slide")
 public class SlideController extends BaseController {
@@ -211,5 +209,18 @@ public class SlideController extends BaseController {
     @PostMapping("/pageSlideStatistics")
     public R<PageMaster<SlideReportVo>> pageSlideStatistics(@RequestBody Map params) {
         return slideService.pageSlideStatistics(params);
+    }
+
+    @ApiOperation(value = "切片导出json")
+    @GetMapping("/jsonExport")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "slideList", value = "切片id", dataTypeClass = List.class, paramType = "query", example = "1")})
+    public R<String> jsonExport(
+            @RequestParam("slideList") List<Long> slideList,
+            @RequestParam(name = "status") @ApiParam(name = "status", value = "状态(1:本地导出,2:获取文件路径)") Integer status,
+            @RequestParam(name = "projectId") @ApiParam(name = "projectId", value = "项目id") Long projectId
+    ) throws Exception {
+        slideService.jsonExport(slideList, projectId, status);
+        return R.ok("操作成功");
     }
 }
