@@ -125,6 +125,12 @@ public class Project implements Serializable {
     @ApiModelProperty("更新时间")
     private Date updateTime;
 
+    /**
+     * 更新时间
+     */
+    @ApiModelProperty("更新时间")
+    private Long topicId;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 

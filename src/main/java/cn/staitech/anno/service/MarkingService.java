@@ -1,13 +1,12 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.Slide;
+import cn.staitech.anno.domain.geojson.Features;
 import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
 import cn.staitech.anno.domain.geojson.in.viewAddIn;
 import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.marking.PointCount;
 import cn.staitech.anno.domain.marking.SlideRes;
 import cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo;
-import org.yaml.snakeyaml.error.Mark;
 
 import java.util.List;
 
@@ -18,7 +17,10 @@ public interface MarkingService {
      * @param slideId 标注信息
      * @return List<Slide>
      */
-    List<MarkingSelectListVo> selectList(Long slideId);
+    List<MarkingSelectListVo> selectList(Long slideId) throws Exception;
+
+
+    List<Features> selectLists(Long slideId) throws Exception;
 
 
     /**
@@ -76,4 +78,20 @@ public interface MarkingService {
      * @return true || false
      */
     int delete(Long markingId) throws Exception;
+
+    /**
+     * 导出json数据
+     * @param slideId
+     * @return
+     */
+    String jsonExport(Long slideId) throws Exception;
+
+    /**
+     * 导入zip压缩包
+     * @param zipUrl
+     * @param specialId
+     * @return
+     * @throws Exception
+     */
+    boolean zipExport(String zipUrl, Long specialId) throws Exception;
 }

@@ -3,6 +3,7 @@ package cn.staitech.anno.project.controller;
 import cn.staitech.anno.project.domain.Review;
 import cn.staitech.anno.project.service.ReviewService;
 import cn.staitech.anno.project.vo.ReviewIN;
+import cn.staitech.anno.project.vo.ReviewUP;
 import cn.staitech.common.core.domain.R;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.swagger.annotations.Api;
@@ -27,15 +28,22 @@ import java.util.List;
 @Validated
 @RestControllerAdvice
 @RequestMapping("/intelligentEvaluation/review")
-public class ReviewContoller {
+public class ReviewController {
 
     @Resource
     private ReviewService reviewService;
 
     @ApiOperation(value = "新增评审")
-    @PostMapping("/addReview")
-    public R<Boolean> addReview(@RequestBody List<ReviewIN> reviews){
+    @PostMapping("/insertReview")
+    public R<Boolean> insertReview(@Validated @RequestBody ReviewIN reviews) throws Exception {
+        reviewService.insert(reviews);
+        return R.ok();
+    }
 
+    @ApiOperation(value = "新增评审")
+    @PutMapping("/updateReview")
+    public R<Boolean> updateReview(@Validated @RequestBody ReviewUP reviews) throws Exception {
+        reviewService.update(reviews);
         return R.ok();
     }
 

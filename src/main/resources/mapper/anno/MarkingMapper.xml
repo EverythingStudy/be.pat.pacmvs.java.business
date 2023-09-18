@@ -30,6 +30,18 @@
         <result property="point_count" column="point_count"/>
     </resultMap>
 
+
+
+    <resultMap type="cn.staitech.anno.domain.geojson.JsonExport" id="jsonExportResult">
+        <result property="topicName" column="topic_name"/>
+        <result property="projectName" column="project_name"/>
+        <result property="indicatorId" column="indicator_id"/>
+        <result property="imageShape" column="image_shape"/>
+        <result property="imageName" column="image_name"/>
+        <result property="format" column="format"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
     <resultMap type="cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo" id="markingSelectListVoResult">
         <result property="marking_id" column="marking_id"/>
         <result property="area" column="area"/>
@@ -44,6 +56,13 @@
         <result property="point_count" column="point_count"/>
     </resultMap>
 
+
+    <resultMap type="cn.staitech.anno.domain.geojson.Features" id="featuresResult">
+        <result property="id" column="id"/>
+        <result property="geometry" column="geometry" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="properties" column="properties" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+    </resultMap>
+
     <resultMap type="cn.staitech.anno.domain.geojson.Properties" id="propertiesResult">
         <result property="marking_id" column="marking_id"/>
         <result property="area" column="area"/>
@@ -52,6 +71,9 @@
         <result property="category_id" column="category_id"/>
         <result property="measure_full_name" column="measure_full_name"/>
         <result property="measure_type" column="measure_type"/>
+        <result property="label_name" column="label_name"/>
+        <result property="label_color" column="label_color"/>
+        <result property="annotation_update_owner" column="annotation_update_owner"/>
         <result property="measure_relation" column="measure_relation"/>
         <result property="measure_name" column="measure_name"/>
         <result property="measure_number" column="measure_number"/>
@@ -108,14 +130,14 @@
 
     <sql id="selectBy">
         SELECT
+            t.annotation_type,
             t.marking_id,
-            t.annotation_id,
             t.area,
             t.perimeter,
-            CONCAT_WS( "_", CONCAT( t.measure_name, t.number ), t1.category_name ) AS measure_full_name,
             t.description,
             t.category_id,
             t.measure_type,
+            t.measure_relation,
             t.measure_name,
             t.measure_number,
             t.radius,
@@ -124,16 +146,21 @@
             t.min_distance,
             t.inner_angle,
             t.exterior_angle,
-            u.user_name,
+            t.create_by,
             t.create_time,
+            t.location_type,
+            t.slide_id,
             t.center_point,
             t.point_count,
-            t.GEOMETRY,
-            t1.category_name
+            t.annotation_owner,
+            c.rgb as label_color,
+            c.category_name as label_name,
+            CONCAT_WS( "_", CONCAT( t.measure_name, t.number ), c.category_name) as measure_full_name,
+            t.annotation_owner,
+            t.annotation_update_owner
         FROM
             tb_marking AS t
-                LEFT JOIN tb_pathological_indicator_category AS t1 ON t.category_id = t1.category_id
-                LEFT JOIN sys_user AS u ON u.user_id = t.create_by
+                LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
     </sql>
 
     <sql id="selectPoint">
@@ -145,13 +172,105 @@
                 LEFT JOIN tb_pathological_indicator_category AS t1 ON t.category_id = t1.category_id
     </sql>
 
+    <sql id="selectList">
+        SELECT
+            annotation_id,
+            geometry,
+            JSON_OBJECT(
+                    "annotation_type",
+                    t.annotation_type,
+                    "marking_id",
+                    t.marking_id,
+                    "area",
+                    t.area,
+                    "perimeter",
+                    t.perimeter,
+                    "description",
+                    t.description,
+                    "category_id",
+                    t.category_id,
+                    "measure_type",
+                    t.measure_type,
+                    "measure_relation",
+                    t.measure_relation,
+                    "measure_name",
+                    t.measure_name,
+                    "measure_number",
+                    t.measure_number,
+                    "radius",
+                    t.radius,
+                    "mean_distance",
+                    t.mean_distance,
+                    "max_distance",
+                    t.max_distance,
+                    "min_distance",
+                    t.min_distance,
+                    "inner_angle",
+                    t.inner_angle,
+                    "exterior_angle",
+                    t.exterior_angle,
+                    "create_by",
+                    t.create_by,
+                    "create_time",
+                    t.create_time,
+                    "location_type",
+                    t.location_type,
+                    "slide_id",
+                    t.slide_id,
+                    "center_point",
+                    t.center_point,
+                    "point_count",
+                    t.point_count,
+                    "annotation_owner",
+                    t.annotation_owner,
+                    "label_color" ,
+                    c.rgb,
+                    "label_name",
+                    c.category_name,
+                    "measure_full_name",
+                    CONCAT_WS( "_", CONCAT( t.measure_name, t.number ), c.category_name)
+                ) AS properties
+        FROM
+            tb_marking AS t
+                LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
+
+
+    </sql>
+
     <select id="selectBy" parameterType="long" resultMap="propertiesResult">
         <include refid="selectBy"/>
         where marking_id = #{markingId}
     </select>
 
 
-    <select id="selectList" parameterType="Long" resultMap="markingSelectListVoResult">
+
+    <select id="jsonExportSelect" parameterType="long" resultMap="jsonExportResult">
+        SELECT
+            t.topic_name,
+            p.project_name,
+            i.image_name,
+            i.format,
+            p.indicator_id,
+            s.create_time,
+            CONCAT_WS(',', i.width, i.height ) AS image_shape
+        FROM
+            tb_slide AS s
+                LEFT JOIN tb_project AS p ON p.project_id = s.project_id
+                LEFT JOIN tb_topic AS t ON t.topic_id = p.topic_id
+                LEFT JOIN tb_image AS i ON i.image_id = s.image_id
+        WHERE
+            s.slide_id = #{slideId}
+    </select>
+
+
+
+    <select id="selectLists" parameterType="long" resultMap="featuresResult">
+        <include refid="selectList"/>
+        where slide_id = #{slideId}
+    </select>
+
+
+    <select id="selectList" parameterType="long" resultMap="markingSelectListVoResult">
         <include refid="selectBy"/>
         where slide_id = #{slideId}
         AND location_type != "Point"
@@ -164,7 +283,7 @@
         AND location_type = "Point"
     </select>
 
-    <select id="selectSlideList" parameterType="Long" resultMap="slideResult">
+    <select id="selectSlideList" parameterType="long" resultMap="slideResult">
         SELECT s.slide_id,
                sub.image_name
         FROM tb_special AS spe
@@ -176,7 +295,7 @@
           AND s.is_delete = 0
     </select>
 
-    <select id="selectCategoryCountList" parameterType="Long" resultMap="pointCountResult">
+    <select id="selectCategoryCountList" parameterType="long" resultMap="pointCountResult">
         SELECT category_id,
                count(marking_id) AS point_count
         FROM tb_marking

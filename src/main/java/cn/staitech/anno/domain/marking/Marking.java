@@ -167,4 +167,15 @@ public class Marking implements Serializable {
     private Date update_time;
 
 
+    /**
+     * 标注作者
+     */
+    private String annotation_owner;
+
+    /**
+     * 标注更新者
+     */
+    private String annotation_update_owner;
+
+
 }

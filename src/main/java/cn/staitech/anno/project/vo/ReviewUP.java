@@ -1,27 +1,16 @@
 package cn.staitech.anno.project.vo;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-/**
- * @author mugw
- * @version 1.0
- * @description 评审
- * @date 2023/9/15 13:11:48
- */
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class ReviewIN {
+public class ReviewUP {
+
     /**
      * 详情
      */
@@ -36,10 +25,11 @@ public class ReviewIN {
     @NotNull(message="[分数]不能为空")
     @ApiModelProperty("分数")
     private Long score;
+
     /**
-     * 切片id
+     * 分数
      */
-    @NotNull(message="[切片id]不能为空")
-    @ApiModelProperty("切片id")
-    private Long slideId;
+    @NotNull(message="[评审id]不能为空")
+    @ApiModelProperty("评审id")
+    private Long reviewId;
 }

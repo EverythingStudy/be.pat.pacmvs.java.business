@@ -26,6 +26,11 @@
         <result property="sum" column="sum"/>
     </resultMap>
 
+    <resultMap type="cn.staitech.anno.domain.geojson.GeoLabel" id="GeoLabelResult">
+        <result property="label_name" column="label_name"/>
+        <result property="label_color" column="label_color"/>
+    </resultMap>
+
     <resultMap id="BaseResult" type="cn.staitech.anno.domain.vo.LabelListVO">
         <id column="category_id" jdbcType="BIGINT" property="categoryId"/>
         <result column="indicator_id" jdbcType="BIGINT" property="indicatorId"/>
@@ -211,6 +216,17 @@
            or category_id = 0
            or category_id = 1
         order by order_number desc
+    </select>
+
+    <select id="selectIndicatorIdList" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+            category_name as label_name,
+            rgb as label_color
+        FROM
+            tb_pathological_indicator_category
+        WHERE
+            indicator_id = 1
+
     </select>
 
     <delete id="delIndicatorCategory" parameterType="java.lang.Long">

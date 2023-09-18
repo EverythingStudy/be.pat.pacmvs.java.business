@@ -13,14 +13,19 @@
             <result property="slideId" column="slide_id" jdbcType="BIGINT"/>
             <result property="reviewContent" column="review_content" jdbcType="VARCHAR"/>
             <result property="reviewRound" column="review_round" jdbcType="BIGINT"/>
-            <result property="specialNumber" column="special_number" jdbcType="VARCHAR"/>
+            <result property="topicId" column="topic_id" jdbcType="BIGINT"/>
+            <result property="topicName" column="topic_name" jdbcType="VARCHAR"/>
             <result property="groupId" column="group_id" jdbcType="BIGINT"/>
+            <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
             <result property="createName" column="create_name" jdbcType="VARCHAR"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="createBy" column="create_by" jdbcType="BIGINT"/>
             <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
             <result property="projectId" column="project_id" jdbcType="BIGINT"/>
+            <result property="projectName" column="project_name" jdbcType="VARCHAR"/>
+            <result property="roundId" column="round_id" jdbcType="BIGINT"/>
+            <result property="roundName" column="round_name" jdbcType="VARCHAR"/>
     </resultMap>
     <select id="exportReview" parameterType="Map" resultType="cn.staitech.anno.project.vo.ReviewVO">
         select r.*,p.project_name,i.image_code
@@ -34,6 +39,38 @@
             </if>
             <if test="params.slideId!= null">
                 AND s.slide_id = #{params.slideId}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="selectSlide" parameterType="long" resultType="cn.staitech.anno.project.domain.Review">
+        SELECT
+        SELECT
+        s.slide_id,
+        i.image_name as slide_name,
+        p.project_id,
+        p.project_name,
+        g.group_id,
+        g.group_name,
+        t.topic_id,
+        t.topic_name,
+        r.round_id,
+        r.round_name,
+        group_concat(st.name SEPARATOR "/") as review_content
+        FROM
+        tb_slide AS s
+        LEFT JOIN tb_project AS p ON s.project_id = p.project_id
+        LEFT JOIN tb_group AS g ON g.group_id = s.group_id
+        LEFT JOIN tb_topic AS t ON t.topic_id = p.topic_id
+        LEFT JOIN tb_round AS r ON r.round_id = s.round_id
+        LEFT JOIN tb_image AS i ON i.image_id = s.image_id
+        LEFT JOIN tb_pathological_indicator as ind on ind.indicator_id = p.indicator_id
+        LEFT JOIN tb_pathological_indicator_category as cate on cate.indicator_id = ind.indicator_id
+        LEFT JOIN tb_structure as st on st.structure_id = cate.structure_id
+        <where>
+            <if test="slideId !=  null">
+                AND s.slide_id = #{slideId}
             </if>
         </where>
     </select>

@@ -1,6 +1,7 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
+import cn.staitech.anno.domain.geojson.GeoLabel;
 import cn.staitech.anno.domain.vo.LabelListVO;
 import cn.staitech.anno.domain.vo.LabelVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListInVO;
@@ -49,6 +50,14 @@ public interface PathologicalIndicatorCategoryMapper {
      * @return
      */
     List<PathologicalIndicatorCategory> selectIndicatorIdAll(Long indicatorId);
+
+    /**
+     * 根据病理指标id获取列表
+     *
+     * @param indicatorId
+     * @return
+     */
+    List<GeoLabel> selectIndicatorIdList(Long indicatorId);
 
     /**
      * 根据病理指标id删除标注类别

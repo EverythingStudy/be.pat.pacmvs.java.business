@@ -1,13 +1,16 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.Slide;
+import cn.staitech.anno.domain.marking.SlideRes;
 import cn.staitech.anno.domain.vo.*;
 import cn.staitech.anno.domain.vo.diagnosis.SpecialDiagnosisAddVo;
+import cn.staitech.anno.domain.vo.file.SlideFileName;
 import cn.staitech.anno.domain.vo.image.ProjectStatisticsVo;
 import cn.staitech.anno.domain.vo.image.SlideReportSummaryVo;
 import cn.staitech.anno.domain.vo.image.SlideReportVo;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListOutVO;
+import cn.staitech.anno.project.domain.Review;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -30,6 +33,15 @@ public interface SlideMapper  extends BaseMapper<Slide> {
      * @return
      */
     int updateSlideHumanAnnotationQuantity(ExaminationListVO examinationListVo);
+
+    Review selectReview(Long slideId);
+
+    /**
+     * 根据切片生成文件目录
+     * @param params
+     * @return
+     */
+    SlideFileName slideFileName(Long slideId);
 
     /**
      * 根据项目ID列表查询图像列表
@@ -54,6 +66,8 @@ public interface SlideMapper  extends BaseMapper<Slide> {
      * @return 结果
      */
     int deleteProjectImage(Long slideId);
+
+    List<SlideRes> selectImageList(Long projectId);
 
     /**
      * 获取项目信息

@@ -107,6 +107,10 @@ public class Slide {
 
     @ApiModelProperty(value = "geojson文件url地址")
     private String geojsonUrl;
+
+    @ApiModelProperty(value = "轮次id")
+    private Long roundId;
+
 }
 
 

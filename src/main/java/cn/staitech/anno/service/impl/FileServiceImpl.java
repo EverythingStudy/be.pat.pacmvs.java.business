@@ -1,20 +1,90 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.file.Chunk;
+import cn.staitech.anno.domain.vo.file.SlideFileName;
+import cn.staitech.anno.mapper.SlideMapper;
 import cn.staitech.anno.service.FileService;
 import cn.staitech.anno.utils.FileUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.io.*;
 import java.nio.file.Files;
 
 @Service
 public class FileServiceImpl implements FileService {
 
-    private static final String zipUrl = "/home/uploadPath/zipFile/";
+    private static final String zipUrl = "/home/data/uploadPath/zipFile/";
 
 //    String zipUrl =  "D:\\zip";
+
+    String fileUrl = "D:\\home\\data";
+
+
+    @Resource
+    private SlideMapper slideMapper;
+
+
+
+
+    @Override
+    public String createFolder(Long slideId) throws Exception {
+        SlideFileName slideFileName = slideMapper.slideFileName(slideId);
+        slideFileVerify(slideFileName);
+        // 生成二级目录 (以专题名称命名)
+        String twoFolderName = fileUrl + "\\" + slideFileName.getTopicName();
+        createFolder(twoFolderName);
+        // 生成三级目录 (切片名称+切片类型+结构编码+时间戳,已下滑线进行分割)
+
+        String threeFolderName = twoFolderName + "\\" + slideFileName.getImageName();
+        createFolder(threeFolderName);
+        return threeFolderName;
+    }
+
+    @Override
+    public void createFile(String url) throws Exception {
+
+        File file=new File(url);
+        if(!file.exists())
+        {
+            try {
+                if(!file.createNewFile()){
+                    throw new Exception("文件下载时遇到了未知错误");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+
+
+    private static void slideFileVerify(SlideFileName slideFileName) throws Exception {
+        if (slideFileName == null) {
+            throw new Exception("文件下载时遇到了未知错误");
+        } else if (slideFileName.getSlideType() == null) {
+            throw new Exception("文件下载时遇到了未知错误");
+        } else if (slideFileName.getImageName() == null) {
+            throw new Exception("文件下载时遇到了未知错误");
+        } else if (slideFileName.getTopicName() == null) {
+            throw new Exception("文件下载时遇到了未知错误");
+        }
+    }
+
+    private static Boolean createFolder(String folder) throws Exception {
+        File file = new File(folder);
+        if (!file.exists() && !file.isDirectory()) {
+            if (file.mkdir()) {
+                return true;
+            } else {
+                throw new Exception("文件下载时遇到了未知错误");
+            }
+        }
+        return true;
+    }
+
 
 
     @Override
@@ -22,8 +92,6 @@ public class FileServiceImpl implements FileService {
         // 切片名称
         // 压缩包文件地址
 //        String zipUrl = "/home/uploadPath/zipFile/";
-
-
         //切片文件夹
         // 创建空文件夹
         File zipFile = new File(zipUrl);
@@ -36,9 +104,7 @@ public class FileServiceImpl implements FileService {
         if (!file.exists()) {
             FileUtils.createNewzip(zipFIleUrl);
         }
-        try (
-                InputStream fis = chunk.getFile().getInputStream();
-                RandomAccessFile raf = new RandomAccessFile(file, "rw")) {
+        try (InputStream fis = chunk.getFile().getInputStream(); RandomAccessFile raf = new RandomAccessFile(file, "rw")) {
             int len = -1;
             // byte[] buffer = new byte[1024*4];
             byte[] buffer = new byte[1024 * 4 * 10];
@@ -89,30 +155,6 @@ public class FileServiceImpl implements FileService {
     }
 
 
-//    private static void merge(String dest, File files) {
-//        // TODO 自动生成的方法存根
-//        String filename = files.getName();
-//        filename = files.getName().substring(0, filename.lastIndexOf("-"));
-//        System.out.println(filename + ">>>>");
-//        try {
-//            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(dest + File.separator + filename));
-//            BufferedInputStream bis = null;
-//            byte bytes[] = new byte[1024 * 1024];
-//            int len = -1;
-//            bis = new BufferedInputStream(new FileInputStream(files));
-//            while ((len = bis.read(bytes)) != -1) {
-//                bos.write(bytes, 0, len);
-//            }
-//        } catch (FileNotFoundException e) {
-//            // TODO 自动生成的 catch 块
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            // TODO 自动生成的 catch 块
-//            e.printStackTrace();
-//        }
-//    }
-
-
     private static void merge(String dest, File files) {
         // TODO 自动生成的方法存根
         String filename = files.getName();
@@ -142,9 +184,7 @@ public class FileServiceImpl implements FileService {
 //         TODO 自动生成的方法存根
         String filename = files.getName();
         filename = files.getName().substring(0, filename.lastIndexOf("-"));
-        try (
-                BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(files.toPath()));
-                RandomAccessFile raf = new RandomAccessFile(new FileOutputStream(dest + File.separator + filename).toString(), "rw")) {
+        try (BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(files.toPath())); RandomAccessFile raf = new RandomAccessFile(new FileOutputStream(dest + File.separator + filename).toString(), "rw")) {
             int len = -1;
             // byte[] buffer = new byte[1024*4];
             byte[] buffer = new byte[1024 * 4 * 10];
@@ -164,5 +204,29 @@ public class FileServiceImpl implements FileService {
         }
         return true;
     }
+
+
+
+    //    private static void merge(String dest, File files) {
+//        // TODO 自动生成的方法存根
+//        String filename = files.getName();
+//        filename = files.getName().substring(0, filename.lastIndexOf("-"));
+//        try {
+//            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(dest + File.separator + filename));
+//            BufferedInputStream bis = null;
+//            byte bytes[] = new byte[1024 * 1024];
+//            int len = -1;
+//            bis = new BufferedInputStream(new FileInputStream(files));
+//            while ((len = bis.read(bytes)) != -1) {
+//                bos.write(bytes, 0, len);
+//            }
+//        } catch (FileNotFoundException e) {
+//            // TODO 自动生成的 catch 块
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            // TODO 自动生成的 catch 块
+//            e.printStackTrace();
+//        }
+//    }
 
 }

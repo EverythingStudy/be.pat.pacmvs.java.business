@@ -8,6 +8,7 @@ public class MeasureResponseConstant {
     public static final String FILE_PREFIX = "measure_";
     public static final String FILE_CONNECTOR = "_";
     public static final String FILE_SUFFIX_JSON = ".json";
+    public static final String FILE_SUFFIX_TXT = ".txt";
     public static final String FILE_SUFFIX_EXCEL = ".xlsx";
     public static final String NO_FILE = "未上传文件";
     public static final String DOWNLOAD_SUCCESS = "下载完成";

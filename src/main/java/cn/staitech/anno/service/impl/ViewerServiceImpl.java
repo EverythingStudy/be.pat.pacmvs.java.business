@@ -117,7 +117,6 @@ public class ViewerServiceImpl implements ViewerService {
         properties.setPerimeter(req.getPerimeter());
         properties.setLocation_type(req.getLocation_type());
         properties.setArea(req.getArea());
-        marking.setProperties(properties);
         return marking;
     }
 
@@ -149,7 +148,6 @@ public class ViewerServiceImpl implements ViewerService {
             }
         }
         properties.setMeasure_full_name(measureFullName);
-        marking.setProperties(properties);
         return marking;
     }
 
@@ -256,7 +254,6 @@ public class ViewerServiceImpl implements ViewerService {
                                                     slideService.updateById(slide);
                                                 }
                                                 properties1.setMarking_id(marking.getMarking_id());
-                                                features1.setProperties(properties1);
                                                 FileUtils.addGeojson(features1, geojsonUrl, slideRes.getSlideId());
                                             }
                                         }

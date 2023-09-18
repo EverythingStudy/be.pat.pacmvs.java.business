@@ -7,7 +7,7 @@ import lombok.Data;
 public class GeoProject {
 
     @ApiModelProperty(value = "项目id")
-    private Long project_id;
+    private String project_id;
 
     @ApiModelProperty(value = "项目名称")
     private String project_name;

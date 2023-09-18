@@ -4,6 +4,7 @@ import cn.staitech.anno.constant.ProjectConstant;
 import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.ProjectMember;
+import cn.staitech.anno.domain.file.Chunk;
 import cn.staitech.anno.domain.po.ProjectPo;
 import cn.staitech.anno.domain.project.in.OperateProjectIn;
 import cn.staitech.anno.domain.project.in.ProjectListQueryIn;
@@ -11,6 +12,8 @@ import cn.staitech.anno.domain.project.in.ProjectRemoveIn;
 import cn.staitech.anno.domain.project.out.*;
 import cn.staitech.anno.domain.projectgroup.ProjectGroup;
 import cn.staitech.anno.domain.vo.InsertProjectVO;
+import cn.staitech.anno.service.FileService;
+import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.ProjectExtService;
 import cn.staitech.anno.service.ProjectMemberService;
 import cn.staitech.anno.service.ProjectService;
@@ -22,8 +25,9 @@ import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.annotation.RequiresSpecialPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
-import cn.staitech.system.api.domain.SysUser;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import io.swagger.annotations.*;
+import cn.staitech.system.api.domain.SysUser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -34,10 +38,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -56,6 +62,12 @@ public class ProjectController extends BaseController {
     private ProjectMemberService projectMemberService;
     @Autowired
     private ProjectExtService projectExtService;
+
+    @Resource
+    private FileService fileService;
+
+    @Resource
+    private MarkingService markingService;
 
 
     @GetMapping("getSystemDictOld")
@@ -282,4 +294,39 @@ public class ProjectController extends BaseController {
         }
         return R.fail(ResponseConstant.OPERATE_ERROR);
     }
+
+    @ApiOperation(value = "项目导出")
+    @GetMapping("/jsonExport")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "projectId", value = "项目id", dataTypeClass = Long.class, paramType = "query", example = "1")})
+    public R<String> jsonExport(
+            @RequestParam("projectId") Long projectId,
+            @RequestParam(name = "status") @ApiParam(name = "status", value = "状态(1:本地导出,2:获取文件路径)") Integer status
+    ) throws Exception {
+        projectExtService.jsonExport(projectId, status);
+        return R.ok("操作成功");
+    }
+
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "导入zip文件(大文件)")
+    @ApiImplicitParams({@ApiImplicitParam(name = "specialId", value = "专题Id", required = true, dataType = "Long"), @ApiImplicitParam(name = "fileName", value = "文件名称", required = true, dataType = "String"), @ApiImplicitParam(name = "chunk", value = "分片Id", required = true, dataType = "Integer"), @ApiImplicitParam(name = "chunkTotal", value = "分片总数", required = true, dataType = "Integer"), @ApiImplicitParam(name = "chunkSize", value = "分片大小", required = true, dataType = "Long"), @ApiImplicitParam(name = "file", value = "分片文件", required = true, dataType = "file")})
+    @PostMapping("/uploadZip")
+    public R<String> uploadZip(
+            @RequestParam("specialId") Long specialId,
+            @RequestParam("fileName") String fileName,
+            @RequestParam("chunk") Integer chunk,
+            @RequestParam("chunkTotal") Integer chunkTotal,
+            @RequestParam("chunkSize") Long chunkSize,
+            @RequestParam("file") MultipartFile file
+    ) throws Exception {
+        Chunk chunkObj = new Chunk().setChunkNumber(chunk).setFile(file).setFileName(fileName).setTotalChunks(chunkTotal).setSpecialId(specialId).setChunkSize(chunkSize);
+        String zipUrl = fileService.mergeChunk(chunkObj);
+        if (!Optional.ofNullable(specialId).isPresent()) {
+            return R.fail("参数异常");
+        }
+        markingService.zipExport(zipUrl, specialId);
+        return R.ok("操作成功");
+    }
+
+
 }

@@ -69,6 +69,11 @@ public class Review implements Serializable {
     @ApiModelProperty("切片id")
     private Long slideId;
     /**
+     * 切片编号
+     */
+    @ApiModelProperty("切片名称")
+    private String slideName;
+    /**
      * 评审内容
      */
     @NotBlank(message="[评审内容]不能为空")
@@ -89,13 +94,25 @@ public class Review implements Serializable {
     @Size(max= 255,message="编码长度不能超过255")
     @ApiModelProperty("专题编号")
     @Length(max= 255,message="编码长度不能超过255")
-    private String specialNumber;
+    private String topicName;
+    /**
+     * 专题id
+     */
+    @NotNull(message="[专题id]不能为空")
+    @ApiModelProperty("专题id")
+    private String topicId;
     /**
      * 分组id
      */
     @NotNull(message="[分组id]不能为空")
     @ApiModelProperty("分组id")
     private Long groupId;
+    /**
+     * 分组名称
+     */
+    @NotNull(message="[分组名称]不能为空")
+    @ApiModelProperty("分组名称")
+    private String groupName;
     /**
      * 创建者名称
      */
@@ -132,86 +149,25 @@ public class Review implements Serializable {
     @ApiModelProperty("项目id")
     private Long projectId;
 
+    /**
+     * 项目名称
+     */
+    @ApiModelProperty("项目名称")
+    private String projectName;
+
+    /**
+     * 轮次id
+     */
+    @ApiModelProperty("轮次id")
+    private Long roundId;
+
+    /**
+     * 轮次名称
+     */
+    @ApiModelProperty("轮次名称")
+    private String roundName;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
-    @Override
-    public boolean equals(Object that) {
-        if (this == that) {
-            return true;
-        }
-        if (that == null) {
-            return false;
-        }
-        if (getClass() != that.getClass()) {
-            return false;
-        }
-        Review other = (Review) that;
-        return (this.getReviewId() == null ? other.getReviewId() == null : this.getReviewId().equals(other.getReviewId()))
-            && (this.getScore() == null ? other.getScore() == null : this.getScore().equals(other.getScore()))
-            && (this.getDetails() == null ? other.getDetails() == null : this.getDetails().equals(other.getDetails()))
-            && (this.getReviewPeople() == null ? other.getReviewPeople() == null : this.getReviewPeople().equals(other.getReviewPeople()))
-            && (this.getReviewTime() == null ? other.getReviewTime() == null : this.getReviewTime().equals(other.getReviewTime()))
-            && (this.getSlideId() == null ? other.getSlideId() == null : this.getSlideId().equals(other.getSlideId()))
-            && (this.getReviewContent() == null ? other.getReviewContent() == null : this.getReviewContent().equals(other.getReviewContent()))
-            && (this.getReviewRound() == null ? other.getReviewRound() == null : this.getReviewRound().equals(other.getReviewRound()))
-            && (this.getSpecialNumber() == null ? other.getSpecialNumber() == null : this.getSpecialNumber().equals(other.getSpecialNumber()))
-            && (this.getGroupId() == null ? other.getGroupId() == null : this.getGroupId().equals(other.getGroupId()))
-            && (this.getCreateName() == null ? other.getCreateName() == null : this.getCreateName().equals(other.getCreateName()))
-            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
-            && (this.getCreateBy() == null ? other.getCreateBy() == null : this.getCreateBy().equals(other.getCreateBy()))
-            && (this.getUpdateBy() == null ? other.getUpdateBy() == null : this.getUpdateBy().equals(other.getUpdateBy()))
-            && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
-            && (this.getProjectId() == null ? other.getProjectId() == null : this.getProjectId().equals(other.getProjectId()));
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getReviewId() == null) ? 0 : getReviewId().hashCode());
-        result = prime * result + ((getScore() == null) ? 0 : getScore().hashCode());
-        result = prime * result + ((getDetails() == null) ? 0 : getDetails().hashCode());
-        result = prime * result + ((getReviewPeople() == null) ? 0 : getReviewPeople().hashCode());
-        result = prime * result + ((getReviewTime() == null) ? 0 : getReviewTime().hashCode());
-        result = prime * result + ((getSlideId() == null) ? 0 : getSlideId().hashCode());
-        result = prime * result + ((getReviewContent() == null) ? 0 : getReviewContent().hashCode());
-        result = prime * result + ((getReviewRound() == null) ? 0 : getReviewRound().hashCode());
-        result = prime * result + ((getSpecialNumber() == null) ? 0 : getSpecialNumber().hashCode());
-        result = prime * result + ((getGroupId() == null) ? 0 : getGroupId().hashCode());
-        result = prime * result + ((getCreateName() == null) ? 0 : getCreateName().hashCode());
-        result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
-        result = prime * result + ((getCreateBy() == null) ? 0 : getCreateBy().hashCode());
-        result = prime * result + ((getUpdateBy() == null) ? 0 : getUpdateBy().hashCode());
-        result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
-        result = prime * result + ((getProjectId() == null) ? 0 : getProjectId().hashCode());
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", reviewId=").append(reviewId);
-        sb.append(", score=").append(score);
-        sb.append(", details=").append(details);
-        sb.append(", reviewPeople=").append(reviewPeople);
-        sb.append(", reviewTime=").append(reviewTime);
-        sb.append(", slideId=").append(slideId);
-        sb.append(", reviewContent=").append(reviewContent);
-        sb.append(", reviewRound=").append(reviewRound);
-        sb.append(", specialNumber=").append(specialNumber);
-        sb.append(", groupId=").append(groupId);
-        sb.append(", createName=").append(createName);
-        sb.append(", createTime=").append(createTime);
-        sb.append(", createBy=").append(createBy);
-        sb.append(", updateBy=").append(updateBy);
-        sb.append(", updateTime=").append(updateTime);
-        sb.append(", projectId=").append(projectId);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
-    }
 }

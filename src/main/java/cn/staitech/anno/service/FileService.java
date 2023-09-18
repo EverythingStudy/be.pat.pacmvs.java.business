@@ -12,4 +12,8 @@ public interface FileService {
 
     String upload(MultipartFile file) throws Exception;
 
+    String createFolder(Long slideId) throws Exception;
+
+    void createFile(String url)throws Exception;
+
 }

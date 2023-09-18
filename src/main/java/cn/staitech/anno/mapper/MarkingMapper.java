@@ -1,13 +1,12 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.Slide;
+import cn.staitech.anno.domain.geojson.Features;
+import cn.staitech.anno.domain.geojson.JsonExport;
 import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.marking.PointCount;
 import cn.staitech.anno.domain.marking.SlideRes;
 import cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.yaml.snakeyaml.error.Mark;
 
 import java.util.List;
 import cn.staitech.anno.domain.geojson.Properties;
@@ -26,11 +25,15 @@ public interface MarkingMapper  extends BaseMapper<Marking> {
      */
     List<MarkingSelectListVo> selectList(Long slideId);
 
+    List<Features> selectLists(Long slideId);
+
 
 
     List<MarkingSelectListVo> selectPointCountList(Long slideId);
 
     Properties selectBy(Long markingId);
+
+    JsonExport jsonExportSelect(Long slide);
 
     /**
      * 根据专题查看当前专题下所有的切片

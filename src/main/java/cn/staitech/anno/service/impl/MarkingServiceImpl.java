@@ -1,32 +1,50 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.geojson.Features;
+import cn.staitech.anno.domain.geojson.*;
+import cn.staitech.anno.domain.geojson.Properties;
 import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
 import cn.staitech.anno.domain.geojson.in.viewAddIn;
 import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.marking.PointCount;
 import cn.staitech.anno.domain.marking.SlideRes;
 import cn.staitech.anno.domain.vo.BroadcastVO;
+import cn.staitech.anno.domain.vo.file.SlideFileName;
 import cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo;
 import cn.staitech.anno.mapper.MarkingMapper;
+import cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper;
 import cn.staitech.anno.mapper.SlideMapper;
 import cn.staitech.anno.netty.websocket.NioWebSocketHandler;
+import cn.staitech.anno.project.service.SlideAttrService;
+import cn.staitech.anno.service.FileService;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.utils.CustomizationIdUtils;
+import cn.staitech.anno.utils.RandomUtils;
 import cn.staitech.anno.utils.SendMessage;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import lombok.SneakyThrows;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
-import cn.staitech.anno.domain.geojson.Properties;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -38,14 +56,38 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Resource
     private SlideMapper slideMapper;
+    @Resource
+    private SlideAttrService slideAttrService;
+
+    @Resource
+    private PathologicalIndicatorCategoryMapper pathologicalIndicatorCategoryMapper;
+
+    @Resource
+    private MarkingMapper markingMapper;
+
+    @Resource
+    private FileService fileService;
 
 
     @Override
-    public List<MarkingSelectListVo> selectList(Long slideId) {
+    public List<MarkingSelectListVo> selectList(Long slideId) throws Exception {
+        Slide slideBy = slideMapper.selectById(slideId);
+        if (!Optional.ofNullable(slideBy).isPresent()) {
+            throw new Exception("切片信息异常,未查询到切片信息");
+        }
         List<MarkingSelectListVo> markingSelectListVoList = markingMapper.selectList(slideId);
         List<MarkingSelectListVo> pointCountList = markingMapper.selectPointCountList(slideId);
         markingSelectListVoList = Stream.of(markingSelectListVoList, pointCountList).flatMap(list -> list.stream().map(x -> (MarkingSelectListVo) x)).collect(Collectors.toList());
         return markingSelectListVoList;
+    }
+
+    @Override
+    public List<Features> selectLists(Long slideId) throws Exception {
+        Slide slideBy = slideMapper.selectById(slideId);
+        if (!Optional.ofNullable(slideBy).isPresent()) {
+            throw new Exception("切片信息异常,未查询到切片信息");
+        }
+        return markingMapper.selectLists(slideId);
     }
 
 
@@ -64,8 +106,6 @@ public class MarkingServiceImpl implements MarkingService {
         return markingMapper.selectCategoryCountList(slideId);
     }
 
-    @Resource
-    private MarkingMapper markingMapper;
 
     @Override
     public Marking selectById(Long markingId) {
@@ -84,23 +124,24 @@ public class MarkingServiceImpl implements MarkingService {
         // 拼接标注名称
         String annotationId = CustomizationIdUtils.getSdId();
         marking.setAnnotation_id(annotationId);
-        if(req.getArea() != null){
+        if (req.getArea() != null) {
             Double area = new Double(req.getArea()) * MICRON;
             marking.setArea(String.valueOf(area));
         }
-        if(req.getPerimeter() != null){
+        if (req.getPerimeter() != null) {
             Double perimeter = new Double(req.getPerimeter()) * MICRON;
             marking.setPerimeter(String.valueOf(perimeter));
         }
         marking.setCreate_by(SecurityUtils.getUserId());
         marking.setAnnotation_type("Draw");
         marking.setCreate_time(new Date());
+        marking.setAnnotation_owner(SecurityUtils.getUsername());
         // 查询
         QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
         // 根据切片和测量轮廓名称查询最大值
-        markingQueryWrapper.eq("slide_id", req.getSlide_id()).eq("measure_name", req.getMeasure_name()).orderByDesc();
+        markingQueryWrapper.eq("slide_id", req.getSlide_id()).eq("measure_name", req.getMeasure_name()).orderByDesc("create_time").last("limit 1");
         Marking markingBy = markingMapper.selectOne(markingQueryWrapper);
-        Integer number = 1;
+        int number = 1;
         if (markingBy != null) {
             if (markingBy.getNumber() != null) {
                 number += markingBy.getNumber();
@@ -115,7 +156,10 @@ public class MarkingServiceImpl implements MarkingService {
         List<PointCount> pointCountList = updatePoint(req.getLocation_type(), markingBy);
         BroadcastVO broadcastVO = SendMessage.sendOneMessages(ADD_STATUS, features, pointCountList);
         NioWebSocketHandler.sendAll(req.getSlide_id(), broadcastVO);
+        // 更新切片表中最新状态
         updateSLide(marking.getSlide_id());
+        slideAttrService.saveAnnoUsers(req.getSlide_id(), Collections.singletonList(marking.getCreate_by()));
+        slideAttrService.saveAnnoCategory(req.getSlide_id(), Collections.singletonList(marking.getCategory_id()));
         return marking.getMarking_id();
     }
 
@@ -132,20 +176,25 @@ public class MarkingServiceImpl implements MarkingService {
         if (!Optional.ofNullable(slide).isPresent()) {
             throw new Exception("未查询到切片信息");
         }
-        Double area = new Double(req.getArea()) * MICRON;
-        Double perimeter = new Double(req.getPerimeter()) * MICRON;
         // 更新前数据
         // 更新文件中的内容
         Marking marking = new Marking();
         BeanUtils.copyProperties(req, marking);
         marking.setUpdate_by(SecurityUtils.getUserId());
         marking.setUpdate_time(new Date());
-        marking.setArea(String.valueOf(area));
-        marking.setPerimeter(String.valueOf(perimeter));
+        marking.setAnnotation_update_owner(SecurityUtils.getUsername());
+        if (req.getArea() != null) {
+            Double area = new Double(req.getArea()) * MICRON;
+            marking.setArea(String.valueOf(area));
+        }
+        if (req.getPerimeter() != null) {
+            Double perimeter = new Double(req.getPerimeter()) * MICRON;
+            marking.setPerimeter(String.valueOf(perimeter));
+        }
         List<PointCount> pointCountList = updatePoint(markingBy.getLocation_type(), markingBy);
         markingMapper.updateById(marking);
         // 判断标签
-        if(req.getCategory_id() != null){
+        if (req.getCategory_id() != null) {
             if (req.getCategory_id() != 0 && !req.getCategory_id().equals(markingBy.getCategory_id())) {
                 markingBy.setCategory_id(req.getCategory_id());
                 List<PointCount> newPointCountList = updatePoint(markingBy.getLocation_type(), markingBy);
@@ -159,6 +208,15 @@ public class MarkingServiceImpl implements MarkingService {
         NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
         // 更新切片表中数据
         updateSLide(slide.getSlideId());
+        // 更新前数据
+//        slideAttrService.removeAnnoUsers(slide.getSlideId(), Collections.singletonList(markingBy.getCreate_by()));
+//        slideAttrService.removeAnnoCategory(slide.getSlideId(), Collections.singletonList(markingBy.getCategory_id()));
+
+        slideAttrService.removeAnnoUsers(slide.getSlideId(), Collections.singletonList(1L));
+        slideAttrService.removeAnnoCategory(slide.getSlideId(), Collections.singletonList(markingBy.getCategory_id()));
+        // 更新后数据
+        slideAttrService.saveAnnoUsers(slide.getSlideId(), Collections.singletonList(SecurityUtils.getUserId()));
+        slideAttrService.saveAnnoCategory(slide.getSlideId(), Collections.singletonList(req.getCategory_id()));
         return markingBy.getMarking_id();
     }
 
@@ -182,14 +240,176 @@ public class MarkingServiceImpl implements MarkingService {
             throw new Exception("未查询到切片信息");
         }
         Properties properties = markingMapper.selectBy(markingId);
-        markingMapper.delete(markingId);
         Features features = socketData(markingBy.getAnnotation_id(), markingBy.getGeometry(), properties);
         List<PointCount> pointCountList = updatePoint(markingBy.getLocation_type(), markingBy);
         BroadcastVO broadcastVO = SendMessage.sendOneMessages(DELETE_STATUS, features, pointCountList);
         NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
         int res = markingMapper.delete(markingId);
         updateSLide(slide.getSlideId());
+        // 更新前数据
+        slideAttrService.removeAnnoUsers(slide.getSlideId(), Collections.singletonList(markingBy.getCreate_by()));
+        slideAttrService.removeAnnoCategory(slide.getSlideId(), Collections.singletonList(markingBy.getCategory_id()));
         return res;
+    }
+
+    @Override
+    public String jsonExport(Long slideId) throws Exception {
+//        CompletableFuture<R<String>> cf2 = CompletableFuture.supplyAsync(() -> {
+        if (!Optional.ofNullable(slideId).isPresent()) {
+            try {
+                throw new Exception("参数异常");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        Slide slideBy = slideMapper.selectById(slideId);
+        if (!Optional.ofNullable(slideBy).isPresent()) {
+            try {
+                throw new Exception("未查询到切片信息");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        String folderUrl = null;
+        try {
+            folderUrl = fileService.createFolder(slideId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        SlideFileName slideFileName = slideMapper.slideFileName(slideId);
+        String fileUrl = folderUrl + "\\" + slideFileName.getImageName() + "_" + slideFileName.getSlideType() + "_" + slideFileName.getCategoryNumber() + "_" + System.currentTimeMillis() + "." + "json";
+        // 创建文件
+        try {
+            fileService.createFile(fileUrl);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        // 标注数据
+        List<Features> features = markingMapper.selectLists(slideId);
+        // 查询项目详情
+        JsonExport jsonExport = markingMapper.jsonExportSelect(slideId);
+        // 项目信息
+        GeoProject project = new GeoProject();
+        project.setProject_id(jsonExport.getTopicName());
+        project.setProject_name(jsonExport.getProjectName());
+        // 图像信息
+        GeoImage image = new GeoImage();
+        image.setImage_shape(jsonExport.getImageShape());
+        image.setImage_type(jsonExport.getFormat());
+        image.setImage_name(jsonExport.getImageName());
+        image.setCreate_time(jsonExport.getCreateTime());
+        String imageId = jsonExport.getImageName() + System.currentTimeMillis() + RandomUtils.RandomNumbers();
+        image.setImage_id(imageId);
+        // 作者信息
+        GeoAttribute attribute = new GeoAttribute();
+        attribute.setAuthor(SecurityUtils.getUsername());
+//            attribute.setDepartment(SecurityUtils.getLoginUser().getSysUser().getDept());
+        attribute.setDepartment("标注组");
+        List<GeoLabel> categoryList = pathologicalIndicatorCategoryMapper.selectIndicatorIdList(jsonExport.getIndicatorId());
+        // 构建geoJson数据
+        GeoJson geoJson = new GeoJson();
+        geoJson.setFeatures(features);
+        geoJson.setImage(image);
+        geoJson.setProject(project);
+        geoJson.setAttribute(attribute);
+        geoJson.setLabel_info(categoryList);
+        String jsonString = JSON.toJSONString(geoJson, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue);
+        // 写入文件
+        exportJson(fileUrl,jsonString);
+//            return R.ok(fileUrl);
+//        });
+        return fileUrl;
+    }
+
+
+
+    @Override
+    public boolean zipExport(String zipUrl, Long projectId) throws Exception {
+        StringBuilder sb;
+        File file1 = new File(zipUrl);
+        Map<String, String> ddlList = new HashMap<>();
+        try {
+            // 查询切片列表
+            List<SlideRes> slideResList = slideMapper.selectImageList(projectId);
+            //zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
+            ZipFile zipFile = new ZipFile(file1, Charset.forName("gbk"));//必须指明读取的各式，不是会存在问题***
+            InputStream in = new BufferedInputStream(Files.newInputStream(file1.toPath()));//按流的方式读取文件，输入到管道中
+            ZipInputStream zp = new ZipInputStream(in);//字节流转换为压缩文件输入流，通常用来读取压缩文件
+            ZipEntry ze;//定义文件条目
+            Enumeration<? extends ZipEntry> zipEnum = zipFile.entries();
+            while (zipEnum.hasMoreElements()) {//判断是否还有元素
+                ze =  zipEnum.nextElement();//返回下一对象
+                String fileNames = ze.getName();
+                if (!fileNames.contains(".")) {
+                    throw new Exception("未检测到json文件");
+                }
+                String suffix = (fileNames.split("\\.")[fileNames.split("\\.").length - 1]);
+                if (!Objects.equals(suffix, "json")) {
+                    throw new Exception("未检测到json文件");
+                }
+                sb = new StringBuilder();
+                if (ze.isDirectory()) {
+                } else {
+                    long size = ze.getSize();
+                    if (size > 0) {
+                        BufferedReader bf = new BufferedReader(new InputStreamReader(zipFile.getInputStream(ze), StandardCharsets.UTF_8));//读取文件内容
+                        String line;
+                        while ((line = bf.readLine()) != null) {
+                            sb.append(line);
+                        }
+                        org.json.JSONObject jsonObject = new org.json.JSONObject(sb.toString());
+                        // 去除后缀获取名称判断是否相等
+                        org.json.JSONObject image = jsonObject.getJSONObject("image");
+                        // 获取标注名称
+                        if (image != null) {
+                            String imageName = image.getString("image_name");
+                            if (imageName != null) {
+                                for (SlideRes slideRes : slideResList) {
+                                    // 获取数据库文件名称
+                                    String slideImageName = slideRes.getImageName();
+                                    // 判断名称相等，获取切片id
+                                    if (Objects.equals(imageName, slideImageName)) {
+                                        org.json.JSONArray features = jsonObject.getJSONArray("features");
+                                        JSONArray jsonArray = JSONArray.parseArray(String.valueOf(features));
+                                        // 循环追加写入文件，添加数据库并保存es中
+                                        for (Object feature : jsonArray) {
+                                            JSONObject featureObject = (JSONObject) feature;
+                                            // 获取annotationId
+                                            String annotationId = featureObject.getString("id");
+                                            // 获取geometry数据
+                                            JSONObject geometry = featureObject.getJSONObject("geometry");
+                                            // 获取属性和自定义字段
+                                            JSONObject properties = featureObject.getJSONObject("properties");
+
+                                            Properties properties1 = JSONObject.toJavaObject(JSONObject.parseObject(JSONObject.toJSONString(properties)), Properties.class);
+                                            // 写入数据库
+                                            Marking marking = new Marking();
+                                            marking.setAnnotation_id(annotationId);
+                                            marking.setCreate_by(SecurityUtils.getUserId());
+                                            marking.setGeometry(geometry);
+                                            marking.setSlide_id(slideRes.getSlideId());
+                                            cn.staitech.common.core.utils.bean.BeanUtils.copyProperties(properties1, marking);
+                                            markingMapper.insert(marking);
+                                        }
+                                    }
+                                }
+                            }
+                            //这里是对读取的文件内容进行处理
+                            ddlList.put(ze.getName(), sb.toString());
+                            bf.close();
+                        }
+                    }
+                }
+                zp.closeEntry();
+            }
+            // 删除文件
+//            if (!file1.delete()) {
+//                log.error("删除文件" + file1 + "失败！");
+//            }
+        } catch (Exception e) {
+            throw new Exception("json文件解析失败");
+        }
+        return true;
     }
 
     /**
@@ -205,9 +425,12 @@ public class MarkingServiceImpl implements MarkingService {
         features.setGeometry(geometry);
         features.setId(annotationId);
         features.setType("Feature");
-        features.setProperties(properties);
+        String str = properties.toString();
+        JSONObject jsonObject = JSONObject.parseObject(str);
+        features.setProperties(jsonObject);
         return features;
     }
+
 
     /**
      * 统计不同类型点的数量
@@ -225,6 +448,19 @@ public class MarkingServiceImpl implements MarkingService {
             pointCountList.add(pointCounts);
         }
         return pointCountList;
+    }
+
+    @SneakyThrows
+    @Async
+    public void exportJson(String fileUrl,String jsonString) {
+        try {
+            OutputStream outputStream = Files.newOutputStream(Paths.get(fileUrl));
+            outputStream.write(jsonString.getBytes());
+            // 关闭流
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

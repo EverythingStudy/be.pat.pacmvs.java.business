@@ -1,10 +1,14 @@
 package cn.staitech.anno.domain.geojson;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
+@TableName(autoResultMap = true)
 public class Features {
 
     @ApiModelProperty(value = "id")
@@ -13,11 +17,13 @@ public class Features {
     @ApiModelProperty(value = "type")
     private String type = "Feature";
 
+    @TableField(typeHandler = JacksonTypeHandler.class)
     @ApiModelProperty(value = "标注坐标")
     private JSONObject geometry;
 
-    @ApiModelProperty(value = "type")
-    private Properties properties;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    @ApiModelProperty(value = "Properties")
+    private JSONObject properties;
 
 
 

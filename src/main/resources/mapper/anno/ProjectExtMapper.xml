@@ -102,8 +102,6 @@
                create_time,
                update_by,
                update_time,
-               text_1,
-               text_2,
                organization_id
         from tb_project
         where project_id = #{projectId}

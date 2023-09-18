@@ -1,8 +1,12 @@
 package cn.staitech.anno.service.impl;
 
+import cn.staitech.anno.constant.ExaminationConstant;
 import cn.staitech.anno.constant.ProjectConstant;
+import cn.staitech.anno.constant.R.MeasureResponseConstant;
 import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.Group;
+import cn.staitech.anno.domain.Slide;
+import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.po.ProjectPo;
 import cn.staitech.anno.domain.project.ProjectExt;
@@ -16,6 +20,7 @@ import cn.staitech.anno.domain.projectgroup.ProjectGroup;
 import cn.staitech.anno.domain.special.Special;
 import cn.staitech.anno.enums.ReasonsEnum;
 import cn.staitech.anno.mapper.*;
+import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.ProjectExtService;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
@@ -38,8 +43,18 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StopWatch;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.io.BufferedOutputStream;
+import java.io.OutputStream;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static cn.staitech.anno.aspect.LogFileAspect.response;
 
 /**
  * @Author: wudi
@@ -56,6 +71,9 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
     private SpecialMapper specialMapper;
 
     @Resource
+    private SlideMapper slideMapper;
+
+    @Resource
     private SystemDictMapper systemDictMapper;
 
     @Resource
@@ -66,6 +84,13 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
 
     @Resource
     private GroupMapper groupMapper;
+
+    @Resource
+    private MarkingMapper markingMapper;
+
+    @Resource
+    private MarkingService markingService;
+
 
     /**
      * 获得系统、脏器下拉框
@@ -583,4 +608,45 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
         }
 
     }
+
+    @Override
+    public void jsonExport(Long projectId, Integer status) throws Exception {
+        StringBuilder res = new StringBuilder();
+        ProjectExt projectExt = projectExtMapper.selectById(projectId);
+        if (projectExt == null) {
+            throw new Exception("未发现项目信息");
+        }
+        // 查询所有的切片
+        List<Slide> slideBy = slideMapper.getProjectInformation(projectId);
+        if (slideBy.size() > 0) {
+            for (Slide slide : slideBy) {
+                QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
+                markingQueryWrapper.eq("slide_id", slide.getSlideId());
+                Integer markingCount = markingMapper.selectCount(markingQueryWrapper);
+                if (markingCount > 0) {
+                    // 将文件生成在本地
+                    String fileUrl = markingService.jsonExport(slide.getSlideId());
+                    res.append(fileUrl).append("\r\n");
+                }
+            }
+        }
+        if(status == 1){
+            try {
+                // 清空response
+                response.reset();
+                OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
+                response.setCharacterEncoding(ExaminationConstant.CHARACTER_ENCODING);
+                response.setContentType(ExaminationConstant.CONTENT_TYPE);
+                response.setHeader(ExaminationConstant.HEADER, "attachment;filename=" +  URLEncoder.encode(projectExt.getProjectName(),"utf-8") + MeasureResponseConstant.FILE_SUFFIX_TXT);
+                outputStream.write(res.toString().getBytes());
+                // 关闭流
+                outputStream.close();
+            } catch (Exception e) {
+                log.error(MeasureResponseConstant.DOWNLOAD_ERROR, e);
+            }
+        }
+
+    }
+
+
 }

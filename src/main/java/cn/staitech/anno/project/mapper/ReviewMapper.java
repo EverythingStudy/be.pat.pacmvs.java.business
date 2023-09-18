@@ -16,6 +16,8 @@ import java.util.Map;
 */
 public interface ReviewMapper extends BaseMapper<Review> {
     List<ReviewVO> exportReview(@Param("params") Map params);
+
+    Review selectSlide(Long slideId);
 }
 
 
