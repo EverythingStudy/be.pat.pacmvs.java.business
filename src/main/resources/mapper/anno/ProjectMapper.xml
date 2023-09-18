@@ -20,6 +20,11 @@
         <result property="projectType" column="project_type"/><!-- 项目类型 -->
         <result property="topicId" column="topic_id"/><!-- 专题 -->
         <result property="organizationId" column="organization_id"/><!-- 机构 -->
+        <result property="indicatorName" column="indicator_name"/>
+        <result property="topicName" column="topic_name"/>
+<!--        <result property="speciesName" column="species_name"/>-->
+        <result property="productSeries" column="product_series"/>
+        <result property="organizationName" column="organization_name"/>
     </resultMap>
 
     <resultMap id="ProjectMessage" type="cn.staitech.anno.domain.vo.ProjectListVO">
@@ -42,6 +47,10 @@
         <result property="projectType" column="project_type"/><!-- 项目类型 -->
         <result property="topicId" column="topic_id"/><!-- 专题 -->
         <result property="organizationId" column="organization_id"/><!-- 机构 -->
+        <result property="topicName" column="topic_name"/>
+<!--        <result property="speciesName" column="species_name"/>-->
+        <result property="productSeries" column="product_series"/>
+        <result property="organizationName" column="organization_name"/>
     </resultMap>
 
     <resultMap id="SlideAnnotationResult" type="cn.staitech.anno.domain.SlideAnnotationResult">
@@ -116,15 +125,25 @@
                p.update_time,
                p.color_type,
                p.species_id,
-               p.product_series_id,
                p.project_type,
                p.topic_id,
                p.organization_id,
+               p.topic_id,
+               p.species_id,
+               p.product_series_id,
                u.user_name,
-               i.indicator_name
+               i.indicator_name,
+               t.topic_name,
+/*               s.name as species_name,*/
+               ps.name as product_series,
+               org.organization_name
         from tb_project p
                  left join sys_user u on p.create_by = u.user_id
                  left join tb_pathological_indicator i on p.indicator_id = i.indicator_id
+                 left join tb_topic t on p.topic_id = t.topic_id
+--                  left join tb_species s on p.species_id = s.species_id
+                 left join tb_product_series ps on p.product_series_id = ps.product_series_id
+                 left join sys_organization org on p.organization_id = org.organization_id
     </sql>
 
     <sql id="selectProjectBy">
@@ -175,8 +194,23 @@
             <if test="projectName != null and projectName != ''">
                 AND p.project_name like concat('%', #{projectName}, '%')
             </if>
+            <if test="topicName != null and topicName != ''">
+                AND p.topic_name like concat('%', #{topicName}, '%')
+            </if>
             <if test="indicatorId != null and indicatorId != ''">
                 AND p.indicator_id = #{indicatorId}
+            </if>
+            <if test="speciesId != null"><!-- 种属 -->
+                AND p.species_id = #{speciesId}
+            </if>
+            <if test="productSeriesId != null"><!-- 品系 -->
+                AND p.product_series_id = #{productSeriesId}
+            </if>
+            <if test="status != null">
+                AND p.status = #{status}
+            </if>
+            <if test="topicId != null">
+                AND p.topic_id = #{topicId}
             </if>
             <if test="description != null and description != ''">
                 AND p.description like concat('%', #{description}, '%')
@@ -184,11 +218,13 @@
             <if test="createBy != null and createBy != ''">
                 AND p.create_by = #{createBy}
             </if>
-            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
-                AND date_format(p.create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
-            </if>
-            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
-                AND date_format(p.create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            <if test="createTimeParams != null">
+                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''"><!-- 开始时间检索 -->
+                    and date_format(p.create_time,'%y%m%d') &gt;= date_format(#{createTimeParams.beginTime},'%y%m%d')
+                </if>
+                <if test="createTimeParams.endTime != null and createTimeParams.endTime != ''"><!-- 结束时间检索 -->
+                    and date_format(p.create_time,'%y%m%d') &lt;= date_format(#{createTimeParams.endTime},'%y%m%d')
+                </if>
             </if>
         </where>
         order by update_time desc

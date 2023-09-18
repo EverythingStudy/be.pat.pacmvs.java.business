@@ -5,9 +5,9 @@ import cn.staitech.anno.constant.ProjectConstant;
 import cn.staitech.anno.constant.R.MeasureResponseConstant;
 import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.Group;
+import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.marking.Marking;
-import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.po.ProjectPo;
 import cn.staitech.anno.domain.project.ProjectExt;
 import cn.staitech.anno.domain.project.in.OperateProjectIn;
@@ -46,12 +46,7 @@ import javax.annotation.Resource;
 import java.io.BufferedOutputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static cn.staitech.anno.aspect.LogFileAspect.response;
@@ -149,10 +144,12 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
         //设置持久层入参
         ProjectExt project = new ProjectExt();
         BeanUtils.copyBeanProp(project, req);
-        Map<String, Date> createTime = req.getCreateTime();
-        if (!ObjectUtils.isEmpty(createTime)) {
-            project.setBeginTime(createTime.get("beginTime"));
-            project.setEndTime(createTime.get("endTime"));
+        Map<String, Object> createTime = req.getCreateTimeParams();
+        if (createTime.containsKey("beginTime")) {
+            project.setBeginTime((Date) createTime.get("beginTime"));
+        }
+        if (createTime.containsKey("endTime")) {
+            project.setEndTime((Date) createTime.get("endTime"));
         }
 
         //分页查询
@@ -630,14 +627,14 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
                 }
             }
         }
-        if(status == 1){
+        if (status == 1) {
             try {
                 // 清空response
                 response.reset();
                 OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
                 response.setCharacterEncoding(ExaminationConstant.CHARACTER_ENCODING);
                 response.setContentType(ExaminationConstant.CONTENT_TYPE);
-                response.setHeader(ExaminationConstant.HEADER, "attachment;filename=" +  URLEncoder.encode(projectExt.getProjectName(),"utf-8") + MeasureResponseConstant.FILE_SUFFIX_TXT);
+                response.setHeader(ExaminationConstant.HEADER, "attachment;filename=" + URLEncoder.encode(projectExt.getProjectName(), "utf-8") + MeasureResponseConstant.FILE_SUFFIX_TXT);
                 outputStream.write(res.toString().getBytes());
                 // 关闭流
                 outputStream.close();

@@ -1,20 +1,21 @@
 package cn.staitech.anno.service.impl;
 
+import cn.staitech.anno.constant.ColorConstant;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.SlideAnnotationResult;
 import cn.staitech.anno.domain.image.in.ImageAllVO;
 import cn.staitech.anno.domain.vo.*;
 import cn.staitech.anno.domain.vo.statistic.StatisticProjectListOutVO;
 import cn.staitech.anno.mapper.ProjectMapper;
-import cn.staitech.anno.mapper.ProjectMemberMapper;
 import cn.staitech.anno.service.ProjectService;
-import cn.staitech.common.security.utils.SecurityUtils;
-import cn.staitech.system.api.domain.SysUser;
+import cn.staitech.anno.service.ProjectTpyeService;
+import cn.staitech.anno.service.SpeciesService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 项目 服务层实现
@@ -26,6 +27,13 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
     @Resource
     private ProjectMapper projectMapper;
+    @Resource
+    private ProjectTpyeService projectTpyeService;
+    @Resource
+    private SpeciesService speciesService;
+
+/*    @Resource
+    private ProductSeriesService productSeriesService;*/
 
     /**
      * 根据主键查询项目详情
@@ -62,20 +70,32 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      */
     @Override
     public List<ProjectListVO> selectProjectList(Project project) {
+        // 项目列表
         List<ProjectListVO> projectList = projectMapper.selectProjectList(project);
-//        List<ProjectMember> projectMemberList = projectMemberMapper.selectByUserId(SecurityUtils.getUserId());
-//        List<ProjectListVO> projectListVOList=new ArrayList<>();
-//        //过滤
-//        if (SecurityUtils.getUserId() != 1) {
-//        for (ProjectListVO projectListVO:projectList) {
-//            for (ProjectMember projectMember : projectMemberList) {
-//                if (Objects.equals(projectMember.getProjectId(), projectListVO.getProjectId())) {
-//                    projectListVOList.add(projectListVO);
-//                }
-//            }
-//        }
-//            return projectListVOList;
-//    }
+
+        // 项目类型
+        Map<String, String> projectTpyeMap = projectTpyeService.selectMap();
+        // 种属
+        Map<Integer, String> sepeciesMap = speciesService.selectMap();
+        // 品系
+        // Map<Integer, String> productSeriesMap = productSeriesService.selectMap();
+
+        for (ProjectListVO obj : projectList) {
+            // 项目类型
+            if (projectTpyeMap.containsKey(obj.getProjectType())) {
+                obj.setProjectTypeName(projectTpyeMap.get(obj.getProjectType()));
+            }
+            // 种属
+            if (sepeciesMap.containsKey(obj.getSpeciesId())) {
+                obj.setSpeciesName(sepeciesMap.get(obj.getSpeciesId()));
+            }
+            // 品系
+/*            if (productSeriesMap.containsKey(obj.getProductSeriesId())) {
+                obj.setProductSeries(productSeriesMap.get(obj.getProductSeriesId()));
+            }*/
+
+            obj.setColorTypeName(ColorConstant.COLOR_TYPE.get(obj.getColorType()));
+        }
         return projectList;
     }
 

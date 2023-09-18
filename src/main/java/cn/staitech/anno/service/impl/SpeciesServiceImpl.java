@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 class SpeciesServiceImpl extends ServiceImpl<SpeciesMapper, Species> implements SpeciesService {
 
     @Resource
-    SpeciesMapper speciesMapper;
+    private SpeciesMapper speciesMapper;
 
     @Override
     public Map<Integer, String> selectMap() {

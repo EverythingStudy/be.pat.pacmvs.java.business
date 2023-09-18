@@ -12,6 +12,32 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 项目列表
+ *
+ * @author wangf
+ * <p>
+ * 返回值：
+ * 项目ID：     "projectId": 13,
+ * 项目名称：projectName
+ * 种属ID:speciesId
+ * 种属名称：speciesName
+ * 品系ID： productSeriesId
+ * 品系名称： productSeries
+ * 染色类型ID	colorType
+ * 染色类型名称	colorTypeName
+ * 关联结构指标ID                "indicatorId": 2,
+ * 关联结构指标名称 "indicatorName": "犬哈氏腺（右侧）",
+ * 项目类型	projectType
+ * 项目类型名称 	projectTypeName
+ * 描述	description
+ * 机构编号	                "organizationId": 1,
+ * 机构名称                "organizationName": null
+ * 状态ID	status
+ * 状态编号 statusName
+ * 创建者	createByName
+ * 创建时间 createTime
+ */
 @Data
 public class ProjectListVO extends BaseEntity {
 
@@ -46,13 +72,13 @@ public class ProjectListVO extends BaseEntity {
     /**
      * 病理指标ID
      */
-    @ApiModelProperty(value = "病理指标id")
+    @ApiModelProperty(value = "结构指标ID")
     private Long indicatorId;
 
     /**
      * 病理指标名称
      */
-    @ApiModelProperty(value = "病理指标名称")
+    @ApiModelProperty(value = "结构指标名称")
     private String indicatorName;
 
     /**
@@ -117,6 +143,9 @@ public class ProjectListVO extends BaseEntity {
     @ApiModelProperty(value = "项目状态")
     private String status;
 
+    @ApiModelProperty(value = "项目状态名称")
+    private String statusName;
+
     /**
      * 项目角色类型
      */
@@ -130,14 +159,25 @@ public class ProjectListVO extends BaseEntity {
     @ApiModelProperty("种属ID")
     private Integer speciesId;
 
+    @ApiModelProperty("种属名称")
+    private String speciesName;
+
+
     @ApiModelProperty("染色类型（1RGB，2HEX）")
     private Integer colorType;
+    @ApiModelProperty("染色类型（1RGB，2HEX）")
+    private String colorTypeName;
 
     /**
      * 品系ID
      */
     @ApiModelProperty("品系ID")
     private Integer productSeriesId;
+
+
+    @ApiModelProperty("品系名称")
+    private String productSeries;
+
     /**
      * 项目类型:1标注2评审3标准训练集
      */
@@ -145,6 +185,10 @@ public class ProjectListVO extends BaseEntity {
     @ApiModelProperty("项目类型:1标注2评审3标准训练集")
     @Length(max = 255, message = "编码长度不能超过255")
     private String projectType;
+
+    @ApiModelProperty("项目类型名称")
+    private String projectTypeName;
+
     @ApiModelProperty("专题ID")
     private Integer topicId;
     @ApiModelProperty(value = "机构编号")
@@ -152,4 +196,6 @@ public class ProjectListVO extends BaseEntity {
     @ApiModelProperty(value = "机构名称")
     private String organizationName;
 
+    @ApiModelProperty(value = "专题名称")
+    private String topicName;
 }

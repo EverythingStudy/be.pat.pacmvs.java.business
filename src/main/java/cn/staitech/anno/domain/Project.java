@@ -12,6 +12,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * 项目表 tb_project
@@ -130,17 +131,18 @@ public class Project extends BaseEntity implements Serializable {
     @ApiModelProperty("专题ID")
     private Integer topicId;
 
-    @ApiModelProperty(value = "专题ID-旧", hidden = true)
-    private Integer specialId;
     @ApiModelProperty(value = "机构编号")
     @TableField(value = "organization_id")
     private Long organizationId;
     @ApiModelProperty(value = "机构名称")
     @TableField(exist = false)
     private String organizationName;
-
-    @ApiModelProperty(required = false, hidden = true, value = "脏器组织id-未使用")
-    @TableField(exist = false)
-    private Long dictCode;
-
+    @ApiModelProperty(value = "专题名称")
+    private String topicName;
+    @ApiModelProperty(value = "种属名称")
+    private String speciesName;
+    @ApiModelProperty(value = "品系名称")
+    private String productSeries;
+    @ApiModelProperty(value = "创建时间-查询入参")
+    private Map<String, Object> createTimeParams;
 }

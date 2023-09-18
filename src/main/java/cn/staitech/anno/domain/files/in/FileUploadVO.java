@@ -1,7 +1,6 @@
 package cn.staitech.anno.domain.files.in;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Builder;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
  * @Description: 文件上传VO
  */
 @Data
-@Builder
 public class FileUploadVO {
     @ApiModelProperty(value = "上传的文件MultipartFile")
     private MultipartFile file;
