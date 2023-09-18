@@ -1,20 +1,15 @@
-package cn.staitech.anno.domain;
+package cn.staitech.anno.domain.reviewround;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-import java.io.Serializable;
-import java.util.Date;
-
 /**
+ * @author wangf
  * @TableName tb_review_round
  */
-@TableName(value = "tb_review_round")
 @Data
-public class ReviewRound extends Pager implements Serializable {
+public class ReviewRoundInVO {
     /**
      * 评审轮次自增ID
      */
@@ -50,27 +45,4 @@ public class ReviewRound extends Pager implements Serializable {
      * 机构ID
      */
     private Long organizationId;
-
-    /**
-     * 创建者
-     */
-    private Long createBy;
-
-    /**
-     * 更新者
-     */
-    private Long updateBy;
-
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
-
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
 }
