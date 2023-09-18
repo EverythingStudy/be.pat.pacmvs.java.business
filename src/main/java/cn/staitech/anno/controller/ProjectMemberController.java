@@ -10,6 +10,7 @@ import cn.staitech.anno.domain.vo.ProjectMemberUpdateVO;
 import cn.staitech.anno.service.AnnotationService;
 import cn.staitech.anno.service.ProjectMemberService;
 import cn.staitech.anno.service.ProjectRoleService;
+import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.utils.ProjectUtils;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
@@ -18,6 +19,7 @@ import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysProjectRole;
 import cn.staitech.system.api.domain.SysUser;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -226,12 +228,14 @@ public class ProjectMemberController extends BaseController {
 
     @ApiOperation(value = "项目成员表列表")
     @PostMapping("/selectProjectMemberList")
-    public R<List<ProjectMember>> selectProjectMemberList(@RequestBody ProjectMemberSelectVO projectMemberSelectVO) {
+    public R<PageMaster<List<ProjectMember>>> selectProjectMemberList(@RequestBody ProjectMemberSelectVO req) {
+        PageHelper.startPage(req.getPageNum(), req.getPageSize()).setReasonable(true);
         ProjectMember projectMember = new ProjectMember();
-        BeanUtils.copyProperties(projectMemberSelectVO, projectMember);
-        return R.ok(projectMemberService.select(projectMember));
+        BeanUtils.copyProperties(req, projectMember);
+        List<ProjectMember> list = projectMemberService.select(projectMember);
+        PageMaster pageMaster = new PageMaster<>(list);
+        return R.ok(pageMaster);
     }
-
 
     @ApiOperation(value = "查询项目当前用户")
     @ApiImplicitParams({

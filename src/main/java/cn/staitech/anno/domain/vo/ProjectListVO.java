@@ -29,45 +29,12 @@ public class ProjectListVO extends BaseEntity {
     @ApiModelProperty(value = "项目名称")
     private String projectName;
 
-
-    /**
-     * 编辑模式
-     */
-    @ApiModelProperty(value = "编辑模式")
-    private String editMode;
-
     /**
      * 图象数
      */
     @Excel(name = "图像数")
     @ApiModelProperty(value = "图象数")
     private Long imageTotal;
-
-    /**
-     * 标注类型
-     */
-    @Excel(name = "标注类型")
-    @ApiModelProperty(value = "标注类型")
-    private Long markType;
-
-    /**
-     * 审核状态
-     */
-    @Excel(name = "审核状态", readConverterExp = "0=未审核,1= 已审核")
-    @ApiModelProperty(value = "审核状态")
-    private Long examinationFlag;
-
-    /**
-     * 状态名称
-     */
-    @ApiModelProperty(value = "状态名称")
-    private String examinationFlagName;
-
-    /**
-     * 已审核的标注数量
-     */
-    @ApiModelProperty(value = "已审核的标注数量")
-    private Integer examinationNum;
 
     /**
      * 描述
@@ -87,25 +54,6 @@ public class ProjectListVO extends BaseEntity {
      */
     @ApiModelProperty(value = "病理指标名称")
     private String indicatorName;
-
-
-    /**
-     * 管理者
-     */
-    @ApiModelProperty(value = "管理者")
-    private String managerId;
-
-    /**
-     * 管理者名称
-     */
-    @ApiModelProperty(value = "管理者名称")
-    private String userName;
-
-    /**
-     * 人工标注数
-     */
-    @ApiModelProperty(value = "人工标注数")
-    private Integer annotationTotal;
 
     /**
      * 创建者id
@@ -167,19 +115,7 @@ public class ProjectListVO extends BaseEntity {
      * 项目状态
      */
     @ApiModelProperty(value = "项目状态")
-    private String projectStatus;
-
-    /**
-     * 脏器组织名称
-     */
-    @ApiModelProperty(value = "脏器组织名称")
-    private String dictLabel;
-
-    /**
-     * 脏器组织id
-     */
-    @ApiModelProperty(value = "脏器组织id")
-    private Long dictCode;
+    private String status;
 
     /**
      * 项目角色类型

@@ -414,13 +414,7 @@ public class ProjectExtController extends BaseController {
         }
         list.setUserNames(userNameList.stream().toArray(String[]::new));
         list.setUserMap(userNames);
-        //获取已审核的标注数
-        Integer checkNum = slideService.selectCheckNum(projectId);
-        if (checkNum != null) {
-            list.setExaminationNum(checkNum);
-        } else {
-            list.setExaminationNum(0);
-        }
+
         Long createBy = list.getCreateBy();
         if (createBy != null) {
             //获取创建者信息
@@ -428,12 +422,7 @@ public class ProjectExtController extends BaseController {
             String username = userInformation.getUserName();
             list.setCreateByName(username);
         }
-        if (list.getExaminationFlag().equals(ProjectConstant.NOT_AUDIT)) {
-            list.setExaminationFlagName(ProjectConstant.ALREADY_AUDITS);
-        }
-        if (list.getExaminationFlag().equals(ProjectConstant.ALREADY_AUDIT)) {
-            list.setExaminationFlagName(ProjectConstant.NOT_AUDITS);
-        }
+
         return R.ok(list);
     }
 
@@ -703,7 +692,7 @@ public class ProjectExtController extends BaseController {
         //根据项目id查询项目信息（主要是获取修改前关联的病理id）
         ProjectListVO project1 = projectService.selectProjectById(projectId);
         if (Objects.equals(projectName, project1.getProjectName()) && Objects.equals(project1.getIndicatorId(),
-                project.getIndicatorId()) && Objects.equals(project1.getDictCode(), project.getDictCode())) {
+                project.getIndicatorId())) {
             return R.ok(null, ProjectConstant.NOT_CHANGE);
         }
         //查询项目名称是否被使用，除了自己
@@ -721,11 +710,10 @@ public class ProjectExtController extends BaseController {
         //查询该项目下，标注已完成提交复核切片是否存在
         List<ProjectListOutVO> slideList1 = slideService.selectByStatus(slideSelectVO);
         if (!slideList1.isEmpty()) {
-            if (!Objects.equals(project1.getProjectName(), projectName) || !Objects.equals(project1.getDictCode(),
-                    project.getDictCode())) {
+            if (!Objects.equals(project1.getProjectName(), projectName)) {
                 if (project.getDictCode() == null) {
                     //更新项目将脏器组织改为null
-                    projectService.updateProjectViscera(projectMessage);
+
                 } else {
                     //更新项目名称或脏器组织
                     projectService.updateProject(projectMessage);
@@ -738,7 +726,7 @@ public class ProjectExtController extends BaseController {
         }
         if (project.getDictCode() == null) {
             //更新项目将脏器组织改为null
-            projectService.updateProjectViscera(projectMessage);
+
         } else {
             //更新项目名称或脏器组织
             projectService.updateProject(projectMessage);
@@ -923,7 +911,6 @@ public class ProjectExtController extends BaseController {
         for (Project user : createByList) {
             //根据id查询用户信息
             SysUser sysUser = getUserInformationService.selectById(user.getCreateBy());
-            user.setUserName(sysUser.getUserName());
         }
         return R.ok(createByList);
     }
@@ -1174,19 +1161,6 @@ public class ProjectExtController extends BaseController {
             @RequestParam @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId) {
         List<ProjectListVO> projectTagger = projectService.selectProjectTagger(projectId);
         return R.ok(projectTagger);
-    }
-
-    /**
-     * 获取脏器组织列表
-     *
-     * @return
-     */
-    @ApiOperation(value = "获取脏器组织列表")
-    @GetMapping(value = "/viscera")
-    public R<List<VisceraVO>> getViscera() {
-        clearPage();
-        List<VisceraVO> visceraVOS = projectService.selectAllViscera();
-        return R.ok(visceraVOS);
     }
 
     /**

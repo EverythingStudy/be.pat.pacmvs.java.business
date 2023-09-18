@@ -219,15 +219,4 @@ public interface ProjectService extends IService<Project> {
      */
     public List<ProjectListVO> selectProjectTagger(Long projectId);
 
-    /**
-     * 查询所有脏器组织
-     */
-    public List<VisceraVO> selectAllViscera();
-
-    /**
-     * 将项目的组织改为null
-     */
-    public Integer updateProjectViscera(Project project);
-
-
 }

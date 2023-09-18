@@ -24,7 +24,7 @@ import java.util.zip.ZipOutputStream;
 public class FileUtils {
 
 
-    private static final String fileUrl = "/home/uploadPath/geojson";
+    private static final String fileUrl = "/home/pat_saas/Data/geojson";
 
 //    E:\geojson
 

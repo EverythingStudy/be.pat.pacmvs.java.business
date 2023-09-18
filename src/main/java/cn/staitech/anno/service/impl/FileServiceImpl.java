@@ -15,7 +15,8 @@ import java.nio.file.Files;
 @Service
 public class FileServiceImpl implements FileService {
 
-    private static final String zipUrl = "/home/data/uploadPath/zipFile/";
+    // private static final String zipUrl = "/home/data/uploadPath/zipFile/";
+    private static final String zipUrl = "/home/pat_saas/Data/zipFile/";
 
 //    String zipUrl =  "D:\\zip";
 
@@ -92,6 +93,8 @@ public class FileServiceImpl implements FileService {
         // 切片名称
         // 压缩包文件地址
 //        String zipUrl = "/home/uploadPath/zipFile/";
+
+
         //切片文件夹
         // 创建空文件夹
         File zipFile = new File(zipUrl);

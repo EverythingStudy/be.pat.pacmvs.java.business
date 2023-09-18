@@ -6,20 +6,14 @@
     <resultMap id="ProjectResult" type="cn.staitech.anno.domain.Project">
         <result property="projectId" column="project_id"/>
         <result property="projectName" column="project_name"/><!--项目名称-->
-        <result property="editMode" column="edit_mode"/>
         <result property="imageTotal" column="image_total"/>
-        <result property="annotationTotal" column="annotation_total"/>
-        <result property="markType" column="mark_type"/>
-        <result property="examinationFlag" column="examination_flag"/>
         <result property="createBy" column="create_by"/>
         <result property="description" column="description"/><!-- 描述 -->
         <result property="indicatorId" column="indicator_id"/><!--关联结构指标-->
         <result property="createTime" column="create_time"/>
-        <result property="managerId" column="manager_id"/>
-        <result property="userName" column="user_name"/>
         <result property="updateTime" column="update_time"/>
         <result property="updateBy" column="update_by"/>
-        <result property="projectStatus" column="project_status"/>
+        <result property="status" column="status"/>
         <result property="colorType" column="color_type"/><!-- 染色类型 -->
         <result property="speciesId" column="species_id"/><!-- 种属 -->
         <result property="productSeriesId" column="product_series_id"/><!-- 品系 -->
@@ -31,25 +25,17 @@
     <resultMap id="ProjectMessage" type="cn.staitech.anno.domain.vo.ProjectListVO">
         <result property="projectId" column="project_id"/>
         <result property="projectName" column="project_name"/>
-        <result property="editMode" column="edit_mode"/>
         <result property="imageTotal" column="image_total"/>
-        <result property="annotationTotal" column="annotation_total"/>
-        <result property="markType" column="mark_type"/>
-        <result property="examinationFlag" column="examination_flag"/>
         <result property="createBy" column="create_by"/>
         <result property="description" column="description"/>
         <result property="indicatorId" column="indicator_id"/>
         <result property="createTime" column="create_time"/>
-        <result property="managerId" column="manager_id"/>
-        <result property="userName" column="user_name"/>
         <result property="updateTime" column="update_time"/>
         <result property="updateBy" column="update_by"/>
         <result property="indicatorName" column="indicator_name"/>
         <result property="imageName" column="image_name"/>
         <result property="slideId" column="slide_id"/>
-        <result property="projectStatus" column="project_status"/>
-        <result property="dictLabel" column="dict_label"/>
-        <result property="dictCode" column="dict_code"/>
+        <result property="status" column="status"/>
         <result property="colorType" column="color_type"/><!-- 染色类型 -->
         <result property="speciesId" column="species_id"/><!-- 种属 -->
         <result property="productSeriesId" column="product_series_id"/><!-- 品系 -->
@@ -117,28 +103,17 @@
         <result property="projectId" column="project_id"/>
     </resultMap>
 
-    <resultMap id="DictDataResult"
-               type="cn.staitech.anno.domain.vo.VisceraVO">
-        <result property="dictCode" column="dict_code"/>
-        <result property="dictLabel" column="dict_label"/>
-    </resultMap>
-
     <sql id="selectProjectVo">
         select p.project_id,
                p.project_name,
-               p.project_status,
-               p.edit_mode,
+               p.status,
                p.image_total,
-               p.annotation_total,
-               p.mark_type,
-               p.examination_flag,
                p.create_by,
                p.description,
                p.indicator_id,
                p.create_time,
                p.update_by,
                p.update_time,
-               p.manager_id,
                p.color_type,
                p.species_id,
                p.product_series_id,
@@ -146,29 +121,22 @@
                p.topic_id,
                p.organization_id,
                u.user_name,
-               i.indicator_name,
-               s.dict_label,
-               s.dict_code
+               i.indicator_name
         from tb_project p
                  left join sys_user u on p.create_by = u.user_id
                  left join tb_pathological_indicator i on p.indicator_id = i.indicator_id
-                 left join sys_dict_data s on p.dict_code = s.dict_code
     </sql>
 
     <sql id="selectProjectBy">
         select project_id,
                project_name,
-               edit_mode,
                image_total,
                annotation_total,
-               mark_type,
-               examination_flag,
                create_by,
                description,
                indicator_id,
                create_time,
                update_by,
-               manager_id,
                color_type,
                species_id,
                product_series_id,
@@ -239,7 +207,6 @@
         <if test="description != null">description,</if>
         <if test="topicId != null">topic_id,</if>
         <if test="specialId != null">special_id,</if>
-        <if test="dictCode != null and dictCode != ''">dict_code,</if>
         <if test="organizationId != null">organization_id,</if>
         create_time,
         image_total,
@@ -255,7 +222,6 @@
         <if test="description != null">#{description},</if>
         <if test="topicId != null">#{topicId},</if>
         <if test="specialId != null">#{specialId},</if>
-        <if test="dictCode != null and dictCode != ''">#{dictCode},</if>
         <if test="organizationId != null">#{organizationId},</if>
         sysdate(),
         0,
@@ -268,7 +234,6 @@
         <set>
             <if test="projectName != null and projectName != ''">project_name = #{projectName},</if>
             <if test="indicatorId != null and indicatorId != ''">indicator_id = #{indicatorId},</if>
-            <if test="dictCode != null and dictCode != ''">dict_code = #{dictCode},</if>
             image_total=(select count(*) from tb_slide where project_id=#{projectId}),
             update_time = sysdate(),
             update_by=#{updateBy}
@@ -433,7 +398,6 @@
         SELECT DISTINCT
         s.project_id,
         p.project_name,
-        p.annotation_total,
         i.image_name,
         s.slide_id,
         s.update_time
@@ -472,7 +436,7 @@
     <update id="updateProjectStatus" parameterType="cn.staitech.anno.domain.vo.ProjectStatusVO">
         update tb_project
         <set>
-            <if test="projectStatus != null">project_status=#{projectStatus},</if>
+            <if test="status != null">status=#{status},</if>
             update_by=#{updateBy},
             update_time = sysdate(),
         </set>
@@ -526,25 +490,6 @@
         where a.category_id !=1 and a.project_id=#{projectId}
     </select>
 
-    <!--查询所有脏器组织-->
-    <select id="selectAllViscera" resultMap="DictDataResult">
-        select dict_code, dict_label
-        from sys_dict_data
-        where dict_type = "sys_viscera_organization"
-    </select>
-
-    <!--将将项目组织改为null-->
-    <update id="updateProjectViscera" parameterType="cn.staitech.anno.domain.Project">
-        update tb_project
-        <set>
-            <if test="projectName != null and projectName != ''">project_name = #{projectName},</if>
-            dict_code=null,
-            update_time = sysdate(),
-            update_by=#{updateBy},
-        </set>
-        where project_id = #{projectId}
-    </update>
-
     <!--查询专题下项目的总数-->
     <select id="selectProjectCount" parameterType="Long" resultType="int">
         select count(project_id)
@@ -556,5 +501,4 @@
             </if>
         </where>
     </select>
-
 </mapper>

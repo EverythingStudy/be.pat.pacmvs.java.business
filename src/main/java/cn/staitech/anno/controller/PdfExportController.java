@@ -55,12 +55,12 @@ public class PdfExportController {
         Date date = new Date();
         DateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmss");
         //创建pdf存储路径
-        File f0 = new File("/home/pdfFile/");
+        File f0 = new File("/home/pat_saas/Data/pdfFile/");
         if (!f0.exists()) {
             f0.mkdir();
         }
         //创建pdf文件
-        File f1 = new File("/home/pdfFile/" + fmt.format(date) + ".pdf");
+        File f1 = new File("/home/pat_saas/Data/pdfFile/" + fmt.format(date) + ".pdf");
         return f1;
     }
     
@@ -107,9 +107,7 @@ public class PdfExportController {
             tableData.add(pro.getProjectName());
             tableData.add(String.valueOf(pro.getProjectId()));
             tableData.add(String.valueOf(pro.getImageTotal()));
-            tableData.add(String.valueOf(pro.getMarkType()));
             tableData.add(String.valueOf(pro.getIndicatorId()));
-            tableData.add(pro.getManagerId());
             tableData.add(String.valueOf(pro.getCreateTime()));
             
             PdfFontUtil.addTableCell(dataTable, CONTENT_FONT, tableData);

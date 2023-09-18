@@ -37,43 +37,11 @@ public class Project extends BaseEntity implements Serializable {
     private String projectName;
 
     /**
-     * 编辑模式
-     */
-    @ApiModelProperty(value = "", hidden = true)
-    private String editMode;
-
-    /**
      * 图象数
      */
     @Excel(name = "图像数")
     @ApiModelProperty(value = "", hidden = true)
     private Long imageTotal;
-
-    /**
-     * 标注类型
-     */
-    @Excel(name = "标注类型")
-    @ApiModelProperty(value = "", hidden = true)
-    private Long markType;
-
-    /**
-     * 审核状态
-     */
-    @Excel(name = "审核状态", readConverterExp = "0=未审核,1= 已审核")
-    @ApiModelProperty(value = "", hidden = true)
-    private Long examinationFlag;
-
-    /**
-     * 描述
-     */
-    @ApiModelProperty(value = "", hidden = true)
-    private String examinationFlagName;
-
-    /**
-     * 已审核的标注数量
-     */
-    @ApiModelProperty(value = "", hidden = true)
-    private Integer examinationNum;
 
     /**
      * 描述
@@ -93,25 +61,6 @@ public class Project extends BaseEntity implements Serializable {
      */
     @ApiModelProperty(value = "病理指标名称", hidden = true)
     private String indicatorName;
-
-
-    /**
-     * 管理者
-     */
-    @ApiModelProperty(value = "管理者id")
-    private String managerId;
-
-    /**
-     * 管理者名称
-     */
-    @ApiModelProperty(value = "管理者名称")
-    private String userName;
-
-    /**
-     * 人工标注数
-     */
-    @ApiModelProperty(value = "", hidden = true)
-    private Integer annotationTotal;
 
     /**
      * 创建者id
@@ -153,7 +102,7 @@ public class Project extends BaseEntity implements Serializable {
     private String remark;
 
     @ApiModelProperty(value = "项目状态")
-    private String projectStatus;
+    private String status;
 
     /**
      * 种属ID

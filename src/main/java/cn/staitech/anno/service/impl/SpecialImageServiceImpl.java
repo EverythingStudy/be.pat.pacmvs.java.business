@@ -252,7 +252,7 @@ public class SpecialImageServiceImpl implements SpecialImageService {
         cutVo.setFilePath(imageInfo.getImagePath());
 //		cutVo.setOutPath("/home/uploadPath/special/big/");
         String currentDate = DateUtil.format(new Date(), "yyyyMMdd");
-        String folderPath = "/home/uploadPath/big/" + currentDate + "/";
+        String folderPath = "/home/pat_saas/Upload/big/" + currentDate + "/";
         checkDirectory(folderPath);
         cutVo.setOutPath(folderPath);
 
@@ -667,7 +667,7 @@ public class SpecialImageServiceImpl implements SpecialImageService {
         Map<String, Object> o1 = new HashMap<>();
         o1.put("_roi_polygon", all_1);
         o1.put("file_path", "");
-        o1.put("out_path", "/home/uploadPath/special/big/");
+        o1.put("out_path", "/home/pat_saas/Upload/special/big/");
         String cd = JSONUtil.toJsonStr(o1);
         return cd;
     }

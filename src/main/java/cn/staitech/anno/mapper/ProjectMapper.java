@@ -215,16 +215,6 @@ public interface ProjectMapper extends BaseMapper<Project> {
     public List<ProjectListVO> selectProjectTagger(Long projectId);
 
     /**
-     * 查询所有脏器组织
-     */
-    public List<VisceraVO> selectAllViscera();
-
-    /**
-     * 将项目的组织改为null
-     */
-    public Integer updateProjectViscera(Project project);
-
-    /**
      * 查询专题下项目的数量
      *
      * @param specialId 专题id

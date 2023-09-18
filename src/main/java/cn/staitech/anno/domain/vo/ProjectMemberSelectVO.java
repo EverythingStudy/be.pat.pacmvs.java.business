@@ -1,9 +1,11 @@
 package cn.staitech.anno.domain.vo;
 
+import cn.staitech.anno.domain.Pager;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 /**
  * 查询项目成员
@@ -13,7 +15,7 @@ import javax.validation.constraints.NotNull;
  * @date 2023/09/17 15:20
  */
 @Data
-public class ProjectMemberSelectVO {
+public class ProjectMemberSelectVO extends Pager implements Serializable {
     @NotNull(message = "项目id不可为空 !")
     @ApiModelProperty(value = "项目ID", required = true)
     private Long projectId;

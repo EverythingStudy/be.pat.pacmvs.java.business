@@ -75,7 +75,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         CompletableFuture<PageMaster<Image>> listFuture = CompletableFuture.supplyAsync(() -> {
             // 分页
             PageHelper.startPage(vo.getPageNum(), vo.getPageSize()).setReasonable(true);
-            log.info("分页参数：{} {}", vo.getPageNum(), vo.getPageSize());
             List<Image> list = imageMapper.selectList(image);
             PageMaster pageMaster = new PageMaster<>(list);
             return pageMaster;

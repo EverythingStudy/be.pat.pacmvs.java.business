@@ -14,9 +14,11 @@ import cn.staitech.anno.domain.projectgroup.ProjectGroup;
 import cn.staitech.anno.domain.vo.InsertProjectVO;
 import cn.staitech.anno.service.FileService;
 import cn.staitech.anno.service.MarkingService;
+import cn.staitech.anno.domain.vo.ProjectListVO;
 import cn.staitech.anno.service.ProjectExtService;
 import cn.staitech.anno.service.ProjectMemberService;
 import cn.staitech.anno.service.ProjectService;
+import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
@@ -25,6 +27,8 @@ import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.annotation.RequiresSpecialPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.domain.SysUser;
+import com.github.pagehelper.PageHelper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import cn.staitech.system.api.domain.SysUser;
@@ -86,14 +90,6 @@ public class ProjectController extends BaseController {
         return R.ok(systemDict);
     }
 
-
-    @ApiOperation(value = "获得项目列表")
-    @RequiresPermissions("special:project:list")
-    @PostMapping("/list")
-    public R<PageResponse<ProjectListQueryOut>> getProjectList(@RequestBody @Validated ProjectListQueryIn req) {
-        PageResponse<ProjectListQueryOut> resp = projectExtService.getProjectList(req);
-        return R.ok(resp);
-    }
 
     @ApiOperation(value = "项目编辑")
     @RequiresPermissions("special:project:edit")
@@ -266,12 +262,12 @@ public class ProjectController extends BaseController {
     }
 
 
-    // ------------------------------------------------------------------
+    // 以下为新版：------------------------------------------------------------------
 
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "添加项目")
-    @RequiresPermissions("anno:project:addproject")
+    //@RequiresPermissions("anno:project:addproject")
     @Log(title = "添加项目", menu = "专题管理", subMenu = "项目管理", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @Transactional
@@ -287,13 +283,30 @@ public class ProjectController extends BaseController {
             // 获取当前项目Id
             Long projectId = project.getProjectId();
             // 向项目成员表添加当前用户
-            ProjectMember projectMember = ProjectMember.builder().userId(sysUser.getUserId()).projectId(projectId)
+            ProjectMember projectMember = ProjectMember.builder()
+                    .userId(sysUser.getUserId())
+                    .projectId(projectId)
+                    .organizationId(sysUser.getOrganizationId())
                     .roleId(sysUser.getRoleId()).createBy(sysUser.getUserId()).build();
             projectMemberService.save(projectMember);
             return R.ok(ResponseConstant.OPERATE_SUCCEED);
         }
         return R.fail(ResponseConstant.OPERATE_ERROR);
     }
+
+
+    @ApiOperation(value = "查询项目列表")
+    //@RequiresPermissions("special:project:list")
+    @PostMapping("/list")
+    public R<PageMaster<List<ProjectListVO>>> getProjectList(@RequestBody @Validated ProjectListQueryIn req) {
+        PageHelper.startPage(req.getPageNum(), req.getPageSize()).setReasonable(true);
+        Project project = new Project();
+        BeanUtils.copyProperties(req, project);
+        List<ProjectListVO> list = projectService.selectProjectList(project);
+        PageMaster pageMaster = new PageMaster<>(list);
+        return R.ok(pageMaster);
+    }
+
 
     @ApiOperation(value = "项目导出")
     @GetMapping("/jsonExport")

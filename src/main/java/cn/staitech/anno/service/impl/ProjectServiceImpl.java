@@ -27,9 +27,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     @Resource
     private ProjectMapper projectMapper;
 
-    @Resource
-    private ProjectMemberMapper projectMemberMapper;
-
     /**
      * 根据主键查询项目详情
      *
@@ -325,21 +322,5 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     @Override
     public List<ProjectListVO> selectProjectTagger(Long projectId) {
         return projectMapper.selectProjectTagger(projectId);
-    }
-
-    /**
-     * 查询所有脏器组织
-     */
-    @Override
-    public List<VisceraVO> selectAllViscera() {
-        return projectMapper.selectAllViscera();
-    }
-
-    /**
-     * 将项目的组织改为null
-     */
-    @Override
-    public Integer updateProjectViscera(Project project) {
-        return projectMapper.updateProjectViscera(project);
     }
 }
