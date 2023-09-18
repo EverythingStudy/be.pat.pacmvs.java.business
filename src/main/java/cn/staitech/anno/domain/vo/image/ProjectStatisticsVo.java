@@ -17,27 +17,27 @@ public class ProjectStatisticsVo extends ProjectExt {
     /**
      * 阴性
      */
-    @ApiModelProperty(name = "阴性", notes = "")
+    @ApiModelProperty(name = "阴性")
     private Integer negativeTotal;
     /**
      * 阳性
      */
-    @ApiModelProperty(name = "阳性", notes = "")
+    @ApiModelProperty(name = "阳性")
     private Integer positiveTotal;
     /**
      * AI分析完成
      */
-    @ApiModelProperty(name = "AI分析完成", notes = "")
+    @ApiModelProperty(name = "AI分析完成")
     private Integer finishTotal;
     /**
      * 待AI分析
      */
-    @ApiModelProperty(name = "待AI分析", notes = "")
+    @ApiModelProperty(name = "待AI分析")
     private Integer analysisTotal;
     /**
      * 人工诊断
      */
-    @ApiModelProperty(name = "人工诊断", notes = "")
+    @ApiModelProperty(name = "人工诊断")
     private Integer diagnosisTotal;
 
 

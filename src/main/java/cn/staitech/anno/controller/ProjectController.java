@@ -12,12 +12,8 @@ import cn.staitech.anno.domain.project.in.ProjectRemoveIn;
 import cn.staitech.anno.domain.project.out.*;
 import cn.staitech.anno.domain.projectgroup.ProjectGroup;
 import cn.staitech.anno.domain.vo.InsertProjectVO;
-import cn.staitech.anno.service.FileService;
-import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.domain.vo.ProjectListVO;
-import cn.staitech.anno.service.ProjectExtService;
-import cn.staitech.anno.service.ProjectMemberService;
-import cn.staitech.anno.service.ProjectService;
+import cn.staitech.anno.service.*;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
@@ -31,11 +27,6 @@ import cn.staitech.system.api.domain.SysUser;
 import com.github.pagehelper.PageHelper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
-import cn.staitech.system.api.domain.SysUser;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -294,7 +285,7 @@ public class ProjectController extends BaseController {
         return R.fail(ResponseConstant.OPERATE_ERROR);
     }
 
-
+    @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "查询项目列表")
     //@RequiresPermissions("special:project:list")
     @PostMapping("/list")
@@ -340,6 +331,4 @@ public class ProjectController extends BaseController {
         markingService.zipExport(zipUrl, specialId);
         return R.ok("操作成功");
     }
-
-
 }

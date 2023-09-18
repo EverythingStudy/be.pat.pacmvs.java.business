@@ -11,10 +11,10 @@ import java.util.List;
 @Api(value = "系统数据字典",tags = "系统数据字典")
 public class SystemDictOut {
 
-    @ApiModelProperty(value = "字典主键", notes = "")
+    @ApiModelProperty(value = "字典主键")
     private Long dictId;
 
-    @ApiModelProperty(value = "字典名称", notes = "")
+    @ApiModelProperty(value = "字典名称")
     private String dictName;
 
 }

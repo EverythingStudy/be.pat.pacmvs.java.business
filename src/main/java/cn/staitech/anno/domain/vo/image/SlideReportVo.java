@@ -57,7 +57,7 @@ public class SlideReportVo extends SubImageVo {
     /**
      * 脏器类型
      */
-    @ApiModelProperty(name = "脏器类型code", notes = "")
+    @ApiModelProperty(name = "脏器类型code")
     private Long viscusCode;
 
     /**

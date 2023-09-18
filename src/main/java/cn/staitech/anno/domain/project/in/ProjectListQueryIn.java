@@ -25,11 +25,11 @@ import java.util.Map;
  */
 @Data
 public class ProjectListQueryIn extends Pager implements Serializable {
-    @ApiModelProperty(value = "专题id", notes = "")
+    @ApiModelProperty(value = "专题id")
     private Long topicId;
-    @ApiModelProperty(value = "专题名称", notes = "")
+    @ApiModelProperty(value = "专题名称")
     private Long topicName;
-    @ApiModelProperty(value = "项目名称", notes = "")
+    @ApiModelProperty(value = "项目名称")
     private String projectName;
     @ApiModelProperty("种属ID")
     private Integer speciesId;
@@ -37,7 +37,7 @@ public class ProjectListQueryIn extends Pager implements Serializable {
     private Integer productSeriesId;
     @ApiModelProperty(value = "结构指标ID")
     private Long indicatorId;
-    @ApiModelProperty(value = "状态", notes = "")
+    @ApiModelProperty(value = "状态")
     private Long status;
     @ApiModelProperty(value = "机构编号")
     private Long organizationId;

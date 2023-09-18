@@ -13,37 +13,37 @@ import java.util.Date;
  */
 @Data
 public class ProjectListQueryOut {
-    @ApiModelProperty(value = "项目ID", notes = "")
+    @ApiModelProperty(value = "项目ID")
     private Long projectId;
 
-    @ApiModelProperty(value = "项目名称", notes = "")
+    @ApiModelProperty(value = "项目名称")
     private String projectName;
 
-    @ApiModelProperty(value = "系统类型code", notes = "")
+    @ApiModelProperty(value = "系统类型code")
     private Long systemCode;
 
-    @ApiModelProperty(value = "系统类型name", notes = "")
+    @ApiModelProperty(value = "系统类型name")
     private String systemName;
 
-    @ApiModelProperty(value = "脏器类型code", notes = "")
+    @ApiModelProperty(value = "脏器类型code")
     private Long viscusCode;
 
-    @ApiModelProperty(value = "脏器类型name", notes = "")
+    @ApiModelProperty(value = "脏器类型name")
     private String viscusName;
 
-    @ApiModelProperty(value = "切片数", notes = "")
+    @ApiModelProperty(value = "切片数")
     private Integer slideTotal;
 
-    @ApiModelProperty(value = "删除标志（0代表存在 1代表删除）", notes = "")
+    @ApiModelProperty(value = "删除标志（0代表存在 1代表删除）")
     private String delFlag;
 
-    @ApiModelProperty(value = "创建者id", notes = "")
+    @ApiModelProperty(value = "创建者id")
     private Long createBy;
 
-    @ApiModelProperty(value = "创建者名称", notes = "")
+    @ApiModelProperty(value = "创建者名称")
     private String createName;
 
-    @ApiModelProperty(value = "创建时间", notes = "")
+    @ApiModelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
