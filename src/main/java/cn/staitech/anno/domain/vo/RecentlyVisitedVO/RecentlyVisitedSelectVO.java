@@ -23,14 +23,8 @@ public class RecentlyVisitedSelectVO {
     @ApiModelProperty(value = "项目id")
     private Long projectId;
 
-    @ApiModelProperty(value = "专题id")
-    private Long specialId;
-
     @ApiModelProperty(value = "项目名称")
     private String projectName;
-
-    @ApiModelProperty(value = "专题名称")
-    private String specialName;
 
     @ApiModelProperty(value = "图像信息")
     private List<ImageVisited> imageVisited;

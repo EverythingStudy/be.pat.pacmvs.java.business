@@ -13,6 +13,10 @@ public class viewAddIn {
     @ApiModelProperty(value = "切片id")
     private Long slide_id;
 
+    @NotNull(message = "标注绘制者不可为空")
+    @ApiModelProperty(value = "标注作者(绘制者)")
+    private Long create_by;
+
     @ApiModelProperty(value = "面积")
     private String area;
 

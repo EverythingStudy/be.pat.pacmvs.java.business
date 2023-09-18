@@ -42,7 +42,7 @@ public class RecentlyVisitedController {
 
 
     @ApiOperation(value = "查询用户最近访问信息")
-    @PostMapping("/selectList")
+    @GetMapping("/selectList")
     public R<List<RecentlyVisitedSelectVO>> selectList() {
         return R.ok(recentlyVisitedService.selectList());
     }

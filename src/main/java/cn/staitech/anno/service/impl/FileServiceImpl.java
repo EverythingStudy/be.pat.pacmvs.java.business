@@ -5,6 +5,7 @@ import cn.staitech.anno.domain.vo.file.SlideFileName;
 import cn.staitech.anno.mapper.SlideMapper;
 import cn.staitech.anno.service.FileService;
 import cn.staitech.anno.utils.FileUtils;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,30 +23,26 @@ public class FileServiceImpl implements FileService {
 
     String fileUrl = "D:\\home\\data";
 
-
     @Resource
     private SlideMapper slideMapper;
 
-
-
-
     @Override
-    public String createFolder(Long slideId) throws Exception {
+    public String createFiles(Long slideId,String suffix) throws Exception {
         SlideFileName slideFileName = slideMapper.slideFileName(slideId);
         slideFileVerify(slideFileName);
         // 生成二级目录 (以专题名称命名)
         String twoFolderName = fileUrl + "\\" + slideFileName.getTopicName();
         createFolder(twoFolderName);
-        // 生成三级目录 (切片名称+切片类型+结构编码+时间戳,已下滑线进行分割)
-
+        // 生成三级目录 (以图片名称命名)
         String threeFolderName = twoFolderName + "\\" + slideFileName.getImageName();
         createFolder(threeFolderName);
-        return threeFolderName;
+        String fileUrl = threeFolderName + "\\" + slideFileName.getImageName() + "_" + slideFileName.getSlideType() + "_" + slideFileName.getCategoryNumber() + "_" + System.currentTimeMillis() + suffix;
+        createFile(fileUrl);
+        return fileUrl;
     }
 
-    @Override
-    public void createFile(String url) throws Exception {
 
+    private static Boolean createFile(String url) throws Exception {
         File file=new File(url);
         if(!file.exists())
         {
@@ -57,7 +54,7 @@ public class FileServiceImpl implements FileService {
                 e.printStackTrace();
             }
         }
-
+        return true;
     }
 
 

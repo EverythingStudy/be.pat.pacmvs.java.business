@@ -10,10 +10,7 @@ import cn.staitech.anno.service.MarkingService;
 import cn.staitech.common.core.domain.R;
 
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -30,6 +27,7 @@ import java.util.Optional;
  * @author gjt
  * @since 2023-09-14
  */
+@Api(value = "viewer", tags = "viewer页面")
 @RestController
 @RequestMapping("/marking")
 public class MarkingController {
@@ -39,8 +37,8 @@ public class MarkingController {
 
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "获取标注列表")
-    @GetMapping("/intelligentEvaluation/selectList")
-    public R<List<MarkingSelectListVo>> selectList(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) throws Exception {
+    @GetMapping("/intelligentEvaluation/selectListBy")
+    public R<List<MarkingSelectListVo>> selectListBy(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) throws Exception {
         if (!Optional.ofNullable(slideId).isPresent()) {
             return R.fail("参数异常");
         }

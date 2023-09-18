@@ -14,6 +14,7 @@ import cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo;
 import cn.staitech.anno.mapper.MarkingMapper;
 import cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper;
 import cn.staitech.anno.mapper.SlideMapper;
+import cn.staitech.anno.mapper.SysUserMapper;
 import cn.staitech.anno.netty.websocket.NioWebSocketHandler;
 import cn.staitech.anno.project.service.SlideAttrService;
 import cn.staitech.anno.service.FileService;
@@ -23,6 +24,7 @@ import cn.staitech.anno.utils.RandomUtils;
 import cn.staitech.anno.utils.SendMessage;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.domain.SysUser;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -67,6 +69,9 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Resource
     private FileService fileService;
+
+    @Resource
+    private SysUserMapper userMapper;
 
 
     @Override
@@ -132,10 +137,13 @@ public class MarkingServiceImpl implements MarkingService {
             Double perimeter = new Double(req.getPerimeter()) * MICRON;
             marking.setPerimeter(String.valueOf(perimeter));
         }
-        marking.setCreate_by(SecurityUtils.getUserId());
+        marking.setCreate_by(req.getCreate_by());
         marking.setAnnotation_type("Draw");
         marking.setCreate_time(new Date());
-        marking.setAnnotation_owner(SecurityUtils.getUsername());
+        SysUser user = userMapper.selectUserById(req.getCreate_by());
+        if(user != null){
+            marking.setAnnotation_owner(user.getUserName());
+        }
         // 查询
         QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
         // 根据切片和测量轮廓名称查询最大值
@@ -153,7 +161,7 @@ public class MarkingServiceImpl implements MarkingService {
         Properties properties = markingMapper.selectBy(marking.getMarking_id());
         Features features = socketData(annotationId, req.getGeometry(), properties);
         // 如果是点类型，返回点的总数并返回
-        List<PointCount> pointCountList = updatePoint(req.getLocation_type(), markingBy);
+        List<PointCount> pointCountList = updatePoint(req.getLocation_type(), marking);
         BroadcastVO broadcastVO = SendMessage.sendOneMessages(ADD_STATUS, features, pointCountList);
         NioWebSocketHandler.sendAll(req.getSlide_id(), broadcastVO);
         // 更新切片表中最新状态
@@ -180,9 +188,17 @@ public class MarkingServiceImpl implements MarkingService {
         // 更新文件中的内容
         Marking marking = new Marking();
         BeanUtils.copyProperties(req, marking);
-        marking.setUpdate_by(SecurityUtils.getUserId());
+        if(req.getCreate_by() != null){
+            marking.setUpdate_by(req.getCreate_by());
+            SysUser user = userMapper.selectUserById(req.getCreate_by());
+            if(user != null){
+                marking.setAnnotation_owner(user.getUserName());
+            }
+        }else{
+            marking.setUpdate_by(SecurityUtils.getUserId());
+            marking.setAnnotation_update_owner(SecurityUtils.getUsername());
+        }
         marking.setUpdate_time(new Date());
-        marking.setAnnotation_update_owner(SecurityUtils.getUsername());
         if (req.getArea() != null) {
             Double area = new Double(req.getArea()) * MICRON;
             marking.setArea(String.valueOf(area));
@@ -209,14 +225,16 @@ public class MarkingServiceImpl implements MarkingService {
         // 更新切片表中数据
         updateSLide(slide.getSlideId());
         // 更新前数据
-//        slideAttrService.removeAnnoUsers(slide.getSlideId(), Collections.singletonList(markingBy.getCreate_by()));
-//        slideAttrService.removeAnnoCategory(slide.getSlideId(), Collections.singletonList(markingBy.getCategory_id()));
-
-        slideAttrService.removeAnnoUsers(slide.getSlideId(), Collections.singletonList(1L));
+        slideAttrService.removeAnnoUsers(slide.getSlideId(), Collections.singletonList(markingBy.getCreate_by()));
         slideAttrService.removeAnnoCategory(slide.getSlideId(), Collections.singletonList(markingBy.getCategory_id()));
         // 更新后数据
         slideAttrService.saveAnnoUsers(slide.getSlideId(), Collections.singletonList(SecurityUtils.getUserId()));
-        slideAttrService.saveAnnoCategory(slide.getSlideId(), Collections.singletonList(req.getCategory_id()));
+        if(req.getCategory_id() != null){
+            slideAttrService.saveAnnoCategory(slide.getSlideId(), Collections.singletonList(req.getCategory_id()));
+        }else{
+            slideAttrService.saveAnnoCategory(slide.getSlideId(), new ArrayList<>());
+        }
+
         return markingBy.getMarking_id();
     }
 
@@ -270,17 +288,9 @@ public class MarkingServiceImpl implements MarkingService {
                 throw new RuntimeException(e);
             }
         }
-        String folderUrl = null;
+        String fileUrl = null;
         try {
-            folderUrl = fileService.createFolder(slideId);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        SlideFileName slideFileName = slideMapper.slideFileName(slideId);
-        String fileUrl = folderUrl + "\\" + slideFileName.getImageName() + "_" + slideFileName.getSlideType() + "_" + slideFileName.getCategoryNumber() + "_" + System.currentTimeMillis() + "." + "json";
-        // 创建文件
-        try {
-            fileService.createFile(fileUrl);
+            fileUrl = fileService.createFiles(slideId,".json");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -425,8 +435,7 @@ public class MarkingServiceImpl implements MarkingService {
         features.setGeometry(geometry);
         features.setId(annotationId);
         features.setType("Feature");
-        String str = properties.toString();
-        JSONObject jsonObject = JSONObject.parseObject(str);
+        JSONObject jsonObject = (JSONObject) JSON.toJSON(properties);
         features.setProperties(jsonObject);
         return features;
     }

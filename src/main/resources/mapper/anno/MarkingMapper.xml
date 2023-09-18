@@ -89,6 +89,8 @@
         <result property="annotation_owner" column="annotation_owner"/>
         <result property="create_time" column="create_time"/>
         <result property="point_count" column="point_count"/>
+        <result property="create_by" column="create_by"/>
+        <result property="update_by" column="update_by"/>
     </resultMap>
 
     <resultMap type="cn.staitech.anno.domain.marking.SlideRes" id="slideResult">
@@ -157,7 +159,9 @@
             c.category_name as label_name,
             CONCAT_WS( "_", CONCAT( t.measure_name, t.number ), c.category_name) as measure_full_name,
             t.annotation_owner,
-            t.annotation_update_owner
+            t.annotation_update_owner,
+            t.update_time,
+            t.update_by
         FROM
             tb_marking AS t
                 LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id

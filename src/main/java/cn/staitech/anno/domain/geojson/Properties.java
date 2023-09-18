@@ -16,6 +16,12 @@ public class Properties {
     @ApiModelProperty(value = "创建时间")
     private String create_time;
 
+    @ApiModelProperty(value = "创建者")
+    private String create_by;
+
+    @ApiModelProperty(value = "更新者")
+    private String update_by;
+
     @ApiModelProperty(value = "标注类型(AI表示AI算出的标注，Draw表示前端绘制的标注，Measure表示测量工具数据)")
     private String annotation_type;
 

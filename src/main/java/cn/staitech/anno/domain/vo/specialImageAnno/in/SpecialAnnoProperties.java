@@ -24,8 +24,8 @@ public class SpecialAnnoProperties extends Properties {
 	@ApiModelProperty(name = "location", value = "location")
 	private String location;
 	
-	@ApiModelProperty(name = "create_by", value = "create_by")
-	private Long create_by;
+//	@ApiModelProperty(name = "create_by", value = "create_by")
+//	private Long create_by;
 	
 	@ApiModelProperty(name = "geometry", value = "geometry")
 	private String geometry;

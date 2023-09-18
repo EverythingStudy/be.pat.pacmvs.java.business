@@ -76,7 +76,8 @@ public class RecentlyVisitedServiceImpl implements RecentlyVisitedService {
     public String selectBy(Long slideId) {
         // 根据切片查询项目、图片、切片信息
         RecentlyVisited req = recentlyVisitedMapper.selectBy(slideId);
-        long userId = SecurityUtils.getUserId();
+//        long userId = SecurityUtils.getUserId();
+        long userId = 2L;
         RecentlyVisited recentlyVisited = new RecentlyVisited();
         recentlyVisited.setUserId(userId);
         recentlyVisited.setProjectId(req.getProjectId());
