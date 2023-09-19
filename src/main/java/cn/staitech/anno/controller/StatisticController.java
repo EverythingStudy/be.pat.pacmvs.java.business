@@ -46,7 +46,7 @@ import static cn.staitech.anno.utils.StatisticListUtils.exportExcelUtil;
 @Api(value = "数据统计接口", tags = "数据统计模块")
 @RestController
 @Slf4j
-@RequestMapping("statistic")
+@RequestMapping("/statistic")
 public class StatisticController extends BaseController {
     @Resource
     private StatisticService statisticService;
@@ -77,57 +77,8 @@ public class StatisticController extends BaseController {
     @ApiOperation(value = "综合统计列表/细分筛选查询")
     @PostMapping("/statisticList")
     public R<StatisticListOutVO> statisticList(@Valid @RequestBody StatisticListInVO statisticList) throws ParseException {
-        // 创建返回结果实例
-        StatisticListOutVO statisticListRep = new StatisticListOutVO();
-        List<StatisticObjectOutVO> resp = new ArrayList<>();
-        StatisticListUtils statisticListUtils = new StatisticListUtils();
-        // 通过SysDictData获取统计维度值、统计数量类别
-        String displayQuantity =  statisticService.statisticSelectDictDataById(statisticList.getStatisticCategory()).getDictLabel();
-        String statisticalDimension = statisticService.statisticSelectDictDataById(statisticList.getStatisticDimension()).getDictLabel();
-        // 数量（横轴）--标注数量
-        if (displayQuantity.equals(ANNOTATION_COUNT)) {
-            // 统计维度（竖轴）--标注日期
-            if (statisticalDimension.equals(ANNOTATION_DATE)) {
-                // 判断startTime、endTime值，并返回日期差
-                long daysBetween = statisticListUtils.statisticSetStartEndTime(statisticList, statisticService);
-                // 按日期差进行分类查询
-                if (daysBetween < THREE_YEAR) {
-                    statisticListRep = statisticListUtils.statisticAnnoDateRespOut(statisticList, statisticListRep, resp, displayQuantity, statisticalDimension, daysBetween, statisticService);
-                    return R.ok(statisticListRep);
-                } else if (daysBetween >= THREE_YEAR) {
-                    return R.fail(MAX_SELECT_TIME_ERROR);
-                } else {
-                    return R.fail(SELECT_TIME_ERROR);
-                }
-            } else {
-                // 统计维度（竖轴）--除标注日期以外的
-                statisticListRep = statisticListUtils.statisticAnnoRespOut(statisticList, statisticListRep, resp, displayQuantity, statisticalDimension, statisticService);
-                return R.ok(statisticListRep);
-            }
-        }
-        // 数量（横轴）--图像数量
-        else if (displayQuantity.equals(SLIDE_COUNT)) {
-            // 统计维度（竖轴）--标注日期
-            if (statisticalDimension.equals(ANNOTATION_DATE)) {
-                // 判断startTime、endTime值，并返回日期差
-                long daysBetween = statisticListUtils.statisticSetStartEndTime(statisticList, statisticService);
-                // 按日期差进行分类查询
-                if (daysBetween >= 0 && daysBetween < THREE_YEAR) {
-                    statisticListRep = statisticListUtils.statisticImageDateRespOut(statisticList, statisticListRep, resp, displayQuantity, statisticalDimension, daysBetween, statisticService);
-                    return R.ok(statisticListRep);
-                } else if (daysBetween >= THREE_YEAR) {
-                    return R.fail(MAX_SELECT_TIME_ERROR);
-                } else {
-                    return R.fail(SELECT_TIME_ERROR);
-                }
-            } else {
-                // 统计维度（竖轴）--除标注日期以外的
-                statisticListRep = statisticListUtils.statisticImageRespOut(statisticList, statisticListRep, resp, displayQuantity, statisticalDimension, statisticService);
-                return R.ok(statisticListRep);
-            }
-        } else {
-            return R.fail(StatisticResponseConstant.STATISTIC_CATEGORY);
-        }
+        return statisticService.statisticList(statisticList);
+
     }
 
     /**

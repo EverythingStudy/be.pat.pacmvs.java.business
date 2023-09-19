@@ -4,11 +4,14 @@ import cn.staitech.anno.domain.vo.statistic.AnnotationStatisticIdListOutVO;
 import cn.staitech.anno.domain.vo.statistic.AnnotationStatisticListPageInVO;
 import cn.staitech.anno.domain.vo.statistic.AnnotationStatisticListPageOutVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticListInVO;
+import cn.staitech.anno.domain.vo.statistic.StatisticListOutVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticObjectOutVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSysDictDataOutVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticUserListOutVO;
 import cn.staitech.anno.domain.vo.statistic.TableDateOutVO;
+import cn.staitech.common.core.domain.R;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -232,4 +235,6 @@ public interface StatisticService {
      * @return 字典数据
      */
     StatisticSysDictDataOutVO statisticSelectDictDataById(Long dictCode);
+
+    R<StatisticListOutVO> statisticList(StatisticListInVO statisticList) throws ParseException;
 }
