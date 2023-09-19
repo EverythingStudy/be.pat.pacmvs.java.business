@@ -1,5 +1,6 @@
 package cn.staitech.anno.domain;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @Data
+@TableName(value ="tb_pathological_indicator_category")
 public class PathologicalIndicatorCategory {
     @ApiModelProperty(required = true, value = "标签id")
     private Long categoryId;

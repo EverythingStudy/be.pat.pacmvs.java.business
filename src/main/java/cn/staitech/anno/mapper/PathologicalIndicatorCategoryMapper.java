@@ -6,10 +6,11 @@ import cn.staitech.anno.domain.vo.LabelListVO;
 import cn.staitech.anno.domain.vo.LabelVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListOutVO;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;
 
-public interface PathologicalIndicatorCategoryMapper {
+public interface PathologicalIndicatorCategoryMapper extends BaseMapper<PathologicalIndicatorCategory> {
 
     /**
      * 根据主键删除信息

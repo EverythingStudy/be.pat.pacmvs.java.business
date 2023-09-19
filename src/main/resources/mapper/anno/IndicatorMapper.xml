@@ -132,12 +132,18 @@
         select distinct(pi.indicator_id), pi.indicator_name
         from tb_pathological_indicator as pi
         left join tb_project as p on p.indicator_id = pi.indicator_id
+        <where>
         <if test="projectIdList.size() != 0 and projectIdList != null ">
-            where p.project_id in
+            and p.project_id in
             <foreach collection="projectIdList" item="project_id" open="(" separator="," close=")">
                 #{project_id}
             </foreach>
         </if>
+
+        <if test="organizationId !=null and organizationId !=0">
+            and pi.organization_id = #{organizationId}
+        </if>
+        </where>
         Group by pi.indicator_id
         order by pi.indicator_id desc
     </select>

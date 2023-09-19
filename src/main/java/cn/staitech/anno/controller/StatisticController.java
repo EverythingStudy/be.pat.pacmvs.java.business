@@ -7,12 +7,12 @@ import cn.staitech.anno.domain.vo.AnnotationBroadcastVO;
 import cn.staitech.anno.domain.vo.statistic.*;
 import cn.staitech.anno.service.*;
 import cn.staitech.anno.utils.PageMaster;
-import cn.staitech.anno.utils.StatisticListUtils;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.annotation.RequiresPermissions;
+import cn.staitech.common.security.utils.SecurityUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -27,13 +27,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 import static cn.staitech.anno.constant.ProjectConstant.NO_ATTRIBUTE;
-import static cn.staitech.anno.constant.R.StatisticResponseConstant.MAX_SELECT_TIME_ERROR;
-import static cn.staitech.anno.constant.R.StatisticResponseConstant.SELECT_TIME_ERROR;
 import static cn.staitech.anno.constant.StatisticConstant.*;
 import static cn.staitech.anno.utils.StatisticListUtils.exportExcelDateUtil;
 import static cn.staitech.anno.utils.StatisticListUtils.exportExcelUtil;
@@ -46,7 +42,7 @@ import static cn.staitech.anno.utils.StatisticListUtils.exportExcelUtil;
 @Api(value = "数据统计接口", tags = "数据统计模块")
 @RestController
 @Slf4j
-@RequestMapping("/statistic")
+@RequestMapping("/intelligentAnno/statistic")
 public class StatisticController extends BaseController {
     @Resource
     private StatisticService statisticService;
@@ -222,6 +218,9 @@ public class StatisticController extends BaseController {
         StatisticSysDictDataOutVO categoryData = statisticService.statisticSelectDictDataById(category);
         StatisticSysDictDataOutVO dimensionData = statisticService.statisticSelectDictDataById(dimension);
 
+        if(!SecurityUtils.isAdmin(SecurityUtils.getUserId())){
+            statisticListInVO.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        }
         // 显示数量：标注数量
         if (Objects.nonNull(categoryData) && categoryData.getDictLabel().equals(ANNOTATION_COUNT)) {
             List<StatisticUserListOutVO> userList = statisticService.queryAnnotationMembersList(statisticListInVO);
@@ -276,6 +275,10 @@ public class StatisticController extends BaseController {
     @ApiOperation(value = "标注统计列表/细分筛选查询/获取统计维度ID")
     @PostMapping("/annotationStatisticIdList")
     public R<List<AnnotationStatisticIdListOutVO>> annotationStatisticIdList(@Valid @RequestBody StatisticListInVO statisticList) {
+
+        if(!SecurityUtils.isAdmin(SecurityUtils.getUserId())){
+            statisticList.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        }
         // 统计类别：标注数量、图像数量
         Long statisticCategory = statisticList.getStatisticCategory();
         // 统计维度：项目、病理指标、标注类别、成员、图像

@@ -226,7 +226,7 @@ public interface StatisticService {
      *
      * @return
      */
-    TableDateOutVO statisticSelectEarliestAnnoDate();
+    TableDateOutVO statisticSelectEarliestAnnoDate(Long organizationId);
 
     /**
      * 根据字典数据ID查询信息

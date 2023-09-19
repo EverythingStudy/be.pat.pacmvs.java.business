@@ -14,6 +14,7 @@ import cn.staitech.anno.mapper.StatisticMapper;
 import cn.staitech.anno.service.StatisticService;
 import cn.staitech.anno.utils.StatisticListUtils;
 import cn.staitech.common.core.domain.R;
+import cn.staitech.common.security.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -95,7 +96,7 @@ public class StatisticServiceImpl implements StatisticService {
      * @return
      */
     public List<StatisticObjectOutVO> statisticSelectAnnoDateDaysList(StatisticListInVO statisticList) {
-        return statisticMapper.statisticSelectAnnoDateDaysList(statisticList);
+        return statisticMapper.statisticSelectAnnoDateDaysListExt(statisticList);
     }
 
     /**
@@ -105,7 +106,7 @@ public class StatisticServiceImpl implements StatisticService {
      * @return
      */
     public List<StatisticObjectOutVO> statisticSelectAnnoDateMonthsList(StatisticListInVO statisticList) {
-        return statisticMapper.statisticSelectAnnoDateMonthsList(statisticList);
+        return statisticMapper.statisticSelectAnnoDateMonthsListExt(statisticList);
     }
 
     /**
@@ -179,6 +180,9 @@ public class StatisticServiceImpl implements StatisticService {
      */
     @Override
     public List<StatisticUserListOutVO> queryAnnotationMembersList(StatisticListInVO statisticListInVO) {
+        if(!SecurityUtils.isAdmin(SecurityUtils.getUserId())){
+            statisticListInVO.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        }
         return statisticMapper.queryAnnotationMembersList(statisticListInVO);
     }
 
@@ -297,8 +301,8 @@ public class StatisticServiceImpl implements StatisticService {
      *
      * @return
      */
-    public TableDateOutVO statisticSelectEarliestAnnoDate() {
-        return statisticMapper.statisticSelectEarliestAnnoDate();
+    public TableDateOutVO statisticSelectEarliestAnnoDate(Long organizationId) {
+        return statisticMapper.statisticSelectEarliestAnnoDate(organizationId);
     }
 
     /**
@@ -319,6 +323,9 @@ public class StatisticServiceImpl implements StatisticService {
     @Override
     public R<StatisticListOutVO> statisticList(StatisticListInVO statisticList) throws ParseException {
 
+        if(!SecurityUtils.isAdmin(SecurityUtils.getUserId())){
+            statisticList.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        }
         // 创建返回结果实例
         StatisticListOutVO statisticListRep = new StatisticListOutVO();
         List<StatisticObjectOutVO> resp = new ArrayList<>();

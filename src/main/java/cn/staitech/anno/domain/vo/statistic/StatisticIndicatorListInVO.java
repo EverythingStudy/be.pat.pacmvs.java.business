@@ -10,5 +10,11 @@ import java.util.List;
 public class StatisticIndicatorListInVO {
     
     @ApiModelProperty(value = "项目ID列表", required = true)
-    private List<Integer> projectIdList;
+    private List<Long> projectIdList;
+
+    private Long organizationId;
+
+
+
+
 }

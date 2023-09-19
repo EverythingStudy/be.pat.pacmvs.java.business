@@ -417,7 +417,7 @@ public class StatisticListUtils {
         // 未输入日期的情况
         if (ObjectUtils.isEmpty(statisticList.getStartTime()) && ObjectUtils.isEmpty(statisticList.getEndTime())) {
             String endTime = dateFormat.format(new Date());
-            String startTime = statisticService.statisticSelectEarliestAnnoDate().getEarliestDate();
+            String startTime = statisticService.statisticSelectEarliestAnnoDate(statisticList.getOrganizationId()).getEarliestDate();
             statisticList.setEndTime(endTime);
             statisticList.setStartTime(startTime);
         }

@@ -18,7 +18,7 @@
         <result property="statisticName" column="image_name"/>
         <result property="statisticDate" column="statistic_date"/>
     </resultMap>
-    
+
     <resultMap id="AnnotationResult"
                type="cn.staitech.anno.domain.vo.statistic.AnnotationStatisticIdListOutVO">
         <result property="statisticId" column="project_id"/>
@@ -32,21 +32,21 @@
         <result property="statisticId" column="image_id"/>
         <result property="statisticName" column="image_name"/>
     </resultMap>
-    
+
     <resultMap id="AnnotationPageResult"
                type="cn.staitech.anno.domain.vo.statistic.AnnotationStatisticListPageOutVO">
         <result property="annotationId" column="annotation_id"/>
     </resultMap>
-    
+
     <resultMap id="UserListResult" type="cn.staitech.anno.domain.vo.statistic.StatisticUserListOutVO">
         <result property="userId" column="user_id"/>
         <result property="userName" column="user_name"/>
     </resultMap>
-    
+
     <resultMap id="EarliestDateResult" type="cn.staitech.anno.domain.vo.statistic.TableDateOutVO">
         <result property="earliestDate" column="earliest_date"/>
     </resultMap>
-    
+
     <resultMap id="DictDataResult"
                type="cn.staitech.anno.domain.vo.statistic.StatisticSysDictDataOutVO">
         <result property="dictCode" column="dict_code"/>
@@ -56,6 +56,9 @@
 
     <sql id="statisticSelectAnnotationSql">
         AND a.category_id != 1
+        <if test="organizationId !=null and organizationId !=0">
+            AND a.organization_id =#{organizationId}
+        </if>
         <if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
             AND date_format(a.update_time,'%Y-%m-%d') &gt;= date_format(#{startTime},'%Y-%m-%d')
         </if>
@@ -186,9 +189,9 @@
         SELECT
         a.project_id,
         p.project_name,
-        count(a.annotation_id) as annotation_count
+        count(a.marking_id) as annotation_count
         FROM
-        tb_annotation as a
+        tb_marking as a
         inner join tb_project as p on a.project_id = p.project_id
         <where>
             <include refid="statisticSelectAnnotationSql"/>
@@ -203,9 +206,9 @@
         SELECT
         pi.indicator_id,
         pi.indicator_name,
-        count(annotation_id) as annotation_count
+        count(a.marking_id) as annotation_count
         FROM
-        tb_annotation AS a
+        tb_marking AS a
         INNER JOIN tb_project AS p ON a.project_id = p.project_id
         INNER JOIN tb_pathological_indicator AS pi ON pi.indicator_id = p.indicator_id
         <where>
@@ -221,9 +224,9 @@
         SELECT
         pic.category_id,
         pic.category_name,
-        count(a.annotation_id) as annotation_count
+        count(a.marking_id) as annotation_count
         FROM
-        tb_annotation AS a
+        tb_marking AS a
         left JOIN tb_pathological_indicator_category AS pic ON a.category_id = pic.category_id
         <where>
             <include refid="statisticSelectAnnotationSql"/>
@@ -237,8 +240,8 @@
             parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
         SELECT a.create_by,
         u.user_name,
-        count(a.annotation_id) AS annotation_count
-        FROM tb_annotation AS a
+        count(a.marking_id) AS annotation_count
+        FROM tb_marking AS a
         LEFT JOIN sys_user u ON a.create_by = u.user_id
         <where>
             <include refid="statisticSelectAnnotationSql"/>
@@ -253,9 +256,9 @@
         SELECT
         i.image_id,
         i.image_name,
-        count(a.annotation_id) as annotation_count
+        count(a.marking_id) as annotation_count
         FROM
-        tb_annotation AS a
+        tb_marking AS a
         INNER JOIN tb_image AS i ON a.image_id = i.image_id
         <where>
             <include refid="statisticSelectAnnotationSql"/>
@@ -336,6 +339,80 @@
         order by statistic_date desc
     </select>
 
+    <!--综合统计列表：标注数量-日期-按天统计-->
+    <select id="statisticSelectAnnoDateDaysListExt"
+            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
+        SELECT
+        DATE_FORMAT(a.update_time,'%Y-%m-%d') as statistic_date,
+        count(a.marking_id) as annotation_count
+        FROM
+        tb_marking AS a
+        left join tb_project as p
+        on a.project_id=p.project_id
+        left join tb_slide as s
+        on a.slide_id=s.slide_id
+        left join tb_project_member pm
+        on p.project_id = pm.project_id
+        where a.category_id != 1
+        <if test="organizationId != null and organizationId !=0">
+            AND a.organization_id = #{organizationId}
+        </if>
+        <if test="member !=null and member != 0">
+            AND pm.user_id = #{member}
+        </if>
+        <if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
+            AND date_format(a.create_time,'%Y-%m-%d') &gt;= date_format(#{startTime},'%Y-%m-%d')
+        </if>
+        <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
+            AND date_format(a.create_time,'%Y-%m-%d') &lt;= date_format(#{endTime},'%Y-%m-%d')
+        </if>
+        <if test="projectIdList != null and projectIdList.size() >0 ">
+            AND a.project_id IN
+            <foreach collection="projectIdList" item="projectId" open="(" separator="," close=")">
+                #{projectId}
+            </foreach>
+        </if>
+        <if test="indicatorIdList != null and indicatorIdList.size() >0 ">
+            AND p.indicator_id IN
+            <foreach collection="indicatorIdList" item="indicatorId" open="(" separator="," close=")">
+                #{indicatorId}
+            </foreach>
+            )
+        </if>
+        <if test="categoryIdList != null and categoryIdList.size() >0">
+            AND a.category_id IN
+            <foreach collection="categoryIdList" item="categoryId" open="(" separator="," close=")">
+                #{categoryId}
+            </foreach>
+        </if>
+        <if test="userIdList != null and userIdList.size() >0 ">
+            AND a.create_by IN
+            <foreach collection="userIdList" item="createBy" open="(" separator="," close=")">
+                #{createBy}
+            </foreach>
+        </if>
+        <if test="slideIdList != null and slideIdList.size() >0 ">
+            AND a.slide_id IN
+            <foreach collection="slideIdList" item="slideId" open="(" separator="," close=")">
+                #{slideId}
+            </foreach>
+        </if>
+        <if test="examinationFlag != null and examinationFlag == 45 or examinationFlag == 46 or examinationFlag == 47 ">
+            <if test="examinationFlag == 45 ">-- 图像标注完成
+                AND s.process_flag = 2
+            </if>
+            <if test="examinationFlag == 46 ">-- 图像复核通过
+                AND s.examination_flag = 2
+            </if>
+            <if test="examinationFlag == 47 ">-- 图像交付
+                AND s.examination_flag = 4
+            </if>
+            )
+        </if>
+        GROUP BY DATE_FORMAT(a.update_time,'%Y-%m-%d')
+        order by statistic_date desc
+    </select>
+
     <!--综合统计列表：标注数量-日期-按月统计-->
     <select id="statisticSelectAnnoDateMonthsList"
             parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
@@ -408,6 +485,79 @@
         order by statistic_date desc
     </select>
 
+    <select id="statisticSelectAnnoDateMonthsListExt"
+            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
+        SELECT
+        DATE_FORMAT(a.update_time,'%Y-%m') as statistic_date,
+        count(a.marking_id) as annotation_count
+        FROM
+        tb_marking AS a
+        left join tb_project as p
+        on a.project_id=p.project_id
+        left join tb_slide as s
+        on a.slide_id=s.slide_id
+        left join tb_project_member pm
+        on p.project_id = pm.project_id
+        where a.category_id != 1
+        <if test="organizationId != null and organizationId !=0">
+            AND a.organization_id = #{organizationId}
+        </if>
+        <if test="member !=null and member != 0">
+            AND pm.user_id = #{member}
+        </if>
+        <if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
+            AND date_format(a.create_time,'%Y-%m-%d') &gt;= date_format(#{startTime},'%Y-%m-%d')
+        </if>
+        <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
+            AND date_format(a.create_time,'%Y-%m-%d') &lt;= date_format(#{endTime},'%Y-%m-%d')
+        </if>
+        <if test="projectIdList != null and projectIdList.size() >0 ">
+            AND a.project_id IN
+            <foreach collection="projectIdList" item="projectId" open="(" separator="," close=")">
+                #{projectId}
+            </foreach>
+        </if>
+        <if test="indicatorIdList != null and indicatorIdList.size() >0 ">
+            AND p.indicator_id IN
+            <foreach collection="indicatorIdList" item="indicatorId" open="(" separator="," close=")">
+                #{indicatorId}
+            </foreach>
+            )
+        </if>
+        <if test="categoryIdList != null and categoryIdList.size() >0">
+            AND a.category_id IN
+            <foreach collection="categoryIdList" item="categoryId" open="(" separator="," close=")">
+                #{categoryId}
+            </foreach>
+        </if>
+        <if test="userIdList != null and userIdList.size() >0 ">
+            AND a.create_by IN
+            <foreach collection="userIdList" item="createBy" open="(" separator="," close=")">
+                #{createBy}
+            </foreach>
+        </if>
+        <if test="slideIdList != null and slideIdList.size() >0 ">
+            AND a.slide_id IN
+            <foreach collection="slideIdList" item="slideId" open="(" separator="," close=")">
+                #{slideId}
+            </foreach>
+        </if>
+        <if test="examinationFlag != null and examinationFlag == 45 or examinationFlag == 46 or examinationFlag == 47 ">
+            <if test="examinationFlag == 45 ">-- 图像标注完成
+                AND s.process_flag = 2
+            </if>
+            <if test="examinationFlag == 46 ">-- 图像复核通过
+                AND s.examination_flag = 2
+            </if>
+            <if test="examinationFlag == 47 ">-- 图像交付
+                AND s.examination_flag = 4
+            </if>
+            )
+        </if>
+        GROUP BY DATE_FORMAT(a.update_time,'%Y-%m')
+        order by statistic_date desc
+    </select>
+
 
     <!--综合统计列表：图像数量-项目-->
     <select id="statisticSelectImageProjectList"
@@ -420,6 +570,9 @@
         tb_slide AS s
         INNER JOIN tb_project AS p ON s.project_id = p.project_id
         <where>
+            <if test="organizationId !=null and organizationId !=0">
+                and p.organization_id =#{organizationId}
+            </if>
             <include refid="statisticSelectImageSql"/>
         </where>
         GROUP BY p.project_id, p.project_name
@@ -438,6 +591,9 @@
         INNER JOIN tb_project AS p ON s.project_id = p.project_id
         INNER JOIN tb_pathological_indicator AS pi ON pi.indicator_id = p.indicator_id
         <where>
+            <if test="organizationId !=null and organizationId !=0">
+                and p.organization_id =#{organizationId}
+            </if>
             <include refid="statisticSelectImageSql"/>
         </where>
         GROUP BY pi.indicator_id, pi.indicator_name
@@ -454,10 +610,13 @@
         count(
         DISTINCT ( a.slide_id )) image_count
         FROM
-        tb_annotation a
+        tb_marking a
         LEFT JOIN tb_slide s ON s.slide_id = a.slide_id
         LEFT JOIN tb_pathological_indicator_category pic ON a.category_id = pic.category_id
         <where>
+            <if test="organizationId !=null and organizationId !=0">
+                and a.organization_id =#{organizationId}
+            </if>
             <include refid="statisticSelectImageSql"/>
         </where>
         GROUP BY
@@ -480,6 +639,9 @@
         LEFT JOIN tb_pathological_indicator pi ON pi.indicator_id = p.indicator_id
         LEFT JOIN tb_pathological_indicator_category pic ON pic.indicator_id = pi.indicator_id
         <where>
+            <if test="organizationId !=null and organizationId !=0">
+                and p.organization_id =#{organizationId}
+            </if>
             <include refid="statisticSelectImageSql"/>
         </where>
         GROUP BY
@@ -496,8 +658,11 @@
         count(distinct(s.slide_id)) as image_count
         FROM
         tb_slide AS s
-        inner join tb_annotation AS a on s.slide_id = a.slide_id
+        inner join tb_marking AS a on s.slide_id = a.slide_id
         <where>
+            <if test="organizationId !=null and organizationId !=0">
+                and a.organization_id =#{organizationId}
+            </if>
             <include refid="statisticSelectImageSql"/>
         </where>
         GROUP BY DATE_FORMAT(a.create_time,'%Y-%m-%d')
@@ -512,8 +677,11 @@
         count(distinct(s.slide_id)) as image_count
         FROM
         tb_slide AS s
-        inner join tb_annotation AS a on s.slide_id = a.slide_id
+        inner join tb_marking AS a on s.slide_id = a.slide_id
         <where>
+            <if test="organizationId !=null and organizationId !=0">
+                and a.organization_id =#{organizationId}
+            </if>
             <include refid="statisticSelectImageSql"/>
         </where>
         GROUP BY DATE_FORMAT(a.create_time,'%Y-%m')
@@ -528,7 +696,7 @@
         u.user_id,
         u.user_name
         FROM
-        tb_annotation a
+        tb_marking a
         LEFT JOIN sys_user u ON u.user_id = a.create_by
         <where>
             <include refid="statisticSelectAnnotationSql"/>
@@ -547,6 +715,9 @@
         tb_slide s
         LEFT JOIN sys_user u ON u.user_id = s.create_by
         <where>
+            <if test="organizationId !=null and organizationId !=0">
+                and u.organization_id =#{organizationId}
+            </if>
             <include refid="statisticSelectImageSql"/>
         </where>
         ORDER BY
@@ -554,17 +725,15 @@
     </select>
 
 
-
-
     <!--标注统计列表: 项目列表 inner join 和left join 效果一样标准从属于一个项目 -->
     <select id="statisticSelectAnnoProjectIdList"
             parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO"
             resultMap="AnnotationResult">
         SELECT
-        a.project_id,
+        p.project_id,
         p.project_name
         FROM
-        tb_annotation as a
+        tb_marking as a
         inner join tb_project as p on a.project_id = p.project_id
         <where>
             <include refid="statisticSelectAnnotationSql"/>
@@ -581,9 +750,8 @@
         pi.indicator_id,
         pi.indicator_name
         FROM
-        tb_annotation AS a
+        tb_marking AS a
         INNER JOIN tb_project AS p ON a.project_id = p.project_id
-        INNER JOIN tb_pathological_indicator AS pi ON pi.indicator_id = p.indicator_id
         <where>
             <include refid="statisticSelectAnnotationSql"/>
         </where>
@@ -596,10 +764,10 @@
             parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO"
             resultMap="AnnotationResult">
         SELECT
-        a.category_id,
+        pic.category_id,
         pic.category_name
         FROM
-        tb_annotation AS a
+        tb_marking AS a
         left JOIN tb_pathological_indicator_category AS pic ON a.category_id = pic.category_id
         <where>
             <include refid="statisticSelectAnnotationSql"/>
@@ -616,7 +784,7 @@
         u.user_id,
         u.user_name
         FROM
-        tb_annotation a
+        tb_marking a
         LEFT JOIN sys_user u ON u.user_id = a.create_by
         <where>
             <include refid="statisticSelectAnnotationSql"/>
@@ -633,7 +801,7 @@
         i.image_id,
         i.image_name
         FROM
-        tb_annotation AS a
+        tb_marking AS a
         INNER JOIN tb_image AS i ON a.image_id = i.image_id
         <where>
             <include refid="statisticSelectAnnotationSql"/>
@@ -652,7 +820,7 @@
         p.project_name,
         a.annotation_id
         FROM
-        tb_annotation as a
+        tb_marking as a
         inner join tb_project as p on a.project_id = p.project_id
         <where>
             <include refid="statisticSelectAnnotationSql"/>
@@ -672,7 +840,7 @@
         pi.indicator_name,
         a.annotation_id
         FROM
-        tb_annotation AS a
+        tb_marking AS a
         INNER JOIN tb_project AS p ON a.project_id = p.project_id
         INNER JOIN tb_pathological_indicator AS pi ON pi.indicator_id = p.indicator_id
         <where>
@@ -691,7 +859,7 @@
         pic.category_name,
         a.annotation_id
         FROM
-        tb_annotation AS a
+        tb_marking AS a
         left JOIN tb_pathological_indicator_category AS pic ON a.category_id = pic.category_id
         <where>
             <include refid="statisticSelectAnnotationSql"/>
@@ -710,7 +878,7 @@
         a.annotation_id,
         a.update_time
         FROM
-        tb_annotation AS a
+        tb_marking AS a
         LEFT JOIN sys_user u ON u.user_id = a.create_by
         <where>
             <include refid="statisticSelectAnnotationSql"/>
@@ -730,7 +898,7 @@
         i.image_name,
         a.annotation_id
         FROM
-        tb_annotation AS a
+        tb_marking AS a
         INNER JOIN tb_image AS i ON a.image_id = i.image_id
         <where>
             <include refid="statisticSelectAnnotationSql"/>
@@ -740,16 +908,19 @@
     </select>
 
 
-
-
     <!--查询标注表最早时间记录-->
-    <select id="statisticSelectEarliestAnnoDate" parameterType="String" resultMap="EarliestDateResult">
+    <select id="statisticSelectEarliestAnnoDate" parameterType="java.lang.String" resultMap="EarliestDateResult">
         SELECT MIN(create_time) as earliest_date
-        from tb_annotation
+        from tb_marking
+        <where>
+            <if test="organizationId !=null and organizationId !=0">
+                organization_id = #{organizationId}
+            </if>
+        </where>
     </select>
 
     <!--根据字典数据ID查询信息-->
-    <select id="statisticSelectDictDataById" parameterType="Long" resultMap="DictDataResult">
+    <select id="statisticSelectDictDataById" parameterType="java.lang.Long" resultMap="DictDataResult">
         select dict_code, dict_label, dict_sort
         from sys_dict_data
         where dict_code = #{dictCode}
