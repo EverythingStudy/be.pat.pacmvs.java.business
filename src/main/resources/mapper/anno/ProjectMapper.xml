@@ -242,7 +242,6 @@
         <if test="projectType != null">project_type,</if>
         <if test="description != null">description,</if>
         <if test="topicId != null">topic_id,</if>
-        <if test="specialId != null">special_id,</if>
         <if test="organizationId != null">organization_id,</if>
         create_time,
         image_total,
@@ -257,7 +256,6 @@
         <if test="projectType != null">#{projectType},</if>
         <if test="description != null">#{description},</if>
         <if test="topicId != null">#{topicId},</if>
-        <if test="specialId != null">#{specialId},</if>
         <if test="organizationId != null">#{organizationId},</if>
         sysdate(),
         0,
