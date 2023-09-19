@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
@@ -66,8 +65,12 @@ public class FilesController extends BaseController {
     })
     @Log(title = "文件上传并处理下游业务逻辑", menu = "文件上传并处理下游业务逻辑", subMenu = "文件上传并处理下游业务逻辑", businessType = BusinessType.IMPORT)
     @PostMapping("/uploadBusiness")
-    public R<Files> uploadBusiness(FileUploadVO fileUploadVO, HttpServletRequest request) throws IOException {
-        return R.ok(fileUploadService.uploadAndProcessBusiness(fileUploadVO));
+    public R<Files> uploadBusiness(
+            @RequestParam("file") MultipartFile file,
+            FileUploadVO fileUploadVO) throws IOException {
+        fileUploadVO.setMultipartFile(file);
+        fileUploadService.uploadAndProcessBusiness(fileUploadVO);
+        return R.ok();
     }
 
 

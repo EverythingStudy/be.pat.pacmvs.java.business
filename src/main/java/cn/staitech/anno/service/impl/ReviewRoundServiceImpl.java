@@ -118,6 +118,36 @@ public class ReviewRoundServiceImpl extends ServiceImpl<ReviewRoundMapper, Revie
         PageHelper.clearPage();
         return pageMaster;
     }
+
+
+    /**
+     * 查询单个评审轮次
+     *
+     * @param reviewRoundId
+     * @return
+     */
+    public ReviewRoundOutVO getOneById(Long reviewRoundId) {
+        ReviewRound reviewRound = new ReviewRound();
+        reviewRound.setReviewRoundId(reviewRoundId);
+        ReviewRound round = this.getById(reviewRound);
+
+        ReviewRoundOutVO reviewRoundOutVO = new ReviewRoundOutVO();
+        BeanUtils.copyProperties(round, reviewRoundOutVO);
+
+        // 评审轮次
+        reviewRoundOutVO.setRoundName(MapConstant.getRoundName(round.getRoundId()));
+        // 组别
+        reviewRoundOutVO.setGroupName(MapConstant.getGroupName(round.getGroupId()));
+
+        //专题编号
+        Map<Long, String> topicMap = topicService.selectMap();
+        if (topicMap.containsKey(round.getTopicId())) {
+            reviewRoundOutVO.setTopicName(topicMap.get(round.getTopicId()));
+        }
+        // 创建者
+        reviewRoundOutVO.setCreateByName(sysUserService.selectUserById(round.getCreateBy()).getUserName());
+        return reviewRoundOutVO;
+    }
 }
 
 

@@ -14,6 +14,7 @@ import java.util.List;
  * @createDate 2023-09-18 16:15:33
  */
 public interface ReviewRoundService extends IService<ReviewRound> {
+
     /**
      * 批量添评审轮次
      *
@@ -33,4 +34,11 @@ public interface ReviewRoundService extends IService<ReviewRound> {
      */
     PageMaster<ReviewRoundOutVO> pageReviewRound(int pageNum, int pageSize, Long projectId);
 
+    /**
+     * 查询单个评审轮次
+     *
+     * @param reviewRoundId
+     * @return
+     */
+    ReviewRoundOutVO getOneById(Long reviewRoundId);
 }

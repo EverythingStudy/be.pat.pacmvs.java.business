@@ -17,7 +17,6 @@ import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.annotation.RequiresPermissions;
-import cn.staitech.common.security.annotation.RequiresSpecialPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -95,7 +94,7 @@ public class SlideController extends BaseController {
             }
             //需求要求，删除单条提示
             if (slideList.size() == 1 && list.size() == 0) {
-                return R.fail( "当前切片处理中，禁止删除");
+                return R.fail("当前切片处理中，禁止删除");
             }
             if (!list.isEmpty()) {
                 slideService.updateBatchByCondition(list);
@@ -150,31 +149,6 @@ public class SlideController extends BaseController {
         return R.ok(ResponseConstant.OPERATE_SUCCEED);
     }
 
-    /**
-     * 通过切片ID查询对应的图像列表 .
-     * 原 ProjectController.java  imageList接口 - anno:annotation:image
-     */
-    @Deprecated
-    @RequiresPermissions("anno:slide:list")
-    @ApiOperation(value = "通过切片ID查询对应的图像（切片）列表")
-    @GetMapping("/list")
-    public R<List<ImageListVO>> listByProjectId(
-            @RequestParam @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId) {
-        if (!Optional.ofNullable(slideId).isPresent()) {
-            return R.fail(ProjectConstant.SLIDE_ID_NOT_NULL);
-        }
-        //获取切片信息
-        Slide list = slideService.selectById(slideId);
-        if (!Optional.ofNullable(list).isPresent()) {
-            return R.fail(ProjectConstant.IMAGE_NOT_EXIST);
-        }
-        Long projectId = list.getProjectId();
-        //根据项目id获取图像信息
-        List<ImageListVO> image = imageService.selectImageListByPorjectId(projectId);
-        return R.ok(image);
-    }
-
-
     @ApiOperation(value = "查询组内切片报表摘要")
     @PostMapping("/getSlideByProjectAndGroup")
     public R<SlideReportSummaryVo> getSlideByProjectAndGroup(@RequestBody Map params) {
@@ -223,4 +197,33 @@ public class SlideController extends BaseController {
         slideService.jsonExport(slideList, projectId, status);
         return R.ok("操作成功");
     }
+
+
+    // =======================================================================================================
+
+
+    /**
+     * 通过切片ID查询对应的图像列表 .
+     * 原 ProjectController.java  imageList接口 - anno:annotation:image
+     */
+    // @RequiresPermissions("anno:slide:list")
+    @ApiOperation(value = "通过切片ID查询对应的图像（切片）列表")
+    @GetMapping("/list")
+    public R<List<ImageListVO>> listByProjectId(
+            @RequestParam @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId) {
+        if (!Optional.ofNullable(slideId).isPresent()) {
+            return R.fail(ProjectConstant.SLIDE_ID_NOT_NULL);
+        }
+        //获取切片信息
+        Slide list = slideService.selectById(slideId);
+        if (!Optional.ofNullable(list).isPresent()) {
+            return R.fail(ProjectConstant.IMAGE_NOT_EXIST);
+        }
+        Long projectId = list.getProjectId();
+        //根据项目id获取图像信息
+        List<ImageListVO> image = imageService.selectImageListByPorjectId(projectId);
+        return R.ok(image);
+    }
+
+
 }
