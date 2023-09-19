@@ -1,13 +1,23 @@
 package cn.staitech.anno.project.service.impl;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.text.csv.CsvUtil;
+import cn.hutool.core.text.csv.CsvWriter;
+import cn.hutool.core.thread.ExecutorBuilder;
+import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.mapper.*;
+import cn.staitech.anno.project.constants.Constants;
+import cn.staitech.anno.project.domain.DownTask;
+import cn.staitech.anno.project.mapper.DownTaskMapper;
 import cn.staitech.anno.project.vo.ReviewIN;
 import cn.staitech.anno.project.vo.ReviewUP;
 import cn.staitech.anno.project.vo.ReviewVO;
+import cn.staitech.anno.service.FileService;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -17,13 +27,17 @@ import cn.staitech.anno.project.mapper.ReviewMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
 
 /**
 * @author 86186
@@ -42,6 +56,18 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
 
     @Resource
     private SlideMapper slideMapper;
+
+    @Resource
+    private FileService fileService;
+
+    @Resource
+    private DownTaskMapper downTaskMapper;
+
+    private static ExecutorService executor = ExecutorBuilder.create()//
+            .setCorePoolSize(1)//
+            .setMaxPoolSize(1)//
+            .setKeepAliveTime(0)//
+            .build();
 
     @Override
     public void exportReview(Long projectId,Long slideId)throws Exception{
@@ -84,6 +110,71 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
             writer.close();
         }
         IoUtil.close(excelOut);
+    }
+
+    @Transactional
+    @Override
+    public DownTask csvExportReview(Long projectId,List<Long> slideIds)throws Exception{
+        Snowflake snowflake = new Snowflake();
+        Long userId = SecurityUtils.getUserId();
+        DownTask task = DownTask.builder().code(snowflake.nextIdStr()).status(Constants.DOWN_STATE_RUNNING).createTime(new Date()).updateTime(new Date()).updateBy(userId).createBy(userId).build();
+        downTaskMapper.insert(task);
+        executor.submit(new TaskThread(task,projectId,slideIds));
+        return task;
+    }
+
+    class TaskThread implements Runnable{
+
+        private DownTask downTask;
+        private Long projectId;
+        private List<Long> slideIds;
+
+        public TaskThread(DownTask downTask, Long projectId, List<Long> slideIds) {
+            this.downTask = downTask;
+            this.projectId = projectId;
+            this.slideIds = slideIds;
+        }
+
+        @Override
+        public void run() {
+            try{
+                String paths = "";
+                String projectName = "";
+                Map params = new HashMap();
+                if (projectId!= null){
+                    params.put("projectId",projectId);
+                }
+                if (slideIds!= null&&!slideIds.isEmpty()){
+                    for (Long slideId:slideIds){
+                        params.put("slideId",slideId);
+                        List<ReviewVO> reviewVOS = getBaseMapper().exportReview(params);
+                        String path = fileService.createFiles(slideId,".csv");
+                        File file = new File(path);
+                        CsvWriter writer = CsvUtil.getWriter(file, CharsetUtil.CHARSET_UTF_8);
+                        String[] header = new String[]{"项目名称","评审内容","评审轮次","专题编号","组别","切片编号","分值","详情","评审人","评审时间"};
+                        writer.write(header);
+                        for (ReviewVO reviewVO:reviewVOS){
+                            projectName = reviewVO.getProjectName();
+                            String[] body = new String[]{reviewVO.getProjectName(),reviewVO.getContent(),reviewVO.getRoundName(),reviewVO.getTopicName(),
+                                    reviewVO.getGroupName(),reviewVO.getImageCode(),String.valueOf(reviewVO.getScore()),reviewVO.getDetails(),
+                                    reviewVO.getCreateName(), DateUtil.format(reviewVO.getCreateTime(),"yyyy-MM-dd hh24:mm:ss")};
+                            writer.write(body);
+                        }
+                        paths += path+";";
+                        writer.flush();
+                        writer.close();
+                    }
+                }
+
+                downTask.setProjectName(projectName);
+                downTask.setPath(paths);
+                downTask.setStatus(Constants.DOWN_STATE_FINISH);
+                downTaskMapper.updateById(downTask);
+            }catch (Exception e){
+                e.printStackTrace();
+                log.error(e.getMessage());
+            }
+        }
     }
 
 

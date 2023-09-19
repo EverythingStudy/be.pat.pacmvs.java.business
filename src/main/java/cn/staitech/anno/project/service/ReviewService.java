@@ -1,5 +1,6 @@
 package cn.staitech.anno.project.service;
 
+import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.anno.project.domain.Review;
 import cn.staitech.anno.project.vo.ReviewIN;
 import cn.staitech.anno.project.vo.ReviewUP;
@@ -18,6 +19,8 @@ import java.util.Map;
 public interface ReviewService extends IService<Review> {
 
     void exportReview(Long projectId,Long slideId)throws Exception;
+
+    DownTask csvExportReview(Long projectId, List<Long> slideIds)throws Exception;
 
     int insert(ReviewIN req) throws Exception;
 

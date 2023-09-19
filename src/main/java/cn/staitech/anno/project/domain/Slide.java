@@ -139,7 +139,7 @@ public class Slide implements Serializable {
      */
     @NotBlank(message="[状态]不能为空")
     @Size(max= 1,message="编码长度不能超过1")
-    @ApiModelProperty("状态")
+    @ApiModelProperty("状态(0未开始 1标注中 2标注完成 3提交复核(未复核) 4开始复核(复核中) 5复核通过(已复核) 6交付)")
     @Length(max= 1,message="编码长度不能超过1")
     private String status;
 

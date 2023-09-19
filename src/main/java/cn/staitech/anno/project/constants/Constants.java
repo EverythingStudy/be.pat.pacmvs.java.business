@@ -23,5 +23,9 @@ public class Constants {
     //已交付
     public static final String  SLIDE_STATE_FINISH = "7";
 
+    //下载任务状态：1、运行中，2、完成
+    public static final String  DOWN_STATE_RUNNING = "1";
+    public static final String  DOWN_STATE_FINISH = "2";
+
 
 }

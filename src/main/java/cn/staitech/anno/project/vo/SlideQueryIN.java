@@ -39,11 +39,21 @@ public class SlideQueryIN {
 
     private Long userId;
 
-    private Date saveStart;
+    /*private Date saveStart;
 
     private Date saveEnd;
 
     private Date updateStart;
 
-    private Date updateEnd;
+    private Date updateEnd;*/
+
+    @ApiModelProperty(value = "创建时间-查询入参")
+    private TimeRangeIN createTimeParams;
+
+    @ApiModelProperty(value = "修改时间-查询入参")
+    private TimeRangeIN updateTimeParams;
+
+    private Integer pageNum;
+
+    private Integer pageSize;
 }

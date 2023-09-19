@@ -10,6 +10,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @author mugw
@@ -50,10 +51,12 @@ public class ProjectIN {
     @ApiModelProperty("当前用户")
     private Long userId;
 
-    @ApiModelProperty("开始时间")
-    private Date start;
+    @ApiModelProperty(value = "创建时间-查询入参")
+    private TimeRangeIN createTimeParams;
 
-    @ApiModelProperty("结束时间")
-    private Date end;
+    private Integer pageNum;
+
+    private Integer pageSize;
+
 
 }

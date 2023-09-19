@@ -75,7 +75,7 @@
         left join tb_species s on p.species_id = s.species_id
         left join sys_organization o on p.organization_id = o.organization_id
         left join sys_user u on p.create_by = u.user_id
-        left join tb_pathological_indicator i on p.tag_id = i.indicator_id
+        left join tb_pathological_indicator i on p.indicator_id = i.indicator_id
         left join tb_product_series ps on p.product_series_id = ps.product_series_id
 
         <where>
@@ -103,11 +103,11 @@
             <if test="params.colorType!= null">
                 AND p.color_type = #{params.colorType}
             </if>
-            <if test="params.start != null">
-                and date_format(m.create_time,'%y%m%d') &gt;= date_format(#{params.start},'%y%m%d')
+            <if test="params.createTimeParams != null">
+                and date_format(m.create_time,'%y%m%d') &gt;= date_format(#{params.createTimeParams.beginTime},'%y%m%d')
             </if>
-            <if test="params.end != null">
-                and date_format(m.create_time,'%y%m%d') &lt;= date_format(#{params.end},'%y%m%d')
+            <if test="params.createTimeParams != null">
+                and date_format(m.create_time,'%y%m%d') &lt;= date_format(#{params..createTimeParams.endTime},'%y%m%d')
             </if>
         </where>
     </select>

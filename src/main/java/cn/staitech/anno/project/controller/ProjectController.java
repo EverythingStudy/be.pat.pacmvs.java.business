@@ -1,7 +1,5 @@
 package cn.staitech.anno.project.controller;
 
-import cn.staitech.anno.domain.AnnotationLog;
-import cn.staitech.anno.domain.vo.image.SubImageVo;
 import cn.staitech.anno.project.service.ProjectService;
 import cn.staitech.anno.project.vo.ProjectIN;
 import cn.staitech.anno.project.vo.ProjectVO;
@@ -36,11 +34,9 @@ public class ProjectController {
 
     @ApiOperation(value = "分页查询")
     @PostMapping("/page")
-    public R<PageMaster<ProjectVO>> page(@NotNull(message = "分页参数为空！") @RequestParam("pageNum") @ApiParam(name = "pageNum", value = "分页参数", required = true) Integer pageNum,
-                                                @NotNull(message = "分页参数为空！") @RequestParam("pageSize") @ApiParam(name = "pageSize", value = "分页参数", required = true) Integer pageSize,
-                                                ProjectIN in) throws Exception{
+    public R<PageMaster<ProjectVO>> page(@RequestBody ProjectIN in) throws Exception{
         handleAuth(in);
-        Page page = new Page(pageNum, pageSize);
+        Page page = new Page(in.getPageNum(), in.getPageSize());
         projectService.pageProject(page,in);
         PageMaster<ProjectVO> pageMaster = PageMaster.of(page.getRecords());
         pageMaster.setTotal(page.getTotal());

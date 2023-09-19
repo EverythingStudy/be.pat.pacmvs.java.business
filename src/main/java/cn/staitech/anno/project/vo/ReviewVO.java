@@ -51,11 +51,13 @@ public class ReviewVO {
     @ApiModelProperty("评审内容")
     private String content;
     @ApiModelProperty("专题编号")
-    private String topic;
+    private String topicName;
     @ApiModelProperty("组别编号")
-    private String group;
+    private String groupName;
     @ApiModelProperty("轮次")
-    private String round;
+    private String roundName;
+    @ApiModelProperty("评审内容")
+    private String reviewContent;
     /**
      * 切片id
      */

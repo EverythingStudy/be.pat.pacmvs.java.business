@@ -47,15 +47,13 @@ public class SlideController {
 
     @ApiOperation(value = "分页查询")
     @PostMapping("/page")
-    public R<PageMaster<SlideVO>> page(@NotNull(message = "分页参数为空！") @RequestParam("pageNum") @ApiParam(name = "pageNum", value = "分页参数", required = true) Integer pageNum,
-                                       @NotNull(message = "分页参数为空！") @RequestParam("pageSize") @ApiParam(name = "pageSize", value = "分页参数", required = true) Integer pageSize,
-                                       SlideQueryIN in) throws Exception {
-        Page page = new Page(pageNum, pageSize);
+    public R<PageMaster<SlideVO>> page(@RequestBody SlideQueryIN in) throws Exception {
+        Page page = new Page(in.getPageNum(), in.getPageSize());
         return R.ok(slideService.pageSlides(page,in));
     }
     @ApiOperation(value = "查看标注数目")
     @PostMapping("/getSlideAnnoStatistics")
-    public R<List<SlideAnnoStatisticsVO>> getSlideAnnoStatistics(SlideQueryIN in) throws Exception {
+    public R<List<SlideAnnoStatisticsVO>> getSlideAnnoStatistics(@RequestBody SlideQueryIN in) throws Exception {
         return R.ok(slideService.getSlideAnnoStatistics(in));
     }
     @ApiOperation(value = "标注数据导出")
@@ -66,7 +64,7 @@ public class SlideController {
 
     @ApiOperation(value = "批量修改备注")
     @PostMapping("/updateRemarkBySlideIds")
-    public R<Boolean> updateRemarkBySlideIds(SlideRemarkIN in) throws Exception {
+    public R<Boolean> updateRemarkBySlideIds(@RequestBody SlideRemarkIN in) throws Exception {
         Collection<Slide> slides = slideService.listByIds(in.getSlideIds());
         slides.forEach(slide -> {
             slide.setRemark(in.getRemark());
@@ -77,7 +75,7 @@ public class SlideController {
 
     @ApiOperation(value = "批量修改状态")
     @PostMapping("/updateStatusBySlideIds")
-    public R<Boolean> updateStatusBySlideIds(SlideStatusIN in) throws Exception {
+    public R<Boolean> updateStatusBySlideIds(@RequestBody SlideStatusIN in) throws Exception {
         Long userId = SecurityUtils.getUserId();
         String userName = SecurityUtils.getUsername();
         List<Opt> optList = new ArrayList<>();
