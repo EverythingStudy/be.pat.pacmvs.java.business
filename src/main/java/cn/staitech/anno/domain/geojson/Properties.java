@@ -88,4 +88,13 @@ public class Properties {
     @ApiModelProperty(value = "修改作者")
     private String annotation_update_owner;
 
+    @ApiModelProperty(value = "图像id")
+    private Long image_id;
+
+    @ApiModelProperty(value = "项目id")
+    private Long project_id;
+
+    @ApiModelProperty(value = "图像url")
+    private String image_url;
+
 }

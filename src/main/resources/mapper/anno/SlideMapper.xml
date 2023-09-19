@@ -177,6 +177,7 @@
                 LEFT JOIN tb_pathological_indicator_category AS cate ON cate.indicator_id = path.indicator_id
                 LEFT JOIN tb_round AS r ON r.round_id = s.round_id
                 where slide_id = #{slideId,jdbcType=BIGINT}
+                group by t.topic_name
     </select>
 
     <delete id="deleteProjectImage" parameterType="java.lang.Long">

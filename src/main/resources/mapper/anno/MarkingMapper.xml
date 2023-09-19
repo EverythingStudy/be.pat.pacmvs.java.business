@@ -78,7 +78,7 @@
         <result property="measure_name" column="measure_name"/>
         <result property="measure_number" column="measure_number"/>
         <result property="radius" column="radius"/>
-        <result property="mean_distance" column="mean_distance "/>
+        <result property="mean_distance" column="mean_distance"/>
         <result property="max_distance" column="max_distance"/>
         <result property="min_distance" column="min_distance"/>
         <result property="inner_angle" column="inner_angle"/>
@@ -91,6 +91,9 @@
         <result property="point_count" column="point_count"/>
         <result property="create_by" column="create_by"/>
         <result property="update_by" column="update_by"/>
+        <result property="project_id" column="project_id"/>
+        <result property="image_id" column="image_id"/>
+        <result property="image_url" column="image_url"/>
     </resultMap>
 
     <resultMap type="cn.staitech.anno.domain.marking.SlideRes" id="slideResult">
@@ -161,7 +164,10 @@
             t.annotation_owner,
             t.annotation_update_owner,
             t.update_time,
-            t.update_by
+            t.update_by,
+            t.image_id,
+            t.project_id,
+            t.image_url
         FROM
             tb_marking AS t
                 LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
@@ -232,7 +238,13 @@
                     "label_name",
                     c.category_name,
                     "measure_full_name",
-                    CONCAT_WS( "_", CONCAT( t.measure_name, t.number ), c.category_name)
+                    CONCAT_WS( "_", CONCAT( t.measure_name, t.number ), c.category_name),
+                    "image_id",
+                    t.image_id,
+                    "project_id",
+                    t.project_id,
+                    "image_url",
+                    t.image_url
                 ) AS properties
         FROM
             tb_marking AS t
@@ -244,6 +256,13 @@
     <select id="selectBy" parameterType="long" resultMap="propertiesResult">
         <include refid="selectBy"/>
         where marking_id = #{markingId}
+    </select>
+
+    <select id="selectMeasureList" parameterType="long" resultMap="propertiesResult">
+        <include refid="selectBy"/>
+        where
+            t.slide_id = #{slideId}
+            AND t.location_type != "Point"
     </select>
 
 

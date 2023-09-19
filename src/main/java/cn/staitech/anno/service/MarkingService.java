@@ -94,4 +94,9 @@ public interface MarkingService {
      * @throws Exception
      */
     boolean zipExport(String zipUrl, Long specialId) throws Exception;
+
+    /**
+     * 导出execl
+     */
+    void execlExport(Long slideId) throws Exception;
 }

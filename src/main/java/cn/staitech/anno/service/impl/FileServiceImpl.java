@@ -23,6 +23,8 @@ public class FileServiceImpl implements FileService {
 
     String fileUrl = "D:\\home\\data";
 
+//    String fileUrl = "/home/data";
+
     @Resource
     private SlideMapper slideMapper;
 
@@ -31,12 +33,12 @@ public class FileServiceImpl implements FileService {
         SlideFileName slideFileName = slideMapper.slideFileName(slideId);
         slideFileVerify(slideFileName);
         // 生成二级目录 (以专题名称命名)
-        String twoFolderName = fileUrl + "\\" + slideFileName.getTopicName();
+        String twoFolderName = fileUrl + File.separator + slideFileName.getTopicName();
         createFolder(twoFolderName);
         // 生成三级目录 (以图片名称命名)
-        String threeFolderName = twoFolderName + "\\" + slideFileName.getImageName();
+        String threeFolderName = twoFolderName + File.separator + slideFileName.getImageName();
         createFolder(threeFolderName);
-        String fileUrl = threeFolderName + "\\" + slideFileName.getImageName() + "_" + slideFileName.getSlideType() + "_" + slideFileName.getCategoryNumber() + "_" + System.currentTimeMillis() + suffix;
+        String fileUrl = threeFolderName + File.separator + slideFileName.getImageName() + "_" + slideFileName.getSlideType() + "_" + slideFileName.getCategoryNumber() + "_" + System.currentTimeMillis() + suffix;
         createFile(fileUrl);
         return fileUrl;
     }

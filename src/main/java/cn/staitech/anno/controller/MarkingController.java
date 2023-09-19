@@ -9,6 +9,8 @@ import cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.common.core.domain.R;
 
+import cn.staitech.common.log.annotation.Log;
+import cn.staitech.common.log.enums.BusinessType;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
@@ -20,7 +22,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
-
 
 
 /**
@@ -102,6 +103,14 @@ public class MarkingController {
             @RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId
     ) throws Exception {
         return R.ok(markingService.jsonExport(slideId));
+    }
+
+    @Log(title = "标注测量excel导出", businessType = BusinessType.EXPORT)
+    @ApiOperation(value = "标注测量excel导出")
+    @GetMapping("/export")
+    public void export(
+            @RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) throws Exception {
+        markingService.execlExport(slideId);
     }
 
 }

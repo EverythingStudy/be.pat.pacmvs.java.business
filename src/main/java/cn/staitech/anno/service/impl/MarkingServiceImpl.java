@@ -1,5 +1,6 @@
 package cn.staitech.anno.service.impl;
 
+import cn.staitech.anno.constant.R.MeasureResponseConstant;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.geojson.*;
@@ -17,9 +18,7 @@ import cn.staitech.anno.netty.websocket.NioWebSocketHandler;
 import cn.staitech.anno.project.service.SlideAttrService;
 import cn.staitech.anno.service.FileService;
 import cn.staitech.anno.service.MarkingService;
-import cn.staitech.anno.utils.CustomizationIdUtils;
-import cn.staitech.anno.utils.RandomUtils;
-import cn.staitech.anno.utils.SendMessage;
+import cn.staitech.anno.utils.*;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -50,6 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static cn.staitech.anno.constant.AnnotationConstant.*;
 import static cn.staitech.anno.constant.ViewerConstant.MICRON;
+import static cn.staitech.anno.aspect.LogFileAspect.response;
 
 @Service
 public class MarkingServiceImpl implements MarkingService {
@@ -429,6 +429,33 @@ public class MarkingServiceImpl implements MarkingService {
         return true;
     }
 
+    @Override
+    public void execlExport(Long slideId) throws Exception {
+        // 构造表头的每个列头 定义表头
+        List<Map<String, String>> titleList = getTitleList(MeasureResponseConstant.COLHEAD_KEY,
+                MeasureResponseConstant.COLHEAD_VALUE);
+        // 查询当前切片不为点类型的标注数据
+        List<Properties> propertiesList = markingMapper.selectMeasureList(slideId);
+
+        System.out.println(propertiesList);
+
+        System.out.println();
+        // 加点的记录
+        QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
+        markingQueryWrapper.eq("slide_id", slideId).eq("location_type", "Point");
+        int marking = markingMapper.selectCount(markingQueryWrapper);
+        Properties properties = new Properties();
+        properties.setPoint_count((long) marking);
+        properties.setMeasure_name("P");
+        propertiesList.add(properties);
+        // 生成excel文件
+        ExcelTool excelTool = new ExcelTool(MeasureResponseConstant.EXCEL_TITLE, 20, 20);
+        List<Column> titleData = excelTool.columnTransformer(titleList);
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setCharacterEncoding("utf-8");
+        excelTool.exportExcel(titleData, propertiesList, response.getOutputStream(), true, false);
+    }
+
     /**
      * 封装socket发送数据
      *
@@ -491,6 +518,18 @@ public class MarkingServiceImpl implements MarkingService {
         slide.setSlideId(slideId);
         slide.setUpdateTime(new Date());
         slideMapper.updateById(slide);
+    }
+
+    public List<Map<String, String>> getTitleList(String[] colHeadKey, String[] colHeadValue) {
+        // 定义表头
+        List<Map<String, String>> list = new ArrayList<>();
+
+        for (int i = 0; i < colHeadKey.length; i++) {
+            Map<String, String> map = new HashMap<String, String>(1);
+            map.put(colHeadKey[i], colHeadValue[i]);
+            list.add(map);
+        }
+        return list;
     }
 
 

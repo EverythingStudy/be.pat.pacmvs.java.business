@@ -31,7 +31,7 @@ public class MeasureResponseConstant {
     // 构造表头的每个列头
     // 名称 周长/长度 面积 内角 外角 平均间距 最小间距 最大间距 总数 测量人 创建时间
     public static final String[] COLHEAD_KEY = {"名称", "周长/长度", "面积", "内角", "外角", "平均间距", "最小间距", "最大间距", "总数", "测量人", "创建时间"};
-    public static final String[] COLHEAD_VALUE = {"measureName", "perimeter", "area", "innerAngle", "exteriorAngle", "meanDistance", "minDistance", "maxDistance", "pointCount", "userName", "createTime"};
+    public static final String[] COLHEAD_VALUE = {"measure_full_name", "perimeter", "area", "inner_angle", "exterior_angle", "mean_distance", "min_distance", "max_distance", "point_count", "annotation_owner", "create_time"};
 
     public static final String MEASURE_NUM = "measureNum:";
     public static final String SLIDE_LINE = "_";
