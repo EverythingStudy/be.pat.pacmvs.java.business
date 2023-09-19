@@ -5,7 +5,6 @@ import cn.staitech.anno.domain.vo.file.SlideFileName;
 import cn.staitech.anno.mapper.SlideMapper;
 import cn.staitech.anno.service.FileService;
 import cn.staitech.anno.utils.FileUtils;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
