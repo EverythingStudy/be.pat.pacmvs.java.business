@@ -2,7 +2,9 @@ package cn.staitech.anno.controller;
 
 import cn.staitech.anno.domain.ReviewRound;
 import cn.staitech.anno.domain.reviewround.ReviewRoundInVO;
+import cn.staitech.anno.domain.reviewround.ReviewRoundOutVO;
 import cn.staitech.anno.service.ReviewRoundService;
+import cn.staitech.anno.service.TopicService;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
@@ -19,7 +21,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * @author: wangfeng
@@ -35,17 +40,28 @@ public class ReviewRoundController {
     @Resource
     private ReviewRoundService reviewRoundService;
 
+
+    @Resource
+    private TopicService topicService;
+
+
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "查询评审轮次列表")
     @GetMapping("/list")
-    public R<PageMaster<List<ReviewRound>>> list(@NotNull(message = "分页参数为空！") @RequestParam("pageNum") @ApiParam(name = "pageNum", value = "分页参数", required = true) Integer pageNum,
-                                                 @NotNull(message = "分页参数为空！") @RequestParam("pageSize") @ApiParam(name = "pageSize", value = "分页参数", required = true) Integer pageSize,
-                                                 @RequestParam("projectId") Long projectId) {
+    public R<PageMaster<List<ReviewRoundOutVO>>> list(@NotNull(message = "分页参数为空！") @RequestParam("pageNum") @ApiParam(name = "pageNum", value = "分页参数", required = true) Integer pageNum,
+                                                      @NotNull(message = "分页参数为空！") @RequestParam("pageSize") @ApiParam(name = "pageSize", value = "分页参数", required = true) Integer pageSize,
+                                                      @RequestParam("projectId") Long projectId) {
         PageHelper.startPage(pageNum, pageSize).setReasonable(true);
         ReviewRound reviewRound = new ReviewRound();
         reviewRound.setProjectId(projectId);
         QueryWrapper queryWrapper = new QueryWrapper<>(reviewRound);
         List<ReviewRound> list = reviewRoundService.list(queryWrapper);
+
+        // List<ReviewRoundOutVO> respList = new List<ReviewRoundOutVO>();
+
+
+
+
         PageMaster pageMaster = new PageMaster<>(list);
         return R.ok(pageMaster);
     }
