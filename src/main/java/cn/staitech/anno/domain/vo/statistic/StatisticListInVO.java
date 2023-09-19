@@ -1,5 +1,6 @@
 package cn.staitech.anno.domain.vo.statistic;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -40,4 +41,10 @@ public class StatisticListInVO {
     
     @ApiModelProperty(value = "结束时间")
     private String endTime;
+    @JsonIgnore
+    @ApiModelProperty(value = "后端使用字段")
+    private Long organizationId;
+    @JsonIgnore
+    @ApiModelProperty(value = "后端使用字段")
+    private Long member;
 }

@@ -65,6 +65,13 @@ public interface StatisticMapper {
      * @return
      */
     List<StatisticObjectOutVO> statisticSelectAnnoDateDaysList(StatisticListInVO statisticList);
+    /**
+     * 综合统计列表: 标注数量-日期-按天统计
+     *
+     * @param statisticList 数据统计入参列表
+     * @return
+     */
+    List<StatisticObjectOutVO> statisticSelectAnnoDateDaysListExt(StatisticListInVO statisticList);
 
     /**
      * 综合统计列表: 标注数量-日期-按月统计
@@ -73,6 +80,13 @@ public interface StatisticMapper {
      * @return
      */
     List<StatisticObjectOutVO> statisticSelectAnnoDateMonthsList(StatisticListInVO statisticList);
+    /**
+     * 综合统计列表: 标注数量-日期-按月统计
+     *
+     * @param statisticList 数据统计入参列表
+     * @return
+     */
+    List<StatisticObjectOutVO> statisticSelectAnnoDateMonthsListExt(StatisticListInVO statisticList);
 
     /**
      * 综合统计列表: 图像数量-项目
@@ -225,7 +239,7 @@ public interface StatisticMapper {
      *
      * @return
      */
-    TableDateOutVO statisticSelectEarliestAnnoDate();
+    TableDateOutVO statisticSelectEarliestAnnoDate(Long organizationId);
 
     /**
      * 根据字典数据ID查询信息

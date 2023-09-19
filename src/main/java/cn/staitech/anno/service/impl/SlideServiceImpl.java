@@ -109,6 +109,9 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
      * @return
      */
     public List<StatisticSlideListOutVO> selectSlideListByProjectIdList(StatisticSlideListInVO projectIdList) {
+        if(!SecurityUtils.isAdmin(SecurityUtils.getUserId())){
+            projectIdList.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        }
         return slideMapper.selectSlideListByProjectIdList(projectIdList);
     }
 

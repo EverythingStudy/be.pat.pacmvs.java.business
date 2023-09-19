@@ -115,6 +115,10 @@ public class PathologicalIndicatorCategoryServicelmpl implements PathologicalInd
     @Override
     public List<StatisticCategoryListOutVO> selectAnnotationCategoryStatisticList(
             StatisticCategoryListInVO indicatorProjectIdList) {
+
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId())) {
+            indicatorProjectIdList.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        }
         return pathologicalIndicatorCategoryMapper.selectAnnotationCategoryStatisticList(indicatorProjectIdList);
     }
 

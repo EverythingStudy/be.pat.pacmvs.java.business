@@ -88,6 +88,13 @@ public interface ProjectMapper extends BaseMapper<Project> {
     public List<StatisticProjectListOutVO> selectProjectStatisticList(Project project);
 
     /**
+     *
+     * @param userId
+     * @return 统计项目下拉框
+     */
+    List<StatisticProjectListOutVO> selectProjectStatisticListExt(Long userId);
+
+    /**
      * 根据id和项目名称称查询信息
      *
      * @param project

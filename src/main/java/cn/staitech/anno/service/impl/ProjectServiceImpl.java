@@ -10,12 +10,16 @@ import cn.staitech.anno.mapper.ProjectMapper;
 import cn.staitech.anno.service.ProjectService;
 import cn.staitech.anno.service.ProjectTypeService;
 import cn.staitech.anno.service.SpeciesService;
+import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import static cn.staitech.common.security.utils.SecurityUtils.isAdmin;
 
 /**
  * 项目 服务层实现
@@ -157,8 +161,22 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      */
     @Override
     public List<StatisticProjectListOutVO> selectProjectStatisticList(Project project) {
+        if (!isAdmin(SecurityUtils.getUserId())) {
+            project.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        }
         return projectMapper.selectProjectStatisticList(project);
     }
+
+    /*public List<StatisticProjectListOutVO> selectProjectStatisticList(Project project) {
+        if (isAdmin(SecurityUtils.getUserId())) {
+            return projectMapper.selectProjectStatisticList(project);
+        } else if (SecurityUtils.getLoginUser().getRoles().contains("system")) {
+            project.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+            return projectMapper.selectProjectStatisticList(project);
+        } else {
+            return projectMapper.selectProjectStatisticListExt(SecurityUtils.getUserId());
+        }
+    }*/
 
     /**
      * 根据id和项目名称查询信息

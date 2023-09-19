@@ -167,10 +167,23 @@
         where project_name = #{projectName}
     </select>
 
+    <!--统计时使用的项目列表-->
     <select id="selectProjectStatisticList"
             parameterType="cn.staitech.anno.domain.vo.statistic.StatisticProjectListOutVO" resultMap="projectStatistic">
         select project_id, project_name, indicator_id
         from tb_project
+        <if test="organizationId !=null and organizationId !=0">
+            organization_id = #{organizationId}
+        </if>
+        order by project_id desc
+    </select>
+
+    <select id="selectProjectStatisticListExt"  resultMap="projectStatistic">
+        select project_id, project_name, indicator_id
+        from tb_project p
+                 left join tb_project_member pm
+                     on p.project_id = pm.project_id
+            where pm.user_id = #{userId}
         order by project_id desc
     </select>
 

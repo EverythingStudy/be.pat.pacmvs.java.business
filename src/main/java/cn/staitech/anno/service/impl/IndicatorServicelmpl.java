@@ -122,7 +122,9 @@ public class IndicatorServicelmpl implements IndicatorService {
      */
     @Override
     public List<StatisticIndicatorListOutVO> selectIndicatorStatisticList(StatisticIndicatorListInVO projectIdList) {
-
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId())) {
+            projectIdList.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        }
         return indicatorMapper.selectIndicatorStatisticList(projectIdList);
     }
 
