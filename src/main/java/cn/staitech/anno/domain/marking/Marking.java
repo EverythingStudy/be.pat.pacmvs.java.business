@@ -192,5 +192,10 @@ public class Marking implements Serializable {
      */
     private String image_url;
 
+    /**
+     * 标注更新者
+     */
+    private Long organization_id;
+
 
 }

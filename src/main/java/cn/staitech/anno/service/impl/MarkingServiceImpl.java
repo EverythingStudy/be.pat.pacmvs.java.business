@@ -140,6 +140,7 @@ public class MarkingServiceImpl implements MarkingService {
         }
         marking.setCreate_by(req.getCreate_by());
         marking.setAnnotation_type("Draw");
+        marking.setOrganization_id(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         marking.setCreate_time(new Date());
         SysUser user = userMapper.selectUserById(req.getCreate_by());
         if(user != null){
