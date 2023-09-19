@@ -109,7 +109,7 @@ public class SubImageServiceImpl extends ServiceImpl<SubImageMapper, SubImage> i
 				for (SubImageVo vo : subImageVos) {
 					if(group!=null){
                         vo.setGroup(group);
-                        vo.setGender(group.getGender());
+                        // vo.setGender(group.getGender());
                     }
 					imageIds.add(vo.getImageId());
 					temp.put(vo.getImageId(),vo);

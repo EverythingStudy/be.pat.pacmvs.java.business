@@ -285,7 +285,7 @@ public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> impl
             //刷新用户权限
             flushPrivileges();
             // 创建默认的分组
-            insertGroup(special.getSpecialId());
+            //  insertGroup(special.getSpecialId());
         }
         return result;
     }
@@ -475,12 +475,15 @@ public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> impl
         }
     }
 
-    /**
+/*
+    */
+/**
      * 专题下创建默认分组
      *
      * @param specialId 专题id
      * @return true || false
-     */
+     *//*
+
     public boolean insertGroup(Long specialId) {
         for (int groupName = 1; groupName < 9; groupName++) {
             System.out.println(groupName);
@@ -500,5 +503,6 @@ public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> impl
         return false;
     }
 
+*/
 
 }

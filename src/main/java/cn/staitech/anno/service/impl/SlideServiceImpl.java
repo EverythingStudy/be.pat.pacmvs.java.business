@@ -288,10 +288,10 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
             Group group = groupMapper.selectById(MapUtils.getLong(params, "groupId"));
             vo.setProjectName(projectExt.getProjectName());
             vo.setGroupName(group.getGroupName());
-            vo.setGender(group.getGender() == 0 ? "雌" : "雄");
+            // vo.setGender(group.getGender() == 0 ? "雌" : "雄");
             vo.setFinishTotal(0);
             vo.setTotal(0);
-            vo.setDescription(group.getDescription());
+            // vo.setDescription(group.getDescription());
         }
         return R.ok(vo);
     }

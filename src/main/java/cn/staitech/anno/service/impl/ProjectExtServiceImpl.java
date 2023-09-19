@@ -207,8 +207,6 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
             }
             //判断专题分组
             LambdaQueryWrapper<Group> groupWrapper = new LambdaQueryWrapper<>();
-            groupWrapper.eq(Group::getSpecialId, req.getSpecialId());
-            groupWrapper.eq(Group::getDelFlag, 0);
             Integer integer1 = groupMapper.selectCount(groupWrapper);
             if (integer1 <= 0) {
                 return R.fail(ProjectConstant.SPECIAL_NOTEXIST_GROUP);
@@ -356,8 +354,8 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
     public R<Boolean> getSpecialGroup(Long specialId) {
 
         LambdaQueryWrapper<Group> groupWrapper = new LambdaQueryWrapper<>();
-        groupWrapper.eq(Group::getSpecialId, specialId);
-        groupWrapper.eq(Group::getDelFlag, 0);
+/*        groupWrapper.eq(Group::getSpecialId, specialId);
+        groupWrapper.eq(Group::getDelFlag, 0);*/
         Integer integer1 = groupMapper.selectCount(groupWrapper);
         if (integer1 <= 0) {
             return R.ok(false);

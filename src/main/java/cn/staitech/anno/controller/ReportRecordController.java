@@ -1,8 +1,6 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.domain.Group;
 import cn.staitech.anno.domain.ReportRecord;
-import cn.staitech.anno.domain.vo.GroupListVO;
 import cn.staitech.anno.domain.vo.ProjectAllVO;
 import cn.staitech.anno.domain.vo.reportRecord.*;
 import cn.staitech.anno.domain.vo.special.SpecialResVo;
@@ -85,17 +83,17 @@ public class ReportRecordController {
         return R.ok(projectList);
     }
 
-
-    @ApiOperation(value = "查询专题下的分组")
-    @ApiOperationSupport(author = "zmj")
-    @ApiImplicitParams({@ApiImplicitParam(name = "specialId", value = "专题id", required = true, dataType = "Long", paramType = "query")})
-    @GetMapping("/selectGroup")
-    public R<List<GroupListVO>> selectGroup(Long specialId) {
-        Group group = Group.builder().delFlag(0).specialId(specialId).build();
-        List<GroupListVO> groups = groupService.selectAllGroup(group);
-        return R.ok(groups);
-    }
-
+    /*
+        @ApiOperation(value = "查询专题下的分组")
+        @ApiOperationSupport(author = "zmj")
+        @ApiImplicitParams({@ApiImplicitParam(name = "specialId", value = "专题id", required = true, dataType = "Long", paramType = "query")})
+        @GetMapping("/selectGroup")
+        public R<List<GroupListVO>> selectGroup(Long specialId) {
+            Group group = Group.builder().delFlag(0).specialId(specialId).build();
+            List<GroupListVO> groups = groupService.selectAllGroup(group);
+            return R.ok(groups);
+        }
+    */
     @ApiOperation(value = "查询切片编号")
     @ApiOperationSupport(author = "zmj")
     @PostMapping("/selectSlide")
@@ -107,6 +105,7 @@ public class ReportRecordController {
 
     /**
      * 报告管理添加记录
+     *
      * @throws Exception
      */
     @ApiOperation(value = "添加记录")
@@ -115,17 +114,17 @@ public class ReportRecordController {
     @Log(title = "下载", menu = "阅片配置", subMenu = "报告管理", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     public R<String> add(@Validated @RequestBody ReportRecordAddVO recordAddVO) throws Exception {
-        float fileSize=0;
+        float fileSize = 0;
         String path;
-        if(recordAddVO.getReportType()==1){
+        if (recordAddVO.getReportType() == 1) {
             return R.fail("单切片报告不能使用");
         }
-        path=reportService.createRpt(recordAddVO);
-        System.out.println(path+"：：：路径理解");
+        path = reportService.createRpt(recordAddVO);
+        System.out.println(path + "：：：路径理解");
         //文件大小
-        Long fileLength=new File(path).length();
-        System.out.println("文件大小："+fileLength);
-        fileSize=(float)fileLength/1024;
+        Long fileLength = new File(path).length();
+        System.out.println("文件大小：" + fileLength);
+        fileSize = (float) fileLength / 1024;
 //        Random random = new Random();
 //        int randomNumber = random.nextInt(100) + 1;
 //        //随机两位数
@@ -155,7 +154,7 @@ public class ReportRecordController {
         //异步更新进度调
         CompletableFuture<Integer> cf2 = CompletableFuture.supplyAsync(() -> {
             try {
-                Group group = Group.builder().specialId(recordAddVO.getSpecialId()).reasons(recordAddVO.getReasons()).build();
+/*                Group group = Group.builder().specialId(recordAddVO.getSpecialId()).reasons(recordAddVO.getReasons()).build();
                 List<GroupListVO> groupListVOS = groupService.selectAllGroup(group);
                 int groupLong = groupListVOS.size();
                 int num = 0;
@@ -172,7 +171,7 @@ public class ReportRecordController {
                         ReportRecord record = ReportRecord.builder().reportId(reportRecord.getReportId()).pace(100).status(1).build();
                         reportRecordService.updateByPrimaryKeySelective(record);
                     }
-                }
+                }*/
             } catch (Exception e) {
                 ReportRecord record = ReportRecord.builder().reportId(reportRecord.getReportId()).status(2).build();
                 reportRecordService.updateByPrimaryKeySelective(record);
@@ -233,19 +232,19 @@ public class ReportRecordController {
     @Log(title = "下载记录-下载", menu = "阅片配置", subMenu = "报告管理", businessType = BusinessType.QUERY)
     @PostMapping(value = "downLoadWord", name = "word下载")
     public void downLoadWord(ReportRecordDelVO recordDelVO) throws Exception {
-        ReportRecordAllVO recordAllVO=reportRecordService.selectReport(recordDelVO.getReportId());
+        ReportRecordAllVO recordAllVO = reportRecordService.selectReport(recordDelVO.getReportId());
 //            // path是指欲下载的文件的路径。
-            File file = new File(recordAllVO.getReportUrl());
+        File file = new File(recordAllVO.getReportUrl());
         //获取文件名
-        String filename  = file.getName();
+        String filename = file.getName();
         //获取后缀名
         int i = filename.lastIndexOf(".");
-        String extension = filename.substring(i+1);
+        String extension = filename.substring(i + 1);
 
         //设置响应的信息
         response.reset();
         response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-Disposition", "attachment;filename=" +  URLEncoder.encode(filename, "utf8"));
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "utf8"));
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Cache-Control", "no-cache");
         //设置浏览器接受类型为流
@@ -256,12 +255,12 @@ public class ReportRecordController {
             //InputStream in = new FileInputStream(file);
             // 将文件写入输入流
             OutputStream out = response.getOutputStream();
-            if (file.length()==0){
-                IOUtils.write("",out);
-            }else{
+            if (file.length() == 0) {
+                IOUtils.write("", out);
+            } else {
                 // 将文件写入输入流
                 byte[] bytes = FileUtils.readFileToByteArray(file);
-                IOUtils.write(bytes,out);
+                IOUtils.write(bytes, out);
             }
 
             /*if("docx".equals(extension) || "doc".equals(extension)) {
