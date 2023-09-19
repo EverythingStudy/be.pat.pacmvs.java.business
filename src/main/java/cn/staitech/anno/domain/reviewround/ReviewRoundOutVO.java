@@ -1,9 +1,7 @@
 package cn.staitech.anno.domain.reviewround;
 
 import cn.staitech.anno.domain.Pager;
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -18,7 +16,6 @@ public class ReviewRoundOutVO extends Pager implements Serializable {
     /**
      * 评审轮次自增ID
      */
-    @TableId(type = IdType.AUTO)
     private Long reviewRoundId;
 
     /**

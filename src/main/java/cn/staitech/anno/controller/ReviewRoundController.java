@@ -1,6 +1,7 @@
 package cn.staitech.anno.controller;
 
 import cn.staitech.anno.domain.ReviewRound;
+import cn.staitech.anno.domain.reviewround.ReviewRoundBatchInVO;
 import cn.staitech.anno.domain.reviewround.ReviewRoundInVO;
 import cn.staitech.anno.domain.reviewround.ReviewRoundOutVO;
 import cn.staitech.anno.service.ReviewRoundService;
@@ -21,10 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * @author: wangfeng
@@ -60,8 +58,6 @@ public class ReviewRoundController {
         //List<ReviewRoundOutVO> respList = new List<ReviewRoundOutVO>();
 
 
-
-
         PageMaster pageMaster = new PageMaster<>(list);
         return R.ok(pageMaster);
     }
@@ -69,13 +65,8 @@ public class ReviewRoundController {
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "添加评审轮次")
     @PostMapping("/add")
-    public R add(@RequestBody ReviewRoundInVO reviewRoundInVO) {
-        ReviewRound reviewRound = new ReviewRound();
-        BeanUtils.copyProperties(reviewRoundInVO, reviewRound);
-        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-        reviewRound.setCreateBy(sysUser.getUserId());
-        reviewRound.setOrganizationId(sysUser.getOrganizationId());
-        return R.ok(reviewRoundService.save(reviewRound));
+    public R add(@RequestBody ReviewRoundBatchInVO reviewRoundBatchInVO) {
+        return R.ok(reviewRoundService.saveBatchByList(reviewRoundBatchInVO));
     }
 
     @ApiOperationSupport(author = "wangfeng")

@@ -13,7 +13,6 @@ public class ReviewRoundInVO {
     /**
      * 评审轮次自增ID
      */
-    @TableId(type = IdType.AUTO)
     private Long reviewRoundId;
 
     /**

@@ -74,7 +74,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         List<ProjectListVO> projectList = projectMapper.selectProjectList(project);
 
         // 项目类型
-        Map<String, String> projectTpyeMap = projectTypeService.selectMap();
+        Map<String, String> projectTypeMap = projectTypeService.selectMap();
         // 种属
         Map<Integer, String> sepeciesMap = speciesService.selectMap();
         // 品系
@@ -82,8 +82,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
         for (ProjectListVO obj : projectList) {
             // 项目类型
-            if (projectTpyeMap.containsKey(obj.getProjectType())) {
-                obj.setProjectTypeName(projectTpyeMap.get(obj.getProjectType()));
+            if (projectTypeMap.containsKey(obj.getProjectType())) {
+                obj.setProjectTypeName(projectTypeMap.get(obj.getProjectType()));
             }
             // 种属
             if (sepeciesMap.containsKey(obj.getSpeciesId())) {
