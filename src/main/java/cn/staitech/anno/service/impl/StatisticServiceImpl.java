@@ -1,19 +1,32 @@
 package cn.staitech.anno.service.impl;
 
+import cn.staitech.anno.constant.R.StatisticResponseConstant;
 import cn.staitech.anno.domain.vo.statistic.AnnotationStatisticIdListOutVO;
 import cn.staitech.anno.domain.vo.statistic.AnnotationStatisticListPageInVO;
 import cn.staitech.anno.domain.vo.statistic.AnnotationStatisticListPageOutVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticListInVO;
+import cn.staitech.anno.domain.vo.statistic.StatisticListOutVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticObjectOutVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSysDictDataOutVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticUserListOutVO;
 import cn.staitech.anno.domain.vo.statistic.TableDateOutVO;
 import cn.staitech.anno.mapper.StatisticMapper;
 import cn.staitech.anno.service.StatisticService;
+import cn.staitech.anno.utils.StatisticListUtils;
+import cn.staitech.common.core.domain.R;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
+
+import static cn.staitech.anno.constant.R.StatisticResponseConstant.MAX_SELECT_TIME_ERROR;
+import static cn.staitech.anno.constant.R.StatisticResponseConstant.SELECT_TIME_ERROR;
+import static cn.staitech.anno.constant.StatisticConstant.ANNOTATION_COUNT;
+import static cn.staitech.anno.constant.StatisticConstant.ANNOTATION_DATE;
+import static cn.staitech.anno.constant.StatisticConstant.SLIDE_COUNT;
+import static cn.staitech.anno.constant.StatisticConstant.THREE_YEAR;
 
 @Service
 public class StatisticServiceImpl implements StatisticService {
@@ -296,5 +309,66 @@ public class StatisticServiceImpl implements StatisticService {
      */
     public StatisticSysDictDataOutVO statisticSelectDictDataById(Long dictCode) {
         return statisticMapper.statisticSelectDictDataById(dictCode);
+    }
+
+    /**
+     * 综合统计列表
+     * @param statisticList
+     * @return
+     */
+    @Override
+    public R<StatisticListOutVO> statisticList(StatisticListInVO statisticList) throws ParseException {
+
+        // 创建返回结果实例
+        StatisticListOutVO statisticListRep = new StatisticListOutVO();
+        List<StatisticObjectOutVO> resp = new ArrayList<>();
+        StatisticListUtils statisticListUtils = new StatisticListUtils();
+        // 通过SysDictData获取统计维度值、统计数量类别
+        String displayQuantity =  statisticSelectDictDataById(statisticList.getStatisticCategory()).getDictLabel();
+        String statisticalDimension = statisticSelectDictDataById(statisticList.getStatisticDimension()).getDictLabel();
+        // 数量（横轴）--标注数量
+        if (displayQuantity.equals(ANNOTATION_COUNT)) {
+            // 统计维度（竖轴）--标注日期
+            if (statisticalDimension.equals(ANNOTATION_DATE)) {
+                // 判断startTime、endTime值，并返回日期差
+                long daysBetween = statisticListUtils.statisticSetStartEndTime(statisticList, this);
+                // 按日期差进行分类查询
+                if (daysBetween < THREE_YEAR) {
+                    statisticListRep = statisticListUtils.statisticAnnoDateRespOut(statisticList, statisticListRep, resp, displayQuantity, statisticalDimension, daysBetween, this);
+                    return R.ok(statisticListRep);
+                } else if (daysBetween >= THREE_YEAR) {
+                    return R.fail(MAX_SELECT_TIME_ERROR);
+                } else {
+                    return R.fail(SELECT_TIME_ERROR);
+                }
+            } else {
+                // 统计维度（竖轴）--除标注日期以外的
+                statisticListRep = statisticListUtils.statisticAnnoRespOut(statisticList, statisticListRep, resp, displayQuantity, statisticalDimension, this);
+                return R.ok(statisticListRep);
+            }
+        }
+        // 数量（横轴）--图像数量
+        else if (displayQuantity.equals(SLIDE_COUNT)) {
+            // 统计维度（竖轴）--标注日期
+            if (statisticalDimension.equals(ANNOTATION_DATE)) {
+                // 判断startTime、endTime值，并返回日期差
+                long daysBetween = statisticListUtils.statisticSetStartEndTime(statisticList, this);
+                // 按日期差进行分类查询
+                if (daysBetween >= 0 && daysBetween < THREE_YEAR) {
+                    statisticListRep = statisticListUtils.statisticImageDateRespOut(statisticList, statisticListRep, resp, displayQuantity, statisticalDimension, daysBetween, this);
+                    return R.ok(statisticListRep);
+                } else if (daysBetween >= THREE_YEAR) {
+                    return R.fail(MAX_SELECT_TIME_ERROR);
+                } else {
+                    return R.fail(SELECT_TIME_ERROR);
+                }
+            } else {
+                // 统计维度（竖轴）--除标注日期以外的
+                statisticListRep = statisticListUtils.statisticImageRespOut(statisticList, statisticListRep, resp, displayQuantity, statisticalDimension, this);
+                return R.ok(statisticListRep);
+            }
+        } else {
+            return R.fail(StatisticResponseConstant.STATISTIC_CATEGORY);
+        }
     }
 }

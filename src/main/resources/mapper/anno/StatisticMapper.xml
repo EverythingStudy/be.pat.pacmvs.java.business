@@ -556,7 +556,7 @@
 
 
 
-    <!--标注统计列表: 项目列表  -->
+    <!--标注统计列表: 项目列表 inner join 和left join 效果一样标准从属于一个项目 -->
     <select id="statisticSelectAnnoProjectIdList"
             parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO"
             resultMap="AnnotationResult">

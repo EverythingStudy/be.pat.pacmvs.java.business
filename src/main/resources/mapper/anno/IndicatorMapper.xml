@@ -128,11 +128,11 @@
 
     </select>
 
-    <select id="selectIndicatorStatisticList" parameterType="Integer" resultMap="SysIndicatorStatisticResult">
+    <select id="selectIndicatorStatisticList" parameterType="java.lang.Integer" resultMap="SysIndicatorStatisticResult">
         select distinct(pi.indicator_id), pi.indicator_name
         from tb_pathological_indicator as pi
         left join tb_project as p on p.indicator_id = pi.indicator_id
-        <if test="projectIdList.size() != 0 and projectIdList != '' ">
+        <if test="projectIdList.size() != 0 and projectIdList != null ">
             where p.project_id in
             <foreach collection="projectIdList" item="project_id" open="(" separator="," close=")">
                 #{project_id}

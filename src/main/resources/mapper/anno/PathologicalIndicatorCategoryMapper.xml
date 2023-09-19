@@ -63,13 +63,13 @@
         left join tb_pathological_indicator as pi on pic.indicator_id = pi.indicator_id
         <where>
             AND pic.category_id != 1
-            <if test="indicatorIdList.size() != 0 and indicatorIdList != '' ">
+            <if test="indicatorIdList.size() != 0 and indicatorIdList != null ">
                 AND pic.indicator_id in
                 <foreach collection="indicatorIdList" item="indicatorId" open="(" separator="," close=")">
                     #{indicatorId}
                 </foreach>
             </if>
-            <if test="projectIdList.size() != 0 and indicatorIdList != '' ">
+            <if test="projectIdList.size() != 0 and indicatorIdList != null ">
                 AND pic.indicator_id in
                 (
                 select p.indicator_id from tb_project as p
