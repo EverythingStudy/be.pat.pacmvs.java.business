@@ -8,7 +8,7 @@ import cn.staitech.anno.domain.vo.*;
 import cn.staitech.anno.domain.vo.statistic.StatisticProjectListOutVO;
 import cn.staitech.anno.mapper.ProjectMapper;
 import cn.staitech.anno.service.ProjectService;
-import cn.staitech.anno.service.ProjectTpyeService;
+import cn.staitech.anno.service.ProjectTypeService;
 import cn.staitech.anno.service.SpeciesService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     @Resource
     private ProjectMapper projectMapper;
     @Resource
-    private ProjectTpyeService projectTpyeService;
+    private ProjectTypeService projectTypeService;
     @Resource
     private SpeciesService speciesService;
 
@@ -74,7 +74,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         List<ProjectListVO> projectList = projectMapper.selectProjectList(project);
 
         // 项目类型
-        Map<String, String> projectTpyeMap = projectTpyeService.selectMap();
+        Map<String, String> projectTpyeMap = projectTypeService.selectMap();
         // 种属
         Map<Integer, String> sepeciesMap = speciesService.selectMap();
         // 品系

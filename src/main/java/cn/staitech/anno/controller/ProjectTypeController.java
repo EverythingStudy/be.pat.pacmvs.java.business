@@ -1,7 +1,7 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.domain.species.Species;
-import cn.staitech.anno.service.SpeciesService;
+import cn.staitech.anno.domain.ProjectType;
+import cn.staitech.anno.service.ProjectTypeService;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
@@ -19,28 +19,28 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
- * 轮次
+ * 项目类型
  *
  * @author wangfeng
- * @date 2023/09/10
+ * @date 2023/09/19
  */
-@Api(value = "种属", tags = "种属")
+@Api(value = "项目类型", tags = "项目类型")
 @RestController
-@RequestMapping("/species")
+@RequestMapping("/projectType")
 @Slf4j
-public class SpeciesController extends BaseController {
+public class ProjectTypeController extends BaseController {
     @Resource
-    private SpeciesService speciesService;
+    private ProjectTypeService projectTypeService;
 
     /**
-     * 轮次列表 .
+     * 项目类型列表 .
      */
     @ApiOperationSupport(author = "wangfeng")
-    @ApiOperation(value = "种属列表", notes = "种属列表 - 王峰")
-    @Log(title = "种属列表", menu = "种属", subMenu = "种属列表", businessType = BusinessType.QUERY)
+    @ApiOperation(value = "项目类型列表", notes = "项目类型列表 - 王峰")
+    @Log(title = "项目类型列表", menu = "项目类型", subMenu = "项目类型列表", businessType = BusinessType.QUERY)
     @GetMapping("/list")
-    public R<List<Species>> list() throws ExecutionException, InterruptedException {
-        List<Species> list = speciesService.list();
+    public R<List<ProjectType>> list() throws ExecutionException, InterruptedException {
+        List<ProjectType> list = projectTypeService.list();
         return R.ok(list);
     }
 

@@ -15,18 +15,18 @@ import java.io.Serializable;
  */
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName(value = "tb_project_tpye")
+@TableName(value = "tb_project_type")
 @Data
-public class ProjectTpye implements Serializable {
+public class ProjectType implements Serializable {
     /**
      * 项目类型ID
      */
-    @TableId(value = "project_tpye_id", type = IdType.NONE)
-    private String projectTpyeId;
+    @TableId(value = "project_type_id", type = IdType.NONE)
+    private String projectTypeId;
 
     /**
      * 项目类型名称
      */
-    private String projectTpyeName;
+    private String projectTypeName;
 
 }

@@ -1,8 +1,8 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.domain.ProjectTpye;
+import cn.staitech.anno.domain.ProjectType;
 import cn.staitech.anno.mapper.ProjectTpyeMapper;
-import cn.staitech.anno.service.ProjectTpyeService;
+import cn.staitech.anno.service.ProjectTypeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -17,16 +17,16 @@ import java.util.stream.Collectors;
  * @createDate 2023-09-18 16:15:33
  */
 @Service
-public class ProjectTpyeServiceImpl extends ServiceImpl<ProjectTpyeMapper, ProjectTpye> implements ProjectTpyeService {
+public class ProjectTypeServiceImpl extends ServiceImpl<ProjectTpyeMapper, ProjectType> implements ProjectTypeService {
     @Resource
     private ProjectTpyeMapper projectTpyeMapper;
 
     @Override
     public Map<String, String> selectMap() {
 
-        List<ProjectTpye> list = projectTpyeMapper.selectList();
+        List<ProjectType> list = projectTpyeMapper.selectList();
         Map<String, String> map = list.stream()
-                .collect(Collectors.toMap(ProjectTpye::getProjectTpyeId, ProjectTpye::getProjectTpyeName));
+                .collect(Collectors.toMap(ProjectType::getProjectTypeId, ProjectType::getProjectTypeName));
         return map;
     }
 }

@@ -1,6 +1,6 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.ProjectTpye;
+import cn.staitech.anno.domain.ProjectType;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.Map;
@@ -10,6 +10,6 @@ import java.util.Map;
  * @description 针对表【tb_project_tpye】的数据库操作Service
  * @createDate 2023-09-18 16:15:33
  */
-public interface ProjectTpyeService extends IService<ProjectTpye> {
+public interface ProjectTypeService extends IService<ProjectType> {
     Map<String, String> selectMap();
 }
