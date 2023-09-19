@@ -1,7 +1,5 @@
 package cn.staitech.anno.domain.reviewround;
 
-import cn.staitech.anno.domain.Pager;
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -12,7 +10,7 @@ import java.util.Date;
  * @TableName tb_review_round
  */
 @Data
-public class ReviewRoundOutVO extends Pager implements Serializable {
+public class ReviewRoundOutVO implements Serializable {
     /**
      * 评审轮次自增ID
      */
@@ -67,7 +65,8 @@ public class ReviewRoundOutVO extends Pager implements Serializable {
      * 更新时间
      */
     private Date updateTime;
-
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
+    private String roundName;
+    private String topicName;
+    private String groupName;
+    private String createByName;
 }

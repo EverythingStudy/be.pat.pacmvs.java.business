@@ -5,13 +5,10 @@ import cn.staitech.anno.domain.reviewround.ReviewRoundBatchInVO;
 import cn.staitech.anno.domain.reviewround.ReviewRoundInVO;
 import cn.staitech.anno.domain.reviewround.ReviewRoundOutVO;
 import cn.staitech.anno.service.ReviewRoundService;
-import cn.staitech.anno.service.TopicService;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.github.pagehelper.PageHelper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,27 +36,13 @@ public class ReviewRoundController {
     private ReviewRoundService reviewRoundService;
 
 
-    @Resource
-    private TopicService topicService;
-
-
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "查询评审轮次列表")
     @GetMapping("/list")
-    public R<PageMaster<List<ReviewRoundOutVO>>> list(@NotNull(message = "分页参数为空！") @RequestParam("pageNum") @ApiParam(name = "pageNum", value = "分页参数", required = true) Integer pageNum,
+    public R<PageMaster<ReviewRoundOutVO>> list(@NotNull(message = "分页参数为空！") @RequestParam("pageNum") @ApiParam(name = "pageNum", value = "分页参数", required = true) Integer pageNum,
                                                       @NotNull(message = "分页参数为空！") @RequestParam("pageSize") @ApiParam(name = "pageSize", value = "分页参数", required = true) Integer pageSize,
                                                       @RequestParam("projectId") Long projectId) {
-        PageHelper.startPage(pageNum, pageSize).setReasonable(true);
-        ReviewRound reviewRound = new ReviewRound();
-        reviewRound.setProjectId(projectId);
-        QueryWrapper queryWrapper = new QueryWrapper<>(reviewRound);
-        List<ReviewRound> list = reviewRoundService.list(queryWrapper);
-
-        //List<ReviewRoundOutVO> respList = new List<ReviewRoundOutVO>();
-
-
-        PageMaster pageMaster = new PageMaster<>(list);
-        return R.ok(pageMaster);
+        return R.ok(reviewRoundService.pageReviewRound(pageNum, pageSize, projectId));
     }
 
     @ApiOperationSupport(author = "wangfeng")
