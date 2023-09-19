@@ -189,13 +189,8 @@ public class ProjectListVO extends BaseEntity {
     @ApiModelProperty("项目类型名称")
     private String projectTypeName;
 
-    @ApiModelProperty("专题ID")
-    private Integer topicId;
     @ApiModelProperty(value = "机构编号")
     private Long organizationId;
     @ApiModelProperty(value = "机构名称")
     private String organizationName;
-
-    @ApiModelProperty(value = "专题名称")
-    private String topicName;
 }

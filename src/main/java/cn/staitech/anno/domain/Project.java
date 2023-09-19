@@ -127,18 +127,12 @@ public class Project extends BaseEntity implements Serializable {
     @ApiModelProperty("项目类型:1标注2评审3标准训练集")
     @Length(max = 255, message = "编码长度不能超过255")
     private String projectType;
-
-    @ApiModelProperty("专题ID")
-    private Integer topicId;
-
     @ApiModelProperty(value = "机构编号")
     @TableField(value = "organization_id")
     private Long organizationId;
     @ApiModelProperty(value = "机构名称")
     @TableField(exist = false)
     private String organizationName;
-    @ApiModelProperty(value = "专题名称")
-    private String topicName;
     @ApiModelProperty(value = "种属名称")
     private String speciesName;
     @ApiModelProperty(value = "品系名称")

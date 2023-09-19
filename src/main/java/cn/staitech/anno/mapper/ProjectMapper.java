@@ -215,10 +215,10 @@ public interface ProjectMapper extends BaseMapper<Project> {
     public List<ProjectListVO> selectProjectTagger(Long projectId);
 
     /**
-     * 查询专题下项目的数量
+     * 查询结构指标下项目的数量
      *
-     * @param specialId 专题id
+     * @param indicatorId 结构指标ID
      * @return int
      */
-    int selectProjectCount(Long specialId);
+    int selectProjectCount(Long indicatorId);
 }

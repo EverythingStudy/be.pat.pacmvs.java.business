@@ -18,11 +18,8 @@
         <result property="speciesId" column="species_id"/><!-- 种属 -->
         <result property="productSeriesId" column="product_series_id"/><!-- 品系 -->
         <result property="projectType" column="project_type"/><!-- 项目类型 -->
-        <result property="topicId" column="topic_id"/><!-- 专题 -->
         <result property="organizationId" column="organization_id"/><!-- 机构 -->
         <result property="indicatorName" column="indicator_name"/>
-        <result property="topicName" column="topic_name"/>
-<!--        <result property="speciesName" column="species_name"/>-->
         <result property="productSeries" column="product_series"/>
         <result property="organizationName" column="organization_name"/>
     </resultMap>
@@ -45,10 +42,7 @@
         <result property="speciesId" column="species_id"/><!-- 种属 -->
         <result property="productSeriesId" column="product_series_id"/><!-- 品系 -->
         <result property="projectType" column="project_type"/><!-- 项目类型 -->
-        <result property="topicId" column="topic_id"/><!-- 专题 -->
         <result property="organizationId" column="organization_id"/><!-- 机构 -->
-        <result property="topicName" column="topic_name"/>
-<!--        <result property="speciesName" column="species_name"/>-->
         <result property="productSeries" column="product_series"/>
         <result property="organizationName" column="organization_name"/>
     </resultMap>
@@ -126,22 +120,16 @@
                p.color_type,
                p.species_id,
                p.project_type,
-               p.topic_id,
                p.organization_id,
-               p.topic_id,
                p.species_id,
                p.product_series_id,
                u.user_name,
                i.indicator_name,
-               t.topic_name,
-/*               s.name as species_name,*/
                ps.name as product_series,
                org.organization_name
         from tb_project p
                  left join sys_user u on p.create_by = u.user_id
                  left join tb_pathological_indicator i on p.indicator_id = i.indicator_id
-                 left join tb_topic t on p.topic_id = t.topic_id
---                  left join tb_species s on p.species_id = s.species_id
                  left join tb_product_series ps on p.product_series_id = ps.product_series_id
                  left join sys_organization org on p.organization_id = org.organization_id
     </sql>
@@ -160,7 +148,6 @@
                species_id,
                product_series_id,
                project_type,
-               topic_id,
                organization_id
         from tb_project
     </sql>
@@ -194,9 +181,6 @@
             <if test="projectName != null and projectName != ''">
                 AND p.project_name like concat('%', #{projectName}, '%')
             </if>
-            <if test="topicName != null and topicName != ''">
-                AND p.topic_name like concat('%', #{topicName}, '%')
-            </if>
             <if test="indicatorId != null and indicatorId != ''">
                 AND p.indicator_id = #{indicatorId}
             </if>
@@ -208,9 +192,6 @@
             </if>
             <if test="status != null">
                 AND p.status = #{status}
-            </if>
-            <if test="topicId != null">
-                AND p.topic_id = #{topicId}
             </if>
             <if test="description != null and description != ''">
                 AND p.description like concat('%', #{description}, '%')
@@ -241,7 +222,6 @@
         <if test="productSeriesId != null">product_series_id,</if>
         <if test="projectType != null">project_type,</if>
         <if test="description != null">description,</if>
-        <if test="topicId != null">topic_id,</if>
         <if test="organizationId != null">organization_id,</if>
         create_time,
         image_total,
@@ -255,7 +235,6 @@
         <if test="productSeriesId != null">#{productSeriesId},</if>
         <if test="projectType != null">#{projectType},</if>
         <if test="description != null">#{description},</if>
-        <if test="topicId != null">#{topicId},</if>
         <if test="organizationId != null">#{organizationId},</if>
         sysdate(),
         0,
@@ -530,8 +509,8 @@
         from tb_project
         <where>
             del_flag = 0
-            <if test="specialId !=null and specialId != 0">
-                AND special_id = #{specialId}
+            <if test="indicatorId !=null and indicatorId != 0">
+                AND indicator_id = #{indicatorId}
             </if>
         </where>
     </select>
