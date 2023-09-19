@@ -112,6 +112,18 @@ public class PathologicalController {
         return R.ok(pageMaster);
     }
 
+    /**
+     * 配置标签-标签列表 .
+     */
+    @ApiOperation(value = "根据项目查询结构指标列表", notes = "gjt")
+    @Log(title = "配置标签-标签列表", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.QUERY)
+    @GetMapping("/selectList")
+    public R<List<PathologicalIndicatorCategory>> selectList(@RequestParam(value = "projectId") @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId) {
+        //获取病理指标下的标注类别
+        List<PathologicalIndicatorCategory> categoryList = pathologicalIndicatorCategoryService.selectprojectList(projectId);
+        return R.ok(categoryList);
+    }
+
 
     /**
      * 标签详细 .

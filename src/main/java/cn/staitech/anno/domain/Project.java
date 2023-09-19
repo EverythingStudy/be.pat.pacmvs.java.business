@@ -60,6 +60,7 @@ public class Project extends BaseEntity implements Serializable {
     /**
      * 病理指标名称
      */
+    @TableField(exist = false)
     @ApiModelProperty(value = "病理指标名称", hidden = true)
     private String indicatorName;
 
@@ -72,6 +73,7 @@ public class Project extends BaseEntity implements Serializable {
     /**
      * 创建者名称
      */
+    @TableField(exist = false)
     @ApiModelProperty(value = "", hidden = true)
     private String createByName;
 
@@ -99,6 +101,7 @@ public class Project extends BaseEntity implements Serializable {
     @ApiModelProperty(value = "", hidden = true)
     private String searchValue;
 
+    @TableField(exist = false)
     @ApiModelProperty(value = "", hidden = true)
     private String remark;
 
@@ -126,17 +129,30 @@ public class Project extends BaseEntity implements Serializable {
     @Size(max = 255, message = "编码长度不能超过255")
     @ApiModelProperty("项目类型:1标注2评审3标准训练集")
     @Length(max = 255, message = "编码长度不能超过255")
+    @TableField(exist = false)
     private String projectType;
+
     @ApiModelProperty(value = "机构编号")
-    @TableField(value = "organization_id")
+    @TableField(value = "organization_id", exist = false)
     private Long organizationId;
+
     @ApiModelProperty(value = "机构名称")
     @TableField(exist = false)
     private String organizationName;
+
+    @TableField(exist = false)
     @ApiModelProperty(value = "种属名称")
     private String speciesName;
+
+    @TableField(exist = false)
     @ApiModelProperty(value = "品系名称")
     private String productSeries;
+
+    @TableField(exist = false)
     @ApiModelProperty(value = "创建时间-查询入参")
     private Map<String, Object> createTimeParams;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "品系名称")
+    private Map<String, Object> params;
 }

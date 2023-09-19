@@ -305,7 +305,7 @@ public class ProjectController extends BaseController {
             @RequestParam("projectId") Long projectId,
             @RequestParam(name = "status") @ApiParam(name = "status", value = "状态(1:本地导出,2:获取文件路径)") Integer status
     ) throws Exception {
-        projectExtService.jsonExport(projectId, status);
+        projectExtService.jsonExport(projectId);
         return R.ok("操作成功");
     }
 

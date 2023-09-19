@@ -1,5 +1,6 @@
 package cn.staitech.anno.service.impl;
 
+import cn.hutool.core.lang.Snowflake;
 import cn.staitech.anno.constant.ExaminationConstant;
 import cn.staitech.anno.constant.ProjectConstant;
 import cn.staitech.anno.constant.R.MeasureResponseConstant;
@@ -20,6 +21,9 @@ import cn.staitech.anno.domain.projectgroup.ProjectGroup;
 import cn.staitech.anno.domain.special.Special;
 import cn.staitech.anno.enums.ReasonsEnum;
 import cn.staitech.anno.mapper.*;
+import cn.staitech.anno.project.constants.Constants;
+import cn.staitech.anno.project.domain.DownTask;
+import cn.staitech.anno.project.mapper.DownTaskMapper;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.ProjectExtService;
 import cn.staitech.common.core.domain.PageResponse;
@@ -85,6 +89,9 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
 
     @Resource
     private MarkingService markingService;
+
+    @Resource
+    private DownTaskMapper downTaskMapper;
 
 
     /**
@@ -605,12 +612,17 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
     }
 
     @Override
-    public void jsonExport(Long projectId, Integer status) throws Exception {
+    public void jsonExport(Long projectId) throws Exception {
         StringBuilder res = new StringBuilder();
         ProjectExt projectExt = projectExtMapper.selectById(projectId);
         if (projectExt == null) {
             throw new Exception("未发现项目信息");
         }
+        Snowflake snowflake = new Snowflake();
+        Long userId = SecurityUtils.getUserId();
+        DownTask task = DownTask.builder().code(snowflake.nextIdStr()).status(Constants.DOWN_STATE_RUNNING).createTime(new Date()).updateTime(new Date()).updateBy(userId).createBy(userId).build();
+        downTaskMapper.insert(task);
+        // 执行任务
         // 查询所有的切片
         List<Slide> slideBy = slideMapper.getProjectInformation(projectId);
         if (slideBy.size() > 0) {
@@ -625,7 +637,8 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
                 }
             }
         }
-        if (status == 1) {
+
+
             try {
                 // 清空response
                 response.reset();
@@ -639,9 +652,14 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
             } catch (Exception e) {
                 log.error(MeasureResponseConstant.DOWNLOAD_ERROR, e);
             }
-        }
+
 
     }
 
+
+    @Override
+    public boolean saveBatch(Collection<Project> entityList) {
+        return super.saveBatch(entityList);
+    }
 
 }

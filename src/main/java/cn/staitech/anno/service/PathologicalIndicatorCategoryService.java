@@ -107,6 +107,12 @@ public interface PathologicalIndicatorCategoryService {
     List<LabelListVO> selectByIndicator(LabelVO labelVO);
 
     /**
+     * 根据项目id查询标签列表
+     * @param projectId 项目id
+     */
+    List<PathologicalIndicatorCategory> selectprojectList(Long projectId);
+
+    /**
      * 查询标签在标注中的使用数量
      * */
     Integer selectLabelNum(Long categoryId);
