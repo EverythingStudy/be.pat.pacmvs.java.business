@@ -40,10 +40,10 @@ public class ReviewRoundController {
     @GetMapping("/list")
     public R<PageMaster<List<ReviewRound>>> list(@NotNull(message = "分页参数为空！") @RequestParam("pageNum") @ApiParam(name = "pageNum", value = "分页参数", required = true) Integer pageNum,
                                                  @NotNull(message = "分页参数为空！") @RequestParam("pageSize") @ApiParam(name = "pageSize", value = "分页参数", required = true) Integer pageSize,
-                                                 @RequestParam("reviewRoundId") Long reviewRoundId) {
+                                                 @RequestParam("projectId") Long projectId) {
         PageHelper.startPage(pageNum, pageSize).setReasonable(true);
         ReviewRound reviewRound = new ReviewRound();
-        reviewRound.setReviewRoundId(reviewRoundId);
+        reviewRound.setProjectId(projectId);
         QueryWrapper queryWrapper = new QueryWrapper<>(reviewRound);
         List<ReviewRound> list = reviewRoundService.list(queryWrapper);
         PageMaster pageMaster = new PageMaster<>(list);
@@ -72,7 +72,12 @@ public class ReviewRoundController {
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "修改评审轮次")
     @PostMapping("/edit")
-    public R edit(@RequestBody ReviewRound reviewRound) {
-        return R.ok(reviewRoundService.save(reviewRound));
+    public R edit(@RequestBody ReviewRoundInVO reviewRoundInVO) {
+        ReviewRound reviewRound = new ReviewRound();
+        BeanUtils.copyProperties(reviewRoundInVO, reviewRound);
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+        reviewRound.setCreateBy(sysUser.getUserId());
+        reviewRound.setOrganizationId(sysUser.getOrganizationId());
+        return R.ok(reviewRoundService.updateById(reviewRound));
     }
 }
