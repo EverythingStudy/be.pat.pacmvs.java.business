@@ -103,18 +103,23 @@
                 #{slideId}
             </foreach>
         </if>
-        <if test="examinationFlag != null and examinationFlag == 45 or examinationFlag == 46 or examinationFlag == 47 ">
+        <!--<if test="examinationFlag != null and examinationFlag == 45 or examinationFlag == 46 or examinationFlag == 47 ">
             AND a.slide_id IN (
-            <if test="examinationFlag == 45 ">-- 图像标注完成
+            <if test="examinationFlag == 45 ">&#45;&#45; 图像标注完成
                 SELECT s.slide_id FROM tb_slide as s WHERE s.process_flag = 2
             </if>
-            <if test="examinationFlag == 46 ">-- 图像复核通过
+            <if test="examinationFlag == 46 ">&#45;&#45; 图像复核通过
                 SELECT s.slide_id FROM tb_slide as s WHERE s.examination_flag = 2
             </if>
-            <if test="examinationFlag == 47 ">-- 图像交付
+            <if test="examinationFlag == 47 ">&#45;&#45; 图像交付
                 SELECT s.slide_id FROM tb_slide as s WHERE s.examination_flag = 4
             </if>
             )
+        </if>-->
+
+        <if test="examinationFlag != null and examinationFlag != ''">
+            AND a.slide_id IN (
+                SELECT s.slide_id FROM tb_slide as s WHERE s.status = #{examinationFlag})
         </if>
     </sql>
 
@@ -169,17 +174,20 @@
                 #{slideId}
             </foreach>
         </if>
-        <if test="examinationFlag != null and examinationFlag == 45 or examinationFlag == 46 or examinationFlag == 47 ">
+        <!--<if test="examinationFlag != null and examinationFlag == 45 or examinationFlag == 46 or examinationFlag == 47 ">
             AND
-            <if test="examinationFlag == 45 ">-- 图像标注完成
+            <if test="examinationFlag == 45 ">&#45;&#45; 图像标注完成
                 s.process_flag = 2
             </if>
-            <if test="examinationFlag == 46 ">-- 图像复核通过
+            <if test="examinationFlag == 46 ">&#45;&#45; 图像复核通过
                 s.examination_flag = 2
             </if>
-            <if test="examinationFlag == 47 ">-- 图像交付
+            <if test="examinationFlag == 47 ">&#45;&#45; 图像交付
                 s.examination_flag = 4
             </if>
+        </if>-->
+        <if test="examinationFlag != null and examinationFlag !=''">
+            AND s.status = #{examinationFlag}
         </if>
     </sql>
 
@@ -321,18 +329,21 @@
                     #{slideId}
                 </foreach>
             </if>
-            <if test="examinationFlag != null and examinationFlag == 45 or examinationFlag == 46 or examinationFlag == 47 ">
+            <!--<if test="examinationFlag != null and examinationFlag == 45 or examinationFlag == 46 or examinationFlag == 47 ">
                 AND a.slide_id IN (
-                <if test="examinationFlag == 45 ">-- 图像标注完成
+                <if test="examinationFlag == 45 ">&#45;&#45; 图像标注完成
                     SELECT s.slide_id FROM tb_slide as s WHERE s.process_flag = 2
                 </if>
-                <if test="examinationFlag == 46 ">-- 图像复核通过
+                <if test="examinationFlag == 46 ">&#45;&#45; 图像复核通过
                     SELECT s.slide_id FROM tb_slide as s WHERE s.examination_flag = 2
                 </if>
-                <if test="examinationFlag == 47 ">-- 图像交付
+                <if test="examinationFlag == 47 ">&#45;&#45; 图像交付
                     SELECT s.slide_id FROM tb_slide as s WHERE s.examination_flag = 4
                 </if>
                 )
+            </if>-->
+            <if test="examinationFlag != null and examinationFlag !=''">
+                AND s.status = #{examinationFlag}
             </if>
         </where>
         GROUP BY DATE_FORMAT(a.update_time,'%Y-%m-%d')
@@ -397,17 +408,8 @@
                 #{slideId}
             </foreach>
         </if>
-        <if test="examinationFlag != null and examinationFlag == 45 or examinationFlag == 46 or examinationFlag == 47 ">
-            <if test="examinationFlag == 45 ">-- 图像标注完成
-                AND s.process_flag = 2
-            </if>
-            <if test="examinationFlag == 46 ">-- 图像复核通过
-                AND s.examination_flag = 2
-            </if>
-            <if test="examinationFlag == 47 ">-- 图像交付
-                AND s.examination_flag = 4
-            </if>
-            )
+        <if test="examinationFlag != null and examinationFlag !=''">
+            AND s.status = #{examinationFlag}
         </if>
         GROUP BY DATE_FORMAT(a.update_time,'%Y-%m-%d')
         order by statistic_date desc
@@ -542,17 +544,8 @@
                 #{slideId}
             </foreach>
         </if>
-        <if test="examinationFlag != null and examinationFlag == 45 or examinationFlag == 46 or examinationFlag == 47 ">
-            <if test="examinationFlag == 45 ">-- 图像标注完成
-                AND s.process_flag = 2
-            </if>
-            <if test="examinationFlag == 46 ">-- 图像复核通过
-                AND s.examination_flag = 2
-            </if>
-            <if test="examinationFlag == 47 ">-- 图像交付
-                AND s.examination_flag = 4
-            </if>
-            )
+        <if test="examinationFlag != null and examinationFlag !=''">
+            AND s.status = #{examinationFlag}
         </if>
         GROUP BY DATE_FORMAT(a.update_time,'%Y-%m')
         order by statistic_date desc
