@@ -1,98 +1,55 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.ImageCsvMapper">
-    <resultMap type="cn.staitech.anno.domain.ImageCsv" id="ImageResult">
-        <result property="imageId" column="image_id"/>
-        <result property="imageName" column="image_name"/>
-        <result property="imageUrl" column="image_url"/>
-        <result property="imagePath" column="image_path"/>
-        <result property="thumbUrl" column="thumb_url"/>
-        <result property="macroUrl" column="macro_url"/>
-        <result property="labelUrl" column="label_url"/>
-        <result property="format" column="format"/>
-        <result property="width" column="width"/>
-        <result property="height" column="height"/>
-        <result property="depth" column="depth"/>
-        <result property="size" column="size"/>
-        <result property="globalSize" column="global_size"/>
-        <result property="resolvingPower" column="resolving_power"/>
-        <result property="tileCountList" column="tile_count_list"/>
-        <result property="levelCount" column="level_count"/>
-        <result property="chunkTotal" column="chunk_total"/>
-        <result property="md5" column="md5"/>
-        <result property="resolutionX" column="resolution_x"/>
-        <result property="resolutionY" column="resolution_y"/>
-        <result property="sourceLens" column="source_lens"/>
-        <result property="processFlag" column="process_flag"/>
-        <result property="createBy" column="create_by"/>
-        <result property="createTime" column="create_time"/>
-        <result property="updateBy" column="update_by"/>
-        <result property="updateTime" column="update_time"/>
-        <result property="imageCode" column="image_code"/>
-        <result property="topicId" column="topic_id"/>
-        <result property="topicName" column="topic_name"/>
-        <result property="status" column="status"/>
-        <result property="deleteFlag" column="delete_flag"/>
-        <result property="organizationId" column="organization_id"/>
-        <result property="roundId" column="round_id"/>
-        <result property="bizType" column="biz_type"/>
-        <result property="source" column="source"/>
+
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.ImageCsv">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="imageId" column="image_id" jdbcType="BIGINT"/>
+        <result property="imageName" column="image_name" jdbcType="VARCHAR"/>
+        <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
+        <result property="gender" column="gender" jdbcType="VARCHAR"/>
+        <result property="species" column="species" jdbcType="VARCHAR"/>
+        <result property="productSeries" column="product_series" jdbcType="VARCHAR"/>
+        <result property="dosage" column="dosage" jdbcType="VARCHAR"/>
+        <result property="animalSource" column="animal_source" jdbcType="VARCHAR"/>
+        <result property="receivingWeek" column="receiving_week" jdbcType="VARCHAR"/>
+        <result property="dosingCycle" column="dosing_cycle" jdbcType="VARCHAR"/>
+        <result property="recoveryCycle" column="recovery_cycle" jdbcType="VARCHAR"/>
+        <result property="dateOfDeath" column="date_of_death" jdbcType="VARCHAR"/>
+        <result property="removeReason" column="remove_reason" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="organ" column="organ" jdbcType="VARCHAR"/>
+        <result property="lesionType1" column="lesion_type1" jdbcType="VARCHAR"/>
+        <result property="lesionDegree1" column="lesion_degree1" jdbcType="VARCHAR"/>
+        <result property="lesionType2" column="lesion_type2" jdbcType="VARCHAR"/>
+        <result property="lesionDegree2" column="lesion_degree2" jdbcType="VARCHAR"/>
+        <result property="processFlag" column="process_flag" jdbcType="TINYINT"/>
+        <result property="createBy" column="create_by" jdbcType="BIGINT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="topicId" column="topic_id" jdbcType="BIGINT"/>
+        <result property="topicName" column="topic_name" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="TINYINT"/>
+        <result property="deleteFlag" column="delete_flag" jdbcType="TINYINT"/>
+        <result property="organizationId" column="organization_id" jdbcType="BIGINT"/>
+        <result property="hostId" column="host_id" jdbcType="TINYINT"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.image.in.ImageListVO" id="ImageSlide">
-        <result property="imageId" column="image_id"/>
-        <result property="imageName" column="image_name"/>
-        <result property="imageUrl" column="image_url"/>
-        <result property="imagePath" column="image_path"/>
-        <result property="thumbUrl" column="thumb_url"/>
-        <result property="macroUrl" column="macro_url"/>
-        <result property="labelUrl" column="label_url"/>
-        <result property="format" column="format"/>
-        <result property="width" column="width"/>
-        <result property="height" column="height"/>
-        <result property="depth" column="depth"/>
-        <result property="size" column="size"/>
-        <result property="globalSize" column="global_size"/>
-        <result property="resolvingPower" column="resolving_power"/>
-        <result property="tileCountList" column="tile_count_list"/>
-        <result property="levelCount" column="level_count"/>
-        <result property="chunkTotal" column="chunk_total"/>
-        <result property="md5" column="md5"/>
-        <result property="resolutionX" column="resolution_x"/>
-        <result property="resolutionY" column="resolution_y"/>
-        <result property="sourceLens" column="source_lens"/>
-        <result property="processFlag" column="process_flag"/>
-        <result property="createBy" column="create_by"/>
-        <result property="createTime" column="create_time"/>
-        <result property="updateBy" column="update_by"/>
-        <result property="updateTime" column="update_time"/>
-        <result property="slideId" column="slide_id"/>
-        <result property="humanAnnotationTotal" column="human_annotation_total"/>
-        <result property="description" column="description"/>
-        <result property="imageCode" column="image_code"/>
-        <result property="topicId" column="topic_id"/>
-        <result property="topicName" column="topic_name"/>
-        <result property="status" column="status"/>
-        <result property="deleteFlag" column="delete_flag"/>
-        <result property="organizationId" column="organization_id"/>
-        <result property="roundId" column="round_id"/>
-        <result property="bizType" column="biz_type"/>
-        <result property="source" column="source"/>
-    </resultMap>
-
-    <sql id="selectImageVo">
-        select image_id,
-               image_name,
-               image_url,
-               image_path,
-               thumb_url,
-               width,
-               height, size, global_size, source_lens, process_flag, create_by, create_time, update_by, update_time, image_code, topic_id, topic_name, status, delete_flag, organization_id, round_id, biz_type, source
-        from
-            tb_image
+    <sql id="Base_Column_List">
+        id
+        ,image_id,image_name,
+        group_name,gender,species,
+        product_series,dosage,animal_source,
+        receiving_week,dosing_cycle,recovery_cycle,
+        date_of_death,remove_reason,remark,
+        organ,lesion_type1,lesion_degree1,
+        lesion_type2,lesion_degree2,process_flag,
+        create_by,create_time,update_by,
+        update_time,topic_id,topic_name,
+        status,delete_flag,organization_id,
+        host_id
     </sql>
-
-
 </mapper>

@@ -4,8 +4,11 @@ import cn.staitech.anno.domain.Topic;
 import cn.staitech.anno.domain.files.Files;
 import cn.staitech.anno.domain.files.in.FileUploadVO;
 import cn.staitech.anno.service.FileUploadService;
+import cn.staitech.anno.service.FilesProcessService;
 import cn.staitech.anno.service.FilesService;
 import cn.staitech.anno.service.TopicService;
+import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.domain.SysUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,7 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -31,7 +35,10 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     @Resource
     private FilesService filesService;
-    String basePath = "d://testdir/";
+
+    @Resource
+    private FilesProcessService filesProcessService;
+    private String basePath = "d://testdir/";
 
     /**
      * @param file 上传的文件MultipartFile
@@ -63,13 +70,15 @@ public class FileUploadServiceImpl implements FileUploadService {
      * @throws IOException
      */
     public Files uploadAndProcessBusiness(FileUploadVO fileUploadVO) throws IOException {
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+
         String dirPath = basePath;
 
         Integer businessType = fileUploadVO.getBusinessType();
+        String fileName = fileUploadVO.getFileName();
         Long topicId = fileUploadVO.getTopicId();
-        // 专题列表
+        // 对应专题
         Topic topic = topicService.getById(topicId);
-
         // 专题名称
         dirPath = basePath + topic.getTopicName();
 
@@ -79,22 +88,36 @@ public class FileUploadServiceImpl implements FileUploadService {
             dir.mkdirs();
         }
 
-        String filePath = dirPath + "\\" + fileUploadVO.getFileName();
+        String filePath = dirPath + "\\" + fileName;
 
-        log.info("------------------filePath:{}", filePath);
         // (真实存入)拷贝
         fileUploadVO.getMultipartFile().transferTo(Paths.get(filePath));
 
-        File file = new File(filePath);
+        File localFile = new File(filePath);
 
         Files files = new Files();
         BeanUtils.copyProperties(fileUploadVO, files);
         files.setFilesName(fileUploadVO.getFileName());
-        files.setFilesPath(file.getAbsolutePath());
-        files.setFilesPath(file.getAbsolutePath());
-        files.setSize(files.getSize());
-        // files.setFormat(file.get);
+        files.setFilesPath(localFile.getAbsolutePath());
+        files.setFilesUrl(localFile.getAbsolutePath());
+        files.setSize(localFile.length());
+        // 获取文件的后缀名
+        String suffixName = fileName.substring(fileName.lastIndexOf("."));
+        files.setFormat(suffixName);
+        // 逻辑删除状态（0删除，1未删除）
+        files.setDeleteFlag(1);
+        // 上传成功
+        files.setProcessFlag(1);
+        files.setCreateBy(sysUser.getUserId());
+        files.setCreateTime(new Date());
+        files.setOrganizationId(sysUser.getOrganizationId());
+        files.setHostId(1);
+        files.setBusinessType(businessType);
+        files.setTopicName(topic.getTopicName());
         filesService.save(files);
+
+        filesProcessService.prodessByBussinessType(files);
+
         return files;
     }
 

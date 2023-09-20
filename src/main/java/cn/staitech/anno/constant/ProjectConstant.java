@@ -1,5 +1,9 @@
 package cn.staitech.anno.constant;
 
+import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
+
 public class ProjectConstant {
     public static final String UNABLE_TO_DELETE = "关联数据未清理，不可删除";
     public static final String IMAGE_UPLOADED_ANNOTATION = "：该图像已有上传标注、不可上传";
@@ -67,20 +71,26 @@ public class ProjectConstant {
     public static final String PROJECT_NAME_EXIST = "当前专题下已存在该项目，请勿重复添加";
     public static final String VISCUS_CODE_EXIST = "当前脏器已存在，请勿重复添加";
     public static final String PROJECT_SLIDE_EXIST = "当前项目已绑定切片，禁止删除";
-    public static final String PROJECT_GROUP_SLIDE_EXIST ="该项目分组下有绑定切片，请清空切片后再删除";
-    public static final String PROJECT_NO_READY ="当前项目内有切片未分析完成，暂无法生成组间报告";
-    public static final String PROJECT_SLIDE_RUNNING ="该组内的切片正在分析中，禁止清空";
-    public static final String PROJECT_BATCH_INSERT="一键创建项目异常";
-    public static final String SPECIAL_NON_DELIVERY="当前切片状态不满足一键创建，请先交付切片";
-    public static final String SPECIAL_EXIST_PROJECT="当前项目列表已进行过手工操作，禁止一键创建";
-    public static final Long AUTO_CREATE_PROJECT_SUC=1L;
-    public static final Long AUTO_CREATE_PROJECT_FAL=2L;
-    public static final String AUTO_CREATE_REASON="上游数据问题，一键创建项目异常";
+    public static final String PROJECT_GROUP_SLIDE_EXIST = "该项目分组下有绑定切片，请清空切片后再删除";
+    public static final String PROJECT_NO_READY = "当前项目内有切片未分析完成，暂无法生成组间报告";
+    public static final String PROJECT_SLIDE_RUNNING = "该组内的切片正在分析中，禁止清空";
+    public static final String PROJECT_BATCH_INSERT = "一键创建项目异常";
+    public static final String SPECIAL_NON_DELIVERY = "当前切片状态不满足一键创建，请先交付切片";
+    public static final String SPECIAL_EXIST_PROJECT = "当前项目列表已进行过手工操作，禁止一键创建";
+    public static final Long AUTO_CREATE_PROJECT_SUC = 1L;
+    public static final Long AUTO_CREATE_PROJECT_FAL = 2L;
+    public static final String AUTO_CREATE_REASON = "上游数据问题，一键创建项目异常";
     public static final String LOGIN_TOKEN_KEY = "login_tokens:";
-    public static final String SPECIAL_EXIST_NON_DELIVERY= "专题未交付";
+    public static final String SPECIAL_EXIST_NON_DELIVERY = "专题未交付";
     public static final String SPECIAL_NOTEXIST_GROUP = "专题内不存在分组";
 
-
-
-
+    /**
+     * 项目状态
+     */
+    public static final Map<Integer, String> PROJECT_STATUS_TYPE = new ImmutableMap.Builder<Integer, String>()
+            .put(1, "待启动")
+            .put(2, "进行中")
+            .put(3, "暂停")
+            .put(4, "已完成")
+            .build();
 }

@@ -96,8 +96,6 @@ public class Files implements Serializable {
     /**
      * 专题名称
      */
-
-
     @TableField(value = "topic_name")
     @ApiModelProperty(value = "专题名称")
     private String topicName;

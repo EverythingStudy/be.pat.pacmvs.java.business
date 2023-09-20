@@ -53,6 +53,8 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
             queryWrapper.le("create_time", req.getCreateTimeParams().get("endTime"));
         }
 
+        queryWrapper.orderByDesc("files_id");
+
         //  查询图像列表
         List<Files> list = filesMapper.selectList(queryWrapper);
         // 机构列表

@@ -1,7 +1,5 @@
 package cn.staitech.anno.service;
 
-import cn.hutool.core.text.csv.CsvRow;
-
 import java.util.List;
 
 /**
@@ -10,7 +8,7 @@ import java.util.List;
  * @Description: CSV文件解析
  */
 
-public interface CSVParserService {
+public interface CsvParserService {
 
-    List<CsvRow> parser(String filePath);
+    <T> List<T> read(String filePath, Class<T> clazz);
 }
