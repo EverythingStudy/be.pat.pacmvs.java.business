@@ -752,6 +752,7 @@
         FROM
         tb_marking AS a
         INNER JOIN tb_project AS p ON a.project_id = p.project_id
+        INNER JOIN tb_pathological_indicator AS pi ON pi.indicator_id = p.indicator_id
         <where>
             <include refid="statisticSelectAnnotationSql"/>
         </where>
