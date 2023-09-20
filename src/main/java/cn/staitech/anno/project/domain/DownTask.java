@@ -1,5 +1,6 @@
 package cn.staitech.anno.project.domain;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +18,7 @@ import lombok.NoArgsConstructor;
  * 文件下载任务
  * @TableName tb_down_task
  */
-@TableName(value ="tb_down_task")
+@TableName(value ="tb_down_task", autoResultMap = true)
 @Data
 @Builder
 @AllArgsConstructor
@@ -31,7 +33,8 @@ public class DownTask implements Serializable {
     /**
      * 文件路径
      */
-    private String path;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private JSONObject path;
 
     /**
      * 任务编码
@@ -67,6 +70,11 @@ public class DownTask implements Serializable {
      * 更新时间
      */
     private Date updateTime;
+
+    /**
+     * 项目id
+     */
+    private Long projectId;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

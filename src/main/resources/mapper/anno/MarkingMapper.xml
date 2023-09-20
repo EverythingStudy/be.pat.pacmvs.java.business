@@ -279,7 +279,26 @@
         FROM
             tb_slide AS s
                 LEFT JOIN tb_project AS p ON p.project_id = s.project_id
-                LEFT JOIN tb_topic AS t ON t.topic_id = p.topic_id
+                LEFT JOIN tb_review_round AS re on re.review_round_id = s.review_round_id
+                LEFT JOIN tb_topic AS t ON t.topic_id = re.topic_id
+                LEFT JOIN tb_image AS i ON i.image_id = s.image_id
+        WHERE
+            s.slide_id = #{slideId}
+    </select>
+
+    <select id="reviewJsonExportSelect" parameterType="long" resultMap="jsonExportResult">
+        SELECT
+            t.topic_name,
+            p.project_name,
+            i.image_name,
+            i.format,
+            p.indicator_id,
+            s.create_time,
+            CONCAT_WS(',', i.width, i.height ) AS image_shape
+        FROM
+            tb_slide AS s
+                LEFT JOIN tb_project AS p ON p.project_id = s.project_id
+                LEFT JOIN tb_topic AS t ON t.topic_id = s.topic_id
                 LEFT JOIN tb_image AS i ON i.image_id = s.image_id
         WHERE
             s.slide_id = #{slideId}

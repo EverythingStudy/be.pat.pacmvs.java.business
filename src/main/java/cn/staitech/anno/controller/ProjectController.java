@@ -13,6 +13,7 @@ import cn.staitech.anno.domain.project.out.*;
 import cn.staitech.anno.domain.projectgroup.ProjectGroup;
 import cn.staitech.anno.domain.vo.InsertProjectVO;
 import cn.staitech.anno.domain.vo.ProjectListVO;
+import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.anno.service.*;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.PageResponse;
@@ -301,12 +302,10 @@ public class ProjectController extends BaseController {
     @GetMapping("/jsonExport")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "projectId", value = "项目id", dataTypeClass = Long.class, paramType = "query", example = "1")})
-    public R<String> jsonExport(
-            @RequestParam("projectId") Long projectId,
-            @RequestParam(name = "status") @ApiParam(name = "status", value = "状态(1:本地导出,2:获取文件路径)") Integer status
+    public R<DownTask> jsonExport(
+            @RequestParam("projectId") Long projectId
     ) throws Exception {
-        projectExtService.jsonExport(projectId);
-        return R.ok("操作成功");
+        return R.ok(markingService.projectJsonExport(projectId));
     }
 
     @ApiOperationSupport(author = "gjt")

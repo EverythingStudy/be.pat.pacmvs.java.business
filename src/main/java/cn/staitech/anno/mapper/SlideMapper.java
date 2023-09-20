@@ -41,6 +41,8 @@ public interface SlideMapper  extends BaseMapper<Slide> {
      * @param params
      * @return
      */
+    SlideFileName slideReviewFileName(Long slideId);
+
     SlideFileName slideFileName(Long slideId);
 
     /**

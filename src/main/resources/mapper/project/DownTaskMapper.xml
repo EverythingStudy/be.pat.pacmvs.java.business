@@ -6,7 +6,7 @@
 
     <resultMap id="BaseResultMap" type="cn.staitech.anno.project.domain.DownTask">
             <id property="downTaskId" column="down_task_id" jdbcType="BIGINT"/>
-            <result property="path" column="path" jdbcType="VARCHAR"/>
+            <result property="path" column="path" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
             <result property="code" column="code" jdbcType="VARCHAR"/>
             <result property="status" column="status" jdbcType="VARCHAR"/>
             <result property="createBy" column="create_by" jdbcType="BIGINT"/>

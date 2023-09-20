@@ -68,8 +68,7 @@ public class LogFileAspect {
         logger.info("IP             : {}", request.getRemoteAddr());
         // 打印请求入参
         Object[] res = filterParams(joinPoint.getArgs());
-        logger.info("Request Args   : {}", (JSONObject.toJSONString(res))
-        );
+        logger.info("Request Args   : {}", (JSONObject.toJSONString(res)));
 
 
     }
