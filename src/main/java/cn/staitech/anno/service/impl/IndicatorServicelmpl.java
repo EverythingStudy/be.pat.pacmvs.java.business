@@ -1,8 +1,8 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.Indicator;
-import cn.staitech.anno.domain.vo.IndicatorGetVO;
-import cn.staitech.anno.domain.vo.IndicatorReviseVO;
+import cn.staitech.anno.domain.vo.indicator.IndicatorGetVO;
+import cn.staitech.anno.domain.vo.indicator.IndicatorReviseVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticIndicatorListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticIndicatorListOutVO;
 import cn.staitech.anno.mapper.IndicatorMapper;
@@ -132,17 +132,6 @@ public class IndicatorServicelmpl implements IndicatorService {
     /**
      * 查询指标列表
      *
-     * @param
-     * @return 结果
-     */
-    @Override
-    public List<Indicator> selectIndicatorInformation() {
-        return indicatorMapper.selectIndicatorInformation();
-    }
-
-    /**
-     * 查询指标列表
-     *
      * @param indicator
      * @return 结果
      */
@@ -178,4 +167,17 @@ public class IndicatorServicelmpl implements IndicatorService {
         return indicatorMapper.selectSpecial(indicatorId);
     }
 
+
+    // 2.0 新修改====================================
+
+    /**
+     * 查询指标列表
+     *
+     * @param
+     * @return 结果
+     */
+    @Override
+    public List<Indicator> selectIndicatorInformation(Indicator indicator) {
+        return indicatorMapper.selectIndicatorInformation(indicator);
+    }
 }

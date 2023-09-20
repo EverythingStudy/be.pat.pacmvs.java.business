@@ -4,7 +4,7 @@ import cn.staitech.anno.constant.R.IndicatorResponseConstant;
 import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
-import cn.staitech.anno.domain.vo.*;
+import cn.staitech.anno.domain.vo.indicator.*;
 import cn.staitech.anno.service.IndicatorService;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
 import cn.staitech.anno.service.ProjectService;
@@ -136,16 +136,6 @@ public class IndicatorController extends BaseController {
         return R.ok(null, ResponseConstant.OPERATE_SUCCEED);
     }
 
-    /**
-     * 关联病理指标列表2.0 .
-     */
-    @ApiOperation(value = "关联病理指标列表", notes = "ZMJ")
-    @GetMapping("/getIndicatorList")
-    public R<List<Indicator>> getIndicatorList() {
-        clearPage();
-        List<Indicator> list = indicatorService.selectIndicatorInformation();
-        return R.ok(list);
-    }
 
     /**
      * 病理指标修改接口 .
@@ -183,5 +173,18 @@ public class IndicatorController extends BaseController {
         return R.ok(1);
     }
 
+    // 2.0 新修改====================================
 
+    /**
+     * 关联病理指标列表2.0 .
+     */
+    @ApiOperation(value = "关联病理指标列表", notes = "wangfeng")
+    @GetMapping("/getIndicatorList")
+    public R<List<Indicator>> getIndicatorList(@Validated @RequestParam Long speciesId) {
+        clearPage();
+        Indicator indicator = new Indicator();
+        indicator.setSpeciesId(speciesId);
+        List<Indicator> list = indicatorService.selectIndicatorInformation(indicator);
+        return R.ok(list);
+    }
 }

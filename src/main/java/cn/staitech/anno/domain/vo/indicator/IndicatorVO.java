@@ -1,4 +1,4 @@
-package cn.staitech.anno.domain.vo;
+package cn.staitech.anno.domain.vo.indicator;
 
 import cn.staitech.anno.domain.Project;
 import io.swagger.annotations.ApiModelProperty;

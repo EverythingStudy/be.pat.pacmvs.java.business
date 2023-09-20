@@ -5,6 +5,7 @@ import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.vo.*;
+import cn.staitech.anno.domain.vo.indicator.IndicatorReviseVO;
 import cn.staitech.anno.service.IndicatorService;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
 import cn.staitech.anno.service.StructureService;

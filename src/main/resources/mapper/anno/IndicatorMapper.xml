@@ -172,10 +172,15 @@
         where indicator_id = #{indicatorId}
     </update>
 
-    <select id="selectIndicatorInformation" resultMap="IndicatorResult">
+    <select id="selectIndicatorInformation" parameterType="cn.staitech.anno.domain.Indicator" resultMap="IndicatorResult">
         select *
         from tb_pathological_indicator
-        where del_flag = 0
+        <where>
+            del_flag = 0
+            <if test="speciesId !=null">
+                and species_id = #{speciesId}
+            </if>
+        </where>
         order by indicator_id desc
     </select>
 
@@ -186,7 +191,7 @@
           and del_flag = 0
     </select>
 
-    <select id="selectIndicatorName" parameterType="cn.staitech.anno.domain.vo.IndicatorGetVO"
+    <select id="selectIndicatorName" parameterType="cn.staitech.anno.domain.vo.indicator.IndicatorGetVO"
             resultMap="IndicatorResult">
         select *
         from tb_pathological_indicator

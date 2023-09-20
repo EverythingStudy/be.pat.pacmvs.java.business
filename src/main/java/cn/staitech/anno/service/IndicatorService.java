@@ -1,14 +1,15 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.Indicator;
-import cn.staitech.anno.domain.vo.*;
+import cn.staitech.anno.domain.vo.indicator.IndicatorGetVO;
+import cn.staitech.anno.domain.vo.indicator.IndicatorReviseVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticIndicatorListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticIndicatorListOutVO;
 
 import java.util.List;
 
 public interface IndicatorService {
-    
+
     /**
      * 添加病例指标
      *
@@ -16,7 +17,7 @@ public interface IndicatorService {
      * @return 结果
      */
     public int insertIndicator(Indicator indicator);
-    
+
     /**
      * 展示病例指标
      *
@@ -24,7 +25,7 @@ public interface IndicatorService {
      * @return 结果
      */
     public List<Indicator> selectIndicatorList(Indicator indicator);
-    
+
     /**
      * 展示病例指标详情
      *
@@ -32,7 +33,7 @@ public interface IndicatorService {
      * @return 结果
      */
     public Indicator selectIndicatorsById(Long indicatorId);
-    
+
     /**
      * 修改
      *
@@ -40,7 +41,7 @@ public interface IndicatorService {
      * @return 结果
      */
     public int updateIndicator(IndicatorReviseVO indicator);
-    
+
     /**
      * 删除
      *
@@ -48,7 +49,7 @@ public interface IndicatorService {
      * @return 结果
      */
     public int delIndicator(Long indicatorId);
-    
+
     /**
      * 展示指定的统计病例指标列表
      *
@@ -56,16 +57,8 @@ public interface IndicatorService {
      * @return 结果
      */
     public List<StatisticIndicatorListOutVO> selectIndicatorStatisticList(StatisticIndicatorListInVO projectIdList);
-    
-    
-    /**
-     * 查询指标列表
-     *
-     * @param
-     * @return 结果
-     */
-    public List<Indicator> selectIndicatorInformation();
-    
+
+
     /**
      * 查询指标列表
      *
@@ -73,7 +66,7 @@ public interface IndicatorService {
      * @return 结果
      */
     public List<Indicator> selectIndicator(Indicator indicator);
-    
+
     /**
      * 根据病理id和名字查询信息
      *
@@ -92,11 +85,21 @@ public interface IndicatorService {
 
     /**
      * 查询所有的病理数量
-     * */
+     */
     public Integer selectIndicatorNum();
 
     /**
      * 查询专题数量
-     * */
+     */
     public Integer selectSpecial(Long indicatorId);
+
+    // 2.0 新修改====================================
+    /**
+     * 查询指标列表
+     *
+     * @param
+     * @return 结果
+     */
+    public List<Indicator> selectIndicatorInformation(Indicator indicator);
+
 }
