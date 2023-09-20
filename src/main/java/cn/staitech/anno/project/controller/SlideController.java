@@ -13,13 +13,11 @@ import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 import java.util.*;
 
 /**
@@ -45,7 +43,7 @@ public class SlideController {
     @Resource
     private OptService optService;
 
-    @ApiOperation(value = "分页查询")
+    @ApiOperation(value = "智能标注-切片分页查询")
     @PostMapping("/page")
     public R<PageMaster<SlideVO>> page(@RequestBody SlideQueryIN in) throws Exception {
         Page page = new Page(in.getPageNum(), in.getPageSize());
@@ -99,7 +97,8 @@ public class SlideController {
         List<Map<String,String>> mapList = new ArrayList<>();
         STATUS.keySet().forEach(k->{
             Map<String,String> map = new HashMap<>();
-            map.put(k,STATUS.get(k));
+            map.put("key",k);
+            map.put("label",STATUS.get(k));
             mapList.add(map);
         });
         return R.ok(mapList);

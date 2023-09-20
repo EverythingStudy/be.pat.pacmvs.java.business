@@ -45,7 +45,7 @@ public class ProjectController {
 
     @ApiOperation(value = "列表查询")
     @PostMapping("/query")
-    public R<List<ProjectVO>> query(ProjectIN in) throws Exception{
+    public R<List<ProjectVO>> query(@RequestBody ProjectIN in) throws Exception{
         handleAuth(in);
         return R.ok(projectService.queryProject(in));
     }

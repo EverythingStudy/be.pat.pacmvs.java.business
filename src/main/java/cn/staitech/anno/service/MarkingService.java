@@ -7,7 +7,10 @@ import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.marking.PointCount;
 import cn.staitech.anno.domain.marking.SlideRes;
 import cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo;
+import cn.staitech.anno.project.domain.DownTask;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 public interface MarkingService {
@@ -84,7 +87,7 @@ public interface MarkingService {
      * @param slideId
      * @return
      */
-    String jsonExport(Long slideId) throws Exception;
+    String slideJsonExport(Long slideId) throws Exception;
 
     /**
      * 导入zip压缩包
@@ -99,4 +102,8 @@ public interface MarkingService {
      * 导出execl
      */
     void execlExport(Long slideId) throws Exception;
+
+    DownTask projectJsonExport(Long projectId) throws Exception;
+
+    void downTaskByCode(String code) throws Exception;
 }

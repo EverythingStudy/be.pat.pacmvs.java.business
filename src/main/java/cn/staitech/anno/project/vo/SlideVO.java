@@ -2,6 +2,7 @@ package cn.staitech.anno.project.vo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +10,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.Date;
 
 /**
  * @author mugw
@@ -83,5 +86,43 @@ public class SlideVO {
 
     @ApiModelProperty("标注类别")
     private String categoryTypes;
+    /**
+     * 备注
+     */
+    @Size(max= 4096,message="编码长度不能超过4096")
+    @ApiModelProperty("备注")
+    @Length(max= 4096,message="编码长度不能超过4096")
+    private String remark;
+    /**
+     * 状态
+     */
+    @NotBlank(message="[状态]不能为空")
+    @Size(max= 1,message="编码长度不能超过1")
+    @ApiModelProperty("状态(0未开始 1标注中 2标注完成 3提交复核(未复核) 4开始复核(复核中) 5复核通过(已复核) 6交付)")
+    @Length(max= 1,message="编码长度不能超过1")
+    private String status;
+
+    /**
+     * 创建者
+     */
+    @ApiModelProperty("创建者")
+    private Long createBy;
+    /**
+     * 创建时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty("创建时间")
+    private Date createTime;
+    /**
+     * 更新者
+     */
+    @ApiModelProperty("更新者")
+    private Long updateBy;
+    /**
+     * 更新时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty("更新时间")
+    private Date updateTime;
 
 }

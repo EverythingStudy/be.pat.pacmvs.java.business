@@ -1,8 +1,8 @@
 package cn.staitech.anno.project.service.impl;
 
-import cn.staitech.anno.project.domain.Annotation;
+import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.project.domain.SlideAttr;
-import cn.staitech.anno.project.mapper.AnnotationMapperV1;
+import cn.staitech.anno.project.mapper.MarkingMapperV1;
 import cn.staitech.anno.project.service.SlideAttrService;
 import cn.staitech.common.security.utils.SecurityUtils;
 
@@ -31,7 +31,7 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
     private static final String CATEGORY = "2";
 
     @Resource
-    private AnnotationMapperV1 annotationMapperV1;
+    private MarkingMapperV1 markingMapperV1;
 
     @Transactional
     @Override
@@ -42,10 +42,10 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
     @Transactional
     @Override
     public Boolean removeAnnoUsers(Long slideId, List<Long> userIds)throws Exception{
-        QueryWrapper<Annotation> queryWrapper = Wrappers.query();
+        QueryWrapper<Marking> queryWrapper = Wrappers.query();
         queryWrapper.eq("slide_id",slideId);
         queryWrapper.in("create_by",userIds);
-        Integer count = annotationMapperV1.selectCount(queryWrapper);
+        Integer count = markingMapperV1.selectCount(queryWrapper);
         if (count==0){
             List<SlideAttr> slideAttrs = queryAttr(slideId,USER,userIds);
             delete(slideAttrs);
@@ -62,10 +62,10 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
     @Transactional
     @Override
     public Boolean removeAnnoCategory(Long slideId, List<Long> categoryIds)throws Exception{
-        QueryWrapper<Annotation> queryWrapper = Wrappers.query();
+        QueryWrapper<Marking> queryWrapper = Wrappers.query();
         queryWrapper.eq("slide_id",slideId);
         queryWrapper.in("category_id",categoryIds);
-        Integer count = annotationMapperV1.selectCount(queryWrapper);
+        Integer count = markingMapperV1.selectCount(queryWrapper);
         if (count==0){
             List<SlideAttr> slideAttrs = queryAttr(slideId,CATEGORY,categoryIds);
             delete(slideAttrs);

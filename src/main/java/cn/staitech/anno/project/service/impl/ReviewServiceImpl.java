@@ -9,21 +9,26 @@ import cn.hutool.core.thread.ExecutorBuilder;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
-import cn.staitech.anno.domain.Slide;
+import cn.staitech.anno.constant.ExportConstant;
 import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.project.constants.Constants;
 import cn.staitech.anno.project.domain.DownTask;
+import cn.staitech.anno.project.domain.Slide;
 import cn.staitech.anno.project.mapper.DownTaskMapper;
+import cn.staitech.anno.project.mapper.SlideMapperV1;
 import cn.staitech.anno.project.vo.ReviewIN;
 import cn.staitech.anno.project.vo.ReviewUP;
 import cn.staitech.anno.project.vo.ReviewVO;
 import cn.staitech.anno.service.FileService;
 import cn.staitech.common.security.utils.SecurityUtils;
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.staitech.anno.project.domain.Review;
 import cn.staitech.anno.project.service.ReviewService;
 import cn.staitech.anno.project.mapper.ReviewMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,7 +60,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
     private ReviewMapper reviewMapper;
 
     @Resource
-    private SlideMapper slideMapper;
+    private SlideMapperV1 slideMapperV1;
 
     @Resource
     private FileService fileService;
@@ -123,7 +128,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
         return task;
     }
 
-    class TaskThread implements Runnable{
+    public class TaskThread implements Runnable{
 
         private DownTask downTask;
         private Long projectId;
@@ -138,11 +143,22 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
         @Override
         public void run() {
             try{
-                String paths = "";
                 String projectName = "";
+                JSONObject jsonObject = new JSONObject();
+                Map<String, String> map = new HashMap<>();
                 Map params = new HashMap();
                 if (projectId!= null){
                     params.put("projectId",projectId);
+                }
+                if (slideIds==null||slideIds.isEmpty()){
+                    QueryWrapper<Slide> queryWrapper = Wrappers.query();
+                    queryWrapper.eq("project_id",projectId);
+                    queryWrapper.select("slide_id");
+                    List<Slide> slideList = slideMapperV1.selectList(queryWrapper);
+                    slideIds = new ArrayList<>();
+                    slideList.forEach(slide -> {
+                        slideIds.add(slide.getSlideId());
+                    });
                 }
                 if (slideIds!= null&&!slideIds.isEmpty()){
                     for (Long slideId:slideIds){
@@ -160,16 +176,18 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
                                     reviewVO.getCreateName(), DateUtil.format(reviewVO.getCreateTime(),"yyyy-MM-dd hh24:mm:ss")};
                             writer.write(body);
                         }
-                        paths += path+";";
+                        map.put(ExportConstant.PATH, path);
+                        jsonObject.put(String.valueOf(slideId), map);
                         writer.flush();
                         writer.close();
                     }
                 }
-
                 downTask.setProjectName(projectName);
-                downTask.setPath(paths);
+                downTask.setProjectId(projectId);
+                downTask.setPath(jsonObject);
                 downTask.setStatus(Constants.DOWN_STATE_FINISH);
-                downTaskMapper.updateById(downTask);
+                int res = downTaskMapper.updateById(downTask);
+                System.out.println(res + "-------------------------->");
             }catch (Exception e){
                 e.printStackTrace();
                 log.error(e.getMessage());
@@ -180,7 +198,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
 
     @Override
     public int insert(ReviewIN req) throws Exception {
-        Slide slideBy = slideMapper.selectById(req.getSlideId());
+        Slide slideBy = slideMapperV1.selectById(req.getSlideId());
         if(slideBy == null){
             throw new Exception("未查询到切片信息");
         }

@@ -1,5 +1,10 @@
 package cn.staitech.anno.service.impl;
 
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.thread.ExecutorBuilder;
+import cn.staitech.anno.constant.ExaminationConstant;
+import cn.staitech.anno.constant.ExportConstant;
 import cn.staitech.anno.constant.R.MeasureResponseConstant;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.Slide;
@@ -10,12 +15,20 @@ import cn.staitech.anno.domain.geojson.in.viewAddIn;
 import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.marking.PointCount;
 import cn.staitech.anno.domain.marking.SlideRes;
+import cn.staitech.anno.domain.project.ProjectExt;
 import cn.staitech.anno.domain.vo.BroadcastVO;
 import cn.staitech.anno.domain.vo.file.SlideFileName;
 import cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo;
 import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.netty.websocket.NioWebSocketHandler;
+import cn.staitech.anno.project.constants.Constants;
+import cn.staitech.anno.project.domain.DownTask;
+import cn.staitech.anno.project.domain.Project;
+import cn.staitech.anno.project.mapper.DownTaskMapper;
+import cn.staitech.anno.project.mapper.ProjectMapperV1;
+import cn.staitech.anno.project.service.DownTaskService;
 import cn.staitech.anno.project.service.SlideAttrService;
+import cn.staitech.anno.project.service.impl.ReviewServiceImpl;
 import cn.staitech.anno.service.FileService;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.utils.*;
@@ -27,17 +40,21 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.SneakyThrows;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 import java.io.*;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -73,6 +90,16 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Resource
     private SysUserMapper userMapper;
+
+    @Resource
+    private ProjectMapperV1 projectMapperV1;
+
+    @Resource
+    private DownTaskMapper downTaskMapper;
+
+    @Resource
+    private DownTaskService downTaskService;
+
 
 
     @Override
@@ -279,7 +306,7 @@ public class MarkingServiceImpl implements MarkingService {
     }
 
     @Override
-    public String jsonExport(Long slideId) throws Exception {
+    public String slideJsonExport(Long slideId) throws Exception {
 //        CompletableFuture<R<String>> cf2 = CompletableFuture.supplyAsync(() -> {
         if (!Optional.ofNullable(slideId).isPresent()) {
             try {
@@ -305,7 +332,13 @@ public class MarkingServiceImpl implements MarkingService {
         // 标注数据
         List<Features> features = markingMapper.selectLists(slideId);
         // 查询项目详情
-        JsonExport jsonExport = markingMapper.jsonExportSelect(slideId);
+        JsonExport jsonExport = null;
+        Project projectBy = projectMapperV1.selectById(slideBy.getProjectId());
+        if(Objects.equals(projectBy.getProjectType(), "2")){
+            jsonExport = markingMapper.reviewJsonExportSelect(slideId);
+        }else{
+            jsonExport = markingMapper.jsonExportSelect(slideId);
+        }
         // 项目信息
         GeoProject project = new GeoProject();
         project.setProject_id(jsonExport.getTopicName());
@@ -437,10 +470,6 @@ public class MarkingServiceImpl implements MarkingService {
                 MeasureResponseConstant.COLHEAD_VALUE);
         // 查询当前切片不为点类型的标注数据
         List<Properties> propertiesList = markingMapper.selectMeasureList(slideId);
-
-        System.out.println(propertiesList);
-
-        System.out.println();
         // 加点的记录
         QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
         markingQueryWrapper.eq("slide_id", slideId).eq("location_type", "Point");
@@ -455,6 +484,108 @@ public class MarkingServiceImpl implements MarkingService {
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("utf-8");
         excelTool.exportExcel(titleData, propertiesList, response.getOutputStream(), true, false);
+    }
+
+
+
+    private static ExecutorService executor = ExecutorBuilder.create()//
+            .setCorePoolSize(1)//
+            .setMaxPoolSize(1)//
+            .setKeepAliveTime(0)//
+            .build();
+
+    @Override
+    public DownTask projectJsonExport(Long projectId) throws Exception {
+
+        Project projectBy = projectMapperV1.selectById(projectId);
+        if (projectBy == null) {
+            throw new Exception("未发现项目信息");
+        }
+        Snowflake snowflake = new Snowflake();
+        Long userId = SecurityUtils.getUserId();
+        DownTask task = DownTask.builder().code(snowflake.nextIdStr()).status(Constants.DOWN_STATE_RUNNING).createTime(new Date()).updateTime(new Date()).updateBy(userId).createBy(userId).build();
+        downTaskMapper.insert(task);
+        // 执行任务
+        // 查询所有的切片
+        executor.submit(new TaskThread(task,projectId,projectBy.getProjectName()));
+        return task;
+
+    }
+
+
+
+    class TaskThread implements Runnable{
+
+        private final DownTask downTask;
+        private final Long projectId;
+        private final String projectName;
+
+        public TaskThread(DownTask downTask, Long projectId,String projectName) {
+            this.downTask = downTask;
+            this.projectId = projectId;
+            this.projectName = projectName;
+        }
+
+        @Override
+        public void run() {
+            try {
+                Map<String, String> map = new HashMap<>();
+                JSONObject jsonObject = new JSONObject();
+                List<Slide> slideList = slideMapper.getProjectInformation(projectId);
+                if (slideList.size() > 0) {
+                    for (Slide slide : slideList) {
+                        QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
+                        markingQueryWrapper.eq("slide_id", slide.getSlideId());
+                        Integer markingCount = markingMapper.selectCount(markingQueryWrapper);
+                        if (markingCount > 0) {
+                            // 将文件生成在本地
+                            String fileUrl = null;
+                            try {
+                                fileUrl = slideJsonExport(slide.getSlideId());
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                            Image image = imageMapper.selectById(slide.getImageId());
+                            map.put(ExportConstant.PATH, fileUrl);
+                            map.put(ExportConstant.IMAGE_URL, image.getImageUrl());
+                            jsonObject.put(String.valueOf(slide.getSlideId()), map);
+                        }
+                    }
+                }
+                downTask.setProjectName(projectName);
+                downTask.setPath(jsonObject);
+                downTask.setProjectId(projectId);
+                downTask.setStatus(Constants.DOWN_STATE_FINISH);
+                downTaskMapper.updateById(downTask);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void downTaskByCode(String code) throws Exception {
+        DownTask downTask = downTaskService.getOne(Wrappers.query(DownTask.builder().code(code).build()));
+        // 构造表头的每个列头 定义表头
+        List<Map<String, String>> titleList = getTitleList(ExportConstant.COLHEAD_KEY, ExportConstant.COLHEAD_VALUE);
+        JSONObject objectPaths = downTask.getPath();
+        // 获取项目id,
+        QueryWrapper<Slide> slideQueryWrapper = new QueryWrapper<>();
+        slideQueryWrapper.eq("project_id", downTask.getProjectId());
+        List<Slide> slideList = slideMapper.selectList(slideQueryWrapper);
+        List<Map<String,String>> res = new ArrayList<>();
+        for(Slide slide:slideList){
+            Map<String,String> pathMap = (Map<String, String>) objectPaths.get(slide.getSlideId().toString());
+            if(pathMap  != null){
+                res.add(pathMap);
+            }
+        }
+        ExcelTool excelTool = new ExcelTool(ExportConstant.EXCEL_TITLE, 20, 20);
+        List<Column> titleData = excelTool.columnTransformer(titleList);
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setCharacterEncoding("utf-8");
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(downTask.getProjectName(), "UTF-8") + ExportConstant.XLSX);
+        excelTool.exportExcel(titleData, res, response.getOutputStream(), true, false);
     }
 
     /**
@@ -494,8 +625,8 @@ public class MarkingServiceImpl implements MarkingService {
         return pointCountList;
     }
 
-    @SneakyThrows
-    @Async
+//    @SneakyThrows
+//    @Async
     public void exportJson(String fileUrl,String jsonString) {
         try {
             OutputStream outputStream = Files.newOutputStream(Paths.get(fileUrl));

@@ -167,6 +167,27 @@
     </select>
 
 
+    <select id="slideReviewFileName" parameterType="java.lang.Long" resultMap="SlideFileNameResultMap">
+        SELECT
+            t.topic_name,
+            i.image_name,
+            CONCAT( p.project_type, r.round_id ) AS slide_type,
+            group_concat( cate.number SEPARATOR "-" ) AS category_number
+        FROM
+            tb_slide AS s
+                LEFT JOIN tb_project AS p ON p.project_id = s.project_id
+                LEFT JOIN tb_review_round AS re on re.review_round_id = s.review_round_id
+                LEFT JOIN tb_topic AS t ON t.topic_id = re.topic_id
+                LEFT JOIN tb_image AS i ON i.image_id = s.image_id
+                LEFT JOIN tb_pathological_indicator AS path ON path.indicator_id = p.indicator_id
+                LEFT JOIN tb_pathological_indicator_category AS cate ON cate.indicator_id = path.indicator_id
+                LEFT JOIN tb_round AS r ON r.round_id = s.round_id
+        WHERE
+            s.slide_id = #{slideId,jdbcType=BIGINT}
+        GROUP BY
+            t.topic_name
+    </select>
+
     <select id="slideFileName" parameterType="java.lang.Long" resultMap="SlideFileNameResultMap">
         SELECT
             t.topic_name,
@@ -176,13 +197,15 @@
         FROM
             tb_slide AS s
                 LEFT JOIN tb_project AS p ON p.project_id = s.project_id
-                LEFT JOIN tb_topic AS t ON t.topic_id = p.topic_id
+                LEFT JOIN tb_topic AS t ON t.topic_id = s.topic_id
                 LEFT JOIN tb_image AS i ON i.image_id = s.image_id
                 LEFT JOIN tb_pathological_indicator AS path ON path.indicator_id = p.indicator_id
                 LEFT JOIN tb_pathological_indicator_category AS cate ON cate.indicator_id = path.indicator_id
                 LEFT JOIN tb_round AS r ON r.round_id = s.round_id
-                where slide_id = #{slideId,jdbcType=BIGINT}
-                group by t.topic_name
+        WHERE
+            s.slide_id = #{slideId,jdbcType=BIGINT}
+        GROUP BY
+            t.topic_name
     </select>
 
     <delete id="deleteProjectImage" parameterType="java.lang.Long">

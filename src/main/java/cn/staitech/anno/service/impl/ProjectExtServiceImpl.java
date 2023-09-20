@@ -1,6 +1,11 @@
 package cn.staitech.anno.service.impl;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.text.csv.CsvUtil;
+import cn.hutool.core.text.csv.CsvWriter;
+import cn.hutool.core.thread.ExecutorBuilder;
+import cn.hutool.core.util.CharsetUtil;
 import cn.staitech.anno.constant.ExaminationConstant;
 import cn.staitech.anno.constant.ProjectConstant;
 import cn.staitech.anno.constant.R.MeasureResponseConstant;
@@ -24,6 +29,8 @@ import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.project.constants.Constants;
 import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.anno.project.mapper.DownTaskMapper;
+import cn.staitech.anno.project.service.impl.ReviewServiceImpl;
+import cn.staitech.anno.project.vo.ReviewVO;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.ProjectExtService;
 import cn.staitech.common.core.domain.PageResponse;
@@ -48,9 +55,11 @@ import org.springframework.util.StopWatch;
 
 import javax.annotation.Resource;
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 import static cn.staitech.anno.aspect.LogFileAspect.response;
@@ -611,50 +620,14 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
 
     }
 
-    @Override
-    public void jsonExport(Long projectId) throws Exception {
-        StringBuilder res = new StringBuilder();
-        ProjectExt projectExt = projectExtMapper.selectById(projectId);
-        if (projectExt == null) {
-            throw new Exception("未发现项目信息");
-        }
-        Snowflake snowflake = new Snowflake();
-        Long userId = SecurityUtils.getUserId();
-        DownTask task = DownTask.builder().code(snowflake.nextIdStr()).status(Constants.DOWN_STATE_RUNNING).createTime(new Date()).updateTime(new Date()).updateBy(userId).createBy(userId).build();
-        downTaskMapper.insert(task);
-        // 执行任务
-        // 查询所有的切片
-        List<Slide> slideBy = slideMapper.getProjectInformation(projectId);
-        if (slideBy.size() > 0) {
-            for (Slide slide : slideBy) {
-                QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
-                markingQueryWrapper.eq("slide_id", slide.getSlideId());
-                Integer markingCount = markingMapper.selectCount(markingQueryWrapper);
-                if (markingCount > 0) {
-                    // 将文件生成在本地
-                    String fileUrl = markingService.jsonExport(slide.getSlideId());
-                    res.append(fileUrl).append("\r\n");
-                }
-            }
-        }
 
 
-            try {
-                // 清空response
-                response.reset();
-                OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
-                response.setCharacterEncoding(ExaminationConstant.CHARACTER_ENCODING);
-                response.setContentType(ExaminationConstant.CONTENT_TYPE);
-                response.setHeader(ExaminationConstant.HEADER, "attachment;filename=" + URLEncoder.encode(projectExt.getProjectName(), "utf-8") + MeasureResponseConstant.FILE_SUFFIX_TXT);
-                outputStream.write(res.toString().getBytes());
-                // 关闭流
-                outputStream.close();
-            } catch (Exception e) {
-                log.error(MeasureResponseConstant.DOWNLOAD_ERROR, e);
-            }
+    private static ExecutorService executor = ExecutorBuilder.create()//
+            .setCorePoolSize(1)//
+            .setMaxPoolSize(1)//
+            .setKeepAliveTime(0)//
+            .build();
 
-
-    }
 
 
     @Override

@@ -1,6 +1,9 @@
 package cn.staitech.anno.project.controller;
 
 import cn.hutool.core.io.IoUtil;
+import cn.staitech.anno.constant.ExportConstant;
+import cn.staitech.anno.domain.Slide;
+import cn.staitech.anno.mapper.SlideMapper;
 import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.anno.project.domain.Review;
 import cn.staitech.anno.project.service.DownTaskService;
@@ -9,6 +12,7 @@ import cn.staitech.anno.project.vo.DownTaskIN;
 import cn.staitech.anno.project.vo.ReviewIN;
 import cn.staitech.anno.project.vo.ReviewUP;
 import cn.staitech.common.core.domain.R;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author mugw
@@ -42,6 +47,8 @@ public class ReviewController {
     private ReviewService reviewService;
     @Resource
     private DownTaskService downTaskService;
+    @Resource
+    private SlideMapper slideMapper;
 
     @ApiOperation(value = "viewer新增评审")
     @PostMapping("/insertReview")
@@ -84,10 +91,16 @@ public class ReviewController {
         httpServletResponse.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(downTask.getProjectName(), "utf-8") +".txt");
         ServletOutputStream out = null;
         out = httpServletResponse.getOutputStream();
-        String paths = downTask.getPath();
-        String[] ps = paths.split(";");
-        for (String p:ps){
-            out.write((p+"\n").getBytes());
+        // 查询切片列表
+        QueryWrapper<Slide> slideQueryWrapper = new QueryWrapper<>();
+        slideQueryWrapper.eq("project_id", downTask.getProjectId());
+        List<Slide> slideList = slideMapper.selectList(slideQueryWrapper);
+        for(Slide slide:slideList){
+            Map<String,String> pathMap = (Map<String, String>) downTask.getPath().get(slide.getSlideId().toString());
+            if(pathMap  != null){
+                String p = pathMap.get(ExportConstant.PATH);
+                out.write((p+"\n").getBytes());
+            }
         }
         IoUtil.close(out);
     }

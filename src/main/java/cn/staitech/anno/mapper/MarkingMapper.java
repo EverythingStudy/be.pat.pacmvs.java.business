@@ -37,6 +37,8 @@ public interface MarkingMapper  extends BaseMapper<Marking> {
 
     JsonExport jsonExportSelect(Long slide);
 
+    JsonExport reviewJsonExportSelect(Long slideId);
+
     /**
      * 根据专题查看当前专题下所有的切片
      * @param specialId 标注信息

@@ -129,6 +129,6 @@ public interface ProjectExtService extends IService<Project> {
      */
     void changeSpecial(Long specialId);
 
-    void jsonExport(Long projectId) throws Exception;
+
 
 }

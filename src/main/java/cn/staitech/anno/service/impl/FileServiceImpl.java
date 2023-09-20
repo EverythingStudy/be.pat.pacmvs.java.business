@@ -1,8 +1,12 @@
 package cn.staitech.anno.service.impl;
 
+import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.file.Chunk;
 import cn.staitech.anno.domain.vo.file.SlideFileName;
+import cn.staitech.anno.mapper.ProjectMapper;
 import cn.staitech.anno.mapper.SlideMapper;
+import cn.staitech.anno.project.domain.Project;
+import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.service.FileService;
 import cn.staitech.anno.utils.FileUtils;
 import org.springframework.stereotype.Service;
@@ -11,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.*;
 import java.nio.file.Files;
+import java.util.Objects;
 
 @Service
 public class FileServiceImpl implements FileService {
@@ -27,9 +32,22 @@ public class FileServiceImpl implements FileService {
     @Resource
     private SlideMapper slideMapper;
 
+    @Resource
+    private ProjectMapperV1 projectMapperV1;
+
     @Override
     public String createFiles(Long slideId,String suffix) throws Exception {
-        SlideFileName slideFileName = slideMapper.slideFileName(slideId);
+        // 查询项目表中信息，判断项目是什么类型
+        Slide slide = slideMapper.selectById(slideId);
+        SlideFileName slideFileName = null;
+        Project project = projectMapperV1.selectById(slide.getProjectId());
+        // 评审
+        if (Objects.equals(project.getProjectType(), "2")) {
+            slideFileName = slideMapper.slideReviewFileName(slideId);
+        }else{
+            // 非评审
+            slideFileName = slideMapper.slideFileName(slideId);
+        }
         slideFileVerify(slideFileName);
         // 生成二级目录 (以专题名称命名)
         String twoFolderName = fileUrl + File.separator + slideFileName.getTopicName();

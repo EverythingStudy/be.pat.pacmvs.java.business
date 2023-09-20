@@ -36,7 +36,7 @@ public class OptController {
     @Resource
     private OptService optService;
 
-    @ApiOperation(value = "分页查询")
+    @ApiOperation(value = "切片操作记录-分页查询")
     @GetMapping("/page")
     public R<PageMaster<Opt>> page(@NotNull(message = "分页参数为空！") @RequestParam("pageNum") @ApiParam(name = "pageNum", value = "分页参数", required = true) Integer pageNum,
                                    @NotNull(message = "分页参数为空！") @RequestParam("pageSize") @ApiParam(name = "pageSize", value = "分页参数", required = true) Integer pageSize,

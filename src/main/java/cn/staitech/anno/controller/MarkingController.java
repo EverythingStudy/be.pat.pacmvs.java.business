@@ -1,16 +1,21 @@
 package cn.staitech.anno.controller;
 
 
+import cn.hutool.core.io.IoUtil;
 import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.geojson.Features;
 import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
 import cn.staitech.anno.domain.geojson.in.viewAddIn;
 import cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo;
+import cn.staitech.anno.project.domain.DownTask;
+import cn.staitech.anno.project.service.DownTaskService;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.common.core.domain.R;
 
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
@@ -19,7 +24,10 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +43,9 @@ public class MarkingController {
 
     @Resource
     private MarkingService markingService;
+
+    @Resource
+    private DownTaskService downTaskService;
 
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "获取标注列表")
@@ -102,7 +113,7 @@ public class MarkingController {
     public R<String> getWebsocketPort(
             @RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId
     ) throws Exception {
-        return R.ok(markingService.jsonExport(slideId));
+        return R.ok(markingService.slideJsonExport(slideId));
     }
 
     @Log(title = "标注测量excel导出", businessType = BusinessType.EXPORT)
@@ -111,6 +122,13 @@ public class MarkingController {
     public void export(
             @RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) throws Exception {
         markingService.execlExport(slideId);
+    }
+
+    @ApiOperation(value = "下载目录文件")
+    @GetMapping("/downTaskByCode")
+    public void downTaskByCode(@RequestParam("code") @ApiParam(name = "code", value = "下载任务编码", required = true) String code)throws Exception{
+
+        markingService.downTaskByCode(code);
     }
 
 }

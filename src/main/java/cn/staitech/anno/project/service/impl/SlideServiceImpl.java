@@ -3,12 +3,8 @@ package cn.staitech.anno.project.service.impl;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
-import cn.staitech.anno.project.domain.Annotation;
-import cn.staitech.anno.project.domain.PathologicalIndicatorCategory;
-import cn.staitech.anno.project.domain.SysUser;
-import cn.staitech.anno.project.mapper.AnnotationMapperV1;
-import cn.staitech.anno.project.mapper.PathologicalIndicatorCategoryMapperV1;
-import cn.staitech.anno.project.mapper.SysUserMapperV1;
+import cn.staitech.anno.project.domain.*;
+import cn.staitech.anno.project.mapper.*;
 import cn.staitech.anno.project.vo.SlideAnnoStatisticsVO;
 import cn.staitech.anno.project.vo.SlideExportVO;
 import cn.staitech.anno.project.vo.SlideQueryIN;
@@ -18,8 +14,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import cn.staitech.anno.project.domain.Slide;
-import cn.staitech.anno.project.mapper.SlideMapperV1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import cn.staitech.anno.project.service.SlideService;
@@ -45,15 +39,18 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         implements SlideService {
 
     @Resource
-    private AnnotationMapperV1 annotationMapperV1;
-    @Resource
     private PathologicalIndicatorCategoryMapperV1 pathologicalIndicatorCategoryMapperV1;
     @Resource
     private SysUserMapperV1 sysUserMapperV1;
 
-
     @Autowired
     private HttpServletResponse httpServletResponse;
+
+    @Resource
+    private MarkingMapperV1 markingMapperV1;
+
+    @Resource
+    private ReviewMapper reviewMapper;
 
     private static final String col1 = "图像id";
     private static final String col2 = "图像名称";
@@ -61,6 +58,17 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
     private static final String col4 = "图像描述";
     private static final String col5 = "图像标注总数";
     private static final String col6 = "无属性数量";
+
+    public void reviewHandle(List<Long> slideIds){
+        QueryWrapper<Review> queryWrapper = Wrappers.query();
+        queryWrapper.in("slide_id",slideIds);
+        queryWrapper.select("slide_id", "group_concat(score separator '-') as score").groupBy("slide_id");
+        List<Map<String, Object>> reviewList = reviewMapper.selectMaps(queryWrapper);
+        Map<Long,String> resp = new HashMap<>();
+        reviewList.forEach(r->{
+            resp.put(Long.parseLong(r.get("slide_id").toString()),r.get("score").toString());
+        });
+    }
 
     @Override
     public PageMaster<SlideVO> pageSlides(Page page, SlideQueryIN params) throws Exception {
@@ -73,7 +81,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
                 slideIds.add(slideVO.getSlideId());
                 map.put(slideVO.getSlideId(), slideVO);
             });
-            List<Annotation> annotationList = queryAnnotation(slideIds, params);
+            List<Marking> annotationList = queryAnnotation(slideIds, params);
             handleAnnoList(annotationList, map);
         }
         PageMaster<SlideVO> pageMaster = PageMaster.of(list);
@@ -91,28 +99,24 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
     @Override
     public List<SlideAnnoStatisticsVO> getSlideAnnoStatistics(SlideQueryIN params) throws Exception {
         List<SlideAnnoStatisticsVO> voList = new ArrayList<>();
-        QueryWrapper<Annotation> queryWrapper = Wrappers.query();
-        queryWrapper.eq("annotation_type", 1);
+        QueryWrapper<Marking> queryWrapper = Wrappers.query();
+        queryWrapper.eq("annotation_type", "Draw");
         queryWrapper.eq("project_id", params.getProjectId());
-        queryWrapper.select("slide_id", "category_id", "create_by", "examination_flag");
-        List<Annotation> annotationList = annotationMapperV1.selectList(queryWrapper);
+        queryWrapper.select("slide_id", "category_id", "create_by");
+        List<Marking> annotationList = markingMapperV1.selectList(queryWrapper);
         if (annotationList != null && !annotationList.isEmpty()) {
             voList.add(SlideAnnoStatisticsVO.builder().statisticsType("人工标注").result(annotationList.size()).build());
-            Map<Integer, List<Annotation>> examination = annotationList.stream().collect(Collectors.groupingBy(Annotation::getExaminationFlag));
-            List<Annotation> annoExam = examination.get(1);
-            if (annoExam != null) {
-                voList.add(SlideAnnoStatisticsVO.builder().statisticsType("人工标注").result(annoExam.size()).build());
-            }
+            voList.add(SlideAnnoStatisticsVO.builder().statisticsType("已审核标注").result(annotationList.size()).build());
             List<PathologicalIndicatorCategory> pathologicalIndicatorCategoryList = pathologicalIndicatorCategoryMapperV1.selectList(Wrappers.query());
             Map<Long, String> categoryMap = new HashMap<>();
             for (PathologicalIndicatorCategory c : pathologicalIndicatorCategoryList) {
                 categoryMap.put(c.getCategoryId(), c.getCategoryName());
             }
             //按类别分组
-            Map<Long, List<Annotation>> categorys = annotationList.stream().collect(Collectors.groupingBy(Annotation::getCategoryId));
+            Map<Long, List<Marking>> categorys = annotationList.stream().collect(Collectors.groupingBy(Marking::getCategoryId));
             if (categorys != null && !categorys.isEmpty()) {
                 for (Long key : categorys.keySet()) {
-                    List<Annotation> subs = categorys.get(key);
+                    List<Marking> subs = categorys.get(key);
                     if (subs != null && !subs.isEmpty()) {
                         SlideAnnoStatisticsVO vo = null;
                         if (key == 0) {
@@ -146,7 +150,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
                 slideIds.add(slideVO.getSlideId());
                 map.put(slideVO.getSlideId(), slideVO);
             });
-            List<Annotation> annotationList = queryAnnotation(slideIds, params);
+            List<Marking> annotationList = queryAnnotation(slideIds, params);
             List<String>  columns = handleAnnoStatisticsExport(annotationList,map,catesMapList);
             //通过hutool工具创建的excel的writer，默认为xls格式
             ExcelWriter writer = ExcelUtil.getWriter();
@@ -160,10 +164,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
             String excelName = "切片数据";
             excelName = URLEncoder.encode(excelName, "utf-8");
             httpServletResponse.setHeader("Content-Disposition", "attachment;filename=" + excelName +".xls");
-            //设置返回excel的格式为xlsx
-            //httpServletResponse.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
-            //httpServletResponse.setHeader("Content-Disposition","attachment;filename="+ URLEncoder.encode("用户信息表","utf-8") + ".xlsx");
-
             ServletOutputStream excelOut = null;
             //将excel文件信息写入输出流，返回给调用者
             try {
@@ -178,7 +178,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         }
     }
 
-    private List<String> handleAnnoStatisticsExport(List<Annotation> annotationList, Map<Long, SlideExportVO> slideExportVOMap,List<Map<String,String>> catesMapList) throws Exception {
+    private List<String> handleAnnoStatisticsExport(List<Marking> annotationList, Map<Long, SlideExportVO> slideExportVOMap,List<Map<String,String>> catesMapList) throws Exception {
         List<String> columns = new ArrayList<>();
         columns.add(col1);
         columns.add(col2);
@@ -193,16 +193,16 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
             for (PathologicalIndicatorCategory c : pathologicalIndicatorCategoryList) {
                 categoryMap.put(c.getCategoryId(), c.getCategoryName());
             }
-            Map<Long, List<Annotation>> map = annotationList.stream().collect(Collectors.groupingBy(Annotation::getSlideId));
+            Map<Long, List<Marking>> map = annotationList.stream().collect(Collectors.groupingBy(Marking::getSlideId));
             for (Long key : map.keySet()) {
                 SlideExportVO vo = slideExportVOMap.get(key);
                 Map<String,String> catesMap = new HashMap<>();
-                List<Annotation> subs = map.get(key);
+                List<Marking> subs = map.get(key);
                 if (subs != null && !subs.isEmpty()) {
-                    Map<Long, List<Annotation>> categorys = subs.stream().collect(Collectors.groupingBy(Annotation::getCategoryId));
+                    Map<Long, List<Marking>> categorys = subs.stream().collect(Collectors.groupingBy(Marking::getCategoryId));
                     if (categorys != null && !categorys.isEmpty()) {
                         for (Long k : categorys.keySet()) {
-                            List<Annotation> annoCateList = categorys.get(k);
+                            List<Marking> annoCateList = categorys.get(k);
                             if (annoCateList != null && !annoCateList.isEmpty()) {
                                 if (k==0){
                                     catesMap.put(col6,String.valueOf(annoCateList.size()));
@@ -232,9 +232,9 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
     }
 
 
-    private List<Annotation> queryAnnotation(List<Long> slideIds, SlideQueryIN params) throws Exception {
-        QueryWrapper<Annotation> queryWrapper = Wrappers.query();
-        queryWrapper.eq("annotation_type", 1);
+    private List<Marking> queryAnnotation(List<Long> slideIds, SlideQueryIN params) throws Exception {
+        QueryWrapper<Marking> queryWrapper = Wrappers.query();
+        queryWrapper.eq("annotation_type", "Draw");
         queryWrapper.eq("project_id", params.getProjectId());
         if (slideIds != null) {
             queryWrapper.in("slide_id", slideIds);
@@ -246,10 +246,10 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
             queryWrapper.eq("create_by", params.getAnnoUser());
         }
         queryWrapper.select("slide_id", "category_id", "create_by");
-        return annotationMapperV1.selectList(queryWrapper);
+        return markingMapperV1.selectList(queryWrapper);
     }
 
-    private void handleAnnoList(List<Annotation> annotationList, Map<Long, SlideVO> slideVOMap) throws Exception {
+    private void handleAnnoList(List<Marking> annotationList, Map<Long, SlideVO> slideVOMap) throws Exception {
         if (annotationList != null && !annotationList.isEmpty()) {
             List<PathologicalIndicatorCategory> pathologicalIndicatorCategoryList = pathologicalIndicatorCategoryMapperV1.selectList(Wrappers.query());
             Map<Long, String> categoryMap = new HashMap<>();
@@ -261,14 +261,14 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
             for (SysUser u : userList) {
                 userMap.put(u.getUserId(), u.getUserName());
             }
-            Map<Long, List<Annotation>> map = annotationList.stream().collect(Collectors.groupingBy(Annotation::getSlideId));
+            Map<Long, List<Marking>> map = annotationList.stream().collect(Collectors.groupingBy(Marking::getSlideId));
             for (Long key : map.keySet()) {
                 SlideVO vo = slideVOMap.get(key);
-                List<Annotation> subs = map.get(key);
+                List<Marking> subs = map.get(key);
                 if (subs != null && !subs.isEmpty()) {
-                    Map<Long, List<Annotation>> categorys = subs.stream().collect(Collectors.groupingBy(Annotation::getCategoryId));
+                    Map<Long, List<Marking>> categorys = subs.stream().collect(Collectors.groupingBy(Marking::getCategoryId));
                     vo.setCategoryTypes(handleCategorys(categorys, categoryMap));
-                    Map<Long, List<Annotation>> users = subs.stream().collect(Collectors.groupingBy(Annotation::getCreateBy));
+                    Map<Long, List<Marking>> users = subs.stream().collect(Collectors.groupingBy(Marking::getCreateBy));
                     vo.setManualAnnoDetails(handleUsers(users, userMap));
                 }
                 vo.setManualAnnoCount(subs.size());
@@ -277,12 +277,12 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         }
     }
 
-    private String handleCategorys(Map<Long, List<Annotation>> categorys, Map<Long, String> categoryMap) throws Exception {
+    private String handleCategorys(Map<Long, List<Marking>> categorys, Map<Long, String> categoryMap) throws Exception {
         String resp = "";
         if (categorys != null && !categorys.isEmpty()) {
             int i = 0;
             for (Long key : categorys.keySet()) {
-                List<Annotation> subs = categorys.get(key);
+                List<Marking> subs = categorys.get(key);
                 if (subs != null && !subs.isEmpty()) {
                     if (i == 0) {
                         resp += (categoryMap.get(key) + "(" + subs.size() + ")");
@@ -296,12 +296,12 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         return resp;
     }
 
-    private String handleUsers(Map<Long, List<Annotation>> users, Map<Long, String> userMap) throws Exception {
+    private String handleUsers(Map<Long, List<Marking>> users, Map<Long, String> userMap) throws Exception {
         String resp = "";
         if (users != null && !users.isEmpty()) {
             int i = 0;
             for (Long key : users.keySet()) {
-                List<Annotation> subs = users.get(key);
+                List<Marking> subs = users.get(key);
                 if (subs != null && !subs.isEmpty()) {
                     if (i == 0) {
                         resp += (userMap.get(key) + "(" + subs.size() + ")");
