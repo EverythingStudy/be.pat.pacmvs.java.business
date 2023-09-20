@@ -128,7 +128,6 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
         return task;
     }
 
-    @Slf4j
     public class TaskThread implements Runnable{
 
         private DownTask downTask;
@@ -188,7 +187,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
                 downTask.setPath(jsonObject);
                 downTask.setStatus(Constants.DOWN_STATE_FINISH);
                 int res = downTaskMapper.updateById(downTask);
-                log.info(res + "-------------------------->");
+                System.out.println(res + "-------------------------->");
             }catch (Exception e){
                 e.printStackTrace();
                 log.error(e.getMessage());
