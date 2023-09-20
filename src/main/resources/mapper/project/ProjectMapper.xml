@@ -50,6 +50,9 @@
             <if test="params.projectType!= null">
                 AND p.project_type = #{params.projectType}
             </if>
+            <if test="params.projectType == null">
+                AND p.project_type in ('1','3')
+            </if>
             <if test="params.createBy!= null">
                 AND p.create_by = #{params.createBy}
             </if>
@@ -59,11 +62,11 @@
             <if test="params.colorType!= null">
                 AND p.color_type = #{params.colorType}
             </if>
-            <if test="params.strat != null">
-                and date_format(m.create_time,'%y%m%d') &gt;= date_format(#{params.start},'%y%m%d')
+            <if test="params.createTimeParams != null and params.createTimeParams.beginTime != null">
+                and date_format(m.create_time,'%y%m%d') &gt;= date_format(#{params.createTimeParams.beginTime},'%y%m%d')
             </if>
-            <if test="params.end != null">
-                and date_format(m.create_time,'%y%m%d') &lt;= date_format(#{params.end},'%y%m%d')
+            <if test="params.createTimeParams != null and params.createTimeParams.endTime != null">
+                and date_format(m.create_time,'%y%m%d') &lt;= date_format(#{params.createTimeParams.endTime},'%y%m%d')
             </if>
         </where>
     </select>
@@ -94,6 +97,9 @@
             <if test="params.projectType!= null">
                 AND p.project_type = #{params.projectType}
             </if>
+            <if test="params.projectType == null">
+                AND p.project_type in ('1','3')
+            </if>
             <if test="params.createBy!= null">
                 AND p.create_by = #{params.createBy}
             </if>
@@ -103,11 +109,11 @@
             <if test="params.colorType!= null">
                 AND p.color_type = #{params.colorType}
             </if>
-            <if test="params.createTimeParams != null">
+            <if test="params.createTimeParams != null and params.createTimeParams.beginTime != null">
                 and date_format(m.create_time,'%y%m%d') &gt;= date_format(#{params.createTimeParams.beginTime},'%y%m%d')
             </if>
-            <if test="params.createTimeParams != null">
-                and date_format(m.create_time,'%y%m%d') &lt;= date_format(#{params..createTimeParams.endTime},'%y%m%d')
+            <if test="params.createTimeParams != null and params.createTimeParams.endTime != null">
+                and date_format(m.create_time,'%y%m%d') &lt;= date_format(#{params.createTimeParams.endTime},'%y%m%d')
             </if>
         </where>
     </select>
