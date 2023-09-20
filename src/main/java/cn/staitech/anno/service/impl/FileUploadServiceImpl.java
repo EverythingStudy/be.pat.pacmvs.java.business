@@ -38,7 +38,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     @Resource
     private FilesProcessService filesProcessService;
-    private String basePath = "d://testdir/";
+    private String basePath = "/home/pat_saas";
 
     /**
      * @param file 上传的文件MultipartFile
@@ -72,9 +72,19 @@ public class FileUploadServiceImpl implements FileUploadService {
     public Files uploadAndProcessBusiness(FileUploadVO fileUploadVO) throws IOException {
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 
+        Integer businessType = fileUploadVO.getBusinessType();
+
         String dirPath = basePath;
 
-        Integer businessType = fileUploadVO.getBusinessType();
+        switch (businessType){
+            case 3:
+                dirPath = dirPath +"\\Data";
+                break;
+        }
+
+
+
+
         String fileName = fileUploadVO.getFileName();
         Long topicId = fileUploadVO.getTopicId();
         // 对应专题
@@ -116,7 +126,13 @@ public class FileUploadServiceImpl implements FileUploadService {
         files.setTopicName(topic.getTopicName());
         filesService.save(files);
 
-        filesProcessService.prodessByBussinessType(files);
+        switch (businessType){
+            case 3:
+                filesProcessService.prodessByBussinessType(files);
+                break;
+        }
+
+
 
         return files;
     }
