@@ -15,7 +15,7 @@ import javax.annotation.Resource;
 @Slf4j
 @RestController
 @RequestMapping("/csv")
-public class CSVParserController {
+public class CsvParserController {
 
     @Resource
     CsvParserService csvParserService;
