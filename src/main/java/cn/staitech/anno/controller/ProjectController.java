@@ -27,7 +27,10 @@ import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.github.pagehelper.PageHelper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +40,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 
 /**
@@ -253,6 +259,19 @@ public class ProjectController extends BaseController {
 
 
     // 以下为新版：------------------------------------------------------------------
+
+    /**
+     * 项目状态列表 .
+     */
+    @ApiOperationSupport(author = "wangfeng")
+    @ApiOperation(value = "项目状态列表", notes = "项目状态列表")
+    @Log(title = "项目状态列表", menu = "项目状态列表", subMenu = "项目状态列表", businessType = BusinessType.QUERY)
+    @GetMapping("/projectStatus")
+    public R<Map<Integer, String>> colorType() {
+        Map<Integer, String> map = ProjectConstant.PROJECT_STATUS;
+        return R.ok(map);
+    }
+
 
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
     @ApiOperationSupport(author = "wangfeng")

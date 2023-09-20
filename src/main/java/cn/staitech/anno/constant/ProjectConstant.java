@@ -4,6 +4,9 @@ import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
+/**
+ * @author wangf
+ */
 public class ProjectConstant {
     public static final String UNABLE_TO_DELETE = "关联数据未清理，不可删除";
     public static final String IMAGE_UPLOADED_ANNOTATION = "：该图像已有上传标注、不可上传";
@@ -87,7 +90,7 @@ public class ProjectConstant {
     /**
      * 项目状态
      */
-    public static final Map<Integer, String> PROJECT_STATUS_TYPE = new ImmutableMap.Builder<Integer, String>()
+    public static final Map<Integer, String> PROJECT_STATUS = new ImmutableMap.Builder<Integer, String>()
             .put(1, "待启动")
             .put(2, "进行中")
             .put(3, "暂停")
