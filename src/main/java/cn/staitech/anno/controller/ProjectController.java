@@ -330,17 +330,7 @@ public class ProjectController extends BaseController {
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
         project.setCreateBy(sysUser.getUserId());
         project.setOrganizationId(sysUser.getOrganizationId());
-
-        if (projectService.insertProject(project) > 0) {
-            // 获取当前项目Id
-            Long projectId = project.getProjectId();
-            // 向项目成员表添加当前用户
-            ProjectMember projectMember = ProjectMember.builder()
-                    .userId(sysUser.getUserId())
-                    .projectId(projectId)
-                    .organizationId(sysUser.getOrganizationId())
-                    .roleId(sysUser.getRoleId()).createBy(sysUser.getUserId()).build();
-            projectMemberService.updateByPrimaryKey(projectMember);
+        if (projectService.updateById(project)) {
             return R.ok(ResponseConstant.OPERATE_SUCCEED);
         }
         return R.fail(ResponseConstant.OPERATE_ERROR);
