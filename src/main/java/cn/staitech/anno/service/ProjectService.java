@@ -32,13 +32,6 @@ public interface ProjectService extends IService<Project> {
      */
     int updateProjectDescription(Project project);
 
-    /**
-     * 查询项目信息
-     *
-     * @param projectId 项目ID
-     * @return 项目信息
-     */
-    public ProjectListVO selectProjectById(Long projectId);
 
     /**
      * 查询项目列表
@@ -218,5 +211,14 @@ public interface ProjectService extends IService<Project> {
      * 根据projectId查询 用户
      */
     public List<ProjectListVO> selectProjectTagger(Long projectId);
+
+
+    /**
+     * 查询项目信息
+     *
+     * @param projectId 项目ID
+     * @return 项目信息
+     */
+    public ProjectListVO selectProjectById(Long projectId);
 
 }

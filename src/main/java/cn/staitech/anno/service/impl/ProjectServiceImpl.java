@@ -1,6 +1,7 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.constant.ColorConstant;
+import cn.staitech.anno.constant.ProjectConstant;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.SlideAnnotationResult;
 import cn.staitech.anno.domain.image.in.ImageAllVO;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static cn.staitech.common.security.utils.SecurityUtils.isAdmin;
 
@@ -99,6 +99,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             }*/
 
             obj.setColorTypeName(ColorConstant.COLOR_TYPE.get(obj.getColorType()));
+            obj.setStatusName(ProjectConstant.PROJECT_STATUS.get(obj.getStatus()));
         }
         return projectList;
     }

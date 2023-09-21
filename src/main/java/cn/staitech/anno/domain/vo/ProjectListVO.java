@@ -35,7 +35,7 @@ import java.util.Map;
  * 机构名称                "organizationName": null
  * 状态ID	status
  * 状态编号 statusName
- * 创建者	createByName
+ * 创建者	userName
  * 创建时间 createTime
  */
 @Data
@@ -91,8 +91,7 @@ public class ProjectListVO extends BaseEntity {
      * 创建者名称
      */
     @ApiModelProperty(value = "创建者名称")
-    private String createByName;
-
+    private String userName;
     /**
      * 更新者id
      */
@@ -141,7 +140,7 @@ public class ProjectListVO extends BaseEntity {
      * 项目状态
      */
     @ApiModelProperty(value = "项目状态")
-    private String status;
+    private Integer status;
 
     @ApiModelProperty(value = "项目状态名称")
     private String statusName;

@@ -354,13 +354,13 @@ public class ProjectController extends BaseController {
 
 
     @ApiOperation(value = "查询项目详情接口")
-    @RequiresPermissions("special:project:details")
+    // @RequiresPermissions("special:project:details")
     @GetMapping(value = "/detail/{projectId}")
     @Log(title = "项目配置-详情", menu = "专题管理", subMenu = "专题创建", businessType = BusinessType.QUERY)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "projectId", value = "项目id", dataTypeClass = Long.class, paramType = "query", example = "1")})
-    public R<ProjectInfoOut> selectOne(@RequestParam("projectId") Long projectId) {
-        ProjectInfoOut resp = projectExtService.getProjectById(projectId);
+    public R<ProjectListVO> selectOne(@RequestParam("projectId") Long projectId) {
+        ProjectListVO resp = projectService.selectProjectById(projectId);
         return R.ok(resp);
     }
 

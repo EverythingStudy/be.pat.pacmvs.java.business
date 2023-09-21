@@ -69,7 +69,7 @@ public class UpdateProjectVO implements Serializable {
     /**
      * 以下属性暂未使用
      */
-    @ApiModelProperty(required = false, hidden = true, value = "状态(1:使用项目名称创建病理指标 2:使用现有病理指标 3:无属性)")
+    @ApiModelProperty(required = false, hidden = true, value = "状态:1待启动，2进行中，3暂停，4已完成")
     private Integer status;
     @ApiModelProperty(required = false, hidden = true, value = "切片列表(可以不传参数)")
     private Long[] imageIdList;

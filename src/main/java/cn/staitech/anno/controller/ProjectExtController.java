@@ -416,14 +416,14 @@ public class ProjectExtController extends BaseController {
         }
         list.setUserNames(userNameList.stream().toArray(String[]::new));
         list.setUserMap(userNames);
-
+/*
         Long createBy = list.getCreateBy();
         if (createBy != null) {
             //获取创建者信息
             SysUser userInformation = getUserInformationService.selectById(createBy);
             String username = userInformation.getUserName();
             list.setCreateByName(username);
-        }
+        }*/
 
         return R.ok(list);
     }
