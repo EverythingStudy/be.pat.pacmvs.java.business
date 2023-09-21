@@ -11,9 +11,9 @@ import cn.staitech.anno.domain.project.in.ProjectListQueryIn;
 import cn.staitech.anno.domain.project.in.ProjectRemoveIn;
 import cn.staitech.anno.domain.project.out.*;
 import cn.staitech.anno.domain.projectgroup.ProjectGroup;
-import cn.staitech.anno.domain.vo.InsertProjectVO;
 import cn.staitech.anno.domain.vo.ProjectListVO;
-import cn.staitech.anno.project.domain.DownTask;
+import cn.staitech.anno.domain.vo.project.InsertProjectVO;
+import cn.staitech.anno.domain.vo.project.UpdateProjectVO;
 import cn.staitech.anno.service.*;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.PageResponse;
@@ -27,7 +27,10 @@ import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.github.pagehelper.PageHelper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -311,6 +314,36 @@ public class ProjectController extends BaseController {
         List<ProjectListVO> list = projectService.selectProjectList(project);
         PageMaster pageMaster = new PageMaster<>(list);
         return R.ok(pageMaster);
+    }
+
+
+    @ApiOperationSupport(author = "wangfeng")
+    @ApiOperation(value = "编辑项目")
+    //@RequiresPermissions("anno:project:addproject")
+    @Log(title = "编辑项目", menu = "编辑项目", subMenu = "编辑项目", businessType = BusinessType.UPDATE)
+    @PostMapping("/edit")
+    @Transactional
+    public R<String> editProject(@Validated @RequestBody UpdateProjectVO req) {
+        Project project = new Project();
+        BeanUtils.copyProperties(req, project);
+
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+        project.setCreateBy(sysUser.getUserId());
+        project.setOrganizationId(sysUser.getOrganizationId());
+
+        if (projectService.insertProject(project) > 0) {
+            // 获取当前项目Id
+            Long projectId = project.getProjectId();
+            // 向项目成员表添加当前用户
+            ProjectMember projectMember = ProjectMember.builder()
+                    .userId(sysUser.getUserId())
+                    .projectId(projectId)
+                    .organizationId(sysUser.getOrganizationId())
+                    .roleId(sysUser.getRoleId()).createBy(sysUser.getUserId()).build();
+            projectMemberService.updateByPrimaryKey(projectMember);
+            return R.ok(ResponseConstant.OPERATE_SUCCEED);
+        }
+        return R.fail(ResponseConstant.OPERATE_ERROR);
     }
 
 

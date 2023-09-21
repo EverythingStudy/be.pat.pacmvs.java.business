@@ -14,6 +14,7 @@ import cn.staitech.anno.domain.image.in.ImageAllVO;
 import cn.staitech.anno.domain.image.in.ImageListVO;
 import cn.staitech.anno.domain.vo.*;
 import cn.staitech.anno.domain.vo.indicator.IndicatorReviseVO;
+import cn.staitech.anno.domain.vo.project.InsertProjectVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListOutVO;
 import cn.staitech.anno.enums.ProjectImageEnum;
 import cn.staitech.anno.service.*;

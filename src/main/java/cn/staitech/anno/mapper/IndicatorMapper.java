@@ -1,7 +1,7 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.Indicator;
-import cn.staitech.anno.domain.vo.InsertProjectVO;
+import cn.staitech.anno.domain.vo.project.InsertProjectVO;
 import cn.staitech.anno.domain.vo.indicator.IndicatorGetVO;
 import cn.staitech.anno.domain.vo.indicator.IndicatorReviseVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticIndicatorListInVO;

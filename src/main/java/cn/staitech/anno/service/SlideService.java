@@ -1,12 +1,15 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.Slide;
+import cn.staitech.anno.domain.reviewround.ReviewRoundOutVO;
 import cn.staitech.anno.domain.vo.ExaminationListVO;
 import cn.staitech.anno.domain.vo.ProjectListOutVO;
 import cn.staitech.anno.domain.vo.SlideSelectVO;
 import cn.staitech.anno.domain.vo.image.ProjectStatisticsVo;
 import cn.staitech.anno.domain.vo.image.SlideReportSummaryVo;
 import cn.staitech.anno.domain.vo.image.SlideReportVo;
+import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO;
+import cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListOutVO;
 import cn.staitech.anno.utils.PageMaster;
@@ -175,10 +178,22 @@ public interface SlideService extends IService<Slide> {
 
     /**
      * 添加标注切片 .
+     *
      * @param projectId
      * @param topicIds
      * @return
      */
     boolean addAnnoSlidesBatch(Long projectId, List<Long> topicIds);
+
+    /**
+     * 批量删除切片
+     *
+     * @param slideIds
+     * @return
+     */
+    int delSlidesBatch(List<Long> slideIds);
+
+
+    PageMaster<ImageCsvListVO> pageSlides(ImageCsvGetVO imageCsvGetVO);
 
 }

@@ -1,9 +1,13 @@
 package cn.staitech.anno.domain.vo.imageCsv;
 
 import cn.staitech.anno.domain.Pager;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * @author: wangfeng
@@ -11,9 +15,15 @@ import java.io.Serializable;
  * @Description: Image CSV查询条件
  * 切片编号 组别 性别 病变程度 病变类型
  */
+@Getter
+@Setter
 @Data
 public class ImageCsvGetVO extends Pager implements Serializable {
 
+    /**
+     * 项目ID
+     */
+    private Long projectId;
     /**
      * 切片编号
      */
@@ -38,4 +48,7 @@ public class ImageCsvGetVO extends Pager implements Serializable {
      * 病变程度1
      */
     private String lesionDegree;
+
+    @ApiModelProperty("请求参数（开始和结束时间）")
+    private Map<String, Object> createTimeParams;
 }

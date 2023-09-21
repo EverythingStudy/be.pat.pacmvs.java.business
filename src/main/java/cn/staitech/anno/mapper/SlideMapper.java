@@ -2,12 +2,16 @@ package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.marking.SlideRes;
-import cn.staitech.anno.domain.vo.*;
+import cn.staitech.anno.domain.vo.ExaminationListVO;
+import cn.staitech.anno.domain.vo.ProjectListOutVO;
+import cn.staitech.anno.domain.vo.SlideSelectVO;
 import cn.staitech.anno.domain.vo.diagnosis.SpecialDiagnosisAddVo;
 import cn.staitech.anno.domain.vo.file.SlideFileName;
 import cn.staitech.anno.domain.vo.image.ProjectStatisticsVo;
 import cn.staitech.anno.domain.vo.image.SlideReportSummaryVo;
 import cn.staitech.anno.domain.vo.image.SlideReportVo;
+import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO;
+import cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListOutVO;
 import cn.staitech.anno.project.domain.Review;
@@ -24,7 +28,7 @@ import java.util.Map;
  *
  * @author staitech
  */
-public interface SlideMapper  extends BaseMapper<Slide> {
+public interface SlideMapper extends BaseMapper<Slide> {
 
     /**
      * 更新切片表人工标注数及标注状态
@@ -38,6 +42,7 @@ public interface SlideMapper  extends BaseMapper<Slide> {
 
     /**
      * 根据切片生成文件目录
+     *
      * @param params
      * @return
      */
@@ -126,7 +131,7 @@ public interface SlideMapper  extends BaseMapper<Slide> {
      * @return
      */
     int updateDescription(Slide slide);
-    
+
     /**
      * 项目批量添加图片
      *
@@ -138,6 +143,7 @@ public interface SlideMapper  extends BaseMapper<Slide> {
 
     /**
      * 根据项目、分组及图像更新切片关系表
+     *
      * @param slideList
      * @return
      */
@@ -145,6 +151,7 @@ public interface SlideMapper  extends BaseMapper<Slide> {
 
     /**
      * 根据项目、分组及图像更新切片诊断状态
+     *
      * @param diagnosisList
      * @return
      */
@@ -152,6 +159,7 @@ public interface SlideMapper  extends BaseMapper<Slide> {
 
     /**
      * 查询组内切片报表摘要
+     *
      * @param params
      * @return
      */
@@ -159,6 +167,7 @@ public interface SlideMapper  extends BaseMapper<Slide> {
 
     /**
      * 组内切片报表分页查询
+     *
      * @param params
      * @return
      */
@@ -166,6 +175,7 @@ public interface SlideMapper  extends BaseMapper<Slide> {
 
     /**
      * 项目内切片统计
+     *
      * @param params
      * @return
      */
@@ -173,6 +183,7 @@ public interface SlideMapper  extends BaseMapper<Slide> {
 
     /**
      * 切片报表分页查询
+     *
      * @param page
      * @param params
      * @return
@@ -181,9 +192,20 @@ public interface SlideMapper  extends BaseMapper<Slide> {
 
     /**
      * 脏器病变报告查询
+     *
      * @param params
      * @return
      */
-    List<Map<String,Object>> queryVisceraLesionRpt(@Param("params") Map params);
+    List<Map<String, Object>> queryVisceraLesionRpt(@Param("params") Map params);
+
+
+    //-------------------------------
+    /**
+     * 切片报表分页查询
+     * @param imageCsvGetVO
+     * @return
+     */
+    List<ImageCsvListVO> pageImageCsvListVOList(ImageCsvGetVO imageCsvGetVO);
+
 
 }

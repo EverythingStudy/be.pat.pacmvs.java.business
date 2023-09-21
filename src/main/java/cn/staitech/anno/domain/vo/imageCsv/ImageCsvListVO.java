@@ -11,4 +11,6 @@ import java.io.Serializable;
  */
 
 public class ImageCsvListVO extends ImageCsv implements Serializable {
+
+
 }

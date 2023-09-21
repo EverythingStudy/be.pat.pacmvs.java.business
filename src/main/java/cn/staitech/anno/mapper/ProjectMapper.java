@@ -4,6 +4,7 @@ import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.SlideAnnotationResult;
 import cn.staitech.anno.domain.image.in.ImageAllVO;
 import cn.staitech.anno.domain.vo.*;
+import cn.staitech.anno.domain.vo.project.InsertProjectVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticProjectListOutVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 

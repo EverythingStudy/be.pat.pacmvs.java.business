@@ -1,14 +1,15 @@
 package cn.staitech.anno.controller;
 
 
-import cn.staitech.anno.constant.ProjectConstant;
+import cn.staitech.anno.constant.ImageConstant;
 import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.image.in.ImageListVO;
 import cn.staitech.anno.domain.vo.SlideDescriptionVo;
 import cn.staitech.anno.domain.vo.image.ProjectStatisticsVo;
 import cn.staitech.anno.domain.vo.image.SlideReportSummaryVo;
 import cn.staitech.anno.domain.vo.image.SlideReportVo;
+import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO;
+import cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.PageMaster;
@@ -21,6 +22,7 @@ import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
@@ -31,7 +33,6 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 
 /**
@@ -201,39 +202,44 @@ public class SlideController extends BaseController {
 
     // =======================================================================================================
 
-
     /**
-     * 通过切片ID查询对应的图像列表 .
-     * 原 ProjectController.java  imageList接口 - anno:annotation:image
+     * 查询切片列表
      */
-    @ApiOperation(value = "通过切片ID查询对应的图像（切片）列表")
-    @GetMapping("/list")
-    public R<List<ImageListVO>> listByProjectId(
-            @RequestParam @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId) {
-        if (!Optional.ofNullable(slideId).isPresent()) {
-            return R.fail(ProjectConstant.SLIDE_ID_NOT_NULL);
-        }
-        //获取切片信息
-        Slide list = slideService.selectById(slideId);
-        if (!Optional.ofNullable(list).isPresent()) {
-            return R.fail(ProjectConstant.IMAGE_NOT_EXIST);
-        }
-        Long projectId = list.getProjectId();
-        //根据项目id获取图像信息
-        List<ImageListVO> image = imageService.selectImageListByPorjectId(projectId);
-        return R.ok(image);
+    @ApiOperation(value = "查询切片列表")
+    @PostMapping("/list")
+    public R<PageMaster<ImageCsvListVO>> listByProjectId(ImageCsvGetVO imageCsvGetVO) {
+        return R.ok(slideService.pageSlides(imageCsvGetVO));
     }
 
 
     /**
      * 批量添加切片
      */
-    @ApiOperation(value = "通过切片ID查询对应的图像（切片）列表")
-    @GetMapping("/add")
-    public R add(
+    @ApiOperation(value = "批量添加切片")
+    @GetMapping("/addAnnoSlidesBatch")
+    public R addAnnoSlidesBatch(
             @RequestParam @ApiParam(name = "projectId", value = "项目ID", required = true) Long projectId,
             @RequestParam @ApiParam(name = "topicIds", value = "专题目ID", required = true) List<Long> topicIds) {
         return R.ok(slideService.addAnnoSlidesBatch(projectId, topicIds));
     }
+
+
+    /**
+     * 删除（根据ID 批量删除）
+     *
+     * @param slideIds 切处ID列表
+     */
+    @ApiOperationSupport(author = "wangfeng")
+    @Log(title = "删除切片", menu = "切片管理", subMenu = "标注切片", businessType = BusinessType.DELETE)
+    @ApiOperation(value = "逻辑批量删除切片")
+    @GetMapping("/deleteBatchIds")
+    public R updateDeleteFlagBatchIds(
+            @RequestParam @ApiParam(name = "slideIds", value = "切片ID列表", required = true) List<Long> slideIds) {
+        if (slideService.delSlidesBatch(slideIds) > 0) {
+            return R.ok(ImageConstant.OPERATE_SUCCEED);
+        }
+        return R.fail(ImageConstant.OPERATE_ERROR);
+    }
+
 
 }
