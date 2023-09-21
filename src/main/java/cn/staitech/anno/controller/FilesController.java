@@ -67,7 +67,7 @@ public class FilesController extends BaseController {
     @PostMapping("/uploadBusiness")
     public R<Files> uploadBusiness(
             @RequestParam("file") MultipartFile file,
-            FileUploadVO fileUploadVO) throws IOException {
+            FileUploadVO fileUploadVO) throws Exception {
         fileUploadVO.setMultipartFile(file);
         fileUploadService.uploadAndProcessBusiness(fileUploadVO);
         return R.ok();
