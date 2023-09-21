@@ -9,8 +9,6 @@ import cn.staitech.anno.service.*;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
-import cn.staitech.common.log.annotation.Log;
-import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import io.swagger.annotations.Api;
@@ -21,9 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.text.ParseException;
@@ -33,6 +29,7 @@ import static cn.staitech.anno.constant.ProjectConstant.NO_ATTRIBUTE;
 import static cn.staitech.anno.constant.StatisticConstant.*;
 import static cn.staitech.anno.utils.StatisticListUtils.exportExcelDateUtil;
 import static cn.staitech.anno.utils.StatisticListUtils.exportExcelUtil;
+import static cn.staitech.anno.aspect.LogFileAspect.response;
 
 /**
  * 数据统计处理
@@ -80,14 +77,19 @@ public class StatisticController extends BaseController {
     /**
      * 综合统计列表页面导出excel
      *
-     * @param response
      * @param statisticList
      */
     @RequiresPermissions("anno:statistic")
     @ApiOperation(value = "综合统计列表/导出细分筛选查询excel")
-    @Log(title = "综合统计列表Excel导出", businessType = BusinessType.EXPORT)
+    //@Log(title = "综合统计列表Excel导出", businessType = BusinessType.EXPORT)
     @PostMapping("/exportExcel")
-    public void exportExcel(HttpServletResponse response, @Validated StatisticListInVO statisticList) throws IOException {
+    public void exportExcel( @Validated StatisticListInVO statisticList) throws IOException {
+
+
+        if(!SecurityUtils.isAdmin(SecurityUtils.getUserId())){
+            statisticList.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        }
+
         // 数量（横轴）: （标注数量/图像数量）
         String displayQuantity = statisticService.statisticSelectDictDataById(statisticList.getStatisticCategory()).getDictLabel();
 
