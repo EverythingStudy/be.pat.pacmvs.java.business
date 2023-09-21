@@ -7,6 +7,7 @@ import cn.staitech.anno.domain.ProjectMember;
 import cn.staitech.anno.domain.file.Chunk;
 import cn.staitech.anno.domain.po.ProjectPo;
 import cn.staitech.anno.domain.project.in.OperateProjectIn;
+import cn.staitech.anno.domain.project.in.ProjectIdsVO;
 import cn.staitech.anno.domain.project.in.ProjectListQueryIn;
 import cn.staitech.anno.domain.project.in.ProjectRemoveIn;
 import cn.staitech.anno.domain.project.out.*;
@@ -25,6 +26,7 @@ import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.annotation.RequiresSpecialPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
@@ -334,6 +336,32 @@ public class ProjectController extends BaseController {
             return R.ok(ResponseConstant.OPERATE_SUCCEED);
         }
         return R.fail(ResponseConstant.OPERATE_ERROR);
+    }
+
+    @ApiOperationSupport(author = "wangfeng")
+    @ApiOperation(value = "批量项目")
+    @PostMapping(value = "/remove")
+    public R remove(@RequestBody ProjectIdsVO request) {
+        List<Long> idList = request.getProjectIds();
+        for (Long projectId : idList) {
+            Project project = new Project();
+            project.setProjectId(projectId);
+            QueryWrapper queryWrapper = new QueryWrapper<>(project);
+            projectService.remove(queryWrapper);
+        }
+        return R.ok(ResponseConstant.OPERATE_SUCCEED);
+    }
+
+
+    @ApiOperation(value = "查询项目详情接口")
+    @RequiresPermissions("special:project:details")
+    @GetMapping(value = "/detail/{projectId}")
+    @Log(title = "项目配置-详情", menu = "专题管理", subMenu = "专题创建", businessType = BusinessType.QUERY)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "projectId", value = "项目id", dataTypeClass = Long.class, paramType = "query", example = "1")})
+    public R<ProjectInfoOut> selectOne(@RequestParam("projectId") Long projectId) {
+        ProjectInfoOut resp = projectExtService.getProjectById(projectId);
+        return R.ok(resp);
     }
 
 

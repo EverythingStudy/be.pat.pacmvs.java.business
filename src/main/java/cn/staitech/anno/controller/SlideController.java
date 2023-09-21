@@ -10,6 +10,7 @@ import cn.staitech.anno.domain.vo.image.SlideReportSummaryVo;
 import cn.staitech.anno.domain.vo.image.SlideReportVo;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO;
+import cn.staitech.anno.domain.vo.slideVo.AddSlideVO;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.PageMaster;
@@ -214,12 +215,15 @@ public class SlideController extends BaseController {
 
     /**
      * 批量添加切片
+     *
+     * @RequestParam @ApiParam(name = "projectId", value = "项目ID", required = true) Long projectId,
+     * @RequestParam @ApiParam(name = "topicIds", value = "专题目ID", required = true) List<Long> topicIds
      */
     @ApiOperation(value = "批量添加切片")
-    @GetMapping("/addAnnoSlidesBatch")
-    public R addAnnoSlidesBatch(
-            @RequestParam @ApiParam(name = "projectId", value = "项目ID", required = true) Long projectId,
-            @RequestParam @ApiParam(name = "topicIds", value = "专题目ID", required = true) List<Long> topicIds) {
+    @PostMapping("/addAnnoSlidesBatch")
+    public R addAnnoSlidesBatch(@RequestBody AddSlideVO addSlideVO) {
+        Long projectId = addSlideVO.getProjectId();
+        List<Long> topicIds = addSlideVO.getTopicIds();
         return R.ok(slideService.addAnnoSlidesBatch(projectId, topicIds));
     }
 
