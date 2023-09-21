@@ -81,8 +81,7 @@ public class FileUploadServiceImpl implements FileUploadService {
      */
     public Files uploadAndProcessBusiness(FileUploadVO fileUploadVO) throws Exception {
 
-        Topic topic = topicService.selectOne(fileUploadVO.getTopicName());
-
+        Files files = new Files();
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 
         Integer businessType = fileUploadVO.getBusinessType();
@@ -91,32 +90,28 @@ public class FileUploadServiceImpl implements FileUploadService {
 
         switch (businessType) {
             case 3:
+                Topic topic = topicService.selectOne(fileUploadVO.getTopicName());
                 dirPath = dirPath + "\\Data";
+                // 定义文件夹名称
+                String folderPath = dirPath + File.separator + topic.getTopicName();
+                //创建文件夹
+                File dir = new File(folderPath);
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+                files.setTopicName(topic.getTopicName());
+                files.setTopicId(topic.getTopicId());
                 break;
             case 4:
                 dirPath = basePath + File.separator + "zip";
                 break;
         }
-
-
         String fileName = fileUploadVO.getFileName();
-        // 专题名称
-        dirPath = basePath + topic.getTopicName();
-
-        //创建文件夹
-        File dir = new File(dirPath);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
+        // 文件名称
         String filePath = dirPath + "\\" + fileName;
-
         // (真实存入)拷贝
         fileUploadVO.getMultipartFile().transferTo(Paths.get(filePath));
-
         File localFile = new File(filePath);
-
-        Files files = new Files();
         BeanUtils.copyProperties(fileUploadVO, files);
         files.setFilesName(fileUploadVO.getFileName());
         files.setFilesPath(localFile.getAbsolutePath());
@@ -134,10 +129,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         files.setOrganizationId(sysUser.getOrganizationId());
         files.setHostId(1);
         files.setBusinessType(businessType);
-        files.setTopicName(topic.getTopicName());
-        files.setTopicId(topic.getTopicId());
         filesService.save(files);
-
         switch (businessType) {
             case 3:
                 filesProcessService.prodessByBussinessType(files);
@@ -146,8 +138,6 @@ public class FileUploadServiceImpl implements FileUploadService {
                 markingService.zipExport(files.getFilesPath(), fileUploadVO.getProjectId());
                 break;
         }
-
-
         return files;
     }
 
@@ -155,20 +145,22 @@ public class FileUploadServiceImpl implements FileUploadService {
     public Boolean mergeChunk(FileUploadVO chunk) throws Exception {
         // 查询文件是否存在
         QueryWrapper<Files> filesQueryWrapper = new QueryWrapper<>();
-//        filesQueryWrapper.eq("files_code");
-
-
-        Files files = filesService.getById(chunk.getFilesId());
-
+        filesQueryWrapper.eq("files_code",chunk.getUuid());
+        Files filesBy = filesService.getOne(filesQueryWrapper);
+        // 文件为空,第一片文件上传时添加到文件表中
+        if(filesBy == null){
+            Long filesId = saveFiles(chunk);
+            filesBy = filesService.getById(filesId);
+        }
         // 将文件数量和文件id添加至map中
-        if (!Container.FILE_MAP.containsKey(chunk.getUid())) {
+        if (!Container.FILE_MAP.containsKey(chunk.getUuid())) {
             ArrayList<Integer> chunkList = new ArrayList<Integer>();
             for (int i = 0; i < chunk.getTotalChunks(); i++) {
                 chunkList.add(i);
             }
-            Container.FILE_MAP.put(files.getFilesId(), chunkList);
+            Container.FILE_MAP.put(Long.valueOf(chunk.getUuid()), chunkList);
         }
-        File file = new File(files.getFilesPath());
+        File file = new File(filesBy.getFilesPath());
         // 写入文件
         try (InputStream fis = chunk.getMultipartFile().getInputStream();
              RandomAccessFile raf = new RandomAccessFile(file, "rw")) {
@@ -185,57 +177,68 @@ public class FileUploadServiceImpl implements FileUploadService {
             return false;
         }
         // 删除map中当前元素
-        Container.FILE_MAP.get(files.getFilesId()).remove(chunk.getChunkNumber());
+        Container.FILE_MAP.get(filesBy.getFilesId()).remove(chunk.getChunkNumber());
+
         // map为空时,代表文件上传完成,根据业务类型执行不同业务
-        if (Container.FILE_MAP.get(files.getFilesId()) != null && Container.FILE_MAP.get(files.getFilesId()).isEmpty()) {
+        if (Container.FILE_MAP.get(filesBy.getFilesId()) != null && Container.FILE_MAP.get(filesBy.getFilesId()).isEmpty()) {
+
             // map中删除当前文件信息
-            Container.FILE_MAP.remove(files.getFilesId());
+            Container.FILE_MAP.remove(filesBy.getFilesId());
+
+            // 更新文件表中传输状态
+            filesBy.setProcessFlag(2);
+            filesService.updateById(filesBy);
+
             // 根据不同业务类型执行
-            switch (files.getBusinessType()) {
+            switch (chunk.getBusinessType()) {
                 case 4:
-                    markingService.zipExport(files.getFilesPath(), chunk.getProjectId());
+                    markingService.zipExport(filesBy.getFilesPath(), chunk.getProjectId());
                     break;
             }
         }
         return true;
     }
 
-
-    public Long fileInformation(FileUploadVO fileUploadVO) {
-        String dirPath = null;
-        // 根据不同业务生成不同文件路径
+    public Long saveFiles(FileUploadVO fileUploadVO) {
+        String path = null;
+        // 根据不同的业务id生成不同的文件
         switch (fileUploadVO.getBusinessType()) {
             case 4:
-                dirPath = zipPath + File.separator + fileUploadVO.getFileName();
+                // 若有二级目录,生成在获取文件名称上方即可
+                path = zipPath + File.separator + fileUploadVO.getFileName();
                 break;
         }
-        //创建文件
-        File dir = new File(dirPath);
-        if (!dir.exists()) {
-            dir.mkdirs();
+        // 创建文件
+        if(path != null){
+            File dir = new File(path);
+            if (!dir.exists()) {
+                if(!dir.mkdirs()){
+                    log.error("创建文件异常");
+                }
+            }
         }
-        File localFile = new File(dirPath);
-        Files files = new Files();
-        BeanUtils.copyProperties(fileUploadVO, files);
-        files.setFilesName(fileUploadVO.getFileName());
-        files.setFilesPath(localFile.getAbsolutePath());
-        files.setFilesUrl(localFile.getAbsolutePath());
-        files.setSize(localFile.length());
-        // 获取文件的后缀名
+        // 获取文件后缀
         String suffixName = fileUploadVO.getFileName().substring(fileUploadVO.getFileName().lastIndexOf("."));
-        files.setFormat(suffixName);
-        // 逻辑删除状态（0删除，1未删除）
-        files.setDeleteFlag(1);
-        // 上传成功
-        files.setProcessFlag(1);
-        files.setCreateBy(SecurityUtils.getUserId());
-        files.setCreateTime(new Date());
-        files.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-        files.setHostId(1);
-        files.setBusinessType(fileUploadVO.getBusinessType());
+
+        Files files = Files.builder()
+                .filesName(fileUploadVO.getFileName())
+                .filesCode(fileUploadVO.getUuid())
+                .filesUrl(path)
+                .filesPath(path)
+                .format(suffixName)
+                .processFlag(1)
+                .deleteFlag(1)
+                .hostId(1)
+                .businessType(fileUploadVO.getBusinessType())
+                .createTime(new Date())
+                .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId())
+                .createBy(SecurityUtils.getUserId())
+                .build();
+        // 写入文件表中
         filesService.save(files);
         return files.getFilesId();
     }
+
 
 
 }
