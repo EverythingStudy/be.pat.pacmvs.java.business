@@ -90,7 +90,7 @@ public class ExaminationController extends BaseController {
         Long slideId = examinationSubmitVo.getSlideId();
 
         // 标注状态
-        Integer processFlag = slideService.selectById(slideId).getProcessFlag();
+        Integer processFlag = Integer.valueOf(slideService.selectById(slideId).getProcessFlag());
         ExaminationLog examinationLog = new ExaminationLog();
         if (processFlag == ProcessFlagEnum.STATUS_INFO_2.value()) {
             examinationSubmitVo.setExaminationFlag(ExaminationConstant.NOT_START_REVIEW);
@@ -148,7 +148,7 @@ public class ExaminationController extends BaseController {
         // 切片信息
         Slide slide1 = slideService.selectById(slideId);
         // 当前标注状态
-        Integer processFlag = slide1.getProcessFlag();
+        Integer processFlag = Integer.valueOf(slide1.getProcessFlag());
 
         ExaminationLog examinationLog = new ExaminationLog();
         //  当前为已提交复核状态

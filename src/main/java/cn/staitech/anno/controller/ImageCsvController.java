@@ -2,9 +2,12 @@ package cn.staitech.anno.controller;
 
 
 import cn.staitech.anno.domain.ImageCsv;
+import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO;
 import cn.staitech.anno.service.ImageCsvService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.api.ApiController;
 import com.baomidou.mybatisplus.extension.api.R;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -18,7 +21,7 @@ import java.util.List;
  * @since 2023-09-13 13:20:02
  */
 @RestController
-@RequestMapping("/csv")
+@RequestMapping("/imageCsv")
 public class ImageCsvController extends ApiController {
     /**
      * 服务对象
@@ -33,10 +36,33 @@ public class ImageCsvController extends ApiController {
      * @param tbImageCsv 查询实体
      * @return 所有数据
      */
-/*    @GetMapping
-    public R selectAll(Page<ImageCsv> page, ImageCsv tbImageCsv) {
-        return success(this.imageCsvService.page(page, new QueryWrapper<>(tbImageCsv)));
-    }*/
+    /**
+     * @param imageCsvGetVO
+     * @return
+     */
+    @GetMapping("/list")
+    public R selectAll(ImageCsvGetVO imageCsvGetVO) {
+
+        Page<ImageCsv> page = new Page();
+        ImageCsv imageCsv = new ImageCsv();
+        QueryWrapper queryWrapper = new QueryWrapper<>(imageCsv);
+        // 切片编号
+        queryWrapper.like("image_name", imageCsvGetVO.getImageName());
+        // 组别
+        queryWrapper.like("group_name", imageCsvGetVO.getGroupName());
+        // 性别
+        queryWrapper.like("gender", imageCsvGetVO.getGender());
+        // 病变类型1
+        queryWrapper.like("lesion_type1", imageCsvGetVO.getLesionType());
+        queryWrapper.like("lesion_type2", imageCsvGetVO.getLesionType());
+        // 病变程度1
+        queryWrapper.like("lesion_degree1", imageCsvGetVO.getLesionDegree());
+        queryWrapper.like("lesion_degree2", imageCsvGetVO.getLesionDegree());
+        queryWrapper.orderByDesc("id");
+
+
+        return R.ok(this.imageCsvService.page(page, queryWrapper));
+    }
 
     /**
      * 通过主键查询单条数据

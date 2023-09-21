@@ -1,117 +1,204 @@
 package cn.staitech.anno.domain;
 
-import cn.staitech.common.core.web.domain.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 
 import java.util.Date;
 
 /**
  * 项目图像表 tb_slide
+ *
+ * @author wangf
  */
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Data
-@TableName("tb_slide")
+@ApiModel(description = "tb_slide")
+@TableName(value = "tb_slide")
 public class Slide {
-
     /**
-     * 切片id
+     * 切片ID
      */
     @TableId(value = "slide_id", type = IdType.AUTO)
-    @ApiModelProperty(value = "切片id")
+    @ApiModelProperty(value = "切片ID")
     private Long slideId;
 
     /**
-     * 项目id
+     * 项目ID
      */
-    @ApiModelProperty(value = "项目id")
+    @TableField(value = "project_id")
+    @ApiModelProperty(value = "项目ID")
     private Long projectId;
 
     /**
-     * 分组id
+     * 图像ID
      */
-    @ApiModelProperty(value = "分组id")
-    private Long groupId;
-
-    /**
-     * 图像id
-     */
-    @ApiModelProperty(value = "图像id")
+    @TableField(value = "image_id")
+    @ApiModelProperty(value = "图像ID")
     private Long imageId;
 
     /**
      * 人工标注数
      */
+    @TableField(value = "human_annotation_total")
     @ApiModelProperty(value = "人工标注数")
     private Integer humanAnnotationTotal;
 
     /**
      * 算法标注数
      */
+    @TableField(value = "algorithm_annotation_total")
     @ApiModelProperty(value = "算法标注数")
     private Integer algorithmAnnotationTotal;
 
     /**
-     * 已审核的切片数
+     * 已审核切片数
      */
-    @ApiModelProperty(value = "已审核的切片数")
+    @TableField(value = "examination_slide_total")
+    @ApiModelProperty(value = "已审核切片数")
     private Integer examinationSlideTotal;
 
     /**
-     * 是否完成该图像的标注
+     * 处理状态（0未处理,1处理中,2处理完成）
      */
-    @ApiModelProperty(value = "标注状态(0未开始 1标注中 2标注完成 3已提交复核)")
+    @TableField(value = "process_flag")
+    @ApiModelProperty(value = "处理状态（0未处理,1处理中,2处理完成）")
     private Integer processFlag;
 
     /**
-     * 切片审核状态
+     * 复核状态 (0提交复核(未复核) 1开始复核(复核中) 2复核通过(已复核) 3复核不通过 4交付)
      */
+    @TableField(value = "examination_flag")
     @ApiModelProperty(value = "复核状态 (0提交复核(未复核) 1开始复核(复核中) 2复核通过(已复核) 3复核不通过 4交付)")
     private Integer examinationFlag;
 
     /**
+     * 创建者
+     */
+    @TableField(value = "create_by")
+    @ApiModelProperty(value = "创建者")
+    private Long createBy;
+
+    /**
+     * 创建时间
+     */
+    @TableField(value = "create_time")
+    @ApiModelProperty(value = "创建时间")
+    private Date createTime;
+
+    /**
+     * 更新者
+     */
+    @TableField(value = "update_by")
+    @ApiModelProperty(value = "更新者")
+    private Long updateBy;
+
+    /**
+     * 更新时间
+     */
+    @TableField(value = "update_time")
+    @ApiModelProperty(value = "更新时间")
+    private Date updateTime;
+
+    /**
      * 切片描述
      */
+    @TableField(value = "description")
     @ApiModelProperty(value = "切片描述")
     private String description;
 
     /**
-     * 是否删除
+     * 分组id
      */
+    @TableField(value = "group_id")
+    @ApiModelProperty(value = "分组id")
+    private Integer groupId;
+
+    /**
+     * 是否删除(0未删除 1已删除)
+     */
+    @TableField(value = "is_delete")
     @ApiModelProperty(value = "是否删除(0未删除 1已删除)")
     private Integer isDelete;
 
-    @ApiModelProperty("创建者")
-    private Long createBy;
+    /**
+     * AI筛阴：1:阴性、2:阳性、0:未筛、3:未知
+     */
+    @TableField(value = "ai_check")
+    @ApiModelProperty(value = "AI筛阴：1:阴性、2:阳性、0:未筛、3:未知")
+    private Integer aiCheck;
 
-    @ApiModelProperty("创建时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date createTime;
+    /**
+     * AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败
+     */
+    @TableField(value = "ai_analyzed")
+    @ApiModelProperty(value = "AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败")
+    private Integer aiAnalyzed;
 
-    @ApiModelProperty("更新者")
-    private Long updateBy;
+    /**
+     * 人工诊断状态：0未诊断，1已诊断
+     */
+    @TableField(value = "diagnosis")
+    @ApiModelProperty(value = "人工诊断状态：0未诊断，1已诊断")
+    private Integer diagnosis;
 
-    @ApiModelProperty("更新时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date updateTime;
-
-    @ApiModelProperty(value = "geojson文件url地址")
+    /**
+     * geojson文件地址
+     */
+    @TableField(value = "geojson_url")
+    @ApiModelProperty(value = "geojson文件地址")
     private String geojsonUrl;
 
-    @ApiModelProperty(value = "轮次id")
+    /**
+     * 备注
+     */
+    @TableField(value = "remark")
+    @ApiModelProperty(value = "备注")
+    private String remark;
+
+    /**
+     * 状态(1未开始 2标注中 3标注完成 4提交复核(未复核) 5开始复核(复核中) 6复核通过(已复核) 7交付)
+     */
+    @TableField(value = "`status`")
+    @ApiModelProperty(value = "状态(1未开始 2标注中 3标注完成 4提交复核(未复核) 5开始复核(复核中) 6复核通过(已复核) 7交付)")
+    private String status;
+
+    /**
+     * 轮次
+     */
+    @TableField(value = "round_id")
+    @ApiModelProperty(value = "轮次")
     private Long roundId;
 
+    /**
+     * 评审轮次id
+     */
+    @TableField(value = "review_round_id")
+    @ApiModelProperty(value = "评审轮次id")
+    private Long reviewRoundId;
+
+    /**
+     * 专题id
+     */
+    @TableField(value = "topic_id")
+    @ApiModelProperty(value = "专题id")
+    private Long topicId;
+
+    /**
+     * csv文件记录ID
+     */
+    @TableField(value = "image_csv_id")
+    @ApiModelProperty(value = "csv文件记录ID")
+    private Long imageCsvId;
+
 }
-
-
 

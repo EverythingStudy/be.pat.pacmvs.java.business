@@ -92,8 +92,7 @@ public class Image extends BaseEntity {
     @TableField(value = "process_flag")
     @ApiModelProperty(value = "图片状态(0分片合并及生成缩略图处理中，,1合并且生成缩略图（可显示）,2文件以经传输（不可见）)", hidden = true)
     private Integer processFlag;
-    @ApiModelProperty(value = "", hidden = true)
-    private String searchValue;
+
     @TableField(value = "create_by")
     @ApiModelProperty(value = "", hidden = true)
     private Long createBy;
@@ -108,6 +107,41 @@ public class Image extends BaseEntity {
     @ApiModelProperty(value = "", hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
+
+
+    /**
+     * 无扩展名文件名称
+     */
+    @TableField(value = "file_name")
+    @ApiModelProperty(value = "无扩展名文件名称")
+    private String fileName;
+
+
+    /**
+     * 1024缩略图路径（用于缓存、标注缩略图时需要）
+     */
+    @TableField(value = "cache_url")
+    @ApiModelProperty(value = "1024缩略图路径（用于缓存、标注缩略图时需要）")
+    private String cacheUrl;
+
+
+    /**
+     * 原图缩到cache图的倍数
+     */
+    @TableField(value = "multiple")
+    @ApiModelProperty(value = "原图缩到cache图的倍数")
+    private String multiple;
+
+
+    /**
+     * 所在主机ID
+     */
+    @TableField(value = "host_id")
+    @ApiModelProperty(value = "所在主机ID")
+    private Byte hostId;
+
+
+    @TableField(exist = false)
     @ApiModelProperty(value = "", hidden = true)
     private String remark;
     @TableField(value = "image_code")
@@ -125,13 +159,17 @@ public class Image extends BaseEntity {
     @TableField(value = "delete_flag")
     @ApiModelProperty(value = "逻辑删除状态:（0删除，1未删除）", hidden = true)
     private Integer deleteFlag;
-    @ApiModelProperty(value = "创建时间-查询入参")
-    private Map<String, Object> createTimeParams;
-    @ApiModelProperty(value = "", hidden = true)
-    private Map<String, Object> params;
+
     @ApiModelProperty(value = "机构编号")
     @TableField(value = "organization_id")
     private Long organizationId;
+    @TableField(exist = false)
+    @ApiModelProperty(value = "创建时间-查询入参")
+    private Map<String, Object> createTimeParams;
+    @TableField(exist = false)
+    @ApiModelProperty(value = "", hidden = true)
+    private Map<String, Object> params;
+
     @ApiModelProperty(value = "机构名称")
     @TableField(exist = false)
     private String organizationName;
@@ -147,4 +185,7 @@ public class Image extends BaseEntity {
     private String businessTypeName;
     @ApiModelProperty(value = "图像来源、上传方式(1前端上传，2目录选片，3TCP客户端上传)")
     private Integer source;
+    @TableField(exist = false)
+    @ApiModelProperty(value = "", hidden = true)
+    private String searchValue;
 }

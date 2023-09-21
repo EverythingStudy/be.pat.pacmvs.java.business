@@ -70,7 +70,7 @@ public class InsertProjectVO implements Serializable {
     @ApiModelProperty(required = false, hidden = true, value = "状态(1:使用项目名称创建病理指标 2:使用现有病理指标 3:无属性)")
     private Integer status;
     @ApiModelProperty(required = false, hidden = true, value = "切片列表(可以不传参数)")
-    private int[] imageIdList;
+    private Long[] imageIdList;
     @ApiModelProperty(required = false, hidden = true, value = "脏器组织id")
     private Long dictCode;
 }

@@ -1,7 +1,9 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.vo.*;
+import cn.staitech.anno.domain.vo.ExaminationListVO;
+import cn.staitech.anno.domain.vo.ProjectListOutVO;
+import cn.staitech.anno.domain.vo.SlideSelectVO;
 import cn.staitech.anno.domain.vo.image.ProjectStatisticsVo;
 import cn.staitech.anno.domain.vo.image.SlideReportSummaryVo;
 import cn.staitech.anno.domain.vo.image.SlideReportVo;
@@ -9,8 +11,6 @@ import cn.staitech.anno.domain.vo.statistic.StatisticSlideListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListOutVO;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Param;
 
@@ -118,7 +118,7 @@ public interface SlideService extends IService<Slide> {
     int updateDescription(Slide slide);
 
     Boolean markIsNotFinish(Long slideId);
-    
+
     /**
      * 更新切片时间
      *
@@ -129,6 +129,7 @@ public interface SlideService extends IService<Slide> {
 
     /**
      * 根据项目、分组及图像更新切片关系表
+     *
      * @param slideList
      * @return
      */
@@ -136,6 +137,7 @@ public interface SlideService extends IService<Slide> {
 
     /**
      * 查询组内切片报表摘要
+     *
      * @param params
      * @return
      */
@@ -143,6 +145,7 @@ public interface SlideService extends IService<Slide> {
 
     /**
      * 组内切片报表分页查询
+     *
      * @param params
      * @return
      */
@@ -151,6 +154,7 @@ public interface SlideService extends IService<Slide> {
 
     /**
      * 项目内切片统计
+     *
      * @param params
      * @return
      */
@@ -158,11 +162,23 @@ public interface SlideService extends IService<Slide> {
 
     /**
      * 切片统计
+     *
      * @param params
      * @return
      */
     R<PageMaster<SlideReportVo>> pageSlideStatistics(Map params);
 
     void jsonExport(List<Long> slideList, Long projectId, Integer status) throws Exception;
+
+
+    // =========================
+
+    /**
+     * 添加标注切片 .
+     * @param projectId
+     * @param topicIds
+     * @return
+     */
+    boolean addAnnoSlidesBatch(Long projectId, List<Long> topicIds);
 
 }

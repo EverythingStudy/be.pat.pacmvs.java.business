@@ -32,4 +32,16 @@ public interface TopicService extends IService<Topic> {
      * @return
      */
     PageMaster<Topic> pagelist(TopicQueryIn req);
+
+
+    /**
+     * 获取单个Topic，有则查询，无则添加
+     *
+     * @param topicName
+     * @return
+     */
+    Topic selectOne(String topicName) throws Exception;
+
+    String processTopicName(String imageName);
+
 }

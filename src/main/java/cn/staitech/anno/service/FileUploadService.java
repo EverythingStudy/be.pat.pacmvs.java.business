@@ -16,5 +16,5 @@ public interface FileUploadService {
 
     Files upload(MultipartFile file) throws IOException;
 
-    Files uploadAndProcessBusiness(FileUploadVO vo) throws IOException;
+    Files uploadAndProcessBusiness(FileUploadVO vo) throws Exception;
 }

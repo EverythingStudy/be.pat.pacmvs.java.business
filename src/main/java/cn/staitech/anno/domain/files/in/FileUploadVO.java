@@ -15,8 +15,8 @@ import java.io.Serializable;
 public class FileUploadVO implements Serializable {
     @ApiModelProperty(value = "业务类型(1原始切片，2预测图片，3切片信息表CSV，4待定)")
     private Integer businessType;
-    @ApiModelProperty(value = "专题号")
-    private Long topicId;
+    @ApiModelProperty(value = "专题名称")
+    private String topicName;
     @ApiModelProperty(value = "机构ID")
     private Long organizationId;
     @ApiModelProperty(value = "文件名称")

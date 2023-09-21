@@ -6,6 +6,9 @@ import cn.staitech.anno.domain.topic.in.TopicQueryIn;
 import cn.staitech.anno.mapper.TopicMapper;
 import cn.staitech.anno.service.TopicService;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.utils.date.DateUtils;
+import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -58,5 +61,55 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         pageMaster.setTotal(page.getTotal());
 
         return pageMaster;
+    }
+
+
+    /**
+     * 获取单个Topic，有则查询，无则添加
+     *
+     * @param topicName
+     * @return
+     */
+    public Topic selectOne(String topicName) throws Exception {
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+        Long userId = sysUser.getUserId();
+        String time = DateUtils.getCurrentHHmmssString("yyyy-MM-dd HH:mm:ss");
+
+        Topic topic = Topic.builder()
+                .topicName(topicName)
+                .build();
+
+        QueryWrapper queryWrap = new QueryWrapper(topic);
+        Topic qTopic = this.baseMapper.selectOne(queryWrap);
+
+        // 有则返回
+        if (qTopic != null) {
+            return qTopic;
+        } else { // 无则添加
+            topic.setCreateBy(userId);
+            topic.setUpdateBy(userId);
+            topic.setCreateTime(time);
+            topic.setUpdateTime(time);
+            topic.setDelFlag(1);
+            this.baseMapper.insert(topic);
+        }
+
+        return topic;
+    }
+
+    /**
+     * 提取文件名称中所属专题名称 .
+     *
+     * @param imageName 文件名称
+     * @return
+     */
+    public String processTopicName(String imageName) {
+        String fileName = imageName.substring(0, imageName.indexOf("."));
+        // 【切片管理】上传切片后切片编号不符合规则时，所属专题应为空 http://jira.shengtong.com/browse/PS-364
+        if (imageName.indexOf("-RD") == -1) {
+            return "";
+        }
+        String topicName = fileName.substring(0, imageName.indexOf("-RD"));
+        return topicName + "-RD";
     }
 }

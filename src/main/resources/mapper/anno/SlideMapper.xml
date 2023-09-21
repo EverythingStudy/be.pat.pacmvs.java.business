@@ -3,6 +3,61 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.SlideMapper">
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.Slide">
+        <id column="slide_id" jdbcType="BIGINT" property="slideId"/>
+        <result column="project_id" jdbcType="INTEGER" property="projectId"/>
+        <result column="image_id" jdbcType="INTEGER" property="imageId"/>
+        <result column="human_annotation_total" jdbcType="INTEGER" property="humanAnnotationTotal"/>
+        <result column="algorithm_annotation_total" jdbcType="INTEGER" property="algorithmAnnotationTotal"/>
+        <result column="examination_slide_total" jdbcType="INTEGER" property="examinationSlideTotal"/>
+        <result column="process_flag" jdbcType="INTEGER" property="processFlag"/>
+        <result column="examination_flag" jdbcType="INTEGER" property="examinationFlag"/>
+        <result column="create_by" jdbcType="BIGINT" property="createBy"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_by" jdbcType="BIGINT" property="updateBy"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="group_id" jdbcType="INTEGER" property="groupId"/>
+        <result column="is_delete" jdbcType="INTEGER" property="isDelete"/>
+        <result column="ai_check" jdbcType="INTEGER" property="aiCheck"/>
+        <result column="ai_analyzed" jdbcType="INTEGER" property="aiAnalyzed"/>
+        <result column="diagnosis" jdbcType="INTEGER" property="diagnosis"/>
+        <result column="geojson_url" jdbcType="VARCHAR" property="geojsonUrl"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="round_id" jdbcType="BIGINT" property="roundId"/>
+        <result column="review_round_id" jdbcType="BIGINT" property="reviewRoundId"/>
+        <result column="topic_id" jdbcType="BIGINT" property="topicId"/>
+        <result column="image_csv_id" jdbcType="BIGINT" property="imageCsvId"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        slide_id,
+        project_id,
+        image_id,
+        human_annotation_total,
+        algorithm_annotation_total,
+        examination_slide_total,
+        process_flag,
+        examination_flag,
+        create_by,
+        create_time,
+        update_by,
+        update_time,
+        description,
+        group_id,
+        is_delete,
+        ai_check,
+        ai_analyzed,
+        diagnosis,
+        geojson_url,
+        remark,
+        `status`,
+        round_id,
+        review_round_id,
+        topic_id,
+        image_csv_id
+    </sql>
+
     <resultMap type="cn.staitech.anno.domain.Slide" id="SlideResult">
         <result property="slideId" column="slide_id"/>
         <result property="projectId" column="project_id"/>
@@ -48,11 +103,6 @@
         FROM tb_slide
     </sql>
 
-    <sql id="Base_Column_List">
-        slide_id, project_id, image_id, human_annotation_total, algorithm_annotation_total,
-    examination_slide_total, process_flag, examination_flag, create_by, create_time,
-    update_by, update_time
-    </sql>
 
     <!--通过项目ID列表查询图像列表-->
     <select id="selectSlideListByProjectIdList"
@@ -60,16 +110,16 @@
             resultMap="statisticSlideResult">
         select s.slide_id, i.image_name, p.project_id, p.project_name
         from tb_slide as s
-        inner join tb_project as p on s.project_id = p.project_id
-        inner join tb_image as i on s.image_id = i.image_id
+                 inner join tb_project as p on s.project_id = p.project_id
+                 inner join tb_image as i on s.image_id = i.image_id
         <where>
-            <if test="projectIdList.size() != 0 and projectIdList != '' ">
+            <if test="projectIdList.size() != 0 and projectIdList != ''">
                 AND s.project_id in
                 <foreach collection="projectIdList" item="projectId" open="(" separator="," close=")">
                     #{projectId}
                 </foreach>
             </if>
-            <if test="organizationId !=null and organizationId !=0">
+            <if test="organizationId != null and organizationId != 0">
                 and p.organization_id = #{organizationId}
             </if>
         </where>
@@ -87,8 +137,7 @@
                 process_flag = #{processFlag},
             </if>
         </set>
-        where
-        slide_id = #{slideId}
+        where slide_id = #{slideId}
     </update>
 
     <resultMap type="cn.staitech.anno.domain.Image" id="ImageResult">
@@ -130,21 +179,6 @@
         <result property="imageName" column="image_name"/>
     </resultMap>
 
-    <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.Slide">
-        <id column="slide_id" jdbcType="BIGINT" property="slideId"/>
-        <result column="project_id" jdbcType="BIGINT" property="projectId"/>
-        <result column="image_id" jdbcType="BIGINT" property="imageId"/>
-        <result column="human_annotation_total" jdbcType="INTEGER" property="humanAnnotationTotal"/>
-        <result column="algorithm_annotation_total" jdbcType="INTEGER" property="algorithmAnnotationTotal"/>
-        <result column="examination_slide_total" jdbcType="INTEGER" property="examinationSlideTotal"/>
-        <result column="process_flag" jdbcType="SMALLINT" property="processFlag"/>
-        <result column="examination_flag" jdbcType="SMALLINT" property="examinationFlag"/>
-        <result column="create_by" jdbcType="BIGINT" property="createBy"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="update_by" jdbcType="BIGINT" property="updateBy"/>
-        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-    </resultMap>
-
     <resultMap id="SlideFileNameResultMap" type="cn.staitech.anno.domain.vo.file.SlideFileName">
         <id column="topic_name" jdbcType="BIGINT" property="topicName"/>
         <result column="image_name" jdbcType="BIGINT" property="imageName"/>
@@ -168,44 +202,36 @@
 
 
     <select id="slideReviewFileName" parameterType="java.lang.Long" resultMap="SlideFileNameResultMap">
-        SELECT
-            t.topic_name,
-            i.image_name,
-            CONCAT( p.project_type, r.round_id ) AS slide_type,
-            group_concat( cate.number SEPARATOR "-" ) AS category_number
-        FROM
-            tb_slide AS s
-                LEFT JOIN tb_project AS p ON p.project_id = s.project_id
-                LEFT JOIN tb_review_round AS re on re.review_round_id = s.review_round_id
-                LEFT JOIN tb_topic AS t ON t.topic_id = re.topic_id
-                LEFT JOIN tb_image AS i ON i.image_id = s.image_id
-                LEFT JOIN tb_pathological_indicator AS path ON path.indicator_id = p.indicator_id
-                LEFT JOIN tb_pathological_indicator_category AS cate ON cate.indicator_id = path.indicator_id
-                LEFT JOIN tb_round AS r ON r.round_id = s.round_id
-        WHERE
-            s.slide_id = #{slideId,jdbcType=BIGINT}
-        GROUP BY
-            t.topic_name
+        SELECT t.topic_name,
+               i.image_name,
+               CONCAT(p.project_type, r.round_id)      AS slide_type,
+               group_concat(cate.number SEPARATOR "-") AS category_number
+        FROM tb_slide AS s
+                 LEFT JOIN tb_project AS p ON p.project_id = s.project_id
+                 LEFT JOIN tb_review_round AS re on re.review_round_id = s.review_round_id
+                 LEFT JOIN tb_topic AS t ON t.topic_id = re.topic_id
+                 LEFT JOIN tb_image AS i ON i.image_id = s.image_id
+                 LEFT JOIN tb_pathological_indicator AS path ON path.indicator_id = p.indicator_id
+                 LEFT JOIN tb_pathological_indicator_category AS cate ON cate.indicator_id = path.indicator_id
+                 LEFT JOIN tb_round AS r ON r.round_id = s.round_id
+        WHERE s.slide_id = #{slideId,jdbcType=BIGINT}
+        GROUP BY t.topic_name
     </select>
 
     <select id="slideFileName" parameterType="java.lang.Long" resultMap="SlideFileNameResultMap">
-        SELECT
-            t.topic_name,
-            i.image_name,
-            CONCAT( p.project_type, r.round_id ) AS slide_type,
-            group_concat( cate.number SEPARATOR "-" ) AS category_number
-        FROM
-            tb_slide AS s
-                LEFT JOIN tb_project AS p ON p.project_id = s.project_id
-                LEFT JOIN tb_topic AS t ON t.topic_id = s.topic_id
-                LEFT JOIN tb_image AS i ON i.image_id = s.image_id
-                LEFT JOIN tb_pathological_indicator AS path ON path.indicator_id = p.indicator_id
-                LEFT JOIN tb_pathological_indicator_category AS cate ON cate.indicator_id = path.indicator_id
-                LEFT JOIN tb_round AS r ON r.round_id = s.round_id
-        WHERE
-            s.slide_id = #{slideId,jdbcType=BIGINT}
-        GROUP BY
-            t.topic_name
+        SELECT t.topic_name,
+               i.image_name,
+               CONCAT(p.project_type, r.round_id)      AS slide_type,
+               group_concat(cate.number SEPARATOR "-") AS category_number
+        FROM tb_slide AS s
+                 LEFT JOIN tb_project AS p ON p.project_id = s.project_id
+                 LEFT JOIN tb_topic AS t ON t.topic_id = s.topic_id
+                 LEFT JOIN tb_image AS i ON i.image_id = s.image_id
+                 LEFT JOIN tb_pathological_indicator AS path ON path.indicator_id = p.indicator_id
+                 LEFT JOIN tb_pathological_indicator_category AS cate ON cate.indicator_id = path.indicator_id
+                 LEFT JOIN tb_round AS r ON r.round_id = s.round_id
+        WHERE s.slide_id = #{slideId,jdbcType=BIGINT}
+        GROUP BY t.topic_name
     </select>
 
     <delete id="deleteProjectImage" parameterType="java.lang.Long">
@@ -222,15 +248,12 @@
 
 
     <select id="selectImageList" parameterType="java.lang.Long" resultMap="slideResult">
-        SELECT
-            s.slide_id,
-            i.image_name
-        FROM
-            tb_slide AS s
-                LEFT JOIN tb_project AS p ON p.project_id = s.project_id
-                LEFT JOIN tb_image AS i ON i.image_id = s.image_id
-        WHERE
-            project_id = #{projectId}
+        SELECT s.slide_id,
+               i.image_name
+        FROM tb_slide AS s
+                 LEFT JOIN tb_project AS p ON p.project_id = s.project_id
+                 LEFT JOIN tb_image AS i ON i.image_id = s.image_id
+        WHERE project_id = #{projectId}
     </select>
 
     <!-- 根据项目ID删除映射关系 -->
@@ -244,14 +267,13 @@
     <select id="selectImageExist" parameterType="cn.staitech.anno.domain.Slide" resultMap="SlideResult">
         select *
         from tb_slide
-        WHERE 1=1
+        WHERE 1 = 1
         <if test="projectId != null and projectId != ''">
             AND project_id = #{projectId}
         </if>
         <if test="imageId != null and imageId != ''">
             AND image_id = #{imageId}
         </if>
-
     </select>
 
     <select id="selectCheckNum" parameterType="java.lang.Long" resultType="java.lang.Integer">
@@ -262,20 +284,18 @@
     </select>
 
     <select id="selectByStatus" parameterType="cn.staitech.anno.domain.vo.SlideSelectVO" resultMap="projectSlideResult">
-        SELECT
-        s.slide_id,
-        s.human_annotation_total,
-        i.image_name,
-        i.size,
-        i.thumb_url,
-        s.process_flag,
-        s.description,
-        s.image_id,
-        s.update_time,
-        s.create_time
-        FROM
-        tb_slide AS s
-        LEFT JOIN tb_image AS i ON s.image_id = i.image_id
+        SELECT s.slide_id,
+               s.human_annotation_total,
+               i.image_name,
+               i.size,
+               i.thumb_url,
+               s.process_flag,
+               s.description,
+               s.image_id,
+               s.update_time,
+               s.create_time
+        FROM tb_slide AS s
+                 LEFT JOIN tb_image AS i ON s.image_id = i.image_id
         <where>
             <if test="projectId != null and projectId != ''">
                 AND s.project_id = #{projectId}
@@ -289,15 +309,17 @@
             <if test="imageName != null and imageName != ''">
                 AND i.image_name like concat('%', #{imageName}, '%')
             </if>
-            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
-                AND date_format(s.update_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            <if test="params.beginTime != null and params.beginTime != ''">
+                <!-- 开始时间检索 -->
+                AND date_format(s.update_time, '%y%m%d') &gt;= date_format(#{params.beginTime}, '%y%m%d')
             </if>
-            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
-                AND date_format(s.update_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            <if test="params.endTime != null and params.endTime != ''">
+                <!-- 结束时间检索 -->
+                AND date_format(s.update_time, '%y%m%d') &lt;= date_format(#{params.endTime}, '%y%m%d')
             </if>
         </where>
         <choose>
-            <when test="(orderBy=='human_annotation_total' or orderBy=='create_time' or orderBy=='update_time') and (sort=='desc' or sort=='asc')">
+            <when test="(orderBy == 'human_annotation_total' or orderBy == 'create_time' or orderBy == 'update_time') and (sort == 'desc' or sort == 'asc')">
                 order by s.${orderBy} ${sort}
             </when>
             <otherwise>
@@ -310,23 +332,19 @@
     <!--项目批量添加图片-->
     <insert id="insertSlide" useGeneratedKeys="true"
             keyProperty="slideId">
-        insert into tb_slide (
-        project_id,
-        image_id,
-        create_by,
-        update_by,
-        create_time,
-        update_time
-        )values
+        insert into tb_slide (project_id,
+                              image_id,
+                              create_by,
+                              update_by,
+                              create_time,
+                              update_time)values
         <foreach collection="slideList" item="slide" separator=",">
-            (
-            #{slide.projectId},
-            #{slide.imageId},
-            #{slide.createBy},
-            #{slide.createBy},
-            sysdate(),
-            sysdate()
-            )
+            (#{slide.projectId},
+             #{slide.imageId},
+             #{slide.createBy},
+             #{slide.createBy},
+             sysdate(),
+             sysdate())
         </foreach>
     </insert>
 
@@ -335,8 +353,12 @@
             keyProperty="slideId">
         update tb_slide
         <set>
-            <if test="description != null">description = #{description},</if>
-            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            <if test="updateBy != null and updateBy != ''">
+                update_by = #{updateBy},
+            </if>
             update_time = sysdate()
         </set>
         where slide_id = #{slideId}
@@ -347,7 +369,9 @@
             keyProperty="slideId">
         update tb_slide
         <set>
-            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateBy != null and updateBy != ''">
+                update_by = #{updateBy},
+            </if>
             update_time = sysdate()
         </set>
         where slide_id = #{slideId}
@@ -356,24 +380,31 @@
 
     <!--新程序-->
     <!--根据项目、分组及图像更新切片关系表-->
-    <update id="updateBatchByCondition"  parameterType="java.util.List">
+    <update id="updateBatchByCondition" parameterType="java.util.List">
         <foreach collection="slideList" item="item" index="index" open="" close="" separator=";">
             update tb_slide
             <set>
-                is_delete=${item.isDelete},update_time=now()
+                is_delete=${item.isDelete},
+                update_time=now()
             </set>
-            where project_id = ${item.projectId} and image_id = ${item.imageId} and group_id = ${item.groupId}
+            where project_id = ${item.projectId}
+              and image_id = ${item.imageId}
+              and group_id = ${item.groupId}
         </foreach>
     </update>
 
     <!--根据项目、分组及图像更新切片诊断状态-->
-    <update id="updateBatchBySpecialDiagnosis"  parameterType="java.util.List">
+    <update id="updateBatchBySpecialDiagnosis" parameterType="java.util.List">
         <foreach collection="diagnosisList" item="item" index="index" open="" close="" separator=";">
             update tb_slide
             <set>
-                diagnosis=${item.diagnosisStatus},update_time=now(),process_flag=2
+                diagnosis=${item.diagnosisStatus},
+                update_time=now(),
+                process_flag=2
             </set>
-            where project_id = ${item.projectId} and image_id = ${item.subImageId} and group_id = ${item.groupId}
+            where project_id = ${item.projectId}
+              and image_id = ${item.subImageId}
+              and group_id = ${item.groupId}
         </foreach>
     </update>
 
@@ -381,66 +412,74 @@
     <select id="selectSlideByProjectAndGroup" parameterType="java.util.Map"
             resultType="cn.staitech.anno.domain.vo.image.SlideReportSummaryVo">
         select p.project_name,
-        g.group_name,
-        case when g.gender = 0 then '雌' else '雄' end as gender,
-        count(s.slide_id) as total,
-        sum(case when s.ai_analyzed = 2 then 1 end) finish_total,
-        g.description,g.reasons,g.dosage
+               g.group_name,
+               case when g.gender = 0 then '雌' else '雄' end as gender,
+               count(s.slide_id)                              as total,
+               sum(case when s.ai_analyzed = 2 then 1 end)       finish_total,
+               g.description,
+               g.reasons,
+               g.dosage
         from tb_slide s
-        left join tb_group g on s.group_id = g.group_id
-        left join tb_project p on s.project_id = p.project_id
+                 left join tb_group g on s.group_id = g.group_id
+                 left join tb_project p on s.project_id = p.project_id
         <where>
             s.is_delete = 0
-            <if test="params.groupId !=null and params.groupId != ''">
+            <if test="params.groupId != null and params.groupId != ''">
                 AND s.group_id = #{params.groupId}
             </if>
-            <if test="params.projectId !=null and params.projectId != ''">
+            <if test="params.projectId != null and params.projectId != ''">
                 AND s.project_id = #{params.projectId}
             </if>
         </where>
-        group by s.group_id,s.project_id
+        group by s.group_id, s.project_id
     </select>
 
     <!--组内切片报表分页查询-->
-    <select id="pageSlideWithSubImage" parameterType="java.util.Map" resultType="cn.staitech.anno.domain.vo.image.SlideReportVo">
-        select m.*,s.slide_id,s.diagnosis,s.ai_analyzed,s.ai_check,case when g.gender = 0 then '雌' else '雄' end as gender
+    <select id="pageSlideWithSubImage" parameterType="java.util.Map"
+            resultType="cn.staitech.anno.domain.vo.image.SlideReportVo">
+        select m.*,
+               s.slide_id,
+               s.diagnosis,
+               s.ai_analyzed,
+               s.ai_check,
+               case when g.gender = 0 then '雌' else '雄' end as gender
         from tb_slide s
-          left join tb_sub_image m on m.image_id = s.image_id
-          left join tb_group g on s.group_id = g.group_id
+                 left join tb_sub_image m on m.image_id = s.image_id
+                 left join tb_group g on s.group_id = g.group_id
         <where>
             s.is_delete = 0
-            <if test="params.aiAnalyzed !=null and params.aiAnalyzed != ''">
+            <if test="params.aiAnalyzed != null and params.aiAnalyzed != ''">
                 AND s.ai_analyzed = #{params.aiAnalyzed}
             </if>
-            <if test="params.aiCheck !=null and params.aiCheck != ''">
+            <if test="params.aiCheck != null and params.aiCheck != ''">
                 AND s.ai_check = #{params.aiCheck}
             </if>
-            <if test="params.diagnosis !=null and params.diagnosis != ''">
+            <if test="params.diagnosis != null and params.diagnosis != ''">
                 AND s.diagnosis = #{params.diagnosis}
             </if>
-            <if test="params.groupId !=null and params.groupId != ''">
+            <if test="params.groupId != null and params.groupId != ''">
                 AND s.group_id = #{params.groupId}
             </if>
-            <if test="params.projectId !=null and params.projectId != ''">
+            <if test="params.projectId != null and params.projectId != ''">
                 AND s.project_id = #{params.projectId}
             </if>
             <if test="params.specialId != null and params.specialId != ''">
                 AND m.special_id = #{params.specialId}
             </if>
             <if test="params.imageCode != null and params.imageCode != ''">
-                AND m.image_name LIKE CONCAT('%',#{params.imageCode},'%')
+                AND m.image_name LIKE CONCAT('%', #{params.imageCode}, '%')
             </if>
             <if test="params.parentImageCode != null and params.parentImageCode != ''">
-                AND m.parent_image_name LIKE CONCAT('%',#{params.parentImageCode},'%')
+                AND m.parent_image_name LIKE CONCAT('%', #{params.parentImageCode}, '%')
             </if>
             <if test="params.visceraType != null and params.visceraType != ''">
                 AND m.viscera_type = #{params.visceraType}
             </if>
-            <if test="params.accessTime!=null and params.accessTime.beginTime != null and params.accessTime.beginTime != ''">
-                and date_format(m.create_time,'%y%m%d') &gt;= date_format(#{params.accessTime.beginTime},'%y%m%d')
+            <if test="params.accessTime != null and params.accessTime.beginTime != null and params.accessTime.beginTime != ''">
+                and date_format(m.create_time, '%y%m%d') &gt;= date_format(#{params.accessTime.beginTime}, '%y%m%d')
             </if>
-            <if test="params.accessTime!=null and params.accessTime.endTime != null and params.accessTime.endTime != ''">
-                and date_format(m.create_time,'%y%m%d') &lt;= date_format(#{params.accessTime.endTime},'%y%m%d')
+            <if test="params.accessTime != null and params.accessTime.endTime != null and params.accessTime.endTime != ''">
+                and date_format(m.create_time, '%y%m%d') &lt;= date_format(#{params.accessTime.endTime}, '%y%m%d')
             </if>
         </where>
     </select>
@@ -460,56 +499,67 @@
                sum(case when s.ai_analyzed = 1 or s.ai_analyzed = 3 then 1 end) as analysis_total
         from tb_project p
                  left join (select * from tb_slide where is_delete = 0) s on p.project_id = s.project_id
-        where p.del_flag = 0 and p.special_id in
+        where p.del_flag = 0
+          and p.special_id in
         <foreach item="specialId" collection="params.specialIds" separator="," open="(" close=")" index="">
             #{specialId, jdbcType=NUMERIC}
         </foreach>
-        <if test="params.projectName !=null and params.projectName != ''">
-            AND p.project_name LIKE CONCAT('%',#{params.projectName},'%')
+        <if test="params.projectName != null and params.projectName != ''">
+            AND p.project_name LIKE CONCAT('%', #{params.projectName}, '%')
         </if>
-        <if test="params.creator !=null and params.creator != ''">
-            AND p.create_by in (select u.user_id from sys_user u where u.user_name LIKE CONCAT('%',#{params.creator},'%'))
+        <if test="params.creator != null and params.creator != ''">
+            AND p.create_by in
+                (select u.user_id from sys_user u where u.user_name LIKE CONCAT('%', #{params.creator}, '%'))
         </if>
-        <if test="params.viscusCode !=null and params.viscusCode != ''">
+        <if test="params.viscusCode != null and params.viscusCode != ''">
             AND p.viscus_code = #{params.viscusCode}
         </if>
-        <if test="params.systemCode !=null and params.systemCode != ''">
+        <if test="params.systemCode != null and params.systemCode != ''">
             AND p.system_code = #{params.systemCode}
         </if>
         group by p.project_id
     </select>
 
     <!--切片报表分页查询-->
-    <select id="pageSlideStatistics" parameterType="java.util.Map" resultType="cn.staitech.anno.domain.vo.image.SlideReportVo">
-        select m.*,s.slide_id,s.diagnosis,s.ai_analyzed,s.ai_check,p.project_name,p.system_code,case when g.gender = 0 then '雌' else '雄' end as gender,p.viscus_code
+    <select id="pageSlideStatistics" parameterType="java.util.Map"
+            resultType="cn.staitech.anno.domain.vo.image.SlideReportVo">
+        select m.*,
+               s.slide_id,
+               s.diagnosis,
+               s.ai_analyzed,
+               s.ai_check,
+               p.project_name,
+               p.system_code,
+               case when g.gender = 0 then '雌' else '雄' end as gender,
+               p.viscus_code
         from tb_slide s
-        left join tb_sub_image m on m.image_id = s.image_id
-        left join tb_group g on s.group_id = g.group_id
-        left join tb_project p on s.project_id = p.project_id
+                 left join tb_sub_image m on m.image_id = s.image_id
+                 left join tb_group g on s.group_id = g.group_id
+                 left join tb_project p on s.project_id = p.project_id
         <where>
             s.is_delete = 0
-            <if test="params.aiAnalyzed !=null and params.aiAnalyzed != ''">
+            <if test="params.aiAnalyzed != null and params.aiAnalyzed != ''">
                 AND s.ai_analyzed = #{params.aiAnalyzed}
             </if>
-            <if test="params.aiCheck !=null and params.aiCheck != ''">
+            <if test="params.aiCheck != null and params.aiCheck != ''">
                 AND s.ai_check = #{params.aiCheck}
             </if>
-            <if test="params.diagnosis !=null and params.diagnosis != ''">
+            <if test="params.diagnosis != null and params.diagnosis != ''">
                 AND s.diagnosis = #{params.diagnosis}
             </if>
-            <if test="params.groupId !=null and params.groupId != ''">
+            <if test="params.groupId != null and params.groupId != ''">
                 AND s.group_id = #{params.groupId}
             </if>
-            <if test="params.projectName !=null and params.projectName != ''">
-                AND p.project_name LIKE CONCAT('%',#{params.projectName},'%')
+            <if test="params.projectName != null and params.projectName != ''">
+                AND p.project_name LIKE CONCAT('%', #{params.projectName}, '%')
             </if>
-            <if test="params.viscusCode !=null and params.viscusCode != ''">
+            <if test="params.viscusCode != null and params.viscusCode != ''">
                 AND p.viscus_code = #{params.viscusCode}
             </if>
-            <if test="params.systemCode !=null and params.systemCode != ''">
+            <if test="params.systemCode != null and params.systemCode != ''">
                 AND p.system_code = #{params.systemCode}
             </if>
-            <if test="params.projectIds !=null">
+            <if test="params.projectIds != null">
                 AND s.project_id in
                 <foreach item="projectId" collection="params.projectIds" separator="," open="(" close=")" index="">
                     #{projectId, jdbcType=NUMERIC}
@@ -519,84 +569,83 @@
                 AND m.special_id = #{params.specialId}
             </if>
             <if test="params.imageCode != null and params.imageCode != ''">
-                AND m.image_name LIKE CONCAT('%',#{params.imageCode},'%')
+                AND m.image_name LIKE CONCAT('%', #{params.imageCode}, '%')
             </if>
             <if test="params.parentImageCode != null and params.parentImageCode != ''">
-                AND m.parent_image_name LIKE CONCAT('%',#{params.parentImageCode},'%')
+                AND m.parent_image_name LIKE CONCAT('%', #{params.parentImageCode}, '%')
             </if>
             <if test="params.visceraType != null and params.visceraType != ''">
                 AND m.viscera_type = #{params.visceraType}
             </if>
-            <if test="params.accessTime!=null and params.accessTime.beginTime != null and params.accessTime.beginTime != ''">
-                and date_format(m.create_time,'%y%m%d') &gt;= date_format(#{params.accessTime.beginTime},'%y%m%d')
+            <if test="params.accessTime != null and params.accessTime.beginTime != null and params.accessTime.beginTime != ''">
+                and date_format(m.create_time, '%y%m%d') &gt;= date_format(#{params.accessTime.beginTime}, '%y%m%d')
             </if>
-            <if test="params.accessTime!=null and params.accessTime.endTime != null and params.accessTime.endTime != ''">
-                and date_format(m.create_time,'%y%m%d') &lt;= date_format(#{params.accessTime.endTime},'%y%m%d')
+            <if test="params.accessTime != null and params.accessTime.endTime != null and params.accessTime.endTime != ''">
+                and date_format(m.create_time, '%y%m%d') &lt;= date_format(#{params.accessTime.endTime}, '%y%m%d')
             </if>
         </where>
     </select>
     <!--查询项目内切片诊断信息-->
     <select id="queryVisceraLesionRpt" parameterType="java.util.Map" resultType="java.util.Map">
-        select g.group_name as 'group',
-			   g.description as groupDesc,
-			   g.group_id,
+        select g.group_name as 'group', g.description as groupDesc,
+               g.group_id,
                g.gender,
                g.dosage,
-			   i.image_name as subImageName,
-			   i.parent_image_name as imageName,
-			   i.image_id,
-			   t1.special_diagnosis_id,
-			   t1.diagnosis,
-                CASE
-                WHEN (ISNULL(t1.remark)=1) || (LENGTH(trim(t1.remark))=0) THEN  '-'
-                  ELSE t1.remark
-                END as remark
+               i.image_name        as subImageName,
+               i.parent_image_name as imageName,
+               i.image_id,
+               t1.special_diagnosis_id,
+               t1.diagnosis,
+               CASE
+                   WHEN (ISNULL(t1.remark) = 1) || (LENGTH(trim(t1.remark)) = 0) THEN '-'
+                   ELSE t1.remark
+                   END             as remark
 
-		from tb_slide s
-			   left join tb_group g on s.group_id = g.group_id
-			   left join tb_sub_image i on s.image_id = i.image_id
-			   left join (select d.special_diagnosis_id,
-								 d.project_id,
-								 d.special_id,
-								 d.sub_image_id,
-								 d.group_id,
-								 d.remark,
-								 GROUP_CONCAT(t.tag_name SEPARATOR "; ") as diagnosis
-						  from tb_special_diagnosis_detail t
-								 left join tb_special_diagnosis d on t.special_diagnosis_id = d.special_diagnosis_id
-                          <where>
-                            <!--是否可用 0:不可用1:可用-->
-                            d.status = 1
-                            <if test="params.specialId != null and params.specialId != ''">
-                                AND d.special_id = #{params.specialId}
-                            </if>
-                            <if test="params.currentUserId != null and params.currentUserId != ''">
-                                <!--需求所要求权限-->
-                                <!--当抽取数据进报告时，如果是其他，不抽其他，只抽取用户自己输入的内容-->
-                                AND d.create_by = #{params.currentUserId}
-                            </if>
-                            <if test="params.projectId !=null">
-                                AND d.project_id = #{params.projectId, jdbcType=NUMERIC}
-                            </if>
-                         </where>
-						  group by d.special_diagnosis_id,d.project_id,d.special_id,d.sub_image_id,d.group_id) t1
-						 on s.project_id = t1.project_id and s.group_id = t1.group_id and s.image_id = t1.sub_image_id
+        from tb_slide s
+            left join tb_group g on s.group_id = g.group_id
+            left join tb_sub_image i on s.image_id = i.image_id
+            left join (select d.special_diagnosis_id,
+                              d.project_id,
+                              d.special_id,
+                              d.sub_image_id,
+                              d.group_id,
+                              d.remark,
+                              GROUP_CONCAT(t.tag_name SEPARATOR "; ") as diagnosis
+                       from tb_special_diagnosis_detail t
+                                left join tb_special_diagnosis d on t.special_diagnosis_id = d.special_diagnosis_id
         <where>
-		    s.is_delete=0
-            <if test="params.groupId !=null and params.groupId != ''">
+            <!--是否可用 0:不可用1:可用-->
+            d.status = 1
+            <if test="params.specialId != null and params.specialId != ''">
+                AND d.special_id = #{params.specialId}
+            </if>
+            <if test="params.currentUserId != null and params.currentUserId != ''">
+                <!--需求所要求权限-->
+                <!--当抽取数据进报告时，如果是其他，不抽其他，只抽取用户自己输入的内容-->
+                AND d.create_by = #{params.currentUserId}
+            </if>
+            <if test="params.projectId != null">
+                AND d.project_id = #{params.projectId, jdbcType=NUMERIC}
+            </if>
+        </where>
+        group by d.special_diagnosis_id, d.project_id, d.special_id, d.sub_image_id, d.group_id) t1
+        on s.project_id = t1.project_id and s.group_id = t1.group_id and s.image_id = t1.sub_image_id
+        <where>
+            s.is_delete = 0
+            <if test="params.groupId != null and params.groupId != ''">
                 AND s.group_id = #{params.groupId}
             </if>
-            <if test="params.projectId !=null">
+            <if test="params.projectId != null">
                 AND s.project_id = #{params.projectId, jdbcType=NUMERIC}
             </if>
-            <if test="params.reasons !=null">
+            <if test="params.reasons != null">
                 AND g.reasons = #{params.reasons, jdbcType=NUMERIC}
             </if>
-            <if test="params.gender !=null">
+            <if test="params.gender != null">
                 AND g.gender = #{params.gender, jdbcType=NUMERIC}
             </if>
         </where>
-        order by g.gender,g.group_id,i.parent_image_name,i.image_name
+        order by g.gender, g.group_id, i.parent_image_name, i.image_name
     </select>
 </mapper>
 

@@ -3,43 +3,56 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.ImageMapper">
-    <resultMap type="cn.staitech.anno.domain.Image" id="ImageResult">
-        <result property="imageId" column="image_id"/>
-        <result property="imageName" column="image_name"/>
-        <result property="imageUrl" column="image_url"/>
-        <result property="imagePath" column="image_path"/>
-        <result property="thumbUrl" column="thumb_url"/>
-        <result property="macroUrl" column="macro_url"/>
-        <result property="labelUrl" column="label_url"/>
-        <result property="format" column="format"/>
-        <result property="width" column="width"/>
-        <result property="height" column="height"/>
-        <result property="depth" column="depth"/>
-        <result property="size" column="size"/>
-        <result property="globalSize" column="global_size"/>
-        <result property="resolvingPower" column="resolving_power"/>
-        <result property="tileCountList" column="tile_count_list"/>
-        <result property="levelCount" column="level_count"/>
-        <result property="chunkTotal" column="chunk_total"/>
-        <result property="md5" column="md5"/>
-        <result property="resolutionX" column="resolution_x"/>
-        <result property="resolutionY" column="resolution_y"/>
-        <result property="sourceLens" column="source_lens"/>
-        <result property="processFlag" column="process_flag"/>
-        <result property="createBy" column="create_by"/>
-        <result property="createTime" column="create_time"/>
-        <result property="updateBy" column="update_by"/>
-        <result property="updateTime" column="update_time"/>
-        <result property="imageCode" column="image_code"/>
-        <result property="topicId" column="topic_id"/>
-        <result property="topicName" column="topic_name"/>
-        <result property="status" column="status"/>
-        <result property="deleteFlag" column="delete_flag"/>
-        <result property="organizationId" column="organization_id"/>
-        <result property="roundId" column="round_id"/>
-        <result property="bizType" column="biz_type"/>
-        <result property="source" column="source"/>
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.Image">
+        <id column="image_id" jdbcType="BIGINT" property="imageId" />
+        <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+        <result column="image_name" jdbcType="VARCHAR" property="imageName" />
+        <result column="image_path" jdbcType="VARCHAR" property="imagePath" />
+        <result column="image_url" jdbcType="VARCHAR" property="imageUrl" />
+        <result column="thumb_url" jdbcType="VARCHAR" property="thumbUrl" />
+        <result column="macro_url" jdbcType="VARCHAR" property="macroUrl" />
+        <result column="label_url" jdbcType="VARCHAR" property="labelUrl" />
+        <result column="cache_url" jdbcType="VARCHAR" property="cacheUrl" />
+        <result column="multiple" jdbcType="VARCHAR" property="multiple" />
+        <result column="format" jdbcType="VARCHAR" property="format" />
+        <result column="width" jdbcType="VARCHAR" property="width" />
+        <result column="height" jdbcType="VARCHAR" property="height" />
+        <result column="depth" jdbcType="VARCHAR" property="depth" />
+        <result column="size" jdbcType="VARCHAR" property="size" />
+        <result column="global_size" jdbcType="VARCHAR" property="globalSize" />
+        <result column="resolving_power" jdbcType="VARCHAR" property="resolvingPower" />
+        <result column="tile_count_list" jdbcType="VARCHAR" property="tileCountList" />
+        <result column="level_count" jdbcType="TINYINT" property="levelCount" />
+        <result column="chunk_total" jdbcType="SMALLINT" property="chunkTotal" />
+        <result column="md5" jdbcType="VARCHAR" property="md5" />
+        <result column="resolution_x" jdbcType="VARCHAR" property="resolutionX" />
+        <result column="resolution_y" jdbcType="VARCHAR" property="resolutionY" />
+        <result column="source_lens" jdbcType="INTEGER" property="sourceLens" />
+        <result column="process_flag" jdbcType="TINYINT" property="processFlag" />
+        <result column="create_by" jdbcType="BIGINT" property="createBy" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_by" jdbcType="BIGINT" property="updateBy" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="image_code" jdbcType="VARCHAR" property="imageCode" />
+        <result column="topic_id" jdbcType="BIGINT" property="topicId" />
+        <result column="topic_name" jdbcType="VARCHAR" property="topicName" />
+        <result column="status" jdbcType="TINYINT" property="status" />
+        <result column="delete_flag" jdbcType="TINYINT" property="deleteFlag" />
+        <result column="host_id" jdbcType="TINYINT" property="hostId" />
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+        <result column="round_id" jdbcType="BIGINT" property="roundId" />
+        <result column="biz_type" jdbcType="TINYINT" property="bizType" />
+        <result column="source" jdbcType="TINYINT" property="source" />
     </resultMap>
+    <sql id="Base_Column_List">
+        image_id, file_name, image_name, image_path, image_url, thumb_url, macro_url, label_url,
+        cache_url, multiple, format, width, height, `depth`, `size`, global_size, resolving_power,
+        tile_count_list, level_count, chunk_total, md5, resolution_x, resolution_y, source_lens,
+        process_flag, create_by, create_time, update_by, update_time, image_code, topic_id,
+        topic_name, `status`, delete_flag, host_id, organization_id, round_id, biz_type,
+        `source`
+    </sql>
+
 
     <resultMap type="cn.staitech.anno.domain.image.in.ImageListVO" id="ImageSlide">
         <result property="imageId" column="image_id"/>
@@ -84,14 +97,45 @@
 
     <sql id="selectImageVo">
         select image_id,
+               file_name,
                image_name,
-               image_url,
                image_path,
+               image_url,
                thumb_url,
+               macro_url,
+               label_url,
+               cache_url,
+               multiple,
+               format,
                width,
-               height, size, global_size, source_lens, process_flag, create_by, create_time, update_by, update_time, image_code, topic_id, topic_name, status, delete_flag, organization_id, round_id, biz_type, source
-        from
-            tb_image
+               height,
+               `depth`,
+               `size`,
+               global_size,
+               resolving_power,
+               tile_count_list,
+               level_count,
+               chunk_total,
+               md5,
+               resolution_x,
+               resolution_y,
+               source_lens,
+               process_flag,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               image_code,
+               topic_id,
+               topic_name,
+               `status`,
+               delete_flag,
+               host_id,
+               organization_id,
+               round_id,
+               biz_type,
+               `source`
+        from tb_image
     </sql>
 
 
@@ -147,7 +191,7 @@
     </select>
 
     <!--查询单个图像信息-->
-    <select id="selectById" parameterType="java.lang.Long" resultMap="ImageResult">
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
         <include refid="selectImageVo"/>
         <where>
             <if test="imageId != null and imageId != ''">
@@ -171,7 +215,7 @@
     根据实际情况不应该为上传失败，优化成上传时不显示信息，上传完显示，或者更好的方式 http://jira.shengtong.com/browse/PS-304
     process_flag 处理状态，不可用原因共三种，0上传失败（MD5校验不通过），1解析中，2解析失败（不能获得缩略图）
     -->
-    <select id="selectList" parameterType="cn.staitech.anno.domain.Image" resultMap="ImageResult">
+    <select id="selectList" parameterType="cn.staitech.anno.domain.Image" resultMap="BaseResultMap">
         <include refid="selectImageVo"></include>
         <where>
             delete_flag = 1 and process_flag != 0
@@ -218,7 +262,7 @@
     </select>
 
     <!--标注组选片入口预览图像列表-->
-    <select id="selectImageChooseList" parameterType="cn.staitech.anno.domain.Image" resultMap="ImageResult">
+    <select id="selectImageChooseList" parameterType="cn.staitech.anno.domain.Image" resultMap="BaseResultMap">
         <include refid="selectImageVo"></include>
         <where>
             delete_flag = 1
@@ -242,7 +286,7 @@
     </select>
 
     <!--标注组图像列表-->
-    <select id="selectImageAnnotationList" parameterType="cn.staitech.anno.domain.Image" resultMap="ImageResult">
+    <select id="selectImageAnnotationList" parameterType="cn.staitech.anno.domain.Image" resultMap="BaseResultMap">
         <include refid="selectImageVo"></include>
         <where>
             delete_flag = 1

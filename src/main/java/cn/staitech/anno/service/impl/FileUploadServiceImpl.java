@@ -69,26 +69,24 @@ public class FileUploadServiceImpl implements FileUploadService {
      * @return
      * @throws IOException
      */
-    public Files uploadAndProcessBusiness(FileUploadVO fileUploadVO) throws IOException {
+    public Files uploadAndProcessBusiness(FileUploadVO fileUploadVO) throws Exception {
+
+        Topic topic = topicService.selectOne(fileUploadVO.getTopicName());
+
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 
         Integer businessType = fileUploadVO.getBusinessType();
 
         String dirPath = basePath;
 
-        switch (businessType){
+        switch (businessType) {
             case 3:
-                dirPath = dirPath +"\\Data";
+                dirPath = dirPath + "\\Data";
                 break;
         }
 
 
-
-
         String fileName = fileUploadVO.getFileName();
-        Long topicId = fileUploadVO.getTopicId();
-        // 对应专题
-        Topic topic = topicService.getById(topicId);
         // 专题名称
         dirPath = basePath + topic.getTopicName();
 
@@ -124,14 +122,14 @@ public class FileUploadServiceImpl implements FileUploadService {
         files.setHostId(1);
         files.setBusinessType(businessType);
         files.setTopicName(topic.getTopicName());
+        files.setTopicId(topic.getTopicId());
         filesService.save(files);
 
-        switch (businessType){
+        switch (businessType) {
             case 3:
                 filesProcessService.prodessByBussinessType(files);
                 break;
         }
-
 
 
         return files;

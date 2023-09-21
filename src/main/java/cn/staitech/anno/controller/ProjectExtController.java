@@ -182,7 +182,7 @@ public class ProjectExtController extends BaseController {
         if (projectByName != null) {
             return R.fail(ProjectConstant.PROJECT_EXIST);
         }
-        final int[] imageIdList = req.getImageIdList();
+        final Long[] imageIdList = req.getImageIdList();
         Indicator indicator = new Indicator();
         Integer status = req.getStatus();
         if (status < ProjectConstant.NOT_INDICATOR_STATUS || status > ProjectConstant.NOT_ATTRIBUTE_STATUS) {
@@ -256,10 +256,10 @@ public class ProjectExtController extends BaseController {
         }
         if (imageIdList.length != 0) {
             List<Slide> slideList = new ArrayList<>();
-            for (int image : imageIdList) {
+            for (Long imageId : imageIdList) {
                 Slide projectImage = new Slide();
                 projectImage.setProjectId(currentProjectId);
-                projectImage.setImageId((long) image);
+                projectImage.setImageId(imageId);
                 projectImage.setCreateBy(loginUser);
                 slideList.add(projectImage);
             }
@@ -1073,53 +1073,6 @@ public class ProjectExtController extends BaseController {
     }
 
     /**
-     * 项目批量添加图片接口（去重） .
-     */
-    @RequiresPermissions("anno:project:addimage")
-    @ApiOperation(value = "项目批量添加图片接口")
-    @Log(title = "项目批量添加图片接口", menu = "专题管理", subMenu = "项目管理", businessType = BusinessType.INSERT)
-    @PostMapping("/addProjectImage")
-    public R<String> add(@Validated @RequestBody ProjectImageVO pro) {
-        if (pro.getProjectId() != null && pro.getImageIdList() != null) {
-            ProjectListVO projectListVO = projectService.selectProjectById(pro.getProjectId());
-            if (projectListVO == null) {
-                return R.fail("projectId不存在");
-            }
-            String result = "";
-            List<Slide> slideList = new ArrayList<>();
-            for (Long i : pro.getImageIdList()) {
-                pro.setImageId(i);
-                Slide projectImage = new Slide();
-                BeanUtils.copyProperties(pro, projectImage);
-                projectImage.setCreateBy(SecurityUtils.getUserId());
-                Image image = new Image();
-                image.setImageId(i);
-                List<Image> imageList = imageService.selectImageAnnotationList(image);
-                if (imageList.isEmpty()) {
-                    result = result + i + ",";
-                    continue;
-                }
-                //查寻项目是否包含该图片
-                List<Slide> imageInformation = slideService.selectImageExist(projectImage);
-                if (imageInformation.isEmpty()) {
-                    slideList.add(projectImage);
-                }
-            }
-            if (slideList.isEmpty()) {
-                return R.fail(null, ProjectConstant.ADDED);
-            }
-            //添加图片
-            slideManage.insertProjectImage(slideList, pro.getProjectId());
-            if (result.isEmpty()) {
-                return R.ok(null, ProjectConstant.STRING_ADD_COMPLETE);
-            }
-            return R.ok(ProjectConstant.ID_IS + result + ProjectConstant.PICTURE_NON_EXISTENT,
-                    ProjectConstant.STRING_ADD_COMPLETE);
-        }
-        return R.fail(ProjectConstant.NO_DATA_TRANSFERRED);
-    }
-
-    /**
      * 修改项目状态 .
      */
     @ApiOperation(value = "修改项目状态接口")
@@ -1424,4 +1377,56 @@ public class ProjectExtController extends BaseController {
             throw new RuntimeException(e);
         }
     }
+
+
+    //=======================================
+
+
+    /**
+     * 项目批量添加图片接口（去重） .
+     */
+    @RequiresPermissions("anno:project:addimage")
+    @ApiOperation(value = "项目批量添加图片接口")
+    @Log(title = "项目批量添加图片接口", menu = "专题管理", subMenu = "项目管理", businessType = BusinessType.INSERT)
+    @PostMapping("/addProjectImage")
+    public R<String> add(@Validated @RequestBody ProjectImageVO pro) {
+        if (pro.getProjectId() != null && pro.getImageIdList() != null) {
+            ProjectListVO projectListVO = projectService.selectProjectById(pro.getProjectId());
+            if (projectListVO == null) {
+                return R.fail("projectId不存在");
+            }
+            String result = "";
+            List<Slide> slideList = new ArrayList<>();
+            for (Long i : pro.getImageIdList()) {
+                pro.setImageId(i);
+                Slide projectImage = new Slide();
+                BeanUtils.copyProperties(pro, projectImage);
+                projectImage.setCreateBy(SecurityUtils.getUserId());
+                Image image = new Image();
+                image.setImageId(i);
+                List<Image> imageList = imageService.selectImageAnnotationList(image);
+                if (imageList.isEmpty()) {
+                    result = result + i + ",";
+                    continue;
+                }
+                //查寻项目是否包含该图片
+                List<Slide> imageInformation = slideService.selectImageExist(projectImage);
+                if (imageInformation.isEmpty()) {
+                    slideList.add(projectImage);
+                }
+            }
+            if (slideList.isEmpty()) {
+                return R.fail(null, ProjectConstant.ADDED);
+            }
+            //添加图片
+            slideManage.insertProjectImage(slideList, pro.getProjectId());
+            if (result.isEmpty()) {
+                return R.ok(null, ProjectConstant.STRING_ADD_COMPLETE);
+            }
+            return R.ok(ProjectConstant.ID_IS + result + ProjectConstant.PICTURE_NON_EXISTENT,
+                    ProjectConstant.STRING_ADD_COMPLETE);
+        }
+        return R.fail(ProjectConstant.NO_DATA_TRANSFERRED);
+    }
+
 }

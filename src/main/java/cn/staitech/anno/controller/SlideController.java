@@ -206,7 +206,6 @@ public class SlideController extends BaseController {
      * 通过切片ID查询对应的图像列表 .
      * 原 ProjectController.java  imageList接口 - anno:annotation:image
      */
-    // @RequiresPermissions("anno:slide:list")
     @ApiOperation(value = "通过切片ID查询对应的图像（切片）列表")
     @GetMapping("/list")
     public R<List<ImageListVO>> listByProjectId(
@@ -225,5 +224,16 @@ public class SlideController extends BaseController {
         return R.ok(image);
     }
 
+
+    /**
+     * 批量添加切片
+     */
+    @ApiOperation(value = "通过切片ID查询对应的图像（切片）列表")
+    @GetMapping("/add")
+    public R add(
+            @RequestParam @ApiParam(name = "projectId", value = "项目ID", required = true) Long projectId,
+            @RequestParam @ApiParam(name = "topicIds", value = "专题目ID", required = true) List<Long> topicIds) {
+        return R.ok(slideService.addAnnoSlidesBatch(projectId, topicIds));
+    }
 
 }

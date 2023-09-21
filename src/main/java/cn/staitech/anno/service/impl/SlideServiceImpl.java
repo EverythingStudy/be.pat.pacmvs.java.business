@@ -3,20 +3,17 @@ package cn.staitech.anno.service.impl;
 import cn.staitech.anno.constant.ExaminationConstant;
 import cn.staitech.anno.constant.ProjectConstant;
 import cn.staitech.anno.constant.R.MeasureResponseConstant;
-import cn.staitech.anno.domain.Group;
-import cn.staitech.anno.domain.Project;
-import cn.staitech.anno.domain.Slide;
+import cn.staitech.anno.domain.*;
 import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.po.ProjectPo;
 import cn.staitech.anno.domain.project.ProjectExt;
-import cn.staitech.anno.domain.project.out.ProjectWithGroupsVo;
-import cn.staitech.anno.domain.projectgroup.ProjectGroup;
 import cn.staitech.anno.domain.special.Special;
-import cn.staitech.anno.domain.vo.*;
+import cn.staitech.anno.domain.vo.ExaminationListVO;
+import cn.staitech.anno.domain.vo.ProjectListOutVO;
+import cn.staitech.anno.domain.vo.SlideSelectVO;
 import cn.staitech.anno.domain.vo.image.ProjectStatisticsVo;
 import cn.staitech.anno.domain.vo.image.SlideReportSummaryVo;
 import cn.staitech.anno.domain.vo.image.SlideReportVo;
-
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListOutVO;
 import cn.staitech.anno.mapper.*;
@@ -24,8 +21,8 @@ import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
-import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -44,6 +41,7 @@ import java.io.BufferedOutputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -80,6 +78,12 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
     @Resource(name = "redissonClient")
     private RedissonClient client;
 
+    @Resource
+    private ImageCsvMapper imageCsvMapper;
+
+    @Resource
+    private ImageMapper imageMapper;
+
     /**
      * 查询单条切片详情
      *
@@ -109,7 +113,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
      * @return
      */
     public List<StatisticSlideListOutVO> selectSlideListByProjectIdList(StatisticSlideListInVO projectIdList) {
-        if(!SecurityUtils.isAdmin(SecurityUtils.getUserId())){
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId())) {
             projectIdList.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         }
         return slideMapper.selectSlideListByProjectIdList(projectIdList);
@@ -477,5 +481,54 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         }
     }
 
+
+    // =========================
+
+    /**
+     * 添加标注切片
+     *
+     * @param projectId
+     * @param topicIds
+     * @return
+     */
+    @Override
+    public boolean addAnnoSlidesBatch(Long projectId, List<Long> topicIds) {
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+
+        QueryWrapper<ImageCsv> query = Wrappers.query();
+        query.in("topic_id", topicIds);
+        List<ImageCsv> imageCsvList = imageCsvMapper.selectList(query);
+        // List<Slide> slideList = new ArrayList<>(imageCsvList.size());
+        for (ImageCsv imageCsv : imageCsvList) {
+
+            // 匹配图片
+            QueryWrapper<Image> imageQueryWrapper = Wrappers.query();
+            imageQueryWrapper.eq("file_name", imageCsv.getImageName());
+            imageQueryWrapper.eq("topic_id", imageCsv.getTopicId());
+            imageQueryWrapper.eq("organization_id", sysUser.getOrganizationId());
+            imageQueryWrapper.eq("status", 1);
+            imageQueryWrapper.eq("delete_flag", 1);
+
+            imageQueryWrapper.orderByDesc("image_id");
+            Image image = imageMapper.selectOne(imageQueryWrapper);
+
+            if (image != null) {
+                Slide slide = new Slide();
+                slide.setProjectId(projectId);
+                slide.setImageId(image.getImageId());
+
+                slide.setImageCsvId(imageCsv.getId());
+                slide.setCreateBy(sysUser.getUserId());
+                slide.setCreateTime(new Date());
+
+                slideMapper.insert(slide);
+                // slideList.add(slide);
+            }
+        }
+
+        // slideMapper.insertSlide(slideList);
+
+        return true;
+    }
 
 }
