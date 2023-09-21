@@ -113,7 +113,7 @@
                  inner join tb_project as p on s.project_id = p.project_id
                  inner join tb_image as i on s.image_id = i.image_id
         <where>
-            <if test="projectIdList.size() != 0 and projectIdList != ''">
+            <if test="projectIdList.size() != 0 and projectIdList != null">
                 AND s.project_id in
                 <foreach collection="projectIdList" item="projectId" open="(" separator="," close=")">
                     #{projectId}

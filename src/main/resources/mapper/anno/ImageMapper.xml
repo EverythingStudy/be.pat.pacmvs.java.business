@@ -334,7 +334,7 @@
             </set>
         </if>
         where image_id in
-        <if test="imageIdList.size() != 0 and imageIdList != '' ">
+        <if test="imageIdList.size() != 0 and imageIdList != null ">
             <foreach collection="imageIdList" item="imageId" open="(" separator="," close=")">
                 #{imageId}
             </foreach>
