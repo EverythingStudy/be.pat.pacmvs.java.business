@@ -908,7 +908,7 @@
         from tb_marking
         <where>
             <if test="organizationId !=null and organizationId !=0">
-                organization_id = #{organizationId}
+               and  organization_id = #{organizationId}
             </if>
         </where>
     </select>
