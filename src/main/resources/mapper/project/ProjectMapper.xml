@@ -4,27 +4,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.project.mapper.ProjectMapperV1">
 
-    <resultMap id="BaseResultMap" type="cn.staitech.anno.project.domain.Project">
-            <id property="projectId" column="project_id" jdbcType="BIGINT"/>
-            <result property="projectName" column="project_name" jdbcType="VARCHAR"/>
-            <result property="specialId" column="special_id" jdbcType="BIGINT"/>
-            <result property="systemCode" column="system_code" jdbcType="BIGINT"/>
-            <result property="viscusCode" column="viscus_code" jdbcType="BIGINT"/>
-            <result property="speciesId" column="species_id" jdbcType="INTEGER"/>
-            <result property="productSeriesId" column="product_series_id" jdbcType="INTEGER"/>
-            <result property="colorType" column="color_type" jdbcType="TINYINT"/>
-            <result property="tagId" column="tag_id" jdbcType="BIGINT"/>
-            <result property="slideTotal" column="slide_total" jdbcType="INTEGER"/>
-            <result property="status" column="status" jdbcType="TINYINT"/>
-            <result property="delFlag" column="del_flag" jdbcType="CHAR"/>
-            <result property="organizationId" column="organization_id" jdbcType="BIGINT"/>
-            <result property="description" column="description" jdbcType="VARCHAR"/>
-            <result property="createBy" column="create_by" jdbcType="BIGINT"/>
-            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-            <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
-            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-    </resultMap>
-
     <select id="queryProject" parameterType="cn.staitech.anno.project.vo.ProjectIN" resultType="cn.staitech.anno.project.vo.ProjectVO">
         select p.*,s.name as species_val,o.organization_name,u.user_name,i.indicator_name,ps.name as ps_name
         from tb_project p
@@ -69,6 +48,7 @@
                 and date_format(m.create_time,'%y%m%d') &lt;= date_format(#{params.createTimeParams.endTime},'%y%m%d')
             </if>
         </where>
+        order by p.create_time desc
     </select>
 
     <select id="pageProject" parameterType="cn.staitech.anno.project.vo.ProjectIN" resultType="cn.staitech.anno.project.vo.ProjectVO">
@@ -116,5 +96,6 @@
                 and date_format(m.create_time,'%y%m%d') &lt;= date_format(#{params.createTimeParams.endTime},'%y%m%d')
             </if>
         </where>
+        order by p.create_time desc
     </select>
 </mapper>
