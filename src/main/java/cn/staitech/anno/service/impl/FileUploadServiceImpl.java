@@ -6,11 +6,11 @@ import cn.staitech.anno.domain.files.Files;
 import cn.staitech.anno.domain.files.in.FileUploadVO;
 import cn.staitech.anno.service.*;
 import cn.staitech.common.security.utils.SecurityUtils;
-import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -21,6 +21,7 @@ import java.io.RandomAccessFile;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -48,7 +49,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 //    private String basePath = "D:\\home\\pat_saas";
 
 
-    private String zipPath = "D:\\home\\upload\\json\\zip";
+    private String zipPath = "D:\\home\\upload\\json";
 
     /**
      * @param file 上传的文件MultipartFile
@@ -79,10 +80,10 @@ public class FileUploadServiceImpl implements FileUploadService {
      * @return
      * @throws IOException
      */
+    @Transactional(rollbackFor = Exception.class)
     public Files uploadAndProcessBusiness(FileUploadVO fileUploadVO) throws Exception {
 
         Files files = new Files();
-        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 
         Integer businessType = fileUploadVO.getBusinessType();
 
@@ -103,12 +104,12 @@ public class FileUploadServiceImpl implements FileUploadService {
                 files.setTopicId(topic.getTopicId());
                 break;
             case 4:
-                dirPath = basePath + File.separator + "zip";
+                dirPath = zipPath + File.separator + "zip";
                 break;
         }
         String fileName = fileUploadVO.getFileName();
         // 文件名称
-        String filePath = dirPath + "\\" + fileName;
+        String filePath = dirPath + File.separator + fileName;
         // (真实存入)拷贝
         fileUploadVO.getMultipartFile().transferTo(Paths.get(filePath));
         File localFile = new File(filePath);
@@ -124,9 +125,9 @@ public class FileUploadServiceImpl implements FileUploadService {
         files.setDeleteFlag(1);
         // 上传成功
         files.setProcessFlag(1);
-        files.setCreateBy(sysUser.getUserId());
+        files.setCreateBy(SecurityUtils.getUserId());
         files.setCreateTime(new Date());
-        files.setOrganizationId(sysUser.getOrganizationId());
+//        files.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         files.setHostId(1);
         files.setBusinessType(businessType);
         filesService.save(files);
@@ -135,6 +136,9 @@ public class FileUploadServiceImpl implements FileUploadService {
                 filesProcessService.prodessByBussinessType(files);
                 break;
             case 4:
+                if (!Optional.ofNullable(fileUploadVO.getProjectId()).isPresent()) {
+                    throw new Exception("项目不可为空");
+                }
                 markingService.zipExport(files.getFilesPath(), fileUploadVO.getProjectId());
                 break;
         }
@@ -192,6 +196,9 @@ public class FileUploadServiceImpl implements FileUploadService {
             // 根据不同业务类型执行
             switch (chunk.getBusinessType()) {
                 case 4:
+                    if (!Optional.ofNullable(chunk.getProjectId()).isPresent()) {
+                        throw new Exception("项目不可为空");
+                    }
                     markingService.zipExport(filesBy.getFilesPath(), chunk.getProjectId());
                     break;
             }

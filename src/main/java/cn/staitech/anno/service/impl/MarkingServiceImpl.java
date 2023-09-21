@@ -22,6 +22,7 @@ import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.domain.Slide;
 import cn.staitech.anno.project.mapper.DownTaskMapper;
+import cn.staitech.anno.project.mapper.MarkingMapperV1;
 import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.project.mapper.SlideMapperV1;
 import cn.staitech.anno.project.service.DownTaskService;
@@ -93,6 +94,9 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Resource
     private DownTaskMapper downTaskMapper;
+
+    @Resource
+    private MarkingMapperV1 markingMapperV1;
 
     @Resource
     private DownTaskService downTaskService;
@@ -433,7 +437,6 @@ public class MarkingServiceImpl implements MarkingService {
                                             JSONObject geometry = featureObject.getJSONObject("geometry");
                                             // 获取属性和自定义字段
                                             JSONObject properties = featureObject.getJSONObject("properties");
-
                                             Properties properties1 = JSONObject.toJavaObject(JSONObject.parseObject(JSONObject.toJSONString(properties)), Properties.class);
                                             // 写入数据库
                                             Marking marking = new Marking();
@@ -443,7 +446,19 @@ public class MarkingServiceImpl implements MarkingService {
                                             marking.setSlide_id(slideRes.getSlideId());
                                             marking.setCreate_time(new Date());
                                             cn.staitech.common.core.utils.bean.BeanUtils.copyProperties(properties1, marking);
-                                            markingMapper.insert(marking);
+                                            // 查询标注是否存在
+                                            QueryWrapper<cn.staitech.anno.project.domain.Marking> markingQueryWrapper = new QueryWrapper<>();
+                                            markingQueryWrapper
+                                                    .eq("slide_id",marking.getSlide_id())
+                                                    .eq("measure_name",marking.getMeasure_name())
+                                                    .eq("number",marking.getNumber())
+                                                    .eq("category_id",marking.getCategory_id())
+                                            ;
+                                            cn.staitech.anno.project.domain.Marking markingBy = markingMapperV1.selectOne(markingQueryWrapper);
+                                            if(markingBy != null){
+
+                                                markingMapper.insert(marking);
+                                            }
                                         }
                                     }
                                 }
