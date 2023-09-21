@@ -588,7 +588,7 @@ public class MarkingServiceImpl implements MarkingService {
         }
         ExcelTool<Map<String, String>> excelTool = new ExcelTool<>(ExportConstant.EXCEL_TITLE, 20, 20);
         List<Column> titleData = excelTool.columnTransformer(titleList);
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setContentType("application/vnd.ms-excel;charset=utf-8");
         response.setCharacterEncoding("utf-8");
         response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(downTask.getProjectName(), "UTF-8") + ExportConstant.XLSX);
         excelTool.exportExcel(titleData, res, response.getOutputStream(), true, false);

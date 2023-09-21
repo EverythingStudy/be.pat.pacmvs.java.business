@@ -69,8 +69,8 @@ public class ReviewController {
     public R<List<Review>> queryReview(@RequestParam("slideId") @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId){
         return R.ok(reviewService.list(Wrappers.query(Review.builder().slideId(slideId).build())));
     }
-    @ApiOperation(value = "按切片id查询评审列表")
-    @GetMapping("/exportReview")
+    @ApiOperation(value = "评审数据导出")
+    @PostMapping("/exportReview")
     public R<DownTask> exportReview(@RequestBody DownTaskIN in) throws Exception{
         return R.ok(reviewService.csvExportReview(in.getProjectId(),in.getSlideIds()));
     }

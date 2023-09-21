@@ -160,6 +160,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
             });
             writer.write(catesMapList,true);
             httpServletResponse.setContentType("application/vnd.ms-excel;charset=utf-8");
+            httpServletResponse.setHeader("responseType","blob");
             //name是下载对话框的名称，不支持中文，想用中文名称需要进行utf8编码
             String excelName = "切片数据";
             excelName = URLEncoder.encode(excelName, "utf-8");

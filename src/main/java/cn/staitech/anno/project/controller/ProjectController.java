@@ -70,7 +70,7 @@ public class ProjectController {
     }
 
     @ApiOperation(value = "项目导出json")
-    @GetMapping("/jsonExport")
+    @PostMapping("/jsonExport")
     public R<DownTask> jsonExport(@RequestBody DownTaskIN downTaskIN) throws Exception {
         return R.ok(markingService.projectJsonExport(downTaskIN.getProjectId(), downTaskIN.getSlideIds()));
     }
