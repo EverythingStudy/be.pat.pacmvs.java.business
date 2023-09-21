@@ -27,10 +27,7 @@ import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.github.pagehelper.PageHelper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -316,16 +313,6 @@ public class ProjectController extends BaseController {
         return R.ok(pageMaster);
     }
 
-
-    @ApiOperation(value = "项目导出")
-    @GetMapping("/jsonExport")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "projectId", value = "项目id", dataTypeClass = Long.class, paramType = "query", example = "1")})
-    public R<DownTask> jsonExport(
-            @RequestParam("projectId") Long projectId
-    ) throws Exception {
-        return R.ok(markingService.projectJsonExport(projectId));
-    }
 
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "导入zip文件(大文件)")

@@ -1,8 +1,11 @@
 package cn.staitech.anno.project.controller;
 
+import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.anno.project.service.ProjectService;
+import cn.staitech.anno.project.vo.DownTaskIN;
 import cn.staitech.anno.project.vo.ProjectIN;
 import cn.staitech.anno.project.vo.ProjectVO;
+import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
@@ -32,6 +35,9 @@ public class ProjectController {
     @Resource
     private ProjectService projectService;
 
+    @Resource
+    private MarkingService markingService;
+
     @ApiOperation(value = "分页查询")
     @PostMapping("/page")
     public R<PageMaster<ProjectVO>> page(@RequestBody ProjectIN in) throws Exception{
@@ -55,6 +61,18 @@ public class ProjectController {
         if (userId>0){
             in.setUserId(userId);
         }
+    }
+
+    @ApiOperation(value = "下载目录文件")
+    @GetMapping("/downTaskByCode")
+    public void downTaskByCode(@RequestParam("code") @ApiParam(name = "code", value = "下载任务编码", required = true) String code)throws Exception{
+        markingService.downTaskByCode(code);
+    }
+
+    @ApiOperation(value = "项目导出json")
+    @GetMapping("/jsonExport")
+    public R<DownTask> jsonExport(@RequestBody DownTaskIN downTaskIN) throws Exception {
+        return R.ok(markingService.projectJsonExport(downTaskIN.getProjectId(), downTaskIN.getSlideIds()));
     }
 
 }

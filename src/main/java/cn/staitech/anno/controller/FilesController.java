@@ -1,5 +1,6 @@
 package cn.staitech.anno.controller;
 
+import cn.staitech.anno.constant.FileConstant;
 import cn.staitech.anno.constant.ImageConstant;
 import cn.staitech.anno.domain.files.Files;
 import cn.staitech.anno.domain.files.in.FileUploadVO;
@@ -74,10 +75,29 @@ public class FilesController extends BaseController {
     }
 
 
+
+    @ApiOperationSupport(author = "wangfeng")
+    @ApiOperation(value = "文件上传并处理下游业务逻辑(大文件)", notes = "文件上传并处理下游业务逻辑 - 王峰")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "file", value = "MultipartFile文件", required = true, dataType = "file"),
+            @ApiImplicitParam(name = "businessType", value = "businessType", required = true, dataType = "Integer")
+    })
+    @Log(title = "文件上传并处理下游业务逻辑(大文件)", menu = "文件上传并处理下游业务逻辑", subMenu = "文件上传并处理下游业务逻辑", businessType = BusinessType.IMPORT)
+    @PostMapping("/uploadBigFileBusiness")
+    public R<String> uploadBigFileBusiness(
+            @RequestParam("file") MultipartFile file, FileUploadVO fileUploadVO) throws Exception {
+        fileUploadVO.setMultipartFile(file);
+        if (fileUploadService.mergeChunk(fileUploadVO)) {
+            return R.ok(FileConstant.FILE_SLIDE_UPLOAD_SUCCESS);
+        } else {
+            return R.fail(FileConstant.FILE_SLIDE_UPLOAD_FAILURE);
+        }
+    }
+
+
     /**
      * 切片信息列表 .
      */
-    // @RequiresPermissions("anno:files:list")
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "文件列表", notes = "文件列表 - 王峰")
     @ApiImplicitParams({

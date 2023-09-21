@@ -124,12 +124,8 @@ public class MarkingController {
         markingService.execlExport(slideId);
     }
 
-    @ApiOperation(value = "下载目录文件")
-    @GetMapping("/downTaskByCode")
-    public void downTaskByCode(@RequestParam("code") @ApiParam(name = "code", value = "下载任务编码", required = true) String code)throws Exception{
 
-        markingService.downTaskByCode(code);
-    }
+
 
 }
 

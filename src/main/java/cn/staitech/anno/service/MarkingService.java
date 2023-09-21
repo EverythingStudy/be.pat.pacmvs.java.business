@@ -103,7 +103,7 @@ public interface MarkingService {
      */
     void execlExport(Long slideId) throws Exception;
 
-    DownTask projectJsonExport(Long projectId) throws Exception;
+    DownTask projectJsonExport(Long projectId, List<Long> slideIds) throws Exception;
 
     void downTaskByCode(String code) throws Exception;
 }

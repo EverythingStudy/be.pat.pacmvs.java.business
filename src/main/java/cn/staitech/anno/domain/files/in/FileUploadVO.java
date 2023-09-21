@@ -13,7 +13,7 @@ import java.io.Serializable;
  */
 @Data
 public class FileUploadVO implements Serializable {
-    @ApiModelProperty(value = "业务类型(1原始切片，2预测图片，3切片信息表CSV，4待定)")
+    @ApiModelProperty(value = "业务类型(1原始切片，2预测图片，3切片信息表CSV，4:json压缩包(zip)")
     private Integer businessType;
     @ApiModelProperty(value = "专题名称")
     private String topicName;
@@ -21,7 +21,6 @@ public class FileUploadVO implements Serializable {
     private Long organizationId;
     @ApiModelProperty(value = "文件名称")
     private String fileName;
-
     /**
      * 当前文件块，从0开始
      */
@@ -45,5 +44,16 @@ public class FileUploadVO implements Serializable {
      * 二进制文件(分片文件)
      */
     private MultipartFile multipartFile;
+
+    @ApiModelProperty(value = "项目id")
+    private Long projectId;
+
+    /**
+     * 分块大小
+     */
+    private Long filesId;
+
+    @ApiModelProperty(value = "uuid")
+    private String uid;
 
 }
