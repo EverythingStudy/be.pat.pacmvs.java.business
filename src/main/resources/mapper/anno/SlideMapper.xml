@@ -647,7 +647,7 @@
         </where>
         order by g.gender, g.group_id, i.parent_image_name, i.image_name
     </select>
-    
+
     <!--分页查询切片列表信息-->
     <select id="pageImageCsvListVOList" parameterType="cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO"
             resultType="cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO">
@@ -686,16 +686,18 @@
                csv.status,
                csv.delete_flag,
                csv.organization_id,
-               csv.host_id,
-               p.project_name,
-               p.system_code,
-               case when g.gender = 0 then '雌' else '雄' end as gender,
-               p.viscus_code
+               csv.host_id
+        <!--
+                ,
+                   p.project_name,
+                       p.system_code,
+                       case when g.gender = 0 then '雌' else '雄' end as gender,
+                       p.viscus_code-->
         from tb_slide s
                  left join tb_image m on m.image_id = s.image_id
                  left join tb_image_csv csv on csv.id = s.image_csv_id
-                 left join tb_group g on s.group_id = g.group_id
-                 left join tb_project p on s.project_id = p.project_id
+<!--                 left join tb_group g on s.group_id = g.group_id
+                 left join tb_project p on s.project_id = p.project_id-->
         <where>
             <if test="projectId != null">
                 AND s.project_id = #{projectId, jdbcType=NUMERIC}
@@ -714,46 +716,9 @@
                 AND csv.lesion_degree1 LIKE CONCAT('%', #{lesionDegree}, '%')
                 AND csv.lesion_degree2 LIKE CONCAT('%', #{lesionDegree}, '%')
             </if>
-
-            <if test="imageId != null">
-                <!-- 切片（图像）ID -->
-                and m.image_id = #{imageId}
-            </if>
-            <if test="topicId != null">
-                <!-- 专题ID -->
-                and m.topic_id = #{topicId}
-            </if>
-            <if test="status != null">
-                <!-- 切片状态 -->
-                and m.status = #{status}
-            </if>
-            <if test="organizationId != null">
-                <!-- 组织机构编号 -->
-                and m.organization_id = #{organizationId}
-            </if>
-            <if test="roundId != null">
-                <!--轮次编号 -->
-                and m.round_id = #{roundId}
-            </if>
-            <if test="bizType != null">
-                <!-- 业务类型编号 -->
-                and m.biz_type = #{bizType}
-            </if>
-            <if test="source != null">
-                <!-- 图像来源：上传方式 -->
-                and m.source = #{source}
-            </if>
             <if test="imageName != null and imageName != ''">
                 <!-- 图像名称 -->
                 and m.image_name like concat('%', #{imageName}, '%')
-            </if>
-            <if test="imageCode != null and imageCode != ''">
-                <!-- 切片（图像）编号 -->
-                and m.image_code like concat('%', #{imageCode}, '%')
-            </if>
-            <if test="topicName != null and topicName != ''">
-                <!-- 专题名称 -->
-                and m.topic_name like concat('%', #{topicName}, '%')
             </if>
             <if test="createTimeParams != null">
                 <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">

@@ -207,7 +207,7 @@ public class SlideController extends BaseController {
      */
     @ApiOperation(value = "查询切片列表")
     @PostMapping("/list")
-    public R<PageMaster<ImageCsvListVO>> listByProjectId(ImageCsvGetVO imageCsvGetVO) {
+    public R<PageMaster<ImageCsvListVO>> listByProjectId(@RequestBody ImageCsvGetVO imageCsvGetVO) {
         return R.ok(slideService.pageSlides(imageCsvGetVO));
     }
 

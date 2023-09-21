@@ -543,7 +543,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
     @Override
     public PageMaster<ImageCsvListVO> pageSlides(ImageCsvGetVO request) {
         PageHelper.startPage(request.getPageNum(), request.getPageSize()).setReasonable(true);
-
         List<ImageCsvListVO> list = slideMapper.pageImageCsvListVOList(request);
         PageMaster pageMaster = new PageMaster<>(list);
 
