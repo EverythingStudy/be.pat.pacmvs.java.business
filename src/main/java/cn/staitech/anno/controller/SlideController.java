@@ -205,21 +205,21 @@ public class SlideController extends BaseController {
     // =======================================================================================================
 
     /**
-     * 查询标注项目切片列表
+     * 查询切片列表-不分页
      */
     @ApiOperation(value = "查询标注项目切片列表")
     @PostMapping("/list")
-    public R<List<ImageCsvListVO>> annoSlidelist(@RequestBody ImageCsvGetVO imageCsvGetVO) {
+    public R<List<ImageCsvListVO>> slidelist(@RequestBody ImageCsvGetVO imageCsvGetVO) {
         return R.ok(slideService.pageSlides(imageCsvGetVO));
     }
 
 
     /**
-     * 查询评审项目切片列表
+     * 查询切片列表-分页
      */
     @ApiOperation(value = "查询评审项目切片列表")
-    @PostMapping("/reviewRoundSlidelist")
-    public R<PageMaster<ImageCsvListVO>> reviewRoundSlidelist(@RequestBody ImageCsvGetPagerVO imageCsvGetPagerVO) {
+    @PostMapping("/pagelidelist")
+    public R<PageMaster<ImageCsvListVO>> pagelidelist(@RequestBody ImageCsvGetPagerVO imageCsvGetPagerVO) {
         return R.ok(slideService.pageReviewRoundSSlides(imageCsvGetPagerVO));
     }
 
