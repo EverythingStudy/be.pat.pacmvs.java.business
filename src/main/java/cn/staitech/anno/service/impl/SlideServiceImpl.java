@@ -553,37 +553,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
     public List<ImageCsvListVO> pageSlides(ImageCsvGetVO request) {
 
         List<ImageCsvListVO> list = slideMapper.pageImageCsvListVOList(request);
-
-
-/*
-
-        ReviewRound reviewRound = new ReviewRound();
-        reviewRound.setProjectId(projectId);
-        QueryWrapper queryWrapper = new QueryWrapper<>(reviewRound);
-        List<ReviewRound> list = this.list(queryWrapper);
-        PageMaster pageMaster = new PageMaster<>(list);
-
-        List<ReviewRoundOutVO> respList = new ArrayList<>(list.size());
-
-        Map<Long, String> topicMap = topicService.selectMap();
-
-        for (ReviewRound round : list) {
-            ReviewRoundOutVO reviewRoundOutVO = new ReviewRoundOutVO();
-            BeanUtils.copyProperties(round, reviewRoundOutVO);
-
-            // 评审轮次
-            reviewRoundOutVO.setRoundName(MapConstant.getRoundName(round.getRoundId()));
-            // 组别
-            reviewRoundOutVO.setGroupName(MapConstant.getGroupName(round.getGroupId()));
-            //专题编号
-            if (topicMap.containsKey(round.getTopicId())) {
-                reviewRoundOutVO.setTopicName(topicMap.get(round.getTopicId()));
-            }
-            // 创建者
-            reviewRoundOutVO.setCreateByName(sysUserService.selectUserById(round.getCreateBy()).getUserName());
-            respList.add(reviewRoundOutVO);
-        }*/
-
         return list;
     }
 
@@ -595,38 +564,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         BeanUtil.copyProperties(request, imageCsvGetVO);
         List<ImageCsvListVO> list = slideMapper.pageImageCsvListVOList(imageCsvGetVO);
         PageMaster<ImageCsvListVO> pageMaster = new PageMaster<>(list);
-
-
-/*
-
-        ReviewRound reviewRound = new ReviewRound();
-        reviewRound.setProjectId(projectId);
-        QueryWrapper queryWrapper = new QueryWrapper<>(reviewRound);
-        List<ReviewRound> list = this.list(queryWrapper);
-        PageMaster pageMaster = new PageMaster<>(list);
-
-        List<ReviewRoundOutVO> respList = new ArrayList<>(list.size());
-
-        Map<Long, String> topicMap = topicService.selectMap();
-
-        for (ReviewRound round : list) {
-            ReviewRoundOutVO reviewRoundOutVO = new ReviewRoundOutVO();
-            BeanUtils.copyProperties(round, reviewRoundOutVO);
-
-            // 评审轮次
-            reviewRoundOutVO.setRoundName(MapConstant.getRoundName(round.getRoundId()));
-            // 组别
-            reviewRoundOutVO.setGroupName(MapConstant.getGroupName(round.getGroupId()));
-            //专题编号
-            if (topicMap.containsKey(round.getTopicId())) {
-                reviewRoundOutVO.setTopicName(topicMap.get(round.getTopicId()));
-            }
-            // 创建者
-            reviewRoundOutVO.setCreateByName(sysUserService.selectUserById(round.getCreateBy()).getUserName());
-            respList.add(reviewRoundOutVO);
-        }*/
-
-        // pageMaster.setList(respList);
         PageHelper.clearPage();
         return pageMaster;
     }

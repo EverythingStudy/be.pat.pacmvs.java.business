@@ -49,6 +49,11 @@ public class ImageCsvGetPagerVO extends Pager implements Serializable {
      */
     private String lesionDegree;
 
+    /**
+     * reviewRoundId
+     */
+    private Long reviewRoundId;
+
     @ApiModelProperty("请求参数（开始和结束时间）")
     private Map<String, Object> createTimeParams;
 }

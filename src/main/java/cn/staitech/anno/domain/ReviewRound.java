@@ -18,7 +18,7 @@ public class ReviewRound implements Serializable {
     /**
      * 评审轮次自增ID
      */
-    @TableId(type = IdType.AUTO)
+    @TableId(value = "review_round_id", type = IdType.AUTO)
     private Long reviewRoundId;
 
     /**

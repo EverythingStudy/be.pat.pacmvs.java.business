@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -129,6 +131,8 @@ public class ImageCsv implements Serializable {
     /**
      * 创建时间
      */
+    @ApiModelProperty(value = "创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -139,6 +143,8 @@ public class ImageCsv implements Serializable {
     /**
      * 更新时间
      */
+    @ApiModelProperty(value = "更新时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
     /**
@@ -171,4 +177,24 @@ public class ImageCsv implements Serializable {
      */
     private Integer hostId;
 
+    /**
+     * 切片ID
+     */
+    @ApiModelProperty(value = "切片ID")
+    @TableField(exist = false, value = "slide_id")
+    private Long slideId;
+
+    /**
+     * 缩略图url地址
+     */
+    @TableField(exist = false, value = "thumb_url")
+    @ApiModelProperty(value = "缩略图url地址", hidden = true)
+    private String thumbUrl;
+
+    /**
+     * reviewRoundId
+     */
+    @TableField(exist = false, value = "review_round_id")
+    @ApiModelProperty(value = "reviewRoundId", hidden = true)
+    private Long reviewRoundId;
 }

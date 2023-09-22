@@ -1,6 +1,8 @@
 package cn.staitech.anno.domain.vo.imageCsv;
 
 import cn.staitech.anno.domain.ImageCsv;
+import com.baomidou.mybatisplus.annotation.TableField;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 
@@ -11,6 +13,5 @@ import java.io.Serializable;
  */
 
 public class ImageCsvListVO extends ImageCsv implements Serializable {
-
 
 }
