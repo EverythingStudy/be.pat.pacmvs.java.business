@@ -556,6 +556,13 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         return list;
     }
 
+    @Override
+    public List<ImageCsvListVO> pageSlides1(ImageCsvGetVO request) {
+
+        List<ImageCsvListVO> list = slideMapper.pageImageCsvListVOList1(request);
+        return list;
+    }
+
 
     @Override
     public PageMaster<ImageCsvListVO> pageReviewRoundSSlides(ImageCsvGetPagerVO request) {

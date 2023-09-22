@@ -206,6 +206,7 @@ public interface SlideMapper extends BaseMapper<Slide> {
      * @return
      */
     List<ImageCsvListVO> pageImageCsvListVOList(ImageCsvGetVO imageCsvGetVO);
+    List<ImageCsvListVO> pageImageCsvListVOList1(ImageCsvGetVO imageCsvGetVO);
 
     /**
      * 切片报表分页查询(单个)

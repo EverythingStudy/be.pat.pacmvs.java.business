@@ -211,8 +211,8 @@ public class SlideController extends BaseController {
      */
     @ApiOperation(value = "查询标注项目切片列表")
     @PostMapping("/viewList")
-    public R<List<ImageCsvListVO>> slideViewlist(@RequestBody ImageCsvGetVO imageCsvGetVO) {
-        return R.ok(slideService.pageSlides(imageCsvGetVO));
+    public R<List<ImageCsvListVO>> viewList(@RequestBody ImageCsvGetVO imageCsvGetVO) {
+        return R.ok(slideService.pageSlides1(imageCsvGetVO));
     }
 
 

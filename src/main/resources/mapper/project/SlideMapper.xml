@@ -126,7 +126,6 @@
         s.diagnosis,
         s.ai_analyzed,
         s.ai_check,
-        case when r.slide_id is not null then '2' else '1' end  as review_status,
         r.score,
         csv.id,
         csv.image_id,
