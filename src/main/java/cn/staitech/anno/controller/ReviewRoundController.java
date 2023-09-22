@@ -3,6 +3,7 @@ package cn.staitech.anno.controller;
 import cn.staitech.anno.domain.Group;
 import cn.staitech.anno.domain.ReviewRound;
 import cn.staitech.anno.domain.Topic;
+import cn.staitech.anno.domain.reviewround.DelReviewRoundIdsVO;
 import cn.staitech.anno.domain.reviewround.ReviewRoundBatchInVO;
 import cn.staitech.anno.domain.reviewround.ReviewRoundInVO;
 import cn.staitech.anno.domain.reviewround.ReviewRoundOutVO;
@@ -54,10 +55,9 @@ public class ReviewRoundController {
     @Resource
     private RoundService roundService;
 
-    public static Map<Long,String> roundMap = new HashMap<>();
-    public static Map<Long,String> topicMap = new HashMap<>();
-    public static Map<Long,String> groupMap = new HashMap<>();
-
+    public static Map<Long, String> roundMap = new HashMap<>();
+    public static Map<Long, String> topicMap = new HashMap<>();
+    public static Map<Long, String> groupMap = new HashMap<>();
 
 
     @ApiOperationSupport(author = "wangfeng")
@@ -85,9 +85,9 @@ public class ReviewRoundController {
 
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "批量删除评审轮次")
-    @GetMapping(value = "/remove")
-    public R remove(@RequestParam("reviewRoundIds") List<Long> reviewRoundIds) {
-        return R.ok(reviewRoundService.removeByIds(reviewRoundIds));
+    @PostMapping(value = "/remove")
+    public R remove(@RequestBody DelReviewRoundIdsVO reviewRoundInVO) {
+        return R.ok(reviewRoundService.removeByIds(reviewRoundInVO.getReviewRoundIds()));
     }
 
     @ApiOperationSupport(author = "wangfeng")
@@ -104,25 +104,25 @@ public class ReviewRoundController {
 
     @ApiOperation(value = "根据项目id查询轮次树")
     @GetMapping("/reviewRoundTree")
-    public R<List<Map<String,Object>>> reviewRoundTree(@RequestParam("projectId") Long projectId) {
+    public R<List<Map<String, Object>>> reviewRoundTree(@RequestParam("projectId") Long projectId) {
         QueryWrapper<ReviewRound> queryWrapper = Wrappers.query();
-        queryWrapper.eq("project_id",projectId);
-        queryWrapper.select("review_round_id","review_content","content_id","round_id","topic_id","group_id");
+        queryWrapper.eq("project_id", projectId);
+        queryWrapper.select("review_round_id", "review_content", "content_id", "round_id", "topic_id", "group_id");
         List<ReviewRound> reviewRoundList = reviewRoundService.list(queryWrapper);
-        List<Map<String,Object>> list = new ArrayList<>();
-        if (reviewRoundList!=null&&!reviewRoundList.isEmpty()){
+        List<Map<String, Object>> list = new ArrayList<>();
+        if (reviewRoundList != null && !reviewRoundList.isEmpty()) {
             //初始化字典
             init();
             Map<String, List<ReviewRound>> reviewContentGroup = reviewRoundList.stream().collect(Collectors.groupingBy(ReviewRound::getContentId));
-            for (String contentId:reviewContentGroup.keySet()){
+            for (String contentId : reviewContentGroup.keySet()) {
                 List<ReviewRound> rs = reviewContentGroup.get(contentId);
-                if (rs!=null&&!rs.isEmpty()){
+                if (rs != null && !rs.isEmpty()) {
                     ReviewRound temp = rs.get(0);
-                    Map<String,Object> node = new HashMap<>();
-                    node.put("key",contentId);
-                    node.put("label",temp.getReviewContent());
+                    Map<String, Object> node = new HashMap<>();
+                    node.put("key", contentId);
+                    node.put("label", temp.getReviewContent());
                     //处理轮次信息
-                    processRound(rs,node);
+                    processRound(rs, node);
                     list.add(node);
                 }
             }
@@ -130,87 +130,88 @@ public class ReviewRoundController {
         return R.ok(list);
     }
 
-    private void init(){
-        List<Round> roundList =roundService.list();
+    private void init() {
+        List<Round> roundList = roundService.list();
         for (Round round : roundList) {
-            roundMap.put(round.getRoundId(),round.getRoundName());
+            roundMap.put(round.getRoundId(), round.getRoundName());
         }
-        List<Group> groupList =groupService.list();
+        List<Group> groupList = groupService.list();
         for (Group group : groupList) {
-            groupMap.put(group.getGroupId(),group.getGroupName());
+            groupMap.put(group.getGroupId(), group.getGroupName());
         }
-        List<Topic> topicList =topicService.list();
+        List<Topic> topicList = topicService.list();
         for (Topic topic : topicList) {
-            topicMap.put(topic.getTopicId(),topic.getTopicName());
+            topicMap.put(topic.getTopicId(), topic.getTopicName());
         }
     }
+
     //处理轮次信息
-    private void processRound(List<ReviewRound> reviewRoundList,Map<String,Object> node){
+    private void processRound(List<ReviewRound> reviewRoundList, Map<String, Object> node) {
         Map<String, List<ReviewRound>> map = new HashMap<>();
         for (ReviewRound reviewRound : reviewRoundList) {
             String contentId = reviewRound.getContentId();
             Long roundId = reviewRound.getRoundId();
             //Long id = reviewRound.getReviewRoundId();
-            String k = contentId+"_"+roundId+"_";
+            String k = contentId + "_" + roundId + "_";
             List<ReviewRound> rounds = map.get(k);
-            if (rounds==null){
+            if (rounds == null) {
                 rounds = new ArrayList<>();
             }
             rounds.add(reviewRound);
-            map.put(k,rounds);
+            map.put(k, rounds);
         }
-        List<Map<String,Object>> list = new ArrayList<>();
-        for (String key:map.keySet()){
-            Map<String,Object> roundNode = new HashMap<>();
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (String key : map.keySet()) {
+            Map<String, Object> roundNode = new HashMap<>();
             String[] strings = key.split("_");
             //roundNode.put("key",strings[1]);
-            roundNode.put("key",key);
-            roundNode.put("label",roundMap.get(Long.parseLong(strings[1])));
+            roundNode.put("key", key);
+            roundNode.put("label", roundMap.get(Long.parseLong(strings[1])));
             //处理下级专题
-            processTopic(map.get(key),roundNode);
+            processTopic(map.get(key), roundNode);
             list.add(roundNode);
         }
-        node.put("children",list);
+        node.put("children", list);
     }
 
     //处理专题信息
-    private void processTopic(List<ReviewRound> reviewTopicList,Map<String,Object> node){
+    private void processTopic(List<ReviewRound> reviewTopicList, Map<String, Object> node) {
         Map<String, List<ReviewRound>> map = new HashMap<>();
         for (ReviewRound reviewRound : reviewTopicList) {
             String contentId = reviewRound.getContentId();
             Long roundId = reviewRound.getRoundId();
             //Long id = reviewRound.getReviewRoundId();
             Long topicId = reviewRound.getTopicId();
-            String k = contentId+"_"+roundId+"_"+topicId;
+            String k = contentId + "_" + roundId + "_" + topicId;
             List<ReviewRound> rounds = map.get(k);
-            if (rounds==null){
+            if (rounds == null) {
                 rounds = new ArrayList<>();
             }
             rounds.add(reviewRound);
-            map.put(k,rounds);
+            map.put(k, rounds);
         }
-        List<Map<String,Object>> list = new ArrayList<>();
-        for (String key:map.keySet()){
-            Map<String,Object> topicNode = new HashMap<>();
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (String key : map.keySet()) {
+            Map<String, Object> topicNode = new HashMap<>();
             String[] strings = key.split("_");
             //topicNode.put("key",strings[2]);
-            topicNode.put("key",key);
-            topicNode.put("label",topicMap.get(Long.parseLong(strings[2])));
-            processGroup(map.get(key),topicNode);
+            topicNode.put("key", key);
+            topicNode.put("label", topicMap.get(Long.parseLong(strings[2])));
+            processGroup(map.get(key), topicNode);
             list.add(topicNode);
         }
-        node.put("children",list);
+        node.put("children", list);
     }
 
     //处理组信息
-    private void processGroup(List<ReviewRound> reviewGroupList,Map<String,Object> node){
-        List<Map<String,Object>> list = new ArrayList<>();
+    private void processGroup(List<ReviewRound> reviewGroupList, Map<String, Object> node) {
+        List<Map<String, Object>> list = new ArrayList<>();
         for (ReviewRound reviewRound : reviewGroupList) {
-            Map<String,Object> groupNode = new HashMap<>();
-            groupNode.put("key",String.valueOf(reviewRound.getReviewRoundId()));
-            groupNode.put("label",groupMap.get(reviewRound.getGroupId()));
+            Map<String, Object> groupNode = new HashMap<>();
+            groupNode.put("key", String.valueOf(reviewRound.getReviewRoundId()));
+            groupNode.put("label", groupMap.get(reviewRound.getGroupId()));
             list.add(groupNode);
         }
-        node.put("children",list);
+        node.put("children", list);
     }
 }

@@ -1,8 +1,6 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.domain.Annotation;
 import cn.staitech.anno.domain.ProjectMember;
-import cn.staitech.anno.domain.SlideAnnotationResult;
 import cn.staitech.anno.domain.vo.ProjectMemberAddVO;
 import cn.staitech.anno.domain.vo.ProjectMemberDeleteVO;
 import cn.staitech.anno.domain.vo.ProjectMemberSelectVO;
@@ -32,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -91,63 +88,19 @@ public class ProjectMemberController extends BaseController {
         // 获取项目ID
         Long projectId = deleteVO.getProjectId();
 
-        ProjectMember projectMemberBy = projectMemberService.getLoginUserProjectRoleType(projectId);
-
-        // 查询项目中是否添加当前用户
-        if (projectMemberBy == null) {
-            return R.fail(DISALLOW_PROJECT_NOT_EXIST + SecurityUtils.getUsername());
-        }
-
-        // 是否包含项目代表
-        boolean isHaveRepresentation = false;
         // 遍历删除
         for (Long userId : deleteVO.getUserIds()) {
-            // 查询是否是项目代表，项目代表不能删除
-            if (projectMemberService.representationCount(projectId, userId) > 0) {
-                isHaveRepresentation = true;
-                continue;
-            }
-
             ProjectMember projectMember = ProjectMember.builder()
                     .projectId(projectId)
                     .userId(userId)
                     .build();
 
             if (projectMemberService.delete(projectMember) > 0) {
-                //更新项目时间
-                ProjectUtils.updateProjectStatus(projectId);
-                // 删除该用户在项目创建的所有标注
-                Annotation annotation = Annotation.builder()
-                        .projectId(projectId)
-                        .createBy(userId)
-                        .updateBy(userId)
-                        .build();
-
-                List<Annotation> annotationList = annotationService.selectAnnotationByProjectIdAndUserId(annotation);
-                annotationService.deleteAnnotationByProjectIdAndUserId(annotation);
-
-                List<SlideAnnotationResult> slideAnnotationResultVOList = new ArrayList<>();
-                for (Annotation annotation1 : annotationList) {
-                    SlideAnnotationResult slideAnnotationResultVO = new SlideAnnotationResult();
-                    slideAnnotationResultVO.setSlideId(annotation1.getSlideId());
-                    slideAnnotationResultVO.setUpdateBy(annotation1.getCreateBy());
-                    slideAnnotationResultVO.setCategoryId(annotation1.getCategoryId());
-                    if (!slideAnnotationResultVOList.contains(slideAnnotationResultVO)) {
-                        slideAnnotationResultVOList.add(slideAnnotationResultVO);
-                    }
-                }
+                return R.ok(DELETE_SUCCESS);
             }
         }
 
-        if (deleteVO.getUserIds().length == 1 && isHaveRepresentation) {
-            return R.ok(DISALLOW_DELETE_REPRESENTATION);
-        }
-
-        if (isHaveRepresentation) {
-            return R.ok(DELETE_SUCCESS + DISALLOW_DELETE_REPRESENTATION);
-        }
-
-        return R.ok(DELETE_SUCCESS);
+        return R.ok(DELETE_FAILURE);
     }
 
     /**
