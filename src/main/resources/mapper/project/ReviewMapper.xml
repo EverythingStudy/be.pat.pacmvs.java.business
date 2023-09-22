@@ -59,18 +59,14 @@
             t.topic_id,
             t.topic_name,
             r.round_id,
-            r.round_name,
-            group_concat( st.NAME SEPARATOR "/" ) AS review_content
+            r.round_name
         FROM
-            tb_slide AS s
+        tb_slide AS s
             LEFT JOIN tb_project AS p ON s.project_id = p.project_id
             LEFT JOIN tb_group AS g ON g.group_id = s.group_id
             LEFT JOIN tb_topic AS t ON t.topic_id = s.topic_id
             LEFT JOIN tb_round AS r ON r.round_id = s.round_id
             LEFT JOIN tb_image AS i ON i.image_id = s.image_id
-            LEFT JOIN tb_pathological_indicator AS ind ON ind.indicator_id = p.indicator_id
-            LEFT JOIN tb_pathological_indicator_category AS cate ON cate.indicator_id = ind.indicator_id
-            LEFT JOIN tb_structure AS st ON st.structure_id = cate.structure_id
         <where>
             <if test="slideId !=  null">
                 AND s.slide_id = #{slideId}
