@@ -165,7 +165,10 @@
         left join (select slide_id, group_concat(score separator '-') as score from tb_review t group by t.slide_id) r on s.slide_id = r.slide_id
         <where>
             <if test="params.imageCode != null ">
-                AND m.image_code like CONCAT('%',#{params.imageCode},'%')
+                AND csv.image_name like CONCAT('%',#{params.imageCode},'%')
+            </if>
+            <if test="params.reviewRoundId != null ">
+                AND s.review_round_id = #{params.reviewRoundId}
             </if>
             <if test="params.score != null ">
                 AND r.score like CONCAT('%',#{params.score},'%')

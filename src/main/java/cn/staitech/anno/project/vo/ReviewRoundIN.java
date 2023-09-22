@@ -21,6 +21,12 @@ public class ReviewRoundIN {
     /**
      * 评审内容
      */
+    @ApiModelProperty("项目id")
+    private Long projectId;
+
+    /**
+     * 评审内容
+     */
     @ApiModelProperty("评审内容")
     private String reviewContent;
     /**

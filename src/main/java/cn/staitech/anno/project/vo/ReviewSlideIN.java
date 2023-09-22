@@ -18,6 +18,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReviewSlideIN {
 
+    @ApiModelProperty("评审轮次ID")
+    private String reviewRoundId;
     @ApiModelProperty("分值")
     private String score;
     @ApiModelProperty("评审状态")

@@ -120,8 +120,8 @@ public class ReviewController {
         return R.ok(reviewService.pageReviewRound(page, params));
     }
 
-    @ApiOperation(value = "智能标注-切片分页查询")
-    @GetMapping("/page")
+    @ApiOperation(value = "智能评审-切片分页查询")
+    @GetMapping("/pageReviewSlide")
     public R<PageMaster<ReviewSlideVO>> pageReviewSlide(@NotNull(message = "分页参数为空！") @RequestParam("pageNum") @ApiParam(name = "pageNum", value = "分页参数", required = true) Integer pageNum,
                                                         @NotNull(message = "分页参数为空！") @RequestParam("pageSize") @ApiParam(name = "pageSize", value = "分页参数", required = true) Integer pageSize,
                                                         ReviewSlideIN in){
