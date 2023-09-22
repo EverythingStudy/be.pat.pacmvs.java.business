@@ -63,7 +63,24 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      */
     @Override
     public ProjectListVO selectProjectById(Long projectId) {
-        return projectMapper.selectProjectById(projectId);
+        ProjectListVO project = projectMapper.selectProjectById(projectId);
+        // 项目类型
+        Map<String, String> projectTypeMap = projectTypeService.selectMap();
+        // 种属
+        Map<Integer, String> sepeciesMap = speciesService.selectMap();
+
+        // 项目类型
+        if (projectTypeMap.containsKey(project.getProjectType())) {
+            project.setProjectTypeName(projectTypeMap.get(project.getProjectType()));
+        }
+        // 种属
+        if (sepeciesMap.containsKey(project.getSpeciesId())) {
+            project.setSpeciesName(sepeciesMap.get(project.getSpeciesId()));
+        }
+
+        project.setColorTypeName(ColorConstant.COLOR_TYPE.get(project.getColorType()));
+        project.setStatusName(ProjectConstant.PROJECT_STATUS.get(project.getStatus()));
+        return project;
     }
 
     /**
