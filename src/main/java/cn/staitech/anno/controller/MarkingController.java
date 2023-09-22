@@ -136,6 +136,12 @@ public class MarkingController {
         return R.ok(slideService.pageImageCsvListVOBy(slideId));
     }
 
+    @ApiOperationSupport(author = "gjt")
+    @GetMapping("/test11")
+    public R<String> test11() throws Exception {
+        return R.ok("ok");
+    }
+
 
 }
 
