@@ -218,7 +218,7 @@ public class SlideController extends BaseController {
      * 查询切片列表-分页
      */
     @ApiOperation(value = "查询评审项目切片列表")
-    @PostMapping("/pagelidelist")
+    @PostMapping("/pageList")
     public R<PageMaster<ImageCsvListVO>> pagelidelist(@RequestBody ImageCsvGetPagerVO imageCsvGetPagerVO) {
         return R.ok(slideService.pageReviewRoundSSlides(imageCsvGetPagerVO));
     }
