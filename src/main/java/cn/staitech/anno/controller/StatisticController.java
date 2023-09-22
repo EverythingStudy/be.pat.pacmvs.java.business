@@ -39,7 +39,7 @@ import static cn.staitech.anno.aspect.LogFileAspect.response;
 @Api(value = "数据统计接口", tags = "数据统计模块")
 @RestController
 @Slf4j
-@RequestMapping("/intelligentAnno/statistic")
+@RequestMapping("/statistic")
 public class StatisticController extends BaseController {
     @Resource
     private StatisticService statisticService;
