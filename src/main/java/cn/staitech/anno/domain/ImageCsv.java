@@ -27,6 +27,7 @@ public class ImageCsv implements Serializable {
      * 描述
      */
     @ApiModelProperty(value = "描述")
+    @TableField(exist = false)
     private String description;
 
     /**
@@ -124,6 +125,7 @@ public class ImageCsv implements Serializable {
      * 切片状态
      */
     @ApiModelProperty(value = "切片状态")
+    @TableField(exist = false)
     private String slideStatus;
 
     /**

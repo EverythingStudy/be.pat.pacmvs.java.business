@@ -654,7 +654,7 @@
         select s.slide_id,
                s.review_round_id,
                s.diagnosis,
-               s.status as slide_status,
+               s.status,
                s.description,
                s.ai_analyzed,
                s.ai_check,

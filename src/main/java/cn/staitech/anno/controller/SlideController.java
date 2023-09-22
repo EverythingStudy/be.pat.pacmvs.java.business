@@ -12,6 +12,7 @@ import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetPagerVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO;
 import cn.staitech.anno.domain.vo.slideVo.AddSlideVO;
+import cn.staitech.anno.domain.vo.slideVo.DelSlideVO;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.PageMaster;
@@ -241,8 +242,8 @@ public class SlideController extends BaseController {
     @ApiOperationSupport(author = "wangfeng")
     @Log(title = "删除切片", menu = "切片管理", subMenu = "标注切片", businessType = BusinessType.DELETE)
     @ApiOperation(value = "逻辑批量删除切片")
-    @GetMapping("/deleteBatchIds")
-    public R updateDeleteFlagBatchIds(
+    @PostMapping("/deleteBatchIds")
+    public R deleteBatchIds(
             @RequestParam @ApiParam(name = "slideIds", value = "切片ID列表", required = true) List<Long> slideIds) {
         if (slideService.delSlidesBatch(slideIds) > 0) {
             return R.ok(ImageConstant.OPERATE_SUCCEED);
@@ -250,5 +251,27 @@ public class SlideController extends BaseController {
         return R.fail(ImageConstant.OPERATE_ERROR);
     }
 
+    /**
+     * 根据查询条件全部删除
+     *
+     * @param req
+     * @return
+     */
+    @ApiOperationSupport(author = "wangfeng")
+    @Log(title = "删除切片", menu = "切片管理", subMenu = "标注切片", businessType = BusinessType.DELETE)
+    @ApiOperation(value = "逻辑批量删除切片")
+    @GetMapping("/deleteAll")
+    public R deleteAll(@RequestBody DelSlideVO req) {
+        Slide slide = new Slide();
+        slide.setProjectId(req.getProjectId());
+        slide.setReviewRoundId(req.getReviewRoundId());
+
+        QueryWrapper<Slide> queryWrapper = new QueryWrapper<>(slide);
+
+        if (slideService.remove(queryWrapper)) {
+            return R.ok(ImageConstant.OPERATE_SUCCEED);
+        }
+        return R.fail(ImageConstant.OPERATE_ERROR);
+    }
 
 }
