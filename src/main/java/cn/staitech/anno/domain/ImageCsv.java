@@ -207,7 +207,6 @@ public class ImageCsv implements Serializable {
     @TableField(exist = false, value = "height")
     @ApiModelProperty(value = "高度", hidden = true)
     private String height;
-
     @TableField(exist = false, value = "resolution_x")
     @ApiModelProperty(value = "x轴分辨率", hidden = true)
     private String resolutionX;

@@ -695,17 +695,9 @@
                csv.delete_flag,
                csv.organization_id,
                csv.host_id
-        <!--
-                ,
-                   p.project_name,
-                       p.system_code,
-                       case when g.gender = 0 then '雌' else '雄' end as gender,
-                       p.viscus_code-->
         from tb_slide s
                  left join tb_image m on m.image_id = s.image_id
                  left join tb_image_csv csv on csv.id = s.image_csv_id
-        <!--                 left join tb_group g on s.group_id = g.group_id
-                         left join tb_project p on s.project_id = p.project_id-->
         <where>
             <if test="projectId != null">
                 AND s.project_id = #{projectId, jdbcType=NUMERIC}
