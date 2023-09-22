@@ -23,7 +23,7 @@ public class ReviewSlideIN {
     private String reviewRoundId;
     @ApiModelProperty("分值")
     private String score;
-    @ApiModelProperty("评审状态")
+    @ApiModelProperty("评审状态：1未评审，2已评审")
     private String reviewStatus;
     @ApiModelProperty("切片编号")
     private String imageCode;
