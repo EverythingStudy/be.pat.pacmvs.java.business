@@ -177,6 +177,7 @@ public class ImageCsv implements Serializable {
      */
     private Integer hostId;
 
+    // =====================================================
     /**
      * 切片ID
      */
@@ -197,4 +198,23 @@ public class ImageCsv implements Serializable {
     @TableField(exist = false, value = "review_round_id")
     @ApiModelProperty(value = "reviewRoundId", hidden = true)
     private Long reviewRoundId;
+    @TableField(exist = false, value = "format")
+    @ApiModelProperty(value = "文件格式", hidden = true)
+    private String format;
+    @TableField(exist = false, value = "width")
+    @ApiModelProperty(value = "宽度", hidden = true)
+    private String width;
+    @TableField(exist = false, value = "height")
+    @ApiModelProperty(value = "高度", hidden = true)
+    private String height;
+
+    @TableField(exist = false, value = "resolution_x")
+    @ApiModelProperty(value = "x轴分辨率", hidden = true)
+    private String resolutionX;
+    @TableField(exist = false, value = "resolution_y")
+    @ApiModelProperty(value = "y轴分辨率", hidden = true)
+    private String resolutionY;
+    @TableField(exist = false, value = "source_lens")
+    @ApiModelProperty(value = "原放大倍数", hidden = true)
+    private Integer sourceLens;
 }
