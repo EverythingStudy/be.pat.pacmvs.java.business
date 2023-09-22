@@ -710,7 +710,6 @@
             <if test="imageName != null">
                 AND m.image_name LIKE CONCAT('%', #{imageName}, '%')
             </if>
-
             <if test="lesionType != null">
                 AND csv.lesion_type1 LIKE CONCAT('%', #{lesionType}, '%')
                 AND csv.lesion_type2 LIKE CONCAT('%', #{lesionType}, '%')
