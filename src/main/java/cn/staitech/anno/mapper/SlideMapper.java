@@ -12,6 +12,7 @@ import cn.staitech.anno.domain.vo.image.SlideReportSummaryVo;
 import cn.staitech.anno.domain.vo.image.SlideReportVo;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO;
+import cn.staitech.anno.domain.vo.marking.out.SlideSelectBy;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListOutVO;
 import cn.staitech.anno.project.domain.Review;
@@ -213,7 +214,7 @@ public interface SlideMapper extends BaseMapper<Slide> {
      * @param slideId 切片id
      * @return
      */
-    ImageCsvListVO pageImageCsvListVOBy(Long slideId);
+    SlideSelectBy pageImageCsvListVOBy(Long slideId);
 
 
 

@@ -824,13 +824,14 @@
     </select>
 
 
-    <select id="pageImageCsvListVOBy" parameterType="long" resultType="cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO">
+    <select id="pageImageCsvListVOBy" parameterType="long" resultType="cn.staitech.anno.domain.vo.marking.out.SlideSelectBy">
         select s.slide_id,
         s.review_round_id,
         s.description,
         s.ai_analyzed,
+        s.remark,
         s.diagnosis,
-        s.status as slide_status,
+        s.status,
         s.ai_check,
         m.image_id,
         m.thumb_url,
@@ -854,7 +855,6 @@
         csv.recovery_cycle,
         csv.date_of_death,
         csv.remove_reason,
-        csv.remark,
         csv.organ,
         csv.lesion_type1,
         csv.lesion_degree1,
@@ -867,7 +867,6 @@
         csv.update_time,
         csv.topic_id,
         csv.topic_name,
-        csv.status,
         csv.delete_flag,
         csv.organization_id,
         csv.host_id

@@ -1,14 +1,12 @@
 package cn.staitech.anno.controller;
 
 
-import cn.hutool.core.io.IoUtil;
 import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.geojson.Features;
 import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
 import cn.staitech.anno.domain.geojson.in.viewAddIn;
-import cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO;
 import cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo;
-import cn.staitech.anno.project.domain.DownTask;
+import cn.staitech.anno.domain.vo.marking.out.SlideSelectBy;
 import cn.staitech.anno.project.service.DownTaskService;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.SlideService;
@@ -16,8 +14,6 @@ import cn.staitech.common.core.domain.R;
 
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
@@ -26,10 +22,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.net.URLEncoder;
 import java.util.List;
 import java.util.Optional;
 
@@ -132,7 +125,7 @@ public class MarkingController {
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "查询切片、图片详情接口")
     @GetMapping("/slideInfo")
-    public R<ImageCsvListVO> slideInfo(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "标注id", required = true) Long slideId) throws Exception {
+    public R<SlideSelectBy> slideInfo(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "标注id", required = true) Long slideId) throws Exception {
         return R.ok(slideService.pageImageCsvListVOBy(slideId));
     }
 

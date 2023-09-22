@@ -18,6 +18,7 @@ import cn.staitech.anno.domain.vo.image.SlideReportVo;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetPagerVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO;
+import cn.staitech.anno.domain.vo.marking.out.SlideSelectBy;
 import cn.staitech.anno.domain.vo.slideVo.AddSlideVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListOutVO;
@@ -576,7 +577,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
     }
 
     @Override
-    public ImageCsvListVO pageImageCsvListVOBy(Long slideId) {
+    public SlideSelectBy pageImageCsvListVOBy(Long slideId) {
         return slideMapper.pageImageCsvListVOBy(slideId);
     }
 
