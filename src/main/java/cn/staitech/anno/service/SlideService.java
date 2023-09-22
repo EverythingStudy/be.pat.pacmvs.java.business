@@ -203,4 +203,12 @@ public interface SlideService extends IService<Slide> {
      */
     PageMaster<ImageCsvListVO> pageReviewRoundSSlides(ImageCsvGetPagerVO imageCsvGetPagerVO);
 
+
+    /**
+     * 查询切片、图片信息接口
+     * @param slideId 切片id
+     * @return
+     */
+    ImageCsvListVO pageImageCsvListVOBy(Long slideId);
+
 }

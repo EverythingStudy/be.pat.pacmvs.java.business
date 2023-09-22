@@ -567,4 +567,12 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         PageHelper.clearPage();
         return pageMaster;
     }
+
+    @Override
+    public ImageCsvListVO pageImageCsvListVOBy(Long slideId) {
+        return slideMapper.pageImageCsvListVOBy(slideId);
+    }
+
+
+
 }

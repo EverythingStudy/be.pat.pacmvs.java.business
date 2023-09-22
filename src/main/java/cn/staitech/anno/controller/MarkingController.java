@@ -6,10 +6,12 @@ import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.geojson.Features;
 import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
 import cn.staitech.anno.domain.geojson.in.viewAddIn;
+import cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO;
 import cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo;
 import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.anno.project.service.DownTaskService;
 import cn.staitech.anno.service.MarkingService;
+import cn.staitech.anno.service.SlideService;
 import cn.staitech.common.core.domain.R;
 
 import cn.staitech.common.log.annotation.Log;
@@ -43,6 +45,9 @@ public class MarkingController {
 
     @Resource
     private MarkingService markingService;
+
+    @Resource
+    private SlideService slideService;
 
     @Resource
     private DownTaskService downTaskService;
@@ -95,7 +100,7 @@ public class MarkingController {
     }
 
     @ApiOperationSupport(author = "gjt")
-    @ApiOperation(value = "websocket接口", hidden = true)
+    @ApiOperation(value = "websocket接口")
     @GetMapping("/getWebsocketPort")
     public R<String> getWebsocketPort() {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -124,7 +129,12 @@ public class MarkingController {
         markingService.execlExport(slideId);
     }
 
-
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "查询切片、图片详情接口")
+    @GetMapping("/slideInfo")
+    public R<ImageCsvListVO> slideInfo(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "标注id", required = true) Long slideId) throws Exception {
+        return R.ok(slideService.pageImageCsvListVOBy(slideId));
+    }
 
 
 }
