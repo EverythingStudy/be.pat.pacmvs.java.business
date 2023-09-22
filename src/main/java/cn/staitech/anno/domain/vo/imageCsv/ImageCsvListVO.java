@@ -3,6 +3,8 @@ package cn.staitech.anno.domain.vo.imageCsv;
 import cn.staitech.anno.domain.ImageCsv;
 import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.io.Serializable;
 

@@ -207,6 +207,16 @@ public class SlideController extends BaseController {
     // =======================================================================================================
 
     /**
+     * view查询切片列表-不分页
+     */
+    @ApiOperation(value = "查询标注项目切片列表")
+    @PostMapping("/viewList")
+    public R<List<ImageCsvListVO>> slideViewlist(@RequestBody ImageCsvGetVO imageCsvGetVO) {
+        return R.ok(slideService.pageSlides(imageCsvGetVO));
+    }
+
+
+    /**
      * 查询切片列表-不分页
      */
     @ApiOperation(value = "查询标注项目切片列表")
@@ -237,6 +247,7 @@ public class SlideController extends BaseController {
 
     /**
      * 根据ID批量删除切片
+     *
      * @param request
      * @return
      */
