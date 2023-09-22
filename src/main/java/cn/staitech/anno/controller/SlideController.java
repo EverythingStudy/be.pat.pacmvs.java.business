@@ -233,18 +233,6 @@ public class SlideController extends BaseController {
         return R.ok(slideService.addAnnoSlidesBatch(addSlideVO));
     }
 
-
-    /**
-     * 批量添加评审切片
-     */
-/*
-    @ApiOperation(value = "批量添加评审切片")
-    @PostMapping("/addReviewSlidesBatch")
-    public R addReviewSlidesBatch(@RequestBody AddSlideVO addSlideVO) {
-        return R.ok(slideService.addAnnoSlidesBatch(addSlideVO));
-    }
-*/
-
     /**
      * 删除（根据ID 批量删除）
      *
