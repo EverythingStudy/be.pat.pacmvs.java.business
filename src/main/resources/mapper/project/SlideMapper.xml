@@ -167,8 +167,8 @@
             <if test="params.imageCode != null ">
                 AND csv.image_name like CONCAT('%',#{params.imageCode},'%')
             </if>
-            <if test="params.reviewRoundId != null ">
-                AND s.review_round_id = #{params.reviewRoundId}
+            <if test="params.projectId != null ">
+                AND s.project_id = #{params.projectId}
             </if>
             <if test="params.score != null ">
                 AND r.score like CONCAT('%',#{params.score},'%')
@@ -176,10 +176,20 @@
             <if test="params.removeReason != null ">
                 AND csv.remove_reason like CONCAT('%',#{params.removeReason},'%')
             </if>
-            <if test="params.reviewStatus != null and params.reviewStatus == '1'">
-                AND r.slide_id is null
+            <if test="params.reviewStatus != null">
+                <choose>
+                    <when test="params.reviewStatus == 1">
+                        AND r.slide_id is null
+                    </when>
+                    <otherwise>
+                        AND r.slide_id is not null
+                    </otherwise>
+                </choose>
             </if>
-            <if test="params.reviewStatus != null and params.reviewStatus == '2'">
+            <if test="params.reviewStatus != null and params.reviewStatus == 1">
+            AND r.slide_id is null
+            </if>
+            <if test="params.reviewStatus != null and params.reviewStatus == 2">
                 AND r.slide_id is not null
             </if>
         </where>

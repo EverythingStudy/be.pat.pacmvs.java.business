@@ -56,6 +56,7 @@ public class ReviewRoundServiceImpl extends ServiceImpl<ReviewRoundMapper, Revie
         List<ReviewRoundInsertInVO> insertVoList = reviewRoundBatchInVO.getInsertList();
         List<ReviewRound> list = new ArrayList<>(insertVoList.size());
         Snowflake snowflake = new Snowflake();
+        String str = snowflake.nextIdStr();
         for (ReviewRoundInsertInVO vo : insertVoList) {
             ReviewRound reviewRound = new ReviewRound();
 
@@ -70,7 +71,7 @@ public class ReviewRoundServiceImpl extends ServiceImpl<ReviewRoundMapper, Revie
             reviewRound.setOrganizationId(sysUser.getOrganizationId());
 
             reviewRound.setCreateTime(new Date());
-            reviewRound.setContentId(snowflake.nextIdStr());
+            reviewRound.setContentId(str);
             list.add(reviewRound);
         }
         return (this.saveBatch(list));

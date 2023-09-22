@@ -18,9 +18,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReviewRoundIN {
 
-    /**
-     * 评审内容
-     */
     @ApiModelProperty("项目id")
     private Long projectId;
 
