@@ -260,7 +260,7 @@ public class SlideController extends BaseController {
     @ApiOperationSupport(author = "wangfeng")
     @Log(title = "删除切片", menu = "切片管理", subMenu = "标注切片", businessType = BusinessType.DELETE)
     @ApiOperation(value = "逻辑批量删除切片")
-    @GetMapping("/deleteAll")
+    @PostMapping("/deleteAll")
     public R deleteAll(@RequestBody DelSlideVO req) {
         Slide slide = new Slide();
         slide.setProjectId(req.getProjectId());
