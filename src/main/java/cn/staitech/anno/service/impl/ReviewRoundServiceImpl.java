@@ -1,5 +1,6 @@
 package cn.staitech.anno.service.impl;
 
+import cn.hutool.core.lang.Snowflake;
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.domain.ReviewRound;
 import cn.staitech.anno.domain.reviewround.ReviewRoundBatchInVO;
@@ -54,7 +55,7 @@ public class ReviewRoundServiceImpl extends ServiceImpl<ReviewRoundMapper, Revie
 
         List<ReviewRoundInsertInVO> insertVoList = reviewRoundBatchInVO.getInsertList();
         List<ReviewRound> list = new ArrayList<>(insertVoList.size());
-
+        Snowflake snowflake = new Snowflake();
         for (ReviewRoundInsertInVO vo : insertVoList) {
             ReviewRound reviewRound = new ReviewRound();
 
@@ -69,7 +70,7 @@ public class ReviewRoundServiceImpl extends ServiceImpl<ReviewRoundMapper, Revie
             reviewRound.setOrganizationId(sysUser.getOrganizationId());
 
             reviewRound.setCreateTime(new Date());
-
+            reviewRound.setContentId(snowflake.nextIdStr());
             list.add(reviewRound);
         }
         return (this.saveBatch(list));

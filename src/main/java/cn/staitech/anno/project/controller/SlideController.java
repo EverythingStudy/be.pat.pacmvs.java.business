@@ -49,6 +49,7 @@ public class SlideController {
         Page page = new Page(in.getPageNum(), in.getPageSize());
         return R.ok(slideService.pageSlides(page,in));
     }
+
     @ApiOperation(value = "查看标注数目")
     @PostMapping("/getSlideAnnoStatistics")
     public R<List<SlideAnnoStatisticsVO>> getSlideAnnoStatistics(@RequestBody SlideQueryIN in) throws Exception {

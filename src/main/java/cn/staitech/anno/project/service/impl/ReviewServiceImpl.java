@@ -10,20 +10,22 @@ import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import cn.staitech.anno.constant.ExportConstant;
+import cn.staitech.anno.domain.reviewround.ReviewRoundOutVO;
 import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.project.constants.Constants;
 import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.anno.project.domain.Slide;
 import cn.staitech.anno.project.mapper.DownTaskMapper;
 import cn.staitech.anno.project.mapper.SlideMapperV1;
-import cn.staitech.anno.project.vo.ReviewIN;
-import cn.staitech.anno.project.vo.ReviewUP;
-import cn.staitech.anno.project.vo.ReviewVO;
+import cn.staitech.anno.project.vo.*;
 import cn.staitech.anno.service.FileService;
+import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.staitech.anno.project.domain.Review;
 import cn.staitech.anno.project.service.ReviewService;
@@ -237,6 +239,15 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
         review.setUpdateTime(new Date());
         return reviewMapper.updateById(review);
     }
+
+    @Override
+    public PageMaster<ReviewRoundOutVO> pageReviewRound(Page page, ReviewRoundIN params){
+        getBaseMapper().pageReviewRound(page,params);
+        PageMaster<ReviewRoundOutVO> pageMaster = PageMaster.of(page.getRecords());
+        pageMaster.setTotal(page.getTotal());
+        return pageMaster;
+    }
+
 
 }
 

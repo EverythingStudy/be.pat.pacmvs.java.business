@@ -1,10 +1,15 @@
 package cn.staitech.anno.project.service;
 
+import cn.staitech.anno.domain.reviewround.ReviewRoundOutVO;
 import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.anno.project.domain.Review;
 import cn.staitech.anno.project.vo.ReviewIN;
+import cn.staitech.anno.project.vo.ReviewRoundIN;
 import cn.staitech.anno.project.vo.ReviewUP;
 import cn.staitech.anno.project.vo.ReviewVO;
+import cn.staitech.anno.utils.PageMaster;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Param;
 
@@ -25,5 +30,8 @@ public interface ReviewService extends IService<Review> {
     int insert(ReviewIN req) throws Exception;
 
     int update(ReviewUP req) throws Exception;
+
+    PageMaster<ReviewRoundOutVO> pageReviewRound(Page page, ReviewRoundIN params);
+
 
 }

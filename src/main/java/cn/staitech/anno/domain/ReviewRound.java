@@ -30,6 +30,10 @@ public class ReviewRound implements Serializable {
      * 评审内容
      */
     private String reviewContent;
+    /**
+     * 内容唯一键
+     */
+    private String contentId;
 
     /**
      * 评审轮次ID、对应1至10轮

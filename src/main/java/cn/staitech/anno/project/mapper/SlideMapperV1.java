@@ -1,9 +1,7 @@
 package cn.staitech.anno.project.mapper;
 
 import cn.staitech.anno.project.domain.Slide;
-import cn.staitech.anno.project.vo.SlideExportVO;
-import cn.staitech.anno.project.vo.SlideQueryIN;
-import cn.staitech.anno.project.vo.SlideVO;
+import cn.staitech.anno.project.vo.*;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -19,6 +17,7 @@ import java.util.List;
 */
 public interface SlideMapperV1 extends BaseMapper<Slide> {
     IPage<SlideVO> pageSlides(@Param("page") Page page, @Param("params") SlideQueryIN params);
+    IPage<ReviewSlideVO> pageReviewSlide(@Param("page") Page page, @Param("params") ReviewSlideIN params);
     List<SlideExportVO> querySlides(@Param("params") SlideQueryIN params);
 }
 

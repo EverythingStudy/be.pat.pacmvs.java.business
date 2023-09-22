@@ -5,10 +5,7 @@ import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import cn.staitech.anno.project.domain.*;
 import cn.staitech.anno.project.mapper.*;
-import cn.staitech.anno.project.vo.SlideAnnoStatisticsVO;
-import cn.staitech.anno.project.vo.SlideExportVO;
-import cn.staitech.anno.project.vo.SlideQueryIN;
-import cn.staitech.anno.project.vo.SlideVO;
+import cn.staitech.anno.project.vo.*;
 import cn.staitech.anno.utils.PageMaster;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -88,6 +85,16 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         pageMaster.setTotal(page.getTotal());
         return pageMaster;
     }
+
+    @Override
+    public PageMaster<ReviewSlideVO> pageReviewSlide(Page page, ReviewSlideIN params){
+        getBaseMapper().pageReviewSlide(page, params);
+        List<ReviewSlideVO> list = page.getRecords();
+        PageMaster<ReviewSlideVO> pageMaster = PageMaster.of(list);
+        pageMaster.setTotal(page.getTotal());
+        return pageMaster;
+    }
+
 
     /**
      * 查看标注数目

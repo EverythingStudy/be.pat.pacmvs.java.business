@@ -3,17 +3,20 @@ package cn.staitech.anno.project.controller;
 import cn.hutool.core.io.IoUtil;
 import cn.staitech.anno.constant.ExportConstant;
 import cn.staitech.anno.domain.Slide;
+import cn.staitech.anno.domain.reviewround.ReviewRoundOutVO;
 import cn.staitech.anno.mapper.SlideMapper;
 import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.anno.project.domain.Review;
 import cn.staitech.anno.project.service.DownTaskService;
 import cn.staitech.anno.project.service.ReviewService;
-import cn.staitech.anno.project.vo.DownTaskIN;
-import cn.staitech.anno.project.vo.ReviewIN;
-import cn.staitech.anno.project.vo.ReviewUP;
+import cn.staitech.anno.project.service.SlideService;
+import cn.staitech.anno.project.vo.*;
+import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.List;
@@ -49,6 +53,8 @@ public class ReviewController {
     private DownTaskService downTaskService;
     @Resource
     private SlideMapper slideMapper;
+    @Resource
+    private SlideService slideService;
 
     @ApiOperation(value = "viewer新增评审")
     @PostMapping("/insertReview")
@@ -103,5 +109,23 @@ public class ReviewController {
             }
         }
         IoUtil.close(out);
+    }
+
+    @ApiOperation(value = "智能评审-查询评审轮次列表")
+    @GetMapping("/pageReviewRound")
+    public R<PageMaster<ReviewRoundOutVO>> pageReviewRound(@NotNull(message = "分页参数为空！") @RequestParam("pageNum") @ApiParam(name = "pageNum", value = "分页参数", required = true) Integer pageNum,
+                                                @NotNull(message = "分页参数为空！") @RequestParam("pageSize") @ApiParam(name = "pageSize", value = "分页参数", required = true) Integer pageSize,
+                                                ReviewRoundIN params) {
+        Page page = new Page(pageNum,pageSize);
+        return R.ok(reviewService.pageReviewRound(page, params));
+    }
+
+    @ApiOperation(value = "智能标注-切片分页查询")
+    @GetMapping("/page")
+    public R<PageMaster<ReviewSlideVO>> pageReviewSlide(@NotNull(message = "分页参数为空！") @RequestParam("pageNum") @ApiParam(name = "pageNum", value = "分页参数", required = true) Integer pageNum,
+                                                        @NotNull(message = "分页参数为空！") @RequestParam("pageSize") @ApiParam(name = "pageSize", value = "分页参数", required = true) Integer pageSize,
+                                                        ReviewSlideIN in){
+        Page page = new Page(pageNum,pageSize);
+        return R.ok(slideService.pageReviewSlide(page,in));
     }
 }

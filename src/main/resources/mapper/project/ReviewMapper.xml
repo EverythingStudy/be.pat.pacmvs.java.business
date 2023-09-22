@@ -65,7 +65,7 @@
             tb_slide AS s
             LEFT JOIN tb_project AS p ON s.project_id = p.project_id
             LEFT JOIN tb_group AS g ON g.group_id = s.group_id
-            LEFT JOIN tb_topic AS t ON t.topic_id = p.topic_id
+            LEFT JOIN tb_topic AS t ON t.topic_id = s.topic_id
             LEFT JOIN tb_round AS r ON r.round_id = s.round_id
             LEFT JOIN tb_image AS i ON i.image_id = s.image_id
             LEFT JOIN tb_pathological_indicator AS ind ON ind.indicator_id = p.indicator_id
@@ -78,4 +78,34 @@
         </where>
     </select>
 
+    <select id="pageReviewRound" parameterType="cn.staitech.anno.project.vo.ReviewRoundIN" resultType="cn.staitech.anno.domain.reviewround.ReviewRoundOutVO">
+        SELECT
+        rr.*,g.group_name,t.topic_name,r.round_name,u.user_name as create_by_name
+        FROM tb_review_round rr
+        LEFT JOIN tb_project p ON rr.project_id = p.project_id
+        LEFT JOIN tb_group g ON g.group_id = rr.group_id
+        LEFT JOIN tb_topic t ON t.topic_id = rr.topic_id
+        LEFT JOIN tb_round r ON r.round_id = rr.round_id
+        LEFT JOIN sys_user u ON u.user_id = rr.create_by
+        LEFT JOIN tb_pathological_indicator AS ind ON ind.indicator_id = p.indicator_id
+        LEFT JOIN tb_pathological_indicator_category AS cate ON cate.indicator_id = ind.indicator_id
+        LEFT JOIN tb_structure AS st ON st.structure_id = cate.structure_id
+        <where>
+            <if test="params.projectId !=  null">
+                AND p.project_id = #{params.projectId}
+            </if>
+            <if test="params.roundId !=  null">
+                AND rr.round_id = #{params.roundId}
+            </if>
+            <if test="params.groupId !=  null">
+                AND rr.group_id = #{params.groupId}
+            </if>
+            <if test="params.topicName !=  null">
+                AND t.topic_name like CONCAT('%',#{params.topicName},'%')
+            </if>
+            <if test="params.reviewContent !=  null">
+                AND rr.review_content like CONCAT('%',#{params.reviewContent},'%')
+            </if>
+        </where>
+    </select>
 </mapper>

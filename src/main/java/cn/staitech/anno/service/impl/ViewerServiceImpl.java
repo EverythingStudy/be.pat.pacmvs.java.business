@@ -50,8 +50,8 @@ public class ViewerServiceImpl implements ViewerService {
     @Resource
     private MarkingMapper markingMapper;
 
-    @Resource
-    private GeometryDocMapper geometryDocMapper;
+    /*@Resource
+    private GeometryDocMapper geometryDocMapper;*/
 
     @Resource
     private SlideService slideService;
@@ -239,7 +239,7 @@ public class ViewerServiceImpl implements ViewerService {
                                             String jsonStr = geometry.toString();
                                             geometryDoc.setGeometry(jsonStr);
                                             geometryDoc.setSlideId(slideRes.getSlideId());
-                                            geometryDocMapper.save(geometryDoc);
+                                            //geometryDocMapper.save(geometryDoc);
                                             // 存入文件中
                                             // 查询切片详情
                                             Slide slide = slideService.getById(slideRes.getSlideId());
