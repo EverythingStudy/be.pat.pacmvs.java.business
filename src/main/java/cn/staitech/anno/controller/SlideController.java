@@ -12,6 +12,7 @@ import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetPagerVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO;
 import cn.staitech.anno.domain.vo.slideVo.AddSlideVO;
+import cn.staitech.anno.domain.vo.slideVo.DelSlideIdsVO;
 import cn.staitech.anno.domain.vo.slideVo.DelSlideVO;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.SlideService;
@@ -235,17 +236,16 @@ public class SlideController extends BaseController {
     }
 
     /**
-     * 删除（根据ID 批量删除）
-     *
-     * @param slideIds 切处ID列表
+     * 根据ID批量删除切片
+     * @param request
+     * @return
      */
     @ApiOperationSupport(author = "wangfeng")
     @Log(title = "删除切片", menu = "切片管理", subMenu = "标注切片", businessType = BusinessType.DELETE)
     @ApiOperation(value = "逻辑批量删除切片")
     @PostMapping("/deleteBatchIds")
-    public R deleteBatchIds(
-            @RequestParam @ApiParam(name = "slideIds", value = "切片ID列表", required = true) List<Long> slideIds) {
-        if (slideService.delSlidesBatch(slideIds) > 0) {
+    public R deleteBatchIds(@RequestBody DelSlideIdsVO request) {
+        if (slideService.delSlidesBatch(request.getSlideIds()) > 0) {
             return R.ok(ImageConstant.OPERATE_SUCCEED);
         }
         return R.fail(ImageConstant.OPERATE_ERROR);
