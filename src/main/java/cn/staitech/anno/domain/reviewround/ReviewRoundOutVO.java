@@ -92,4 +92,10 @@ public class ReviewRoundOutVO implements Serializable {
     @TableField(exist = false)
     @ApiModelProperty(value = "是否绑定图片:0 未绑定,1已绑定")
     private Integer slideStatus = 0;
+    /**
+     * 图片绝对路径
+     */
+    @TableField(exist = false)
+    @ApiModelProperty(value = "", hidden = true)
+    private String imagePath;
 }
