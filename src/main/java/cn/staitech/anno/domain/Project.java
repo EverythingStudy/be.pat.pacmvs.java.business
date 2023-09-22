@@ -2,15 +2,19 @@ package cn.staitech.anno.domain;
 
 import cn.staitech.common.core.annotation.Excel;
 import cn.staitech.common.core.web.domain.BaseEntity;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
@@ -19,15 +23,19 @@ import java.util.Map;
  *
  * @author staitech
  */
-@TableName(value = "tb_project")
 @Data
-public class Project extends BaseEntity implements Serializable {
+@TableName(value = "tb_project")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class Project extends BaseEntity {
 
     /**
      * 项目ID
      */
     @Excel(name = "项目ID", cellType = Excel.ColumnType.NUMERIC, prompt = "项目ID")
     @ApiModelProperty(value = "", hidden = true)
+    @TableId(value = "project_id", type = IdType.AUTO)
     private Long projectId;
 
     /**
@@ -106,7 +114,7 @@ public class Project extends BaseEntity implements Serializable {
     private String remark;
 
     @ApiModelProperty(value = "项目状态")
-    private String status;
+    private Integer status;
 
     /**
      * 种属ID

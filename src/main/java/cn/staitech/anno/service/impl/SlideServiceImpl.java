@@ -1,5 +1,6 @@
 package cn.staitech.anno.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.staitech.anno.constant.ExaminationConstant;
 import cn.staitech.anno.constant.ProjectConstant;
 import cn.staitech.anno.constant.R.MeasureResponseConstant;
@@ -14,6 +15,7 @@ import cn.staitech.anno.domain.vo.SlideSelectVO;
 import cn.staitech.anno.domain.vo.image.ProjectStatisticsVo;
 import cn.staitech.anno.domain.vo.image.SlideReportSummaryVo;
 import cn.staitech.anno.domain.vo.image.SlideReportVo;
+import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetPagerVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListInVO;
@@ -540,11 +542,53 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         return slideMapper.deleteBatchIds(slideIds);
     }
 
+
     @Override
-    public PageMaster<ImageCsvListVO> pageSlides(ImageCsvGetVO request) {
-        PageHelper.startPage(request.getPageNum(), request.getPageSize()).setReasonable(true);
+    public List<ImageCsvListVO> pageSlides(ImageCsvGetVO request) {
+
         List<ImageCsvListVO> list = slideMapper.pageImageCsvListVOList(request);
+
+
+/*
+
+        ReviewRound reviewRound = new ReviewRound();
+        reviewRound.setProjectId(projectId);
+        QueryWrapper queryWrapper = new QueryWrapper<>(reviewRound);
+        List<ReviewRound> list = this.list(queryWrapper);
         PageMaster pageMaster = new PageMaster<>(list);
+
+        List<ReviewRoundOutVO> respList = new ArrayList<>(list.size());
+
+        Map<Long, String> topicMap = topicService.selectMap();
+
+        for (ReviewRound round : list) {
+            ReviewRoundOutVO reviewRoundOutVO = new ReviewRoundOutVO();
+            BeanUtils.copyProperties(round, reviewRoundOutVO);
+
+            // 评审轮次
+            reviewRoundOutVO.setRoundName(MapConstant.getRoundName(round.getRoundId()));
+            // 组别
+            reviewRoundOutVO.setGroupName(MapConstant.getGroupName(round.getGroupId()));
+            //专题编号
+            if (topicMap.containsKey(round.getTopicId())) {
+                reviewRoundOutVO.setTopicName(topicMap.get(round.getTopicId()));
+            }
+            // 创建者
+            reviewRoundOutVO.setCreateByName(sysUserService.selectUserById(round.getCreateBy()).getUserName());
+            respList.add(reviewRoundOutVO);
+        }*/
+
+        return list;
+    }
+
+
+    @Override
+    public PageMaster<ImageCsvListVO> pageReviewRoundSSlides(ImageCsvGetPagerVO request) {
+        PageHelper.startPage(request.getPageNum(), request.getPageSize()).setReasonable(true);
+        ImageCsvGetVO imageCsvGetVO = new ImageCsvGetVO();
+        BeanUtil.copyProperties(request, imageCsvGetVO);
+        List<ImageCsvListVO> list = slideMapper.pageImageCsvListVOList(imageCsvGetVO);
+        PageMaster<ImageCsvListVO> pageMaster = new PageMaster<>(list);
 
 
 /*

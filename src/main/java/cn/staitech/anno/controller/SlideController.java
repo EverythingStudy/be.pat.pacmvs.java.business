@@ -8,6 +8,7 @@ import cn.staitech.anno.domain.vo.SlideDescriptionVo;
 import cn.staitech.anno.domain.vo.image.ProjectStatisticsVo;
 import cn.staitech.anno.domain.vo.image.SlideReportSummaryVo;
 import cn.staitech.anno.domain.vo.image.SlideReportVo;
+import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetPagerVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO;
 import cn.staitech.anno.domain.vo.slideVo.AddSlideVO;
@@ -208,8 +209,18 @@ public class SlideController extends BaseController {
      */
     @ApiOperation(value = "查询切片列表")
     @PostMapping("/list")
-    public R<PageMaster<ImageCsvListVO>> listByProjectId(@RequestBody ImageCsvGetVO imageCsvGetVO) {
+    public R<List<ImageCsvListVO>> annoSlidelist(@RequestBody ImageCsvGetVO imageCsvGetVO) {
         return R.ok(slideService.pageSlides(imageCsvGetVO));
+    }
+
+
+    /**
+     * 查询切片列表
+     */
+    @ApiOperation(value = "查询切片列表")
+    @PostMapping("/reviewRoundSlidelist")
+    public R<PageMaster<ImageCsvListVO>> reviewRoundSlidelist(@RequestBody ImageCsvGetPagerVO imageCsvGetPagerVO) {
+        return R.ok(slideService.pageReviewRoundSSlides(imageCsvGetPagerVO));
     }
 
 

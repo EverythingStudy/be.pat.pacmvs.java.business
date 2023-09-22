@@ -1,13 +1,13 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.reviewround.ReviewRoundOutVO;
 import cn.staitech.anno.domain.vo.ExaminationListVO;
 import cn.staitech.anno.domain.vo.ProjectListOutVO;
 import cn.staitech.anno.domain.vo.SlideSelectVO;
 import cn.staitech.anno.domain.vo.image.ProjectStatisticsVo;
 import cn.staitech.anno.domain.vo.image.SlideReportSummaryVo;
 import cn.staitech.anno.domain.vo.image.SlideReportVo;
+import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetPagerVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListInVO;
@@ -194,6 +194,9 @@ public interface SlideService extends IService<Slide> {
     int delSlidesBatch(List<Long> slideIds);
 
 
-    PageMaster<ImageCsvListVO> pageSlides(ImageCsvGetVO imageCsvGetVO);
+    List<ImageCsvListVO> pageSlides(ImageCsvGetVO imageCsvGetVO);
+
+
+    PageMaster<ImageCsvListVO> pageReviewRoundSSlides(ImageCsvGetPagerVO imageCsvGetPagerVO);
 
 }

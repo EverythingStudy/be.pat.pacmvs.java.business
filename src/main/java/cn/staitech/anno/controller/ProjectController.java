@@ -14,6 +14,7 @@ import cn.staitech.anno.domain.project.out.*;
 import cn.staitech.anno.domain.projectgroup.ProjectGroup;
 import cn.staitech.anno.domain.vo.ProjectListVO;
 import cn.staitech.anno.domain.vo.project.InsertProjectVO;
+import cn.staitech.anno.domain.vo.project.UpdateProjectStatusVO;
 import cn.staitech.anno.domain.vo.project.UpdateProjectVO;
 import cn.staitech.anno.service.*;
 import cn.staitech.anno.utils.PageMaster;
@@ -362,6 +363,28 @@ public class ProjectController extends BaseController {
     public R<ProjectListVO> selectOne(@RequestParam("projectId") Long projectId) {
         ProjectListVO resp = projectService.selectProjectById(projectId);
         return R.ok(resp);
+    }
+
+
+    @ApiOperationSupport(author = "wangfeng")
+    @ApiOperation(value = "编辑项目")
+    //@RequiresPermissions("anno:project:addproject")
+    @Log(title = "编辑项目", menu = "编辑项目", subMenu = "编辑项目", businessType = BusinessType.UPDATE)
+    @PostMapping("/editStatus")
+    @Transactional
+    public R<String> editProjectStatus(@Validated @RequestBody UpdateProjectStatusVO req) {
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+
+        Project project = new Project();
+        project.setProjectId(req.getProjectId());
+        project.setStatus(req.getStatus());
+        project.setUpdateBy(sysUser.getUserId());
+        project.setOrganizationId(sysUser.getOrganizationId());
+
+        if (projectService.updateById(project)) {
+            return R.ok(ResponseConstant.OPERATE_SUCCEED);
+        }
+        return R.fail(ResponseConstant.OPERATE_ERROR);
     }
 
 

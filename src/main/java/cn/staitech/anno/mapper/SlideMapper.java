@@ -208,4 +208,5 @@ public interface SlideMapper extends BaseMapper<Slide> {
     List<ImageCsvListVO> pageImageCsvListVOList(ImageCsvGetVO imageCsvGetVO);
 
 
+
 }
