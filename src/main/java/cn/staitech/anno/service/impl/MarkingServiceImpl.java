@@ -160,9 +160,9 @@ public class MarkingServiceImpl implements MarkingService {
             slideBy.setStatus("2");
             slideMapperV1.updateById(slideBy);
         }
-        if (Boolean.FALSE.equals(markIsNotFinish(slideBy.getStatus()))) {
-            throw new Exception(AnnotationConstant.UPDATE_ANNOTATION_CATEGORY_MESSAGE);
-        }
+//        if (Boolean.FALSE.equals(markIsNotFinish(slideBy.getStatus()))) {
+//            throw new Exception(AnnotationConstant.UPDATE_ANNOTATION_CATEGORY_MESSAGE);
+//        }
         // 获取规定的geoJson Id
         String annotationId = CustomizationIdUtils.getSdId();
         marking.setAnnotation_id(annotationId);
@@ -176,7 +176,8 @@ public class MarkingServiceImpl implements MarkingService {
         }
         marking.setCreate_by(req.getCreate_by());
         marking.setAnnotation_type("Draw");
-        marking.setOrganization_id(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+//        marking.(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+//        marking.(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         marking.setCreate_time(new Date());
         SysUser user = userMapper.selectUserById(req.getCreate_by());
         if (user != null) {
@@ -688,9 +689,9 @@ public class MarkingServiceImpl implements MarkingService {
         return list;
     }
 
-    public Boolean markIsNotFinish(String status) {
-        return Objects.equals(status, "7");
-    }
+//    public Boolean markIsNotFinish(String status) {
+//        return Objects.equals(status, "7");
+//    }
 
 
 }
