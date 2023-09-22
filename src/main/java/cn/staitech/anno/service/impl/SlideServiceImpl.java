@@ -18,6 +18,7 @@ import cn.staitech.anno.domain.vo.image.SlideReportVo;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetPagerVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO;
+import cn.staitech.anno.domain.vo.slideVo.AddSlideVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListOutVO;
 import cn.staitech.anno.mapper.*;
@@ -497,8 +498,13 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
      * @return
      */
     @Override
-    public boolean addAnnoSlidesBatch(Long projectId, List<Long> topicIds) {
+    public boolean addAnnoSlidesBatch(AddSlideVO addSlideVO) {
+        Long projectId = addSlideVO.getProjectId();
+        List<Long> topicIds = addSlideVO.getTopicIds();
+        Long reviewRoundId = addSlideVO.getReviewRoundId();
+
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+
 
         QueryWrapper<ImageCsv> query = Wrappers.query();
         query.in("topic_id", topicIds);
@@ -525,6 +531,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                 slide.setImageCsvId(imageCsv.getId());
                 slide.setCreateBy(sysUser.getUserId());
                 slide.setCreateTime(new Date());
+                slide.setReviewRoundId(reviewRoundId);
 
                 slideMapper.insert(slide);
                 // slideList.add(slide);
@@ -532,7 +539,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         }
 
         // slideMapper.insertSlide(slideList);
-
         return true;
     }
 

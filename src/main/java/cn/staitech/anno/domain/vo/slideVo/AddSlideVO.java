@@ -15,6 +15,10 @@ public class AddSlideVO {
     @ApiModelProperty(value = "图像ID", required = true)
     private List<Long> topicIds;
 
-    @ApiModelProperty(value = "修改人", required = false, hidden = true)
+    @ApiModelProperty(value = "项目ID", required = false, hidden = true)
     private Long projectId;
+
+    @ApiModelProperty(value = "评审轮次ID", required = false, hidden = true)
+    private Long reviewRoundId;
+
 }

@@ -205,9 +205,9 @@ public class SlideController extends BaseController {
     // =======================================================================================================
 
     /**
-     * 查询切片列表
+     * 查询标注项目切片列表
      */
-    @ApiOperation(value = "查询切片列表")
+    @ApiOperation(value = "查询标注项目切片列表")
     @PostMapping("/list")
     public R<List<ImageCsvListVO>> annoSlidelist(@RequestBody ImageCsvGetVO imageCsvGetVO) {
         return R.ok(slideService.pageSlides(imageCsvGetVO));
@@ -215,9 +215,9 @@ public class SlideController extends BaseController {
 
 
     /**
-     * 查询切片列表
+     * 查询评审项目切片列表
      */
-    @ApiOperation(value = "查询切片列表")
+    @ApiOperation(value = "查询评审项目切片列表")
     @PostMapping("/reviewRoundSlidelist")
     public R<PageMaster<ImageCsvListVO>> reviewRoundSlidelist(@RequestBody ImageCsvGetPagerVO imageCsvGetPagerVO) {
         return R.ok(slideService.pageReviewRoundSSlides(imageCsvGetPagerVO));
@@ -225,19 +225,25 @@ public class SlideController extends BaseController {
 
 
     /**
-     * 批量添加切片
-     *
-     * @RequestParam @ApiParam(name = "projectId", value = "项目ID", required = true) Long projectId,
-     * @RequestParam @ApiParam(name = "topicIds", value = "专题目ID", required = true) List<Long> topicIds
+     * 批量添加标注切片
      */
-    @ApiOperation(value = "批量添加切片")
+    @ApiOperation(value = "批量添加标注切片")
     @PostMapping("/addAnnoSlidesBatch")
     public R addAnnoSlidesBatch(@RequestBody AddSlideVO addSlideVO) {
-        Long projectId = addSlideVO.getProjectId();
-        List<Long> topicIds = addSlideVO.getTopicIds();
-        return R.ok(slideService.addAnnoSlidesBatch(projectId, topicIds));
+        return R.ok(slideService.addAnnoSlidesBatch(addSlideVO));
     }
 
+
+    /**
+     * 批量添加评审切片
+     */
+/*
+    @ApiOperation(value = "批量添加评审切片")
+    @PostMapping("/addReviewSlidesBatch")
+    public R addReviewSlidesBatch(@RequestBody AddSlideVO addSlideVO) {
+        return R.ok(slideService.addAnnoSlidesBatch(addSlideVO));
+    }
+*/
 
     /**
      * 删除（根据ID 批量删除）
