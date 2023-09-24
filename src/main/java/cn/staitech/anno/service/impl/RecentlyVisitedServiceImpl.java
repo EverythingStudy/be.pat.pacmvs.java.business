@@ -63,6 +63,7 @@ public class RecentlyVisitedServiceImpl implements RecentlyVisitedService {
             recentlyVisitedSelectVO.setProjectName(recentlyVisited1.getProjectName());
             recentlyVisitedSelectVO.setProjectId(recentlyVisited1.getProjectId());
             recentlyVisitedSelectVO.setVisitTime(recentlyVisited1.getUpdateTime());
+            recentlyVisitedSelectVO.setReviewRoundId(recentlyVisited1.getReviewRoundId());
             recentlyVisitedSelectVO.setImageVisited(imageVisitedList);
             recentlyVisitedSelectVO.setUserId(recentlyVisited1.getUserId());
             recentlyVisitedSelectVOS.add(recentlyVisitedSelectVO);
@@ -73,11 +74,10 @@ public class RecentlyVisitedServiceImpl implements RecentlyVisitedService {
 
 
     @Override
-    public String selectBy(Long slideId) {
+    public void selectBy(Long slideId) {
         // 根据切片查询项目、图片、切片信息
         RecentlyVisited req = recentlyVisitedMapper.selectBy(slideId);
-//        long userId = SecurityUtils.getUserId();
-        long userId = 2L;
+        long userId = SecurityUtils.getUserId();
         RecentlyVisited recentlyVisited = new RecentlyVisited();
         recentlyVisited.setUserId(userId);
         recentlyVisited.setProjectId(req.getProjectId());
@@ -102,7 +102,6 @@ public class RecentlyVisitedServiceImpl implements RecentlyVisitedService {
             req.setUserId(userId);
             recentlyVisitedMapper.insert(req);
         }
-        return "ok";
     }
 
 }

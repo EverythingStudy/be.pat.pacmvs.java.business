@@ -23,7 +23,7 @@
              , project_name
              , image_name
              , thumb_url
-             , group_id
+             , review_round_id
              , create_time
              , update_time
         from tb_recently_visited
@@ -32,6 +32,7 @@
 
     <sql id="selectBy">
         SELECT s.slide_id,
+               s.review_round_id,
                i.image_name,
                i.thumb_url,
                p.project_id,
@@ -147,6 +148,7 @@
         <if test="projectName != null">project_name,</if>
         <if test="imageName != null and imageName != ''">image_name,</if>
         <if test="thumbUrl != null and thumbUrl != ''">thumb_url,</if>
+        <if test="reviewRoundId != null">review_round_id,</if>
         create_time,
         update_time
         )values(
@@ -156,6 +158,7 @@
         <if test="projectName != null">#{projectName},</if>
         <if test="imageName != null and imageName != ''">#{imageName},</if>
         <if test="thumbUrl != null and thumbUrl != ''">#{thumbUrl},</if>
+        <if test="reviewRoundId != null">#{reviewRoundId},</if>
         sysdate(),
         sysdate()
         )

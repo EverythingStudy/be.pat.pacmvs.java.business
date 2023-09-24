@@ -55,9 +55,8 @@ public class RecentlyVisitedController {
         if (!Optional.ofNullable(slideId).isPresent()) {
             return R.fail("参数异常");
         }
-        LoginUser loginUser = getLoginUser();
         // 判断当前角色是否为admin或者超级管理员
-        if(!SysUser.isAdmin(SecurityUtils.getUserId()) || loginUser.getSysUser().getRoleId() != 1L){
+        if(!SysUser.isAdmin(SecurityUtils.getUserId())){
             // 根据项目查询专题信息
             recentlyVisitedService.selectBy(slideId);
         }

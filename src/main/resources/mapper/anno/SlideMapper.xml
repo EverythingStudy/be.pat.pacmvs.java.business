@@ -835,6 +835,7 @@
         s.ai_check,
         m.image_id,
         m.thumb_url,
+        m.image_path,
         m.format,
         m.width,
         m.height,

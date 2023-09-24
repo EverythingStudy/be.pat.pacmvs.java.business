@@ -26,6 +26,9 @@ public class RecentlyVisitedSelectVO {
     @ApiModelProperty(value = "项目名称")
     private String projectName;
 
+    @ApiModelProperty(value = "评审轮次id")
+    private Long reviewRoundId;
+
     @ApiModelProperty(value = "图像信息")
     private List<ImageVisited> imageVisited;
 

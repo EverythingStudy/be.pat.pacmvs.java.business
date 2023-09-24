@@ -27,5 +27,5 @@ public interface RecentlyVisitedService {
      * @param slideId 切片id
      * @return list
      */
-    String selectBy(Long slideId);
+    void selectBy(Long slideId);
 }

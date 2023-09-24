@@ -210,6 +210,12 @@ public class SlideSelectBy {
     private Long organizationId;
 
     /**
+     * 图像路径
+     */
+    @ApiModelProperty(value = "图像路径")
+    private String imagePath;
+
+    /**
      * 所在主机ID
      */
     @ApiModelProperty(value = "所在主机ID")

@@ -32,6 +32,9 @@ public class RecentlyVisited {
     @ApiModelProperty(value = "图像url")
     private String thumbUrl;
 
+    @ApiModelProperty(value = "评审轮次id")
+    private Long reviewRoundId;
+
     @ApiModelProperty(value = "访问时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private String createTime;
