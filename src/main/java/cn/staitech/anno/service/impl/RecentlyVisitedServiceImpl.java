@@ -41,7 +41,7 @@ public class RecentlyVisitedServiceImpl implements RecentlyVisitedService {
         List<RecentlyVisitedSelectVO> recentlyVisitedSelectVOS = new ArrayList<>();
         LoginUser loginUser = getLoginUser();
         // 判断用户为admin或者超级管理员
-        if(SysUser.isAdmin(SecurityUtils.getUserId()) || loginUser.getSysUser().getRoleId() == 1L){
+        if(SysUser.isAdmin(SecurityUtils.getUserId())){
             return recentlyVisitedSelectVOS;
         }
         for (RecentlyVisited recentlyVisited1 : recentlyVisitedList) {
