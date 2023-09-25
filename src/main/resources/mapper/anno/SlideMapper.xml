@@ -667,7 +667,7 @@
                m.resolution_y,
                m.source_lens,
                m.image_path,
-               csv.id,
+   <!--            csv.id,
                csv.image_id,
                csv.image_name,
                csv.group_name,
@@ -697,11 +697,10 @@
                csv.status,
                csv.delete_flag,
                csv.organization_id,
-               csv.host_id
+               csv.host_id-->
         from tb_slide s
                  left join tb_image m on m.image_id = s.image_id
-                 left join tb_image_csv csv
-<!--        on csv.id = s.image_csv_id-->
+              <!--   left join tb_image_csv csv on csv.id = s.image_csv_id-->
         <where>
             <if test="projectId != null">
                 AND s.project_id = #{projectId, jdbcType=NUMERIC}
@@ -712,7 +711,7 @@
             <if test="imageName != null">
                 AND m.image_name LIKE CONCAT('%', #{imageName}, '%')
             </if>
-            <if test="lesionType != null">
+<!--            <if test="lesionType != null">
                 AND csv.lesion_type1 LIKE CONCAT('%', #{lesionType}, '%')
                 AND csv.lesion_type2 LIKE CONCAT('%', #{lesionType}, '%')
             </if>
@@ -720,7 +719,7 @@
             <if test="lesionDegree != null">
                 AND csv.lesion_degree1 LIKE CONCAT('%', #{lesionDegree}, '%')
                 AND csv.lesion_degree2 LIKE CONCAT('%', #{lesionDegree}, '%')
-            </if>
+            </if>-->
             <if test="imageName != null and imageName != ''">
                 <!-- 图像名称 -->
                 and m.image_name like concat('%', #{imageName}, '%')
@@ -757,8 +756,6 @@
                m.resolution_x,
                m.resolution_y,
                m.source_lens
-
-
         <!--,
                csv.id,
                csv.image_id,
@@ -791,8 +788,7 @@
                csv.host_id-->
         from tb_slide s
                  left join tb_image m on m.image_id = s.image_id
-                 left join tb_image_csv csv
-<!--        on csv.id = s.image_csv_id-->
+                <!-- left join tb_image_csv csv on csv.id = s.image_csv_id-->
         <where>
             <if test="projectId != null">
                 AND s.project_id = #{projectId, jdbcType=NUMERIC}
@@ -803,7 +799,7 @@
             <if test="imageName != null">
                 AND m.image_name LIKE CONCAT('%', #{imageName}, '%')
             </if>
-            <if test="lesionType != null">
+<!--            <if test="lesionType != null">
                 AND csv.lesion_type1 LIKE CONCAT('%', #{lesionType}, '%')
                 AND csv.lesion_type2 LIKE CONCAT('%', #{lesionType}, '%')
             </if>
@@ -811,7 +807,7 @@
             <if test="lesionDegree != null">
                 AND csv.lesion_degree1 LIKE CONCAT('%', #{lesionDegree}, '%')
                 AND csv.lesion_degree2 LIKE CONCAT('%', #{lesionDegree}, '%')
-            </if>
+            </if>-->
             <if test="imageName != null and imageName != ''">
                 <!-- 图像名称 -->
                 and m.image_name like concat('%', #{imageName}, '%')
@@ -848,7 +844,7 @@
         m.resolution_x,
         m.resolution_y,
         m.source_lens,
-        csv.id,
+ <!--       csv.id,
         csv.image_id,
         csv.image_name,
         csv.group_name,
@@ -876,11 +872,10 @@
         csv.topic_name,
         csv.delete_flag,
         csv.organization_id,
-        csv.host_id
+        csv.host_id-->
         from tb_slide s
         left join tb_image m on m.image_id = s.image_id
-        left join tb_image_csv csv
-<!--        on csv.id = s.image_csv_id-->
+      <!--  left join tb_image_csv csv on csv.id = s.image_csv_id-->
         <where>
             <if test="slideId != null">
                 s.slide_id = #{slideId, jdbcType=NUMERIC}
