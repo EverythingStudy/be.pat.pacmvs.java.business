@@ -259,4 +259,8 @@ public class ImageCsv implements Serializable {
     @TableField(exist = false, value = "source_lens")
     @ApiModelProperty(value = "原放大倍数")
     private Integer sourceLens;
+    @TableField(exist = false, value = "image_path")
+    @ApiModelProperty(value = "图像路径")
+    private String imagePath;
+
 }
