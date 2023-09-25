@@ -700,7 +700,8 @@
                csv.host_id
         from tb_slide s
                  left join tb_image m on m.image_id = s.image_id
-                 left join tb_image_csv csv on csv.id = s.image_csv_id
+                 left join tb_image_csv csv
+<!--        on csv.id = s.image_csv_id-->
         <where>
             <if test="projectId != null">
                 AND s.project_id = #{projectId, jdbcType=NUMERIC}
@@ -755,7 +756,10 @@
                m.height,
                m.resolution_x,
                m.resolution_y,
-               m.source_lens,
+               m.source_lens
+
+
+        <!--,
                csv.id,
                csv.image_id,
                csv.image_name,
@@ -784,10 +788,11 @@
                csv.topic_name,
                csv.delete_flag,
                csv.organization_id,
-               csv.host_id
+               csv.host_id-->
         from tb_slide s
                  left join tb_image m on m.image_id = s.image_id
-                 left join tb_image_csv csv on csv.id = s.image_csv_id
+                 left join tb_image_csv csv
+<!--        on csv.id = s.image_csv_id-->
         <where>
             <if test="projectId != null">
                 AND s.project_id = #{projectId, jdbcType=NUMERIC}
@@ -874,7 +879,8 @@
         csv.host_id
         from tb_slide s
         left join tb_image m on m.image_id = s.image_id
-        left join tb_image_csv csv on csv.id = s.image_csv_id
+        left join tb_image_csv csv
+<!--        on csv.id = s.image_csv_id-->
         <where>
             <if test="slideId != null">
                 s.slide_id = #{slideId, jdbcType=NUMERIC}
