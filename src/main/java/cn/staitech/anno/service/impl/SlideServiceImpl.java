@@ -581,7 +581,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
 
             if (imageCsv != null) {
                 slide.setImageCsvId(imageCsv.getId());
-
             }
 
             slide.setProjectId(projectId);
