@@ -557,7 +557,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
     public boolean addAnnoSlidesBatch(AddSlideVO addSlideVO) {
         Long projectId = addSlideVO.getProjectId();
         List<Long> topicIds = addSlideVO.getTopicIds();
-        Long reviewRoundId = addSlideVO.getReviewRoundId();
+        Long reviewRoundId = addSlideVO.getReviewRoundId() > 0 ? addSlideVO.getReviewRoundId() : 0;
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 
         QueryWrapper<Image> query = Wrappers.query();
@@ -574,7 +574,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
             csvQueryWrapper.eq("status", 1);
             csvQueryWrapper.eq("delete_flag", 1);*/
 
-            csvQueryWrapper.orderByDesc("image_id");
+            csvQueryWrapper.orderByDesc("id");
             ImageCsv imageCsv = imageCsvMapper.selectOne(csvQueryWrapper);
 
             Slide slide = new Slide();
