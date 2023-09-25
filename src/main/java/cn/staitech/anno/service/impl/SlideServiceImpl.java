@@ -557,18 +557,20 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
     public boolean addAnnoSlidesBatch(AddSlideVO addSlideVO) {
         Long projectId = addSlideVO.getProjectId();
         List<Long> topicIds = addSlideVO.getTopicIds();
-        Long reviewRoundId = addSlideVO.getReviewRoundId() > 0 ? addSlideVO.getReviewRoundId() : 0;
+
+        Long reviewRoundId = addSlideVO.getReviewRoundId() != null ? addSlideVO.getReviewRoundId() : 0;
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 
-        QueryWrapper<Image> query = Wrappers.query();
-        query.in("topic_id", topicIds);
-        List<Image> imageList = imageMapper.selectList(query);
+        Image imageQuery = new Image();
+        QueryWrapper queryWrapper = new QueryWrapper<>(imageQuery);
+        queryWrapper.in("topic_id", topicIds);
+        List<Image> imageList = imageMapper.selectList(queryWrapper);
 
         // List<Slide> slideList = new ArrayList<>(imageCsvList.size());
         for (Image imageObj : imageList) {
             // 匹配图片
             QueryWrapper<ImageCsv> csvQueryWrapper = Wrappers.query();
-            csvQueryWrapper.eq("file_name", imageObj.getImageName());
+            csvQueryWrapper.eq("image_name", imageObj.getImageName());
 /*            csvQueryWrapper.eq("topic_id", imageObj.getTopicId());
             csvQueryWrapper.eq("organization_id", sysUser.getOrganizationId());
             csvQueryWrapper.eq("status", 1);

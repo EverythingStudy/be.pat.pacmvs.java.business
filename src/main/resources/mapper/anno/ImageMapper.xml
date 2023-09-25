@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.ImageMapper">
     <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.Image">
-        <id column="image_id" jdbcType="BIGINT" property="imageId" />
+        <result column="image_id" jdbcType="BIGINT" property="imageId" />
         <result column="file_name" jdbcType="VARCHAR" property="fileName" />
         <result column="image_name" jdbcType="VARCHAR" property="imageName" />
         <result column="image_path" jdbcType="VARCHAR" property="imagePath" />
@@ -215,7 +215,7 @@
     根据实际情况不应该为上传失败，优化成上传时不显示信息，上传完显示，或者更好的方式 http://jira.shengtong.com/browse/PS-304
     process_flag 处理状态，不可用原因共三种，0上传失败（MD5校验不通过），1解析中，2解析失败（不能获得缩略图）
     -->
-    <select id="selectList" parameterType="cn.staitech.anno.domain.Image" resultMap="BaseResultMap">
+    <select id="selectListSlfe" parameterType="cn.staitech.anno.domain.Image" resultMap="BaseResultMap">
         <include refid="selectImageVo"></include>
         <where>
             delete_flag = 1 and process_flag != 0

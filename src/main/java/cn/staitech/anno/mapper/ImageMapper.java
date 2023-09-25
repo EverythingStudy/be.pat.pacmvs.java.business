@@ -22,7 +22,7 @@ public interface ImageMapper extends BaseMapper<Image> {
      * @param image
      * @return
      */
-    List<Image> selectList(Image image);
+    List<Image> selectListSlfe(Image image);
 
     /**
      * 查询单个切片信息

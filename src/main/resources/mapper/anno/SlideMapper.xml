@@ -666,7 +666,8 @@
                m.resolution_x,
                m.resolution_y,
                m.source_lens,
-               m.image_path
+               m.image_path,
+        m.thumb_url
    <!--   ,         csv.id,
                csv.image_id,
                csv.image_name,
@@ -755,7 +756,9 @@
                m.height,
                m.resolution_x,
                m.resolution_y,
-               m.source_lens
+               m.source_lens,
+               m.image_path,
+               m.thumb_url
         <!--,
                csv.id,
                csv.image_id,
@@ -788,7 +791,7 @@
                csv.host_id-->
         from tb_slide s
                  left join tb_image m on m.image_id = s.image_id
-                <!-- left join tb_image_csv csv on csv.id = s.image_csv_id-->
+        <!-- left join tb_image_csv csv on csv.id = s.image_csv_id-->
         <where>
             <if test="projectId != null">
                 AND s.project_id = #{projectId, jdbcType=NUMERIC}
@@ -799,15 +802,15 @@
             <if test="imageName != null">
                 AND m.image_name LIKE CONCAT('%', #{imageName}, '%')
             </if>
-<!--            <if test="lesionType != null">
-                AND csv.lesion_type1 LIKE CONCAT('%', #{lesionType}, '%')
-                AND csv.lesion_type2 LIKE CONCAT('%', #{lesionType}, '%')
-            </if>
+            <!--            <if test="lesionType != null">
+                            AND csv.lesion_type1 LIKE CONCAT('%', #{lesionType}, '%')
+                            AND csv.lesion_type2 LIKE CONCAT('%', #{lesionType}, '%')
+                        </if>
 
-            <if test="lesionDegree != null">
-                AND csv.lesion_degree1 LIKE CONCAT('%', #{lesionDegree}, '%')
-                AND csv.lesion_degree2 LIKE CONCAT('%', #{lesionDegree}, '%')
-            </if>-->
+                        <if test="lesionDegree != null">
+                            AND csv.lesion_degree1 LIKE CONCAT('%', #{lesionDegree}, '%')
+                            AND csv.lesion_degree2 LIKE CONCAT('%', #{lesionDegree}, '%')
+                        </if>-->
             <if test="imageName != null and imageName != ''">
                 <!-- 图像名称 -->
                 and m.image_name like concat('%', #{imageName}, '%')
@@ -828,54 +831,56 @@
 
     <select id="pageImageCsvListVOBy" parameterType="long" resultType="cn.staitech.anno.domain.vo.marking.out.SlideSelectBy">
         select s.slide_id,
-        s.review_round_id,
-        s.description,
-        s.ai_analyzed,
-        s.remark,
-        s.diagnosis,
-        s.status,
-        s.ai_check,
-        m.image_id,
-        m.thumb_url,
-        m.image_path,
-        m.format,
-        m.width,
-        m.height,
-        m.resolution_x,
-        m.resolution_y,
-        m.source_lens,
- <!--       csv.id,
-        csv.image_id,
-        csv.image_name,
-        csv.group_name,
-        csv.gender,
-        csv.species,
-        csv.product_series,
-        csv.dosage,
-        csv.animal_source,
-        csv.receiving_week,
-        csv.dosing_cycle,
-        csv.recovery_cycle,
-        csv.date_of_death,
-        csv.remove_reason,
-        csv.organ,
-        csv.lesion_type1,
-        csv.lesion_degree1,
-        csv.lesion_type2,
-        csv.lesion_degree2,
-        csv.process_flag,
-        csv.create_by,
-        csv.create_time,
-        csv.update_by,
-        csv.update_time,
-        csv.topic_id,
-        csv.topic_name,
-        csv.delete_flag,
-        csv.organization_id,
-        csv.host_id-->
+               s.review_round_id,
+               s.description,
+               s.ai_analyzed,
+               s.remark,
+               s.diagnosis,
+               s.status,
+               s.ai_check,
+               m.image_id,
+               m.thumb_url,
+               m.image_path,
+               m.format,
+               m.width,
+               m.height,
+               m.resolution_x,
+               m.resolution_y,
+               m.source_lens,
+               m.image_path,
+               m.thumb_url
+        <!--       csv.id,
+               csv.image_id,
+               csv.image_name,
+               csv.group_name,
+               csv.gender,
+               csv.species,
+               csv.product_series,
+               csv.dosage,
+               csv.animal_source,
+               csv.receiving_week,
+               csv.dosing_cycle,
+               csv.recovery_cycle,
+               csv.date_of_death,
+               csv.remove_reason,
+               csv.organ,
+               csv.lesion_type1,
+               csv.lesion_degree1,
+               csv.lesion_type2,
+               csv.lesion_degree2,
+               csv.process_flag,
+               csv.create_by,
+               csv.create_time,
+               csv.update_by,
+               csv.update_time,
+               csv.topic_id,
+               csv.topic_name,
+               csv.delete_flag,
+               csv.organization_id,
+               csv.host_id-->
         from tb_slide s
-        left join tb_image m on m.image_id = s.image_id
-      <!--  left join tb_image_csv csv on csv.id = s.image_csv_id-->
+                 left join tb_image m on m.image_id = s.image_id
+        <!--  left join tb_image_csv csv on csv.id = s.image_csv_id-->
         <where>
             <if test="slideId != null">
                 s.slide_id = #{slideId, jdbcType=NUMERIC}
