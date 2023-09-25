@@ -399,13 +399,13 @@ public class MarkingServiceImpl implements MarkingService {
             while (zipEnum.hasMoreElements()) {//判断是否还有元素
                 ze = zipEnum.nextElement();//返回下一对象
                 String fileNames = ze.getName();
-//                if (!fileNames.contains(".")) {
-//                    throw new Exception("未检测到json文件");
-//                }
-//                String suffix = (fileNames.split("\\.")[fileNames.split("\\.").length - 1]);
-//                if (!Objects.equals(suffix, "json")) {
-//                    throw new Exception("未检测到json文件");
-//                }
+                if (!fileNames.contains(".")) {
+                    throw new Exception("未检测到json文件");
+                }
+                String suffix = (fileNames.split("\\.")[fileNames.split("\\.").length - 1]);
+                if (!Objects.equals(suffix, "json")) {
+                    throw new Exception("未检测到json文件");
+                }
                 sb = new StringBuilder();
                 if (ze.isDirectory()) {
                 } else {
@@ -457,7 +457,6 @@ public class MarkingServiceImpl implements MarkingService {
                                             ;
                                             cn.staitech.anno.project.domain.Marking markingBy = markingMapperV1.selectOne(markingQueryWrapper);
                                             if(markingBy != null){
-
                                                 markingMapper.insert(marking);
                                             }
                                         }
