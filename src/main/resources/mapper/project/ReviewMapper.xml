@@ -83,9 +83,6 @@
         LEFT JOIN tb_topic t ON t.topic_id = rr.topic_id
         LEFT JOIN tb_round r ON r.round_id = rr.round_id
         LEFT JOIN sys_user u ON u.user_id = rr.create_by
-        LEFT JOIN tb_pathological_indicator AS ind ON ind.indicator_id = p.indicator_id
-        LEFT JOIN tb_pathological_indicator_category AS cate ON cate.indicator_id = ind.indicator_id
-        LEFT JOIN tb_structure AS st ON st.structure_id = cate.structure_id
         <where>
             <if test="params.projectId !=  null">
                 AND p.project_id = #{params.projectId}
