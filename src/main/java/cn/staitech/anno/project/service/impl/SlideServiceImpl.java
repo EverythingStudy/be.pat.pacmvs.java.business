@@ -158,12 +158,17 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
                 map.put(slideVO.getSlideId(), slideVO);
             });
             List<Marking> annotationList = queryAnnotation(slideIds, params);
-            List<String>  columns = handleAnnoStatisticsExport(annotationList,map,catesMapList);
+            List<PathologicalIndicatorCategory>  columns = handleAnnoStatisticsExport(annotationList,map,catesMapList);
             //通过hutool工具创建的excel的writer，默认为xls格式
             ExcelWriter writer = ExcelUtil.getWriter();
+            writer.addHeaderAlias(col1,col1);
+            writer.addHeaderAlias(col2,col2);
+            writer.addHeaderAlias(col3,col3);
+            writer.addHeaderAlias(col4,col4);
+            writer.addHeaderAlias(col5,col5);
             //自定义excel标题和列名
             columns.forEach(c->{
-                writer.addHeaderAlias(c,c);
+                writer.addHeaderAlias(String.valueOf(c.getCategoryId()),c.getCategoryName());
             });
             writer.write(catesMapList,true);
             httpServletResponse.setContentType("application/vnd.ms-excel;charset=utf-8");
@@ -186,41 +191,30 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         }
     }
 
-    private List<String> handleAnnoStatisticsExport(List<Marking> annotationList, Map<Long, SlideExportVO> slideExportVOMap,List<Map<String,String>> catesMapList) throws Exception {
-        List<String> columns = new ArrayList<>();
-        columns.add(col1);
-        columns.add(col2);
-        columns.add(col3);
-        columns.add(col4);
-        columns.add(col5);
-        columns.add(col6);
-        Map<String,Boolean> columnMap = new HashMap<>();
+    private List<PathologicalIndicatorCategory> handleAnnoStatisticsExport(List<Marking> annotationList, Map<Long, SlideExportVO> slideExportVOMap,List<Map<String,String>> catesMapList) throws Exception {
+        List<PathologicalIndicatorCategory> columns = new ArrayList<>();
+        Map<Long,Boolean> columnMap = new HashMap<>();
         if (annotationList != null && !annotationList.isEmpty()) {
             List<PathologicalIndicatorCategory> pathologicalIndicatorCategoryList = pathologicalIndicatorCategoryMapperV1.selectList(Wrappers.query());
-            Map<Long, String> categoryMap = new HashMap<>();
+            Map<Long, PathologicalIndicatorCategory> categoryMap = new HashMap<>();
             for (PathologicalIndicatorCategory c : pathologicalIndicatorCategoryList) {
-                categoryMap.put(c.getCategoryId(), c.getCategoryName());
+                categoryMap.put(c.getCategoryId(), c);
             }
             Map<Long, List<Marking>> map = annotationList.stream().collect(Collectors.groupingBy(Marking::getSlideId));
-            for (Long key : map.keySet()) {
-                SlideExportVO vo = slideExportVOMap.get(key);
+            for (Long slideKey : map.keySet()) {
+                SlideExportVO vo = slideExportVOMap.get(slideKey);
                 Map<String,String> catesMap = new HashMap<>();
-                List<Marking> subs = map.get(key);
+                List<Marking> subs = map.get(slideKey);
                 if (subs != null && !subs.isEmpty()) {
                     Map<Long, List<Marking>> categorys = subs.stream().collect(Collectors.groupingBy(Marking::getCategoryId));
                     if (categorys != null && !categorys.isEmpty()) {
-                        for (Long k : categorys.keySet()) {
-                            List<Marking> annoCateList = categorys.get(k);
+                        for (Long categoryKey : categorys.keySet()) {
+                            List<Marking> annoCateList = categorys.get(categoryKey);
                             if (annoCateList != null && !annoCateList.isEmpty()) {
-                                if (k==0){
-                                    catesMap.put(col6,String.valueOf(annoCateList.size()));
-                                }else{
-                                    String col = categoryMap.get(k);
-                                    catesMap.put(col,String.valueOf(annoCateList.size()));
-                                    if (columnMap.get(col)==null){
-                                        columnMap.put(col,true);
-                                        columns.add(col);
-                                    }
+                                catesMap.put(String.valueOf(categoryKey),String.valueOf(annoCateList.size()));
+                                if (columnMap.get(categoryKey)==null||!columnMap.get(categoryKey)){
+                                    columnMap.put(categoryKey,true);
+                                    columns.add(categoryMap.get(categoryKey));
                                 }
                             }
                         }
@@ -234,6 +228,15 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
                 vo.setCates(catesMap);
                 vo.setManualAnnoCount(subs.size());
                 catesMapList.add(catesMap);
+            }
+            //补全数据行缺失字段
+            for (Map<String,String> catesMap: catesMapList){
+                for (PathologicalIndicatorCategory column : columns) {
+                    String count = catesMap.get(String.valueOf(column.getCategoryId()));
+                    if (count==null){
+                        catesMap.put(String.valueOf(column.getCategoryId()),"");
+                    }
+                }
             }
         }
         return columns;
