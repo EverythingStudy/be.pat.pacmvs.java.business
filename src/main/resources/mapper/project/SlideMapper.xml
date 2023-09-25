@@ -121,7 +121,15 @@
 
     <select id="pageReviewSlide" parameterType="cn.staitech.anno.project.vo.ReviewSlideIN"
             resultType="cn.staitech.anno.project.vo.ReviewSlideVO">
-        select m.*,
+        select m.image_id,
+        m.thumb_url,
+        m.format,
+        m.width,
+        m.height,
+        m.resolution_x,
+        m.resolution_y,
+        m.source_lens,
+        m.image_path,
         s.slide_id,
         s.diagnosis,
         s.ai_analyzed,
