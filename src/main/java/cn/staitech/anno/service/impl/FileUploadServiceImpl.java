@@ -46,7 +46,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 //    private String basePath = "D:\\home\\pat_saas";
 
 
-    private String zipPath = "D:\\home\\upload\\json";
+    private String zipPath = "/home/upload/json";
 
     /**
      * @param file 上传的文件MultipartFile
@@ -92,11 +92,10 @@ public class FileUploadServiceImpl implements FileUploadService {
                     throw new Exception("参数异常，未发现专题名称");
                 }
                 Topic topic = topicService.selectOne(fileUploadVO.getTopicName());
-                dirPath = dirPath + "\\Data";
                 // 定义文件夹名称
-                String folderPath = dirPath + File.separator + topic.getTopicName();
+                dirPath = dirPath + File.separator +  "Data" + File.separator + topic.getTopicName();
                 //创建文件夹
-                File dir = new File(folderPath);
+                File dir = new File(dirPath);
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
@@ -112,7 +111,9 @@ public class FileUploadServiceImpl implements FileUploadService {
         String filePath = dirPath + File.separator + fileName;
         // (真实存入)拷贝+
         File file = new File(filePath);
+        System.out.println(filePath);
         if(!file.exists()){
+            System.out.println(filePath);
             fileUploadVO.getMultipartFile().transferTo(Paths.get(filePath));
         }
         File localFile = new File(filePath);
