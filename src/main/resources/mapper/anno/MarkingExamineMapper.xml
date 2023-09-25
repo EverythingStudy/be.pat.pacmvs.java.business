@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mytest1.annotation.mapper.MarkingExamineMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.MarkingExamine">
+        <id column="marking_id" property="markingId" />
+        <result column="annotation_id" property="annotationId" />
+        <result column="area" property="area" />
+        <result column="perimeter" property="perimeter" />
+        <result column="description" property="description" />
+        <result column="category_id" property="categoryId" />
+        <result column="number" property="number" />
+        <result column="measure_type" property="measureType" />
+        <result column="measure_relation" property="measureRelation" />
+        <result column="measure_name" property="measureName" />
+        <result column="measure_number" property="measureNumber" />
+        <result column="radius" property="radius" />
+        <result column="mean_distance" property="meanDistance" />
+        <result column="max_distance" property="maxDistance" />
+        <result column="min_distance" property="minDistance" />
+        <result column="inner_angle" property="innerAngle" />
+        <result column="exterior_angle" property="exteriorAngle" />
+        <result column="create_by" property="createBy" />
+        <result column="create_time" property="createTime" />
+        <result column="annotation_type" property="annotationType" />
+        <result column="location_type" property="locationType" />
+        <result column="slide_id" property="slideId" />
+        <result column="center_point" property="centerPoint" />
+        <result column="point_count" property="pointCount" />
+        <result column="geometry" property="geometry" />
+        <result column="update_by" property="updateBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="annotation_owner" property="annotationOwner" />
+        <result column="annotation_update_owner" property="annotationUpdateOwner" />
+        <result column="project_id" property="projectId" />
+        <result column="image_id" property="imageId" />
+        <result column="image_url" property="imageUrl" />
+        <result column="organization_id" property="organizationId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        marking_id, annotation_id, area, perimeter, description, category_id, number, measure_type, measure_relation, measure_name, measure_number, radius, mean_distance, max_distance, min_distance, inner_angle, exterior_angle, create_by, create_time, annotation_type, location_type, slide_id, center_point, point_count, geometry, update_by, update_time, annotation_owner, annotation_update_owner, project_id, image_id, image_url, organization_id
+    </sql>
+
+</mapper>

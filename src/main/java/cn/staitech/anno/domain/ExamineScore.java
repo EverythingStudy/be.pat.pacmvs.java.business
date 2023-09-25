@@ -1,0 +1,121 @@
+package cn.staitech.anno.domain;
+
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * <p>
+ * 
+ * </p>
+ *
+ * @author gjt
+ * @since 2023-09-25
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
+@TableName("tb_examine_score")
+public class ExamineScore implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 主键
+     */
+    @TableId(value = "examine_score_id", type = IdType.AUTO)
+    private Long examineScoreId;
+
+    /**
+     * 项目id
+     */
+    private Long projectId;
+
+    /**
+     * 切片id
+     */
+    private Long slideId;
+
+    /**
+     * 切片编号
+     */
+    private String slideNumber;
+
+    /**
+     * 答题者
+     */
+    private String nickName;
+
+    /**
+     * 开始时间
+     */
+    private Date startTime;
+
+    /**
+     * 结束时间
+     */
+    private Date endTime;
+
+    /**
+     * 应标个数
+     */
+    private Integer shouldNumber;
+
+    /**
+     * 实标个数
+     */
+    private Integer realityNumber;
+
+    /**
+     * 算法拟合区间
+     */
+    private String algorithmInterval;
+
+    /**
+     * 个人拟合度
+     */
+    private String personalFit;
+
+    /**
+     * 考试结果(0无结果，1通过、2未通过)
+     */
+    private String examResults;
+
+    /**
+     * 操作状态（0：开始考试，考试完成）
+     */
+    private String operateStatus;
+
+    /**
+     * 考试状态（0：未交卷，1：已交卷）
+     */
+    private String examStatus;
+
+    /**
+     * 创建时间
+     */
+    @TableField(fill = FieldFill.INSERT)
+    private Date createTime;
+
+    /**
+     * 创建者
+     */
+    private Long createBy;
+
+    /**
+     * 更新时间
+     */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private Date updateTime;
+
+    /**
+     * 更新者
+     */
+    private Long updateBy;
+
+
+}

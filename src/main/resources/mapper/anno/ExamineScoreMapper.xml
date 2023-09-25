@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mytest1.annotation.mapper.ExamineScoreMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.ExamineScore">
+        <id column="examine_score_id" property="examineScoreId" />
+        <result column="project_id" property="projectId" />
+        <result column="slide_id" property="slideId" />
+        <result column="slide_number" property="slideNumber" />
+        <result column="nick_name" property="nickName" />
+        <result column="start_time" property="startTime" />
+        <result column="end_time" property="endTime" />
+        <result column="should_number" property="shouldNumber" />
+        <result column="reality_number" property="realityNumber" />
+        <result column="algorithm_interval" property="algorithmInterval" />
+        <result column="personal_fit" property="personalFit" />
+        <result column="exam_results" property="examResults" />
+        <result column="operate_status" property="operateStatus" />
+        <result column="exam_status" property="examStatus" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        examine_score_id, project_id, slide_id, slide_number, nick_name, start_time, end_time, should_number, reality_number, algorithm_interval, personal_fit, exam_results, operate_status, exam_status, create_time, create_by, update_time, update_by
+    </sql>
+
+</mapper>
