@@ -40,7 +40,7 @@
                 AND s.create_by = #{params.userId}
             </if>
             <if test="params.imageCode!= null">
-                AND i.image_code like CONCAT('%',#{params.imageCode},'%')
+                AND i.image_name like CONCAT('%',#{params.imageCode},'%')
             </if>
             <if test="params.remark!= null">
                 AND s.remark like CONCAT('%',#{params.remark},'%')
@@ -85,7 +85,7 @@
                 AND s.create_by = #{params.userId}
             </if>
             <if test="params.imageCode!= null">
-                AND i.image_code like CONCAT('%',#{params.imageCode},'%')
+                AND i.image_name like CONCAT('%',#{params.imageCode},'%')
             </if>
             <if test="params.remark!= null">
                 AND s.remark like CONCAT('%',#{params.remark},'%')
@@ -126,6 +126,7 @@
         s.diagnosis,
         s.ai_analyzed,
         s.ai_check,
+        case when r.slide_id is not null then '2' else '1' end  as review_status,
         r.score,
         csv.id,
         csv.image_id,
@@ -169,6 +170,9 @@
             <if test="params.projectId != null ">
                 AND s.project_id = #{params.projectId}
             </if>
+            <if test="params.reviewRoundId != null ">
+                AND s.review_round_id = #{params.reviewRoundId}
+            </if>
             <if test="params.score != null ">
                 AND r.score like CONCAT('%',#{params.score},'%')
             </if>
@@ -184,12 +188,6 @@
                         AND r.slide_id is not null
                     </otherwise>
                 </choose>
-            </if>
-            <if test="params.reviewStatus != null and params.reviewStatus == 1">
-            AND r.slide_id is null
-            </if>
-            <if test="params.reviewStatus != null and params.reviewStatus == 2">
-                AND r.slide_id is not null
             </if>
         </where>
     </select>
