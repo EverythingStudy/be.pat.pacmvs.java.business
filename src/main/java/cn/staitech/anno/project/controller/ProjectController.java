@@ -9,6 +9,7 @@ import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +59,8 @@ public class ProjectController {
 
     private void handleAuth(ProjectIN in){
         Long userId = SecurityUtils.getUserId();
-        if (userId>0){
+        //管理员id为1
+        if (userId>1){
             in.setUserId(userId);
         }
     }
