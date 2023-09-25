@@ -700,7 +700,8 @@
                csv.host_id
         from tb_slide s
                  left join tb_image m on m.image_id = s.image_id
-                 left join tb_image_csv csv on csv.id = s.image_csv_id
+                 left join tb_image_csv csv
+<!--        on csv.id = s.image_csv_id-->
         <where>
             <if test="projectId != null">
                 AND s.project_id = #{projectId, jdbcType=NUMERIC}
@@ -741,52 +742,57 @@
     <select id="pageImageCsvListVOList1" parameterType="cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO"
             resultType="cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO">
         select s.slide_id,
-        s.review_round_id,
-        s.diagnosis,
-        s.status,
-        s.remark,
-        s.ai_analyzed,
-        s.ai_check,
-        m.image_id,
-        m.thumb_url,
-        m.format,
-        m.width,
-        m.height,
-        m.resolution_x,
-        m.resolution_y,
-        m.source_lens,
-        csv.id,
-        csv.image_id,
-        csv.image_name,
-        csv.group_name,
-        csv.gender,
-        csv.species,
-        csv.product_series,
-        csv.dosage,
-        csv.animal_source,
-        csv.receiving_week,
-        csv.dosing_cycle,
-        csv.recovery_cycle,
-        csv.date_of_death,
-        csv.remove_reason,
-        csv.organ,
-        csv.lesion_type1,
-        csv.lesion_degree1,
-        csv.lesion_type2,
-        csv.lesion_degree2,
-        csv.process_flag,
-        csv.create_by,
-        csv.create_time,
-        csv.update_by,
-        csv.update_time,
-        csv.topic_id,
-        csv.topic_name,
-        csv.delete_flag,
-        csv.organization_id,
-        csv.host_id
+               s.review_round_id,
+               s.diagnosis,
+               s.status,
+               s.remark,
+               s.ai_analyzed,
+               s.ai_check,
+               m.image_id,
+               m.image_path,
+               m.thumb_url,
+               m.format,
+               m.width,
+               m.height,
+               m.resolution_x,
+               m.resolution_y,
+               m.source_lens
+
+
+        <!--,
+               csv.id,
+               csv.image_id,
+               csv.image_name,
+               csv.group_name,
+               csv.gender,
+               csv.species,
+               csv.product_series,
+               csv.dosage,
+               csv.animal_source,
+               csv.receiving_week,
+               csv.dosing_cycle,
+               csv.recovery_cycle,
+               csv.date_of_death,
+               csv.remove_reason,
+               csv.organ,
+               csv.lesion_type1,
+               csv.lesion_degree1,
+               csv.lesion_type2,
+               csv.lesion_degree2,
+               csv.process_flag,
+               csv.create_by,
+               csv.create_time,
+               csv.update_by,
+               csv.update_time,
+               csv.topic_id,
+               csv.topic_name,
+               csv.delete_flag,
+               csv.organization_id,
+               csv.host_id-->
         from tb_slide s
-        left join tb_image m on m.image_id = s.image_id
-        left join tb_image_csv csv on csv.id = s.image_csv_id
+                 left join tb_image m on m.image_id = s.image_id
+                 left join tb_image_csv csv
+<!--        on csv.id = s.image_csv_id-->
         <where>
             <if test="projectId != null">
                 AND s.project_id = #{projectId, jdbcType=NUMERIC}
@@ -873,7 +879,8 @@
         csv.host_id
         from tb_slide s
         left join tb_image m on m.image_id = s.image_id
-        left join tb_image_csv csv on csv.id = s.image_csv_id
+        left join tb_image_csv csv
+<!--        on csv.id = s.image_csv_id-->
         <where>
             <if test="slideId != null">
                 s.slide_id = #{slideId, jdbcType=NUMERIC}

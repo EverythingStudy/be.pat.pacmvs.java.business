@@ -19,10 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author: wangfeng
@@ -91,6 +88,9 @@ public class FileUploadServiceImpl implements FileUploadService {
 
         switch (businessType) {
             case 3:
+                if(Objects.equals(fileUploadVO.getTopicName(), "")){
+                    throw new Exception("参数异常，未发现专题名称");
+                }
                 Topic topic = topicService.selectOne(fileUploadVO.getTopicName());
                 dirPath = dirPath + "\\Data";
                 // 定义文件夹名称
@@ -110,8 +110,11 @@ public class FileUploadServiceImpl implements FileUploadService {
         String fileName = fileUploadVO.getFileName();
         // 文件名称
         String filePath = dirPath + File.separator + fileName;
-        // (真实存入)拷贝
-        fileUploadVO.getMultipartFile().transferTo(Paths.get(filePath));
+        // (真实存入)拷贝+
+        File file = new File(filePath);
+        if(!file.exists()){
+            fileUploadVO.getMultipartFile().transferTo(Paths.get(filePath));
+        }
         File localFile = new File(filePath);
         BeanUtils.copyProperties(fileUploadVO, files);
         files.setFilesName(fileUploadVO.getFileName());
@@ -162,7 +165,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             for (int i = 0; i < chunk.getTotalChunks(); i++) {
                 chunkList.add(i);
             }
-            Container.FILE_MAP.put(Long.valueOf(chunk.getUuid()), chunkList);
+            Container.FILE_MAP.put(chunk.getUuid(), chunkList);
         }
         File file = new File(filesBy.getFilesPath());
         // 写入文件
@@ -181,13 +184,13 @@ public class FileUploadServiceImpl implements FileUploadService {
             return false;
         }
         // 删除map中当前元素
-        Container.FILE_MAP.get(filesBy.getFilesId()).remove(chunk.getChunkNumber());
+        Container.FILE_MAP.get(chunk.getUuid()).remove(chunk.getChunkNumber());
 
         // map为空时,代表文件上传完成,根据业务类型执行不同业务
-        if (Container.FILE_MAP.get(filesBy.getFilesId()) != null && Container.FILE_MAP.get(filesBy.getFilesId()).isEmpty()) {
+        if (Container.FILE_MAP.get(chunk.getUuid()) != null && Container.FILE_MAP.get(chunk.getUuid()).isEmpty()) {
 
             // map中删除当前文件信息
-            Container.FILE_MAP.remove(filesBy.getFilesId());
+            Container.FILE_MAP.remove(chunk.getUuid());
 
             // 更新文件表中传输状态
             filesBy.setProcessFlag(2);
@@ -199,7 +202,9 @@ public class FileUploadServiceImpl implements FileUploadService {
                     if (!Optional.ofNullable(chunk.getProjectId()).isPresent()) {
                         throw new Exception("项目不可为空");
                     }
+                    System.out.println("111111111111111");
                     markingService.zipExport(filesBy.getFilesPath(), chunk.getProjectId());
+                    System.out.println("22222222222222");
                     break;
             }
         }

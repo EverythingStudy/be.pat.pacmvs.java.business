@@ -57,18 +57,18 @@ public class LogFileAspect {
         MDC.put("logFileName", split[split.length - 2]);
 
         // 打印请求相关参数
-        logger.info("========================================== Start ==========================================");
-        // 打印请求 url
-        logger.info("URL            : {}", request.getRequestURL().toString());
-        // 打印 Http method
-        logger.info("HTTP Method    : {}", request.getMethod());
-        // 打印调用 controller 的全路径以及执行方法
-        logger.info("Class Method   : {}.{}", joinPoint.getSignature().getDeclaringTypeName(), joinPoint.getSignature().getName());
-        // 打印请求的 IP
-        logger.info("IP             : {}", request.getRemoteAddr());
-        // 打印请求入参
-        Object[] res = filterParams(joinPoint.getArgs());
-        logger.info("Request Args   : {}", (JSONObject.toJSONString(res)));
+//        logger.info("========================================== Start ==========================================");
+//        // 打印请求 url
+//        logger.info("URL            : {}", request.getRequestURL().toString());
+//        // 打印 Http method
+//        logger.info("HTTP Method    : {}", request.getMethod());
+//        // 打印调用 controller 的全路径以及执行方法
+//        logger.info("Class Method   : {}.{}", joinPoint.getSignature().getDeclaringTypeName(), joinPoint.getSignature().getName());
+//        // 打印请求的 IP
+//        logger.info("IP             : {}", request.getRemoteAddr());
+//         打印请求入参
+//        Object[] res = filterParams(joinPoint.getArgs());
+//        logger.info("Request Args   : {}", (JSONObject.toJSONString(res)));
 
 
     }
@@ -80,46 +80,46 @@ public class LogFileAspect {
      * @param args joinPoint.getArgs()
      * @return arguments 参数
      */
-    public static Object[] filterParams(Object[] args) {
-        Object[] arguments = new Object[args.length];
-        for(int i = 0;i < args.length;i++){
-            if(args[i] instanceof MultipartFile){
-                continue;
-            }
-            arguments[i] = args[i];
-        }
-        return arguments;
-    }
-
-
-    /**
-     * 在切点之后织入
-     *
-     * @throws Throwable
-     */
-    @After("logFile()")
-    public void doAfter() throws Throwable {
-        // 接口结束后换行，方便分割查看
-        logger.info("=========================================== End ===========================================" + System.lineSeparator());
-    }
-
-    /**
-     * 环绕
-     *
-     * @param proceedingJoinPoint
-     * @return
-     * @throws Throwable
-     */
-    @Around("logFile()")
-    public Object doAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        long startTime = System.currentTimeMillis();
-        Object result = proceedingJoinPoint.proceed();
-        // 打印出参
-        logger.info("Response Args  : {}", JSONObject.toJSONString(result));
-        // 执行耗时
-        logger.info("Time-Consuming : {} ms", System.currentTimeMillis() - startTime);
-        //清空防止内存泄漏
-        MDC.clear();
-        return result;
-    }
+//    public static Object[] filterParams(Object[] args) {
+//        Object[] arguments = new Object[args.length];
+//        for(int i = 0;i < args.length;i++){
+//            if(args[i] instanceof MultipartFile){
+//                continue;
+//            }
+//            arguments[i] = args[i];
+//        }
+//        return arguments;
+//    }
+//
+//
+//    /**
+//     * 在切点之后织入
+//     *
+//     * @throws Throwable
+//     */
+//    @After("logFile()")
+//    public void doAfter() throws Throwable {
+//        // 接口结束后换行，方便分割查看
+//        logger.info("=========================================== End ===========================================" + System.lineSeparator());
+//    }
+//
+//    /**
+//     * 环绕
+//     *
+//     * @param proceedingJoinPoint
+//     * @return
+//     * @throws Throwable
+//     */
+//    @Around("logFile()")
+//    public Object doAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+//        long startTime = System.currentTimeMillis();
+//        Object result = proceedingJoinPoint.proceed();
+//        // 打印出参
+//        logger.info("Response Args  : {}", JSONObject.toJSONString(result));
+//        // 执行耗时
+//        logger.info("Time-Consuming : {} ms", System.currentTimeMillis() - startTime);
+//        //清空防止内存泄漏
+//        MDC.clear();
+//        return result;
+//    }
 }
