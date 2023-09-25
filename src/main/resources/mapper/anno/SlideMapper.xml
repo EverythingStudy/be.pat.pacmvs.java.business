@@ -666,8 +666,8 @@
                m.resolution_x,
                m.resolution_y,
                m.source_lens,
-               m.image_path,
-   <!--            csv.id,
+               m.image_path
+   <!--   ,         csv.id,
                csv.image_id,
                csv.image_name,
                csv.group_name,
