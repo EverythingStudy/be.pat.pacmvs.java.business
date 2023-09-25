@@ -90,6 +90,7 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
             topic.setUpdateBy(userId);
             topic.setCreateTime(time);
             topic.setUpdateTime(time);
+            topic.setOrganizationId(sysUser.getOrganizationId());
             topic.setDelFlag(1);
             this.baseMapper.insert(topic);
         }
