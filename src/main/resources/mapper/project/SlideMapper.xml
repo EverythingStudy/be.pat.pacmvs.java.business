@@ -28,7 +28,7 @@
 
     <select id="pageSlides" resultType="cn.staitech.anno.project.vo.SlideVO"
             parameterType="cn.staitech.anno.project.vo.SlideQueryIN">
-        select s.*, i.thumb_url, i.image_code, c.group_name, c.gender, c.species, c.product_series
+        select s.*, i.thumb_url, i.image_name as image_code, c.group_name, c.gender, c.species, c.product_series
         from tb_slide s
         left join tb_image i on s.image_id = i.image_id
         left join tb_image_csv c on c.id = s.image_csv_id
@@ -72,7 +72,7 @@
     </select>
     <select id="querySlides" resultType="cn.staitech.anno.project.vo.SlideExportVO"
             parameterType="cn.staitech.anno.project.vo.SlideQueryIN">
-        select s.*, i.thumb_url, i.image_code, c.group_name, c.gender, c.species, c.product_series,p.project_name
+        select s.*, i.thumb_url,  i.image_name as image_code, c.group_name, c.gender, c.species, c.product_series,p.project_name
         from tb_slide s
         left join tb_image i on s.image_id = i.image_id
         left join tb_image_csv c on c.id = s.image_csv_id
