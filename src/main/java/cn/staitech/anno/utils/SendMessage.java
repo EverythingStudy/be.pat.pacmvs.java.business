@@ -7,6 +7,7 @@ import cn.staitech.anno.domain.vo.BroadcastVO;
 import cn.staitech.anno.domain.vo.specialImageAnno.AnnoBroadcastVO;
 import cn.staitech.anno.domain.vo.specialImageAnno.AnnoFeatures;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,6 +22,15 @@ public class SendMessage {
         broadcast.setData(features);
         broadcast.setType(status);
         broadcast.setPoint_count_list(pointCountRes);
+        return broadcast;
+
+    }
+
+    public static BroadcastVO sendOneMessages(String status, Features features) {
+        BroadcastVO broadcast = new BroadcastVO();
+        broadcast.setData(features);
+        broadcast.setType(status);
+        broadcast.setPoint_count_list(new ArrayList<>());
         return broadcast;
 
     }
