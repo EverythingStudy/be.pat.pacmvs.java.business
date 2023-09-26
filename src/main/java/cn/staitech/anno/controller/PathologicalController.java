@@ -102,7 +102,7 @@ public class PathologicalController {
      * 配置标签-标签列表 .
      */
     @ApiOperation(value = "获取标注类别列表接口", notes = "wangfeng")
-    @RequiresPermissions("special:pathology:tablist")
+//    @RequiresPermissions("special:pathology:tablist")
     @Log(title = "配置标签-标签列表", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.QUERY)
     @PostMapping("/all")
     public R<PageMaster<LabelListVO>> list(@RequestBody LabelVO labelVO) {
