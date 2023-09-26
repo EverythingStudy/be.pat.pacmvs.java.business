@@ -243,18 +243,11 @@ public class SlideController extends BaseController {
     @PostMapping("/addAnnoSlidesBatch")
     public R addAnnoSlidesBatch(@RequestBody AddSlideVO req) {
         // 先清空
-        Slide slide = new Slide();
-        slide.setProjectId(req.getProjectId());
-        slide.setReviewRoundId(req.getReviewRoundId());
-        QueryWrapper<Slide> queryWrapper = new QueryWrapper<>(slide);
-
-        if (slideService.remove(queryWrapper)) {
-            return R.ok(ImageConstant.OPERATE_SUCCEED);
-        }
-
+        removeAll(req.getProjectId(), req.getReviewRoundId());
         // 再新增
         return R.ok(slideService.addAnnoSlidesBatch(req));
     }
+
 
     /**
      * 根据ID批量删除切片
@@ -284,16 +277,31 @@ public class SlideController extends BaseController {
     @ApiOperation(value = "逻辑批量删除切片")
     @PostMapping("/deleteAll")
     public R deleteAll(@RequestBody DelSlideVO req) {
-        Slide slide = new Slide();
-        slide.setProjectId(req.getProjectId());
-        slide.setReviewRoundId(req.getReviewRoundId());
-
-        QueryWrapper<Slide> queryWrapper = new QueryWrapper<>(slide);
-
-        if (slideService.remove(queryWrapper)) {
+        if (removeAll(req.getProjectId(), req.getReviewRoundId())) {
             return R.ok(ImageConstant.OPERATE_SUCCEED);
         }
         return R.fail(ImageConstant.OPERATE_ERROR);
     }
+
+
+    /**
+     * 清空
+     *
+     * @param projectId
+     * @param reviewRoundId
+     * @return
+     */
+    private boolean removeAll(Long projectId, Long reviewRoundId) {
+        Slide slide = new Slide();
+        slide.setProjectId(projectId);
+        slide.setReviewRoundId(reviewRoundId);
+        QueryWrapper<Slide> queryWrapper = new QueryWrapper<>(slide);
+
+        if (slideService.remove(queryWrapper)) {
+            return true;
+        }
+        return false;
+    }
+
 
 }
