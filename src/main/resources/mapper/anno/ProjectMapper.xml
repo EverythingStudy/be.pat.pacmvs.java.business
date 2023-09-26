@@ -190,7 +190,7 @@
         order by project_id desc
     </select>
 
-    <!--条件查询项目和病理信息1-->
+    <!--条件查询项目列表-->
     <select id="selectProjectList" parameterType="cn.staitech.anno.domain.Project" resultMap="ProjectMessage">
         <include refid="selectProjectVo"/>
         <where>
@@ -205,6 +205,9 @@
             </if>
             <if test="productSeriesId != null"><!-- 品系 -->
                 AND p.product_series_id = #{productSeriesId}
+            </if>
+            <if test="organizationId != null"><!-- 组织机构ID -->
+                AND p.organization_id = #{organizationId}
             </if>
             <if test="status != null">
                 AND p.status = #{status}
