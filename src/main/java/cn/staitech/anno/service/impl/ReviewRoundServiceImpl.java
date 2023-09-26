@@ -92,6 +92,9 @@ public class ReviewRoundServiceImpl extends ServiceImpl<ReviewRoundMapper, Revie
         ReviewRound reviewRound = new ReviewRound();
         reviewRound.setProjectId(projectId);
         QueryWrapper queryWrapper = new QueryWrapper<>(reviewRound);
+        // 【评审设置】评审轮次列表排序方式为创建时间倒序，现在是正序 http://jira.shengtong.com/browse/SAAS-87
+        queryWrapper.orderByDesc("create_time");
+
         List<ReviewRound> list = this.list(queryWrapper);
         PageMaster pageMaster = new PageMaster<>(list);
 
