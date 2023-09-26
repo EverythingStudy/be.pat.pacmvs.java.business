@@ -43,10 +43,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 /**
@@ -333,7 +330,8 @@ public class ProjectController extends BaseController {
         BeanUtils.copyProperties(req, project);
 
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-        project.setCreateBy(sysUser.getUserId());
+        project.setUpdateBy(sysUser.getUserId());
+        project.setUpdateTime(new Date());
         project.setOrganizationId(sysUser.getOrganizationId());
         if (projectService.updateById(project)) {
             return R.ok(ResponseConstant.OPERATE_SUCCEED);

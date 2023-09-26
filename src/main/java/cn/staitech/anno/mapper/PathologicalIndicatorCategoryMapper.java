@@ -107,7 +107,7 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
     /**
      * 查询病例指标下的标注类别数量
      */
-    Integer selectCategoryNumber(Long indicatorId);
+    Long selectCategoryNumber(Long indicatorId);
 
     /**
      * 根据projectId查询标注类别

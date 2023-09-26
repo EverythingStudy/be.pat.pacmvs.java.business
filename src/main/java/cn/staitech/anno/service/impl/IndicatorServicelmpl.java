@@ -8,6 +8,7 @@ import cn.staitech.anno.domain.vo.statistic.StatisticIndicatorListOutVO;
 import cn.staitech.anno.mapper.IndicatorMapper;
 import cn.staitech.anno.service.IndicatorService;
 import cn.staitech.anno.service.OrganService;
+import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
 import cn.staitech.anno.service.SpeciesService;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.security.utils.SecurityUtils;
@@ -31,6 +32,9 @@ public class IndicatorServicelmpl implements IndicatorService {
 
     @Resource
     private OrganService organService;
+
+    @Resource
+    private PathologicalIndicatorCategoryService pathologicalIndicatorCategoryService;
 
     /**
      * 添加病例指标
@@ -70,6 +74,11 @@ public class IndicatorServicelmpl implements IndicatorService {
             if (organMap.containsKey(obj.getOrganId())) {
                 obj.setOrganName(organMap.get(obj.getOrganId()));
             }
+
+            // 查询总数
+            obj.setAnnotationCategoryTotal(pathologicalIndicatorCategoryService.selectCategoryNumber(obj.getIndicatorId()));
+
+
         }
         PageMaster<Indicator> pageMaster = new PageMaster<>(list);
         return pageMaster;
@@ -100,6 +109,10 @@ public class IndicatorServicelmpl implements IndicatorService {
             if (organMap.containsKey(obj.getOrganId())) {
                 obj.setOrganName(organMap.get(obj.getOrganId()));
             }
+
+            // 查询总数
+            obj.setAnnotationCategoryTotal(pathologicalIndicatorCategoryService.selectCategoryNumber(obj.getIndicatorId()));
+
         }
 
         return list;

@@ -20,12 +20,10 @@ public class PathologicalIndicatorCategoryVO {
 
     @NotBlank(message = "颜色值不可为空")
     @ApiModelProperty(required = true, value = "颜色RBG值")
-    @NotBlank(message = "病理指标名称不可为空!")
     private String rgb;
 
     @NotBlank(message = "颜色值不可为空")
     @ApiModelProperty(required = true, value = "颜色值HEX")
-    @NotBlank(message = "病理指标名称不可为空!")
     private String hex;
 
     @NotNull(message = "病理指标不能为空")

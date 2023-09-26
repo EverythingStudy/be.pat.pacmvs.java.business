@@ -299,7 +299,7 @@
         WHERE p.project_id = #{projectId}
     </select>
 
-    <select id="selectCategoryNumber" parameterType="java.lang.Long" resultType="java.lang.Integer">
+    <select id="selectCategoryNumber" parameterType="java.lang.Long" resultType="java.lang.Long">
         select count(*)
         from tb_pathological_indicator_category
         where indicator_id = #{indicatorId}
@@ -330,6 +330,12 @@
             </if>
             <if test="structureId != null">
                 AND p.structure_id =#{structureId}
+            </if>
+            <if test="indicatorId != null">
+                AND p.indicator_id =#{indicatorId}
+            </if>
+            <if test="organizationId != null">
+                AND p.organization_id =#{organizationId}
             </if>
             <if test="structureName != null and structureName != ''">
                 AND p.structure_name like concat('%', #{structureName}, '%')

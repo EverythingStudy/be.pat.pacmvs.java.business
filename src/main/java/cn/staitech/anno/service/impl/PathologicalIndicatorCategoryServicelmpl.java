@@ -159,7 +159,7 @@ public class PathologicalIndicatorCategoryServicelmpl implements PathologicalInd
      * 查询病例指标下的标注类别数量
      */
     @Override
-    public Integer selectCategoryNumber(Long indicatorId) {
+    public Long selectCategoryNumber(Long indicatorId) {
         return pathologicalIndicatorCategoryMapper.selectCategoryNumber(indicatorId);
     }
 

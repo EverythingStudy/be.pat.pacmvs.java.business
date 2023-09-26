@@ -20,7 +20,6 @@ public class IndicatorReviseVO {
     private Integer indicatorId;
     
     @ApiModelProperty(required = true, value = "病例指标名称")
-    @NotBlank(message = "病理指标名称不可为空 ！")
     private String indicatorName;
     
     @ApiModelProperty(hidden = true, value = "更新者")

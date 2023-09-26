@@ -26,7 +26,7 @@ import java.util.Map;
 public class Indicator extends BaseEntity {
     @ApiModelProperty(hidden = true, value = "病例指标id")
     @TableId(value = "indicator_id", type = IdType.AUTO)
-    private Integer indicatorId;
+    private Long indicatorId;
     @ApiModelProperty(value = "病例指标名称")
     private String indicatorName;
 
@@ -34,7 +34,7 @@ public class Indicator extends BaseEntity {
     private Integer projectTotal;
 
     @ApiModelProperty(value = "标签数量")
-    private Integer annotationCategoryTotal;
+    private Long annotationCategoryTotal;
 
     @ApiModelProperty(hidden = true, value = "创建者")
     private Long createBy;
