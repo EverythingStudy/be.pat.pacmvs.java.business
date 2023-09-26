@@ -28,10 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -97,7 +94,8 @@ public class ReviewRoundController {
         ReviewRound reviewRound = new ReviewRound();
         BeanUtils.copyProperties(reviewRoundInVO, reviewRound);
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-        reviewRound.setCreateBy(sysUser.getUserId());
+        reviewRound.setUpdateBy(sysUser.getUserId());
+        reviewRound.setUpdateTime(new Date());
         reviewRound.setOrganizationId(sysUser.getOrganizationId());
         return R.ok(reviewRoundService.updateById(reviewRound));
     }
