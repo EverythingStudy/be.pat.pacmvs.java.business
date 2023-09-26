@@ -60,11 +60,10 @@ public class IndicatorController extends BaseController {
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 
         Indicator indicator = new Indicator();
-        BeanUtils.copyProperties(req, indicator);
-        // indicator.setSpeciesId(req.getSpeciesId());
-        // indicator.setOrganId(req.getOrganId());
+        indicator.setSpeciesId(req.getSpeciesId());
+        indicator.setOrganId(req.getOrganId());
         indicator.setOrganizationId(sysUser.getOrganizationId());
-        indicator.setIndicatorName(indicator.getSpeciesName() + indicator.getOrganName());
+        indicator.setIndicatorName(req.getSpeciesName() + req.getOrganName());
 
         //查询结构指标是否存在
         List<Indicator> indicatorList = indicatorService.selectIndicator(indicator);
@@ -73,7 +72,7 @@ public class IndicatorController extends BaseController {
         }
 
         indicator.setCreateBy(sysUser.getUserId());
-        indicator.setNumber(indicator.getSpeciesId() + indicator.getOrganId());
+        indicator.setNumber(indicator.getSpeciesId() + "" + indicator.getOrganId());
 
         //添加结构指标
         indicatorService.insertIndicator(indicator);

@@ -24,7 +24,7 @@ public class Species {
      */
     @TableId(value = "species_id", type = IdType.AUTO)
     @ApiModelProperty(value = "种属ID", hidden = true)
-    private Integer speciesId;
+    private Long speciesId;
 
     /**
      * 种属value

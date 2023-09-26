@@ -13,5 +13,5 @@ import java.util.Map;
  */
 public interface SpeciesService extends IService<Species> {
 
-    Map<Integer, String> selectMap();
+    Map<Long, String> selectMap();
 }

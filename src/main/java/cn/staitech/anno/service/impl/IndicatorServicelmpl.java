@@ -55,7 +55,7 @@ public class IndicatorServicelmpl implements IndicatorService {
     @Override
     public List<Indicator> selectIndicatorList(Indicator indicator) {
         // 种属
-        Map<Integer, String> sepeciesMap = speciesService.selectMap();
+        Map<Long, String> sepeciesMap = speciesService.selectMap();
         // 脏器
         Map<String, String> organMap = organService.selectMap();
 
@@ -71,6 +71,8 @@ public class IndicatorServicelmpl implements IndicatorService {
 
         // ===========================================
         List<Indicator> list = indicatorMapper.selectIndicatorList(indicator);
+
+        log.info("-------------{}", list);
         for (Indicator obj : list) {
             if (sepeciesMap.containsKey(obj.getSpeciesId())) {
                 obj.setSpeciesName(sepeciesMap.get(obj.getSpeciesId()));

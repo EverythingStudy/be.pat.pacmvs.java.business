@@ -24,10 +24,10 @@ class SpeciesServiceImpl extends ServiceImpl<SpeciesMapper, Species> implements 
     private SpeciesMapper speciesMapper;
 
     @Override
-    public Map<Integer, String> selectMap() {
+    public Map<Long, String> selectMap() {
 
         List<Species> list = speciesMapper.selectList();
-        Map<Integer, String> map = list.stream()
+        Map<Long, String> map = list.stream()
                 .collect(Collectors.toMap(Species::getSpeciesId, Species::getName));
         return map;
     }

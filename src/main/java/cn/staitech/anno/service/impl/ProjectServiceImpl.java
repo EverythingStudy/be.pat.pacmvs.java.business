@@ -67,7 +67,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         // 项目类型
         Map<String, String> projectTypeMap = projectTypeService.selectMap();
         // 种属
-        Map<Integer, String> sepeciesMap = speciesService.selectMap();
+        Map<Long, String> sepeciesMap = speciesService.selectMap();
 
         // 项目类型
         if (projectTypeMap.containsKey(project.getProjectType())) {
@@ -97,7 +97,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         // 项目类型
         Map<String, String> projectTypeMap = projectTypeService.selectMap();
         // 种属
-        Map<Integer, String> sepeciesMap = speciesService.selectMap();
+        Map<Long, String> sepeciesMap = speciesService.selectMap();
         // 品系
         // Map<Integer, String> productSeriesMap = productSeriesService.selectMap();
 
