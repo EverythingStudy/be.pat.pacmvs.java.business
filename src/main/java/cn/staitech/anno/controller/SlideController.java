@@ -241,8 +241,19 @@ public class SlideController extends BaseController {
      */
     @ApiOperation(value = "批量添加标注切片")
     @PostMapping("/addAnnoSlidesBatch")
-    public R addAnnoSlidesBatch(@RequestBody AddSlideVO addSlideVO) {
-        return R.ok(slideService.addAnnoSlidesBatch(addSlideVO));
+    public R addAnnoSlidesBatch(@RequestBody AddSlideVO req) {
+        // 先清空
+        Slide slide = new Slide();
+        slide.setProjectId(req.getProjectId());
+        slide.setReviewRoundId(req.getReviewRoundId());
+        QueryWrapper<Slide> queryWrapper = new QueryWrapper<>(slide);
+
+        if (slideService.remove(queryWrapper)) {
+            return R.ok(ImageConstant.OPERATE_SUCCEED);
+        }
+
+        // 再新增
+        return R.ok(slideService.addAnnoSlidesBatch(req));
     }
 
     /**
