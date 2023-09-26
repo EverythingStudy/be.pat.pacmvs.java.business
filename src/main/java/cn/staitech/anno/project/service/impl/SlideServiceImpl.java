@@ -56,14 +56,14 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
     private static final String col5 = "图像标注总数";
     private static final String col6 = "无属性数量";
 
-    public void reviewHandle(List<Long> slideIds){
+    public void reviewHandle(List<Long> slideIds) {
         QueryWrapper<Review> queryWrapper = Wrappers.query();
-        queryWrapper.in("slide_id",slideIds);
+        queryWrapper.in("slide_id", slideIds);
         queryWrapper.select("slide_id", "group_concat(score separator '-') as score").groupBy("slide_id");
         List<Map<String, Object>> reviewList = reviewMapper.selectMaps(queryWrapper);
-        Map<Long,String> resp = new HashMap<>();
-        reviewList.forEach(r->{
-            resp.put(Long.parseLong(r.get("slide_id").toString()),r.get("score").toString());
+        Map<Long, String> resp = new HashMap<>();
+        reviewList.forEach(r -> {
+            resp.put(Long.parseLong(r.get("slide_id").toString()), r.get("score").toString());
         });
     }
 
@@ -87,7 +87,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
     }
 
     @Override
-    public PageMaster<ReviewSlideVO> pageReviewSlide(Page page, ReviewSlideIN params){
+    public PageMaster<ReviewSlideVO> pageReviewSlide(Page page, ReviewSlideIN params) {
         getBaseMapper().pageReviewSlide(page, params);
         List<ReviewSlideVO> list = page.getRecords();
         PageMaster<ReviewSlideVO> pageMaster = PageMaster.of(list);
@@ -150,7 +150,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
     public void slideAnnoStatisticsExport(SlideQueryIN params) throws Exception {
         List<SlideExportVO> list = getBaseMapper().querySlides(params);
         Map<Long, SlideExportVO> map = new HashMap<>();
-        List<Map<String,String>> catesMapList = new ArrayList<>();
+        List<Map<String, String>> catesMapList = new ArrayList<>();
         List<Long> slideIds = new ArrayList<>();
         if (list != null && !list.isEmpty()) {
             list.forEach(slideVO -> {
@@ -158,87 +158,90 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
                 map.put(slideVO.getSlideId(), slideVO);
             });
             List<Marking> annotationList = queryAnnotation(slideIds, params);
-            List<PathologicalIndicatorCategory>  columns = handleAnnoStatisticsExport(annotationList,map,catesMapList);
+            List<PathologicalIndicatorCategory> columns = handleAnnoStatisticsExport(annotationList, map, catesMapList);
             //通过hutool工具创建的excel的writer，默认为xls格式
             ExcelWriter writer = ExcelUtil.getWriter();
-            writer.addHeaderAlias(col1,col1);
-            writer.addHeaderAlias(col2,col2);
-            writer.addHeaderAlias(col3,col3);
-            writer.addHeaderAlias(col4,col4);
-            writer.addHeaderAlias(col5,col5);
+            writer.addHeaderAlias(col1, col1);
+            writer.addHeaderAlias(col2, col2);
+            writer.addHeaderAlias(col3, col3);
+            writer.addHeaderAlias(col4, col4);
+            writer.addHeaderAlias(col5, col5);
             //自定义excel标题和列名
-            columns.forEach(c->{
-                writer.addHeaderAlias(String.valueOf(c.getCategoryId()),c.getCategoryName());
+            columns.forEach(c -> {
+                writer.addHeaderAlias(String.valueOf(c.getCategoryId()), c.getCategoryName());
             });
-            writer.write(catesMapList,true);
+            writer.write(catesMapList, true);
             httpServletResponse.setContentType("application/vnd.ms-excel;charset=utf-8");
-            httpServletResponse.setHeader("responseType","blob");
+            httpServletResponse.setHeader("responseType", "blob");
             //name是下载对话框的名称，不支持中文，想用中文名称需要进行utf8编码
             String excelName = "切片数据";
             excelName = URLEncoder.encode(excelName, "utf-8");
-            httpServletResponse.setHeader("Content-Disposition", "attachment;filename=" + excelName +".xls");
+            httpServletResponse.setHeader("Content-Disposition", "attachment;filename=" + excelName + ".xls");
             ServletOutputStream excelOut = null;
             //将excel文件信息写入输出流，返回给调用者
             try {
                 excelOut = httpServletResponse.getOutputStream();
-                writer.flush(excelOut,true);
+                writer.flush(excelOut, true);
             } catch (IOException e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 writer.close();
             }
             IoUtil.close(excelOut);
         }
     }
 
-    private List<PathologicalIndicatorCategory> handleAnnoStatisticsExport(List<Marking> annotationList, Map<Long, SlideExportVO> slideExportVOMap,List<Map<String,String>> catesMapList) throws Exception {
+    private List<PathologicalIndicatorCategory> handleAnnoStatisticsExport(List<Marking> annotationList, Map<Long, SlideExportVO> slideExportVOMap, List<Map<String, String>> catesMapList) throws Exception {
         List<PathologicalIndicatorCategory> columns = new ArrayList<>();
-        Map<Long,Boolean> columnMap = new HashMap<>();
+        Map<Long, Boolean> columnMap = new HashMap<>();
+        List<PathologicalIndicatorCategory> pathologicalIndicatorCategoryList = pathologicalIndicatorCategoryMapperV1.selectList(Wrappers.query());
+        Map<Long, PathologicalIndicatorCategory> categoryMap = new HashMap<>();
+        for (PathologicalIndicatorCategory c : pathologicalIndicatorCategoryList) {
+            categoryMap.put(c.getCategoryId(), c);
+        }
+        Map<Long, List<Marking>> map = new HashMap<>();
         if (annotationList != null && !annotationList.isEmpty()) {
-            List<PathologicalIndicatorCategory> pathologicalIndicatorCategoryList = pathologicalIndicatorCategoryMapperV1.selectList(Wrappers.query());
-            Map<Long, PathologicalIndicatorCategory> categoryMap = new HashMap<>();
-            for (PathologicalIndicatorCategory c : pathologicalIndicatorCategoryList) {
-                categoryMap.put(c.getCategoryId(), c);
-            }
-            Map<Long, List<Marking>> map = annotationList.stream().collect(Collectors.groupingBy(Marking::getSlideId));
-            for (Long slideKey : map.keySet()) {
-                SlideExportVO vo = slideExportVOMap.get(slideKey);
-                Map<String,String> catesMap = new HashMap<>();
-                List<Marking> subs = map.get(slideKey);
-                if (subs != null && !subs.isEmpty()) {
-                    Map<Long, List<Marking>> categorys = subs.stream().collect(Collectors.groupingBy(Marking::getCategoryId));
-                    if (categorys != null && !categorys.isEmpty()) {
-                        for (Long categoryKey : categorys.keySet()) {
-                            List<Marking> annoCateList = categorys.get(categoryKey);
-                            if (annoCateList != null && !annoCateList.isEmpty()) {
-                                catesMap.put(String.valueOf(categoryKey),String.valueOf(annoCateList.size()));
-                                if (columnMap.get(categoryKey)==null||!columnMap.get(categoryKey)){
-                                    columnMap.put(categoryKey,true);
-                                    columns.add(categoryMap.get(categoryKey));
-                                }
+            map = annotationList.stream().collect(Collectors.groupingBy(Marking::getSlideId));
+        }
+        for (Long slideKey : slideExportVOMap.keySet()) {
+            /*for (Long slideKey : map.keySet()) {*/
+            SlideExportVO vo = slideExportVOMap.get(slideKey);
+            Map<String, String> catesMap = new HashMap<>();
+            List<Marking> subs = map.get(slideKey);
+            if (subs != null && !subs.isEmpty()) {
+                Map<Long, List<Marking>> categorys = subs.stream().collect(Collectors.groupingBy(Marking::getCategoryId));
+                if (categorys != null && !categorys.isEmpty()) {
+                    for (Long categoryKey : categorys.keySet()) {
+                        List<Marking> annoCateList = categorys.get(categoryKey);
+                        if (annoCateList != null && !annoCateList.isEmpty()) {
+                            catesMap.put(String.valueOf(categoryKey), String.valueOf(annoCateList.size()));
+                            if (columnMap.get(categoryKey) == null || !columnMap.get(categoryKey)) {
+                                columnMap.put(categoryKey, true);
+                                columns.add(categoryMap.get(categoryKey));
                             }
                         }
                     }
                 }
-                catesMap.put(col1,String.valueOf(vo.getSlideId()));
-                catesMap.put(col2,vo.getImageCode());
-                catesMap.put(col3,vo.getProjectName());
-                catesMap.put(col4,vo.getRemark());
-                catesMap.put(col5,String.valueOf(subs.size()));
-                vo.setCates(catesMap);
-                vo.setManualAnnoCount(subs.size());
-                catesMapList.add(catesMap);
             }
-            //补全数据行缺失字段
-            for (Map<String,String> catesMap: catesMapList){
-                for (PathologicalIndicatorCategory column : columns) {
-                    String count = catesMap.get(String.valueOf(column.getCategoryId()));
-                    if (count==null){
-                        catesMap.put(String.valueOf(column.getCategoryId()),"");
-                    }
+            catesMap.put(col1, String.valueOf(vo.getSlideId()));
+            catesMap.put(col2, vo.getImageCode());
+            catesMap.put(col3, vo.getProjectName());
+            catesMap.put(col4, vo.getRemark());
+            catesMap.put(col5, String.valueOf(subs==null?0:subs.size()));
+            vo.setCates(catesMap);
+            vo.setManualAnnoCount(subs==null?0:subs.size());
+            catesMapList.add(catesMap);
+        }
+        //补全数据行缺失字段
+        for (Map<String, String> catesMap : catesMapList) {
+            for (PathologicalIndicatorCategory column : columns) {
+                String count = catesMap.get(String.valueOf(column.getCategoryId()));
+                if (count == null) {
+                    catesMap.put(String.valueOf(column.getCategoryId()), "");
                 }
             }
         }
+
         return columns;
     }
 
