@@ -590,6 +590,15 @@ public class MarkingServiceImpl implements MarkingService {
         }
     }
 
+    @Override
+    public void batchDelete(Long slideId) {
+        QueryWrapper<cn.staitech.anno.project.domain.Marking> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("slide_id",slideId);
+        markingMapperV1.delete(queryWrapper);
+        BroadcastVO broadcastVO = SendMessage.sendOneMessages(CLEAN,new Features());
+        NioWebSocketHandler.sendAll(slideId, broadcastVO);
+    }
+
 
     @Override
     public void downTaskByCode(String code) throws Exception {

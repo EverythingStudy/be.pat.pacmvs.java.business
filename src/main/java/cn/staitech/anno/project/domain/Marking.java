@@ -1,18 +1,21 @@
 package cn.staitech.anno.project.domain;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.Data;
 
 /**
  * 
  * @TableName tb_marking
  */
-@TableName(value ="tb_marking")
+@TableName(value ="tb_marking", autoResultMap = true)
 @Data
 public class Marking implements Serializable {
     /**
@@ -139,7 +142,8 @@ public class Marking implements Serializable {
     /**
      * 标注数据
      */
-    private Object geometry;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private JSONObject geometry;
 
     /**
      * 更新者

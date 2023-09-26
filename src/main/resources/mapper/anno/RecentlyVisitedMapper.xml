@@ -149,6 +149,7 @@
         <if test="slideId != null and slideId != 0 ">slide_id,</if>
         <if test="projectId != null and projectId != 0 ">project_id,</if>
         <if test="projectName != null">project_name,</if>
+        <if test="projectType != null">project_type,</if>
         <if test="imageName != null and imageName != ''">image_name,</if>
         <if test="thumbUrl != null and thumbUrl != ''">thumb_url,</if>
         <if test="reviewRoundId != null">review_round_id,</if>
@@ -159,6 +160,7 @@
         <if test="slideId != null and slideId != ''">#{slideId},</if>
         <if test="projectId != null and projectId != ''">#{projectId},</if>
         <if test="projectName != null">#{projectName},</if>
+        <if test="projectType != null">#{projectType},</if>
         <if test="imageName != null and imageName != ''">#{imageName},</if>
         <if test="thumbUrl != null and thumbUrl != ''">#{thumbUrl},</if>
         <if test="reviewRoundId != null">#{reviewRoundId},</if>
