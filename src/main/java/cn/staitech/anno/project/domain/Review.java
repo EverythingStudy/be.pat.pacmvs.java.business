@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -126,7 +127,8 @@ public class Review implements Serializable {
      */
     @NotNull(message="[创建时间]不能为空")
     @ApiModelProperty("创建时间")
-    private Date createTime;
+    @JsonFormat(pattern = "yyyy-mm-ss HH:mm:ss")
+    private String createTime;
     /**
      * 创建者
      */
@@ -142,7 +144,8 @@ public class Review implements Serializable {
      * 更新时间
      */
     @ApiModelProperty("更新时间")
-    private Date updateTime;
+    @JsonFormat(pattern = "yyyy-mm-ss HH:mm:ss")
+    private String updateTime;
     /**
      * 项目id
      */
