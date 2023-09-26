@@ -48,7 +48,6 @@ public class FileServiceImpl implements FileService {
             // 非评审
             slideFileName = slideMapper.slideFileName(slideId);
         }
-        slideFileVerify(slideFileName);
         // 生成二级目录 (以专题名称命名)
         String twoFolderName = fileUrl + File.separator + slideFileName.getTopicName();
         createFolder(twoFolderName);
@@ -83,19 +82,6 @@ public class FileServiceImpl implements FileService {
         return true;
     }
 
-
-
-    private static void slideFileVerify(SlideFileName slideFileName) throws Exception {
-        if (slideFileName == null) {
-            throw new Exception("文件下载时遇到了未知错误");
-        } else if (slideFileName.getSlideType() == null) {
-            throw new Exception("文件下载时遇到了未知错误");
-        } else if (slideFileName.getImageName() == null) {
-            throw new Exception("文件下载时遇到了未知错误");
-        } else if (slideFileName.getTopicName() == null) {
-            throw new Exception("文件下载时遇到了未知错误");
-        }
-    }
 
     private static Boolean createFolder(String folder) throws Exception {
         File file = new File(folder);
