@@ -46,7 +46,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 //    private String basePath = "D:\\home\\pat_saas";
 
 
-    private String zipPath = "/home/upload/json";
+    private String zipPath = "/home/pat_saas/upload/json/zip";
 
     /**
      * @param file 上传的文件MultipartFile
@@ -103,7 +103,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 files.setTopicId(topic.getTopicId());
                 break;
             case 4:
-                dirPath = zipPath + File.separator + "zip";
+                dirPath = zipPath;
                 break;
         }
         String fileName = fileUploadVO.getFileName();
