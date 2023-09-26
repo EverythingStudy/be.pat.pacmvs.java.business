@@ -1,6 +1,8 @@
 package cn.staitech.anno.domain;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -19,7 +21,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("tb_marking_examine")
+@TableName(value = "tb_marking_examine",autoResultMap = true)
 public class MarkingExamine implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -27,13 +29,8 @@ public class MarkingExamine implements Serializable {
     /**
      * 主键自增id
      */
-    @TableId(value = "marking_id", type = IdType.AUTO)
-    private Long markingId;
-
-    /**
-     * 标注id
-     */
-    private String annotationId;
+    @TableId(value = "marking_examine_id", type = IdType.AUTO)
+    private Long markingExamineId;
 
     /**
      * 面积
@@ -56,64 +53,9 @@ public class MarkingExamine implements Serializable {
     private Long categoryId;
 
     /**
-     * 标注名称
-     */
-    private Long number;
-
-    /**
-     * 测量轮廓类型(0:正常,表示有关系,默认为0")
-     */
-    private Integer measureType;
-
-    /**
-     * 测量关系
-     */
-    private String measureRelation;
-
-    /**
-     * 测量轮廓表示名称:L
-     */
-    private String measureName;
-
-    /**
-     * 测量轮廓标识：1
-     */
-    private Integer measureNumber;
-
-    /**
-     * 周长（圆）
-     */
-    private String radius;
-
-    /**
-     * 平均间距
-     */
-    private Double meanDistance;
-
-    /**
-     * 最大间距
-     */
-    private Double maxDistance;
-
-    /**
-     * 最小间距
-     */
-    private Double minDistance;
-
-    /**
-     * 内角
-     */
-    private String innerAngle;
-
-    /**
-     * 外角
-     */
-    private String exteriorAngle;
-
-    /**
      * 创建者
      */
-    private Integer createBy;
+    private Long createBy;
 
     /**
      * 创建时间
@@ -122,34 +64,15 @@ public class MarkingExamine implements Serializable {
     private Date createTime;
 
     /**
-     * 标注类型(AI表示AI算出的标注，Draw表示前端绘制的标注，Measure表示测量工具数据)
-     */
-    private String annotationType;
-
-    /**
-     * 标注数据类型(LineString,Polygon,point,pc,p,L)
-     */
-    private String locationType;
-
-    /**
      * 切片id
      */
-    private Integer slideId;
-
-    /**
-     * 中心
-     */
-    private String centerPoint;
-
-    /**
-     * 不同标签点的总数
-     */
-    private Integer pointCount;
+    private Long slideId;
 
     /**
      * 标注数据
      */
-    private String geometry;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private JSONObject geometry;
 
     /**
      * 更新者
@@ -166,31 +89,6 @@ public class MarkingExamine implements Serializable {
      * 标注绘制者
      */
     private String annotationOwner;
-
-    /**
-     * 标注更新者
-     */
-    private String annotationUpdateOwner;
-
-    /**
-     * 项目id
-     */
-    private Long projectId;
-
-    /**
-     * 图像id
-     */
-    private Long imageId;
-
-    /**
-     * 图像url
-     */
-    private String imageUrl;
-
-    /**
-     * 机构id
-     */
-    private Long organizationId;
 
 
 }

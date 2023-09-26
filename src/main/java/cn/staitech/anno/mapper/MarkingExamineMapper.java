@@ -1,6 +1,7 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.MarkingExamine;
+import cn.staitech.anno.domain.geojson.Properties;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -13,4 +14,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface MarkingExamineMapper extends BaseMapper<MarkingExamine> {
 
+    /**
+     * 查询单个切片详情信息
+     * @param markingExamineId 考核标注id
+     * @return
+     */
+    Properties selectBy(Long markingExamineId);
 }

@@ -1,47 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.mytest1.annotation.mapper.MarkingExamineMapper">
+<mapper namespace="cn.staitech.anno.mapper.MarkingExamineMapper">
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.MarkingExamine">
-        <id column="marking_id" property="markingId" />
-        <result column="annotation_id" property="annotationId" />
+        <id column="marking_examine_id" property="markingExamineId" />
         <result column="area" property="area" />
         <result column="perimeter" property="perimeter" />
         <result column="description" property="description" />
         <result column="category_id" property="categoryId" />
-        <result column="number" property="number" />
-        <result column="measure_type" property="measureType" />
-        <result column="measure_relation" property="measureRelation" />
-        <result column="measure_name" property="measureName" />
-        <result column="measure_number" property="measureNumber" />
-        <result column="radius" property="radius" />
-        <result column="mean_distance" property="meanDistance" />
-        <result column="max_distance" property="maxDistance" />
-        <result column="min_distance" property="minDistance" />
-        <result column="inner_angle" property="innerAngle" />
-        <result column="exterior_angle" property="exteriorAngle" />
         <result column="create_by" property="createBy" />
         <result column="create_time" property="createTime" />
-        <result column="annotation_type" property="annotationType" />
-        <result column="location_type" property="locationType" />
         <result column="slide_id" property="slideId" />
-        <result column="center_point" property="centerPoint" />
-        <result column="point_count" property="pointCount" />
-        <result column="geometry" property="geometry" />
+        <result column="geometry" property="geometry" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler" />
         <result column="update_by" property="updateBy" />
         <result column="update_time" property="updateTime" />
         <result column="annotation_owner" property="annotationOwner" />
-        <result column="annotation_update_owner" property="annotationUpdateOwner" />
-        <result column="project_id" property="projectId" />
-        <result column="image_id" property="imageId" />
-        <result column="image_url" property="imageUrl" />
-        <result column="organization_id" property="organizationId" />
+    </resultMap>
+
+    <resultMap type="cn.staitech.anno.domain.geojson.Properties" id="propertiesResult">
+        <result property="marking_id" column="marking_id"/>
+        <result property="area" column="area"/>
+        <result property="perimeter" column="perimeter"/>
+        <result property="description" column="description"/>
+        <result property="category_id" column="category_id"/>
+        <result property="measure_full_name" column="measure_full_name"/>
+        <result property="measure_type" column="measure_type"/>
+        <result property="label_name" column="label_name"/>
+        <result property="label_color" column="label_color"/>
+        <result property="annotation_update_owner" column="annotation_update_owner"/>
+        <result property="measure_relation" column="measure_relation"/>
+        <result property="measure_name" column="measure_name"/>
+        <result property="measure_number" column="measure_number"/>
+        <result property="radius" column="radius"/>
+        <result property="mean_distance" column="mean_distance"/>
+        <result property="max_distance" column="max_distance"/>
+        <result property="min_distance" column="min_distance"/>
+        <result property="inner_angle" column="inner_angle"/>
+        <result property="exterior_angle" column="exterior_angle"/>
+        <result property="center_point" column="center_point"/>
+        <result property="annotation_type" column="annotation_type"/>
+        <result property="location_type" column="location_type"/>
+        <result property="annotation_owner" column="annotation_owner"/>
+        <result property="create_time" column="create_time"/>
+        <result property="point_count" column="point_count"/>
+        <result property="create_by" column="create_by"/>
+        <result property="update_by" column="update_by"/>
+        <result property="project_id" column="project_id"/>
+        <result property="image_id" column="image_id"/>
+        <result property="image_url" column="image_url"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         marking_id, annotation_id, area, perimeter, description, category_id, number, measure_type, measure_relation, measure_name, measure_number, radius, mean_distance, max_distance, min_distance, inner_angle, exterior_angle, create_by, create_time, annotation_type, location_type, slide_id, center_point, point_count, geometry, update_by, update_time, annotation_owner, annotation_update_owner, project_id, image_id, image_url, organization_id
     </sql>
+
+
+
+    <sql id="selectBy">
+        t.marking_examine_id as marking_id, t.area, t.perimeter, t.description, t.category_id, t.create_by, t.create_time, t.slide_id, t.geometry, t.update_by, t.update_time, t.annotation_owner,
+            c.rgb as label_color,
+            c.category_name as label_name
+    </sql>
+
+    <select id="selectBy" parameterType="long" resultMap="propertiesResult">
+        select
+        <include refid="selectBy"/>
+        from tb_marking_examine AS t
+        LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
+        where t.marking_examine_id = #{markingExamineId}
+    </select>
 
 </mapper>
