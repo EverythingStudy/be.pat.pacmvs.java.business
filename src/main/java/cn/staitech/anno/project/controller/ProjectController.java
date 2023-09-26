@@ -8,6 +8,7 @@ import cn.staitech.anno.project.vo.ProjectVO;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
+import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -49,7 +50,7 @@ public class ProjectController {
         pageMaster.setTotal(page.getTotal());
         return R.ok(pageMaster);
     }
-
+    @RequiresPermissions("smartAnno:project:list")
     @ApiOperation(value = "列表查询")
     @PostMapping("/query")
     public R<List<ProjectVO>> query(@RequestBody ProjectIN in) throws Exception{

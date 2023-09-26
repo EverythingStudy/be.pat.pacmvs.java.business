@@ -9,6 +9,7 @@ import cn.staitech.anno.project.vo.*;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
 
+import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
@@ -43,6 +44,7 @@ public class SlideController {
     @Resource
     private OptService optService;
 
+    @RequiresPermissions("smartAnno:project:slice")
     @ApiOperation(value = "智能标注-切片分页查询")
     @PostMapping("/page")
     public R<PageMaster<SlideVO>> page(@RequestBody SlideQueryIN in) throws Exception {
@@ -50,17 +52,19 @@ public class SlideController {
         return R.ok(slideService.pageSlides(page,in));
     }
 
+    @RequiresPermissions("smartAnno:project:slice:check")
     @ApiOperation(value = "查看标注数目")
     @PostMapping("/getSlideAnnoStatistics")
     public R<List<SlideAnnoStatisticsVO>> getSlideAnnoStatistics(@RequestBody SlideQueryIN in) throws Exception {
         return R.ok(slideService.getSlideAnnoStatistics(in));
     }
+    @RequiresPermissions("smartAnno:project:slice:export")
     @ApiOperation(value = "标注数据导出")
     @GetMapping("/slideAnnoStatisticsExport")
     public void slideAnnoStatisticsExport(SlideQueryIN in) throws Exception {
         slideService.slideAnnoStatisticsExport(in);
     }
-
+    @RequiresPermissions("smartAnno:project:slice:remarkList")
     @ApiOperation(value = "批量修改备注")
     @PostMapping("/updateRemarkBySlideIds")
     public R<Boolean> updateRemarkBySlideIds(@RequestBody SlideRemarkIN in) throws Exception {
@@ -71,7 +75,7 @@ public class SlideController {
         Boolean flag = slideService.updateBatchById(slides);
         return R.ok(flag);
     }
-
+    @RequiresPermissions("smartAnno:project:slice:editList")
     @ApiOperation(value = "批量修改状态")
     @PostMapping("/updateStatusBySlideIds")
     public R<Boolean> updateStatusBySlideIds(@RequestBody SlideStatusIN in) throws Exception {

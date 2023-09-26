@@ -5,6 +5,7 @@ import cn.staitech.anno.project.service.OptService;
 import cn.staitech.anno.project.vo.ProjectIN;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
+import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -36,6 +37,7 @@ public class OptController {
     @Resource
     private OptService optService;
 
+    @RequiresPermissions("smartAnno:project:slice:operation")
     @ApiOperation(value = "切片操作记录-分页查询")
     @GetMapping("/page")
     public R<PageMaster<Opt>> page(@NotNull(message = "分页参数为空！") @RequestParam("pageNum") @ApiParam(name = "pageNum", value = "分页参数", required = true) Integer pageNum,
@@ -47,7 +49,7 @@ public class OptController {
         pageMaster.setTotal(page.getTotal());
         return R.ok(pageMaster);
     }
-
+    @RequiresPermissions("smartAnno:project:slice:operation")
     @ApiOperation(value = "列表查询")
     @GetMapping("/query")
     public R<List<Opt>> query(@NotNull(message = "切片id！") @RequestParam("slideId") @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId) throws Exception{

@@ -13,6 +13,7 @@ import cn.staitech.anno.project.service.SlideService;
 import cn.staitech.anno.project.vo.*;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
+import cn.staitech.common.security.annotation.RequiresPermissions;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -69,12 +70,13 @@ public class ReviewController {
         reviewService.update(reviews);
         return R.ok("操作成功");
     }
-
+    @RequiresPermissions("smartReview:project:detail:view:review")
     @ApiOperation(value = "viewer按切片id查询评审列表")
     @GetMapping("/queryReview")
     public R<List<Review>> queryReview(@RequestParam("slideId") @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId){
         return R.ok(reviewService.list(Wrappers.query(Review.builder().slideId(slideId).build())));
     }
+    @RequiresPermissions("smartReview:project:export")
     @ApiOperation(value = "评审数据导出")
     @PostMapping("/exportReview")
     public R<DownTask> exportReview(@RequestBody DownTaskIN in) throws Exception{
@@ -110,7 +112,7 @@ public class ReviewController {
         }
         IoUtil.close(out);
     }
-
+    @RequiresPermissions("smartReview:project:detail:round")
     @ApiOperation(value = "智能评审-查询评审轮次列表")
     @GetMapping("/pageReviewRound")
     public R<PageMaster<ReviewRoundOutVO>> pageReviewRound(@NotNull(message = "分页参数为空！") @RequestParam("pageNum") @ApiParam(name = "pageNum", value = "分页参数", required = true) Integer pageNum,
@@ -119,7 +121,7 @@ public class ReviewController {
         Page page = new Page(pageNum,pageSize);
         return R.ok(reviewService.pageReviewRound(page, params));
     }
-
+    @RequiresPermissions("smartReview:project:detail:slice")
     @ApiOperation(value = "智能评审-切片分页查询")
     @GetMapping("/pageReviewSlide")
     public R<PageMaster<ReviewSlideVO>> pageReviewSlide(@NotNull(message = "分页参数为空！") @RequestParam("pageNum") @ApiParam(name = "pageNum", value = "分页参数", required = true) Integer pageNum,
