@@ -14,6 +14,7 @@ import cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO;
 import cn.staitech.anno.domain.vo.slideVo.AddSlideVO;
 import cn.staitech.anno.domain.vo.slideVo.DelSlideIdsVO;
 import cn.staitech.anno.domain.vo.slideVo.DelSlideVO;
+import cn.staitech.anno.domain.vo.slideVo.GetTopicListVO;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.PageMaster;
@@ -205,6 +206,23 @@ public class SlideController extends BaseController {
 
 
     // =======================================================================================================
+
+
+    /**
+     * 查询某个项目或者review_round_id对应的已经绑定的topic
+     */
+    @ApiOperation(value = "查询某个项目或者review_round_id对应的已经绑定的topic列表")
+    @PostMapping("/topicList")
+    public R<List<Slide>> topicList(@RequestBody GetTopicListVO getTopicListVO) {
+        Slide slide = new Slide();
+        QueryWrapper<Slide> queryWrapper = new QueryWrapper<>(slide);
+        queryWrapper.select("topic_id", "topic_name");
+        queryWrapper.eq("project_id", getTopicListVO.getProjectId());
+        queryWrapper.eq("review_round_id", getTopicListVO.getReviewRoundId());
+        List<Slide> list = slideService.list(queryWrapper);
+        return R.ok(list);
+    }
+
 
     /**
      * view查询切片列表-不分页
