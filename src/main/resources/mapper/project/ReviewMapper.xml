@@ -28,7 +28,7 @@
             <result property="roundName" column="round_name" jdbcType="VARCHAR"/>
     </resultMap>
     <select id="exportReview" parameterType="Map" resultType="cn.staitech.anno.project.vo.ReviewVO">
-        select r.*,p.project_name,i.image_name,rr.review_content as content,tr.round_name,g.group_name,tt.topic_name
+        select r.score,r.details,r.create_name,r.create_time,p.project_name,i.image_name as image_code,rr.review_content as content,tr.round_name,g.group_name,tt.topic_name
         from tb_review r
             left join tb_project p on r.project_id = p.project_id
             left join tb_slide s on r.slide_id = s.slide_id
@@ -39,10 +39,10 @@
             left join tb_topic tt on rr.topic_id = tt.topic_id
         <where>
             <if test="params.projectId!= null">
-                AND s.project_id = #{params.projectId}
+                AND r.project_id = #{params.projectId}
             </if>
             <if test="params.slideId!= null">
-                AND s.slide_id = #{params.slideId}
+                AND r.slide_id = #{params.slideId}
             </if>
         </where>
     </select>
