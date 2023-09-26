@@ -36,6 +36,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.google.common.collect.ImmutableMap;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.ibatis.annotations.Param;
 import org.redisson.api.RMap;
@@ -59,6 +60,7 @@ import static cn.staitech.anno.aspect.LogFileAspect.response;
  *
  * @author staitech
  */
+@Slf4j
 @Service
 public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements SlideService {
     @Resource
@@ -513,16 +515,20 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         for (Image imageObj : imageList) {
             // 匹配图片
             QueryWrapper<ImageCsv> csvQueryWrapper = Wrappers.query();
-            csvQueryWrapper.eq("image_name", imageObj.getImageName());
+            csvQueryWrapper.eq("image_name", imageObj.getFileName());
             csvQueryWrapper.orderByDesc("id");
+            csvQueryWrapper.last("limit 1");
 
             ImageCsv imageCsv = imageCsvMapper.selectOne(csvQueryWrapper);
 
+            log.info("imageCsv:{}", imageCsv);
+
             Slide slide = new Slide();
-            BeanUtil.copyProperties(imageCsv, slide);
+
 
             if (imageCsv != null) {
-                slide.setImageCsvId(imageCsv.getId());
+                BeanUtil.copyProperties(imageCsv, slide);
+                // slide.setImageCsvId(imageCsv.getId());
             }
 
             slide.setProjectId(projectId);
