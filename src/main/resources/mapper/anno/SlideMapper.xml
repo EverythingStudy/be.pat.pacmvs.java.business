@@ -261,7 +261,7 @@
     <select id="slideFileName" parameterType="java.lang.Long" resultMap="SlideFileNameResultMap">
         SELECT t.topic_name,
                i.image_name,
-               CONCAT(p.project_type, r.round_id)      AS slide_type,
+               p.project_type AS slide_type,
                group_concat(cate.number SEPARATOR "-") AS category_number
         FROM tb_slide AS s
                  LEFT JOIN tb_project AS p ON p.project_id = s.project_id
@@ -269,7 +269,6 @@
                  LEFT JOIN tb_image AS i ON i.image_id = s.image_id
                  LEFT JOIN tb_pathological_indicator AS path ON path.indicator_id = p.indicator_id
                  LEFT JOIN tb_pathological_indicator_category AS cate ON cate.indicator_id = path.indicator_id
-                 LEFT JOIN tb_round AS r ON r.round_id = s.round_id
         WHERE s.slide_id = #{slideId,jdbcType=BIGINT}
         GROUP BY t.topic_name
     </select>
