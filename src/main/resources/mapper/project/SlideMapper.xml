@@ -28,10 +28,9 @@
 
     <select id="pageSlides" resultType="cn.staitech.anno.project.vo.SlideVO"
             parameterType="cn.staitech.anno.project.vo.SlideQueryIN">
-        select s.*, i.thumb_url, i.image_name as image_code, c.group_name, c.gender, c.species, c.product_series
+        select s.*, i.thumb_url, i.image_name as image_code
         from tb_slide s
         left join tb_image i on s.image_id = i.image_id
-        left join tb_image_csv c on c.id = s.image_csv_id
         <where>
             <if test="params.projectId!= null">
                 AND s.project_id = #{params.projectId}
@@ -72,10 +71,9 @@
     </select>
     <select id="querySlides" resultType="cn.staitech.anno.project.vo.SlideExportVO"
             parameterType="cn.staitech.anno.project.vo.SlideQueryIN">
-        select s.*, i.thumb_url,  i.image_name as image_code, c.group_name, c.gender, c.species, c.product_series,p.project_name
+        select s.*, i.thumb_url,  i.image_name as image_code,p.project_name
         from tb_slide s
         left join tb_image i on s.image_id = i.image_id
-        left join tb_image_csv c on c.id = s.image_csv_id
         left join tb_project p on s.project_id = p.project_id
         <where>
             <if test="params.projectId!= null">
@@ -136,44 +134,41 @@
         s.ai_check,
         case when r.slide_id is not null then '2' else '1' end  as review_status,
         r.score,
-        csv.id,
-        csv.image_id,
-        csv.image_name,
-        csv.group_name,
-        csv.gender,
-        csv.species,
-        csv.product_series,
-        csv.dosage,
-        csv.animal_source,
-        csv.receiving_week,
-        csv.dosing_cycle,
-        csv.recovery_cycle,
-        csv.date_of_death,
-        csv.remove_reason,
-        csv.remark,
-        csv.organ,
-        csv.lesion_type1,
-        csv.lesion_degree1,
-        csv.lesion_type2,
-        csv.lesion_degree2,
-        csv.process_flag,
-        csv.create_by,
-        csv.create_time,
-        csv.update_by,
-        csv.update_time,
-        csv.topic_id,
-        csv.topic_name,
-        csv.status,
-        csv.delete_flag,
-        csv.organization_id,
-        csv.host_id
+        s.image_id,
+        s.group_name,
+        s.gender,
+        s.species,
+        s.product_series,
+        s.dosage,
+        s.animal_source,
+        s.receiving_week,
+        s.dosing_cycle,
+        s.recovery_cycle,
+        s.date_of_death,
+        s.remove_reason,
+        s.remark,
+        s.organ,
+        s.lesion_type1,
+        s.lesion_degree1,
+        s.lesion_type2,
+        s.lesion_degree2,
+        s.process_flag,
+        s.create_by,
+        s.create_time,
+        s.update_by,
+        s.update_time,
+        s.topic_id,
+        s.topic_name,
+        s.status,
+        s.delete_flag,
+        s.organization_id,
+        s.host_id
         from tb_slide s
         left join tb_image m on m.image_id = s.image_id
-        left join tb_image_csv csv on csv.id = s.image_csv_id
         left join (select slide_id, group_concat(score separator '-') as score from tb_review t group by t.slide_id) r on s.slide_id = r.slide_id
         <where>
             <if test="params.imageCode != null ">
-                AND csv.image_name like CONCAT('%',#{params.imageCode},'%')
+                AND m.image_name like CONCAT('%',#{params.imageCode},'%')
             </if>
             <if test="params.projectId != null ">
                 AND s.project_id = #{params.projectId}
@@ -185,7 +180,7 @@
                 AND r.score like CONCAT('%',#{params.score},'%')
             </if>
             <if test="params.removeReason != null ">
-                AND csv.remove_reason like CONCAT('%',#{params.removeReason},'%')
+                AND s.remove_reason like CONCAT('%',#{params.removeReason},'%')
             </if>
             <if test="params.reviewStatus != null">
                 <choose>
