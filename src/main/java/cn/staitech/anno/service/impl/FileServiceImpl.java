@@ -55,7 +55,14 @@ public class FileServiceImpl implements FileService {
         // 生成三级目录 (以图片名称命名)
         String threeFolderName = twoFolderName + File.separator + slideFileName.getImageName();
         createFolder(threeFolderName);
-        String fileUrl = threeFolderName + File.separator + slideFileName.getImageName() + "_" + slideFileName.getSlideType() + "_" + slideFileName.getCategoryNumber() + "_" + System.currentTimeMillis() + suffix;
+        String fileUrl = threeFolderName + File.separator + slideFileName.getImageName();
+        if(slideFileName.getSlideType() != null){
+            fileUrl += "_" + slideFileName.getSlideType();
+        }
+        if(slideFileName.getCategoryNumber() != null){
+            fileUrl += "_" + slideFileName.getCategoryNumber();
+        }
+        fileUrl += "_" + System.currentTimeMillis() + suffix;
         createFile(fileUrl);
         return fileUrl;
     }
