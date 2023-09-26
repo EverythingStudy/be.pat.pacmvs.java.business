@@ -15,6 +15,7 @@ import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.domain.SysUser;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.*;
 import lombok.SneakyThrows;
@@ -52,12 +53,15 @@ public class IndicatorController extends BaseController {
      */
     @SneakyThrows
     @ApiOperation(value = "添加结构指标", notes = "wangfeng")
-    @RequiresPermissions("special:pathology:add")
+    // @RequiresPermissions("special:pathology:add")
     @Log(title = "添加结构指标", menu = "结构指标", subMenu = "结构指标", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     public R<String> add(@Validated @RequestBody IndicatorAddVO req) {
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+
         Indicator indicator = new Indicator();
         BeanUtils.copyProperties(req, indicator);
+        indicator.setOrganizationId(sysUser.getOrganizationId());
         indicator.setIndicatorName(indicator.getSpeciesName() + indicator.getOrganName());
 
         //查询结构指标是否存在
@@ -65,6 +69,9 @@ public class IndicatorController extends BaseController {
         if (!indicatorList.isEmpty()) {
             return R.fail(IndicatorResponseConstant.INDICATOR_EXIST);
         }
+
+        indicator.setCreateBy(sysUser.getUserId());
+        indicator.setNumber(indicator.getSpeciesId() + indicator.getOrganId());
 
         //添加结构指标
         indicatorService.insertIndicator(indicator);
