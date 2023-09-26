@@ -46,7 +46,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 //    private String basePath = "D:\\home\\pat_saas";
 
 
-    private String zipPath = "/home/pat_saas/upload/json/zip";
+    private String zipPath = "/home/pat_saas/Upload/json/zip";
 
     /**
      * @param file 上传的文件MultipartFile
@@ -111,9 +111,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         String filePath = dirPath + File.separator + fileName;
         // (真实存入)拷贝+
         File file = new File(filePath);
-        System.out.println(filePath);
         if(!file.exists()){
-            System.out.println(filePath);
             fileUploadVO.getMultipartFile().transferTo(Paths.get(filePath));
         }
         File localFile = new File(filePath);
