@@ -188,7 +188,7 @@
                         AND r.review_count <![CDATA[<=]]>3
                     </when>
                     <otherwise>
-                        AND r.review_count >2
+                        AND (r.review_count >2 or r.review_count is null)
                     </otherwise>
                 </choose>
             </if>
