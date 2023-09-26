@@ -1,6 +1,7 @@
 package cn.staitech.anno.controller;
 
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.staitech.anno.constant.ImageConstant;
 import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.Slide;
@@ -15,6 +16,7 @@ import cn.staitech.anno.domain.vo.slideVo.AddSlideVO;
 import cn.staitech.anno.domain.vo.slideVo.DelSlideIdsVO;
 import cn.staitech.anno.domain.vo.slideVo.DelSlideVO;
 import cn.staitech.anno.domain.vo.slideVo.GetTopicListVO;
+import cn.staitech.anno.domain.vo.topic.TopicListVO;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.PageMaster;
@@ -213,14 +215,27 @@ public class SlideController extends BaseController {
      */
     @ApiOperation(value = "查询某个项目或者review_round_id对应的已经绑定的topic列表")
     @PostMapping("/topicList")
-    public R<List<Slide>> topicList(@RequestBody GetTopicListVO getTopicListVO) {
+    public R<List<TopicListVO>> topicList(@RequestBody GetTopicListVO getTopicListVO) {
         Slide slide = new Slide();
         QueryWrapper<Slide> queryWrapper = new QueryWrapper<>(slide);
-        queryWrapper.select("topic_id", "topic_name");
+        queryWrapper.select("distinct topic_id", "topic_name");
         queryWrapper.eq("project_id", getTopicListVO.getProjectId());
         queryWrapper.eq("review_round_id", getTopicListVO.getReviewRoundId());
+        queryWrapper.isNotNull("topic_id");
+        // queryWrapper.isNotNull("topic_name");
+        queryWrapper.orderByDesc("topic_id");
+
         List<Slide> list = slideService.list(queryWrapper);
-        return R.ok(list);
+
+        List<TopicListVO> topicList = new ArrayList<>(list.size());
+        for (Slide slideObj : list) {
+            TopicListVO topic = new TopicListVO();
+            BeanUtil.copyProperties(slideObj, topic);
+            topicList.add(topic);
+        }
+
+        log.info("list:{}", list);
+        return R.ok(topicList);
     }
 
 

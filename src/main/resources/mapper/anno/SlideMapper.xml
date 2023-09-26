@@ -731,8 +731,12 @@
                m.image_name
         from tb_slide s
                  left join tb_image m on m.image_id = s.image_id
-        <!--   left join tb_image_csv csv on s.id = s.image_csv_id-->
         <where>
+<!--            切片编号        imageName
+            组别        groupName
+            性别        gender
+            病变程度        lesionDegree
+            病变类型        lesionType-->
             <if test="projectId != null">
                 AND s.project_id = #{projectId, jdbcType=NUMERIC}
             </if>
@@ -741,6 +745,9 @@
             </if>
             <if test="imageName != null">
                 AND m.image_name LIKE CONCAT('%', #{imageName}, '%')
+            </if>
+            <if test="groupName != null">
+                AND m.group_name LIKE CONCAT('%', #{groupName}, '%')
             </if>
             <if test="gender != null">
                 AND s.gender = #{gender, jdbcType=NUMERIC}
@@ -753,10 +760,6 @@
             <if test="lesionDegree != null">
                 AND s.lesion_degree1 LIKE CONCAT('%', #{lesionDegree}, '%')
                 AND s.lesion_degree2 LIKE CONCAT('%', #{lesionDegree}, '%')
-            </if>
-            <if test="imageName != null and imageName != ''">
-                <!-- 图像名称 -->
-                and m.image_name like concat('%', #{imageName}, '%')
             </if>
             <if test="createTimeParams != null">
                 <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
@@ -825,6 +828,9 @@
             <if test="imageName != null">
                 AND m.image_name LIKE CONCAT('%', #{imageName}, '%')
             </if>
+            <if test="groupName != null">
+                AND m.group_name LIKE CONCAT('%', #{groupName}, '%')
+            </if>
             <if test="gender != null">
                 AND s.gender = #{gender, jdbcType=NUMERIC}
             </if>
@@ -835,10 +841,6 @@
             <if test="lesionDegree != null">
                 AND s.lesion_degree1 LIKE CONCAT('%', #{lesionDegree}, '%')
                 AND s.lesion_degree2 LIKE CONCAT('%', #{lesionDegree}, '%')
-            </if>
-            <if test="imageName != null and imageName != ''">
-                <!-- 图像名称 -->
-                and m.image_name like concat('%', #{imageName}, '%')
             </if>
             <if test="createTimeParams != null">
                 <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
