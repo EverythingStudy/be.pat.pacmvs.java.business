@@ -36,7 +36,7 @@ public class viewAddIn {
     private JSONObject geometry;
 
     @ApiModelProperty(value = "测量轮廓类型(0:正常,表示有关系,默认为0")
-    private Long measure_type;
+    private Integer measure_type;
 
     @ApiModelProperty(value = "测量关系")
     private String measure_relation;
@@ -45,7 +45,7 @@ public class viewAddIn {
     private String measure_name;
 
     @ApiModelProperty(value = "测量轮廓标识：1")
-    private Long measure_number;
+    private Integer measure_number;
 
     @ApiModelProperty(value = " 周长（圆）")
     private String radius;

@@ -17,10 +17,10 @@ public class Properties {
     private String create_time;
 
     @ApiModelProperty(value = "创建者")
-    private String create_by;
+    private Long create_by;
 
     @ApiModelProperty(value = "更新者")
-    private String update_by;
+    private Long update_by;
 
     @ApiModelProperty(value = "标注类型(AI表示AI算出的标注，Draw表示前端绘制的标注，Measure表示测量工具数据)")
     private String annotation_type;
@@ -50,7 +50,7 @@ public class Properties {
     private String label_color;
 
     @ApiModelProperty(value = "测量轮廓类型(0:正常,表示有关系,默认为0")
-    private Long measure_type;
+    private Integer measure_type;
 
     @ApiModelProperty(value = "测量关系")
     private String measure_relation;
@@ -59,19 +59,22 @@ public class Properties {
     private String measure_name;
 
     @ApiModelProperty(value = "测量轮廓标识：1")
-    private Long measure_number;
+    private Integer measure_number;
 
     @ApiModelProperty(value = " 周长（圆）")
     private String radius;
 
+    @ApiModelProperty(value = "编号")
+    private Long number;
+
     @ApiModelProperty(value = "平均间距")
-    private String mean_distance;
+    private Double mean_distance;
 
     @ApiModelProperty(value = "最大间距")
-    private String max_distance;
+    private Double max_distance;
 
     @ApiModelProperty(value = "最小间距")
-    private String min_distance;
+    private Double min_distance;
 
     @ApiModelProperty(value = "内角")
     private String inner_angle;
@@ -83,7 +86,7 @@ public class Properties {
     private String center_point;
 
     @ApiModelProperty(value = "标签总点数")
-    private Long point_count;
+    private Integer point_count;
     
     @ApiModelProperty(value = "修改作者")
     private String annotation_update_owner;

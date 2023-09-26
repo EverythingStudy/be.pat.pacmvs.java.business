@@ -58,7 +58,7 @@
 
 
     <resultMap type="cn.staitech.anno.domain.geojson.Features" id="featuresResult">
-        <result property="id" column="id"/>
+        <result property="id" column="annotation_id"/>
         <result property="geometry" column="geometry" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
         <result property="properties" column="properties" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
     </resultMap>
@@ -77,6 +77,7 @@
         <result property="measure_relation" column="measure_relation"/>
         <result property="measure_name" column="measure_name"/>
         <result property="measure_number" column="measure_number"/>
+        <result property="number" column="number"/>
         <result property="radius" column="radius"/>
         <result property="mean_distance" column="mean_distance"/>
         <result property="max_distance" column="max_distance"/>
@@ -234,6 +235,8 @@
                     "annotation_owner",
                     t.annotation_owner,
                     "label_color" ,
+                    t.number,
+                    "number" ,
                     c.rgb,
                     "label_name",
                     c.category_name,

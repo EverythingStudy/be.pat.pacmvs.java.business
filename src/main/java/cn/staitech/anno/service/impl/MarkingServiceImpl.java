@@ -440,25 +440,49 @@ public class MarkingServiceImpl implements MarkingService {
                                             JSONObject properties = featureObject.getJSONObject("properties");
                                             Properties properties1 = JSONObject.toJavaObject(JSONObject.parseObject(JSONObject.toJSONString(properties)), Properties.class);
                                             // 写入数据库
-                                            Marking marking = new Marking();
-                                            marking.setAnnotation_id(annotationId);
-                                            marking.setCreate_by(SecurityUtils.getUserId());
+                                            cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
+                                            marking.setAnnotationId(annotationId);
+                                            marking.setArea(properties1.getArea());
+                                            marking.setPerimeter(properties1.getPerimeter());
+                                            marking.setDescription(properties1.getDescription());
+                                            marking.setCategoryId(properties1.getCategory_id());
+                                            marking.setNumber(properties1.getNumber());
+                                            marking.setMeasureType(properties1.getMeasure_type());
+                                            marking.setMeasureRelation(properties1.getMeasure_relation());
+                                            marking.setMeasureName(properties1.getMeasure_name());
+                                            marking.setMeasureNumber(properties1.getMeasure_number());
+                                            marking.setRadius(properties1.getRadius());
+                                            marking.setMeanDistance(properties1.getMean_distance());
+                                            marking.setMaxDistance(properties1.getMax_distance());
+                                            marking.setMinDistance(properties1.getMin_distance());
+                                            marking.setInnerAngle(properties1.getInner_angle());
+                                            marking.setExteriorAngle(properties1.getExterior_angle());
+                                            marking.setAnnotationType(properties1.getAnnotation_type());
+                                            marking.setLocationType(properties1.getLocation_type());
+                                            marking.setCenterPoint(properties1.getCenter_point());
+                                            marking.setPointCount(properties1.getPoint_count());
+                                            marking.setUpdateBy(properties1.getUpdate_by());
+                                            marking.setAnnotationOwner(properties1.getAnnotation_owner());
+                                            marking.setAnnotationUpdateOwner(properties1.getAnnotation_update_owner());
+                                            marking.setProjectId(properties1.getProject_id());
+                                            marking.setImageId(properties1.getImage_id());
+                                            marking.setImageUrl(properties1.getImage_url());
+                                            marking.setCreateBy(SecurityUtils.getUserId());
                                             marking.setGeometry(geometry);
-                                            marking.setSlide_id(slideRes.getSlideId());
-                                            marking.setCreate_time(new Date());
-                                            cn.staitech.common.core.utils.bean.BeanUtils.copyProperties(properties1, marking);
+                                            marking.setSlideId(slideRes.getSlideId());
+                                            marking.setCreateTime(new Date());
                                             // 查询标注是否存在
                                             QueryWrapper<cn.staitech.anno.project.domain.Marking> markingQueryWrapper = new QueryWrapper<>();
                                             markingQueryWrapper
-                                                    .eq("slide_id",marking.getSlide_id())
-                                                    .eq("measure_name",marking.getMeasure_name())
+                                                    .eq("slide_id",marking.getSlideId())
+                                                    .eq("measure_name",marking.getMeasureName())
                                                     .eq("number",marking.getNumber())
-                                                    .eq("category_id",marking.getCategory_id())
+                                                    .eq("category_id",marking.getCategoryId())
                                             ;
                                             cn.staitech.anno.project.domain.Marking markingBy = markingMapperV1.selectOne(markingQueryWrapper);
-                                            if(markingBy != null){
-                                                markingMapper.insert(marking);
-                                            }
+//                                            if(markingBy == null){
+                                                int res = markingMapperV1.insert(marking);
+//                                            }
                                         }
                                     }
                                 }
@@ -492,7 +516,7 @@ public class MarkingServiceImpl implements MarkingService {
         markingQueryWrapper.eq("slide_id", slideId).eq("location_type", "Point");
         int marking = markingMapper.selectCount(markingQueryWrapper);
         Properties properties = new Properties();
-        properties.setPoint_count((long) marking);
+        properties.setPoint_count(marking);
         properties.setMeasure_name("P");
         propertiesList.add(properties);
         // 生成excel文件
