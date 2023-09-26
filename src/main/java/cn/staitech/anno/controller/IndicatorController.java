@@ -83,7 +83,7 @@ public class IndicatorController extends BaseController {
      * 获取结构指标列表 .
      */
     @ApiOperation(value = "查询结构指标接口", notes = "wangfeng")
-    @RequiresPermissions("special:pathology:query")
+    @RequiresPermissions("project:pathology:query")
     @Log(title = "结构指标列表", menu = "结构指标", subMenu = "结构指标", businessType = BusinessType.QUERY)
     @PostMapping("/allIndicator")
     @ApiImplicitParams({
