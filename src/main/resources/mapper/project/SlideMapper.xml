@@ -119,7 +119,7 @@
 
     <select id="pageReviewSlide" parameterType="cn.staitech.anno.project.vo.ReviewSlideIN"
             resultType="cn.staitech.anno.project.vo.ReviewSlideVO">
-        select m.image_id,
+        select m.image_name,
         m.thumb_url,
         m.format,
         m.width,
