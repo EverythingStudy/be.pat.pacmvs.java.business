@@ -299,10 +299,11 @@
         WHERE p.project_id = #{projectId}
     </select>
 
-    <select id="selectCategoryNumber" parameterType="java.lang.Long" resultType="java.lang.Long">
+    <select id="selectCategoryNumber" parameterType="cn.staitech.anno.domain.vo.indicator.IndicatorAndOrganizationIdVO" resultType="java.lang.Long">
         select count(*)
         from tb_pathological_indicator_category
         where indicator_id = #{indicatorId}
+        and organization_id = #{organizationId}
           and del_flag = 0
     </select>
 

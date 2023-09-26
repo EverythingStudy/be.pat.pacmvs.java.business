@@ -1,6 +1,7 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.Indicator;
+import cn.staitech.anno.domain.vo.indicator.IndicatorAndOrganizationIdVO;
 import cn.staitech.anno.domain.vo.indicator.IndicatorGetVO;
 import cn.staitech.anno.domain.vo.indicator.IndicatorReviseVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticIndicatorListInVO;
@@ -60,7 +61,8 @@ public class IndicatorServicelmpl implements IndicatorService {
         // 脏器
         Map<String, String> organMap = organService.selectMap();
 
-        indicator.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+        indicator.setOrganizationId(organizationId);
 
 
         PageHelper.startPage(pageNum, pageSize).setReasonable(true);
@@ -75,10 +77,11 @@ public class IndicatorServicelmpl implements IndicatorService {
                 obj.setOrganName(organMap.get(obj.getOrganId()));
             }
 
+            IndicatorAndOrganizationIdVO indicatorAndOrganizationIdVO = new IndicatorAndOrganizationIdVO();
+            indicatorAndOrganizationIdVO.setIndicatorId(obj.getIndicatorId());
+            indicatorAndOrganizationIdVO.setOrganizationId(organizationId);
             // 查询总数
-            obj.setAnnotationCategoryTotal(pathologicalIndicatorCategoryService.selectCategoryNumber(obj.getIndicatorId()));
-
-
+            obj.setAnnotationCategoryTotal(pathologicalIndicatorCategoryService.selectCategoryNumber(indicatorAndOrganizationIdVO));
         }
         PageMaster<Indicator> pageMaster = new PageMaster<>(list);
         return pageMaster;
@@ -98,7 +101,8 @@ public class IndicatorServicelmpl implements IndicatorService {
         // 脏器
         Map<String, String> organMap = organService.selectMap();
 
-        indicator.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+        indicator.setOrganizationId(organizationId);
 
         List<Indicator> list = indicatorMapper.selectIndicatorList(indicator);
 
@@ -110,8 +114,11 @@ public class IndicatorServicelmpl implements IndicatorService {
                 obj.setOrganName(organMap.get(obj.getOrganId()));
             }
 
+            IndicatorAndOrganizationIdVO indicatorAndOrganizationIdVO = new IndicatorAndOrganizationIdVO();
+            indicatorAndOrganizationIdVO.setIndicatorId(obj.getIndicatorId());
+            indicatorAndOrganizationIdVO.setOrganizationId(organizationId);
             // 查询总数
-            obj.setAnnotationCategoryTotal(pathologicalIndicatorCategoryService.selectCategoryNumber(obj.getIndicatorId()));
+            obj.setAnnotationCategoryTotal(pathologicalIndicatorCategoryService.selectCategoryNumber(indicatorAndOrganizationIdVO));
 
         }
 

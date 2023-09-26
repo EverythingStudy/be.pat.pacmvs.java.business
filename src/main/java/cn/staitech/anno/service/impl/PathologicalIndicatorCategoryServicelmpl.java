@@ -5,6 +5,7 @@ import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.project.ProjectExt;
 import cn.staitech.anno.domain.vo.LabelListVO;
 import cn.staitech.anno.domain.vo.LabelVO;
+import cn.staitech.anno.domain.vo.indicator.IndicatorAndOrganizationIdVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListOutVO;
 import cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper;
@@ -159,8 +160,8 @@ public class PathologicalIndicatorCategoryServicelmpl implements PathologicalInd
      * 查询病例指标下的标注类别数量
      */
     @Override
-    public Long selectCategoryNumber(Long indicatorId) {
-        return pathologicalIndicatorCategoryMapper.selectCategoryNumber(indicatorId);
+    public Long selectCategoryNumber(  IndicatorAndOrganizationIdVO indicatorAndOrganizationIdVO ) {
+        return pathologicalIndicatorCategoryMapper.selectCategoryNumber(indicatorAndOrganizationIdVO);
     }
 
     /**
