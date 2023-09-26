@@ -28,12 +28,12 @@
             <result property="roundName" column="round_name" jdbcType="VARCHAR"/>
     </resultMap>
     <select id="exportReview" parameterType="Map" resultType="cn.staitech.anno.project.vo.ReviewVO">
-        select r.*,p.project_name,i.image_code,rr.review_content as content,tr.round_name,g.group_name,tt.topic_name
+        select r.*,p.project_name,i.image_name,rr.review_content as content,tr.round_name,g.group_name,tt.topic_name
         from tb_review r
             left join tb_project p on r.project_id = p.project_id
             left join tb_slide s on r.slide_id = s.slide_id
             left join tb_image i on s.image_id = i.image_id
-            left join tb_review_round rr on s.slide_id = rr.review_round_id
+            left join tb_review_round rr on s.review_round_id = rr.review_round_id
             left join tb_round tr on rr.round_id = tr.round_id
             left join tb_group g on rr.group_id = g.group_id
             left join tb_topic tt on rr.topic_id = tt.topic_id
