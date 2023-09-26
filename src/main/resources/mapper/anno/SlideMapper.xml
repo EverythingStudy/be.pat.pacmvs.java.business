@@ -727,7 +727,8 @@
                m.resolution_y,
                m.source_lens,
                m.image_path,
-               m.thumb_url
+               m.thumb_url,
+               m.image_name
         from tb_slide s
                  left join tb_image m on m.image_id = s.image_id
         <!--   left join tb_image_csv csv on s.id = s.image_csv_id-->
@@ -742,7 +743,7 @@
                 AND m.image_name LIKE CONCAT('%', #{imageName}, '%')
             </if>
             <if test="gender != null">
-                AND m.gender = #{gender, jdbcType=NUMERIC}
+                AND s.gender = #{gender, jdbcType=NUMERIC}
             </if>
             <if test="lesionType != null">
                 AND s.lesion_type1 LIKE CONCAT('%', #{lesionType}, '%')
@@ -810,7 +811,8 @@
                m.resolution_y,
                m.source_lens,
                m.image_path,
-               m.thumb_url
+               m.thumb_url,
+               m.image_name
         from tb_slide s
                  left join tb_image m on m.image_id = s.image_id
         <where>
@@ -824,7 +826,7 @@
                 AND m.image_name LIKE CONCAT('%', #{imageName}, '%')
             </if>
             <if test="gender != null">
-                AND m.gender = #{gender, jdbcType=NUMERIC}
+                AND s.gender = #{gender, jdbcType=NUMERIC}
             </if>
             <if test="lesionType != null">
                 AND s.lesion_type1 LIKE CONCAT('%', #{lesionType}, '%')
@@ -892,7 +894,8 @@
                m.resolution_y,
                m.source_lens,
                m.image_path,
-               m.thumb_url
+               m.thumb_url,
+               m.image_name
         from tb_slide s
                  left join tb_image m on m.image_id = s.image_id
         <where>
@@ -902,5 +905,3 @@
         </where>
     </select>
 </mapper>
-
-

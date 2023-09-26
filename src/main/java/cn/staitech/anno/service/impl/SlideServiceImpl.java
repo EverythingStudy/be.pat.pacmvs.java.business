@@ -491,7 +491,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
     }
 
 
-    // =========================
+    // ==================================================
 
     /**
      * 添加标注切片
@@ -521,14 +521,10 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
 
             ImageCsv imageCsv = imageCsvMapper.selectOne(csvQueryWrapper);
 
-            log.info("imageCsv:{}", imageCsv);
-
             Slide slide = new Slide();
-
-
             if (imageCsv != null) {
                 BeanUtil.copyProperties(imageCsv, slide);
-                // slide.setImageCsvId(imageCsv.getId());
+                slide.setImageCsvId(imageCsv.getId());
             }
 
             slide.setProjectId(projectId);
