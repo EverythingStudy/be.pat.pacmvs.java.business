@@ -73,7 +73,7 @@ public class CacheUtils {
      */
     public static void indicatorCache(Indicator indicator) {
         cacheUtils.iCache.removeList(CacheConstant.INDICATOR_CACHE_KEY);
-        List<Indicator> indicators = cacheUtils.indicatorService.selectIndicatorList(indicator);
+        List<Indicator> indicators = cacheUtils.indicatorService.selectIndicatorList1(indicator);
         Map<String, Object> indicatorMap = indicators.stream()
                 .collect(Collectors.toMap(indicator1 -> indicator1.getIndicatorId() + "", Function.identity(), (a, b) -> a));
         cacheUtils.iCache.putObjectAllToMap(CacheConstant.INDICATOR_CACHE_KEY, indicatorMap, -1);

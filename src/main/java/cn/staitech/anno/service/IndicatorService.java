@@ -5,6 +5,7 @@ import cn.staitech.anno.domain.vo.indicator.IndicatorGetVO;
 import cn.staitech.anno.domain.vo.indicator.IndicatorReviseVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticIndicatorListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticIndicatorListOutVO;
+import cn.staitech.anno.utils.PageMaster;
 
 import java.util.List;
 
@@ -24,7 +25,16 @@ public interface IndicatorService {
      * @param indicator 查询的条件
      * @return 结果
      */
-    public List<Indicator> selectIndicatorList(Indicator indicator);
+    public PageMaster<Indicator> selectIndicatorList(Indicator indicator, Integer pageNum, Integer pageSize);
+
+
+    /**
+     * 展示病例指标
+     *
+     * @param indicator 查询的条件
+     * @return 结果
+     */
+    public List<Indicator> selectIndicatorList1(Indicator indicator);
 
     /**
      * 展示病例指标详情
@@ -94,6 +104,7 @@ public interface IndicatorService {
     public Integer selectSpecial(Long indicatorId);
 
     // 2.0 新修改====================================
+
     /**
      * 查询指标列表
      *

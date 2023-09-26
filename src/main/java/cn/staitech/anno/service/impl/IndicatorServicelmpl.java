@@ -9,8 +9,9 @@ import cn.staitech.anno.mapper.IndicatorMapper;
 import cn.staitech.anno.service.IndicatorService;
 import cn.staitech.anno.service.OrganService;
 import cn.staitech.anno.service.SpeciesService;
+import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.security.utils.SecurityUtils;
-import cn.staitech.system.api.domain.SysUser;
+import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -39,10 +40,6 @@ public class IndicatorServicelmpl implements IndicatorService {
      */
     @Override
     public int insertIndicator(Indicator indicator) {
-/*        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-        indicator.setOrganizationId(sysUser.getOrganizationId());
-        indicator.setCreateBy(sysUser.getUserId());
-        indicator.setNumber(indicator.getSpeciesId() + indicator.getOrganId());*/
         return indicatorMapper.insertIndicator(indicator);
     }
 
@@ -53,26 +50,19 @@ public class IndicatorServicelmpl implements IndicatorService {
      * @return 结果
      */
     @Override
-    public List<Indicator> selectIndicatorList(Indicator indicator) {
+    public PageMaster<Indicator> selectIndicatorList(Indicator indicator, Integer pageNum, Integer pageSize) {
         // 种属
         Map<Long, String> sepeciesMap = speciesService.selectMap();
         // 脏器
         Map<String, String> organMap = organService.selectMap();
 
-        //LoginUser loginUser = getLoginUser();
-        // 判断用户为admin或者超级管理员
-        /*
-                if(SysUser.isAdmin(SecurityUtils.getUserId()) || loginUser.getSysUser().getRoleId() == 1L){
-
-                }
-        */
-
         indicator.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
 
-        // ===========================================
+
+        PageHelper.startPage(pageNum, pageSize).setReasonable(true);
+
         List<Indicator> list = indicatorMapper.selectIndicatorList(indicator);
 
-        log.info("-------------{}", list);
         for (Indicator obj : list) {
             if (sepeciesMap.containsKey(obj.getSpeciesId())) {
                 obj.setSpeciesName(sepeciesMap.get(obj.getSpeciesId()));
@@ -81,6 +71,37 @@ public class IndicatorServicelmpl implements IndicatorService {
                 obj.setOrganName(organMap.get(obj.getOrganId()));
             }
         }
+        PageMaster<Indicator> pageMaster = new PageMaster<>(list);
+        return pageMaster;
+    }
+
+
+    /**
+     * 展示病例指标
+     *
+     * @param indicator 查询的条件
+     * @return 结果
+     */
+    @Override
+    public List<Indicator> selectIndicatorList1(Indicator indicator) {
+        // 种属
+        Map<Long, String> sepeciesMap = speciesService.selectMap();
+        // 脏器
+        Map<String, String> organMap = organService.selectMap();
+
+        indicator.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+
+        List<Indicator> list = indicatorMapper.selectIndicatorList(indicator);
+
+        for (Indicator obj : list) {
+            if (sepeciesMap.containsKey(obj.getSpeciesId())) {
+                obj.setSpeciesName(sepeciesMap.get(obj.getSpeciesId()));
+            }
+            if (organMap.containsKey(obj.getOrganId())) {
+                obj.setOrganName(organMap.get(obj.getOrganId()));
+            }
+        }
+
         return list;
     }
 

@@ -16,7 +16,6 @@ import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
-import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.*;
 import lombok.SneakyThrows;
 import org.springframework.beans.BeanUtils;
@@ -91,11 +90,16 @@ public class IndicatorController extends BaseController {
             @ApiImplicitParam(name = "pageNum", value = "当前记录起始索引", dataTypeClass = Integer.class, paramType = "query", example = "1"),
             @ApiImplicitParam(name = "pageSize", value = "每页显示记录数", dataTypeClass = Integer.class, paramType = "query", example = "10")})
     public R<PageMaster<Indicator>> list1(@RequestBody IndicatorListVO indicatorListVO) {
-        PageHelper.startPage(indicatorListVO.getPageNum(), indicatorListVO.getPageSize()).setReasonable(true);
+/*        PageHelper.startPage(indicatorListVO.getPageNum(), indicatorListVO.getPageSize()).setReasonable(true);
         Indicator indicator = new Indicator();
         BeanUtils.copyProperties(indicatorListVO, indicator);
-        List<Indicator> indicators = indicatorService.selectIndicatorList(indicator);
-        PageMaster<Indicator> pageMaster = new PageMaster<>(indicators);
+        List<Indicator> indicators = indicatorService.selectIndicatorList(indicator, indicatorListVO.getPageNum(), indicatorListVO.getPageSize());
+        PageMaster<Indicator> pageMaster = new PageMaster<>(indicators);*/
+
+        Indicator indicator = new Indicator();
+        BeanUtils.copyProperties(indicatorListVO, indicator);
+
+        PageMaster<Indicator> pageMaster = indicatorService.selectIndicatorList(indicator, indicatorListVO.getPageNum(), indicatorListVO.getPageSize());
         return R.ok(pageMaster);
     }
 
