@@ -201,9 +201,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                     if (!Optional.ofNullable(chunk.getProjectId()).isPresent()) {
                         throw new Exception("项目不可为空");
                     }
-                    System.out.println("111111111111111");
                     markingService.zipExport(filesBy.getFilesPath(), chunk.getProjectId());
-                    System.out.println("22222222222222");
                     break;
             }
         }
