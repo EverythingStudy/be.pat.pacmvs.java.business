@@ -491,66 +491,10 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
 
     // =========================
 
-
-    /**
-     * #### 关连IMAGE CSV
-     * 添加标注切片
-     *
-     * @param projectId
-     * @param topicIds
-     * @return
-     */
-//    @Override
-//    public boolean addAnnoSlidesBatch(AddSlideVO addSlideVO) {
-//        Long projectId = addSlideVO.getProjectId();
-//        List<Long> topicIds = addSlideVO.getTopicIds();
-//        Long reviewRoundId = addSlideVO.getReviewRoundId();
-//
-//        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-//
-//
-//        QueryWrapper<ImageCsv> query = Wrappers.query();
-//        query.in("topic_id", topicIds);
-//        List<ImageCsv> imageCsvList = imageCsvMapper.selectList(query);
-//        // List<Slide> slideList = new ArrayList<>(imageCsvList.size());
-//        for (ImageCsv imageCsv : imageCsvList) {
-//
-//            // 匹配图片
-//            QueryWrapper<Image> imageQueryWrapper = Wrappers.query();
-//            imageQueryWrapper.eq("file_name", imageCsv.getImageName());
-//            imageQueryWrapper.eq("topic_id", imageCsv.getTopicId());
-//            imageQueryWrapper.eq("organization_id", sysUser.getOrganizationId());
-//            imageQueryWrapper.eq("status", 1);
-//            imageQueryWrapper.eq("delete_flag", 1);
-//
-//            imageQueryWrapper.orderByDesc("image_id");
-//            Image image = imageMapper.selectOne(imageQueryWrapper);
-//
-//            if (image != null) {
-//                Slide slide = new Slide();
-//                slide.setProjectId(projectId);
-//                slide.setImageId(image.getImageId());
-//
-//                slide.setImageCsvId(imageCsv.getId());
-//                slide.setCreateBy(sysUser.getUserId());
-//                slide.setCreateTime(new Date());
-//                slide.setReviewRoundId(reviewRoundId);
-//
-//                slideMapper.insert(slide);
-//                // slideList.add(slide);
-//            }
-//        }
-//
-//        // slideMapper.insertSlide(slideList);
-//        return true;
-//    }
-
-
     /**
      * 添加标注切片
      *
-     * @param projectId
-     * @param topicIds
+     * @param addSlideVO
      * @return
      */
     @Override
@@ -566,20 +510,16 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         queryWrapper.in("topic_id", topicIds);
         List<Image> imageList = imageMapper.selectList(queryWrapper);
 
-        // List<Slide> slideList = new ArrayList<>(imageCsvList.size());
         for (Image imageObj : imageList) {
             // 匹配图片
             QueryWrapper<ImageCsv> csvQueryWrapper = Wrappers.query();
             csvQueryWrapper.eq("image_name", imageObj.getImageName());
-/*            csvQueryWrapper.eq("topic_id", imageObj.getTopicId());
-            csvQueryWrapper.eq("organization_id", sysUser.getOrganizationId());
-            csvQueryWrapper.eq("status", 1);
-            csvQueryWrapper.eq("delete_flag", 1);*/
-
             csvQueryWrapper.orderByDesc("id");
+
             ImageCsv imageCsv = imageCsvMapper.selectOne(csvQueryWrapper);
 
             Slide slide = new Slide();
+            BeanUtil.copyProperties(imageCsv, slide);
 
             if (imageCsv != null) {
                 slide.setImageCsvId(imageCsv.getId());
@@ -587,17 +527,11 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
 
             slide.setProjectId(projectId);
             slide.setImageId(imageObj.getImageId());
-
-
             slide.setCreateBy(sysUser.getUserId());
             slide.setCreateTime(new Date());
             slide.setReviewRoundId(reviewRoundId);
             slideMapper.insert(slide);
-
-            // slideList.add(slide);
         }
-
-        // slideMapper.insertSlide(slideList);
         return true;
     }
 

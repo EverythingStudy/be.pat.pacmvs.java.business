@@ -28,7 +28,7 @@ public class Slide {
     /**
      * 切片ID
      */
-    @TableId(value = "slide_id", type = IdType.AUTO)
+    @TableId(value = "slide_id", type = IdType.INPUT)
     @ApiModelProperty(value = "切片ID")
     private Long slideId;
 
@@ -135,21 +135,21 @@ public class Slide {
      */
     @TableField(value = "ai_check")
     @ApiModelProperty(value = "AI筛阴：1:阴性、2:阳性、0:未筛、3:未知")
-    private Integer aiCheck;
+    private Short aiCheck;
 
     /**
      * AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败
      */
     @TableField(value = "ai_analyzed")
     @ApiModelProperty(value = "AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败")
-    private Integer aiAnalyzed;
+    private Short aiAnalyzed;
 
     /**
      * 人工诊断状态：0未诊断，1已诊断
      */
     @TableField(value = "diagnosis")
     @ApiModelProperty(value = "人工诊断状态：0未诊断，1已诊断")
-    private Integer diagnosis;
+    private Short diagnosis;
 
     /**
      * geojson文件地址
@@ -200,5 +200,144 @@ public class Slide {
     @ApiModelProperty(value = "csv文件记录ID")
     private Long imageCsvId;
 
-}
+    /**
+     * 组别
+     */
+    @TableField(value = "group_name")
+    @ApiModelProperty(value = "组别")
+    private String groupName;
 
+    /**
+     * 性别
+     */
+    @TableField(value = "gender")
+    @ApiModelProperty(value = "性别")
+    private String gender;
+
+    /**
+     * 种属
+     */
+    @TableField(value = "species")
+    @ApiModelProperty(value = "种属")
+    private String species;
+
+    /**
+     * 品系
+     */
+    @TableField(value = "product_series")
+    @ApiModelProperty(value = "品系")
+    private String productSeries;
+
+    /**
+     * 剂量
+     */
+    @TableField(value = "dosage")
+    @ApiModelProperty(value = "剂量")
+    private String dosage;
+
+    /**
+     * 实验动物来源
+     */
+    @TableField(value = "animal_source")
+    @ApiModelProperty(value = "实验动物来源")
+    private String animalSource;
+
+    /**
+     * 动物接收周龄
+     */
+    @TableField(value = "receiving_week")
+    @ApiModelProperty(value = "动物接收周龄")
+    private String receivingWeek;
+
+    /**
+     * 动物给药周期
+     */
+    @TableField(value = "dosing_cycle")
+    @ApiModelProperty(value = "动物给药周期")
+    private String dosingCycle;
+
+    /**
+     * 动物恢复周期
+     */
+    @TableField(value = "recovery_cycle")
+    @ApiModelProperty(value = "动物恢复周期")
+    private String recoveryCycle;
+
+    /**
+     * 死亡日期
+     */
+    @TableField(value = "date_of_death")
+    @ApiModelProperty(value = "死亡日期")
+    private String dateOfDeath;
+
+    /**
+     * 移走原因
+     */
+    @TableField(value = "remove_reason")
+    @ApiModelProperty(value = "移走原因")
+    private String removeReason;
+
+    /**
+     * 脏器
+     */
+    @TableField(value = "organ")
+    @ApiModelProperty(value = "脏器")
+    private String organ;
+
+    /**
+     * 病变类型1
+     */
+    @TableField(value = "lesion_type1")
+    @ApiModelProperty(value = "病变类型1")
+    private String lesionType1;
+
+    /**
+     * 病变程度1
+     */
+    @TableField(value = "lesion_degree1")
+    @ApiModelProperty(value = "病变程度1")
+    private String lesionDegree1;
+
+    /**
+     * 病变类型2
+     */
+    @TableField(value = "lesion_type2")
+    @ApiModelProperty(value = "病变类型2")
+    private String lesionType2;
+
+    /**
+     * 病变程度2
+     */
+    @TableField(value = "lesion_degree2")
+    @ApiModelProperty(value = "病变程度2")
+    private String lesionDegree2;
+
+    /**
+     * 专题名称
+     */
+    @TableField(value = "topic_name")
+    @ApiModelProperty(value = "专题名称")
+    private String topicName;
+
+    /**
+     * 逻辑删除状态（0删除,1未删除）
+     */
+    @TableField(value = "delete_flag")
+    @ApiModelProperty(value = "逻辑删除状态（0删除,1未删除）")
+    private Byte deleteFlag;
+
+    /**
+     * 机构ID
+     */
+    @TableField(value = "organization_id")
+    @ApiModelProperty(value = "机构ID")
+    private Long organizationId;
+
+    /**
+     * 所在主机ID
+     */
+    @TableField(value = "host_id")
+    @ApiModelProperty(value = "所在主机ID")
+    private Byte hostId;
+
+}

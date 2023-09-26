@@ -10,8 +10,8 @@
         <result column="human_annotation_total" jdbcType="INTEGER" property="humanAnnotationTotal"/>
         <result column="algorithm_annotation_total" jdbcType="INTEGER" property="algorithmAnnotationTotal"/>
         <result column="examination_slide_total" jdbcType="INTEGER" property="examinationSlideTotal"/>
-        <result column="process_flag" jdbcType="INTEGER" property="processFlag"/>
-        <result column="examination_flag" jdbcType="INTEGER" property="examinationFlag"/>
+        <result column="process_flag" jdbcType="SMALLINT" property="processFlag"/>
+        <result column="examination_flag" jdbcType="SMALLINT" property="examinationFlag"/>
         <result column="create_by" jdbcType="BIGINT" property="createBy"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_by" jdbcType="BIGINT" property="updateBy"/>
@@ -19,9 +19,9 @@
         <result column="description" jdbcType="VARCHAR" property="description"/>
         <result column="group_id" jdbcType="INTEGER" property="groupId"/>
         <result column="is_delete" jdbcType="INTEGER" property="isDelete"/>
-        <result column="ai_check" jdbcType="INTEGER" property="aiCheck"/>
-        <result column="ai_analyzed" jdbcType="INTEGER" property="aiAnalyzed"/>
-        <result column="diagnosis" jdbcType="INTEGER" property="diagnosis"/>
+        <result column="ai_check" jdbcType="SMALLINT" property="aiCheck"/>
+        <result column="ai_analyzed" jdbcType="SMALLINT" property="aiAnalyzed"/>
+        <result column="diagnosis" jdbcType="SMALLINT" property="diagnosis"/>
         <result column="geojson_url" jdbcType="VARCHAR" property="geojsonUrl"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="status" jdbcType="VARCHAR" property="status"/>
@@ -29,6 +29,26 @@
         <result column="review_round_id" jdbcType="BIGINT" property="reviewRoundId"/>
         <result column="topic_id" jdbcType="BIGINT" property="topicId"/>
         <result column="image_csv_id" jdbcType="BIGINT" property="imageCsvId"/>
+        <result column="group_name" jdbcType="VARCHAR" property="groupName"/>
+        <result column="gender" jdbcType="VARCHAR" property="gender"/>
+        <result column="species" jdbcType="VARCHAR" property="species"/>
+        <result column="product_series" jdbcType="VARCHAR" property="productSeries"/>
+        <result column="dosage" jdbcType="VARCHAR" property="dosage"/>
+        <result column="animal_source" jdbcType="VARCHAR" property="animalSource"/>
+        <result column="receiving_week" jdbcType="VARCHAR" property="receivingWeek"/>
+        <result column="dosing_cycle" jdbcType="VARCHAR" property="dosingCycle"/>
+        <result column="recovery_cycle" jdbcType="VARCHAR" property="recoveryCycle"/>
+        <result column="date_of_death" jdbcType="VARCHAR" property="dateOfDeath"/>
+        <result column="remove_reason" jdbcType="VARCHAR" property="removeReason"/>
+        <result column="organ" jdbcType="VARCHAR" property="organ"/>
+        <result column="lesion_type1" jdbcType="VARCHAR" property="lesionType1"/>
+        <result column="lesion_degree1" jdbcType="VARCHAR" property="lesionDegree1"/>
+        <result column="lesion_type2" jdbcType="VARCHAR" property="lesionType2"/>
+        <result column="lesion_degree2" jdbcType="VARCHAR" property="lesionDegree2"/>
+        <result column="topic_name" jdbcType="VARCHAR" property="topicName"/>
+        <result column="delete_flag" jdbcType="TINYINT" property="deleteFlag"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="host_id" jdbcType="TINYINT" property="hostId"/>
     </resultMap>
     <sql id="Base_Column_List">
         slide_id,
@@ -55,7 +75,27 @@
         round_id,
         review_round_id,
         topic_id,
-        image_csv_id
+        image_csv_id,
+        group_name,
+        gender,
+        species,
+        product_series,
+        dosage,
+        animal_source,
+        receiving_week,
+        dosing_cycle,
+        recovery_cycle,
+        date_of_death,
+        remove_reason,
+        organ,
+        lesion_type1,
+        lesion_degree1,
+        lesion_type2,
+        lesion_degree2,
+        topic_name,
+        delete_flag,
+        organization_id,
+        host_id
     </sql>
 
     <resultMap type="cn.staitech.anno.domain.Slide" id="SlideResult">
@@ -658,6 +698,26 @@
                s.description,
                s.ai_analyzed,
                s.ai_check,
+               s.group_name,
+               s.gender,
+               s.species,
+               s.product_series,
+               s.dosage,
+               s.animal_source,
+               s.receiving_week,
+               s.dosing_cycle,
+               s.recovery_cycle,
+               s.date_of_death,
+               s.remove_reason,
+               s.organ,
+               s.lesion_type1,
+               s.lesion_degree1,
+               s.lesion_type2,
+               s.lesion_degree2,
+               s.topic_name,
+               s.delete_flag,
+               s.organization_id,
+               s.host_id,
                m.image_id,
                m.thumb_url,
                m.format,
@@ -667,41 +727,10 @@
                m.resolution_y,
                m.source_lens,
                m.image_path,
-        m.thumb_url
-   <!--   ,         csv.id,
-               csv.image_id,
-               csv.image_name,
-               csv.group_name,
-               csv.gender,
-               csv.species,
-               csv.product_series,
-               csv.dosage,
-               csv.animal_source,
-               csv.receiving_week,
-               csv.dosing_cycle,
-               csv.recovery_cycle,
-               csv.date_of_death,
-               csv.remove_reason,
-               csv.remark,
-               csv.organ,
-               csv.lesion_type1,
-               csv.lesion_degree1,
-               csv.lesion_type2,
-               csv.lesion_degree2,
-               csv.process_flag,
-               csv.create_by,
-               csv.create_time,
-               csv.update_by,
-               csv.update_time,
-               csv.topic_id,
-               csv.topic_name,
-               csv.status,
-               csv.delete_flag,
-               csv.organization_id,
-               csv.host_id-->
+               m.thumb_url
         from tb_slide s
                  left join tb_image m on m.image_id = s.image_id
-              <!--   left join tb_image_csv csv on csv.id = s.image_csv_id-->
+        <!--   left join tb_image_csv csv on s.id = s.image_csv_id-->
         <where>
             <if test="projectId != null">
                 AND s.project_id = #{projectId, jdbcType=NUMERIC}
@@ -712,15 +741,18 @@
             <if test="imageName != null">
                 AND m.image_name LIKE CONCAT('%', #{imageName}, '%')
             </if>
-<!--            <if test="lesionType != null">
-                AND csv.lesion_type1 LIKE CONCAT('%', #{lesionType}, '%')
-                AND csv.lesion_type2 LIKE CONCAT('%', #{lesionType}, '%')
+            <if test="gender != null">
+                AND m.gender = #{gender, jdbcType=NUMERIC}
+            </if>
+            <if test="lesionType != null">
+                AND s.lesion_type1 LIKE CONCAT('%', #{lesionType}, '%')
+                AND s.lesion_type2 LIKE CONCAT('%', #{lesionType}, '%')
             </if>
 
             <if test="lesionDegree != null">
-                AND csv.lesion_degree1 LIKE CONCAT('%', #{lesionDegree}, '%')
-                AND csv.lesion_degree2 LIKE CONCAT('%', #{lesionDegree}, '%')
-            </if>-->
+                AND s.lesion_degree1 LIKE CONCAT('%', #{lesionDegree}, '%')
+                AND s.lesion_degree2 LIKE CONCAT('%', #{lesionDegree}, '%')
+            </if>
             <if test="imageName != null and imageName != ''">
                 <!-- 图像名称 -->
                 and m.image_name like concat('%', #{imageName}, '%')
@@ -748,6 +780,26 @@
                s.remark,
                s.ai_analyzed,
                s.ai_check,
+               s.group_name,
+               s.gender,
+               s.species,
+               s.product_series,
+               s.dosage,
+               s.animal_source,
+               s.receiving_week,
+               s.dosing_cycle,
+               s.recovery_cycle,
+               s.date_of_death,
+               s.remove_reason,
+               s.organ,
+               s.lesion_type1,
+               s.lesion_degree1,
+               s.lesion_type2,
+               s.lesion_degree2,
+               s.topic_name,
+               s.delete_flag,
+               s.organization_id,
+               s.host_id,
                m.image_id,
                m.image_path,
                m.thumb_url,
@@ -759,39 +811,8 @@
                m.source_lens,
                m.image_path,
                m.thumb_url
-        <!--,
-               csv.id,
-               csv.image_id,
-               csv.image_name,
-               csv.group_name,
-               csv.gender,
-               csv.species,
-               csv.product_series,
-               csv.dosage,
-               csv.animal_source,
-               csv.receiving_week,
-               csv.dosing_cycle,
-               csv.recovery_cycle,
-               csv.date_of_death,
-               csv.remove_reason,
-               csv.organ,
-               csv.lesion_type1,
-               csv.lesion_degree1,
-               csv.lesion_type2,
-               csv.lesion_degree2,
-               csv.process_flag,
-               csv.create_by,
-               csv.create_time,
-               csv.update_by,
-               csv.update_time,
-               csv.topic_id,
-               csv.topic_name,
-               csv.delete_flag,
-               csv.organization_id,
-               csv.host_id-->
         from tb_slide s
                  left join tb_image m on m.image_id = s.image_id
-        <!-- left join tb_image_csv csv on csv.id = s.image_csv_id-->
         <where>
             <if test="projectId != null">
                 AND s.project_id = #{projectId, jdbcType=NUMERIC}
@@ -802,15 +823,17 @@
             <if test="imageName != null">
                 AND m.image_name LIKE CONCAT('%', #{imageName}, '%')
             </if>
-            <!--            <if test="lesionType != null">
-                            AND csv.lesion_type1 LIKE CONCAT('%', #{lesionType}, '%')
-                            AND csv.lesion_type2 LIKE CONCAT('%', #{lesionType}, '%')
-                        </if>
-
-                        <if test="lesionDegree != null">
-                            AND csv.lesion_degree1 LIKE CONCAT('%', #{lesionDegree}, '%')
-                            AND csv.lesion_degree2 LIKE CONCAT('%', #{lesionDegree}, '%')
-                        </if>-->
+            <if test="gender != null">
+                AND m.gender = #{gender, jdbcType=NUMERIC}
+            </if>
+            <if test="lesionType != null">
+                AND s.lesion_type1 LIKE CONCAT('%', #{lesionType}, '%')
+                AND s.lesion_type2 LIKE CONCAT('%', #{lesionType}, '%')
+            </if>
+            <if test="lesionDegree != null">
+                AND s.lesion_degree1 LIKE CONCAT('%', #{lesionDegree}, '%')
+                AND s.lesion_degree2 LIKE CONCAT('%', #{lesionDegree}, '%')
+            </if>
             <if test="imageName != null and imageName != ''">
                 <!-- 图像名称 -->
                 and m.image_name like concat('%', #{imageName}, '%')
@@ -829,7 +852,8 @@
     </select>
 
 
-    <select id="pageImageCsvListVOBy" parameterType="long" resultType="cn.staitech.anno.domain.vo.marking.out.SlideSelectBy">
+    <select id="pageImageCsvListVOBy" parameterType="long"
+            resultType="cn.staitech.anno.domain.vo.marking.out.SlideSelectBy">
         select s.slide_id,
                s.review_round_id,
                s.description,
@@ -838,6 +862,26 @@
                s.diagnosis,
                s.status,
                s.ai_check,
+               s.group_name,
+               s.gender,
+               s.species,
+               s.product_series,
+               s.dosage,
+               s.animal_source,
+               s.receiving_week,
+               s.dosing_cycle,
+               s.recovery_cycle,
+               s.date_of_death,
+               s.remove_reason,
+               s.organ,
+               s.lesion_type1,
+               s.lesion_degree1,
+               s.lesion_type2,
+               s.lesion_degree2,
+               s.topic_name,
+               s.delete_flag,
+               s.organization_id,
+               s.host_id,
                m.image_id,
                m.thumb_url,
                m.image_path,
@@ -849,38 +893,8 @@
                m.source_lens,
                m.image_path,
                m.thumb_url
-        <!--       csv.id,
-               csv.image_id,
-               csv.image_name,
-               csv.group_name,
-               csv.gender,
-               csv.species,
-               csv.product_series,
-               csv.dosage,
-               csv.animal_source,
-               csv.receiving_week,
-               csv.dosing_cycle,
-               csv.recovery_cycle,
-               csv.date_of_death,
-               csv.remove_reason,
-               csv.organ,
-               csv.lesion_type1,
-               csv.lesion_degree1,
-               csv.lesion_type2,
-               csv.lesion_degree2,
-               csv.process_flag,
-               csv.create_by,
-               csv.create_time,
-               csv.update_by,
-               csv.update_time,
-               csv.topic_id,
-               csv.topic_name,
-               csv.delete_flag,
-               csv.organization_id,
-               csv.host_id-->
         from tb_slide s
                  left join tb_image m on m.image_id = s.image_id
-        <!--  left join tb_image_csv csv on csv.id = s.image_csv_id-->
         <where>
             <if test="slideId != null">
                 s.slide_id = #{slideId, jdbcType=NUMERIC}
