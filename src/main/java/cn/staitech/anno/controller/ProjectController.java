@@ -374,7 +374,6 @@ public class ProjectController extends BaseController {
     @Transactional
     public R<String> editProjectStatus(@Validated @RequestBody UpdateProjectStatusVO req) {
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-
         Project project = new Project();
         project.setProjectId(req.getProjectId());
         project.setStatus(req.getStatus());

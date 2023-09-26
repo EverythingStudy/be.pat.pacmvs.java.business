@@ -10,6 +10,7 @@ import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
+import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
@@ -39,8 +40,12 @@ public class ImageController extends BaseController {
 
     /**
      * 切片列表 .
+     * 原始切片
+     * 57
+     * 1
+     * section:slices:query
      */
-    // @RequiresPermissions("anno:image:list")
+    @RequiresPermissions("section:slices:query")
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "切片列表", notes = "切片列表 - 王峰")
     @ApiImplicitParams({

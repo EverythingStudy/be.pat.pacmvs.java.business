@@ -3,6 +3,7 @@ package cn.staitech.anno.controller;
 import cn.staitech.anno.domain.file.FileNode;
 import cn.staitech.anno.domain.file.PathVO;
 import cn.staitech.common.core.domain.R;
+import cn.staitech.common.security.annotation.RequiresPermissions;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,6 +40,7 @@ public class FileManagerController {
      * @param vo
      * @return
      */
+    @RequiresPermissions("section:slices:distribute")
     @PostMapping(value = "/list")
     public R<List<FileNode>> list(@RequestBody PathVO vo) {
         String path = vo.getPath();

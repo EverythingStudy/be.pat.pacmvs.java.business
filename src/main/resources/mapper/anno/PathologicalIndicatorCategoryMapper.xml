@@ -247,8 +247,9 @@
     <!-- 结构编码在当前列表内不可重复；C：结构名称在当前列表内不可重复。D：图层顺序在当前列表内不可重复；E：颜色值在当前列表不可重复 -->
     <select id="selectIndicatorMessage" parameterType="cn.staitech.anno.domain.PathologicalIndicatorCategory"
             resultMap="BaseResultMap">
-        select * from tb_pathological_indicator_category where del_flag=0
-        <if test="indicatorId != null and indicatorId != ''">
+        select *
+        from tb_pathological_indicator_category where del_flag = 0
+        <if test="indicatorId != null">
             AND indicator_id = #{indicatorId}
         </if>
         <if test="categoryName != null and categoryName != ''">
@@ -261,21 +262,20 @@
             AND organization_id = #{organizationId}
         </if>
         <if test="number != null and number != ''">
-            OR number = #{number}
+            AND number = #{number}
         </if>
         <if test="rgb != null">
-            OR rgb = #{rgb}
+            AND rgb = #{rgb}
         </if>
         <if test="hex != null">
-            OR hex = #{hex}
+            AND hex = #{hex}
         </if>
-        <if test="structureId != null">
-            OR structure_id = #{structureId}
-        </if>
+<!--        <if test="structureId != null">
+            AND structure_id = #{structureId}
+        </if>-->
         <if test="orderNumber != null and orderNumber != ''">
-            OR order_number = #{orderNumber}
+            AND order_number = #{orderNumber}
         </if>
-
     </select>
 
     <select id="selectByProjectId" parameterType="java.lang.Long" resultMap="SysAnnotationCategoryStatisticResult">
