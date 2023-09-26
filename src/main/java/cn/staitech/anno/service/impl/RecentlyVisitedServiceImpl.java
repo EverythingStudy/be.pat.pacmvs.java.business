@@ -39,7 +39,6 @@ public class RecentlyVisitedServiceImpl implements RecentlyVisitedService {
         List<RecentlyVisited> recentlyVisitedList = recentlyVisitedMapper.selectUpdateIsTrue(recentlyVisited);
 
         List<RecentlyVisitedSelectVO> recentlyVisitedSelectVOS = new ArrayList<>();
-        LoginUser loginUser = getLoginUser();
         // 判断用户为admin或者超级管理员
         if(SysUser.isAdmin(SecurityUtils.getUserId())){
             return recentlyVisitedSelectVOS;
@@ -65,6 +64,7 @@ public class RecentlyVisitedServiceImpl implements RecentlyVisitedService {
             recentlyVisitedSelectVO.setVisitTime(recentlyVisited1.getUpdateTime());
             recentlyVisitedSelectVO.setReviewRoundId(recentlyVisited1.getReviewRoundId());
             recentlyVisitedSelectVO.setImageVisited(imageVisitedList);
+            recentlyVisitedSelectVO.setProjectType(recentlyVisited1.getProjectType());
             recentlyVisitedSelectVO.setUserId(recentlyVisited1.getUserId());
             recentlyVisitedSelectVOS.add(recentlyVisitedSelectVO);
         }

@@ -30,6 +30,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.staitech.anno.project.domain.Review;
 import cn.staitech.anno.project.service.ReviewService;
 import cn.staitech.anno.project.mapper.ReviewMapper;
+import com.ibm.icu.text.SimpleDateFormat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -189,7 +190,6 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
                 downTask.setPath(jsonObject);
                 downTask.setStatus(Constants.DOWN_STATE_FINISH);
                 int res = downTaskMapper.updateById(downTask);
-                System.out.println(res + "-------------------------->");
             }catch (Exception e){
                 e.printStackTrace();
                 log.error(e.getMessage());
@@ -213,7 +213,9 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
         BeanUtils.copyProperties(reviewBy, review);
         review.setCreateName(SecurityUtils.getUsername());
         review.setCreateBy(SecurityUtils.getUserId());
-        review.setCreateTime(new Date());
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        review.setCreateTime(sdf.format(date));
         review.setReviewPeople(SecurityUtils.getUsername());
         review.setReviewTime(new Date());
         review.setUpdateBy(SecurityUtils.getUserId());
@@ -236,7 +238,9 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
         review.setDetails(req.getDetails());
         review.setScore(req.getScore());
         review.setUpdateBy(SecurityUtils.getUserId());
-        review.setUpdateTime(new Date());
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        review.setUpdateTime(sdf.format(date));
         return reviewMapper.updateById(review);
     }
 

@@ -23,6 +23,9 @@ public class RecentlyVisited {
     @ApiModelProperty(value = "项目id")
     private Long projectId;
 
+    @ApiModelProperty(value = "项目类型")
+    private String projectType;
+
     @ApiModelProperty(value = "项目名称")
     private String projectName;
 
