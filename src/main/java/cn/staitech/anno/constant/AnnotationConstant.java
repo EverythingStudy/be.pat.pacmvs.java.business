@@ -38,6 +38,8 @@ public class AnnotationConstant {
 
     public static final String DELETE_STATUS = "delete";
 
+    public static final String CLEAN = "clean";
+
     public static final String UPDATE_DESCRIPTION = "修改描述成功";
 
 //    public static final String UPDATE_ANNOTATION_CATEGORY_MESSAGE = "此图像已完成标注,不可对该图像进行操作";

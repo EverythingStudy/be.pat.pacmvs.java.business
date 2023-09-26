@@ -108,17 +108,14 @@ public class MarkingController {
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "json导出", hidden = true)
     @GetMapping("/jsonExport")
-    public R<String> getWebsocketPort(
-            @RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId
-    ) throws Exception {
+    public R<String> getWebsocketPort(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId) throws Exception {
         return R.ok(markingService.slideJsonExport(slideId));
     }
 
     @Log(title = "标注测量excel导出", businessType = BusinessType.EXPORT)
     @ApiOperation(value = "标注测量excel导出")
     @GetMapping("/export")
-    public void export(
-            @RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) throws Exception {
+    public void export(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) throws Exception {
         markingService.execlExport(slideId);
     }
 
@@ -127,6 +124,14 @@ public class MarkingController {
     @GetMapping("/slideInfo")
     public R<SlideSelectBy> slideInfo(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "标注id", required = true) Long slideId) throws Exception {
         return R.ok(slideService.pageImageCsvListVOBy(slideId));
+    }
+
+    @ApiOperation(value = "删除页面标注")
+    @DeleteMapping("/batchDelete")
+    @ApiImplicitParams({@ApiImplicitParam(name = "slideId", value = "切片id", required = true, dataType = "Long", paramType = "query")})
+    public R<String> batchDeleteRoi(@RequestParam @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId) {
+        markingService.batchDelete(slideId);
+        return R.ok("操作成功");
     }
 
 }

@@ -106,4 +106,11 @@ public interface MarkingService {
     DownTask projectJsonExport(Long projectId, List<Long> slideIds) throws Exception;
 
     void downTaskByCode(String code) throws Exception;
+
+    /**
+     * 删除页面所有标注
+     * @param slideId 切片id
+     * @return
+     */
+    void batchDelete(Long slideId);
 }

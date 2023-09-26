@@ -29,7 +29,7 @@
             <result property="slideId" column="slide_id" jdbcType="INTEGER"/>
             <result property="centerPoint" column="center_point" jdbcType="VARCHAR"/>
             <result property="pointCount" column="point_count" jdbcType="INTEGER"/>
-            <result property="geometry" column="geometry" jdbcType="OTHER"/>
+            <result property="geometry" column="geometry" jdbcType="OTHER" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
             <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
             <result property="annotationOwner" column="annotation_owner" jdbcType="VARCHAR"/>
