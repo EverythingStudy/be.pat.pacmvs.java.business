@@ -61,6 +61,8 @@ public class IndicatorController extends BaseController {
 
         Indicator indicator = new Indicator();
         BeanUtils.copyProperties(req, indicator);
+        // indicator.setSpeciesId(req.getSpeciesId());
+        // indicator.setOrganId(req.getOrganId());
         indicator.setOrganizationId(sysUser.getOrganizationId());
         indicator.setIndicatorName(indicator.getSpeciesName() + indicator.getOrganName());
 

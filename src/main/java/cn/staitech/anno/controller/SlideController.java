@@ -220,9 +220,10 @@ public class SlideController extends BaseController {
         QueryWrapper<Slide> queryWrapper = new QueryWrapper<>(slide);
         queryWrapper.select("distinct topic_id", "topic_name");
         queryWrapper.eq("project_id", getTopicListVO.getProjectId());
-        queryWrapper.eq("review_round_id", getTopicListVO.getReviewRoundId());
+        if (getTopicListVO.getReviewRoundId() != null && getTopicListVO.getReviewRoundId() > 0) {
+            queryWrapper.eq("review_round_id", getTopicListVO.getReviewRoundId());
+        }
         queryWrapper.isNotNull("topic_id");
-        // queryWrapper.isNotNull("topic_name");
         queryWrapper.orderByDesc("topic_id");
 
         List<Slide> list = slideService.list(queryWrapper);
@@ -234,7 +235,6 @@ public class SlideController extends BaseController {
             topicList.add(topic);
         }
 
-        log.info("list:{}", list);
         return R.ok(topicList);
     }
 

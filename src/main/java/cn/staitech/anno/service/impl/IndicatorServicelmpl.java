@@ -69,6 +69,7 @@ public class IndicatorServicelmpl implements IndicatorService {
 
         indicator.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
 
+        // ===========================================
         List<Indicator> list = indicatorMapper.selectIndicatorList(indicator);
         for (Indicator obj : list) {
             if (sepeciesMap.containsKey(obj.getSpeciesId())) {

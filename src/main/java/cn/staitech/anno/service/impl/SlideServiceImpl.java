@@ -527,6 +527,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                 slide.setImageCsvId(imageCsv.getId());
             }
 
+            slide.setTopicId(imageObj.getTopicId());
             slide.setProjectId(projectId);
             slide.setImageId(imageObj.getImageId());
             slide.setCreateBy(sysUser.getUserId());
