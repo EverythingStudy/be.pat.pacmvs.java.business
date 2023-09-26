@@ -9,6 +9,7 @@
         <result property="userId" column="user_id"/>
         <result property="slideId" column="slide_id"/>
         <result property="projectId" column="project_id"/>
+        <result property="projectType" column="project_type"/>
         <result property="projectName" column="project_name"/>
         <result property="imageName" column="image_name"/>
         <result property="thumbUrl" column="thumb_url"/>
@@ -21,6 +22,7 @@
              , slide_id
              , project_id
              , project_name
+             , project_type
              , image_name
              , thumb_url
              , review_round_id
@@ -36,6 +38,7 @@
                i.image_name,
                i.thumb_url,
                p.project_id,
+               p.project_type,
                p.project_name
         FROM tb_slide AS s
                  LEFT JOIN tb_image AS i ON s.image_id = i.image_id
