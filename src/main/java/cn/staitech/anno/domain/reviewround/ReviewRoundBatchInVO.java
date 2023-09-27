@@ -19,6 +19,10 @@ public class ReviewRoundBatchInVO {
      * 评审内容
      */
     private String reviewContent;
+    /**
+     * 评审内容id
+     */
+    private String contentId;
 
     private List<ReviewRoundInsertInVO> insertList;
 }

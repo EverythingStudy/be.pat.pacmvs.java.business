@@ -4,7 +4,10 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -14,6 +17,9 @@ import java.util.Date;
  */
 @TableName(value = "tb_review_round")
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ReviewRound implements Serializable {
     /**
      * 评审轮次自增ID

@@ -71,7 +71,11 @@ public class ReviewRoundServiceImpl extends ServiceImpl<ReviewRoundMapper, Revie
             reviewRound.setOrganizationId(sysUser.getOrganizationId());
 
             reviewRound.setCreateTime(new Date());
-            reviewRound.setContentId(str);
+            if (reviewRoundBatchInVO.getContentId()!=null&&!"".equals(reviewRoundBatchInVO.getContentId())){
+                reviewRound.setContentId(reviewRoundBatchInVO.getContentId());
+            }else{
+                reviewRound.setContentId(str);
+            }
             list.add(reviewRound);
         }
         return (this.saveBatch(list));

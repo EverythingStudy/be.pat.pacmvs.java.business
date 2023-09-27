@@ -3,10 +3,7 @@ package cn.staitech.anno.controller;
 import cn.staitech.anno.domain.Group;
 import cn.staitech.anno.domain.ReviewRound;
 import cn.staitech.anno.domain.Topic;
-import cn.staitech.anno.domain.reviewround.DelReviewRoundIdsVO;
-import cn.staitech.anno.domain.reviewround.ReviewRoundBatchInVO;
-import cn.staitech.anno.domain.reviewround.ReviewRoundInVO;
-import cn.staitech.anno.domain.reviewround.ReviewRoundOutVO;
+import cn.staitech.anno.domain.reviewround.*;
 import cn.staitech.anno.domain.round.Round;
 import cn.staitech.anno.service.GroupService;
 import cn.staitech.anno.service.ReviewRoundService;
@@ -73,10 +70,41 @@ public class ReviewRoundController {
         return R.ok(reviewRoundService.pageReviewRound(pageNum, pageSize, projectId));
     }
 
+    @ApiOperation(value = "查询评审轮次内容")
+    @GetMapping("/query")
+    public R<List<ReviewRound>> query(@RequestParam("projectId") Long projectId) {
+        QueryWrapper<ReviewRound> queryWrapper = Wrappers.query(ReviewRound.builder().projectId(projectId).build());
+        queryWrapper.select("review_content","content_id");
+        queryWrapper.groupBy("review_content","content_id");
+        return R.ok(reviewRoundService.list(queryWrapper));
+    }
+
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "添加评审轮次")
     @PostMapping("/add")
     public R add(@RequestBody ReviewRoundBatchInVO reviewRoundBatchInVO) {
+        return R.ok(reviewRoundService.saveBatchByList(reviewRoundBatchInVO));
+    }
+
+    @ApiOperation(value = "新添加评审轮次")
+    @PostMapping("/addNew")
+    public R addNew(@RequestBody ReviewRoundBatchInVO reviewRoundBatchInVO) {
+        //去重
+        QueryWrapper<ReviewRound> queryWrapper = Wrappers.query(ReviewRound.builder().projectId(reviewRoundBatchInVO.getProjectId()).build());
+        List<ReviewRound> reviewRoundList = reviewRoundService.list(queryWrapper);
+        List<ReviewRoundInsertInVO> reviewRoundInsertInVOS = new ArrayList<>();
+        for (ReviewRoundInsertInVO vo:reviewRoundBatchInVO.getInsertList()){
+            Boolean flag = true;
+            for (ReviewRound reviewRound:reviewRoundList){
+                if (vo.getRoundId()==reviewRound.getRoundId()&&vo.getGroupId()==vo.getGroupId()&&vo.getTopicId()==reviewRound.getTopicId()){
+                    flag = false;
+                }
+            }
+            if (flag){
+                reviewRoundInsertInVOS.add(vo);
+            }
+        }
+        reviewRoundBatchInVO.setInsertList(reviewRoundInsertInVOS);
         return R.ok(reviewRoundService.saveBatchByList(reviewRoundBatchInVO));
     }
 
