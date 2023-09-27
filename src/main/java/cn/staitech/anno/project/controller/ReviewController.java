@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -85,9 +86,14 @@ public class ReviewController {
 
     //@RequiresPermissions("smartReview:project:export")
     @ApiOperation(value = "评审数据导出")
-    @PostMapping("/downReview")
-    public void csvExportReviewCurrent(@RequestBody DownTaskIN in) throws Exception{
-        reviewService.csvExportReviewCurrent(in.getProjectId(),in.getSlideIds());
+    @GetMapping("/downReview")
+    public void csvExportReviewCurrent(@RequestParam("slideId") @ApiParam(name = "slideId", value = "切片id", required = false) Long slideId,
+                                       @RequestParam("projectId") @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId) throws Exception{
+        List<Long> list = new ArrayList<>();
+        if (slideId!=null){
+            list.add(slideId);
+        }
+        reviewService.csvExportReviewCurrent(projectId,list);
     }
 
     @ApiOperation(value = "下载任务状态查询")
