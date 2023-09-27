@@ -87,8 +87,8 @@ public class ReviewController {
     //@RequiresPermissions("smartReview:project:export")
     @ApiOperation(value = "评审数据导出")
     @GetMapping("/downReview")
-    public void csvExportReviewCurrent(@RequestParam("slideId") @ApiParam(name = "slideId", value = "切片id", required = false) Long slideId,
-                                       @RequestParam("projectId") @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId) throws Exception{
+    public void csvExportReviewCurrent(@RequestParam(value = "slideId", required = false) @ApiParam(name = "slideId", value = "切片id") Long slideId,
+                                       @RequestParam(value = "projectId",required = true) @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId) throws Exception{
         List<Long> list = new ArrayList<>();
         if (slideId!=null){
             list.add(slideId);
