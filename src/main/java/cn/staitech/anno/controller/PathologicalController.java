@@ -4,6 +4,7 @@ import cn.staitech.anno.constant.PathologicalLogConstant;
 import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
+import cn.staitech.anno.domain.structure.Structure;
 import cn.staitech.anno.domain.vo.CategoryVO;
 import cn.staitech.anno.domain.vo.LabelListVO;
 import cn.staitech.anno.domain.vo.LabelVO;
@@ -84,8 +85,13 @@ public class PathologicalController {
             return R.fail(PathologicalLogConstant.CATEGORY_NAME_EXIST);
         }
 
+        String structureName = "";
         // 获取structureName
-        String structureName = structureService.getOneStructure(indicator.getSpeciesId().toString(), indicator.getOrganId(), vo.getStructureId()).getName();
+        Structure structure = structureService.getOneStructure(indicator.getSpeciesId().toString(), indicator.getOrganId(), vo.getStructureId());
+        if (structure != null) {
+            structureName = structure.getName();
+        }
+
 
         // 生成categoryName
         String categoryName = indicator.getIndicatorName() + structureName;
