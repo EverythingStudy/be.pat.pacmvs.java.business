@@ -12,6 +12,8 @@ import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
+import cn.staitech.common.security.annotation.Logical;
+import cn.staitech.common.security.annotation.RequiresPermissions;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import lombok.SneakyThrows;
@@ -46,6 +48,7 @@ public class FilesController extends BaseController {
      */
     // @RequiresPermissions("anno:files:upload")
     @ApiOperationSupport(author = "wangfeng")
+    @RequiresPermissions(value = {"smartAnno:project:upload"}, logical = Logical.OR)
     @ApiOperation(value = "文件上传", notes = "文件列表 - 王峰")
     @Log(title = "文件上传", menu = "文件上传", subMenu = "文件上传", businessType = BusinessType.IMPORT)
     @PostMapping("/upload")
@@ -59,6 +62,7 @@ public class FilesController extends BaseController {
      */
     // @RequiresPermissions("anno:files:upload")
     @ApiOperationSupport(author = "wangfeng")
+    @RequiresPermissions(value = {"smartAnno:project:upload"}, logical = Logical.OR)
     @ApiOperation(value = "文件上传并处理下游业务逻辑", notes = "文件上传并处理下游业务逻辑 - 王峰")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file", value = "MultipartFile文件", required = true, dataType = "file"),

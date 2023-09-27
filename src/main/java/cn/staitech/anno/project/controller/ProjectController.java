@@ -8,6 +8,7 @@ import cn.staitech.anno.project.vo.ProjectVO;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
+import cn.staitech.common.security.annotation.Logical;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -74,6 +75,7 @@ public class ProjectController {
 
     @ApiOperation(value = "项目导出json")
     @PostMapping("/jsonExport")
+    @RequiresPermissions(value = {"smartAnno:project:slice:exportList","smartAnno:project:slice:operation:exportJson","smartAnno:project:export"}, logical = Logical.OR)
     public R<DownTask> jsonExport(@RequestBody DownTaskIN downTaskIN) throws Exception {
         return R.ok(markingService.projectJsonExport(downTaskIN.getProjectId(), downTaskIN.getSlideIds()));
     }

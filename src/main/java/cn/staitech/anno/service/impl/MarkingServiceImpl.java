@@ -30,6 +30,7 @@ import cn.staitech.anno.project.service.SlideAttrService;
 import cn.staitech.anno.service.FileService;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.utils.*;
+import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -163,6 +164,7 @@ public class MarkingServiceImpl implements MarkingService {
 //        if (Boolean.FALSE.equals(markIsNotFinish(slideBy.getStatus()))) {
 //            throw new Exception(AnnotationConstant.UPDATE_ANNOTATION_CATEGORY_MESSAGE);
 //        }
+
         // 获取规定的geoJson Id
         String annotationId = CustomizationIdUtils.getSdId();
         marking.setAnnotation_id(annotationId);
