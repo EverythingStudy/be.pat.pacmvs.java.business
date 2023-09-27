@@ -36,6 +36,9 @@
             <if test="params.createBy!= null">
                 AND p.create_by = #{params.createBy}
             </if>
+            <if test="params.userName!= null">
+                AND u.user_name = like CONCAT('%',#{params.userName},'%')
+            </if>
             <if test="params.status!= null">
                 AND p.status = #{params.status}
             </if>
@@ -84,6 +87,9 @@
             </if>
             <if test="params.createBy!= null">
                 AND p.create_by = #{params.createBy}
+            </if>
+            <if test="params.userName!= null">
+                AND u.user_name = like CONCAT('%',#{params.userName},'%')
             </if>
             <if test="params.status!= null">
                 AND p.status = #{params.status}

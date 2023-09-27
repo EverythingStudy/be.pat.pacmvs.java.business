@@ -48,6 +48,9 @@ public class ProjectIN {
     @ApiModelProperty("创建者")
     private Long createBy;
 
+    @ApiModelProperty("创建者名称")
+    private String userName;
+
     @ApiModelProperty("当前用户")
     private Long userId;
 
