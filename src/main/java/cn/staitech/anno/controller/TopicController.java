@@ -11,10 +11,7 @@ import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -41,11 +38,14 @@ public class TopicController {
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "切片专题列表 - 无分页版", notes = "切片专题目列表 - 王峰")
     @GetMapping("/list")
-    public R<List<Topic>> list() {
+    public R<List<Topic>> list(@RequestParam("projectTypeId") @ApiParam(name = "projectTypeId", value = "项目类型ID", required = true) Long projectTypeId) {
         // 组织ID
         Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
         QueryWrapper<Topic> qw = new QueryWrapper();
-        qw.eq("organization_id", organizationId).eq("del_flag", 1).orderByDesc("topic_id");
+        qw.eq("organization_id", organizationId)
+                .eq("project_type_id", projectTypeId)
+                .eq("del_flag", 1)
+                .orderByDesc("topic_id");
         List<Topic> list = topicService.list(qw);
         return R.ok(list);
     }

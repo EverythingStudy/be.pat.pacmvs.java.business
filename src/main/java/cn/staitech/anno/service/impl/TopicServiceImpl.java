@@ -32,8 +32,8 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     private TopicMapper topicMapper;
 
     @Override
-    public Map<Long, String> selectMap() {
-        List<TopicIdName> list = topicMapper.selectIdNameList();
+    public Map<Long, String> selectMap(Integer projectTypeId) {
+        List<TopicIdName> list = topicMapper.selectIdNameList(projectTypeId);
         Map<Long, String> map = list.stream()
                 .collect(Collectors.toMap(TopicIdName::getTopicId, TopicIdName::getTopicName));
         return map;
@@ -48,10 +48,13 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     public PageMaster<Topic> pagelist(TopicQueryIn req) {
         Page<Topic> page = new Page<>(req.getPageNum(), req.getPageSize());
         QueryWrapper<Topic> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("del_flag", 1).orderByDesc("topic_id");
+        queryWrapper.eq("del_flag", 1);
+        queryWrapper.eq("project_type_id", req.getProjectTypeId());
         if (req.getTopicName() != null && req.getTopicName() != "" && req.getTopicName() != "null") {
             queryWrapper.like("topic_name", req.getTopicName());
         }
+
+        queryWrapper.orderByDesc("topic_id");
 
         this.baseMapper.selectPage(page, queryWrapper);
         List<Topic> list = page.getRecords();
@@ -70,13 +73,14 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
      * @param topicName
      * @return
      */
-    public Topic selectOne(String topicName) throws Exception {
+    public Topic selectOne(String topicName, Integer projectTypeId) throws Exception {
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
         Long userId = sysUser.getUserId();
         String time = DateUtils.getCurrentHHmmssString("yyyy-MM-dd HH:mm:ss");
 
         Topic topic = Topic.builder()
                 .topicName(topicName)
+                .projectTypeId(projectTypeId)
                 .build();
 
         QueryWrapper queryWrap = new QueryWrapper(topic);
@@ -86,6 +90,7 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         if (qTopic != null) {
             return qTopic;
         } else { // 无则添加
+            topic.setProjectTypeId(projectTypeId);
             topic.setCreateBy(userId);
             topic.setUpdateBy(userId);
             topic.setCreateTime(time);
@@ -98,19 +103,4 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         return topic;
     }
 
-    /**
-     * 提取文件名称中所属专题名称 .
-     *
-     * @param imageName 文件名称
-     * @return
-     */
-    public String processTopicName(String imageName) {
-        String fileName = imageName.substring(0, imageName.indexOf("."));
-        // 【切片管理】上传切片后切片编号不符合规则时，所属专题应为空 http://jira.shengtong.com/browse/PS-364
-        if (imageName.indexOf("-RD") == -1) {
-            return "";
-        }
-        String topicName = fileName.substring(0, imageName.indexOf("-RD"));
-        return topicName + "-RD";
-    }
 }

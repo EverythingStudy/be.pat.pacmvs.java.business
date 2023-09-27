@@ -22,7 +22,7 @@ public interface TopicService extends IService<Topic> {
      *
      * @return
      */
-    Map<Long, String> selectMap();
+    Map<Long, String> selectMap(Integer projectTypeId);
 
 
     /**
@@ -40,8 +40,6 @@ public interface TopicService extends IService<Topic> {
      * @param topicName
      * @return
      */
-    Topic selectOne(String topicName) throws Exception;
-
-    String processTopicName(String imageName);
+    Topic selectOne(String topicName, Integer projectTypeId) throws Exception;
 
 }

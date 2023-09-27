@@ -14,10 +14,10 @@ import java.util.List;
  */
 public interface TopicMapper extends BaseMapper<Topic> {
     /**
-     * 查询组织表
-     *
+     * 专题列表
+     * @param projectTypeId
      * @return
      */
-    List<TopicIdName> selectIdNameList();
+    List<TopicIdName> selectIdNameList(Integer projectTypeId);
 }
 

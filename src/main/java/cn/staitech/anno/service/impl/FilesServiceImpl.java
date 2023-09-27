@@ -60,7 +60,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         // 机构列表
         Map<Long, String> organizationMap = organizationService.selectMap();
         // 专题列表
-        Map<Long, String> topicMap = topicService.selectMap();
+        Map<Long, String> topicMap = topicService.selectMap(1);
 
         for (Files obj : list) {
             // 机构名称

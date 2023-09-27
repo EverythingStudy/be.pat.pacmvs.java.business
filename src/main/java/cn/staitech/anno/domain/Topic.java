@@ -43,6 +43,11 @@ public class Topic implements Serializable {
     @TableField(value = "organization_id")
     private Long organizationId;
 
+    /**
+     * 项目类型ID .
+     */
+    @TableField(value = "project_type_id")
+    private Integer projectTypeId;
 
     /**
      * 创建者 .
@@ -76,6 +81,4 @@ public class Topic implements Serializable {
     @TableField(value = "del_flag")
     private Integer delFlag;
 
-//    @ApiModelProperty(value = "创建时间")
-//    private Map<String, Object> createTimeParams;
 }

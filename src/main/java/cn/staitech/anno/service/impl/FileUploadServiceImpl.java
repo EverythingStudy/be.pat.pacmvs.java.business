@@ -91,7 +91,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 if(Objects.equals(fileUploadVO.getTopicName(), "")){
                     throw new Exception("参数异常，未发现专题名称");
                 }
-                Topic topic = topicService.selectOne(fileUploadVO.getTopicName());
+                Topic topic = topicService.selectOne(fileUploadVO.getTopicName(),1);
                 // 定义文件夹名称
                 dirPath = dirPath + File.separator +  "Slides" + File.separator + topic.getTopicName();
                 //创建文件夹

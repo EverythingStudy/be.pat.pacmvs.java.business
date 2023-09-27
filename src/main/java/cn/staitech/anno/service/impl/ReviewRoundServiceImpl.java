@@ -104,7 +104,7 @@ public class ReviewRoundServiceImpl extends ServiceImpl<ReviewRoundMapper, Revie
 
         List<ReviewRoundOutVO> respList = new ArrayList<>(list.size());
 
-        Map<Long, String> topicMap = topicService.selectMap();
+        Map<Long, String> topicMap = topicService.selectMap(2);
 
         for (ReviewRound round : list) {
             ReviewRoundOutVO reviewRoundOutVO = new ReviewRoundOutVO();
@@ -149,7 +149,7 @@ public class ReviewRoundServiceImpl extends ServiceImpl<ReviewRoundMapper, Revie
         reviewRoundOutVO.setGroupName(MapConstant.getGroupName(round.getGroupId()));
 
         //专题编号
-        Map<Long, String> topicMap = topicService.selectMap();
+        Map<Long, String> topicMap = topicService.selectMap(2);
         if (topicMap.containsKey(round.getTopicId())) {
             reviewRoundOutVO.setTopicName(topicMap.get(round.getTopicId()));
         }

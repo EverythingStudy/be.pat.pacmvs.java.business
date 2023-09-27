@@ -16,8 +16,8 @@ import java.util.Map;
  */
 @Component
 public class MapConstant {
-    @Resource
-    private TopicService topicService;
+/*    @Resource
+    private TopicService topicService;*/
 
     @Resource
     private GroupService groupService;
@@ -29,13 +29,13 @@ public class MapConstant {
     /**
      * 专题列表
      */
-    public static Map<Long, String> TOPIC_MAP;
+    // public static Map<Long, String> TOPIC_MAP;
     public static Map<Long, String> GROUP_MAP;
     public static Map<Long, String> ROUND_MAP;
 
     @PostConstruct
     public void init() {
-        TOPIC_MAP = topicService.selectMap();
+        //TOPIC_MAP = topicService.selectMap();
         GROUP_MAP = groupService.selectMap();
         ROUND_MAP = roundService.selectMap();
     }
@@ -46,13 +46,13 @@ public class MapConstant {
      * @param topicId
      * @return
      */
-    public static String getTopicName(Long topicId) {
+/*    public static String getTopicName(Long topicId) {
         if (TOPIC_MAP.containsKey(topicId)) {
 
             return TOPIC_MAP.get(topicId);
         }
         return "";
-    }
+    }*/
 
 
     /**

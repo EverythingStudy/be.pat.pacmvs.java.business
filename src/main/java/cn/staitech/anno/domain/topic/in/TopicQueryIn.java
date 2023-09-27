@@ -21,4 +21,11 @@ public class TopicQueryIn extends Pager implements Serializable {
     @ApiModelProperty(value = "专题名称")
     private String topicName;
 
+    /**
+     * 项目类型 .
+     */
+    @ApiModelProperty(value = "项目类型")
+    private String projectTypeId;
+
+
 }
