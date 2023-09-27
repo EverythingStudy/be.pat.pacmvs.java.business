@@ -36,7 +36,7 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
     @Transactional
     @Override
     public Boolean saveAnnoUsers(Long slideId, List<Long> userIds)throws Exception{
-        List<SlideAttr> slideAttrs = queryAttr(slideId,CATEGORY,userIds);
+        List<SlideAttr> slideAttrs = queryAttr(slideId,USER,userIds);
         return save(slideId,USER,userIds,slideAttrs);
     }
     @Transactional
