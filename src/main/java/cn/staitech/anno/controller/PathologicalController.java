@@ -58,7 +58,7 @@ public class PathologicalController {
      * 结构指标ID	indicatorId
      */
     @ApiOperation(value = "标签添加接口", notes = "wangfeng")
-    @RequiresPermissions("special:pathology:tabadd")
+    @RequiresPermissions("project:pathology:add")
     @Log(title = "配置标签-新增标签", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     public R<String> add(@Validated @RequestBody PathologicalIndicatorCategoryVO vo) {
@@ -143,7 +143,7 @@ public class PathologicalController {
      * 配置标签-编辑 .
      */
     @ApiOperation(value = "标注类别修改接口", notes = "wangfeng")
-    @RequiresPermissions("special:pathology:tabedit")
+    @RequiresPermissions("project:pathology:edit")
     @Log(title = "配置标签-编辑", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.UPDATE)
     @PutMapping("/edit")
     public R<String> edit(@Validated @RequestBody PathologicalIndicatorCategory category) {
@@ -190,7 +190,7 @@ public class PathologicalController {
      * 配置标签-删除 .
      */
     @ApiOperation(value = "标签删除接口", notes = "ZMJ")
-    @RequiresPermissions("special:pathology:tabremove")
+    @RequiresPermissions("project:pathology:remove")
     @Log(title = "配置标签-删除", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.DELETE)
     @PostMapping("/del")
     public R<String> del(@RequestBody CategoryVO categoryVO) {
