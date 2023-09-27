@@ -93,7 +93,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 }
                 Topic topic = topicService.selectOne(fileUploadVO.getTopicName());
                 // 定义文件夹名称
-                dirPath = dirPath + File.separator +  "Data" + File.separator + topic.getTopicName();
+                dirPath = dirPath + File.separator +  "Slides" + File.separator + topic.getTopicName();
                 //创建文件夹
                 File dir = new File(dirPath);
                 if (!dir.exists()) {

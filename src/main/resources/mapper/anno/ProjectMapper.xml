@@ -227,7 +227,7 @@
                 </if>
             </if>
         </where>
-        order by update_time desc
+        order by create_time desc
     </select>
 
     <insert id="insertProject" parameterType="cn.staitech.anno.domain.Project" useGeneratedKeys="true"
