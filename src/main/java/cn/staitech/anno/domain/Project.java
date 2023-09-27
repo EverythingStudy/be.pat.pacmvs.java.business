@@ -137,7 +137,7 @@ public class Project extends BaseEntity {
     @Size(max = 255, message = "编码长度不能超过255")
     @ApiModelProperty("项目类型:1标注2评审3标准训练集")
     @Length(max = 255, message = "编码长度不能超过255")
-    @TableField(exist = false)
+   // @TableField(exist = false)
     private String projectType;
 
     @ApiModelProperty(value = "机构编号")

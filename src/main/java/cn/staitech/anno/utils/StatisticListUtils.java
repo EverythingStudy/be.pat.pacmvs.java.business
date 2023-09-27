@@ -5,9 +5,9 @@ import cn.staitech.anno.constant.StatisticConstant;
 import cn.staitech.anno.domain.vo.statistic.StatisticListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticListOutVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticObjectOutVO;
+import cn.staitech.anno.domain.vo.statistic.TableDateOutVO;
 import cn.staitech.anno.domain.vo.statistic.excel.*;
 import cn.staitech.anno.service.StatisticService;
-import cn.staitech.common.core.utils.poi.ExcelUtil;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.util.ListUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -417,9 +417,14 @@ public class StatisticListUtils {
         // 未输入日期的情况
         if (ObjectUtils.isEmpty(statisticList.getStartTime()) && ObjectUtils.isEmpty(statisticList.getEndTime())) {
             String endTime = dateFormat.format(new Date());
-            String startTime = statisticService.statisticSelectEarliestAnnoDate(statisticList.getOrganizationId()).getEarliestDate();
+            TableDateOutVO tableDateOutVO = statisticService.statisticSelectEarliestAnnoDate(statisticList.getOrganizationId());
+            if (ObjectUtils.isEmpty(tableDateOutVO)) {
+                statisticList.setStartTime(endTime);
+            } else {
+                String startTime = statisticService.statisticSelectEarliestAnnoDate(statisticList.getOrganizationId()).getEarliestDate();
+                statisticList.setStartTime(startTime);
+            }
             statisticList.setEndTime(endTime);
-            statisticList.setStartTime(startTime);
         }
         long startTime = dateFormat.parse(statisticList.getStartTime()).getTime();
         long endTime = dateFormat.parse(statisticList.getEndTime()).getTime();
