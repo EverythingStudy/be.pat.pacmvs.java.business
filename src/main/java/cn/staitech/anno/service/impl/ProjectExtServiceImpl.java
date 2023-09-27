@@ -12,6 +12,7 @@ import cn.staitech.anno.constant.R.MeasureResponseConstant;
 import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.Group;
 import cn.staitech.anno.domain.Project;
+import cn.staitech.anno.domain.RecentlyVisited;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.po.ProjectPo;
@@ -98,6 +99,9 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
 
     @Resource
     private MarkingService markingService;
+
+    @Resource
+    private RecentlyVisitedMapper recentlyVisitedMapper;
 
     @Resource
     private DownTaskMapper downTaskMapper;
@@ -281,7 +285,10 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
         //修改状态
         projectExtMapper.updateDelFlag(req.getProjectId(), userId);
         projectGroupMapper.updateDelFlag(req.getProjectId(), userId);
-
+        // 删除最近访问表中数据
+        QueryWrapper<RecentlyVisited> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("project_id",req.getProjectId());
+        recentlyVisitedMapper.delete(queryWrapper);
         return R.ok(null, ResponseConstant.OPERATE_SUCCEED);
     }
 
