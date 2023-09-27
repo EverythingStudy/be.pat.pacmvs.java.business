@@ -45,7 +45,7 @@ public class RecentlyVisitedServiceImpl implements RecentlyVisitedService {
             recentlyVisited.setProjectId(recentlyVisited1.getProjectId());
             List<ImageVisited> imageVisitedList = new ArrayList<>();
 
-            List<RecentlyVisited> recentlyVisiteds = recentlyVisitedMapper.selectList(recentlyVisited);
+            List<RecentlyVisited> recentlyVisiteds = recentlyVisitedMapper.selectLists(recentlyVisited);
             for (RecentlyVisited recentlyVisited2 : recentlyVisiteds) {
                 ImageVisited imageVisited = new ImageVisited();
                 imageVisited.setImageName(recentlyVisited2.getImageName());
@@ -78,7 +78,7 @@ public class RecentlyVisitedServiceImpl implements RecentlyVisitedService {
         recentlyVisited.setUserId(userId);
         recentlyVisited.setProjectId(req.getProjectId());
         // 添加时间根据用户id项目id和专题id查询表中 ，如果结果数量小于3  直接添加
-        List<RecentlyVisited> recentlyVisitedLIst = recentlyVisitedMapper.selectList(recentlyVisited);
+        List<RecentlyVisited> recentlyVisitedLIst = recentlyVisitedMapper.selectLists(recentlyVisited);
         // 添加时将该专题下的更新时间清空
         recentlyVisited.setSlideId(slideId);
         recentlyVisitedMapper.updateTime(recentlyVisited);

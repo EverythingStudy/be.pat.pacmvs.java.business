@@ -46,7 +46,7 @@
     </sql>
 
 
-    <select id="selectList" parameterType="cn.staitech.anno.domain.RecentlyVisited" resultMap="RecentlyVisitedResult">
+    <select id="selectLists" parameterType="cn.staitech.anno.domain.RecentlyVisited" resultMap="RecentlyVisitedResult">
         <include refid="selectRecentlyVisited"/>
         where
         <if test="userId != null">

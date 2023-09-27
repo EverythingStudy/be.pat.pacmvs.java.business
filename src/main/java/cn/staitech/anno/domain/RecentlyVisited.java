@@ -1,17 +1,26 @@
 package cn.staitech.anno.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author gjt.
  * @data 2023/5/25 13:44
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@TableName(value = "tb_recently_visited")
 public class RecentlyVisited {
 
     @ApiModelProperty(value = "主键id")
+    @TableId(value = "recently_visited_id", type = IdType.AUTO)
     private Long recentlyVisitedId;
 
     @ApiModelProperty(value = "用户id")

@@ -1,6 +1,7 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.RecentlyVisited;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
  *
  * @author staitech
  */
-public interface RecentlyVisitedMapper {
+public interface RecentlyVisitedMapper extends BaseMapper<RecentlyVisited> {
 
     /**
      * 查询用户的最近访问
@@ -17,7 +18,7 @@ public interface RecentlyVisitedMapper {
      * @param userId
      * @return List
      */
-    List<RecentlyVisited> selectList(RecentlyVisited recentlyVisited);
+    List<RecentlyVisited> selectLists(RecentlyVisited recentlyVisited);
 
     /**
      * 查询更新时间不为空

@@ -236,6 +236,8 @@
                     t.annotation_owner,
                     "label_color" ,
                     c.rgb,
+                    "label_code" ,
+                    c.number,
                     "number" ,
                     t.number,
                     "label_name",

@@ -363,8 +363,8 @@ public class MarkingServiceImpl implements MarkingService {
         // 作者信息
         GeoAttribute attribute = new GeoAttribute();
         attribute.setAuthor(SecurityUtils.getUsername());
-//            attribute.setDepartment(SecurityUtils.getLoginUser().getSysUser().getDept());
-        attribute.setDepartment("标注组");
+        attribute.setDepartment(SecurityUtils.getLoginUser().getSysUser().getDept());
+        // 标签信息
         List<GeoLabel> categoryList = pathologicalIndicatorCategoryMapper.selectIndicatorIdList(jsonExport.getIndicatorId());
         // 构建geoJson数据
         GeoJson geoJson = new GeoJson();
@@ -590,11 +590,11 @@ public class MarkingServiceImpl implements MarkingService {
                         if (markingCount > 0) {
                             // 将文件生成在本地
                             String fileUrl = null;
-                            try {
+//                            try {
                                 fileUrl = slideJsonExport(slideId);
-                            } catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
+//                            } catch (Exception e) {
+//                                throw new RuntimeException(e);
+//                            }
                             Slide slideBy = slideMapperV1.selectById(slideId);
                             Image image = imageMapper.selectById(slideBy);
                             map.put(ExportConstant.PATH, fileUrl);

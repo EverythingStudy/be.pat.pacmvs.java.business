@@ -82,6 +82,9 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
     private GroupMapper groupMapper;
 
     @Resource
+    private RecentlyVisitedMapper recentlyVisitedMapper;
+
+    @Resource
     private MarkingService markingService;
 
     @Resource(name = "redissonClient")
@@ -540,9 +543,16 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int delSlidesBatch(List<Long> slideIds) {
-        return slideMapper.deleteBatchIds(slideIds);
+        int res = slideMapper.deleteBatchIds(slideIds);
+        for(Long slideId:slideIds){
+            updateRecentlyVisited(slideId);
+        }
+        return res;
     }
+
+
 
 
     @Override
@@ -574,6 +584,49 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
     @Override
     public SlideSelectBy pageImageCsvListVOBy(Long slideId) {
         return slideMapper.pageImageCsvListVOBy(slideId);
+    }
+
+    public void updateRecentlyVisited(Long slideId) {
+        // 查询出列表
+        QueryWrapper<RecentlyVisited> recentlyVisitedQueryWrapper = new QueryWrapper<>();
+        recentlyVisitedQueryWrapper.eq("slide_id", slideId);
+        List<RecentlyVisited> recentlyVisitedList = recentlyVisitedMapper.selectList(recentlyVisitedQueryWrapper);
+        //        // 根据项目和用户查询是否是最后一条，如果是，直接删除，如果不是，查询时间最大的一条数据，将更新时间进行赋值过去
+        if (recentlyVisitedList.size() > 0) {
+            for (RecentlyVisited recentlyVisited1 : recentlyVisitedList) {
+                QueryWrapper<RecentlyVisited> queryWrapper = new QueryWrapper<>();
+                queryWrapper.eq("project_id", recentlyVisited1.getProjectId()).eq("user_id", recentlyVisited1.getUserId());
+                List<RecentlyVisited> recentlyVisiteds = recentlyVisitedMapper.selectList(queryWrapper);
+
+                if (recentlyVisiteds.size() > 1) {
+                    QueryWrapper<RecentlyVisited> queryWrapperBy = new QueryWrapper<>();
+                    queryWrapperBy
+                            .eq("project_id", recentlyVisited1.getProjectId())
+                            .eq("user_id", recentlyVisited1.getUserId())
+                            .eq("slide_id", recentlyVisited1.getSlideId());
+                    // 即将删除的切片信息
+                    RecentlyVisited recentlyVisitedMapper1 = recentlyVisitedMapper.selectOne(queryWrapperBy);
+                    // 查询当前数据以外创建时间最近的一条数据，并将更新时间进行赋值
+                    QueryWrapper<RecentlyVisited> delQueryWrapper = new QueryWrapper<>();
+                    delQueryWrapper
+                            .eq("project_id", recentlyVisited1.getProjectId())
+                            .eq("user_id", recentlyVisited1.getUserId())
+                            .ne("slide_id", recentlyVisited1.getSlideId())
+                            .orderByDesc("create_time")
+                            .last("limit 1");
+                    RecentlyVisited recentlyVisited3 = recentlyVisitedMapper.selectOne(delQueryWrapper);
+                    recentlyVisited3.setUpdateTime(recentlyVisitedMapper1.getUpdateTime());
+                    recentlyVisitedMapper.updateById(recentlyVisited3);
+                    // 删除数据
+                    recentlyVisitedMapper.delete(queryWrapperBy);
+                } else {
+                    // 删除
+                    QueryWrapper<RecentlyVisited> deleteQueryWrapper = new QueryWrapper<>();
+                    deleteQueryWrapper.eq("project_id", recentlyVisited1.getProjectId()).eq("user_id", recentlyVisited1.getUserId()).eq("slide_id", recentlyVisited1.getSlideId());
+                    recentlyVisitedMapper.delete(deleteQueryWrapper);
+                }
+            }
+        }
     }
 
 
