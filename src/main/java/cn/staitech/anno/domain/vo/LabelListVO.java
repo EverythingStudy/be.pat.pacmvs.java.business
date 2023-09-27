@@ -48,4 +48,8 @@ public class LabelListVO {
     private String orderNumber;
     @ApiModelProperty(value = "标签编号")
     private String number;
+    @ApiModelProperty(value = "种属编号")
+    private String speciesId;
+    @ApiModelProperty(value = "脏器编号")
+    private String organId;
 }

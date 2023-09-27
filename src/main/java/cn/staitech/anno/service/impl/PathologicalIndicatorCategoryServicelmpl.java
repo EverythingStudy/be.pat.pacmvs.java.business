@@ -2,19 +2,17 @@ package cn.staitech.anno.service.impl;
 
 
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
-import cn.staitech.anno.domain.project.ProjectExt;
+import cn.staitech.anno.domain.structure.Structure;
 import cn.staitech.anno.domain.vo.LabelListVO;
 import cn.staitech.anno.domain.vo.LabelVO;
 import cn.staitech.anno.domain.vo.indicator.IndicatorAndOrganizationIdVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListOutVO;
 import cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper;
-import cn.staitech.anno.mapper.ProjectExtMapper;
-import cn.staitech.anno.mapper.ProjectMapper;
 import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
-import cn.staitech.anno.service.ProjectService;
+import cn.staitech.anno.service.StructureService;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -23,7 +21,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 @Service
 public class PathologicalIndicatorCategoryServicelmpl implements PathologicalIndicatorCategoryService {
@@ -32,6 +29,9 @@ public class PathologicalIndicatorCategoryServicelmpl implements PathologicalInd
 
     @Resource
     private ProjectMapperV1 projectMapperv1;
+
+    @Resource
+    private StructureService structureService;
 
     /**
      * 添加标签
@@ -160,7 +160,7 @@ public class PathologicalIndicatorCategoryServicelmpl implements PathologicalInd
      * 查询病例指标下的标注类别数量
      */
     @Override
-    public Long selectCategoryNumber(  IndicatorAndOrganizationIdVO indicatorAndOrganizationIdVO ) {
+    public Long selectCategoryNumber(IndicatorAndOrganizationIdVO indicatorAndOrganizationIdVO) {
         return pathologicalIndicatorCategoryMapper.selectCategoryNumber(indicatorAndOrganizationIdVO);
     }
 
@@ -177,13 +177,19 @@ public class PathologicalIndicatorCategoryServicelmpl implements PathologicalInd
      */
     @Override
     public List<LabelListVO> selectByIndicator(LabelVO labelVO) {
-        return pathologicalIndicatorCategoryMapper.selectByIndicator(labelVO);
+        List<LabelListVO> list = pathologicalIndicatorCategoryMapper.selectByIndicator(labelVO);
+        for (LabelListVO listVO : list) {
+            Structure structure = structureService.getOneStructure(listVO.getSpeciesId(), listVO.getOrganId(), listVO.getStructureId());
+            // 结构名称
+            listVO.setStructureName(structure.getName());
+        }
+        return list;
     }
 
     @Override
     public List<PathologicalIndicatorCategory> selectprojectList(Long projectId) {
         Project project = projectMapperv1.selectById(projectId);
-        if(project != null){
+        if (project != null) {
             QueryWrapper<PathologicalIndicatorCategory> pathologicalIndicatorCategoryQueryWrapper = new QueryWrapper<>();
             pathologicalIndicatorCategoryQueryWrapper.eq("indicator_id", project.getIndicatorId()).orderByDesc("order_number");
             return pathologicalIndicatorCategoryMapper.selectList(pathologicalIndicatorCategoryQueryWrapper);

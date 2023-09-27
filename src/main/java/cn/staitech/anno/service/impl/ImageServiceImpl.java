@@ -15,6 +15,7 @@ import cn.staitech.anno.service.RoundService;
 import cn.staitech.anno.service.SysOrganizationService;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -66,6 +67,9 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         Image image = new Image();
         BeanUtils.copyProperties(vo, image);
 
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+        image.setOrganizationId(sysUser.getOrganizationId());
+
         // 业务类型 1 原始切片 2 预测切片
         Integer bizType = image.getBizType();
         // 所有的轮次Map
@@ -101,7 +105,8 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
                 // 提取处理状态文本描述并赋值
                 Integer status = in.getStatus();
-                out.setFileStatus(ImageConstant.IMAGE_STATUS_MAP.get(status));
+                // out.setFileStatus(ImageConstant.IMAGE_STATUS_MAP.get(status));
+                // 不可用 可用 解析中
 
                 if (status == 0) {
                     out.setProcessFlagName(ImageConstant.IMAGE_PROCESS_MAP.get(in.getProcessFlag()));

@@ -21,4 +21,6 @@ public interface StructureService extends IService<Structure> {
     List<Structure> getStructureList(String speciesId,String organId);
     
     List<Organ> getOrganBySpeciesId(String speciesId);
+
+    Structure getOneStructure(String speciesId,String organId,String structureId);
 }

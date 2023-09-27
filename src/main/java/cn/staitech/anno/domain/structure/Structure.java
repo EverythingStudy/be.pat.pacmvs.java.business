@@ -21,7 +21,7 @@ public class Structure {
     /**
      * 结构ID
      */
-    @TableId(value = "structure_id", type = IdType.NONE)
+    @TableId(value = "structure_id", type = IdType.INPUT)
     @ApiModelProperty(value = "结构ID", hidden = true)
     private String structureId;
 
@@ -30,14 +30,14 @@ public class Structure {
      */
     @ApiModelProperty(value = "结构名称", required = true)
     private String name;
-    
+
     /**
      * 种属ID
      */
     @ApiModelProperty(value = "种属ID", required = true)
     private String speciesId;
-    
-    
+
+
     /**
      * 脏器ID
      */

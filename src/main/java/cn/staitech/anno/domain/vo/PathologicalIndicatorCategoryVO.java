@@ -15,7 +15,6 @@ import javax.validation.constraints.NotNull;
 public class PathologicalIndicatorCategoryVO {
     @ApiModelProperty(required = true, value = "结构ID")
     @NotBlank(message = "结构ID不能为空!")
-    @NotBlank(message = "结构ID不能为空!")
     private String structureId;
 
     @NotBlank(message = "颜色值不可为空")

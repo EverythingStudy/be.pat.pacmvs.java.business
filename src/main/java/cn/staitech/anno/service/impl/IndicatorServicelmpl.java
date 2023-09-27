@@ -12,6 +12,7 @@ import cn.staitech.anno.service.OrganService;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
 import cn.staitech.anno.service.SpeciesService;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +55,7 @@ public class IndicatorServicelmpl implements IndicatorService {
      * @param indicator 查询的条件
      * @return 结果
      */
+    @RequiresPermissions("project:pathology:query")
     @Override
     public PageMaster<Indicator> selectIndicatorList(Indicator indicator, Integer pageNum, Integer pageSize) {
         // 种属
@@ -61,8 +63,8 @@ public class IndicatorServicelmpl implements IndicatorService {
         // 脏器
         Map<String, String> organMap = organService.selectMap();
 
-        Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-        indicator.setOrganizationId(organizationId);
+        // Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+        // indicator.setOrganizationId(organizationId);
 
 
         PageHelper.startPage(pageNum, pageSize).setReasonable(true);
@@ -79,7 +81,7 @@ public class IndicatorServicelmpl implements IndicatorService {
 
             IndicatorAndOrganizationIdVO indicatorAndOrganizationIdVO = new IndicatorAndOrganizationIdVO();
             indicatorAndOrganizationIdVO.setIndicatorId(obj.getIndicatorId());
-            indicatorAndOrganizationIdVO.setOrganizationId(organizationId);
+            // indicatorAndOrganizationIdVO.setOrganizationId(organizationId);
             // 查询总数
             obj.setAnnotationCategoryTotal(pathologicalIndicatorCategoryService.selectCategoryNumber(indicatorAndOrganizationIdVO));
         }

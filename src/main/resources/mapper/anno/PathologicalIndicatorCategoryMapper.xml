@@ -317,13 +317,13 @@
         where p.project_id = #{projectId}
     </select>
 
+
     <select id="selectByIndicator" parameterType="cn.staitech.anno.domain.vo.LabelVO" resultMap="BaseResult">
         select
-        p.indicator_id,p.category_name,p.category_id,p.structure_id,p.rgb,p.hex,p.create_by,p.create_time,p.order_number,s.user_name,p.number,p.organization_id,st.name
-        as structure_name
+        p.indicator_id,p.category_name,p.category_id,p.structure_id,p.rgb,p.hex,p.create_by,p.create_time,p.order_number,s.user_name,p.number,p.organization_id,idc.species_id,idc.organ_id
         from tb_pathological_indicator_category as p
+        left join tb_pathological_indicator as idc on p.indicator_id=idc.indicator_id
         left join sys_user as s on p.create_by=s.user_id
-        left join tb_structure as st on p.structure_id=st.structure_id
         <where>
             <if test="categoryName != null and categoryName != ''">
                 AND p.category_name like concat('%', #{categoryName}, '%')
@@ -354,6 +354,45 @@
             and p.del_flag=0
         </where>
     </select>
+
+<!--
+    <select id="selectByIndicator" parameterType="cn.staitech.anno.domain.vo.LabelVO" resultMap="BaseResult">
+        select
+        p.indicator_id,p.category_name,p.category_id,p.structure_id,p.rgb,p.hex,p.create_by,p.create_time,p.order_number,s.user_name,p.number,p.organization_id,st.name
+        as structure_name
+        from tb_pathological_indicator_category as p
+        left join sys_user as s on p.create_by=s.user_id
+        left join tb_structure as st on p.structure_id=st.structure_id
+        <where>
+            <if test="categoryName != null and categoryName != ''">
+                AND p.category_name like concat('%', #{categoryName}, '%')
+            </if>
+            <if test="organizationId != null">
+                AND p.organization_id =#{organizationId}
+            </if>
+            <if test="structureId != null">
+                AND p.structure_id =#{structureId}
+            </if>
+            <if test="indicatorId != null">
+                AND p.indicator_id =#{indicatorId}
+            </if>
+            <if test="organizationId != null">
+                AND p.organization_id =#{organizationId}
+            </if>
+            <if test="structureName != null and structureName != ''">
+                AND p.structure_name like concat('%', #{structureName}, '%')
+            </if>
+            <if test="params != null">
+                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">&lt;!&ndash; 开始时间检索 &ndash;&gt;
+                    AND date_format(p.create_time,'%y%m%d') &gt;= date_format(#{createTimeParams.beginTime},'%y%m%d')
+                </if>
+                <if test="createTimeParams.endTime != null and createTimeParams.endTime != ''">&lt;!&ndash; 结束时间检索 &ndash;&gt;
+                    AND date_format(p.create_time,'%y%m%d') &lt;= date_format(#{createTimeParams.endTime},'%y%m%d')
+                </if>
+            </if>
+            and p.del_flag=0
+        </where>
+    </select>-->
 
     <select id="selectLabelNum" parameterType="java.lang.Long" resultType="java.lang.Integer">
         select count(*)
