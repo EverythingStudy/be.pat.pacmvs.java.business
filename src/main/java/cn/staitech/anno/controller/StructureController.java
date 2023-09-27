@@ -53,6 +53,7 @@ public class StructureController extends BaseController {
     // @RequiresPermissions("anno:round:list")
     @ApiOperationSupport(author = "wanglibei")
     @Log(title = "结构列表", menu = "结构", subMenu = "结构列表", businessType = BusinessType.QUERY)
+    @ApiOperation(value = "结构列表new", notes = "结构列表")
     @GetMapping("/getStructureList")
     public R<List<Structure>> getStructureList(@RequestParam(required = true, name = "speciesId") String speciesId,
             @RequestParam(required = true, name = "organId") String organId) throws ExecutionException, InterruptedException {
@@ -65,6 +66,7 @@ public class StructureController extends BaseController {
      */
     // @RequiresPermissions("anno:round:list")
     @ApiOperationSupport(author = "wanglibei")
+    @ApiOperation(value = "脏器列表", notes = "结构列表")
     @Log(title = "脏器列表", menu = "结构", subMenu = "脏器列表", businessType = BusinessType.QUERY)
     @GetMapping("/getOrganByspeciesId")
     public R<List<Organ>> getOrganByspeciesId(@RequestParam(required = true, name = "speciesId") String speciesId) throws ExecutionException, InterruptedException {
