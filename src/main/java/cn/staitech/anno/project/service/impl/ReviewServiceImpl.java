@@ -1,5 +1,6 @@
 package cn.staitech.anno.project.service.impl;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.IoUtil;
@@ -12,7 +13,6 @@ import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import cn.staitech.anno.constant.ExportConstant;
 import cn.staitech.anno.domain.reviewround.ReviewRoundOutVO;
-import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.project.constants.Constants;
 import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.anno.project.domain.Slide;
@@ -24,7 +24,6 @@ import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -42,10 +41,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 
@@ -54,6 +51,7 @@ import java.util.concurrent.ExecutorService;
 * @description 针对表【tb_review】的数据库操作Service实现
 * @createDate 2023-09-15 13:05:15
 */
+@Slf4j
 @Service
 public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
     implements ReviewService{
@@ -120,6 +118,57 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
             writer.close();
         }
         IoUtil.close(excelOut);
+    }
+
+    @Transactional
+    @Override
+    public void csvExportReviewCurrent(Long projectId,List<Long> slideIds)throws Exception{
+        String projectName = "";
+        ServletOutputStream out = null;
+        InputStream inputStream = null;
+        String path = File.separator+"temp";
+        File file = new File(path);
+        try{
+            Map params = new HashMap();
+            params.put("projectId",projectId);
+            params.put("slideIds",slideIds);
+            List<ReviewVO> reviewVOS = getBaseMapper().exportReview(params);
+            if (reviewVOS!=null&&!reviewVOS.isEmpty()){
+                CsvWriter writer = CsvUtil.getWriter(file, CharsetUtil.CHARSET_UTF_8);
+                String[] header = new String[]{"项目名称","评审内容","评审轮次","专题编号","组别","切片编号","分值","详情","评审人","评审时间"};
+                writer.write(header);
+                for (ReviewVO reviewVO:reviewVOS){
+                    projectName = reviewVO.getProjectName();
+                    String[] body = new String[]{reviewVO.getProjectName(),reviewVO.getContent(),reviewVO.getRoundName(),reviewVO.getTopicName(),
+                            reviewVO.getGroupName(),reviewVO.getImageCode(),String.valueOf(reviewVO.getScore()),reviewVO.getDetails(),
+                            reviewVO.getCreateName(), DateUtil.format(reviewVO.getCreateTime(),"yyyy-MM-dd hh24:mm:ss")};
+                    writer.write(body);
+                }
+                writer.flush();
+                writer.close();
+                inputStream = new FileInputStream(file);
+                httpServletResponse.setContentType("text/csv;charset=utf-8");
+                //name是下载对话框的名称，不支持中文，想用中文名称需要进行utf8编码
+                String excelName = projectName+"评审结果";
+                excelName = URLEncoder.encode(excelName, "utf-8");
+                httpServletResponse.setHeader("Content-Disposition", "attachment;filename=" + excelName +".csv");
+                //将excel文件信息写入输出流，返回给调用者
+                out = httpServletResponse.getOutputStream();
+                out.write(IOUtils.toByteArray(inputStream));
+                IoUtil.close(out);
+                IoUtil.close(inputStream);
+                file.delete();
+            }
+        }catch (Exception e){
+            log.error("切片projectId:{}；评审导出异常：{}",projectId,e.getMessage());
+            IoUtil.close(out);
+            IoUtil.close(inputStream);
+            file.delete();
+        }finally {
+            IoUtil.close(out);
+            IoUtil.close(inputStream);
+            file.delete();
+        }
     }
 
     @Transactional

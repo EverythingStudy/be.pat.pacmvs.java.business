@@ -45,6 +45,7 @@
                 AND r.slide_id = #{params.slideId}
             </if>
         </where>
+        order by r.slide_id desc
     </select>
 
 

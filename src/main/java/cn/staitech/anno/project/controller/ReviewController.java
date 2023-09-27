@@ -83,6 +83,13 @@ public class ReviewController {
         return R.ok(reviewService.csvExportReview(in.getProjectId(),in.getSlideIds()));
     }
 
+    //@RequiresPermissions("smartReview:project:export")
+    @ApiOperation(value = "评审数据导出")
+    @PostMapping("/downReview")
+    public void csvExportReviewCurrent(@RequestBody DownTaskIN in) throws Exception{
+        reviewService.csvExportReviewCurrent(in.getProjectId(),in.getSlideIds());
+    }
+
     @ApiOperation(value = "下载任务状态查询")
     @GetMapping("/queryDownTaskByCode")
     public R<DownTask> queryDownTaskByCode(@RequestParam("code") @ApiParam(name = "code", value = "下载任务编码", required = true) String code)throws Exception{
