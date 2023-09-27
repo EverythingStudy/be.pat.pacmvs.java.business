@@ -5,6 +5,8 @@ import cn.staitech.anno.domain.ReviewRound;
 import cn.staitech.anno.domain.Topic;
 import cn.staitech.anno.domain.reviewround.*;
 import cn.staitech.anno.domain.round.Round;
+import cn.staitech.anno.project.domain.Slide;
+import cn.staitech.anno.project.service.SlideService;
 import cn.staitech.anno.service.GroupService;
 import cn.staitech.anno.service.ReviewRoundService;
 import cn.staitech.anno.service.RoundService;
@@ -48,6 +50,8 @@ public class ReviewRoundController {
     private GroupService groupService;
     @Resource
     private RoundService roundService;
+    @Resource
+    private SlideService slideService;
 
     public static Map<Long, String> roundMap = new HashMap<>();
     public static Map<Long, String> topicMap = new HashMap<>();
@@ -112,6 +116,25 @@ public class ReviewRoundController {
     @ApiOperation(value = "批量删除评审轮次")
     @PostMapping(value = "/remove")
     public R remove(@RequestBody DelReviewRoundIdsVO reviewRoundInVO) {
+        List<Long> reviewRoundIds = reviewRoundInVO.getReviewRoundIds();
+        QueryWrapper<Slide> queryWrapper = Wrappers.query();
+        queryWrapper.select("slide_id","review_round_id");
+        queryWrapper.in("review_round_id",reviewRoundIds);
+        List<Slide> slides = slideService.list(queryWrapper);
+        boolean flag = false;
+        if (slides!=null&&!slides.isEmpty()){
+            Map<Long, List<Slide>> stringListMap = slides.stream().collect(Collectors.groupingBy(Slide::getReviewRoundId));
+            for (Long id:reviewRoundIds){
+                List<Slide> slideList = stringListMap.get(id);
+                if (slideList!=null&&!slideList.isEmpty()){
+                    flag = true;
+                    break;
+                }
+            }
+        }
+        if (flag){
+            return R.fail("存在关联数据，不能执行此操作");
+        }
         return R.ok(reviewRoundService.removeByIds(reviewRoundInVO.getReviewRoundIds()));
     }
 
@@ -119,6 +142,14 @@ public class ReviewRoundController {
     @ApiOperation(value = "修改评审轮次")
     @PostMapping("/edit")
     public R edit(@RequestBody ReviewRoundInVO reviewRoundInVO) {
+        QueryWrapper<Slide> queryWrapper = Wrappers.query();
+        queryWrapper.select("slide_id","review_round_id");
+        queryWrapper.eq("review_round_id",reviewRoundInVO.getReviewRoundId());
+        int slides = 0;
+        slides = slideService.count(queryWrapper);
+        if (slides>0){
+            return R.fail("存在关联数据，不能执行此操作");
+        }
         ReviewRound reviewRound = new ReviewRound();
         BeanUtils.copyProperties(reviewRoundInVO, reviewRound);
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
