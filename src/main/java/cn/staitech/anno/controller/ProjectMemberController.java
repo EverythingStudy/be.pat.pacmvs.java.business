@@ -1,6 +1,7 @@
 package cn.staitech.anno.controller;
 
 import cn.staitech.anno.domain.ProjectMember;
+import cn.staitech.anno.domain.RecentlyVisited;
 import cn.staitech.anno.domain.vo.ProjectMemberAddVO;
 import cn.staitech.anno.domain.vo.ProjectMemberDeleteVO;
 import cn.staitech.anno.domain.vo.ProjectMemberSelectVO;
@@ -8,6 +9,7 @@ import cn.staitech.anno.domain.vo.ProjectMemberUpdateVO;
 import cn.staitech.anno.service.AnnotationService;
 import cn.staitech.anno.service.ProjectMemberService;
 import cn.staitech.anno.service.ProjectRoleService;
+import cn.staitech.anno.service.RecentlyVisitedService;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.utils.ProjectUtils;
 import cn.staitech.common.core.domain.R;
@@ -17,6 +19,7 @@ import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysProjectRole;
 import cn.staitech.system.api.domain.SysUser;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -52,6 +55,9 @@ public class ProjectMemberController extends BaseController {
     private ProjectRoleService projectRoleService;
     @Resource
     private AnnotationService annotationService;
+
+    @Resource
+    private RecentlyVisitedService recentlyVisitedService;
 
     @Log(title = "项目成员表增加", businessType = BusinessType.INSERT)
     @ApiOperation(value = "项目成员表增加")
@@ -98,6 +104,10 @@ public class ProjectMemberController extends BaseController {
             if (projectMemberService.delete(projectMember) > 0) {
                 return R.ok(DELETE_SUCCESS);
             }
+            // 根据用户和项目删除最近访问数据
+            QueryWrapper<RecentlyVisited> recentlyVisitedQueryWrapper = new QueryWrapper<>();
+            recentlyVisitedQueryWrapper.eq("project_id",projectId).eq("userId",userId);
+            recentlyVisitedService.remove(recentlyVisitedQueryWrapper);
         }
 
         return R.ok(DELETE_FAILURE);
