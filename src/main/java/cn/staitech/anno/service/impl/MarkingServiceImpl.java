@@ -479,9 +479,11 @@ public class MarkingServiceImpl implements MarkingService {
                                                     .eq("category_id",marking.getCategoryId())
                                             ;
                                             cn.staitech.anno.project.domain.Marking markingBy = markingMapperV1.selectOne(markingQueryWrapper);
-//                                            if(markingBy == null){
+                                            if(markingBy == null){
                                                 int res = markingMapperV1.insert(marking);
-//                                            }
+                                                slideAttrService.saveAnnoUsers(marking.getSlideId(), Collections.singletonList(marking.getCreateBy()));
+                                                slideAttrService.saveAnnoCategory(marking.getSlideId(), Collections.singletonList(marking.getCategoryId()));
+                                            }
                                         }
                                     }
                                 }
