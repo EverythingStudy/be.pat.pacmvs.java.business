@@ -152,6 +152,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
                 String excelName = projectName+"评审结果";
                 excelName = URLEncoder.encode(excelName, "utf-8");
                 httpServletResponse.setHeader("Content-Disposition", "attachment;filename=" + excelName +".csv");
+                httpServletResponse.setHeader("responseType", "blob");
                 //将excel文件信息写入输出流，返回给调用者
                 out = httpServletResponse.getOutputStream();
                 out.write(IOUtils.toByteArray(inputStream));
