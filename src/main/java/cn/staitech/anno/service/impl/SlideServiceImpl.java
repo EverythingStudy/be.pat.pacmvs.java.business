@@ -37,6 +37,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.ibatis.annotations.Param;
 import org.redisson.api.RMap;
@@ -512,7 +513,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
 
         Image imageQuery = new Image();
         QueryWrapper queryWrapper = new QueryWrapper<>(imageQuery);
-        queryWrapper.in("topic_id", topicIds);
+        queryWrapper.in(CollectionUtils.isNotEmpty(topicIds),"topic_id", topicIds);
         List<Image> imageList = imageMapper.selectList(queryWrapper);
 
         for (Image imageObj : imageList) {
