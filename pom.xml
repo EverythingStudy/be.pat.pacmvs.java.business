@@ -151,10 +151,10 @@
         </dependency>
 
         <!-- rabbitmq消息队列-->
-<!--        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-amqp</artifactId>
-        </dependency>-->
+        <!--        <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-amqp</artifactId>
+                </dependency>-->
 
         <!--加入log4j -->
         <dependency>
@@ -278,11 +278,11 @@
         </dependency>
 
         <!-- csv文件解析 -->
-<!--        <dependency>
-            <groupId>net.sourceforge.javacsv</groupId>
-            <artifactId>javacsv</artifactId>
-            <version>2.0</version>
-        </dependency>-->
+        <!--        <dependency>
+                    <groupId>net.sourceforge.javacsv</groupId>
+                    <artifactId>javacsv</artifactId>
+                    <version>2.0</version>
+                </dependency>-->
     </dependencies>
 
 
@@ -403,6 +403,21 @@
                 <nacosAddress>http://192.168.52.114:8848</nacosAddress>
                 <nacosGroup>DEFAULT_GROUP</nacosGroup>
                 <serverAddr>192.168.52.114:8848</serverAddr>
+            </properties>
+        </profile>
+
+        <profile>
+            <!--184预生产环境-->
+            <id>preprodsaas</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <activatedProperties>preprodsaas</activatedProperties>
+                <nacosNamespace>b9d9d54e-4660-4a29-837f-019909d49028</nacosNamespace>
+                <nacosAddress>http://192.168.52.184:8848</nacosAddress>
+                <nacosGroup>DEFAULT_GROUP</nacosGroup>
+                <serverAddr>192.168.52.184:8848</serverAddr>
             </properties>
         </profile>
     </profiles>
