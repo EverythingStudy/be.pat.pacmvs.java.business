@@ -16,12 +16,14 @@ import cn.staitech.anno.service.StructureService;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class PathologicalIndicatorCategoryServicelmpl implements PathologicalIndicatorCategoryService {
     @Resource
@@ -179,9 +181,14 @@ public class PathologicalIndicatorCategoryServicelmpl implements PathologicalInd
     public List<LabelListVO> selectByIndicator(LabelVO labelVO) {
         List<LabelListVO> list = pathologicalIndicatorCategoryMapper.selectByIndicator(labelVO);
         for (LabelListVO listVO : list) {
-            Structure structure = structureService.getOneStructure(listVO.getSpeciesId(), listVO.getOrganId(), listVO.getStructureId());
-            // 结构名称
-            listVO.setStructureName(structure.getName());
+            try {
+                Structure structure = structureService.getOneStructure(listVO.getSpeciesId(), listVO.getOrganId(), listVO.getSpeciesId()+""+listVO.getStructureId());
+                // 结构名称
+                listVO.setStructureName(structure.getName());
+            }catch (Exception e){
+                log.error("{};;;{};;;;{}",listVO.getSpeciesId(), listVO.getOrganId(), listVO.getStructureId());
+            }
+
         }
         return list;
     }
