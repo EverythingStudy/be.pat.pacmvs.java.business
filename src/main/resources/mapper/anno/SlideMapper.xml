@@ -746,7 +746,7 @@
                 AND m.image_name LIKE CONCAT('%', #{imageName}, '%')
             </if>
             <if test="groupName != null">
-                AND m.group_name LIKE CONCAT('%', #{groupName}, '%')
+                AND s.group_name LIKE CONCAT('%', #{groupName}, '%')
             </if>
             <if test="gender != null">
                 AND s.gender = #{gender, jdbcType=NUMERIC}
