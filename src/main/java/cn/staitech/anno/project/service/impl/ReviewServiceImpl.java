@@ -1,5 +1,6 @@
 package cn.staitech.anno.project.service.impl;
 
+import org.slf4j.Logger;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.lang.Snowflake;
@@ -32,6 +33,7 @@ import cn.staitech.anno.project.service.ReviewService;
 import cn.staitech.anno.project.mapper.ReviewMapper;
 import com.ibm.icu.text.SimpleDateFormat;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -132,7 +134,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
     }
 
     public class TaskThread implements Runnable{
-
+        public Logger logger = LoggerFactory.getLogger(TaskThread.class);
         private DownTask downTask;
         private Long projectId;
         private List<Long> slideIds;
@@ -165,24 +167,29 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
                 }
                 if (slideIds!= null&&!slideIds.isEmpty()){
                     for (Long slideId:slideIds){
-                        params.put("slideId",slideId);
-                        List<ReviewVO> reviewVOS = getBaseMapper().exportReview(params);
-                        String path = fileService.createFiles(slideId,".csv");
-                        File file = new File(path);
-                        CsvWriter writer = CsvUtil.getWriter(file, CharsetUtil.CHARSET_UTF_8);
-                        String[] header = new String[]{"项目名称","评审内容","评审轮次","专题编号","组别","切片编号","分值","详情","评审人","评审时间"};
-                        writer.write(header);
-                        for (ReviewVO reviewVO:reviewVOS){
-                            projectName = reviewVO.getProjectName();
-                            String[] body = new String[]{reviewVO.getProjectName(),reviewVO.getContent(),reviewVO.getRoundName(),reviewVO.getTopicName(),
-                                    reviewVO.getGroupName(),reviewVO.getImageCode(),String.valueOf(reviewVO.getScore()),reviewVO.getDetails(),
-                                    reviewVO.getCreateName(), DateUtil.format(reviewVO.getCreateTime(),"yyyy-MM-dd hh24:mm:ss")};
-                            writer.write(body);
+                        try{
+                            params.put("slideId",slideId);
+                            List<ReviewVO> reviewVOS = getBaseMapper().exportReview(params);
+                            String path = fileService.createFiles(slideId,".csv");
+                            File file = new File(path);
+                            CsvWriter writer = CsvUtil.getWriter(file, CharsetUtil.CHARSET_UTF_8);
+                            String[] header = new String[]{"项目名称","评审内容","评审轮次","专题编号","组别","切片编号","分值","详情","评审人","评审时间"};
+                            writer.write(header);
+                            for (ReviewVO reviewVO:reviewVOS){
+                                projectName = reviewVO.getProjectName();
+                                String[] body = new String[]{reviewVO.getProjectName(),reviewVO.getContent(),reviewVO.getRoundName(),reviewVO.getTopicName(),
+                                        reviewVO.getGroupName(),reviewVO.getImageCode(),String.valueOf(reviewVO.getScore()),reviewVO.getDetails(),
+                                        reviewVO.getCreateName(), DateUtil.format(reviewVO.getCreateTime(),"yyyy-MM-dd hh24:mm:ss")};
+                                writer.write(body);
+                            }
+                            map.put(ExportConstant.PATH, path);
+                            jsonObject.put(String.valueOf(slideId), map);
+                            writer.flush();
+                            writer.close();
+                        }catch (Exception e){
+                            logger.error("切片slideId:{}；评审导出异常：{}",slideId,e.getMessage());
+                            continue;
                         }
-                        map.put(ExportConstant.PATH, path);
-                        jsonObject.put(String.valueOf(slideId), map);
-                        writer.flush();
-                        writer.close();
                     }
                 }
                 downTask.setProjectName(projectName);

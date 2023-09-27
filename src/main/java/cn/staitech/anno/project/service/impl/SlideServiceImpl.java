@@ -95,6 +95,22 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         return pageMaster;
     }
 
+    private Integer getAnnoCount(Integer projectId)throws Exception{
+        List<Slide> list = getBaseMapper().selectList(Wrappers.query(Slide.builder().status("6").projectId(projectId).build()).select("slide_id"));
+        Integer count = 0;
+        List<Long> slideIds = new ArrayList<>();
+        if (list != null && !list.isEmpty()) {
+            list.forEach(slideVO -> {
+                slideIds.add(slideVO.getSlideId());
+            });
+            QueryWrapper<Marking> queryWrapper = Wrappers.query();
+            queryWrapper.in("slide_id",slideIds);
+            queryWrapper.eq("annotation_type", "Draw");
+            count = markingMapperV1.selectCount(queryWrapper);
+        }
+        return count;
+    }
+
 
     /**
      * 查看标注数目
@@ -113,7 +129,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         List<Marking> annotationList = markingMapperV1.selectList(queryWrapper);
         if (annotationList != null && !annotationList.isEmpty()) {
             voList.add(SlideAnnoStatisticsVO.builder().statisticsType("人工标注").result(annotationList.size()).build());
-            voList.add(SlideAnnoStatisticsVO.builder().statisticsType("已审核标注").result(annotationList.size()).build());
+            voList.add(SlideAnnoStatisticsVO.builder().statisticsType("已审核标注").result(getAnnoCount(params.getProjectId())).build());
             List<PathologicalIndicatorCategory> pathologicalIndicatorCategoryList = pathologicalIndicatorCategoryMapperV1.selectList(Wrappers.query());
             Map<Long, String> categoryMap = new HashMap<>();
             for (PathologicalIndicatorCategory c : pathologicalIndicatorCategoryList) {
