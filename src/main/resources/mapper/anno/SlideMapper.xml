@@ -288,7 +288,7 @@
 
     <select id="selectImageList" parameterType="java.lang.Long" resultMap="slideResult">
         SELECT s.slide_id,
-               i.image_name
+               i.file_name as image_name
         FROM tb_slide AS s
                  LEFT JOIN tb_project AS p ON p.project_id = s.project_id
                  LEFT JOIN tb_image AS i ON i.image_id = s.image_id

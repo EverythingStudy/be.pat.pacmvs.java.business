@@ -176,8 +176,7 @@ public class MarkingServiceImpl implements MarkingService {
         }
         marking.setCreate_by(req.getCreate_by());
         marking.setAnnotation_type("Draw");
-//        marking.(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-//        marking.(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        marking.setOrganization_id(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         marking.setCreate_time(new Date());
         SysUser user = userMapper.selectUserById(req.getCreate_by());
         if (user != null) {
@@ -344,9 +343,9 @@ public class MarkingServiceImpl implements MarkingService {
         JsonExport jsonExport = null;
         Project projectBy = projectMapperV1.selectById(slideBy.getProjectId());
         if (Objects.equals(projectBy.getProjectType(), "2")) {
-            jsonExport = markingMapper.reviewJsonExportSelect(slideId);
-        } else {
             jsonExport = markingMapper.jsonExportSelect(slideId);
+        } else {
+            jsonExport = markingMapper.reviewJsonExportSelect(slideId);
         }
         // 项目信息
         GeoProject project = new GeoProject();
@@ -590,11 +589,11 @@ public class MarkingServiceImpl implements MarkingService {
                         if (markingCount > 0) {
                             // 将文件生成在本地
                             String fileUrl = null;
-//                            try {
+                            try {
                                 fileUrl = slideJsonExport(slideId);
-//                            } catch (Exception e) {
-//                                throw new RuntimeException(e);
-//                            }
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
                             Slide slideBy = slideMapperV1.selectById(slideId);
                             Image image = imageMapper.selectById(slideBy);
                             map.put(ExportConstant.PATH, fileUrl);
