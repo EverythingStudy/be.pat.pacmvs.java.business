@@ -87,10 +87,7 @@
     <select id="selectSpecial" parameterType="cn.staitech.anno.domain.RecentlyVisited"
             resultMap="RecentlyVisitedResult">
         <include refid="selectRecentlyVisited"/>
-        where update_time != null
-        <if test="projectId != null">
-            AND project_id = #{projectId}
-        </if>
+        where update_time is not null
         <if test="userId != null">
             AND user_id = #{userId}
         </if>
