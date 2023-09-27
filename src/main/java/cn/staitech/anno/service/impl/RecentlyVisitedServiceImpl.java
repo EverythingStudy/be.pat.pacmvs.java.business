@@ -1,6 +1,5 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.ImageVisited;
 import cn.staitech.anno.domain.RecentlyVisited;
 import cn.staitech.anno.domain.vo.RecentlyVisitedVO.RecentlyVisitedSelectVO;
@@ -8,15 +7,12 @@ import cn.staitech.anno.mapper.RecentlyVisitedMapper;
 import cn.staitech.anno.service.RecentlyVisitedService;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
-import cn.staitech.system.api.model.LoginUser;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
-import static cn.staitech.common.security.utils.SecurityUtils.getLoginUser;
 
 /**
  * @author gjt.
@@ -101,6 +97,15 @@ public class RecentlyVisitedServiceImpl implements RecentlyVisitedService {
             // 添加数据
             req.setUserId(userId);
             recentlyVisitedMapper.insert(req);
+        }
+        // 添加之后根据用户和项目查询 如果大于十条，根据用户和项目删除数据
+        List<RecentlyVisited> recentlyVisitedList = recentlyVisitedMapper.selectSpecial(recentlyVisited);
+        if (recentlyVisitedList.size() > 10) {
+            // 找出时间最小的一条数据
+            RecentlyVisited recentlyVisited1 = recentlyVisitedList.stream().min(Comparator.comparing(RecentlyVisited::getUpdateTime)).get();
+            recentlyVisited.setProjectId(recentlyVisited1.getProjectId());
+            recentlyVisited.setUserId(userId);
+            recentlyVisitedMapper.deleteMinCreateTime(recentlyVisited);
         }
     }
 
