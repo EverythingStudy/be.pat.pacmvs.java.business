@@ -143,6 +143,12 @@ public class Slide implements Serializable {
     @Length(max= 1,message="编码长度不能超过1")
     private String status;
 
+    /**
+     * 评审轮次id
+     */
+    @ApiModelProperty(value = "评审轮次id")
+    private Long reviewRoundId;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
