@@ -1,9 +1,12 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.structure.Structure;
+import java.util.List;
+import java.util.Map;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import java.util.Map;
+import cn.staitech.anno.domain.organ.Organ;
+import cn.staitech.anno.domain.structure.Structure;
 
 
 /**
@@ -14,4 +17,8 @@ import java.util.Map;
 public interface StructureService extends IService<Structure> {
 
     Map<String, String> selectMap();
+    
+    List<Structure> getStructureList(String speciesId,String organId);
+    
+    List<Organ> getOrganBySpeciesId(String speciesId);
 }

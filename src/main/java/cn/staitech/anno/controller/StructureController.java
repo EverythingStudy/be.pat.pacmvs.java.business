@@ -1,5 +1,6 @@
 package cn.staitech.anno.controller;
 
+import cn.staitech.anno.domain.organ.Organ;
 import cn.staitech.anno.domain.structure.Structure;
 import cn.staitech.anno.service.StructureService;
 import cn.staitech.common.core.domain.R;
@@ -12,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -42,6 +44,31 @@ public class StructureController extends BaseController {
     @GetMapping("/list")
     public R<List<Structure>> list() throws ExecutionException, InterruptedException {
         List<Structure> list = structureService.list();
+        return R.ok(list);
+    }
+    
+    /**
+     * 种属-脏器-结构-列表 .
+     */
+    // @RequiresPermissions("anno:round:list")
+    @ApiOperationSupport(author = "wanglibei")
+    @Log(title = "结构列表", menu = "结构", subMenu = "结构列表", businessType = BusinessType.QUERY)
+    @GetMapping("/getStructureList")
+    public R<List<Structure>> getStructureList(@RequestParam(required = true, name = "speciesId") String speciesId,
+            @RequestParam(required = true, name = "organId") String organId) throws ExecutionException, InterruptedException {
+        List<Structure> list = structureService.getStructureList(speciesId,organId);
+        return R.ok(list);
+    }
+    
+    /**
+     * 种属-脏器列表 .
+     */
+    // @RequiresPermissions("anno:round:list")
+    @ApiOperationSupport(author = "wanglibei")
+    @Log(title = "脏器列表", menu = "结构", subMenu = "脏器列表", businessType = BusinessType.QUERY)
+    @GetMapping("/getOrganByspeciesId")
+    public R<List<Organ>> getOrganByspeciesId(@RequestParam(required = true, name = "speciesId") String speciesId) throws ExecutionException, InterruptedException {
+        List<Organ> list = structureService.getOrganBySpeciesId(speciesId);
         return R.ok(list);
     }
 

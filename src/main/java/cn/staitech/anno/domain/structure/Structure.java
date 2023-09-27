@@ -30,4 +30,17 @@ public class Structure {
      */
     @ApiModelProperty(value = "结构名称", required = true)
     private String name;
+    
+    /**
+     * 种属ID
+     */
+    @ApiModelProperty(value = "种属ID", required = true)
+    private String speciesId;
+    
+    
+    /**
+     * 脏器ID
+     */
+    @ApiModelProperty(value = "脏器ID", required = true)
+    private String organId;
 }
