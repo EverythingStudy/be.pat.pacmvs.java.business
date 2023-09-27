@@ -26,6 +26,8 @@ public interface ProjectMemberMapper {
 
     List<ProjectMember> selectByUserId(Long userId);
 
+    ProjectMember selectUserBy(ProjectMember projectMember);
+
     /**
      * 查询用户id（结果去重的）
      * */

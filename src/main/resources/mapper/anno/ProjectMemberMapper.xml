@@ -81,6 +81,17 @@
             </if>
         </where>
     </select>
+
+    <select id="selectUserBy" parameterType="cn.staitech.anno.domain.ProjectMember" resultMap="BaseResultMap">
+        select
+            *
+        from tb_project_member
+        where
+            project_id = #{projectId,jdbcType=BIGINT}
+            AND user_id = #{userId,jdbcType=BIGINT}
+
+
+    </select>
     <select id="selectByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>

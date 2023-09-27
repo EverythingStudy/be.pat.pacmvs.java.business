@@ -4,6 +4,7 @@ import cn.staitech.anno.constant.ProjectConstant;
 import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.ProjectMember;
+import cn.staitech.anno.domain.RecentlyVisited;
 import cn.staitech.anno.domain.file.Chunk;
 import cn.staitech.anno.domain.po.ProjectPo;
 import cn.staitech.anno.domain.project.in.OperateProjectIn;
@@ -68,6 +69,9 @@ public class ProjectController extends BaseController {
 
     @Resource
     private MarkingService markingService;
+
+    @Resource
+    private RecentlyVisitedService recentlyVisitedService;
 
 
     @GetMapping("getSystemDictOld")
@@ -349,6 +353,9 @@ public class ProjectController extends BaseController {
             project.setProjectId(projectId);
             QueryWrapper queryWrapper = new QueryWrapper<>(project);
             projectService.remove(queryWrapper);
+            QueryWrapper<RecentlyVisited> recentlyVisitedQueryWrapper = new QueryWrapper<>();
+            recentlyVisitedQueryWrapper.eq("project_id",projectId);
+            recentlyVisitedService.remove(recentlyVisitedQueryWrapper);
         }
         return R.ok(ResponseConstant.OPERATE_SUCCEED);
     }

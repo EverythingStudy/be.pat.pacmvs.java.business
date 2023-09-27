@@ -1,7 +1,9 @@
 package cn.staitech.anno.service;
 
+import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.RecentlyVisited;
 import cn.staitech.anno.domain.vo.RecentlyVisitedVO.RecentlyVisitedSelectVO;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
 
@@ -9,7 +11,7 @@ import java.util.List;
  * @author gjt.
  * @data 2023/5/25 14:08
  */
-public interface RecentlyVisitedService {
+public interface RecentlyVisitedService extends IService<RecentlyVisited> {
 
 
     /**
