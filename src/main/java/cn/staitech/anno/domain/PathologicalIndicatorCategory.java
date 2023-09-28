@@ -56,7 +56,6 @@ public class PathologicalIndicatorCategory {
 
     @ApiModelProperty(value = "标签名称")
     @Size(min = 0, max = 50, message = "名称不能超过50个字符")
-    @NotBlank(message = "标签名称不可为空")
     private String categoryName;
 
     @ApiModelProperty(required = true, value = "标注类型")
