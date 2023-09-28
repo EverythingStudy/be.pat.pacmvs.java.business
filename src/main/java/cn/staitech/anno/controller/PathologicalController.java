@@ -97,7 +97,8 @@ public class PathologicalController {
         String categoryName = indicator.getIndicatorName() + structureName;
         category.setCategoryName(categoryName);
         // 生成完整编码
-        category.setNumber(indicator.getNumber() + "" + vo.getStructureId());
+        //category.setNumber(indicator.getNumber() + "" + vo.getStructureId());
+        category.setNumber(vo.getStructureId());
 
         // 添加标注类别
         pathologicalIndicatorCategoryService.insertSelective(category);
@@ -179,7 +180,7 @@ public class PathologicalController {
         category.setCategoryName(categoryName);
         // 生成完整编码
         //category.setNumber(indicator.getNumber() + "" + category.getStructureId());
-        category.setNumber(indicator.getNumber());
+        //category.setNumber(indicator.getNumber());
 
 
         // 验证是否存在该条件的记录    A：必填项校验。B：结构编码在当前列表内不可重复；C：结构名称在当前列表内不可重复。D：图层顺序在当前列表内不可重复；E：颜色值在当前列表不可重复
