@@ -573,7 +573,6 @@ public class MarkingServiceImpl implements MarkingService {
         @Override
         public void run() {
             try {
-                Map<String, String> map = new HashMap<>();
                 JSONObject jsonObject = new JSONObject();
                 if (slideIds == null || slideIds.isEmpty()) {
                     QueryWrapper<Slide> queryWrapper = Wrappers.query();
@@ -600,6 +599,7 @@ public class MarkingServiceImpl implements MarkingService {
                             }
                             Slide slideBy = slideMapperV1.selectById(slideId);
                             Image image = imageMapper.selectById(slideBy);
+                            Map<String, String> map = new HashMap<>();
                             map.put(ExportConstant.PATH, fileUrl);
                             map.put(ExportConstant.IMAGE_URL, image.getImageUrl());
                             jsonObject.put(String.valueOf(slideId), map);
