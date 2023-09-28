@@ -181,7 +181,7 @@
                 rgb = #{rgb,jdbcType=VARCHAR},
             </if>
             <if test="hex != null">
-                rgb = #{hex,jdbcType=VARCHAR},
+                hex = #{hex,jdbcType=VARCHAR},
             </if>
             <if test="updateBy != null">
                 update_by = #{updateBy,jdbcType=BIGINT},
