@@ -246,8 +246,9 @@
         where category_id = #{categoryId}
     </select>
 
+
     <!-- 结构编码在当前列表内不可重复；C：结构名称在当前列表内不可重复。D：图层顺序在当前列表内不可重复；E：颜色值在当前列表不可重复 -->
-    <select id="selectIndicatorMessage" parameterType="cn.staitech.anno.domain.PathologicalIndicatorCategory"
+  <!--  <select id="selectIndicatorMessage" parameterType="cn.staitech.anno.domain.PathologicalIndicatorCategory"
             resultMap="BaseResultMap">
         select *
         from tb_pathological_indicator_category where del_flag = 0
@@ -272,12 +273,46 @@
         <if test="hex != null">
             AND hex = #{hex}
         </if>
-<!--        <if test="structureId != null">
-            AND structure_id = #{structureId}
-        </if>-->
+        &lt;!&ndash;        <if test="structureId != null">
+                    AND structure_id = #{structureId}
+                </if>&ndash;&gt;
         <if test="orderNumber != null and orderNumber != ''">
             AND order_number = #{orderNumber}
         </if>
+    </select>-->
+
+    <!-- 结构编码在当前列表内不可重复；C：结构名称在当前列表内不可重复。D：图层顺序在当前列表内不可重复；E：颜色值在当前列表不可重复 -->
+    <select id="selectIndicatorMessage" parameterType="cn.staitech.anno.domain.PathologicalIndicatorCategory"
+            resultMap="BaseResultMap">
+        select *
+        from tb_pathological_indicator_category where del_flag = 0
+        <if test="indicatorId != null">
+            AND indicator_id = #{indicatorId}
+        </if>
+        <if test="categoryName != null and categoryName != ''">
+            OR category_name = #{categoryName}
+        </if>
+        <if test="categoryId != null and categoryId != ''">
+            OR category_id = #{categoryId}
+        </if>
+        <if test="number != null and number != ''">
+            OR number = #{number}
+        </if>
+        <if test="rgb != null">
+            OR rgb = #{rgb}
+        </if>
+        <if test="hex != null">
+            OR hex = #{hex}
+        </if>
+        <if test="structureId != null">
+            OR structure_id = #{structureId}
+        </if>
+        <if test="orderNumber != null and orderNumber != ''">
+            OR order_number = #{orderNumber}
+        </if>
+        <!--        <if test="organizationId != null">
+                    AND organization_id = #{organizationId}
+        </if>-->
     </select>
 
     <select id="selectByProjectId" parameterType="java.lang.Long" resultMap="SysAnnotationCategoryStatisticResult">
