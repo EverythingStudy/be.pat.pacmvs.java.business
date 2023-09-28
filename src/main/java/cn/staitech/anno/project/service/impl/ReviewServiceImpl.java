@@ -1,6 +1,7 @@
 package cn.staitech.anno.project.service.impl;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.tomcat.util.threads.TaskThread;
 import org.slf4j.Logger;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.IoUtil;
@@ -41,6 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.*;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.*;
@@ -140,8 +142,8 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
                 for (ReviewVO reviewVO:reviewVOS){
                     projectName = reviewVO.getProjectName();
                     String[] body = new String[]{reviewVO.getProjectName(),reviewVO.getContent(),reviewVO.getRoundName(),reviewVO.getTopicName(),
-                            reviewVO.getGroupName(),reviewVO.getImageCode(),String.valueOf(reviewVO.getScore()),reviewVO.getDetails(),
-                            reviewVO.getCreateName(), DateUtil.format(reviewVO.getCreateTime(),"yyyy-MM-dd hh24:mm:ss")};
+                            reviewVO.getGroupName(),reviewVO.getImageCode(),String.valueOf(reviewVO.getScore()),reviewVO.getDetails() + "\t",
+                            reviewVO.getCreateName(), DateUtil.format(reviewVO.getCreateTime(),"yyyy-MM-dd hh:mm:ss") + "\t"};
                     writer.write(body);
                 }
                 writer.flush();
