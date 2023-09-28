@@ -182,7 +182,7 @@ public class PathologicalIndicatorCategoryServicelmpl implements PathologicalInd
         List<LabelListVO> list = pathologicalIndicatorCategoryMapper.selectByIndicator(labelVO);
         for (LabelListVO listVO : list) {
             try {
-                Structure structure = structureService.getOneStructure(listVO.getSpeciesId(), listVO.getOrganId(), listVO.getSpeciesId()+""+listVO.getStructureId());
+                Structure structure = structureService.getOneStructure(listVO.getSpeciesId(), listVO.getOrganId(), listVO.getStructureId());
                 // 结构名称
                 listVO.setStructureName(structure.getName());
             }catch (Exception e){
