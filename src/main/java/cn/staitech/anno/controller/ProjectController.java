@@ -45,6 +45,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -280,7 +281,7 @@ public class ProjectController extends BaseController {
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "添加项目")
-    //@RequiresPermissions("anno:project:addproject")
+    @RequiresPermissions("projectConfig:projectList:create")
     @Log(title = "添加项目", menu = "专题管理", subMenu = "项目管理", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @Transactional
@@ -325,7 +326,7 @@ public class ProjectController extends BaseController {
 
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "编辑项目")
-    //@RequiresPermissions("anno:project:addproject")
+    @RequiresPermissions("projectConfig:projectList:edit")
     @Log(title = "编辑项目", menu = "编辑项目", subMenu = "编辑项目", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @Transactional
@@ -345,20 +346,34 @@ public class ProjectController extends BaseController {
 
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "批量项目")
-    @Transactional
+    @RequiresPermissions("projectConfig:projectList:remove")
     @PostMapping(value = "/remove")
     public R remove(@RequestBody ProjectIdsVO request) {
         List<Long> idList = request.getProjectIds();
+        AtomicInteger processCount = new AtomicInteger(0);
         for (Long projectId : idList) {
             Project project = new Project();
             project.setProjectId(projectId);
+            // 只能删除项目状态是未启动的项目。
+            project.setStatus(1);
             QueryWrapper queryWrapper = new QueryWrapper<>(project);
-            projectService.remove(queryWrapper);
-            QueryWrapper<RecentlyVisited> recentlyVisitedQueryWrapper = new QueryWrapper<>();
-            recentlyVisitedQueryWrapper.eq("project_id",projectId);
-            recentlyVisitedService.remove(recentlyVisitedQueryWrapper);
+
+            Project delProject = projectService.getOne(queryWrapper);
+            if (delProject != null) {
+                projectService.removeById(projectId);
+
+                QueryWrapper<RecentlyVisited> recentlyVisitedQueryWrapper = new QueryWrapper<>();
+                recentlyVisitedQueryWrapper.eq("project_id", projectId);
+                recentlyVisitedService.remove(recentlyVisitedQueryWrapper);
+                processCount.getAndIncrement();
+            }
         }
-        return R.ok(ResponseConstant.OPERATE_SUCCEED);
+
+        if (processCount.get() > 0) {
+            return R.ok(ResponseConstant.OPERATE_SUCCEED);
+        } else {
+            return R.fail(ResponseConstant.OPERATE_ERROR);
+        }
     }
 
 

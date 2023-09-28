@@ -121,7 +121,6 @@
                p.species_id,
                p.project_type,
                p.organization_id,
-               p.species_id,
                p.product_series_id,
                u.user_name,
                i.indicator_name,

@@ -105,7 +105,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
                 // 提取处理状态文本描述并赋值
                 Integer status = in.getStatus();
-                // out.setFileStatus(ImageConstant.IMAGE_STATUS_MAP.get(status));
+                out.setFileStatus(ImageConstant.IMAGE_STATUS_MAP.get(status));
                 // 不可用 可用 解析中
 
                 if (status == 0) {
