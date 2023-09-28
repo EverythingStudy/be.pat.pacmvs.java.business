@@ -143,7 +143,8 @@ public class ReviewRoundController {
     @PostMapping("/edit")
     public R edit(@RequestBody ReviewRoundInVO reviewRoundInVO) {
         QueryWrapper<Slide> queryWrapper = Wrappers.query();
-        queryWrapper.select("slide_id","review_round_id");
+        //queryWrapper.select("slide_id","review_round_id");
+        queryWrapper.select("review_round_id");
         queryWrapper.eq("review_round_id",reviewRoundInVO.getReviewRoundId());
         int slides = 0;
         slides = slideService.count(queryWrapper);

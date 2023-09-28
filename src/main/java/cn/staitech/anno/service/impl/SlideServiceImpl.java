@@ -513,6 +513,9 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
 
         Image imageQuery = new Image();
         QueryWrapper queryWrapper = new QueryWrapper<>(imageQuery);
+        // 只查可用的图片
+        queryWrapper.eq("status",1);
+        queryWrapper.eq("delete_flag",1);
         queryWrapper.in(CollectionUtils.isNotEmpty(topicIds), "topic_id", topicIds);
         List<Image> imageList = imageMapper.selectList(queryWrapper);
 
@@ -555,7 +558,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
             // 匹配图片
             QueryWrapper<Slide> queryWrapper = Wrappers.query();
             queryWrapper.eq("slide_id", slideId);
-            queryWrapper.orderByDesc("id");
+            queryWrapper.orderByDesc("slide_id");
             queryWrapper.last("limit 1");
             Slide slide = slideMapper.selectOne(queryWrapper);
 
