@@ -83,7 +83,7 @@ public class IndicatorServicelmpl implements IndicatorService {
             indicatorAndOrganizationIdVO.setIndicatorId(obj.getIndicatorId());
             // indicatorAndOrganizationIdVO.setOrganizationId(organizationId);
             // 查询总数
-            obj.setAnnotationCategoryTotal(pathologicalIndicatorCategoryService.selectCategoryNumber(indicatorAndOrganizationIdVO));
+            //obj.setAnnotationCategoryTotal(pathologicalIndicatorCategoryService.selectCategoryNumber(indicatorAndOrganizationIdVO));
         }
         PageMaster<Indicator> pageMaster = new PageMaster<>(list);
         return pageMaster;
