@@ -35,7 +35,7 @@
 
     <resultMap id="AnnotationPageResult"
                type="cn.staitech.anno.domain.vo.statistic.AnnotationStatisticListPageOutVO">
-        <result property="annotationId" column="annotation_id"/>
+        <result property="markingId" column="marking_id"/>
     </resultMap>
 
     <resultMap id="UserListResult" type="cn.staitech.anno.domain.vo.statistic.StatisticUserListOutVO">
@@ -812,7 +812,7 @@
         SELECT
         p.project_id,
         p.project_name,
-        a.annotation_id
+        a.marking_id
         FROM
         tb_marking as a
         inner join tb_project as p on a.project_id = p.project_id

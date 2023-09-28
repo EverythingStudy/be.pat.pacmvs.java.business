@@ -17,6 +17,9 @@ public class AnnotationStatisticListPageInVO {
     @ApiModelProperty(value = "统计类别：标注数量、图像数量", required = true)
     private Long statisticCategory;
 
+    @ApiModelProperty(value = "专题id")
+    private Long organizationId;
+
     @ApiModelProperty(value = "项目ID列表")
     private List<Integer> projectIdList;
 

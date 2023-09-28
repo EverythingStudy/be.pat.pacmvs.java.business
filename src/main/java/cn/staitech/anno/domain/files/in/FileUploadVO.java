@@ -31,7 +31,7 @@ public class FileUploadVO implements Serializable {
     /**
      * 当前文件块，从0开始
      */
-    private Integer chunkNumber;
+    private Integer chunk;
     /**
      * 分块大小
      */
@@ -40,7 +40,7 @@ public class FileUploadVO implements Serializable {
     /**
      * 切片总块数
      */
-    private Integer totalChunks;
+    private Integer chunkTotal;
 
     /**
      * 专题id

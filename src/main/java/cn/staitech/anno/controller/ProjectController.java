@@ -345,6 +345,7 @@ public class ProjectController extends BaseController {
 
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "批量项目")
+    @Transactional
     @PostMapping(value = "/remove")
     public R remove(@RequestBody ProjectIdsVO request) {
         List<Long> idList = request.getProjectIds();
