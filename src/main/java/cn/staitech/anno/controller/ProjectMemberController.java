@@ -103,7 +103,7 @@ public class ProjectMemberController extends BaseController {
 
             if (projectMemberService.delete(projectMember) > 0) {
                 QueryWrapper<RecentlyVisited> recentlyVisitedQueryWrapper = new QueryWrapper<>();
-                recentlyVisitedQueryWrapper.eq("project_id",projectId).eq("userId",userId);
+                recentlyVisitedQueryWrapper.eq("project_id",projectId).eq("user_id",userId);
                 recentlyVisitedService.remove(recentlyVisitedQueryWrapper);
                 return R.ok(DELETE_SUCCESS);
             }
