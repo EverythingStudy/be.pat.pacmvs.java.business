@@ -102,7 +102,7 @@ public interface SlideMapper extends BaseMapper<Slide> {
     List<Slide> selectImageExist(Slide slide);
 
     /**
-     * 通过项目id 查询审核过的数量
+     * 通过项目id查询切片的数量
      *
      * @param projectId
      * @return 结果
@@ -201,21 +201,24 @@ public interface SlideMapper extends BaseMapper<Slide> {
 
 
     //-------------------------------
+
     /**
      * 切片报表分页查询
+     *
      * @param imageCsvGetVO
      * @return
      */
     List<ImageCsvListVO> pageImageCsvListVOList(ImageCsvGetVO imageCsvGetVO);
+
     List<ImageCsvListVO> pageImageCsvListVOList1(ImageCsvGetVO imageCsvGetVO);
 
     /**
      * 切片报表分页查询(单个)
+     *
      * @param slideId 切片id
      * @return
      */
     SlideSelectBy pageImageCsvListVOBy(Long slideId);
-
 
 
 }

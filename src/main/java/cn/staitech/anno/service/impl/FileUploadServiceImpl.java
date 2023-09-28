@@ -161,7 +161,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         // 将文件数量和文件id添加至map中
         if (!Container.FILE_MAP.containsKey(chunk.getUuid())) {
             ArrayList<Integer> chunkList = new ArrayList<Integer>();
-            for (int i = 0; i < chunk.getTotalChunks(); i++) {
+            for (int i = 0; i < chunk.getChunkTotal(); i++) {
                 chunkList.add(i);
             }
             Container.FILE_MAP.put(chunk.getUuid(), chunkList);
@@ -174,7 +174,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             byte[] buffer = new byte[1024 * 4 * 10];
             // 指针移动到当前块开始写的位置，chunk.getChunkNumber()是指当前是第几块，减一后乘
             // 以每个块的大小 得到前面块的偏移量，即当前块的起始位置
-            raf.seek((chunk.getChunkNumber()) * chunk.getChunkSize());
+            raf.seek((chunk.getChunk()) * chunk.getChunkSize());
             // 写入文件
             while ((len = fis.read(buffer)) != -1) {
                 raf.write(buffer, 0, len);
@@ -183,7 +183,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             return false;
         }
         // 删除map中当前元素
-        Container.FILE_MAP.get(chunk.getUuid()).remove(chunk.getChunkNumber());
+        Container.FILE_MAP.get(chunk.getUuid()).remove(chunk.getChunk());
 
         // map为空时,代表文件上传完成,根据业务类型执行不同业务
         if (Container.FILE_MAP.get(chunk.getUuid()) != null && Container.FILE_MAP.get(chunk.getUuid()).isEmpty()) {

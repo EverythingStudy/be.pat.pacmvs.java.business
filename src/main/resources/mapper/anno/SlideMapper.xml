@@ -306,13 +306,14 @@
     <select id="selectImageExist" parameterType="cn.staitech.anno.domain.Slide" resultMap="SlideResult">
         select *
         from tb_slide
-        WHERE 1 = 1
-        <if test="projectId != null and projectId != ''">
-            AND project_id = #{projectId}
-        </if>
-        <if test="imageId != null and imageId != ''">
-            AND image_id = #{imageId}
-        </if>
+        <where>
+            <if test="projectId != null and projectId != ''">
+                AND project_id = #{projectId}
+            </if>
+            <if test="imageId != null and imageId != ''">
+                AND image_id = #{imageId}
+            </if>
+        </where>
     </select>
 
     <select id="selectCheckNum" parameterType="java.lang.Long" resultType="java.lang.Integer">

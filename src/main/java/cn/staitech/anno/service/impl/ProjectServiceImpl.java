@@ -1,5 +1,6 @@
 package cn.staitech.anno.service.impl;
 
+import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.constant.ColorConstant;
 import cn.staitech.anno.constant.ProjectConstant;
 import cn.staitech.anno.domain.Project;
@@ -96,8 +97,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
         // 项目类型
         Map<String, String> projectTypeMap = projectTypeService.selectMap();
-        // 种属
-        Map<Long, String> sepeciesMap = speciesService.selectMap();
+
         // 品系
         // Map<Integer, String> productSeriesMap = productSeriesService.selectMap();
 
@@ -107,9 +107,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                 obj.setProjectTypeName(projectTypeMap.get(obj.getProjectType()));
             }
             // 种属
-            if (sepeciesMap.containsKey(obj.getSpeciesId())) {
-                obj.setSpeciesName(sepeciesMap.get(obj.getSpeciesId()));
-            }
+            obj.setSpeciesName(MapConstant.getSpeciesName(obj.getSpeciesId()));
+
             // 品系
 /*            if (productSeriesMap.containsKey(obj.getProductSeriesId())) {
                 obj.setProductSeries(productSeriesMap.get(obj.getProductSeriesId()));

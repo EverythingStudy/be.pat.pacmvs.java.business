@@ -29,7 +29,7 @@ public class UpdateProjectVO implements Serializable {
     private static final long serialVersionUID = 1L;
     @NotBlank(message = "项目名称不能为空字符串")
     @ApiModelProperty(required = true, value = "项目名称")
-    @Size(min = 0, max = 50, message = "名称不能超过50个字符")
+    @Size(min = 0, max = 200, message = "名称不能超过100个字符")
     private String projectName;
 
     /**
@@ -60,7 +60,7 @@ public class UpdateProjectVO implements Serializable {
     @ApiModelProperty(value = "机构编号")
     private Long organizationId;
     @ApiModelProperty(value = "项目描述")
-    @Size(min = 0, max = 50, message = "项目描述不能超过50个字符")
+    @Size(min = 0, max = 200, message = "名称不能超过100个字符")
     private String description;
     @ApiModelProperty("专题ID")
     private Integer topicId;
@@ -73,6 +73,4 @@ public class UpdateProjectVO implements Serializable {
     private Integer status;
     @ApiModelProperty(required = false, hidden = true, value = "切片列表(可以不传参数)")
     private Long[] imageIdList;
-/*    @ApiModelProperty(required = false, hidden = true, value = "脏器组织id")
-    private Long dictCode;*/
 }

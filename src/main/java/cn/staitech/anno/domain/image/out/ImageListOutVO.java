@@ -75,4 +75,6 @@ public class ImageListOutVO {
     private String businessTypeName;
     @ApiModelProperty(value = "图像来源(1前端上传，2目录选片，3TCP客户端上传)")
     private Integer source;
+    @ApiModelProperty(value = "是否允许删除： 1 禁止选中")
+    private Integer deleState;
 }

@@ -2,7 +2,7 @@ package cn.staitech.anno.config;
 
 import cn.staitech.anno.service.GroupService;
 import cn.staitech.anno.service.RoundService;
-import cn.staitech.anno.service.TopicService;
+import cn.staitech.anno.service.SpeciesService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -16,8 +16,8 @@ import java.util.Map;
  */
 @Component
 public class MapConstant {
-/*    @Resource
-    private TopicService topicService;*/
+    @Resource
+    private SpeciesService speciesService;
 
     @Resource
     private GroupService groupService;
@@ -27,32 +27,32 @@ public class MapConstant {
 
 
     /**
-     * 专题列表
+     * 种属
      */
-    // public static Map<Long, String> TOPIC_MAP;
+    public static Map<Long, String> SPECIES_MAP;
     public static Map<Long, String> GROUP_MAP;
     public static Map<Long, String> ROUND_MAP;
 
     @PostConstruct
     public void init() {
-        //TOPIC_MAP = topicService.selectMap();
+        SPECIES_MAP = speciesService.selectMap();
         GROUP_MAP = groupService.selectMap();
         ROUND_MAP = roundService.selectMap();
     }
 
     /**
-     * 获取专题名称
+     * 获取种属名称
      *
      * @param topicId
      * @return
      */
-/*    public static String getTopicName(Long topicId) {
-        if (TOPIC_MAP.containsKey(topicId)) {
+    public static String getSpeciesName(Long topicId) {
+        if (SPECIES_MAP.containsKey(topicId)) {
 
-            return TOPIC_MAP.get(topicId);
+            return SPECIES_MAP.get(topicId);
         }
         return "";
-    }*/
+    }
 
 
     /**

@@ -156,7 +156,7 @@ public class ProjectListVO extends BaseEntity {
      * 种属ID
      */
     @ApiModelProperty("种属ID")
-    private Integer speciesId;
+    private Long speciesId;
 
     @ApiModelProperty("种属名称")
     private String speciesName;

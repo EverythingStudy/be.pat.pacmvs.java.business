@@ -2,6 +2,7 @@ package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.constant.ImageConstant;
 import cn.staitech.anno.domain.Image;
+import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.image.in.ImageBatchIdsVO;
 import cn.staitech.anno.domain.image.in.ImageListVO;
 import cn.staitech.anno.domain.image.in.ImageTopicBatchIdsVO;
@@ -9,9 +10,9 @@ import cn.staitech.anno.domain.image.in.ImageUpdateVO;
 import cn.staitech.anno.domain.image.out.ImageListOutVO;
 import cn.staitech.anno.mapper.ImageMapper;
 import cn.staitech.anno.mapper.SpecialImageMapper;
-import cn.staitech.anno.mapper.TopicMapper;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.RoundService;
+import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.service.SysOrganizationService;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.security.utils.SecurityUtils;
@@ -43,7 +44,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     private ImageMapper imageMapper;
 
     @Resource
-    private TopicMapper topicMapper;
+    private SlideService slideService;
 
     @Resource
     private SpecialImageMapper specialImageMapper;
@@ -105,7 +106,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
                 // 提取处理状态文本描述并赋值
                 Integer status = in.getStatus();
-                // out.setFileStatus(ImageConstant.IMAGE_STATUS_MAP.get(status));
+                out.setFileStatus(ImageConstant.IMAGE_STATUS_MAP.get(status));
                 // 不可用 可用 解析中
 
                 if (status == 0) {
@@ -123,6 +124,15 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                 if (bizType.equals(2) && roundMap.containsKey(in.getRoundId())) {
                     out.setRoundName(roundMap.get(in.getRoundId()).toString());
                 }
+
+                Slide slide = new Slide();
+                slide.setImageId(out.getImageId());
+                // 禁止删除
+                out.setDeleState(0);
+                if (slideService.selectImageExist(slide).size() > 0) {
+                    out.setDeleState(1);
+                }
+
                 respList.add(out);
             }
         }
@@ -244,12 +254,20 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
         List<Long> forbidIds = new ArrayList<>();
         // remove id in forbid list
-        for (Long id : ids.getImageIdList()) {
-            if (usingIds.contains(id)) {
-                forbidIds.add(id);
+        for (Long imageId : ids.getImageIdList()) {
+            if (usingIds.contains(imageId)) {
+                forbidIds.add(imageId);
                 continue;
             }
-            imageMapper.updateDeleteFlagById(id);
+
+            if (imageId > 0) {
+                Slide slide = new Slide();
+                slide.setImageId(imageId);
+                // 查切片表中有没有绑定此图片
+                if (slideService.selectImageExist(slide).size() > 0) {
+                    imageMapper.updateDeleteFlagById(imageId);
+                }
+            }
         }
         return forbidIds;
     }

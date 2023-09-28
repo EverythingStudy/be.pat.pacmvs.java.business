@@ -513,7 +513,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
 
         Image imageQuery = new Image();
         QueryWrapper queryWrapper = new QueryWrapper<>(imageQuery);
-        queryWrapper.in(CollectionUtils.isNotEmpty(topicIds),"topic_id", topicIds);
+        queryWrapper.in(CollectionUtils.isNotEmpty(topicIds), "topic_id", topicIds);
         List<Image> imageList = imageMapper.selectList(queryWrapper);
 
         for (Image imageObj : imageList) {
@@ -543,17 +543,28 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
     }
 
 
+    /**
+     * 批量删除切片
+     * @param slideIds
+     * @return
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int delSlidesBatch(List<Long> slideIds) {
-        int res = slideMapper.deleteBatchIds(slideIds);
-        for(Long slideId:slideIds){
-            updateRecentlyVisited(slideId);
+        for (Long slideId : slideIds) {
+            // 匹配图片
+            QueryWrapper<Slide> queryWrapper = Wrappers.query();
+            queryWrapper.eq("slide_id", slideId);
+            queryWrapper.orderByDesc("id");
+            queryWrapper.last("limit 1");
+            Slide slide = slideMapper.selectOne(queryWrapper);
+
+            if (slide != null && slideMapper.deleteById(slideId) > 0) {
+                updateRecentlyVisited(slideId);
+            }
         }
-        return res;
+        return 1;
     }
-
-
 
 
     @Override
