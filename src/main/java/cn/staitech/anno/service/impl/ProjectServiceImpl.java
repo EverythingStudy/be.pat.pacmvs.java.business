@@ -101,15 +101,13 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         // 品系
         // Map<Integer, String> productSeriesMap = productSeriesService.selectMap();
 
-        //List<ProjectListVO> projectListResp = new ArrayList<>(projectList.size());
-
         for (ProjectListVO obj : projectList) {
             // 项目类型
             if (projectTypeMap.containsKey(obj.getProjectType())) {
                 obj.setProjectTypeName(projectTypeMap.get(obj.getProjectType()));
             }
             // 种属
-            MapConstant.getSpeciesName(obj.getSpeciesId());
+            obj.setSpeciesName(MapConstant.getSpeciesName(obj.getSpeciesId()));
 
             // 品系
 /*            if (productSeriesMap.containsKey(obj.getProductSeriesId())) {
@@ -118,8 +116,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
             obj.setColorTypeName(ColorConstant.COLOR_TYPE.get(obj.getColorType()));
             obj.setStatusName(ProjectConstant.PROJECT_STATUS.get(obj.getStatus()));
-
-            // projectListResp.add(obj);
         }
         return projectList;
     }
