@@ -338,6 +338,9 @@ public class StatisticController extends BaseController {
             @ApiImplicitParam(name = "pageNum", value = "当前记录起始索引", dataTypeClass = Integer.class, paramType = "query", example = "1"),
             @ApiImplicitParam(name = "pageSize", value = "每页显示记录数", dataTypeClass = Integer.class, paramType = "query", example = "10")})
     public R<PageMaster<AnnotationStatisticListPageOutVO>> annotationStatisticPageList(@Valid @RequestBody AnnotationStatisticListPageInVO statisticList) {
+        if(!SecurityUtils.isAdmin(SecurityUtils.getUserId())){
+            statisticList.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        }
         // 统计数量（标注/图像）
         String category = statisticService.statisticSelectDictDataById(statisticList.getStatisticCategory()).getDictLabel();
         // 统计维度（项目/病理指标/标注类别/成员/图像）
