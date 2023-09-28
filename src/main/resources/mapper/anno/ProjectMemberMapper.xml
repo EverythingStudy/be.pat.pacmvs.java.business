@@ -30,6 +30,7 @@
         left join sys_role pr on u.role_id = pr.role_id
         where pm.project_id = #{ProjectId,jdbcType=BIGINT}
     </select>
+<!--
     <select id="select" parameterType="cn.staitech.anno.domain.ProjectMember" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -60,6 +61,76 @@
             </if>
         </where>
     </select>
+-->
+
+
+    <!-- 项目用户查询 -->
+    <select id="select" parameterType="cn.staitech.anno.domain.ProjectMember" resultMap="BaseResultMap">
+        <choose>
+            <when test="roleId != null">
+                SELECT us.user_name,
+                       us.nick_name,
+                       us.user_id,
+                       us.role_id,
+                       us.sex,
+                       us.phonenumber,
+                       us.organization_id,
+                       r.role_name
+                FROM sys_user_role u
+                         LEFT JOIN sys_role r ON r.role_id = u.role_id
+                         LEFT JOIN sys_user us ON us.user_id = u.user_id
+                WHERE u.user_id IN (SELECT user_id
+                                    FROM tb_project_member
+                                    WHERE project_id = #{projectId,jdbcType=BIGINT})
+                <if test="roleId != null">
+                    AND u.role_id = #{roleId,jdbcType=BIGINT}
+                </if>
+                <if test="sex != null">
+                    AND us.sex = #{sex,jdbcType=INTEGER}
+                </if>
+                <if test="organizationId != null">
+                    AND us.organization_id = #{organizationId,jdbcType=BIGINT}
+                </if>
+                <if test="userName != null and userName != ''">
+                    AND us.user_name like concat('%', #{userName}, '%')
+                </if>
+                <if test="nickName != null and nickName != ''">
+                    AND us.nick_name like concat('%', #{nickName}, '%')
+                </if>
+            </when>
+            <otherwise>
+                select
+                <include refid="Base_Column_List"/>
+                from tb_project_member pm
+                left join sys_user u on pm.user_id = u.user_id
+                left join sys_role pr on u.role_id = pr.role_id
+                <where>
+                    <if test="projectId != null">
+                        AND pm.project_id = #{projectId,jdbcType=BIGINT}
+                    </if>
+                    <if test="roleId != null">
+                        AND u.role_id = #{roleId,jdbcType=BIGINT}
+                    </if>
+                    <if test="sex != null">
+                        AND u.sex = #{sex,jdbcType=INTEGER}
+                    </if>
+                    <if test="userId != null">
+                        AND pm.user_id = #{userId,jdbcType=BIGINT}
+                    </if>
+                    <if test="organizationId != null">
+                        AND pm.organization_id = #{organizationId,jdbcType=BIGINT}
+                    </if>
+                    <if test="userName != null and userName != ''">
+                        AND u.user_name like concat('%', #{userName}, '%')
+                    </if>
+                    <if test="nickName != null and nickName != ''">
+                        AND u.nick_name like concat('%', #{nickName}, '%')
+                    </if>
+                </where>
+            </otherwise>
+        </choose>
+    </select>
+
     <select id="selectBy" parameterType="cn.staitech.anno.domain.ProjectMember" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
