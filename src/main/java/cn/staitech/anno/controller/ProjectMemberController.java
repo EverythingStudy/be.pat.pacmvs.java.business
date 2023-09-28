@@ -102,14 +102,12 @@ public class ProjectMemberController extends BaseController {
                     .build();
 
             if (projectMemberService.delete(projectMember) > 0) {
+                QueryWrapper<RecentlyVisited> recentlyVisitedQueryWrapper = new QueryWrapper<>();
+                recentlyVisitedQueryWrapper.eq("project_id",projectId).eq("userId",userId);
+                recentlyVisitedService.remove(recentlyVisitedQueryWrapper);
                 return R.ok(DELETE_SUCCESS);
             }
-            // 根据用户和项目删除最近访问数据
-            QueryWrapper<RecentlyVisited> recentlyVisitedQueryWrapper = new QueryWrapper<>();
-            recentlyVisitedQueryWrapper.eq("project_id",projectId).eq("userId",userId);
-            recentlyVisitedService.remove(recentlyVisitedQueryWrapper);
         }
-
         return R.ok(DELETE_FAILURE);
     }
 
