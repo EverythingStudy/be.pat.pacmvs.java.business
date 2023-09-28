@@ -40,7 +40,6 @@ public class FileManagerController {
      * @param vo
      * @return
      */
-    @RequiresPermissions("section:slices:distribute")
     @PostMapping(value = "/list")
     public R<List<FileNode>> list(@RequestBody PathVO vo) {
         String path = vo.getPath();
