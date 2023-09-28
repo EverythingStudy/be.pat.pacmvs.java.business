@@ -751,15 +751,18 @@
                 AND s.group_name LIKE CONCAT('%', #{groupName}, '%')
             </if>
             <if test="gender != null">
-                AND s.gender = #{gender, jdbcType=NUMERIC}
+                AND s.gender = #{gender}
             </if>
             <if test="lesionType != null">
                 AND s.lesion_type1 LIKE CONCAT('%', #{lesionType}, '%')
+            </if>
+            <if test="lesionType != null">
                 AND s.lesion_type2 LIKE CONCAT('%', #{lesionType}, '%')
             </if>
-
             <if test="lesionDegree != null">
                 AND s.lesion_degree1 LIKE CONCAT('%', #{lesionDegree}, '%')
+            </if>
+            <if test="lesionDegree != null">
                 AND s.lesion_degree2 LIKE CONCAT('%', #{lesionDegree}, '%')
             </if>
             <if test="createTimeParams != null">
@@ -834,14 +837,18 @@
                 AND m.group_name LIKE CONCAT('%', #{groupName}, '%')
             </if>
             <if test="gender != null">
-                AND s.gender = #{gender, jdbcType=NUMERIC}
+                AND s.gender = #{gender}
             </if>
             <if test="lesionType != null">
                 AND s.lesion_type1 LIKE CONCAT('%', #{lesionType}, '%')
+            </if>
+            <if test="lesionType != null">
                 AND s.lesion_type2 LIKE CONCAT('%', #{lesionType}, '%')
             </if>
             <if test="lesionDegree != null">
                 AND s.lesion_degree1 LIKE CONCAT('%', #{lesionDegree}, '%')
+            </if>
+            <if test="lesionDegree != null">
                 AND s.lesion_degree2 LIKE CONCAT('%', #{lesionDegree}, '%')
             </if>
             <if test="createTimeParams != null">
