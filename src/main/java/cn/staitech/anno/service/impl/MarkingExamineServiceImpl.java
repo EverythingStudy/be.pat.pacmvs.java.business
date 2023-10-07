@@ -8,6 +8,7 @@ import cn.staitech.anno.domain.geojson.in.viewAddIn;
 import cn.staitech.anno.domain.vo.BroadcastVO;
 import cn.staitech.anno.mapper.MarkingExamineMapper;
 import cn.staitech.anno.netty.websocket.NioWebSocketHandler;
+import cn.staitech.anno.project.domain.Slide;
 import cn.staitech.anno.project.mapper.SlideMapperV1;
 import cn.staitech.anno.service.MarkingExamineService;
 import cn.staitech.anno.utils.SendMessage;
@@ -41,6 +42,15 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
 
     @Resource
     private MarkingServiceImpl markingServiceImpl;
+
+    @Override
+    public List<Features> selectLists(Long slideId) throws Exception {
+        Slide slideBy = slideMapperV1.selectById(slideId);
+        if (!Optional.ofNullable(slideBy).isPresent()) {
+            throw new Exception("切片信息异常,未查询到切片信息");
+        }
+        return markingExamineMapper.selectLists(slideId);
+    }
 
 
 

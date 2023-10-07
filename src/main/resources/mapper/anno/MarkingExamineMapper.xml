@@ -51,6 +51,12 @@
         <result property="image_url" column="image_url"/>
     </resultMap>
 
+    <resultMap type="cn.staitech.anno.domain.geojson.Features" id="featuresResult">
+        <result property="id" column="annotation_id"/>
+        <result property="geometry" column="geometry" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="properties" column="properties" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         marking_id, annotation_id, area, perimeter, description, category_id, number, measure_type, measure_relation, measure_name, measure_number, radius, mean_distance, max_distance, min_distance, inner_angle, exterior_angle, create_by, create_time, annotation_type, location_type, slide_id, center_point, point_count, geometry, update_by, update_time, annotation_owner, annotation_update_owner, project_id, image_id, image_url, organization_id
@@ -64,12 +70,90 @@
             c.category_name as label_name
     </sql>
 
+    <sql id="selectList">
+        SELECT
+            annotation_id,
+            geometry,
+            JSON_OBJECT(
+                    "annotation_type",
+                    t.annotation_type,
+                    "marking_id",
+                    t.marking_id,
+                    "area",
+                    t.area,
+                    "perimeter",
+                    t.perimeter,
+                    "description",
+                    t.description,
+                    "category_id",
+                    t.category_id,
+                    "measure_type",
+                    t.measure_type,
+                    "measure_relation",
+                    t.measure_relation,
+                    "measure_name",
+                    t.measure_name,
+                    "measure_number",
+                    t.measure_number,
+                    "radius",
+                    t.radius,
+                    "mean_distance",
+                    t.mean_distance,
+                    "max_distance",
+                    t.max_distance,
+                    "min_distance",
+                    t.min_distance,
+                    "inner_angle",
+                    t.inner_angle,
+                    "exterior_angle",
+                    t.exterior_angle,
+                    "create_by",
+                    t.create_by,
+                    "create_time",
+                    t.create_time,
+                    "location_type",
+                    t.location_type,
+                    "slide_id",
+                    t.slide_id,
+                    "center_point",
+                    t.center_point,
+                    "point_count",
+                    t.point_count,
+                    "annotation_owner",
+                    t.annotation_owner,
+                    "label_color" ,
+                    c.rgb,
+                    "label_code" ,
+                    c.number,
+                    "number" ,
+                    t.number,
+                    "label_name",
+                    c.category_name,
+                    "measure_full_name",
+                    CONCAT_WS( "_", CONCAT( t.measure_name, t.number ), c.category_name),
+                    "image_id",
+                    t.image_id,
+                    "project_id",
+                    t.project_id,
+                    "image_url",
+                    t.image_url
+                ) AS properties
+        FROM
+            tb_marking_examine AS t
+                LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
+    </sql>
+
     <select id="selectBy" parameterType="long" resultMap="propertiesResult">
         select
         <include refid="selectBy"/>
         from tb_marking_examine AS t
         LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
         where t.marking_examine_id = #{markingExamineId}
+    </select>
+
+    <select id="selectLists" parameterType="long" resultMap="featuresResult">
+        <include refid="selectList"/>
+        where slide_id = #{slideId}
     </select>
 
 </mapper>

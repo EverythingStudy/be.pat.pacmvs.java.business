@@ -484,7 +484,12 @@ public class MarkingServiceImpl implements MarkingService {
                                             if(markingBy == null){
                                                 int res = markingMapperV1.insert(marking);
                                                 slideAttrService.saveAnnoUsers(marking.getSlideId(), Collections.singletonList(marking.getCreateBy()));
-                                                slideAttrService.saveAnnoCategory(marking.getSlideId(), Collections.singletonList(marking.getCategoryId()));
+                                                if(marking.getCategoryId() == null){
+                                                    slideAttrService.saveAnnoCategory(marking.getSlideId(), new ArrayList<>());
+                                                }else{
+                                                    slideAttrService.saveAnnoCategory(marking.getSlideId(), Collections.singletonList(marking.getCategoryId()));
+                                                }
+
                                             }
                                         }
                                     }
