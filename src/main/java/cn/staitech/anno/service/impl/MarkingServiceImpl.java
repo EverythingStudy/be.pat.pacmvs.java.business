@@ -363,7 +363,7 @@ public class MarkingServiceImpl implements MarkingService {
         image.setImage_id(imageId);
         // 作者信息
         GeoAttribute attribute = new GeoAttribute();
-        attribute.setAuthor(SecurityUtils.getUsername());
+        attribute.setAuthor(SecurityUtils.getLoginUser().getSysUser().getUserName());
         attribute.setDepartment(SecurityUtils.getLoginUser().getSysUser().getDept());
         // 标签信息
         List<GeoLabel> categoryList = pathologicalIndicatorCategoryMapper.selectIndicatorIdList(jsonExport.getIndicatorId());
