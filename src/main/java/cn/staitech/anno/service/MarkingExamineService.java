@@ -4,6 +4,8 @@ import cn.staitech.anno.domain.MarkingExamine;
 import cn.staitech.anno.domain.geojson.Features;
 import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
 import cn.staitech.anno.domain.geojson.in.viewAddIn;
+import cn.staitech.anno.domain.markingExamine.MarkingExamineInsertVO;
+import cn.staitech.anno.domain.markingExamine.MarkingExamineUpdateVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -18,21 +20,21 @@ import java.util.List;
  */
 public interface MarkingExamineService extends IService<MarkingExamine> {
 
-    List<Features> selectLists(Long slideId) throws Exception;
+    List<Features> selectLists(Long questionProjectId) throws Exception;
 
     /**
      * 添加标注
      * @param req 标注数据
      * @return true || false
      */
-    Long insert(viewAddIn req) throws Exception;
+    Long insert(MarkingExamineInsertVO req) throws Exception;
 
     /**
      * 删除标注
      * @param marking 标注数据
      * @return true || false
      */
-    Long update(MarkingUpdateIn marking) throws Exception;
+    Long update(MarkingExamineUpdateVO marking) throws Exception;
 
 
     /**

@@ -4,6 +4,7 @@ package cn.staitech.anno.controller;
 import cn.staitech.anno.constant.ExamineScoreConstant;
 import cn.staitech.anno.constant.ExportConstant;
 import cn.staitech.anno.domain.ExamineScore;
+import cn.staitech.anno.domain.examineScore.SelectExaminationListVO;
 import cn.staitech.anno.service.ExamineScoreService;
 import cn.staitech.anno.utils.Column;
 import cn.staitech.anno.utils.ExcelTool;
@@ -42,14 +43,30 @@ public class ExamineScoreController {
 
     // 根据项目查询评分列表接口(搜索条件（答题者，考试结果）翻页查询)
 
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "考题列表查询")
+    @GetMapping("/selectExaminationList")
+    public R<List<SelectExaminationListVO>> selectListBy(
+            @NotNull(message = "参数异常,未传入项目id") @RequestParam(value = "projectId") @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId,
+            @RequestParam(value = "slideNumber") @ApiParam(name = "slideNumber", value = "切片编号") String slideNumber) throws Exception {
+        return R.ok(examineScoreService.selectExaminationList(projectId, slideNumber));
+    }
+
 
 
     @ApiOperationSupport(author = "gjt")
-    @ApiOperation(value = "获取标注列表")
+    @ApiOperation(value = "评分列表查询")
     @GetMapping("/selectListBy")
-    public R<PageResponse<ExamineScore>> selectListBy(@NotNull(message = "参数异常,未传入项目id") @RequestParam(value = "projectId") @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId, @NotNull(message = "参数异常,未发现分页信息") @RequestParam(value = "pageSize") @ApiParam(name = "pageSize", value = "当前页数", required = true) Integer pageSize, @NotNull(message = "参数异常,未发现分页信息") @RequestParam(value = "pageNum") @ApiParam(name = "pageNum", value = "每页数量", required = true) Integer pageNum, @RequestParam(value = "nickName") @ApiParam(name = "nickName", value = "答题者") String nickName, @RequestParam(value = "examResults") @ApiParam(name = "examResults", value = "考试结果") Long examResults) throws Exception {
+    public R<PageResponse<ExamineScore>> selectListBy(
+            @NotNull(message = "参数异常,未传入项目id") @RequestParam(value = "projectId") @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId,
+            @NotNull(message = "参数异常,未发现分页信息") @RequestParam(value = "pageSize") @ApiParam(name = "pageSize", value = "当前页数", required = true) Integer pageSize,
+            @NotNull(message = "参数异常,未发现分页信息") @RequestParam(value = "pageNum") @ApiParam(name = "pageNum", value = "每页数量", required = true) Integer pageNum,
+            @RequestParam(value = "nickName") @ApiParam(name = "nickName", value = "答题者") String nickName,
+            @RequestParam(value = "examResults") @ApiParam(name = "examResults", value = "考试结果") Long examResults) throws Exception {
         return R.ok(examineScoreService.selectList(pageSize, pageNum, projectId, nickName, examResults));
     }
+
+
 
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "获取标注列表")

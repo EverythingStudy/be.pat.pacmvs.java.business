@@ -26,8 +26,8 @@ public interface MarkingExamineMapper extends BaseMapper<MarkingExamine> {
 
     /**
      * 查询详情接口
-     * @param slideId
+     * @param questionProjectId
      * @return
      */
-    List<Features> selectLists(Long slideId);
+    List<Features> selectLists(Long questionProjectId);
 }

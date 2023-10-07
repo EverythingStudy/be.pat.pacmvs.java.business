@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.mytest1.annotation.mapper.ExamineScoreMapper">
+<mapper namespace="cn.staitech.anno.mapper.ExamineScoreMapper">
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.ExamineScore">
@@ -28,5 +28,27 @@
     <sql id="Base_Column_List">
         examine_score_id, project_id, slide_id, slide_number, nick_name, start_time, end_time, should_number, reality_number, algorithm_interval, personal_fit, exam_results, operate_status, exam_status, create_time, create_by, update_time, update_by
     </sql>
+
+
+    <select id="selectExaminationList" parameterType="cn.staitech.anno.domain.QuestionBank" resultType="cn.staitech.anno.domain.examineScore.SelectExaminationListVO">
+        SELECT
+            e.nick_name,
+            q.image_code,
+            qp.question_project_id,
+            e.start_time,
+            e.end_time,
+            e.exam_results,
+            e.operate_status
+        FROM
+            tb_question_bank as q
+                left join tb_question_project_rel as qp on qp.question_id = q.question_id
+                left join tb_examine_score as e on e.question_project_id = qp.question_project_id
+        where #{createBy} in (select user_id from tb_project_member where project_id = #{projectId})
+          and q.project_id = #{projectId}
+        <if test="imageCode != null and imageCode != ''">
+            and q.image_code like concat('%', #{imageCode}, '%')
+
+        </if>
+    </select>
 
 </mapper>

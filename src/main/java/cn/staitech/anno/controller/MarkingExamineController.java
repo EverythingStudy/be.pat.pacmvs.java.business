@@ -5,6 +5,8 @@ import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.geojson.Features;
 import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
 import cn.staitech.anno.domain.geojson.in.viewAddIn;
+import cn.staitech.anno.domain.markingExamine.MarkingExamineInsertVO;
+import cn.staitech.anno.domain.markingExamine.MarkingExamineUpdateVO;
 import cn.staitech.anno.service.MarkingExamineService;
 import cn.staitech.common.core.domain.R;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -33,18 +35,15 @@ public class MarkingExamineController {
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "获取GeoJson数据")
     @GetMapping("/selectList")
-    public R<List<Features>> selectList(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) throws Exception {
-        if (!Optional.ofNullable(slideId).isPresent()) {
-            return R.fail("参数异常");
-        }
-        return R.ok(markingExamineService.selectLists(slideId));
+    public R<List<Features>> selectList(@RequestParam(value = "questionProjectId") @ApiParam(name = "questionProjectId", value = "切片ID", required = true) Long questionProjectId) throws Exception {
+        return R.ok(markingExamineService.selectLists(questionProjectId));
     }
 
 
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "添加标注")
     @PostMapping("/insert")
-    public R<Long> add(@Validated @RequestBody viewAddIn req) throws Exception {
+    public R<Long> add(@Validated @RequestBody MarkingExamineInsertVO req) throws Exception {
         Long markingId = markingExamineService.insert(req);
         return R.ok(markingId, ResponseConstant.OPERATE_SUCCEED);
     }
@@ -61,7 +60,7 @@ public class MarkingExamineController {
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "更新标注")
     @PutMapping("/update")
-    public R<Long> update(@Validated @RequestBody MarkingUpdateIn req) throws Exception {
+    public R<Long> update(@Validated @RequestBody MarkingExamineUpdateVO req) throws Exception {
         markingExamineService.update(req);
         return R.ok(req.getMarking_id(), ResponseConstant.OPERATE_SUCCEED);
     }

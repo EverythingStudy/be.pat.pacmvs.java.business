@@ -1,9 +1,12 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.ExamineScore;
+import cn.staitech.anno.domain.QuestionBank;
+import cn.staitech.anno.domain.examineScore.SelectExaminationListVO;
 import cn.staitech.anno.mapper.ExamineScoreMapper;
 import cn.staitech.anno.service.ExamineScoreService;
 import cn.staitech.common.core.domain.PageResponse;
+import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.Page;
@@ -30,7 +33,6 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
 
     @Override
     public PageResponse<ExamineScore> selectList(Integer pageSize, Integer pageNum, Long projectId, String nickName, Long examResults) {
-
         PageResponse<ExamineScore> resp = new PageResponse<>();
         // 查询考核评分表中信息
         QueryWrapper<ExamineScore> examineScoreQueryWrapper = new QueryWrapper<>();
@@ -48,6 +50,15 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         resp.setPageNum(pageNum);
         resp.setPageSize(pageSize);
         return resp;
+    }
+
+    @Override
+    public List<SelectExaminationListVO> selectExaminationList(Long projectId, String slideNumber){
+        QuestionBank questionBank = new QuestionBank();
+        questionBank.setProjectId(projectId);
+        questionBank.setCreateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
+        questionBank.setImageCode(slideNumber);
+        return examineScoreMapper.selectExaminationList(questionBank);
     }
 
     @Override
