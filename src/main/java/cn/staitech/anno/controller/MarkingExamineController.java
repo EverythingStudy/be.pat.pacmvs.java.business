@@ -2,6 +2,7 @@ package cn.staitech.anno.controller;
 
 
 import cn.staitech.anno.constant.R.ResponseConstant;
+import cn.staitech.anno.domain.geojson.Features;
 import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
 import cn.staitech.anno.domain.geojson.in.viewAddIn;
 import cn.staitech.anno.service.MarkingExamineService;
@@ -12,6 +13,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -27,15 +30,15 @@ public class MarkingExamineController {
     private MarkingExamineService markingExamineService;
 
 
-//    @ApiOperationSupport(author = "gjt")
-//    @ApiOperation(value = "获取GeoJson数据")
-//    @GetMapping("/selectList")
-//    public R<List<Features>> selectList(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) throws Exception {
-//        if (!Optional.ofNullable(slideId).isPresent()) {
-//            return R.fail("参数异常");
-//        }
-//        return R.ok(markingExamineService.selectLists(slideId));
-//    }
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "获取GeoJson数据")
+    @GetMapping("/selectList")
+    public R<List<Features>> selectList(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) throws Exception {
+        if (!Optional.ofNullable(slideId).isPresent()) {
+            return R.fail("参数异常");
+        }
+        return R.ok(markingExamineService.selectLists(slideId));
+    }
 
 
     @ApiOperationSupport(author = "gjt")

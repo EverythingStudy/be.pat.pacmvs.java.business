@@ -68,6 +68,7 @@
                 and date_format(s.update_time,'%y%m%d') &lt;= date_format(#{params.updateTimeParams.endTime},'%y%m%d')
             </if>
         </where>
+        order by s.update_time desc
     </select>
     <select id="querySlides" resultType="cn.staitech.anno.project.vo.SlideExportVO"
             parameterType="cn.staitech.anno.project.vo.SlideQueryIN">
@@ -115,6 +116,7 @@
                 and date_format(s.update_time,'%y%m%d') &lt;= date_format(#{params.updateTimeParams.endTime},'%y%m%d')
             </if>
         </where>
+        order by s.update_time desc
     </select>
 
     <select id="pageReviewSlide" parameterType="cn.staitech.anno.project.vo.ReviewSlideIN"
@@ -193,5 +195,6 @@
                 </choose>
             </if>
         </where>
+        order by s.update_time desc
     </select>
 </mapper>

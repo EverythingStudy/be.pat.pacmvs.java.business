@@ -7,6 +7,8 @@ import cn.staitech.anno.domain.reviewround.ReviewRoundBatchInVO;
 import cn.staitech.anno.domain.reviewround.ReviewRoundInsertInVO;
 import cn.staitech.anno.domain.reviewround.ReviewRoundOutVO;
 import cn.staitech.anno.mapper.ReviewRoundMapper;
+import cn.staitech.anno.project.domain.Slide;
+import cn.staitech.anno.project.mapper.SlideMapperV1;
 import cn.staitech.anno.service.ReviewRoundService;
 import cn.staitech.anno.service.SysUserService;
 import cn.staitech.anno.service.TopicService;
@@ -14,6 +16,7 @@ import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
@@ -24,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author wangf
@@ -42,6 +46,8 @@ public class ReviewRoundServiceImpl extends ServiceImpl<ReviewRoundMapper, Revie
 
     @Resource
     private SysUserService sysUserService;
+    @Resource
+    private SlideMapperV1 slideMapperV1;
 
     /**
      * 批量添评审轮次
@@ -105,6 +111,7 @@ public class ReviewRoundServiceImpl extends ServiceImpl<ReviewRoundMapper, Revie
         List<ReviewRoundOutVO> respList = new ArrayList<>(list.size());
 
         Map<Long, String> topicMap = topicService.selectMap(2);
+        List<Long> reviewRoundIds = new ArrayList<>();
 
         for (ReviewRound round : list) {
             ReviewRoundOutVO reviewRoundOutVO = new ReviewRoundOutVO();
@@ -121,8 +128,20 @@ public class ReviewRoundServiceImpl extends ServiceImpl<ReviewRoundMapper, Revie
             // 创建者
             reviewRoundOutVO.setCreateByName(sysUserService.selectUserById(round.getCreateBy()).getUserName());
             respList.add(reviewRoundOutVO);
+            reviewRoundIds.add(round.getReviewRoundId());
         }
-
+        QueryWrapper<Slide> slideQueryWrapper = Wrappers.query();
+        slideQueryWrapper.in("review_round_id",reviewRoundIds);
+        slideQueryWrapper.select("review_round_id");
+        slideQueryWrapper.groupBy("review_round_id");
+        List<Slide> mapList = slideMapperV1.selectList(slideQueryWrapper);
+        Map<Long,List<Slide>> map = mapList.stream().collect(Collectors.groupingBy(Slide::getReviewRoundId));
+        respList.forEach(r->{
+            List<Slide> slides = map.get(r.getReviewRoundId());
+            if (slides!=null&&!slides.isEmpty()){
+                r.setSlideStatus(1);
+            }
+        });
         pageMaster.setList(respList);
         PageHelper.clearPage();
         return pageMaster;
