@@ -1,8 +1,11 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.MarkingExamine;
+import cn.staitech.anno.domain.geojson.Features;
 import cn.staitech.anno.domain.geojson.Properties;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import java.util.List;
 
 /**
  * <p>
@@ -20,4 +23,11 @@ public interface MarkingExamineMapper extends BaseMapper<MarkingExamine> {
      * @return
      */
     Properties selectBy(Long markingExamineId);
+
+    /**
+     * 查询详情接口
+     * @param slideId
+     * @return
+     */
+    List<Features> selectLists(Long slideId);
 }

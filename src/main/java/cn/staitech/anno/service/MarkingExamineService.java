@@ -1,9 +1,12 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.MarkingExamine;
+import cn.staitech.anno.domain.geojson.Features;
 import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
 import cn.staitech.anno.domain.geojson.in.viewAddIn;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -15,7 +18,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface MarkingExamineService extends IService<MarkingExamine> {
 
-//    List<Features> selectLists(Long slideId) throws Exception;
+    List<Features> selectLists(Long slideId) throws Exception;
 
     /**
      * 添加标注
