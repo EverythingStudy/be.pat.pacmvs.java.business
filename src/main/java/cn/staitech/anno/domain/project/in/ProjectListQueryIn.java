@@ -38,7 +38,7 @@ public class ProjectListQueryIn extends Pager implements Serializable {
     @ApiModelProperty(value = "结构指标ID")
     private Long indicatorId;
     @ApiModelProperty(value = "状态")
-    private Long status;
+    private Integer status;
     @ApiModelProperty(value = "机构编号")
     private Long organizationId;
     @ApiModelProperty(value = "创建时间-查询入参")
