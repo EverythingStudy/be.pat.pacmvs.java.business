@@ -562,7 +562,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
             queryWrapper.last("limit 1");
             Slide slide = slideMapper.selectOne(queryWrapper);
 
-            if (slide != null && slideMapper.deleteById(slideId) > 0) {
+            if (slide != null && "1".equals(slide.getStatus())&&slideMapper.deleteById(slideId) > 0) {
                 updateRecentlyVisited(slideId);
             }
         }
