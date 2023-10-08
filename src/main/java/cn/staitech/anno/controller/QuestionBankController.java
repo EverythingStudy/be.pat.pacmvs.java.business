@@ -4,6 +4,7 @@ import cn.staitech.anno.domain.question.in.ConfirmSelectionIn;
 import cn.staitech.anno.domain.question.in.CreateBySlideIn;
 import cn.staitech.anno.domain.question.in.CreateQuestionIn;
 import cn.staitech.anno.domain.question.in.GetQuestionListIn;
+import cn.staitech.anno.domain.question.in.GetQuestionsIn;
 import cn.staitech.anno.domain.question.in.SettingCompletedIn;
 import cn.staitech.anno.domain.question.out.GetProjectBoxOut;
 import cn.staitech.anno.domain.question.out.GetQuestionListOut;
@@ -72,13 +73,13 @@ public class QuestionBankController {
     @ApiOperation(value = "考核选片-不分页查询考题列表")
     @PostMapping("/getQuestionListExt")
 
-    public R<List<GetQuestionListOut>> getQuestionListExt(@Validated @RequestBody GetQuestionListIn req) {
+    public R<List<GetQuestionListOut>> getQuestionListExt(@Validated @RequestBody GetQuestionsIn req) {
 
         List<GetQuestionListOut> resp = iQuestionBankService.getQuestionListExt(req);
         return R.ok(resp);
     }
 
-    @ApiOperation(value = "考核选片-项目下考题列表")
+    @ApiOperation(value = "考核设置-项目下考题列表")
     @GetMapping("/getQuestionByProject")
     public R<List<GetQuestionListOut>> getQuestionByProject(@RequestParam(value = "projectId", required = false)
                                                             @NotNull(message = "项目id不能为空！") @ApiParam(name = "projectId", value = "项目id") Long projectId) {
@@ -95,7 +96,7 @@ public class QuestionBankController {
 
     }
 
-    @ApiOperation(value = "考核选片-设置完成")
+    @ApiOperation(value = "考核设置-设置完成")
     @PostMapping("/settingCompleted")
     public R settingCompleted(@Validated @RequestBody SettingCompletedIn req) {
 
@@ -103,7 +104,7 @@ public class QuestionBankController {
 
     }
 
-    @ApiOperation(value = "考核选片-删除")
+    @ApiOperation(value = "考核设置-删除")
     @PostMapping("/removeQuestion")
     public R removeQuestion(@Validated @RequestBody SettingCompletedIn req) {
 

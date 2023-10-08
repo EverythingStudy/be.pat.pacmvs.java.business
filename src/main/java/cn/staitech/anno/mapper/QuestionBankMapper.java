@@ -2,6 +2,7 @@ package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.QuestionBank;
 import cn.staitech.anno.domain.question.in.GetQuestionListIn;
+import cn.staitech.anno.domain.question.in.GetQuestionsIn;
 import cn.staitech.anno.domain.question.out.GetProjectBoxOut;
 import cn.staitech.anno.domain.question.out.GetQuestionListOut;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -21,4 +22,5 @@ public interface QuestionBankMapper extends BaseMapper<QuestionBank> {
 
     List<GetProjectBoxOut>  selectProjectList(Long organizationId);
 
+    List<GetQuestionListOut> selectQuestionListExt(GetQuestionsIn getQuestionListIn);
 }

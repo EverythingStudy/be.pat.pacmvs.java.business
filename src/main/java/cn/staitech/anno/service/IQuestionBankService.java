@@ -5,6 +5,7 @@ import cn.staitech.anno.domain.question.in.ConfirmSelectionIn;
 import cn.staitech.anno.domain.question.in.CreateBySlideIn;
 import cn.staitech.anno.domain.question.in.CreateQuestionIn;
 import cn.staitech.anno.domain.question.in.GetQuestionListIn;
+import cn.staitech.anno.domain.question.in.GetQuestionsIn;
 import cn.staitech.anno.domain.question.in.SettingCompletedIn;
 import cn.staitech.anno.domain.question.out.GetProjectBoxOut;
 import cn.staitech.anno.domain.question.out.GetQuestionListOut;
@@ -32,7 +33,7 @@ public interface IQuestionBankService extends IService<QuestionBank> {
 
     R<List<GetProjectBoxOut>> getProjectBox();
 
-    List<GetQuestionListOut> getQuestionListExt(GetQuestionListIn req);
+    List<GetQuestionListOut> getQuestionListExt(GetQuestionsIn req);
 
     List<GetQuestionListOut> getQuestionByProject(Long projectId);
 

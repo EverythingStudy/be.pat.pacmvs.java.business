@@ -80,7 +80,44 @@
         </where>
         order by qb.create_time desc
     </select>
+    <select id="selectQuestionListExt" parameterType="cn.staitech.anno.domain.question.in.GetQuestionsIn"
+            resultType="cn.staitech.anno.domain.question.out.GetQuestionListOut">
+        select p.project_name projectName,
+        tt.topic_name topicName,
+        qb.question_id questionId,
+        qb.image_code imageCode,
+        qb.size as size,
+        qb.json_name jsonName,
+        o.organization_name organizationName,
+        qb.create_time createTime
+        from tb_question_bank qb
+        left join tb_slide s
+        on qb.slide_id = s.slide_id
+        left join tb_project p
+        on qb.project_id = p.project_id
+        left join tb_topic tt
+        on qb.topic_id = tt.topic_id
+        left join sys_organization o
+        on qb.organization_id = o.organization_id
+        <where>
 
+            p.project_id = #{projectId}
+
+            <if test="imageCode !=null and imageCode ! =''">
+
+                and qb.image_code like CONCAT('%',#{imageCode},'%')
+
+            </if>
+
+            <if test="topicName !=null and topicName ! =''">
+
+                and tt.topic_name like CONCAT('%',#{topicName},'%')
+
+            </if>
+
+        </where>
+        order by qb.create_time desc
+    </select>
     <select id="selectProjectList" resultType="cn.staitech.anno.domain.question.out.GetProjectBoxOut"
             parameterType="java.lang.Long">
         select distinct

@@ -9,6 +9,7 @@ import cn.staitech.anno.domain.question.in.ConfirmSelectionIn;
 import cn.staitech.anno.domain.question.in.CreateBySlideIn;
 import cn.staitech.anno.domain.question.in.CreateQuestionIn;
 import cn.staitech.anno.domain.question.in.GetQuestionListIn;
+import cn.staitech.anno.domain.question.in.GetQuestionsIn;
 import cn.staitech.anno.domain.question.in.SettingCompletedIn;
 import cn.staitech.anno.domain.question.out.GetProjectBoxOut;
 import cn.staitech.anno.domain.question.out.GetQuestionListOut;
@@ -180,12 +181,9 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
     }
 
     @Override
-    public List<GetQuestionListOut> getQuestionListExt(GetQuestionListIn req) {
+    public List<GetQuestionListOut> getQuestionListExt(GetQuestionsIn req) {
         log.info("考题列表不分页查询接口开始：");
-        if (!isAdmin(SecurityUtils.getUserId())) {
-            req.setOrganizationId(SecurityUtils.getUserId());
-        }
-        List<GetQuestionListOut> resp = this.baseMapper.selectQuestionList(req);
+        List<GetQuestionListOut> resp = this.baseMapper.selectQuestionListExt(req);
 
         return resp;
     }
