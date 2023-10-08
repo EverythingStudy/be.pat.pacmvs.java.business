@@ -119,12 +119,12 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
                 .eq("question_project_id", req.getQuestionProjectId())
                 .eq("create_by", SecurityUtils.getLoginUser().getSysUser().getUserId());
         ExamineScore examineScoreBy = examineScoreMapper.selectOne(examineScoreQueryWrapper);
-        if(examineScoreBy == null){
+        if (examineScoreBy == null) {
             throw new Exception("数据异常");
         }
         // 查询切片表中应标数量
         QueryWrapper<MarkingExamine> markingExamineQueryWrapper = new QueryWrapper<>();
-        markingExamineQueryWrapper.eq("question_project_id",req.getQuestionProjectId()).eq("create_by",examineScoreBy.getCreateBy());
+        markingExamineQueryWrapper.eq("question_project_id", req.getQuestionProjectId()).eq("create_by", examineScoreBy.getCreateBy());
         Integer markingCount = markingExamineMapper.selectCount(markingExamineQueryWrapper);
         ExamineScore examineScore = new ExamineScore();
         examineScore.setExamineScoreId(examineScoreBy.getExamineScoreId());
