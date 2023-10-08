@@ -64,9 +64,9 @@ public class MarkingExamine implements Serializable {
     private Date createTime;
 
     /**
-     * 切片id
+     * 题库项目id
      */
-    private Long slideId;
+    private Long questionProjectId;
 
     /**
      * 标注数据
@@ -89,6 +89,11 @@ public class MarkingExamine implements Serializable {
      * 标注绘制者
      */
     private String annotationOwner;
+
+    /**
+     * 标注类型
+     */
+    private String locationType;
 
 
 }

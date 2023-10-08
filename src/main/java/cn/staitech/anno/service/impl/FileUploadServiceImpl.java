@@ -113,6 +113,10 @@ public class FileUploadServiceImpl implements FileUploadService {
         File file = new File(filePath);
         if(!file.exists()){
             fileUploadVO.getMultipartFile().transferTo(Paths.get(filePath));
+        }else{
+            // 删除文件
+            file.delete();
+            fileUploadVO.getMultipartFile().transferTo(Paths.get(filePath));
         }
         File localFile = new File(filePath);
         BeanUtils.copyProperties(fileUploadVO, files);
@@ -167,6 +171,10 @@ public class FileUploadServiceImpl implements FileUploadService {
             Container.FILE_MAP.put(chunk.getUuid(), chunkList);
         }
         File file = new File(filesBy.getFilesPath());
+        if(file.exists()){
+            // 删除文件
+            file.delete();
+        }
         // 写入文件
         try (InputStream fis = chunk.getMultipartFile().getInputStream();
              RandomAccessFile raf = new RandomAccessFile(file, "rw")) {
