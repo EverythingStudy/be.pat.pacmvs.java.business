@@ -9,6 +9,7 @@ import cn.staitech.anno.domain.question.in.GetQuestionsIn;
 import cn.staitech.anno.domain.question.in.SettingCompletedIn;
 import cn.staitech.anno.domain.question.out.GetProjectBoxOut;
 import cn.staitech.anno.domain.question.out.GetQuestionListOut;
+import cn.staitech.anno.domain.question.out.GetQuestionsOut;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -35,7 +36,7 @@ public interface IQuestionBankService extends IService<QuestionBank> {
 
     List<GetQuestionListOut> getQuestionListExt(GetQuestionsIn req);
 
-    List<GetQuestionListOut> getQuestionByProject(Long projectId);
+    GetQuestionsOut getQuestionByProject(Long projectId);
 
     R confirmSelection(ConfirmSelectionIn req);
 

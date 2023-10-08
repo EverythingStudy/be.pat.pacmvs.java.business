@@ -8,6 +8,7 @@ import cn.staitech.anno.domain.question.in.GetQuestionsIn;
 import cn.staitech.anno.domain.question.in.SettingCompletedIn;
 import cn.staitech.anno.domain.question.out.GetProjectBoxOut;
 import cn.staitech.anno.domain.question.out.GetQuestionListOut;
+import cn.staitech.anno.domain.question.out.GetQuestionsOut;
 import cn.staitech.anno.service.IQuestionBankService;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
@@ -81,10 +82,10 @@ public class QuestionBankController {
 
     @ApiOperation(value = "考核设置-项目下考题列表")
     @GetMapping("/getQuestionByProject")
-    public R<List<GetQuestionListOut>> getQuestionByProject(@RequestParam(value = "projectId", required = false)
+    public R<GetQuestionsOut> getQuestionByProject(@RequestParam(value = "projectId", required = false)
                                                             @NotNull(message = "项目id不能为空！") @ApiParam(name = "projectId", value = "项目id") Long projectId) {
 
-        List<GetQuestionListOut> resp = iQuestionBankService.getQuestionByProject(projectId);
+        GetQuestionsOut resp = iQuestionBankService.getQuestionByProject(projectId);
         return R.ok(resp);
     }
 

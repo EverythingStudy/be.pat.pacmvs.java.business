@@ -13,6 +13,7 @@ import cn.staitech.anno.domain.question.in.GetQuestionsIn;
 import cn.staitech.anno.domain.question.in.SettingCompletedIn;
 import cn.staitech.anno.domain.question.out.GetProjectBoxOut;
 import cn.staitech.anno.domain.question.out.GetQuestionListOut;
+import cn.staitech.anno.domain.question.out.GetQuestionsOut;
 import cn.staitech.anno.mapper.ImageMapper;
 import cn.staitech.anno.mapper.QuestionBankMapper;
 import cn.staitech.anno.mapper.QuestionProjectRelMapper;
@@ -22,7 +23,6 @@ import cn.staitech.anno.service.IQuestionProjectRelService;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
-import cn.staitech.common.core.exception.base.BaseException;
 import cn.staitech.common.core.utils.SpringUtils;
 import cn.staitech.common.core.utils.StringUtils;
 import cn.staitech.common.core.utils.bean.BeanUtils;
@@ -38,7 +38,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -189,22 +188,26 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
     }
 
     @Override
-    public List<GetQuestionListOut> getQuestionByProject(Long projectId) {
+    public GetQuestionsOut getQuestionByProject(Long projectId) {
 
         log.info("考核选片-选片列表查询：");
-        List<GetQuestionListOut> resp = new ArrayList<>();
+        GetQuestionsOut resp = new GetQuestionsOut();
+        List<GetQuestionListOut> respData = new ArrayList<>();
         LambdaQueryWrapper<QuestionProjectRel> qw = new LambdaQueryWrapper<>();
         qw.eq(QuestionProjectRel::getProjectId, projectId);
         qw.eq(QuestionProjectRel::getDelFlag, NUMBER_0);
 
         List<QuestionProjectRel> questionProjectRels = questionProjectRelMapper.selectList(qw);
         if (!CollectionUtils.isEmpty(questionProjectRels)) {
-            resp = questionProjectRels.stream().map(e -> {
+            respData = questionProjectRels.stream().map(e -> {
                 GetQuestionListOut ret = new GetQuestionListOut();
                 BeanUtils.copyProperties(e, ret);
                 return ret;
             }).collect(Collectors.toList());
+            resp.setShouldMarks(questionProjectRels.get(0).getShouldMarks());
         }
+        resp.setReqList(respData);
+
         return resp;
     }
 
