@@ -32,7 +32,7 @@ public class ExamineScoreExportVO {
     @ApiModelProperty(value = "算法拟合区间")
     private String algorithmInterval;
 
-    @ApiModelProperty(value = "个人拟合区间")
+    @ApiModelProperty(value = "个人拟合度")
     private String personalFit;
 
     @ApiModelProperty(value = "考试结果")

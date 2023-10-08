@@ -6,6 +6,7 @@ import cn.staitech.anno.constant.ExportConstant;
 import cn.staitech.anno.domain.ExamineScore;
 import cn.staitech.anno.domain.examineScore.ExamineScoreAddVO;
 import cn.staitech.anno.domain.examineScore.ExamineScoreExportVO;
+import cn.staitech.anno.domain.examineScore.ExamineScoreExportInsertVo;
 import cn.staitech.anno.domain.examineScore.SelectExaminationListVO;
 import cn.staitech.anno.service.ExamineScoreService;
 import cn.staitech.anno.utils.Column;
@@ -83,12 +84,10 @@ public class ExamineScoreController {
 
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "导出标注数据")
-    @GetMapping("/export")
-    public void export(@RequestParam(value = "examineScoreIdList") @ApiParam(name = "examineScoreIdList", value = "审核评分id列表") Long examineScoreIdList) throws Exception {
-        List<Long> list = new ArrayList<>();
-        list.add(examineScoreIdList);
+    @PostMapping("/export")
+    public void export(@RequestBody ExamineScoreExportInsertVo req) throws Exception {
         // 查询考核评分列表
-        List<ExamineScoreExportVO> examineScoreList = examineScoreService.selectLists(list);
+        List<ExamineScoreExportVO> examineScoreList = examineScoreService.selectLists(req.getExamineScoreIdList());
         // 构造表头的每个列头 定义表头
         List<Map<String, String>> titleList = getTitleList(ExamineScoreConstant.COLHEAD_KEY, ExamineScoreConstant.COLHEAD_VALUE);
         ExcelTool excelTool = new ExcelTool<>(ExportConstant.EXCEL_TITLE, 20, 20);
