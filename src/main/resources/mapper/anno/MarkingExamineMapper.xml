@@ -123,9 +123,10 @@
         where t.marking_examine_id = #{markingExamineId}
     </select>
 
-    <select id="selectLists" parameterType="long" resultMap="featuresResult">
+    <select id="selectLists" parameterType="cn.staitech.anno.domain.MarkingExamine" resultMap="featuresResult">
         <include refid="selectList"/>
-        where question_project_id = #{questionProjectId}
+        where t.question_project_id = #{questionProjectId}
+        and t.create_by = #{createBy}
     </select>
 
 </mapper>

@@ -35,8 +35,11 @@ public class MarkingExamineController {
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "获取GeoJson数据")
     @GetMapping("/selectList")
-    public R<List<Features>> selectList(@RequestParam(value = "questionProjectId") @ApiParam(name = "questionProjectId", value = "切片ID", required = true) Long questionProjectId) throws Exception {
-        return R.ok(markingExamineService.selectLists(questionProjectId));
+    public R<List<Features>> selectList(
+            @RequestParam(value = "questionProjectId") @ApiParam(name = "questionProjectId", value = "题库项目", required = true) Long questionProjectId,
+            @RequestParam(value = "createBy") @ApiParam(name = "createBy", value = "答题者", required = true) Long createBy
+    ) throws Exception {
+        return R.ok(markingExamineService.selectLists(questionProjectId,createBy));
     }
 
 

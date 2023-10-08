@@ -36,9 +36,9 @@ public class ExamineScore implements Serializable {
     private Long projectId;
 
     /**
-     * 切片id
+     * 项目题库id
      */
-    private Long slideId;
+    private Long questionProjectId;
 
     /**
      * 切片编号
@@ -63,12 +63,12 @@ public class ExamineScore implements Serializable {
     /**
      * 应标个数
      */
-    private Integer shouldNumber;
+    private Long shouldNumber;
 
     /**
      * 实标个数
      */
-    private Integer realityNumber;
+    private Long realityNumber;
 
     /**
      * 算法拟合区间

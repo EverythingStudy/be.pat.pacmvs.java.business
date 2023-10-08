@@ -29,5 +29,5 @@ public interface MarkingExamineMapper extends BaseMapper<MarkingExamine> {
      * @param questionProjectId
      * @return
      */
-    List<Features> selectLists(Long questionProjectId);
+    List<Features> selectLists(MarkingExamine markingExamine);
 }

@@ -2,8 +2,10 @@ package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.ExamineScore;
 import cn.staitech.anno.domain.QuestionBank;
+import cn.staitech.anno.domain.examineScore.ExamineScoreExportVO;
 import cn.staitech.anno.domain.examineScore.SelectExaminationListVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -18,5 +20,7 @@ import java.util.List;
 public interface ExamineScoreMapper extends BaseMapper<ExamineScore> {
 
     List<SelectExaminationListVO> selectExaminationList(QuestionBank questionBank);
+
+    List<ExamineScoreExportVO> selectLists(@Param("examineScoreIdList") List<Long> examineScoreIdList);
 
 }

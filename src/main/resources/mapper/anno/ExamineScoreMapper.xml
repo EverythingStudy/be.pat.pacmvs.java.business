@@ -6,7 +6,6 @@
     <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.ExamineScore">
         <id column="examine_score_id" property="examineScoreId" />
         <result column="project_id" property="projectId" />
-        <result column="slide_id" property="slideId" />
         <result column="slide_number" property="slideNumber" />
         <result column="nick_name" property="nickName" />
         <result column="start_time" property="startTime" />
@@ -50,5 +49,33 @@
 
         </if>
     </select>
+
+    <select id="selectLists" parameterType="list" resultType="cn.staitech.anno.domain.examineScore.ExamineScoreExportVO">
+        SELECT
+            p.project_name,
+            e.slide_number as image_code,
+            e.nick_name,
+            e.start_time,
+            e.end_time,
+            e.should_number,
+            e.reality_number,
+            e.algorithm_interval,
+            e.personal_fit,
+            CASE
+                e.exam_results
+                WHEN '1' THEN
+                    '通过' ELSE '不通过'
+                END
+                as exam_results
+        FROM
+            tb_examine_score AS e
+                LEFT JOIN tb_project AS p ON p.project_id = e.project_id
+        WHERE
+            e.examine_score_id IN
+        <foreach item="examineScoreId" collection="examineScoreIdList" separator="," open="(" close=")" index="">
+            #{examineScoreId, jdbcType=NUMERIC}
+        </foreach>
+    </select>
+
 
 </mapper>

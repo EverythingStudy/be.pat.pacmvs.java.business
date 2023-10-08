@@ -20,7 +20,7 @@ import java.util.List;
  */
 public interface MarkingExamineService extends IService<MarkingExamine> {
 
-    List<Features> selectLists(Long questionProjectId) throws Exception;
+    List<Features> selectLists(Long questionProjectId, Long createBy) throws Exception;
 
     /**
      * 添加标注

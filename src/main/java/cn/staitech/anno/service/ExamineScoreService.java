@@ -1,6 +1,8 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.ExamineScore;
+import cn.staitech.anno.domain.examineScore.ExamineScoreAddVO;
+import cn.staitech.anno.domain.examineScore.ExamineScoreExportVO;
 import cn.staitech.anno.domain.examineScore.SelectExaminationListVO;
 import cn.staitech.common.core.domain.PageResponse;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -19,8 +21,13 @@ public interface ExamineScoreService extends IService<ExamineScore> {
 
     PageResponse<ExamineScore> selectList(Integer pageSize, Integer pageNum, Long projectId, String nickName, Long examResults);
 
-    List<ExamineScore> selectLists(Long projectId,List<Long> examineScoreIdList);
+    List<ExamineScoreExportVO> selectLists(List<Long> examineScoreIdList);
 
     List<SelectExaminationListVO> selectExaminationList(Long projectId, String slideNumber);
+
+    int add(ExamineScoreAddVO examineScoreAddVO) throws Exception;
+
+    int update(ExamineScoreAddVO examineScoreAddVO) throws Exception;
+
 
 }

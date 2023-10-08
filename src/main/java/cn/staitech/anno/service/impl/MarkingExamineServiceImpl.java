@@ -36,8 +36,6 @@ import static cn.staitech.anno.constant.ViewerConstant.MICRON;
 @Service
 public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper, MarkingExamine> implements MarkingExamineService {
 
-    @Resource
-    private SlideMapperV1 slideMapperV1;
 
     @Resource
     private MarkingExamineMapper markingExamineMapper;
@@ -49,8 +47,11 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
     private MarkingServiceImpl markingServiceImpl;
 
     @Override
-    public List<Features> selectLists(Long questionProjectId) throws Exception {
-        return markingExamineMapper.selectLists(questionProjectId);
+    public List<Features> selectLists(Long questionProjectId, Long createBy) throws Exception {
+        MarkingExamine markingExamine = new MarkingExamine();
+        markingExamine.setQuestionProjectId(questionProjectId);
+        markingExamine.setCreateBy(createBy);
+        return markingExamineMapper.selectLists(markingExamine);
     }
 
 
