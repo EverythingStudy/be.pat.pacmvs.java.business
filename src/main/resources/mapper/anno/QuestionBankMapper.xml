@@ -48,25 +48,25 @@
         left join sys_organization o
         on qb.organization_id = o.organization_id
         <where>
-            <if test="projectName !=null and projectName ! =''">
+            <if test="projectName !=null and projectName !=''">
 
                 and p.project_name like CONCAT('%',#{projectName},'%')
 
             </if>
 
-            <if test="imageCode !=null and imageCode ! =''">
+            <if test="imageCode !=null and imageCode !=''">
 
                 and qb.image_code like CONCAT('%',#{imageCode},'%')
 
             </if>
 
-            <if test="topicName !=null and topicName ! =''">
+            <if test="topicName !=null and topicName !=''">
 
                 and tt.topic_name like CONCAT('%',#{topicName},'%')
 
             </if>
 
-            <if test="organizationName !=null and organizationName ! =''">
+            <if test="organizationName !=null and organizationName !=''">
 
                 and o.organization_name like CONCAT('%',#{organizationName},'%')
 

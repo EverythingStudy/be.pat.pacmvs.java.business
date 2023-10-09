@@ -157,6 +157,9 @@ public class Project extends BaseEntity {
     @ApiModelProperty(value = "品系名称")
     private String productSeries;
 
+    @ApiModelProperty("是否已生成考题0-未生成；1-已生成")
+    private String ifCreateQuestions;
+
     @TableField(exist = false)
     @ApiModelProperty(value = "创建时间-查询入参")
     private Map<String, Object> createTimeParams;

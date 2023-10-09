@@ -6,6 +6,7 @@ import cn.staitech.anno.domain.QuestionBank;
 import cn.staitech.anno.domain.QuestionProjectRel;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.question.in.ConfirmSelectionIn;
+import cn.staitech.anno.domain.question.in.CreateBySlideData;
 import cn.staitech.anno.domain.question.in.CreateBySlideIn;
 import cn.staitech.anno.domain.question.in.CreateQuestionIn;
 import cn.staitech.anno.domain.question.in.GetQuestionListIn;
@@ -15,9 +16,11 @@ import cn.staitech.anno.domain.question.out.GetProjectBoxOut;
 import cn.staitech.anno.domain.question.out.GetQuestionListOut;
 import cn.staitech.anno.domain.question.out.GetQuestionsOut;
 import cn.staitech.anno.mapper.ImageMapper;
+import cn.staitech.anno.mapper.ProjectMapper;
 import cn.staitech.anno.mapper.QuestionBankMapper;
 import cn.staitech.anno.mapper.QuestionProjectRelMapper;
 import cn.staitech.anno.mapper.SlideMapper;
+import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.service.IQuestionBankService;
 import cn.staitech.anno.service.IQuestionProjectRelService;
 import cn.staitech.anno.service.MarkingService;
@@ -38,6 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -73,6 +77,9 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
 
     @Autowired
     private MarkingService markingService;
+
+    @Resource
+    private ProjectMapper projectMapper;
 
     /**
      * 生成考题
@@ -111,13 +118,17 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                 log.error(exception.toString());
                  throw new RuntimeException(QuestionBankConstant.ERROR_GENERATE_JSON);
             }
-            String s = StringUtils.substringAfterLast(urlPath, "/");
+            String s = StringUtils.substringAfterLast(urlPath, File.separator);
             ret.setJsonName(s);
             return ret;
         }).collect(Collectors.toList());
         //插入题库表
         QuestionBankServiceImpl bean = SpringUtils.getBean(QuestionBankServiceImpl.class);
         bean.saveBatch(resp);
+        cn.staitech.anno.domain.Project project = new cn.staitech.anno.domain.Project();
+        project.setProjectId(req.getProjectId());
+        project.setIfCreateQuestions("1");
+        projectMapper.updateById(project);
         return R.ok();
     }
 
@@ -125,15 +136,22 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
     @Override
     public R createBySlide(CreateBySlideIn req) {
         log.info("根据切片生成考题接口开始：");
-        //
+
+        List<CreateBySlideData> slideDataList = req.getSlideDataList();
+        if(CollectionUtils.isEmpty(slideDataList)){
+            R.ok();
+        }
+
         List<QuestionBank> questionBanks = req.getSlideDataList().stream().map(e -> {
-            Image image = imageMapper.selectById(e.getImageId());
+            Slide slide = slideMapper.selectById(e.getSlideId());
+            Image image = imageMapper.selectById(slide.getImageId());
             QuestionBank ret = new QuestionBank();
             BeanUtils.copyProperties(e, ret);
+            BeanUtils.copyProperties(image, ret);
             ret.setCreateBy(SecurityUtils.getUserId());
             ret.setCreateTime(new Date());
-            ret.setImageCode(image.getImageCode());
-            ret.setSize(image.getSize());
+
+
             // 插入json文件返回数据
             String urlPath;
             try {
@@ -142,7 +160,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                 log.error(exception.toString());
                 throw new RuntimeException(QuestionBankConstant.ERROR_GENERATE_JSON);
             }
-            String s = StringUtils.substringAfterLast(urlPath, "/");
+            String s = StringUtils.substringAfterLast(urlPath, File.separator);
             ret.setJsonName(s);
             return ret;
         }).collect(Collectors.toList());
