@@ -246,6 +246,17 @@
         where category_id = #{categoryId}
     </select>
 
+    <select id="selectProjectAndNumber"  resultMap="BaseResultMap">
+        SELECT
+            *
+        FROM
+            tb_pathological_indicator_category AS pic
+                LEFT JOIN tb_project AS p ON p.indicator_id = pic.indicator_id
+        WHERE
+            p.project_id = #{projectId}
+          AND pic.number = #{number}
+    </select>
+
 
     <!-- 结构编码在当前列表内不可重复；C：结构名称在当前列表内不可重复。D：图层顺序在当前列表内不可重复；E：颜色值在当前列表不可重复 -->
   <!--  <select id="selectIndicatorMessage" parameterType="cn.staitech.anno.domain.PathologicalIndicatorCategory"

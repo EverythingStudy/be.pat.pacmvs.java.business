@@ -49,6 +49,9 @@ public class Properties {
     @ApiModelProperty(value = "标注颜色")
     private String label_color;
 
+    @ApiModelProperty(value = "结构编码")
+    private String label_code;
+
     @ApiModelProperty(value = "测量轮廓类型(0:正常,表示有关系,默认为0")
     private Integer measure_type;
 

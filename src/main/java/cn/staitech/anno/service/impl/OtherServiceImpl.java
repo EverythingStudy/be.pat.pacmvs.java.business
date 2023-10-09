@@ -47,7 +47,7 @@ public class OtherServiceImpl implements OtherService {
 
     @Override
     public void atRegularTimeUpdateExamStatus() {
-        // 考试结束时间小于当前时间说明考试已经结束，查询三天之内考试结束且状态为未交卷的数据,进行更新
+        // 考试结束时间小于当前时间说明考试已经结束，查询七天之内考试结束且状态为未交卷的数据,进行更新
         QueryWrapper<ExamineScore> examineScoreQueryWrapper = new QueryWrapper<>();
         Date startTime = new Date();
         // 七天前

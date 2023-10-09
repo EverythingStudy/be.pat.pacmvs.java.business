@@ -47,7 +47,7 @@ public class ExamineScoreController {
     @GetMapping("/selectExaminationList")
     public R<List<SelectExaminationListVO>> selectListBy(
             @NotNull(message = "参数异常,未传入项目id") @RequestParam(value = "projectId") @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId,
-            @RequestParam(value = "slideNumber") @ApiParam(name = "slideNumber", value = "切片编号") String slideNumber) throws Exception {
+            @RequestParam(value = "slideNumber", required = false) @ApiParam(name = "slideNumber", value = "切片编号") String slideNumber) throws Exception {
         return R.ok(examineScoreService.selectExaminationList(projectId, slideNumber));
     }
 

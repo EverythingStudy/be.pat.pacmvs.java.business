@@ -34,7 +34,10 @@
 
     <resultMap type="cn.staitech.anno.domain.geojson.JsonExport" id="jsonExportResult">
         <result property="topicName" column="topic_name"/>
+        <result property="projectId" column="project_id"/>
         <result property="projectName" column="project_name"/>
+        <result property="speciesId" column="species_id"/>
+        <result property="organId" column="organ_id"/>
         <result property="indicatorId" column="indicator_id"/>
         <result property="imageShape" column="image_shape"/>
         <result property="imageName" column="image_name"/>
@@ -190,16 +193,10 @@
             JSON_OBJECT(
                     "annotation_type",
                     t.annotation_type,
-                    "marking_id",
-                    t.marking_id,
                     "area",
                     t.area,
                     "perimeter",
                     t.perimeter,
-                    "description",
-                    t.description,
-                    "category_id",
-                    t.category_id,
                     "measure_type",
                     t.measure_type,
                     "measure_relation",
@@ -220,20 +217,12 @@
                     t.inner_angle,
                     "exterior_angle",
                     t.exterior_angle,
-                    "create_by",
-                    t.create_by,
                     "create_time",
                     t.create_time,
-                    "location_type",
-                    t.location_type,
-                    "slide_id",
-                    t.slide_id,
                     "center_point",
                     t.center_point,
-                    "point_count",
-                    t.point_count,
                     "annotation_owner",
-                    t.annotation_owner,
+                    t.create_by,
                     "label_color" ,
                     c.rgb,
                     "label_code" ,
@@ -243,13 +232,7 @@
                     "label_name",
                     c.category_name,
                     "measure_full_name",
-                    CONCAT_WS( "_", CONCAT( t.measure_name, t.number ), c.category_name),
-                    "image_id",
-                    t.image_id,
-                    "project_id",
-                    t.project_id,
-                    "image_url",
-                    t.image_url
+                    CONCAT_WS( "_", CONCAT( t.measure_name, t.number ), c.category_name)
                 ) AS properties
         FROM
             tb_marking AS t
@@ -275,9 +258,13 @@
     <select id="jsonExportSelect" parameterType="long" resultMap="jsonExportResult">
         SELECT
             t.topic_name,
+            p.project_id,
             p.project_name,
+            pi.species_id,
+            pi.organ_id,
             i.file_name as image_name,
             i.format,
+            i.image_url,
             p.indicator_id,
             s.create_time,
             CONCAT_WS(',', i.width, i.height ) AS image_shape
@@ -287,6 +274,7 @@
                 LEFT JOIN tb_review_round AS re on re.review_round_id = s.review_round_id
                 LEFT JOIN tb_topic AS t ON t.topic_id = re.topic_id
                 LEFT JOIN tb_image AS i ON i.image_id = s.image_id
+                LEFT JOIN tb_pathological_indicator as pi on pi.indicator_id = p.indicator_id
         WHERE
             s.slide_id = #{slideId}
     </select>
@@ -294,9 +282,13 @@
     <select id="reviewJsonExportSelect" parameterType="long" resultMap="jsonExportResult">
         SELECT
             t.topic_name,
+            p.project_id,
             p.project_name,
+            pi.species_id,
+            pi.organ_id,
             i.file_name as image_name,
             i.format,
+            i.image_url,
             p.indicator_id,
             s.create_time,
             CONCAT_WS(',', i.width, i.height ) AS image_shape
@@ -305,6 +297,7 @@
                 LEFT JOIN tb_project AS p ON p.project_id = s.project_id
                 LEFT JOIN tb_topic AS t ON t.topic_id = s.topic_id
                 LEFT JOIN tb_image AS i ON i.image_id = s.image_id
+                LEFT JOIN tb_pathological_indicator as pi on pi.indicator_id = p.indicator_id
         WHERE
             s.slide_id = #{slideId}
     </select>

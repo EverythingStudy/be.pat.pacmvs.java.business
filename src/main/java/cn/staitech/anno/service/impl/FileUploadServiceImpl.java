@@ -133,7 +133,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         files.setProcessFlag(1);
         files.setCreateBy(SecurityUtils.getUserId());
         files.setCreateTime(new Date());
-//        files.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        files.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         files.setHostId(1);
         files.setBusinessType(businessType);
         filesService.save(files);

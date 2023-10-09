@@ -25,7 +25,10 @@ public class GeoImage {
     @ApiModelProperty(value = "标注类型")
     private List<String> flow_path;
 
+    @ApiModelProperty(value = "图像存储位置")
+    private String image_url;
+
     @ApiModelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date create_time;
+    private String create_time;
 }

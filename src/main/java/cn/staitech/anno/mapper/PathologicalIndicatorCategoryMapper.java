@@ -8,6 +8,7 @@ import cn.staitech.anno.domain.vo.indicator.IndicatorAndOrganizationIdVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListOutVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -124,4 +125,9 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
      * 查询标签在标注中的使用数量
      * */
     Integer selectLabelNum(Long categoryId);
+
+    /**
+     * 根据项目和结构编码查询详情数据
+     */
+    PathologicalIndicatorCategory selectProjectAndNumber(@Param("projectId") Long projectId, @Param("number") String number);
 }
