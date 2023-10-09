@@ -23,7 +23,7 @@ public interface MarkingService {
     List<MarkingSelectListVo> selectList(Long slideId) throws Exception;
 
 
-    List<Features> selectLists(Long slideId) throws Exception;
+    List<Features> selectListBy(Long slideId) throws Exception;
 
 
     /**

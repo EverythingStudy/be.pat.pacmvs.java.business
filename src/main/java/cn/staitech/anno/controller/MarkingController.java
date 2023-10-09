@@ -63,7 +63,7 @@ public class MarkingController {
         if (!Optional.ofNullable(slideId).isPresent()) {
             return R.fail("参数异常");
         }
-        return R.ok(markingService.selectLists(slideId));
+        return R.ok(markingService.selectListBy(slideId));
     }
 
 

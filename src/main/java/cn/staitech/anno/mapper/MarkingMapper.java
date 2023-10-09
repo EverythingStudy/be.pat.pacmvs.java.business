@@ -25,7 +25,20 @@ public interface MarkingMapper  extends BaseMapper<Marking> {
      */
     List<MarkingSelectListVo> selectList(Long slideId);
 
+    /**
+     * json文件导出的列表
+     * @param slideId
+     * @return
+     */
     List<Features> selectLists(Long slideId);
+
+
+    /**
+     * 与前端交互使用的列表
+     * @param slideId
+     * @return
+     */
+    List<Features> selectListBy(Long slideId);
 
 
 
