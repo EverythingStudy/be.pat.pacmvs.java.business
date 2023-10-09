@@ -14,6 +14,7 @@ import cn.staitech.anno.mapper.QuestionBankMapper;
 import cn.staitech.anno.mapper.QuestionProjectRelMapper;
 import cn.staitech.anno.queue.DelayQueueExample;
 import cn.staitech.anno.service.ExamineScoreService;
+import cn.staitech.anno.utils.ExcludeEmptyQueryWrapper;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -57,11 +58,10 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
     public PageResponse<ExamineScore> selectList(Integer pageSize, Integer pageNum, Long projectId, String nickName, Long examResults) {
         PageResponse<ExamineScore> resp = new PageResponse<>();
         // 查询考核评分表中信息
-        QueryWrapper<ExamineScore> examineScoreQueryWrapper = new QueryWrapper<>();
+        ExcludeEmptyQueryWrapper<ExamineScore> examineScoreQueryWrapper = new ExcludeEmptyQueryWrapper<>();
         examineScoreQueryWrapper
                 .eq("project_id", projectId)
                 .like("nick_name", nickName)
-                .eq("del_flag", "0")
                 .eq("exam_results", examResults)
                 .orderByDesc("create_time");
         Page<ExamineScore> page = PageHelper.startPage(pageNum, pageSize);

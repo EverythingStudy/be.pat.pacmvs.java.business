@@ -59,8 +59,8 @@ public class ExamineScoreController {
             @NotNull(message = "参数异常,未传入项目id") @RequestParam(value = "projectId") @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId,
             @NotNull(message = "参数异常,未发现分页信息") @RequestParam(value = "pageSize") @ApiParam(name = "pageSize", value = "当前页数", required = true) Integer pageSize,
             @NotNull(message = "参数异常,未发现分页信息") @RequestParam(value = "pageNum") @ApiParam(name = "pageNum", value = "每页数量", required = true) Integer pageNum,
-            @RequestParam(value = "nickName") @ApiParam(name = "nickName", value = "答题者") String nickName,
-            @RequestParam(value = "examResults") @ApiParam(name = "examResults", value = "考试结果") Long examResults) throws Exception {
+            @RequestParam(value = "nickName", required = false) @ApiParam(name = "nickName", value = "答题者") String nickName,
+            @RequestParam(value = "examResults", required = false) @ApiParam(name = "examResults", value = "考试结果") Long examResults) throws Exception {
         return R.ok(examineScoreService.selectList(pageSize, pageNum, projectId, nickName, examResults));
     }
 
