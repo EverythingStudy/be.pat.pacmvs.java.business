@@ -126,6 +126,8 @@ public class Project implements Serializable {
      * 关联图像总数
      */
     private Long imageTotal;
+    @ApiModelProperty("是否已生成考题0-未生成；1-已生成")
+    private String ifCreateQuestions;
 
 
 }
