@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.util.*;
 
 import static cn.staitech.anno.constant.AnnotationConstant.*;
+import static cn.staitech.anno.constant.MarkingExamineConstant.GLIDE_LINE;
 import static cn.staitech.anno.constant.ViewerConstant.MICRON;
 
 /**
@@ -107,7 +108,8 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         Properties properties = markingExamineMapper.selectBy(markingExamine.getMarkingExamineId());
         Features features = markingServiceImpl.socketData("", req.getGeometry(), properties);
         BroadcastVO broadcastVO = SendMessage.sendOneMessages(ADD_STATUS, features);
-        NioWebSocketHandler.sendAll(req.getQuestion_project_id(), broadcastVO);
+        String questionProjectId = req.getQuestion_project_id() + GLIDE_LINE + SecurityUtils.getLoginUser().getSysUser().getUserId();
+        NioWebSocketHandler.sendQuestionProject(questionProjectId, broadcastVO);
         return markingExamine.getMarkingExamineId();
     }
 
@@ -124,7 +126,8 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         Properties properties = markingExamineMapper.selectBy(markingExamineId);
         Features features = markingServiceImpl.socketData("", markingExamineBy.getGeometry(), properties);
         BroadcastVO broadcastVO = SendMessage.sendOneMessages(DELETE_STATUS, features);
-        NioWebSocketHandler.sendAll(markingExamineBy.getQuestionProjectId(), broadcastVO);
+        String questionProjectId = markingExamineBy.getQuestionProjectId() + GLIDE_LINE + SecurityUtils.getLoginUser().getSysUser().getUserId();
+        NioWebSocketHandler.sendQuestionProject(questionProjectId, broadcastVO);
         int res = markingExamineMapper.deleteById(markingExamineId);
         return res;
     }
@@ -159,7 +162,8 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         Features features = markingServiceImpl.socketData("", req.getGeometry(), properties);
         BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features);
         // 使用websocket发送数据
-        NioWebSocketHandler.sendAll(markingExamine.getQuestionProjectId(), broadcastVO);
+        String questionProjectId = markingExamineBy.getQuestionProjectId() + GLIDE_LINE + SecurityUtils.getLoginUser().getSysUser().getUserId();
+        NioWebSocketHandler.sendQuestionProject(questionProjectId, broadcastVO);
         return markingExamine.getMarkingExamineId();
     }
 

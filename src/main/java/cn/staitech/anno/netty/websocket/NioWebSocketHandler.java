@@ -111,6 +111,18 @@ public class NioWebSocketHandler extends SimpleChannelInboundHandler<Object> {
             }
         }
     }
+
+
+    public static void sendQuestionProject(String questionProjectId, BroadcastVO message) {
+        String jsonStr = JSONObject.toJSONString(message, SerializerFeature.WriteMapNullValue);
+        for (Map.Entry<Channel, String> vo : ChannelSupervise.QUESTION_CHANNEL_MAP.entrySet()) {
+            if (vo.getValue().equals(questionProjectId)) {
+                TextWebSocketFrame tws = new TextWebSocketFrame(jsonStr);
+                vo.getKey().writeAndFlush(tws);
+            }
+        }
+    }
+
     
     
     public static void sendAnnoAll(Long slideId, AnnoBroadcastVO message) {
@@ -168,9 +180,17 @@ public class NioWebSocketHandler extends SimpleChannelInboundHandler<Object> {
 
         WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory("ws:/" + ctx.channel() + "/websocket", null, false);
 
-        long slideId = Long.parseLong(req.getUri().split("/")[req.getUri().split("/").length - 1]);
 
-        ChannelSupervise.addChannelTest(ctx.channel(), slideId);
+        String type = (req.getUri().split("/")[req.getUri().split("/").length - 2]);
+        // 判断socket连接类型
+        if(Objects.equals(type, "slide")){
+            long slideId = Long.parseLong(req.getUri().split("/")[req.getUri().split("/").length - 1]);
+            ChannelSupervise.addChannelTest(ctx.channel(), slideId);
+        }else if(Objects.equals(type, "questionProject")){
+
+            String questionProjectId = req.getUri().split("/")[req.getUri().split("/").length - 1];
+            ChannelSupervise.addQuestionChannel(ctx.channel(), questionProjectId);
+        }
 
         handshaker = wsFactory.newHandshaker(req);
 

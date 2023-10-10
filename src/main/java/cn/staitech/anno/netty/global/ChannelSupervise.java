@@ -17,6 +17,8 @@ public class ChannelSupervise {
     private static ConcurrentMap<String, ChannelId> ChannelMap = new ConcurrentHashMap();
     
     public static final ConcurrentMap<Channel, Long> CHANNEL_MAP = new ConcurrentHashMap<>();
+
+    public static final ConcurrentMap<Channel, String> QUESTION_CHANNEL_MAP = new ConcurrentHashMap<>();
     
     public static void addChannel(Channel channel) {
         GlobalGroup.add(channel);
@@ -35,6 +37,10 @@ public class ChannelSupervise {
     public static void addChannelTest(Channel channel, Long slideId) {
         CHANNEL_MAP.put(channel, slideId);
         // System.out.println(CHANNEL_MAP);
+    }
+
+    public static void addQuestionChannel(Channel channel, String questionProjectId) {
+        QUESTION_CHANNEL_MAP.put(channel, questionProjectId);
     }
     public static void removeChannelTest(Channel channel) {
         CHANNEL_MAP.remove(channel);
