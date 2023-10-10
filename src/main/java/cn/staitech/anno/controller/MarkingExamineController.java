@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,6 +41,17 @@ public class MarkingExamineController {
             @RequestParam(value = "createBy") @ApiParam(name = "createBy", value = "答题者", required = true) Long createBy
     ) throws Exception {
         return R.ok(markingExamineService.selectLists(questionProjectId,createBy));
+    }
+
+
+
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "获取切片原始GeoJson数据")
+    @GetMapping("/selectQuestionMarkingList")
+    public R<List<Features>> selectQuestionMarkingList(
+            @RequestParam(value = "questionId") @ApiParam(name = "questionId", value = "题库id", required = true) Long questionId
+    ) throws Exception {
+        return R.ok(new ArrayList<>());
     }
 
 
