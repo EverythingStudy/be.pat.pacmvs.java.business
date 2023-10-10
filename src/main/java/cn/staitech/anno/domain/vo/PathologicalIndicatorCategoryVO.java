@@ -31,5 +31,5 @@ public class PathologicalIndicatorCategoryVO {
 
     @ApiModelProperty(value = "图层顺序")
     @NotBlank(message = "图层顺序不可为空!")
-    private String orderNumber;
+    private Integer orderNumber;
 }

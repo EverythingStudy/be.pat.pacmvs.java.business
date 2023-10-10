@@ -136,6 +136,21 @@ public class PathologicalIndicatorCategoryServicelmpl implements PathologicalInd
         return pathologicalIndicatorCategoryMapper.selectIndicatorMessage(Pathological);
     }
 
+
+    /**
+     * 条件查询标注类别
+     *
+     * @param Pathological 病例指标id 或 颜色 或 标注类别名称
+     * @return 结果
+     */
+    @Override
+    public List<PathologicalIndicatorCategory> selectIndicatorMessageForUpdate(PathologicalIndicatorCategory Pathological) {
+        return pathologicalIndicatorCategoryMapper.selectIndicatorMessageForUpdate(Pathological);
+    }
+
+
+
+
     /**
      * 通过项目id统计标注类别
      *

@@ -90,6 +90,15 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
      */
     List<PathologicalIndicatorCategory> selectIndicatorMessage(PathologicalIndicatorCategory Pathological);
 
+
+    /**
+     * 条件查询标注类别-用于修改，排除自己
+     *
+     * @param Pathological 病例指标id 或 颜色 或 标注类别名称
+     * @return 结果
+     */
+    List<PathologicalIndicatorCategory> selectIndicatorMessageForUpdate(PathologicalIndicatorCategory Pathological);
+
     /**
      * 通过项目id统计标注类别
      *
