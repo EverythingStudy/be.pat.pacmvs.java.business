@@ -36,6 +36,7 @@
             qp.question_project_id,
             e.start_time,
             e.end_time,
+            e.create_by,
             e.exam_results,
             CASE
                 WHEN e.operate_status IS NULL THEN
@@ -47,8 +48,21 @@
                 LEFT JOIN tb_examine_score AS e ON e.question_project_id = qp.question_project_id
     </sql>
 
-    <select id="selectExaminationBy" parameterType="long" resultType="cn.staitech.anno.domain.examineScore.SelectExaminationListVO">
+    <select id="selectExaminationBy" parameterType="cn.staitech.anno.domain.ExamineScore" resultType="cn.staitech.anno.domain.examineScore.SelectExaminationListVO">
         <include refid="selectQuestionProject"/>
+        where qp.question_project_id = #{questionProjectId}
+        and e.create_by = #{createBy}
+    </select>
+
+    <select id="selectQuestionProject" parameterType="long" resultType="cn.staitech.anno.domain.examineScore.SelectExaminationListVO">
+        SELECT
+            q.image_name,
+            q.question_id,
+            q.slide_id,
+            qp.question_project_id
+        FROM
+            tb_question_project_rel AS qp
+                LEFT JOIN tb_question_bank AS q ON qp.question_id = q.question_id
         where qp.question_project_id = #{questionProjectId}
     </select>
 

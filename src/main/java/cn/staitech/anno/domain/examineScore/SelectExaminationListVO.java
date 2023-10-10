@@ -17,6 +17,9 @@ public class SelectExaminationListVO {
     @ApiModelProperty(value = "切片id")
     private Long slideId;
 
+    @ApiModelProperty(value = "答题者id")
+    private Long createBy;
+
     @ApiModelProperty(value = "切片编码")
     private String imageName;
 

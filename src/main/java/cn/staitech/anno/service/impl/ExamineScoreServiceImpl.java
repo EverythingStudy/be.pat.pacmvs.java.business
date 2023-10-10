@@ -82,7 +82,23 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
 
     @Override
     public SelectExaminationListVO selectExaminationBy(Long questionProjectId){
-        return examineScoreMapper.selectExaminationBy(questionProjectId);
+        QueryWrapper<ExamineScore> examineScoreQueryWrapper = new QueryWrapper<>();
+        examineScoreQueryWrapper.eq("question_project_id",questionProjectId).eq("create_by", SecurityUtils.getLoginUser().getSysUser().getUserId());
+        ExamineScore examineScoreBy = examineScoreMapper.selectOne(examineScoreQueryWrapper);
+        SelectExaminationListVO examinationListVO = new SelectExaminationListVO();
+        if(examineScoreBy != null){
+            ExamineScore examineScore = new ExamineScore();
+            examineScore.setQuestionProjectId(questionProjectId);
+            examineScore.setCreateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
+            examinationListVO = examineScoreMapper.selectExaminationBy(examineScore);
+        }
+        else{
+            examinationListVO = examineScoreMapper.selectQuestionProject(questionProjectId);
+            if(examinationListVO != null){
+                examinationListVO.setOperateStatus(0L);
+            }
+        }
+        return examinationListVO;
     }
 
     @Override
@@ -110,6 +126,7 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         examineScore.setStartTime(date);
         examineScore.setEndTime(DateUtil.offsetMinute(date, 20));
         examineScore.setShouldNumber(projectMarksRelBy.getShouldMarks());
+        examineScore.setOperateStatus("1");
         examineScore.setCreateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
         examineScore.setCreateTime(date);
         int res = examineScoreMapper.insert(examineScore);
@@ -134,7 +151,7 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         Integer markingCount = markingExamineMapper.selectCount(markingExamineQueryWrapper);
         ExamineScore examineScore = new ExamineScore();
         examineScore.setExamineScoreId(examineScoreBy.getExamineScoreId());
-        examineScore.setOperateStatus("1");
+        examineScore.setOperateStatus("2");
         examineScore.setRealityNumber(Long.valueOf(markingCount));
         // 更新当前评分记录
         return examineScoreMapper.updateById(examineScore);

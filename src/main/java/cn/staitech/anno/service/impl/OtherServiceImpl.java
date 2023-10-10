@@ -36,7 +36,7 @@ public class OtherServiceImpl implements OtherService {
                 Integer markingCount = markingExamineMapper.selectCount(markingExamineQueryWrapper);
                 ExamineScore examineScore = new ExamineScore();
                 examineScore.setExamineScoreId(examineScoreBy.getExamineScoreId());
-                examineScore.setOperateStatus("1");
+                examineScore.setOperateStatus("2");
                 examineScore.setRealityNumber(Long.valueOf(markingCount));
                 // 更新当前评分记录
                 examineScoreMapper.updateById(examineScore);
@@ -52,7 +52,7 @@ public class OtherServiceImpl implements OtherService {
         // 七天前
         Date endTime = DateUtil.offsetDay(startTime, -7);
         examineScoreQueryWrapper
-                .eq("operate_status", "0")
+                .eq("operate_status", "1")
                 .ge("end_time", endTime)
                 .lt("end_time", startTime);
         List<ExamineScore> examineScoreList = examineScoreMapper.selectList(examineScoreQueryWrapper);
