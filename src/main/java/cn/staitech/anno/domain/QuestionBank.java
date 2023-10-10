@@ -79,6 +79,10 @@ public class QuestionBank implements Serializable {
     @TableField("algorithm_status")
     private String algorithmStatus;
 
+    @ApiModelProperty(value = "json路径")
+    @TableField("geojson_url")
+    private String geojsonUrl;
+
     @ApiModelProperty(value = "创建者")
     @TableField("create_by")
     private Long createBy;

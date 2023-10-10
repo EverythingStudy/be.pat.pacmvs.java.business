@@ -20,6 +20,7 @@
         <result column="create_time" property="createTime"/>
         <result column="update_by" property="updateBy"/>
         <result column="update_time" property="updateTime"/>
+        <result column="geojson_url" property="geojsonUrl"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
