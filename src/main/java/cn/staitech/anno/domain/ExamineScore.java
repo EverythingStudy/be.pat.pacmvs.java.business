@@ -48,7 +48,7 @@ public class ExamineScore implements Serializable {
      * 切片编号
      */
     @ApiModelProperty(value = "切片编号")
-    private String slideNumber;
+    private String imageName;
 
     /**
      * 答题者

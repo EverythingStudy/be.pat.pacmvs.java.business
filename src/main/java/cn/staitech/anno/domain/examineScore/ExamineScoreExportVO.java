@@ -12,7 +12,7 @@ public class ExamineScoreExportVO {
     private String projectName;
 
     @ApiModelProperty(value = "切片编码")
-    private String imageCode;
+    private String imageName;
 
     @ApiModelProperty(value = "答题者")
     private String nickName;

@@ -1,17 +1,11 @@
 package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.date.DateUtil;
-import cn.staitech.anno.domain.ExamineScore;
-import cn.staitech.anno.domain.MarkingExamine;
-import cn.staitech.anno.domain.QuestionBank;
-import cn.staitech.anno.domain.QuestionProjectRel;
+import cn.staitech.anno.domain.*;
 import cn.staitech.anno.domain.examineScore.ExamineScoreAddVO;
 import cn.staitech.anno.domain.examineScore.ExamineScoreExportVO;
 import cn.staitech.anno.domain.examineScore.SelectExaminationListVO;
-import cn.staitech.anno.mapper.ExamineScoreMapper;
-import cn.staitech.anno.mapper.MarkingExamineMapper;
-import cn.staitech.anno.mapper.QuestionBankMapper;
-import cn.staitech.anno.mapper.QuestionProjectRelMapper;
+import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.queue.DelayQueueExample;
 import cn.staitech.anno.service.ExamineScoreService;
 import cn.staitech.anno.utils.ExcludeEmptyQueryWrapper;
@@ -49,6 +43,9 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
     private QuestionBankMapper questionBankMapper;
 
     @Resource
+    private ProjectMarksRelMapper projectMarksRelMapper;
+
+    @Resource
     private DelayQueueExample delayQueueExample;
 
     @Resource
@@ -75,11 +72,12 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
     }
 
     @Override
-    public List<SelectExaminationListVO> selectExaminationList(Long projectId, String slideNumber) {
+    public List<SelectExaminationListVO> selectExaminationList(Long projectId, String imageName) {
         QuestionBank questionBank = new QuestionBank();
         questionBank.setProjectId(projectId);
         questionBank.setCreateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
-        questionBank.setImageCode(slideNumber);
+        questionBank.setImageName(imageName);
+        System.out.println(questionBank + "_____________.");
         return examineScoreMapper.selectExaminationList(questionBank);
     }
 
@@ -90,6 +88,10 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         if (questionProjectRel == null) {
             throw new Exception("数据异常");
         }
+        // 查询应标个数
+        QueryWrapper<ProjectMarksRel> projectMarksRelQueryWrapper = new QueryWrapper<>();
+        projectMarksRelQueryWrapper.eq("project_id", questionProjectRel.getProjectId());
+        ProjectMarksRel projectMarksRelBy = projectMarksRelMapper.selectOne(projectMarksRelQueryWrapper);
         // 查询题库表中信息
         QuestionBank questionBank = questionBankMapper.selectById(questionProjectRel.getQuestionId());
         if (questionBank == null) {
@@ -97,13 +99,13 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         }
         ExamineScore examineScore = new ExamineScore();
         examineScore.setQuestionProjectId(questionProjectRel.getQuestionProjectId());
-        examineScore.setSlideNumber(questionBank.getImageCode());
+        examineScore.setImageName(questionBank.getImageName());
         examineScore.setProjectId(questionProjectRel.getProjectId());
         examineScore.setNickName(SecurityUtils.getLoginUser().getSysUser().getNickName());
         Date date = new Date();
         examineScore.setStartTime(date);
         examineScore.setEndTime(DateUtil.offsetMinute(date, 20));
-        examineScore.setShouldNumber(questionProjectRel.getShouldMarks());
+        examineScore.setShouldNumber(projectMarksRelBy.getShouldMarks());
         examineScore.setCreateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
         examineScore.setCreateTime(date);
         int res = examineScoreMapper.insert(examineScore);

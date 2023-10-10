@@ -3,24 +3,20 @@ package cn.staitech.anno.controller;
 
 import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.geojson.Features;
-import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
-import cn.staitech.anno.domain.geojson.in.viewAddIn;
 import cn.staitech.anno.domain.markingExamine.MarkingExamineInsertVO;
 import cn.staitech.anno.domain.markingExamine.MarkingExamineUpdateVO;
 import cn.staitech.anno.service.MarkingExamineService;
 import cn.staitech.common.core.domain.R;
+import com.alibaba.fastjson.JSONArray;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
- *
  * @author gjt
  * @since 2023-09-25
  */
@@ -36,22 +32,16 @@ public class MarkingExamineController {
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "获取GeoJson数据")
     @GetMapping("/selectList")
-    public R<List<Features>> selectList(
-            @RequestParam(value = "questionProjectId") @ApiParam(name = "questionProjectId", value = "题库项目", required = true) Long questionProjectId,
-            @RequestParam(value = "createBy") @ApiParam(name = "createBy", value = "答题者", required = true) Long createBy
-    ) throws Exception {
-        return R.ok(markingExamineService.selectLists(questionProjectId,createBy));
+    public R<List<Features>> selectList(@RequestParam(value = "questionProjectId") @ApiParam(name = "questionProjectId", value = "题库项目", required = true) Long questionProjectId, @RequestParam(value = "createBy") @ApiParam(name = "createBy", value = "答题者", required = true) Long createBy) throws Exception {
+        return R.ok(markingExamineService.selectLists(questionProjectId, createBy));
     }
-
 
 
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "获取切片原始GeoJson数据")
     @GetMapping("/selectQuestionMarkingList")
-    public R<List<Features>> selectQuestionMarkingList(
-            @RequestParam(value = "questionId") @ApiParam(name = "questionId", value = "题库id", required = true) Long questionId
-    ) throws Exception {
-        return R.ok(new ArrayList<>());
+    public R<JSONArray> selectQuestionMarkingList(@RequestParam(value = "questionId") @ApiParam(name = "questionId", value = "题库id", required = true) Long questionId) throws Exception {
+        return R.ok(markingExamineService.selectQuestionMarkingList(questionId));
     }
 
 
@@ -79,8 +69,6 @@ public class MarkingExamineController {
         markingExamineService.update(req);
         return R.ok(req.getMarking_id(), ResponseConstant.OPERATE_SUCCEED);
     }
-
-
 
 
 }
