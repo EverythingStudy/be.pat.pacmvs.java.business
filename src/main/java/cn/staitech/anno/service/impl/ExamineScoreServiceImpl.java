@@ -77,8 +77,12 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         questionBank.setProjectId(projectId);
         questionBank.setCreateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
         questionBank.setImageName(imageName);
-        System.out.println(questionBank + "_____________.");
         return examineScoreMapper.selectExaminationList(questionBank);
+    }
+
+    @Override
+    public SelectExaminationListVO selectExaminationBy(Long questionProjectId){
+        return examineScoreMapper.selectExaminationBy(questionProjectId);
     }
 
     @Override
@@ -130,7 +134,6 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         Integer markingCount = markingExamineMapper.selectCount(markingExamineQueryWrapper);
         ExamineScore examineScore = new ExamineScore();
         examineScore.setExamineScoreId(examineScoreBy.getExamineScoreId());
-        examineScore.setExamStatus("1");
         examineScore.setOperateStatus("1");
         examineScore.setRealityNumber(Long.valueOf(markingCount));
         // 更新当前评分记录

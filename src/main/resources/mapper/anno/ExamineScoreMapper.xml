@@ -16,7 +16,6 @@
         <result column="personal_fit" property="personalFit" />
         <result column="exam_results" property="examResults" />
         <result column="operate_status" property="operateStatus" />
-        <result column="exam_status" property="examStatus" />
         <result column="create_time" property="createTime" />
         <result column="create_by" property="createBy" />
         <result column="update_time" property="updateTime" />
@@ -25,11 +24,10 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        examine_score_id, project_id, slide_id, slide_number, nick_name, start_time, end_time, should_number, reality_number, algorithm_interval, personal_fit, exam_results, operate_status, exam_status, create_time, create_by, update_time, update_by
+        examine_score_id, project_id, slide_id, slide_number, nick_name, start_time, end_time, should_number, reality_number, algorithm_interval, personal_fit, exam_results, operate_status, create_time, create_by, update_time, update_by
     </sql>
 
-
-    <select id="selectExaminationList" parameterType="cn.staitech.anno.domain.QuestionBank" resultType="cn.staitech.anno.domain.examineScore.SelectExaminationListVO">
+    <sql id="selectQuestionProject">
         SELECT
             e.nick_name,
             q.image_name,
@@ -40,13 +38,23 @@
             e.end_time,
             e.exam_results,
             CASE
-            WHEN e.operate_status IS NULL THEN
-            0 ELSE e.operate_status
-            END AS operate_status
+                WHEN e.operate_status IS NULL THEN
+                    0 ELSE e.operate_status
+                END AS operate_status
         FROM
             tb_question_project_rel AS qp
-            LEFT JOIN tb_question_bank AS q ON qp.question_id = q.question_id
-            LEFT JOIN tb_examine_score AS e ON e.question_project_id = qp.question_project_id
+                LEFT JOIN tb_question_bank AS q ON qp.question_id = q.question_id
+                LEFT JOIN tb_examine_score AS e ON e.question_project_id = qp.question_project_id
+    </sql>
+
+    <select id="selectExaminationBy" parameterType="long" resultType="cn.staitech.anno.domain.examineScore.SelectExaminationListVO">
+        <include refid="selectQuestionProject"/>
+        where qp.question_project_id = #{questionProjectId}
+    </select>
+
+
+    <select id="selectExaminationList" parameterType="cn.staitech.anno.domain.QuestionBank" resultType="cn.staitech.anno.domain.examineScore.SelectExaminationListVO">
+        <include refid="selectQuestionProject"/>
         where #{createBy} in (select user_id from tb_project_member where project_id = #{projectId})
           and qp.project_id = #{projectId}
         <if test="imageName != null and imageName != ''">
