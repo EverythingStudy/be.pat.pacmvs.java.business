@@ -4,23 +4,71 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.QuestionProjectRel">
-        <id column="question_project_id" property="questionProjectId" />
-        <result column="question_id" property="questionId" />
+        <id column="question_project_id" property="questionProjectId"/>
+        <result column="question_id" property="questionId"/>
         <result column="project_id" property="projectId"/>
-        <result column="should_marks" property="shouldMarks" />
-        <result column="del_flag" property="delFlag" />
+        <result column="should_marks" property="shouldMarks"/>
+        <result column="del_flag" property="delFlag"/>
         <result column="image_code" property="imageCode"/>
+        <result column="image_name" property="imageName"/>
         <result column="json_name" property="jsonName"/>
-        <result column="create_by" property="createBy" />
-        <result column="create_name" property="createName" />
-        <result column="create_time" property="createTime" />
-        <result column="update_by" property="updateBy" />
-        <result column="update_time" property="updateTime" />
+        <result column="create_by" property="createBy"/>
+        <result column="create_name" property="createName"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        question_project_id, question_id, should_marks,image_code,json_name,del_flag, create_by, create_name,create_time, update_by, update_time
+        question_project_id
+        , question_id, should_marks,image_code,image_name,json_name,del_flag, create_by, create_name,create_time, update_by, update_time
     </sql>
+
+    <select id="selectListByProject" resultType="cn.staitech.anno.domain.question.out.GetQuestionListOut"
+            parameterType="java.lang.Long">
+
+        select qpr.question_project_id as questionProjectId,
+        qpr.question_id as questionId,
+        qpr.image_code as imageCode,
+        qpr.image_name as imageName,
+        qpr.json_name as jsonName,
+        qpr.create_name as createName,
+        qpr.create_time as createTime,
+        qpr.should_marks as shouldMarks,
+        i.thumb_url as thumbUrl
+        from tb_question_project_rel qpr
+        left join tb_question_bank qb
+        on qpr.question_id = qb.question_id
+        left join tb_image i
+        on i.image_id=qb.image_id
+        <where>
+            qpr.del_flag='0'
+            and qpr.project_id = #{projectId}
+
+        </where>
+    </select>
+    <insert id="insertShouldMarks">
+        insert into tb_project_marks_rel(project_id, should_marks)
+        values (#{projectId}, #{shouldMarks})
+    </insert>
+
+    <update id="updateShouldMarks">
+        update tb_project_marks_rel
+        set should_marks =#{shouldMarks}
+        where project_id = #{projectId}
+    </update>
+
+    <select id="countShouldMarks" resultType="java.lang.Integer">
+        select count(0)
+        from tb_project_marks_rel
+        where project_id = #{projectId}
+    </select>
+
+    <select id="selectShouldMarks" resultType="java.lang.Long">
+        select should_marks
+        from tb_project_marks_rel
+        where project_id =#{projectId} limit 1
+    </select>
 
 </mapper>

@@ -55,6 +55,10 @@ public class QuestionProjectRel implements Serializable {
     @TableField("image_code")
     private String imageCode;
 
+    @ApiModelProperty(value = "图片名称")
+    @TableField("image_name")
+    private String imageName;
+
     @ApiModelProperty(value = "json文件名称")
     @TableField("json_name")
     private String jsonName;

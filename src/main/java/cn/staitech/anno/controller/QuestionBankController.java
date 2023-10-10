@@ -109,7 +109,7 @@ public class QuestionBankController {
     @PostMapping("/removeQuestion")
     public R removeQuestion(@Validated @RequestBody SettingCompletedIn req) {
 
-        return iQuestionBankService.settingCompleted(req);
+        return iQuestionBankService.removeQuestion(req);
 
     }
 }

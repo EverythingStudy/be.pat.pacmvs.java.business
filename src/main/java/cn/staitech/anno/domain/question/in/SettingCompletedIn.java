@@ -16,6 +16,8 @@ public class SettingCompletedIn {
     @ApiModelProperty(value = "应标个数")
     private Long shouldMarks;
 
+    @ApiModelProperty(value = "项目id")
+    private Long projectId;
 
     @ApiModelProperty(value = "题库项目列表id")
     @NotEmpty(message = "题库项目列表id不能为空！")

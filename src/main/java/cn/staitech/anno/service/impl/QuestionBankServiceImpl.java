@@ -20,7 +20,6 @@ import cn.staitech.anno.mapper.ProjectMapper;
 import cn.staitech.anno.mapper.QuestionBankMapper;
 import cn.staitech.anno.mapper.QuestionProjectRelMapper;
 import cn.staitech.anno.mapper.SlideMapper;
-import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.service.IQuestionBankService;
 import cn.staitech.anno.service.IQuestionProjectRelService;
 import cn.staitech.anno.service.MarkingService;
@@ -42,12 +41,10 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static cn.staitech.anno.constant.QuestionBankConstant.NUMBER_0;
 import static cn.staitech.anno.constant.QuestionBankConstant.PROHIBIT_REPETITION;
 import static cn.staitech.common.security.utils.SecurityUtils.isAdmin;
 
@@ -108,6 +105,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
             ret.setCreateBy(SecurityUtils.getUserId());
             ret.setCreateTime(new Date());
             ret.setImageCode(image.getImageCode());
+            ret.setImageName(image.getImageName());
             ret.setSize(image.getSize());
 
             // 插入json文件返回数据
@@ -116,7 +114,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                 urlPath = markingService.slideJsonExport(e.getSlideId());
             } catch (Exception exception) {
                 log.error(exception.toString());
-                 throw new RuntimeException(QuestionBankConstant.ERROR_GENERATE_JSON);
+                throw new RuntimeException(QuestionBankConstant.ERROR_GENERATE_JSON);
             }
             String s = StringUtils.substringAfterLast(urlPath, File.separator);
             ret.setJsonName(s);
@@ -138,7 +136,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         log.info("根据切片生成考题接口开始：");
 
         List<CreateBySlideData> slideDataList = req.getSlideDataList();
-        if(CollectionUtils.isEmpty(slideDataList)){
+        if (CollectionUtils.isEmpty(slideDataList)) {
             R.ok();
         }
 
@@ -190,7 +188,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
     public R<List<GetProjectBoxOut>> getProjectBox() {
         log.info("考核选片项目下拉框查询接口开始：");
         if (!isAdmin(SecurityUtils.getUserId())) {
-            List<GetProjectBoxOut> resp = this.baseMapper.selectProjectList(SecurityUtils.getUserId());
+            List<GetProjectBoxOut> resp = this.baseMapper.selectProjectList(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
             return R.ok(resp);
         }
         List<GetProjectBoxOut> resp = this.baseMapper.selectProjectList(null);
@@ -210,22 +208,9 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
 
         log.info("考核选片-选片列表查询：");
         GetQuestionsOut resp = new GetQuestionsOut();
-        List<GetQuestionListOut> respData = new ArrayList<>();
-        LambdaQueryWrapper<QuestionProjectRel> qw = new LambdaQueryWrapper<>();
-        qw.eq(QuestionProjectRel::getProjectId, projectId);
-        qw.eq(QuestionProjectRel::getDelFlag, NUMBER_0);
-
-        List<QuestionProjectRel> questionProjectRels = questionProjectRelMapper.selectList(qw);
-        if (!CollectionUtils.isEmpty(questionProjectRels)) {
-            respData = questionProjectRels.stream().map(e -> {
-                GetQuestionListOut ret = new GetQuestionListOut();
-                BeanUtils.copyProperties(e, ret);
-                return ret;
-            }).collect(Collectors.toList());
-            resp.setShouldMarks(questionProjectRels.get(0).getShouldMarks());
-        }
+        List<GetQuestionListOut> respData = questionProjectRelMapper.selectListByProject(projectId);
         resp.setReqList(respData);
-
+        resp.setShouldMarks(questionProjectRelMapper.selectShouldMarks(projectId));
         return resp;
     }
 
@@ -233,11 +218,12 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
     public R confirmSelection(ConfirmSelectionIn req) {
         log.info("考核选片-确认选择接口开始：");
         LambdaQueryWrapper<QuestionProjectRel> qw = new LambdaQueryWrapper<>();
-        qw.eq(QuestionProjectRel::getProjectId,req.getProjectId());
-        qw.eq(QuestionProjectRel::getQuestionId,req.getQuestionId());
+        qw.eq(QuestionProjectRel::getProjectId, req.getProjectId());
+        qw.eq(QuestionProjectRel::getQuestionId, req.getQuestionId());
+        qw.eq(QuestionProjectRel::getDelFlag, QuestionBankConstant.NUMBER_0);
         List<QuestionProjectRel> questionProjectRels = questionProjectRelMapper.selectList(qw);
 
-        if(!CollectionUtils.isEmpty(questionProjectRels)){
+        if (!CollectionUtils.isEmpty(questionProjectRels)) {
             return R.fail(PROHIBIT_REPETITION);
         }
 
@@ -255,10 +241,31 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
     @Override
     public R settingCompleted(SettingCompletedIn req) {
         log.info("考核选片-设置完成接口开始：");
-        List<Long> dataList = req.getDataList();
+        /*List<Long> dataList = req.getDataList();
         List<QuestionProjectRel> param = dataList.stream().map(e -> {
             QuestionProjectRel questionProjectRel = new QuestionProjectRel();
             questionProjectRel.setShouldMarks(req.getShouldMarks());
+            questionProjectRel.setQuestionProjectId(e);
+            return questionProjectRel;
+        }).collect(Collectors.toList());
+        iQuestionProjectRelService.updateBatchById(param);*/
+
+        if (questionProjectRelMapper.countShouldMarks(req.getProjectId()) > 0) {
+            questionProjectRelMapper.updateShouldMarks(req.getProjectId(), req.getShouldMarks());
+        } else {
+            questionProjectRelMapper.insertShouldMarks(req.getProjectId(), req.getShouldMarks());
+        }
+
+        return R.ok();
+    }
+
+    @Override
+    public R removeQuestion(SettingCompletedIn req) {
+        log.info("考核选片-删除接口开始：");
+        List<Long> dataList = req.getDataList();
+        List<QuestionProjectRel> param = dataList.stream().map(e -> {
+            QuestionProjectRel questionProjectRel = new QuestionProjectRel();
+            questionProjectRel.setDelFlag(QuestionBankConstant.NUMBER_1);
             questionProjectRel.setQuestionProjectId(e);
             return questionProjectRel;
         }).collect(Collectors.toList());

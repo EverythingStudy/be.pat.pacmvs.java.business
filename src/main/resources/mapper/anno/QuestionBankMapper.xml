@@ -9,6 +9,7 @@
         <result column="image_id" property="imageId"/>
         <result column="project_id" property="projectId"/>
         <result column="image_code" property="imageCode"/>
+        <result column="image_name" property="imageName"/>
         <result column="json_name" property="jsonName"/>
         <result column="size" property="size"/>
         <result column="fitting_interval" property="fittingInterval"/>
@@ -34,6 +35,8 @@
         tt.topic_name topicName,
         qb.question_id questionId,
         qb.image_code imageCode,
+        qb.image_name imageName,
+        ti.thumb_url thumbUrl,
         qb.size as size,
         qb.json_name jsonName,
         o.organization_name organizationName,
@@ -47,6 +50,8 @@
         on qb.topic_id = tt.topic_id
         left join sys_organization o
         on qb.organization_id = o.organization_id
+            left join tb_image ti
+            on s.image_id=ti.image_id
         <where>
             <if test="projectName !=null and projectName !=''">
 
@@ -84,8 +89,10 @@
             resultType="cn.staitech.anno.domain.question.out.GetQuestionListOut">
         select p.project_name projectName,
         tt.topic_name topicName,
+        ti.thumb_url thumbUrl,
         qb.question_id questionId,
         qb.image_code imageCode,
+        qb.image_name imageName,
         qb.size as size,
         qb.json_name jsonName,
         o.organization_name organizationName,
@@ -99,17 +106,19 @@
         on qb.topic_id = tt.topic_id
         left join sys_organization o
         on qb.organization_id = o.organization_id
+        left join tb_image ti
+        on s.image_id=ti.image_id
         <where>
 
             p.project_id = #{projectId}
 
-            <if test="imageCode !=null and imageCode ! =''">
+            <if test="imageCode !=null and imageCode !=''">
 
                 and qb.image_code like CONCAT('%',#{imageCode},'%')
 
             </if>
 
-            <if test="topicName !=null and topicName ! =''">
+            <if test="topicName !=null and topicName !=''">
 
                 and tt.topic_name like CONCAT('%',#{topicName},'%')
 

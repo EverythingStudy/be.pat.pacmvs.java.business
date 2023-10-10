@@ -41,4 +41,6 @@ public interface IQuestionBankService extends IService<QuestionBank> {
     R confirmSelection(ConfirmSelectionIn req);
 
     R settingCompleted(SettingCompletedIn req);
+
+    R removeQuestion(SettingCompletedIn req);
 }

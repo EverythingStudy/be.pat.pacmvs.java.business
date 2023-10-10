@@ -1,7 +1,11 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.QuestionProjectRel;
+import cn.staitech.anno.domain.question.out.GetQuestionListOut;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +17,11 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface QuestionProjectRelMapper extends BaseMapper<QuestionProjectRel> {
 
+    List<GetQuestionListOut> selectListByProject(Long projectId);
+
+    int insertShouldMarks(@Param("projectId") Long projectId, @Param("shouldMarks")Long shouldMarks);
+    int updateShouldMarks(@Param("projectId") Long projectId, @Param("shouldMarks")Long shouldMarks);
+    int countShouldMarks( Long projectId);
+
+    Long selectShouldMarks( Long projectId);
 }

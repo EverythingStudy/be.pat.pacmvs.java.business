@@ -21,11 +21,20 @@ public class GetQuestionListOut {
     @ApiModelProperty(value = "考题id")
     private Long questionId;
 
+    @ApiModelProperty(value = "应标个数")
+    private Long shouldMarks;
+
     @ApiModelProperty(value = "项目名称")
     private String projectName;
 
     @ApiModelProperty(value = "切片编号")
     private String imageCode;
+
+    @ApiModelProperty(value = "图片名称")
+    private String imageName;
+
+    @ApiModelProperty(value = "缩略图url地址")
+    private String thumbUrl;
 
     @ApiModelProperty(value = "专题号")
     private String topicName;
