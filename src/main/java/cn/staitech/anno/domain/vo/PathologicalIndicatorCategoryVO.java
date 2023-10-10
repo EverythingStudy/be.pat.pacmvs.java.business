@@ -30,6 +30,6 @@ public class PathologicalIndicatorCategoryVO {
     private Long indicatorId;
 
     @ApiModelProperty(value = "图层顺序")
-    @NotBlank(message = "图层顺序不可为空!")
+    @NotNull(message = "图层顺序不可为空!")
     private Integer orderNumber;
 }

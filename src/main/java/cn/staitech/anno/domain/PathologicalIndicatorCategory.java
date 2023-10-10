@@ -82,7 +82,7 @@ public class PathologicalIndicatorCategory implements Serializable {
      * 图层顺序
      */
     @ApiModelProperty(required = true, value = "图层顺序")
-    @NotNull(message = "图层不可为空")
+    @NotNull(message = "图层顺序不可为空!")
     private Integer orderNumber;
 
     /**
