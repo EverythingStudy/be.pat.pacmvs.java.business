@@ -33,8 +33,10 @@ import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static cn.staitech.anno.constant.ProjectMemberConstant.*;
 
@@ -63,27 +65,41 @@ public class ProjectMemberController extends BaseController {
     @ApiOperation(value = "项目成员表增加")
     @PostMapping("/addProjectMember")
     public R addProjectMember(@RequestBody ProjectMemberAddVO projectMemberAddVO) {
-
+        // 当前用户
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+        // 获取项目ID
+        Long projectId = projectMemberAddVO.getProjectId();
+        // 添加有效用户总数
+        AtomicInteger sum = new AtomicInteger(0);
 
-        ProjectMember projectMember = ProjectMember.builder()
-                .projectId(projectMemberAddVO.getProjectId())
-                .userId(projectMemberAddVO.getUserId())
-                .organizationId(sysUser.getOrganizationId())
-                .build();
+        // 遍历添加
+        for (Long userId : projectMemberAddVO.getUserId()) {
+            ProjectMember projectMember = ProjectMember.builder()
+                    .projectId(projectId)
+                    .userId(userId)
+                    .organizationId(sysUser.getOrganizationId())
+                    .build();
 
-        List<ProjectMember> list = projectMemberService.select(projectMember);
+            List<ProjectMember> list = projectMemberService.select(projectMember);
 
-        if (list.size() > 0) {
-            return R.fail(INSERT_FAILURE_HAD_USER);
+            if (list.size() > 0) {
+                continue;
+            }
+
+            projectMember.setCreateBy(sysUser.getUserId());
+            projectMember.setCreateTime(new Date());
+            if (projectMemberService.save(projectMember) > 0) {
+                //更新项目时间
+                ProjectUtils.updateProjectStatus(projectMemberAddVO.getProjectId());
+            }
+
+            sum.getAndIncrement();
         }
 
-        projectMember.setCreateBy(sysUser.getUserId());
-        if (projectMemberService.save(projectMember) > 0) {
-            //更新项目时间
-            ProjectUtils.updateProjectStatus(projectMemberAddVO.getProjectId());
+        if (sum.get() > 0) {
             return R.ok(INSERT_SUCCESS);
         }
+
         return R.fail(INSERT_FAILURE);
     }
 
@@ -103,7 +119,7 @@ public class ProjectMemberController extends BaseController {
 
             if (projectMemberService.delete(projectMember) > 0) {
                 QueryWrapper<RecentlyVisited> recentlyVisitedQueryWrapper = new QueryWrapper<>();
-                recentlyVisitedQueryWrapper.eq("project_id",projectId).eq("user_id",userId);
+                recentlyVisitedQueryWrapper.eq("project_id", projectId).eq("user_id", userId);
                 recentlyVisitedService.remove(recentlyVisitedQueryWrapper);
                 return R.ok(DELETE_SUCCESS);
             }
