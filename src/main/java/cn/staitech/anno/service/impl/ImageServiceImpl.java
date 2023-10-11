@@ -234,7 +234,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                     slide.setImageId(out.getImageId());
                     slide.setProjectId(vo.getProjectId());
 
-                    if (vo.getReviewRoundId() > 0) {
+                    if (vo.getReviewRoundId() != null && vo.getReviewRoundId() > 0) {
                         slide.setReviewRoundId(vo.getReviewRoundId());
                     }
                     // 查询当前项目或评审轮次是否选中此图片
