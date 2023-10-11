@@ -179,7 +179,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         log.info("考题列表分页查询接口开始：");
         PageResponse resp = new PageResponse<>();
         if (!isAdmin(SecurityUtils.getUserId())) {
-            req.setOrganizationId(SecurityUtils.getUserId());
+            req.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         }
         Page<GetQuestionListOut> page = PageHelper.startPage(req.getPageNum(), req.getPageSize());
         List<GetQuestionListOut> getQuestionListOuts = this.baseMapper.selectQuestionList(req);
