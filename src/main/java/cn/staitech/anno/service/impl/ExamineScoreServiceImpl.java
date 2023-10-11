@@ -129,6 +129,7 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         examineScore.setOperateStatus("1");
         examineScore.setCreateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
         examineScore.setCreateTime(date);
+        examineScore.setSlideId(questionBank.getSlideId());
         int res = examineScoreMapper.insert(examineScore);
         delayQueueExample.addDelayQueueExample(examineScore.getExamineScoreId());
         return res;

@@ -149,5 +149,11 @@ public class ExamineScore implements Serializable {
     @ApiModelProperty(value = "更新者")
     private Long updateBy;
 
+    /**
+     * 切片id
+     */
+    @ApiModelProperty(value = "切片id")
+    private Long slideId;
+
 
 }
