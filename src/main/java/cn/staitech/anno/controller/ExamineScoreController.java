@@ -45,12 +45,19 @@ public class ExamineScoreController {
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "考题列表查询")
     @GetMapping("/selectExaminationList")
-    public R<List<SelectExaminationListVO>> selectListBy(
+    public R<List<SelectExaminationListVO>> selectExaminationList(
             @NotNull(message = "参数异常,未传入项目id") @RequestParam(value = "projectId") @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId,
-            @RequestParam(value = "slideNumber", required = false) @ApiParam(name = "slideNumber", value = "切片编号") String slideNumber) throws Exception {
-        return R.ok(examineScoreService.selectExaminationList(projectId, slideNumber));
+            @RequestParam(value = "imageName", required = false) @ApiParam(name = "imageName", value = "切片编号") String imageName) throws Exception {
+        return R.ok(examineScoreService.selectExaminationList(projectId, imageName));
     }
 
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "查询考题详情")
+    @GetMapping("/selectExaminationBy")
+    public R<SelectExaminationListVO> selectExaminationBy(
+            @NotNull(message = "参数异常,未传入项目题库id") @RequestParam(value = "questionProjectId") @ApiParam(name = "questionProjectId", value = "项目题库id", required = true) Long questionProjectId) {
+        return R.ok(examineScoreService.selectExaminationBy(questionProjectId));
+    }
 
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "评分列表查询")

@@ -16,7 +16,6 @@
         <result column="personal_fit" property="personalFit" />
         <result column="exam_results" property="examResults" />
         <result column="operate_status" property="operateStatus" />
-        <result column="exam_status" property="examStatus" />
         <result column="create_time" property="createTime" />
         <result column="create_by" property="createBy" />
         <result column="update_time" property="updateTime" />
@@ -25,35 +24,62 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        examine_score_id, project_id, slide_id, slide_number, nick_name, start_time, end_time, should_number, reality_number, algorithm_interval, personal_fit, exam_results, operate_status, exam_status, create_time, create_by, update_time, update_by
+        examine_score_id, project_id, slide_id, slide_number, nick_name, start_time, end_time, should_number, reality_number, algorithm_interval, personal_fit, exam_results, operate_status, create_time, create_by, update_time, update_by
     </sql>
 
-
-    <select id="selectExaminationList" parameterType="cn.staitech.anno.domain.QuestionBank" resultType="cn.staitech.anno.domain.examineScore.SelectExaminationListVO">
+    <sql id="selectQuestionProject">
         SELECT
             e.nick_name,
-            q.image_code,
+            q.image_name,
+            q.question_id,
+            q.slide_id,
             qp.question_project_id,
             e.start_time,
             e.end_time,
+            e.create_by,
             e.exam_results,
-            e.operate_status
+            CASE
+                WHEN e.operate_status IS NULL THEN
+                    0 ELSE e.operate_status
+                END AS operate_status
         FROM
-            tb_question_bank as q
-                left join tb_question_project_rel as qp on qp.question_id = q.question_id
-                left join tb_examine_score as e on e.question_project_id = qp.question_project_id
-        where #{createBy} in (select user_id from tb_project_member where project_id = #{projectId})
-          and q.project_id = #{projectId}
-        <if test="imageCode != null and imageCode != ''">
-            and q.image_code like concat('%', #{imageCode}, '%')
+            tb_question_project_rel AS qp
+                LEFT JOIN tb_question_bank AS q ON qp.question_id = q.question_id
+                LEFT JOIN tb_examine_score AS e ON e.question_project_id = qp.question_project_id
+    </sql>
 
+    <select id="selectExaminationBy" parameterType="cn.staitech.anno.domain.ExamineScore" resultType="cn.staitech.anno.domain.examineScore.SelectExaminationListVO">
+        <include refid="selectQuestionProject"/>
+        where qp.question_project_id = #{questionProjectId}
+        and e.create_by = #{createBy}
+    </select>
+
+    <select id="selectQuestionProject" parameterType="long" resultType="cn.staitech.anno.domain.examineScore.SelectExaminationListVO">
+        SELECT
+            q.image_name,
+            q.question_id,
+            q.slide_id,
+            qp.question_project_id
+        FROM
+            tb_question_project_rel AS qp
+                LEFT JOIN tb_question_bank AS q ON qp.question_id = q.question_id
+        where qp.question_project_id = #{questionProjectId}
+    </select>
+
+
+    <select id="selectExaminationList" parameterType="cn.staitech.anno.domain.QuestionBank" resultType="cn.staitech.anno.domain.examineScore.SelectExaminationListVO">
+        <include refid="selectQuestionProject"/>
+        where #{createBy} in (select user_id from tb_project_member where project_id = #{projectId})
+          and qp.project_id = #{projectId}
+        <if test="imageName != null and imageName != ''">
+            and qp.image_name like concat('%', #{imageName}, '%')
         </if>
     </select>
 
     <select id="selectLists" parameterType="list" resultType="cn.staitech.anno.domain.examineScore.ExamineScoreExportVO">
         SELECT
             p.project_name,
-            e.slide_number as image_code,
+            e.image_name,
             e.nick_name,
             e.start_time,
             e.end_time,

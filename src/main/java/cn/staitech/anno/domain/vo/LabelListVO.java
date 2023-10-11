@@ -45,7 +45,7 @@ public class LabelListVO {
     @ApiModelProperty(hidden = true, value = "标注类型")
     private Long annoType;
     @ApiModelProperty(value = "图层顺序")
-    private String orderNumber;
+    private Integer orderNumber;
     @ApiModelProperty(value = "标签编号")
     private String number;
     @ApiModelProperty(value = "种属编号")

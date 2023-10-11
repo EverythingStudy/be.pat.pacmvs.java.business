@@ -29,15 +29,14 @@ public class OtherServiceImpl implements OtherService {
         ExamineScore examineScoreBy = examineScoreMapper.selectById(examineScoreId);
         if (examineScoreBy != null) {
             // 判断是否已经交卷
-            if (Objects.equals(examineScoreBy.getExamStatus(), "0")) {
+            if (Objects.equals(examineScoreBy.getOperateStatus(), "0")) {
                 // 查询切片表中应标数量
                 QueryWrapper<MarkingExamine> markingExamineQueryWrapper = new QueryWrapper<>();
                 markingExamineQueryWrapper.eq("question_project_id", examineScoreBy.getQuestionProjectId()).eq("create_by", examineScoreBy.getCreateBy());
                 Integer markingCount = markingExamineMapper.selectCount(markingExamineQueryWrapper);
                 ExamineScore examineScore = new ExamineScore();
                 examineScore.setExamineScoreId(examineScoreBy.getExamineScoreId());
-                examineScore.setExamStatus("1");
-                examineScore.setOperateStatus("1");
+                examineScore.setOperateStatus("2");
                 examineScore.setRealityNumber(Long.valueOf(markingCount));
                 // 更新当前评分记录
                 examineScoreMapper.updateById(examineScore);
@@ -53,7 +52,7 @@ public class OtherServiceImpl implements OtherService {
         // 七天前
         Date endTime = DateUtil.offsetDay(startTime, -7);
         examineScoreQueryWrapper
-                .eq("exam_status", "0")
+                .eq("operate_status", "1")
                 .ge("end_time", endTime)
                 .lt("end_time", startTime);
         List<ExamineScore> examineScoreList = examineScoreMapper.selectList(examineScoreQueryWrapper);

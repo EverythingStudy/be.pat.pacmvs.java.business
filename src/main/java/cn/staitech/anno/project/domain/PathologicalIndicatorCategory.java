@@ -71,8 +71,7 @@ public class PathologicalIndicatorCategory implements Serializable {
      */
     @Size(max= 50,message="编码长度不能超过50")
     @ApiModelProperty("图层顺序")
-    @Length(max= 50,message="编码长度不能超过50")
-    private String orderNumber;
+    private Integer orderNumber;
     /**
      * 组织机构ID
      */

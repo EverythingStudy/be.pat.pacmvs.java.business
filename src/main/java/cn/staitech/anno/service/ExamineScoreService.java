@@ -25,6 +25,8 @@ public interface ExamineScoreService extends IService<ExamineScore> {
 
     List<SelectExaminationListVO> selectExaminationList(Long projectId, String slideNumber);
 
+    SelectExaminationListVO selectExaminationBy(Long questionProjectId);
+
     int add(ExamineScoreAddVO examineScoreAddVO) throws Exception;
 
     int update(ExamineScoreAddVO examineScoreAddVO) throws Exception;

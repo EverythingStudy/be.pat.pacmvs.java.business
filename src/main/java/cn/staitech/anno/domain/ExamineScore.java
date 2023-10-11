@@ -48,7 +48,7 @@ public class ExamineScore implements Serializable {
      * 切片编号
      */
     @ApiModelProperty(value = "切片编号")
-    private String slideNumber;
+    private String imageName;
 
     /**
      * 答题者
@@ -93,9 +93,9 @@ public class ExamineScore implements Serializable {
     private String personalFit;
 
     /**
-     * 考试结果(0无结果，1通过、2未通过)
+     * 考试结果(1通过、2未通过)
      */
-    @ApiModelProperty(value = "考试结果(0无结果，1通过、2未通过)")
+    @ApiModelProperty(value = "考试结果(1通过、2未通过)")
     private String examResults;
 
     /**
@@ -104,11 +104,6 @@ public class ExamineScore implements Serializable {
     @ApiModelProperty(value = "操作状态（0：开始考试，考试完成）")
     private String operateStatus;
 
-    /**
-     * 考试状态（0：未交卷，1：已交卷）
-     */
-    @ApiModelProperty(value = "考试状态（0：未交卷，1：已交卷）")
-    private String examStatus;
 
     /**
      * 创建时间

@@ -1,20 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper">
+    <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.PathologicalIndicatorCategory">
-        <id column="category_id" jdbcType="BIGINT" property="categoryId"/>
-        <result column="indicator_id" jdbcType="BIGINT" property="indicatorId"/>
-        <result column="color" jdbcType="VARCHAR" property="color"/>
-        <result column="create_by" jdbcType="BIGINT" property="createBy"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="update_by" jdbcType="BIGINT" property="updateBy"/>
-        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-        <result column="category_name" jdbcType="VARBINARY" property="categoryName"/>
-        <result column="anno_type" jdbcType="BIGINT" property="annoType"/>
-        <result column="order_number" jdbcType="VARCHAR" property="orderNumber"/>
-        <result column="number" jdbcType="VARCHAR" property="number"/>
-        <result column="del_flag" jdbcType="INTEGER" property="delFlag"/>
+        <id column="category_id" property="categoryId" />
+        <result column="indicator_id" property="indicatorId" />
+        <result column="category_name" property="categoryName" />
+        <result column="structure_id" property="structureId" />
+        <result column="rgb" property="rgb" />
+        <result column="hex" property="hex" />
+        <result column="color" property="color" />
+        <result column="number" property="number" />
+        <result column="order_number" property="orderNumber" />
+        <result column="organization_id" property="organizationId" />
+        <result column="anno_type" property="annoType" />
+        <result column="del_flag" property="delFlag" />
+        <result column="create_by" property="createBy" />
+        <result column="update_by" property="updateBy" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
     </resultMap>
+
+
 
     <resultMap type="cn.staitech.anno.domain.vo.statistic.StatisticCategoryListOutVO"
                id="SysAnnotationCategoryStatisticResult">
@@ -39,14 +46,14 @@
         <result column="create_by" jdbcType="BIGINT" property="createBy"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="category_name" jdbcType="VARBINARY" property="categoryName"/>
-        <result column="order_number" jdbcType="VARCHAR" property="orderNumber"/>
+        <result column="order_number" jdbcType="INTEGER" property="orderNumber"/>
         <result column="number" jdbcType="VARCHAR" property="number"/>
         <result column="user_name" jdbcType="VARCHAR" property="userName"/>
     </resultMap>
 
+    <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        category_id
-        , indicator_id, rgb , hex, structure_id, create_by, create_time, update_by, update_time, category_name,order_number,organization_id,number
+        category_id, indicator_id, category_name, structure_id, rgb, hex, color, number, order_number, organization_id, anno_type, del_flag, create_by, update_by, create_time, update_time
     </sql>
 
     <!--  根据主键查询单条标注信息-->
@@ -163,7 +170,7 @@
                 #{annoType,jdbcType=BIGINT},
             </if>
             <if test="orderNumber != null">
-                #{orderNumber,jdbcType=VARCHAR},
+                #{orderNumber,jdbcType=INTEGER},
             </if>
             <if test="number != null">
                 #{number,jdbcType=VARCHAR},
@@ -194,7 +201,7 @@
                 number = #{number,jdbcType=VARCHAR},
             </if>
             <if test="orderNumber != null">
-                order_number = #{orderNumber,jdbcType=VARCHAR},
+                order_number = #{orderNumber,jdbcType=INTEGER},
             </if>
             <if test="delFlag != null">
                 del_flag = #{delFlag,jdbcType=INTEGER},
@@ -223,15 +230,11 @@
     </select>
 
     <select id="selectIndicatorIdList" parameterType="java.lang.Long" resultMap="GeoLabelResult">
-        SELECT
-            category_name as label_name,
-            rgb as label_color,
-            number as label_code
-        FROM
-            tb_pathological_indicator_category
-        WHERE
-            indicator_id = #{indicatorId}
-
+        SELECT category_name as label_name,
+               rgb           as label_color,
+               number        as label_code
+        FROM tb_pathological_indicator_category
+        WHERE indicator_id = #{indicatorId}
     </select>
 
     <delete id="delIndicatorCategory" parameterType="java.lang.Long">
@@ -246,53 +249,44 @@
         where category_id = #{categoryId}
     </select>
 
-    <select id="selectProjectAndNumber"  resultMap="BaseResultMap">
-        SELECT
-            *
-        FROM
-            tb_pathological_indicator_category AS pic
-                LEFT JOIN tb_project AS p ON p.indicator_id = pic.indicator_id
-        WHERE
-            p.project_id = #{projectId}
+    <select id="selectProjectAndNumber" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_pathological_indicator_category AS pic
+                 LEFT JOIN tb_project AS p ON p.indicator_id = pic.indicator_id
+        WHERE p.project_id = #{projectId}
           AND pic.number = #{number}
     </select>
 
 
-    <!-- 结构编码在当前列表内不可重复；C：结构名称在当前列表内不可重复。D：图层顺序在当前列表内不可重复；E：颜色值在当前列表不可重复 -->
-  <!--  <select id="selectIndicatorMessage" parameterType="cn.staitech.anno.domain.PathologicalIndicatorCategory"
-            resultMap="BaseResultMap">
-        select *
-        from tb_pathological_indicator_category where del_flag = 0
-        <if test="indicatorId != null">
-            AND indicator_id = #{indicatorId}
-        </if>
-        <if test="categoryName != null and categoryName != ''">
-            AND category_name = #{categoryName}
-        </if>
-        <if test="categoryId != null and categoryId != ''">
-            AND category_id = #{categoryId}
-        </if>
-        <if test="organizationId != null">
-            AND organization_id = #{organizationId}
-        </if>
-        <if test="number != null and number != ''">
-            AND number = #{number}
-        </if>
-        <if test="rgb != null">
-            AND rgb = #{rgb}
-        </if>
-        <if test="hex != null">
-            AND hex = #{hex}
-        </if>
-        &lt;!&ndash;        <if test="structureId != null">
-                    AND structure_id = #{structureId}
-                </if>&ndash;&gt;
-        <if test="orderNumber != null and orderNumber != ''">
-            AND order_number = #{orderNumber}
-        </if>
-    </select>-->
 
-    <!-- 结构编码在当前列表内不可重复；C：结构名称在当前列表内不可重复。D：图层顺序在当前列表内不可重复；E：颜色值在当前列表不可重复 -->
+    <!--
+        <select id="selectIndicatorMessage" parameterType="cn.staitech.anno.domain.PathologicalIndicatorCategory"
+                resultMap="BaseResultMap">
+            select *
+            from tb_pathological_indicator_category where del_flag = 0
+            <if test="indicatorId != null">
+                AND indicator_id = #{indicatorId}
+            </if>
+            <if test="categoryId != null">
+                AND category_id != #{categoryId}
+            </if>
+            <if test="orderNumber !=null">
+                AND order_number = #{orderNumber}
+            </if>
+            <if test="rgb != null">
+                AND rgb = '#{rgb}'
+            </if>
+            <if test="hex != null">
+                AND hex = #{hex}
+            </if>
+            <if test="structureId != null">
+                AND structure_id = #{structureId,jdbcType=VARCHAR}
+            </if>
+        </select>
+        -->
+
+
+    <!-- 查询标签：不区分组织机构 结构编码在当前列表内不可重复；C：结构名称在当前列表内不可重复。D：图层顺序在当前列表内不可重复；E：颜色值在当前列表不可重复 -->
     <select id="selectIndicatorMessage" parameterType="cn.staitech.anno.domain.PathologicalIndicatorCategory"
             resultMap="BaseResultMap">
         select *
@@ -300,31 +294,40 @@
         <if test="indicatorId != null">
             AND indicator_id = #{indicatorId}
         </if>
-        <if test="categoryName != null and categoryName != ''">
-            OR category_name = #{categoryName}
-        </if>
-        <if test="categoryId != null and categoryId != ''">
-            OR category_id = #{categoryId}
-        </if>
-        <if test="number != null and number != ''">
-            OR number = #{number}
-        </if>
-        <if test="rgb != null">
-            OR rgb = #{rgb}
+        <if test="orderNumber !=null">
+            AND order_number = #{orderNumber}
         </if>
         <if test="hex != null">
-            OR hex = #{hex}
+            AND hex = #{hex}
         </if>
         <if test="structureId != null">
-            OR structure_id = #{structureId}
+            AND structure_id = #{structureId,jdbcType=VARCHAR}
         </if>
-        <if test="orderNumber != null and orderNumber != ''">
-            OR order_number = #{orderNumber}
-        </if>
-        <!--        <if test="organizationId != null">
-                    AND organization_id = #{organizationId}
-        </if>-->
     </select>
+
+
+    <!-- 查询标签：不区分组织机构 结构编码在当前列表内不可重复；C：结构名称在当前列表内不可重复。D：图层顺序在当前列表内不可重复；E：颜色值在当前列表不可重复 -->
+    <select id="selectIndicatorMessageForUpdate" parameterType="cn.staitech.anno.domain.PathologicalIndicatorCategory"
+            resultMap="BaseResultMap">
+        select *
+        from tb_pathological_indicator_category where del_flag = 0
+        <if test="indicatorId != null">
+            AND indicator_id = #{indicatorId}
+        </if>
+        <if test="categoryId != null">
+            AND category_id  &lt;&gt; #{categoryId}
+        </if>
+        <if test="orderNumber !=null">
+            AND order_number = #{orderNumber}
+        </if>
+        <if test="hex != null">
+            AND hex = #{hex}
+        </if>
+        <if test="structureId != null">
+            AND structure_id = #{structureId,jdbcType=VARCHAR}
+        </if>
+    </select>
+
 
     <select id="selectByProjectId" parameterType="java.lang.Long" resultMap="SysAnnotationCategoryStatisticResult">
         select DISTINCT a.category_id, i.category_name, sum(a.sum) as sum
@@ -347,11 +350,12 @@
         WHERE p.project_id = #{projectId}
     </select>
 
-    <select id="selectCategoryNumber" parameterType="cn.staitech.anno.domain.vo.indicator.IndicatorAndOrganizationIdVO" resultType="java.lang.Long">
+    <select id="selectCategoryNumber" parameterType="cn.staitech.anno.domain.vo.indicator.IndicatorAndOrganizationIdVO"
+            resultType="java.lang.Long">
         select count(*)
         from tb_pathological_indicator_category
         where indicator_id = #{indicatorId}
-        and organization_id = #{organizationId}
+          and organization_id = #{organizationId}
           and del_flag = 0
     </select>
 
@@ -390,60 +394,22 @@
                 AND p.structure_name like concat('%', #{structureName}, '%')
             </if>
             <if test="params != null">
-                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''"><!-- 开始时间检索 -->
+                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
+                    <!-- 开始时间检索 -->
                     AND date_format(p.create_time,'%y%m%d') &gt;= date_format(#{createTimeParams.beginTime},'%y%m%d')
                 </if>
-                <if test="createTimeParams.endTime != null and createTimeParams.endTime != ''"><!-- 结束时间检索 -->
+                <if test="createTimeParams.endTime != null and createTimeParams.endTime != ''">
+                    <!-- 结束时间检索 -->
                     AND date_format(p.create_time,'%y%m%d') &lt;= date_format(#{createTimeParams.endTime},'%y%m%d')
                 </if>
             </if>
             and p.del_flag=0
         </where>
     </select>
-
-<!--
-    <select id="selectByIndicator" parameterType="cn.staitech.anno.domain.vo.LabelVO" resultMap="BaseResult">
-        select
-        p.indicator_id,p.category_name,p.category_id,p.structure_id,p.rgb,p.hex,p.create_by,p.create_time,p.order_number,s.user_name,p.number,p.organization_id,st.name
-        as structure_name
-        from tb_pathological_indicator_category as p
-        left join sys_user as s on p.create_by=s.user_id
-        left join tb_structure as st on p.structure_id=st.structure_id
-        <where>
-            <if test="categoryName != null and categoryName != ''">
-                AND p.category_name like concat('%', #{categoryName}, '%')
-            </if>
-            <if test="organizationId != null">
-                AND p.organization_id =#{organizationId}
-            </if>
-            <if test="structureId != null">
-                AND p.structure_id =#{structureId}
-            </if>
-            <if test="indicatorId != null">
-                AND p.indicator_id =#{indicatorId}
-            </if>
-            <if test="organizationId != null">
-                AND p.organization_id =#{organizationId}
-            </if>
-            <if test="structureName != null and structureName != ''">
-                AND p.structure_name like concat('%', #{structureName}, '%')
-            </if>
-            <if test="params != null">
-                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">&lt;!&ndash; 开始时间检索 &ndash;&gt;
-                    AND date_format(p.create_time,'%y%m%d') &gt;= date_format(#{createTimeParams.beginTime},'%y%m%d')
-                </if>
-                <if test="createTimeParams.endTime != null and createTimeParams.endTime != ''">&lt;!&ndash; 结束时间检索 &ndash;&gt;
-                    AND date_format(p.create_time,'%y%m%d') &lt;= date_format(#{createTimeParams.endTime},'%y%m%d')
-                </if>
-            </if>
-            and p.del_flag=0
-        </where>
-    </select>-->
 
     <select id="selectLabelNum" parameterType="java.lang.Long" resultType="java.lang.Integer">
         select count(*)
         from tb_special_annotation
         where category_id = #{categoryId}
     </select>
-
 </mapper>

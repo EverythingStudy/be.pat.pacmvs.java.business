@@ -11,8 +11,17 @@ public class SelectExaminationListVO {
     @ApiModelProperty(value = "项目题库id")
     private Long questionProjectId;
 
+    @ApiModelProperty(value = "题库id")
+    private Long questionId;
+
+    @ApiModelProperty(value = "切片id")
+    private Long slideId;
+
+    @ApiModelProperty(value = "答题者id")
+    private Long createBy;
+
     @ApiModelProperty(value = "切片编码")
-    private String imageCode;
+    private String imageName;
 
     @ApiModelProperty(value = "答题者")
     private String nickName;

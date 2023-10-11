@@ -67,7 +67,7 @@
 
     <sql id="selectBy">
         SELECT
-            t.marking_examine_id,
+            t.marking_examine_id as marking_id,
             t.area,
             t.perimeter,
             t.description,
