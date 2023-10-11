@@ -281,7 +281,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
             qw.eq(ExamineScore::getQuestionProjectId,aLong);
             List<ExamineScore> examineScores = examineScoreMapper.selectList(qw);
             if(!CollectionUtils.isEmpty(examineScores)){
-                R.fail(QuestionBankConstant.ERROR_HAS_ALREADY);
+                return R.fail(QuestionBankConstant.ERROR_HAS_ALREADY);
             }
         }
         List<QuestionProjectRel> param = dataList.stream().map(e -> {
