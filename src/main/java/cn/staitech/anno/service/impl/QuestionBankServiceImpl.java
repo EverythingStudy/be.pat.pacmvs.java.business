@@ -171,6 +171,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
             String s1 = StringUtils.substringBeforeLast(urlPath, File.separator);
             ret.setJsonName(s);
             ret.setGeojsonUrl(s1);
+            ret.setProjectId(e.getProjectId());
             ret.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
             return ret;
         }).collect(Collectors.toList());
