@@ -23,4 +23,7 @@ public class ConfirmSelectionIn {
 
     @ApiModelProperty(value = "json文件名称")
     private String jsonName;
+
+    @ApiModelProperty(value = "切片名称")
+    private String imageName;
 }

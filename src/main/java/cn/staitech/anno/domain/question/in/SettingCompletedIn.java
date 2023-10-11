@@ -20,7 +20,6 @@ public class SettingCompletedIn {
     private Long projectId;
 
     @ApiModelProperty(value = "题库项目列表id")
-    @NotEmpty(message = "题库项目列表id不能为空！")
     private List<Long> dataList;
 
 }

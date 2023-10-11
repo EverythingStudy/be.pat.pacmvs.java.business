@@ -31,7 +31,7 @@
         select qpr.question_project_id as questionProjectId,
         qpr.question_id as questionId,
         qpr.image_code as imageCode,
-        qpr.image_name as imageName,
+        qb.image_name as imageName,
         qpr.json_name as jsonName,
         qpr.create_name as createName,
         qpr.create_time as createTime,

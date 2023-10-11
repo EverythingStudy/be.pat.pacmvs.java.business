@@ -107,6 +107,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
             ret.setImageCode(image.getImageCode());
             ret.setImageName(image.getImageName());
             ret.setSize(image.getSize());
+            ret.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
 
             // 插入json文件返回数据
             String urlPath;
@@ -117,7 +118,9 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                 throw new RuntimeException(QuestionBankConstant.ERROR_GENERATE_JSON);
             }
             String s = StringUtils.substringAfterLast(urlPath, File.separator);
+            String s1 = StringUtils.substringBeforeLast(urlPath, File.separator);
             ret.setJsonName(s);
+            ret.setGeojsonUrl(s1);
             return ret;
         }).collect(Collectors.toList());
         //插入题库表
@@ -148,7 +151,8 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
             BeanUtils.copyProperties(image, ret);
             ret.setCreateBy(SecurityUtils.getUserId());
             ret.setCreateTime(new Date());
-
+            ret.setUpdateBy(null);
+            ret.setUpdateTime(null);
 
             // 插入json文件返回数据
             String urlPath;
@@ -159,7 +163,10 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                 throw new RuntimeException(QuestionBankConstant.ERROR_GENERATE_JSON);
             }
             String s = StringUtils.substringAfterLast(urlPath, File.separator);
+            String s1 = StringUtils.substringBeforeLast(urlPath, File.separator);
             ret.setJsonName(s);
+            ret.setGeojsonUrl(s1);
+            ret.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
             return ret;
         }).collect(Collectors.toList());
         QuestionBankServiceImpl bean = SpringUtils.getBean(QuestionBankServiceImpl.class);
