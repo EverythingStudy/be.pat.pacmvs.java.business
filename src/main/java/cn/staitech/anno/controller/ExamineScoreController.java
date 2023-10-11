@@ -78,20 +78,20 @@ public class ExamineScoreController {
 
 
     @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "刷新拟合区间")
+    @PostMapping("/refreshInterval")
+    public R<String> refreshInterval(@RequestBody ExamineScoreExportInsertVo examineScoreExportInsertVo) throws Exception {
+        // 调用python
+        return R.ok("操作成功");
+    }
+
+    @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "添加考核信息")
     @PostMapping("/add")
     public R<String> add(@RequestBody ExamineScoreAddVO examineScoreAddVO) throws Exception {
         examineScoreService.add(examineScoreAddVO);
         return R.ok("操作成功");
     }
-
-//    @ApiOperationSupport(author = "gjt")
-//    @ApiOperation(value = "添加考核信息")
-//    @PostMapping("/add")
-//    public R<String> add(@RequestBody ExamineScoreAddVO examineScoreAddVO) throws Exception {
-//        examineScoreService.add(examineScoreAddVO);
-//        return R.ok("操作成功");
-//    }
 
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "完成考核信息")
