@@ -186,6 +186,7 @@ public class Image extends BaseEntity {
     @ApiModelProperty(value = "图像来源、上传方式(1前端上传，2目录选片，3TCP客户端上传)")
     private Integer source;
 
+    @TableField(exist = false)
     @ApiModelProperty(value = "", hidden = true)
     private String searchValue;
 
