@@ -76,6 +76,7 @@ public class ExamineScoreController {
         return R.ok(examineScoreService.selectList(pageSize, pageNum, projectId, nickName, examResults));
     }
 
+
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "添加考核信息")
     @PostMapping("/add")
@@ -83,6 +84,14 @@ public class ExamineScoreController {
         examineScoreService.add(examineScoreAddVO);
         return R.ok("操作成功");
     }
+
+//    @ApiOperationSupport(author = "gjt")
+//    @ApiOperation(value = "添加考核信息")
+//    @PostMapping("/add")
+//    public R<String> add(@RequestBody ExamineScoreAddVO examineScoreAddVO) throws Exception {
+//        examineScoreService.add(examineScoreAddVO);
+//        return R.ok("操作成功");
+//    }
 
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "完成考核信息")

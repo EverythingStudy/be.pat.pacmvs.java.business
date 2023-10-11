@@ -6,13 +6,11 @@
     <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.ExamineScore">
         <id column="examine_score_id" property="examineScoreId" />
         <result column="project_id" property="projectId" />
-        <result column="slide_number" property="slideNumber" />
         <result column="nick_name" property="nickName" />
         <result column="start_time" property="startTime" />
         <result column="end_time" property="endTime" />
         <result column="should_number" property="shouldNumber" />
         <result column="reality_number" property="realityNumber" />
-        <result column="algorithm_interval" property="algorithmInterval" />
         <result column="personal_fit" property="personalFit" />
         <result column="exam_results" property="examResults" />
         <result column="operate_status" property="operateStatus" />
@@ -86,7 +84,10 @@
             e.end_time,
             e.should_number,
             e.reality_number,
-            e.algorithm_interval,
+            e.miou_interval,
+            e.fiou_interval,
+            e.biou_interval,
+            e.tiou_interval,
             e.personal_fit,
             CASE
                 e.exam_results
