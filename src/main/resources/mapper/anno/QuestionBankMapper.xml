@@ -66,6 +66,13 @@
 
             </if>
 
+            <if test="imageName !=null and imageName !=''">
+
+                and qb.image_name like CONCAT('%',#{imageName},'%')
+
+            </if>
+
+
             <if test="topicName !=null and topicName !=''">
 
                 and tt.topic_name like CONCAT('%',#{topicName},'%')

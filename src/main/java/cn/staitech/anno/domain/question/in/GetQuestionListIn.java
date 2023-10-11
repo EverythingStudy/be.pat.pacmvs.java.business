@@ -17,6 +17,9 @@ public class GetQuestionListIn extends PageRequest {
     @ApiModelProperty(value = "切片编号")
     private String imageCode;
 
+    @ApiModelProperty(value = "切片名称")
+    private String imageName;
+
     @ApiModelProperty(value = "专题号")
     private String topicName;
 
