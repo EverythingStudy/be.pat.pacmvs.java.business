@@ -122,7 +122,7 @@
 
             <if test="imageCode !=null and imageCode !=''">
 
-                and qb.image_code like CONCAT('%',#{imageCode},'%')
+                and qb.image_name like CONCAT('%',#{imageCode},'%')
 
             </if>
 
