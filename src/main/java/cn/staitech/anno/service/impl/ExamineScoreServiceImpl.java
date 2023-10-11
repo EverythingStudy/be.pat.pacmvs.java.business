@@ -125,7 +125,9 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         Date date = new Date();
         examineScore.setStartTime(date);
         examineScore.setEndTime(DateUtil.offsetMinute(date, 20));
-        examineScore.setShouldNumber(projectMarksRelBy.getShouldMarks());
+        if(projectMarksRelBy != null){
+            examineScore.setShouldNumber(projectMarksRelBy.getShouldMarks());
+        }
         examineScore.setOperateStatus("1");
         examineScore.setCreateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
         examineScore.setCreateTime(date);
