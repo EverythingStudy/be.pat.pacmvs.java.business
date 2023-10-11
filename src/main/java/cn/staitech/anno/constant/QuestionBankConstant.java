@@ -12,4 +12,5 @@ public class QuestionBankConstant {
     public static final String NUMBER_1="1";
     public static final String PROHIBIT_REPETITION = "禁止重复选择考核图片";
     public static final String ERROR_GENERATE_JSON= "切片生成json异常！";
+    public static final String ERROR_HAS_ALREADY= "此考题已进行考试，禁止删除!";
 }

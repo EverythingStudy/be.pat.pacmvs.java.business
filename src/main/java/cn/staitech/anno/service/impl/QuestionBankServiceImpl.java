@@ -1,6 +1,7 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.constant.QuestionBankConstant;
+import cn.staitech.anno.domain.ExamineScore;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.QuestionBank;
 import cn.staitech.anno.domain.QuestionProjectRel;
@@ -15,6 +16,7 @@ import cn.staitech.anno.domain.question.in.SettingCompletedIn;
 import cn.staitech.anno.domain.question.out.GetProjectBoxOut;
 import cn.staitech.anno.domain.question.out.GetQuestionListOut;
 import cn.staitech.anno.domain.question.out.GetQuestionsOut;
+import cn.staitech.anno.mapper.ExamineScoreMapper;
 import cn.staitech.anno.mapper.ImageMapper;
 import cn.staitech.anno.mapper.ProjectMapper;
 import cn.staitech.anno.mapper.QuestionBankMapper;
@@ -77,6 +79,9 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
 
     @Resource
     private ProjectMapper projectMapper;
+
+    @Resource
+    private ExamineScoreMapper examineScoreMapper;
 
     /**
      * 生成考题
@@ -270,6 +275,15 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
     public R removeQuestion(SettingCompletedIn req) {
         log.info("考核选片-删除接口开始：");
         List<Long> dataList = req.getDataList();
+
+        for (Long aLong : dataList) {
+            LambdaQueryWrapper<ExamineScore> qw = new LambdaQueryWrapper<>();
+            qw.eq(ExamineScore::getQuestionProjectId,aLong);
+            List<ExamineScore> examineScores = examineScoreMapper.selectList(qw);
+            if(!CollectionUtils.isEmpty(examineScores)){
+                R.fail(QuestionBankConstant.ERROR_HAS_ALREADY);
+            }
+        }
         List<QuestionProjectRel> param = dataList.stream().map(e -> {
             QuestionProjectRel questionProjectRel = new QuestionProjectRel();
             questionProjectRel.setDelFlag(QuestionBankConstant.NUMBER_1);
