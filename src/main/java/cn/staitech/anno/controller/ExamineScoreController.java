@@ -8,6 +8,8 @@ import cn.staitech.anno.domain.examineScore.ExamineScoreAddVO;
 import cn.staitech.anno.domain.examineScore.ExamineScoreExportVO;
 import cn.staitech.anno.domain.examineScore.ExamineScoreExportInsertVo;
 import cn.staitech.anno.domain.examineScore.SelectExaminationListVO;
+import cn.staitech.anno.project.domain.Project;
+import cn.staitech.anno.project.service.ProjectService;
 import cn.staitech.anno.service.ExamineScoreService;
 import cn.staitech.anno.utils.Column;
 import cn.staitech.anno.utils.ExcelTool;
@@ -40,6 +42,9 @@ public class ExamineScoreController {
 
     @Resource
     private ExamineScoreService examineScoreService;
+
+    @Resource
+    private ProjectService projectService;
 
 
     @ApiOperationSupport(author = "gjt")
@@ -95,13 +100,19 @@ public class ExamineScoreController {
     public void export(@RequestBody ExamineScoreExportInsertVo req) throws Exception {
         // 查询考核评分列表
         List<ExamineScoreExportVO> examineScoreList = examineScoreService.selectLists(req.getExamineScoreIdList());
+        // 查询项目中得信息
+        Project projectBy = projectService.getById(req.getProjectId());
+        String projectName = "";
+        if(projectBy != null){
+            projectName = projectBy.getProjectName();
+        }
         // 构造表头的每个列头 定义表头
         List<Map<String, String>> titleList = getTitleList(ExamineScoreConstant.COLHEAD_KEY, ExamineScoreConstant.COLHEAD_VALUE);
         ExcelTool excelTool = new ExcelTool<>(ExportConstant.EXCEL_TITLE, 20, 20);
         List<Column> titleData = excelTool.columnTransformer(titleList);
         response.setContentType("application/vnd.ms-excel;charset=utf-8");
         response.setCharacterEncoding("utf-8");
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("项目名称", "UTF-8") + ExportConstant.XLSX);
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(projectName, "UTF-8") + ExportConstant.XLSX);
         excelTool.exportExcel(titleData, examineScoreList, response.getOutputStream(), true, false);
     }
 
