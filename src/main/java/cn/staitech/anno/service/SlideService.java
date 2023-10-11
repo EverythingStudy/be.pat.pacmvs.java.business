@@ -11,6 +11,7 @@ import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetPagerVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO;
 import cn.staitech.anno.domain.vo.marking.out.SlideSelectBy;
+import cn.staitech.anno.domain.vo.slideVo.AddSlideIdsVO;
 import cn.staitech.anno.domain.vo.slideVo.AddSlideVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListOutVO;
@@ -179,12 +180,22 @@ public interface SlideService extends IService<Slide> {
     // =========================
 
     /**
-     * 选片 - 添加标注切片 .
+     * 选片 - 添加标注切片（旧） .
      *
      * @param addSlideVO
      * @return
      */
     boolean addAnnoSlidesBatch(AddSlideVO addSlideVO);
+
+
+
+    /**
+     * 选片 - 添加切片（新） .
+     *
+     * @param addSlideIdsVO
+     * @return
+     */
+    boolean addSlidesBatch(AddSlideIdsVO addSlideIdsVO);
 
     /**
      * 批量删除切片

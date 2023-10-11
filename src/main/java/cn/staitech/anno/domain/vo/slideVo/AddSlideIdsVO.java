@@ -11,9 +11,9 @@ import java.util.List;
  * @Description:
  */
 @Data
-public class AddSlideVO {
-    @ApiModelProperty(value = "专题ID", required = true)
-    private List<Long> topicIds;
+public class AddSlideIdsVO {
+    @ApiModelProperty(value = "图像ID", required = true)
+    private List<Long> imageIds;
 
     @ApiModelProperty(value = "项目ID", required = true, hidden = true)
     private Long projectId;

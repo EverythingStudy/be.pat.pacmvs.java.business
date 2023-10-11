@@ -12,10 +12,7 @@ import cn.staitech.anno.domain.vo.image.SlideReportVo;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetPagerVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO;
-import cn.staitech.anno.domain.vo.slideVo.AddSlideVO;
-import cn.staitech.anno.domain.vo.slideVo.DelSlideIdsVO;
-import cn.staitech.anno.domain.vo.slideVo.DelSlideVO;
-import cn.staitech.anno.domain.vo.slideVo.GetTopicListVO;
+import cn.staitech.anno.domain.vo.slideVo.*;
 import cn.staitech.anno.domain.vo.topic.TopicListVO;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.SlideService;
@@ -270,7 +267,7 @@ public class SlideController extends BaseController {
 
 
     /**
-     * 批量添加标注切片
+     * 批量添加标注切片（旧）
      */
     @ApiOperation(value = "批量添加标注切片")
     @PostMapping("/addAnnoSlidesBatch")
@@ -281,6 +278,14 @@ public class SlideController extends BaseController {
         return R.ok(slideService.addAnnoSlidesBatch(req));
     }
 
+    /**
+     * 批量添加切片(新)
+     */
+    @ApiOperation(value = "批量添加标注切片")
+    @PostMapping("/addSlidesBatch")
+    public R addASlidesBatch(@RequestBody AddSlideIdsVO req) {
+        return R.ok(slideService.addSlidesBatch(req));
+    }
 
     /**
      * 根据ID批量删除切片

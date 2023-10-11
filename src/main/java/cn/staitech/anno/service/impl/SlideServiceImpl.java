@@ -19,6 +19,7 @@ import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetPagerVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO;
 import cn.staitech.anno.domain.vo.marking.out.SlideSelectBy;
+import cn.staitech.anno.domain.vo.slideVo.AddSlideIdsVO;
 import cn.staitech.anno.domain.vo.slideVo.AddSlideVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListOutVO;
@@ -514,8 +515,8 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         Image imageQuery = new Image();
         QueryWrapper queryWrapper = new QueryWrapper<>(imageQuery);
         // 只查可用的图片
-        queryWrapper.eq("status",1);
-        queryWrapper.eq("delete_flag",1);
+        queryWrapper.eq("status", 1);
+        queryWrapper.eq("delete_flag", 1);
         queryWrapper.in(CollectionUtils.isNotEmpty(topicIds), "topic_id", topicIds);
         List<Image> imageList = imageMapper.selectList(queryWrapper);
 
@@ -545,9 +546,58 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         return true;
     }
 
+    /**
+     * 选片 - 添加切片（新） .
+     *
+     * @param addSlideIdsVO
+     * @return
+     */
+    @Override
+    public boolean addSlidesBatch(AddSlideIdsVO addSlideIdsVO) {
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+
+        Long projectId = addSlideIdsVO.getProjectId();
+        Long reviewRoundId = addSlideIdsVO.getReviewRoundId() != null ? addSlideIdsVO.getReviewRoundId() : 0;
+
+        List<Long> imageIds = addSlideIdsVO.getImageIds();
+
+        Image imageQuery = new Image();
+        QueryWrapper queryWrapper = new QueryWrapper<>(imageQuery);
+        // 只查可用的图片
+        queryWrapper.eq("status", 1);
+        queryWrapper.eq("delete_flag", 1);
+        queryWrapper.in(CollectionUtils.isNotEmpty(imageIds), "image_id", imageIds);
+        List<Image> imageList = imageMapper.selectList(queryWrapper);
+
+        for (Image imageObj : imageList) {
+            // 匹配图片
+            QueryWrapper<ImageCsv> csvQueryWrapper = Wrappers.query();
+            csvQueryWrapper.eq("image_name", imageObj.getFileName());
+            csvQueryWrapper.orderByDesc("id");
+            csvQueryWrapper.last("limit 1");
+
+            ImageCsv imageCsv = imageCsvMapper.selectOne(csvQueryWrapper);
+
+            Slide slide = new Slide();
+            if (imageCsv != null) {
+                BeanUtil.copyProperties(imageCsv, slide);
+                slide.setImageCsvId(imageCsv.getId());
+            }
+
+            slide.setTopicId(imageObj.getTopicId());
+            slide.setProjectId(projectId);
+            slide.setImageId(imageObj.getImageId());
+            slide.setCreateBy(sysUser.getUserId());
+            slide.setCreateTime(new Date());
+            slide.setReviewRoundId(reviewRoundId);
+            slideMapper.insert(slide);
+        }
+        return true;
+    }
 
     /**
      * 批量删除切片
+     *
      * @param slideIds
      * @return
      */
@@ -562,7 +612,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
             queryWrapper.last("limit 1");
             Slide slide = slideMapper.selectOne(queryWrapper);
 
-            if (slide != null && "1".equals(slide.getStatus())&&slideMapper.deleteById(slideId) > 0) {
+            if (slide != null && "1".equals(slide.getStatus()) && slideMapper.deleteById(slideId) > 0) {
                 updateRecentlyVisited(slideId);
             }
         }
