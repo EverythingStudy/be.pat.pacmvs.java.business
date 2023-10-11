@@ -148,17 +148,13 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     /**
      * 项目管理-图像列表
      *
-     * @param ImageTopicVO
+     * @param vo
      * @return
      */
     @Override
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
     @Transactional(rollbackFor = Exception.class)
     public PageMaster<ImageListOutVO> choiceList(ImageTopicVO vo) throws ExecutionException, InterruptedException {
-
-        // 1、查询所有状态
-        // 2、未选中：image表为主表 not in slide表中的image_id
-        // 3、已选中：slide表为主表 join image获取基础数据
 
         Image image = new Image();
         BeanUtils.copyProperties(vo, image);
@@ -177,21 +173,17 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
             // 分页
             PageHelper.startPage(vo.getPageNum(), vo.getPageSize()).setReasonable(true);
             List<Image> list = null;
-            switch (vo.getChoiceState()) {
-                // 0未添加
-                case 0:
-                    list = imageMapper.selectNotChoicedList(image);
-                    break;
-                // 1已添加
-                case 1:
-                    list = imageMapper.selectChoicedList(image);
-                    break;
-                // 2查全部
-                case 2:
-                    list = imageMapper.selectListSlfe(image);
-                    break;
+            // 添加状态：NULL查全部、0未添加、1已添加
+            // 1、查询所有状态
+            // 2、未选中：image表为主表 not in slide表中的image_id
+            // 3、已选中：slide表为主表 join image获取基础数据
+            if (vo.getChoiceState() == null) {
+                list = imageMapper.selectListSlfe(image);
+            } else if (vo.getChoiceState() == 0) {
+                list = imageMapper.selectNotChoicedList(image);
+            } else if (vo.getChoiceState() == 1) {
+                list = imageMapper.selectChoicedList(image);
             }
-
             PageMaster pageMaster = new PageMaster<>(list);
             return pageMaster;
         });
@@ -236,34 +228,25 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                     out.setRoundName(roundMap.get(in.getRoundId()).toString());
                 }
 
+                if (vo.getChoiceState() == null) {
+                    // 查询选中状态
+                    Slide slide = new Slide();
+                    slide.setImageId(out.getImageId());
+                    slide.setProjectId(vo.getProjectId());
 
-                switch (vo.getChoiceState()) {
-                    // 0未添加
-                    case 0:
-                        out.setChoiceState(0);
-                        break;
-                    // 1已添加
-                    case 1:
+                    if (vo.getReviewRoundId() > 0) {
+                        slide.setReviewRoundId(vo.getReviewRoundId());
+                    }
+                    // 查询当前项目或评审轮次是否选中此图片
+                    out.setChoiceState(0);
+                    if (slideService.selectImageExist(slide).size() > 0) {
                         out.setChoiceState(1);
-                        break;
-                    // 2查全部
-                    case 2:
-                        // 查询选中状态
-                        Slide slide = new Slide();
-                        slide.setImageId(out.getImageId());
-                        slide.setProjectId(vo.getProjectId());
-
-                        if (vo.getReviewRoundId() > 0) {
-                            slide.setReviewRoundId(vo.getReviewRoundId());
-                        }
-                        // 查询当前项目或评审轮次是否选中此图片
-                        out.setChoiceState(0);
-                        if (slideService.selectImageExist(slide).size() > 0) {
-                            out.setChoiceState(1);
-                        }
-                        break;
+                    }
+                } else if (vo.getChoiceState() == 0) {
+                    out.setChoiceState(0);
+                } else if (vo.getChoiceState() == 1) {
+                    out.setChoiceState(1);
                 }
-
 
                 respList.add(out);
             }

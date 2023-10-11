@@ -28,7 +28,7 @@ public class ImageTopicVO extends Pager implements Serializable {
     @Size(min = 0, max = 200, message = "专题名称长度不能超过100个字符")
     @ApiModelProperty(value = "所属专题-专题名称")
     private String topicName;
-    @ApiModelProperty(value = "添加状态：0未添加、1已添加、2查全部")
+    @ApiModelProperty(value = "添加状态：NULL查全部、0未添加、1已添加")
     private Integer choiceState;
     @ApiModelProperty(value = "项目编号")
     private Long projectId;
