@@ -3,10 +3,7 @@ package cn.staitech.anno.service.impl;
 import cn.staitech.anno.constant.ImageConstant;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.image.in.ImageBatchIdsVO;
-import cn.staitech.anno.domain.image.in.ImageListVO;
-import cn.staitech.anno.domain.image.in.ImageTopicBatchIdsVO;
-import cn.staitech.anno.domain.image.in.ImageUpdateVO;
+import cn.staitech.anno.domain.image.in.*;
 import cn.staitech.anno.domain.image.out.ImageListOutVO;
 import cn.staitech.anno.mapper.ImageMapper;
 import cn.staitech.anno.mapper.SpecialImageMapper;
@@ -132,6 +129,141 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                 if (slideService.selectImageExist(slide).size() > 0) {
                     out.setDeleState(1);
                 }
+
+                respList.add(out);
+            }
+        }
+
+        PageMaster<ImageListOutVO> resp = new PageMaster<>(respList);
+        resp.setTotal(pageMaster.getTotal());
+        resp.setPages(pageMaster.getPages());
+        resp.setPageNum(pageMaster.getPageNum());
+        resp.setPageSize(pageMaster.getPageSize());
+        //清除分页缓存
+        PageHelper.clearPage();
+        return resp;
+    }
+
+
+    /**
+     * 项目管理-图像列表
+     *
+     * @param ImageTopicVO
+     * @return
+     */
+    @Override
+    @SuppressWarnings("checkstyle:MissingJavadocMethod")
+    @Transactional(rollbackFor = Exception.class)
+    public PageMaster<ImageListOutVO> choiceList(ImageTopicVO vo) throws ExecutionException, InterruptedException {
+
+        // 1、查询所有状态
+        // 2、未选中：image表为主表 not in slide表中的image_id
+        // 3、已选中：slide表为主表 join image获取基础数据
+
+        Image image = new Image();
+        BeanUtils.copyProperties(vo, image);
+
+        // SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+        // image.setOrganizationId(sysUser.getOrganizationId());
+        image.setOrganizationId(1L);
+
+        // 业务类型 1 原始切片 2 预测切片
+        Integer bizType = image.getBizType();
+        // 所有的轮次Map
+        Map<Long, String> roundMap = null;
+
+        // 异步查询图像列表
+        CompletableFuture<PageMaster<Image>> listFuture = CompletableFuture.supplyAsync(() -> {
+            // 分页
+            PageHelper.startPage(vo.getPageNum(), vo.getPageSize()).setReasonable(true);
+            List<Image> list = null;
+            switch (vo.getChoiceState()) {
+                // 0未添加
+                case 0:
+                    list = imageMapper.selectNotChoicedList(image);
+                    break;
+                // 1已添加
+                case 1:
+                    list = imageMapper.selectChoicedList(image);
+                    break;
+                // 2查全部
+                case 2:
+                    list = imageMapper.selectListSlfe(image);
+                    break;
+            }
+
+            PageMaster pageMaster = new PageMaster<>(list);
+            return pageMaster;
+        });
+        // 异步查询所有的机构Map
+        CompletableFuture<Map<Long, String>> mapFuture = CompletableFuture.supplyAsync(() -> sysOrganizationService.selectMap());
+        // 异步查询所有的轮次Map
+        if (bizType.equals(2)) {
+            CompletableFuture<Map<Long, String>> roundFuture = CompletableFuture.supplyAsync(() -> roundService.selectMap());
+            roundMap = roundFuture.get();
+        }
+
+        PageMaster<Image> pageMaster = listFuture.get();
+        List<Image> list = pageMaster.getList();
+        Map<Long, String> map = mapFuture.get();
+        // response List
+        List<ImageListOutVO> respList = new ArrayList<>();
+
+        if (list.size() > 0) {
+            // 数据格式化
+            for (Image in : list) {
+                ImageListOutVO out = new ImageListOutVO();
+                BeanUtils.copyProperties(in, out);
+
+                // 提取处理状态文本描述并赋值
+                Integer status = in.getStatus();
+                out.setFileStatus(ImageConstant.IMAGE_STATUS_MAP.get(status));
+                // 不可用 可用 解析中
+
+                if (status == 0) {
+                    out.setProcessFlagName(ImageConstant.IMAGE_PROCESS_MAP.get(in.getProcessFlag()));
+                } else {
+                    out.setProcessFlagName("");
+                }
+
+                // 匹配机构名称
+                if (map.containsKey(in.getOrganizationId())) {
+                    out.setOrganizationName(map.get(in.getOrganizationId()).toString());
+                }
+
+                // 匹配轮次
+                if (bizType.equals(2) && roundMap.containsKey(in.getRoundId())) {
+                    out.setRoundName(roundMap.get(in.getRoundId()).toString());
+                }
+
+
+                switch (vo.getChoiceState()) {
+                    // 0未添加
+                    case 0:
+                        out.setChoiceState(0);
+                        break;
+                    // 1已添加
+                    case 1:
+                        out.setChoiceState(1);
+                        break;
+                    // 2查全部
+                    case 2:
+                        // 查询选中状态
+                        Slide slide = new Slide();
+                        slide.setImageId(out.getImageId());
+                        slide.setProjectId(vo.getProjectId());
+
+                        if (vo.getReviewRoundId() > 0) {
+                            slide.setReviewRoundId(vo.getReviewRoundId());
+                        }
+                        // 查询当前项目或评审轮次是否选中此图片
+                        out.setChoiceState(0);
+                        if (slideService.selectImageExist(slide).size() > 0) {
+                            out.setChoiceState(1);
+                        }
+                        break;
+                }
+
 
                 respList.add(out);
             }

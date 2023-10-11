@@ -25,6 +25,15 @@ public interface ImageService extends IService<Image> {
      */
     PageMaster<ImageListOutVO> selectList(ImageListVO image) throws ExecutionException, InterruptedException;
 
+
+    /**
+     * 项目管理-图像列表
+     *
+     * @param image
+     * @return
+     */
+    PageMaster<ImageListOutVO> choiceList(ImageTopicVO image) throws ExecutionException, InterruptedException;
+
     /**
      * 查询单个切片信息
      *

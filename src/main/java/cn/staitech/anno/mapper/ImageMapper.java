@@ -25,6 +25,25 @@ public interface ImageMapper extends BaseMapper<Image> {
     List<Image> selectListSlfe(Image image);
 
     /**
+     * 查询未添加切片列表
+     *
+     * @param image
+     * @return
+     */
+    List<Image> selectNotChoicedList(Image image);
+
+    /**
+     * 查询已添加切片列表
+     *
+     * @param image
+     * @return
+     */
+    List<Image> selectChoicedList(Image image);
+
+
+
+
+    /**
      * 查询单个切片信息
      *
      * @param imageId

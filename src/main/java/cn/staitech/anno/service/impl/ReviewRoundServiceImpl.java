@@ -77,9 +77,9 @@ public class ReviewRoundServiceImpl extends ServiceImpl<ReviewRoundMapper, Revie
             reviewRound.setOrganizationId(sysUser.getOrganizationId());
 
             reviewRound.setCreateTime(new Date());
-            if (reviewRoundBatchInVO.getContentId()!=null&&!"".equals(reviewRoundBatchInVO.getContentId())){
+            if (reviewRoundBatchInVO.getContentId() != null && !"".equals(reviewRoundBatchInVO.getContentId())) {
                 reviewRound.setContentId(reviewRoundBatchInVO.getContentId());
-            }else{
+            } else {
                 reviewRound.setContentId(str);
             }
             list.add(reviewRound);
@@ -113,6 +113,11 @@ public class ReviewRoundServiceImpl extends ServiceImpl<ReviewRoundMapper, Revie
         Map<Long, String> topicMap = topicService.selectMap(2);
         List<Long> reviewRoundIds = new ArrayList<>();
 
+        // 暂无数据
+        if (list.size() == 0) {
+            return null;
+        }
+
         for (ReviewRound round : list) {
             ReviewRoundOutVO reviewRoundOutVO = new ReviewRoundOutVO();
             BeanUtils.copyProperties(round, reviewRoundOutVO);
@@ -130,15 +135,17 @@ public class ReviewRoundServiceImpl extends ServiceImpl<ReviewRoundMapper, Revie
             respList.add(reviewRoundOutVO);
             reviewRoundIds.add(round.getReviewRoundId());
         }
+
+
         QueryWrapper<Slide> slideQueryWrapper = Wrappers.query();
-        slideQueryWrapper.in("review_round_id",reviewRoundIds);
+        slideQueryWrapper.in("review_round_id", reviewRoundIds);
         slideQueryWrapper.select("review_round_id");
         slideQueryWrapper.groupBy("review_round_id");
         List<Slide> mapList = slideMapperV1.selectList(slideQueryWrapper);
-        Map<Long,List<Slide>> map = mapList.stream().collect(Collectors.groupingBy(Slide::getReviewRoundId));
-        respList.forEach(r->{
+        Map<Long, List<Slide>> map = mapList.stream().collect(Collectors.groupingBy(Slide::getReviewRoundId));
+        respList.forEach(r -> {
             List<Slide> slides = map.get(r.getReviewRoundId());
-            if (slides!=null&&!slides.isEmpty()){
+            if (slides != null && !slides.isEmpty()) {
                 r.setSlideStatus(1);
             }
         });

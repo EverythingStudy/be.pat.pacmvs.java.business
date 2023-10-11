@@ -77,4 +77,6 @@ public class ImageListOutVO {
     private Integer source;
     @ApiModelProperty(value = "是否允许删除： 1 禁止选中")
     private Integer deleState;
+    @ApiModelProperty(value = "添加状态：0未添加、1已添加")
+    private Integer choiceState;
 }

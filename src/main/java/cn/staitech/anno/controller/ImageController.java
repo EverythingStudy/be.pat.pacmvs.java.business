@@ -3,10 +3,7 @@ package cn.staitech.anno.controller;
 import cn.staitech.anno.constant.ImageConstant;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.image.in.ImageBatchIdsVO;
-import cn.staitech.anno.domain.image.in.ImageListVO;
-import cn.staitech.anno.domain.image.in.ImageTopicBatchIdsVO;
-import cn.staitech.anno.domain.image.in.ImageUpdateVO;
+import cn.staitech.anno.domain.image.in.*;
 import cn.staitech.anno.domain.image.out.ImageListOutVO;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.SlideService;
@@ -159,4 +156,29 @@ public class ImageController extends BaseController {
         }
         return R.fail(ImageConstant.OPERATE_ERROR);
     }
+
+
+    /**
+     * 选片列表 .
+     * <p>
+     * 标注类项目：
+     * 查询条件：切片编号、专题号、状态、项目ID
+     * 回显字段：缩略图、专题号、切片编号、图片大小、机构、上传时间、添加状态
+     * <p>
+     * 评审轮次切片列表-选片：
+     * 查询条件：切片编号、专题号、状态、项目ID、roundReviewId
+     * 回显字段：缩略图、专题号、切片编号、轮次、图片大小、机构、上传时间、添加状态
+     */
+    @ApiOperationSupport(author = "wangfeng")
+    @ApiOperation(value = "切片列表", notes = "切片列表 - 王峰")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pageNum", value = "当前记录起始索引", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+            @ApiImplicitParam(name = "pageSize", value = "每页显示记录数", dataTypeClass = Integer.class, paramType = "query", example = "10")})
+    @Log(title = "选片列表", menu = "项目管理", subMenu = "选片列表", businessType = BusinessType.QUERY)
+    @PostMapping("/choiceList")
+    public R<PageMaster<ImageListOutVO>> choiceList(@Validated @RequestBody ImageTopicVO image) throws ExecutionException, InterruptedException {
+        PageMaster<ImageListOutVO> page = imageService.choiceList(image);
+        return R.ok(page);
+    }
+
 }
