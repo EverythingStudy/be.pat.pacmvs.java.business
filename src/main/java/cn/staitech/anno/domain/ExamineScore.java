@@ -83,8 +83,26 @@ public class ExamineScore implements Serializable {
     /**
      * 算法拟合区间
      */
-    @ApiModelProperty(value = "算法拟合区间")
-    private String algorithmInterval;
+    @ApiModelProperty(value = "miou拟合区间")
+    private String miouInterval;
+
+    /**
+     * 算法拟合区间
+     */
+    @ApiModelProperty(value = "fiou拟合区间")
+    private String fiouInterval;
+
+    /**
+     * 算法拟合区间
+     */
+    @ApiModelProperty(value = "biou拟合区间")
+    private String biouInterval;
+
+    /**
+     * 算法拟合区间
+     */
+    @ApiModelProperty(value = "tiou拟合区间")
+    private String tiouInterval;
 
     /**
      * 个人拟合度

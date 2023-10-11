@@ -93,17 +93,17 @@ public class ExamineScoreController {
     }
 
 
-
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "导出标注数据")
     @PostMapping("/export")
-    public void export(@RequestBody ExamineScoreExportInsertVo req) throws Exception {
+    public void export(@RequestBody ExamineScoreExportInsertVo examineScoreExportInsertVo
+    ) throws Exception {
         // 查询考核评分列表
-        List<ExamineScoreExportVO> examineScoreList = examineScoreService.selectLists(req.getExamineScoreIdList());
+        List<ExamineScoreExportVO> examineScoreList = examineScoreService.selectLists(examineScoreExportInsertVo.getExamineScoreIdList());
         // 查询项目中得信息
-        Project projectBy = projectService.getById(req.getProjectId());
+        Project projectBy = projectService.getById(examineScoreExportInsertVo.getProjectId());
         String projectName = "";
-        if(projectBy != null){
+        if (projectBy != null) {
             projectName = projectBy.getProjectName();
         }
         // 构造表头的每个列头 定义表头
