@@ -155,5 +155,11 @@ public class ExamineScore implements Serializable {
     @ApiModelProperty(value = "切片id")
     private Long slideId;
 
+    /**
+     * json文件路径
+     */
+    @ApiModelProperty(value = "json文件路径")
+    private String geojsonUrl;
+
 
 }
