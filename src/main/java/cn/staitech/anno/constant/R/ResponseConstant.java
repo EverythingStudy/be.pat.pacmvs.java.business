@@ -12,5 +12,4 @@ public class ResponseConstant {
 
     public static final String OPERATE_ERROR = "操作失败";
 
-    public static final String PARAMS_EXCEPTION = "参数异常";
 }

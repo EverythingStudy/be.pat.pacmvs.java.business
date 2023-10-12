@@ -411,44 +411,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         // 获取当前登录用户Id
         Long loginUser = SecurityUtils.getUserId();
         image.setUpdateBy(loginUser);
-
-
-/*
-        String time = DateUtils.getCurrentHHmmssString("yyyy-MM-dd HH:mm:ss");
-
-        // 处理Topic逻辑，有则修改，无则添加
-
-        if (image.getTopicId().equals(999999999L)) {
-            // 如果存在逻辑删除的Topic：insert会报错，insert前查询，如果有修改defFlag = 1
-            QueryWrapper<Topic> qWrapper = new QueryWrapper<>();
-            qWrapper.eq("topic_name", vo.getTopicName());
-
-            Topic topic = topicMapper.selectOne(qWrapper);
-            if (topic != null) {
-                topic.setUpdateBy(loginUser);
-                topic.setUpdateTime(time);
-                topic.setDelFlag(1);
-
-                topicMapper.updateById(topic);
-            } else {
-                // construct a new Topic object
-                topic = Topic.builder()
-                        .topicName(vo.getTopicName())
-                        .createBy(loginUser)
-                        .updateBy(loginUser)
-                        .createTime(time)
-                        .updateTime(time)
-                        .delFlag(1)
-                        .build();
-
-                // insert Topic object
-                topicMapper.insert(topic);
-            }
-
-            image.setTopicId(topic.getTopicId());
-            image.setTopicName(topic.getTopicName());
-        }*/
-
         return imageMapper.updateById(image);
     }
 }

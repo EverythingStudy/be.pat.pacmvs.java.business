@@ -1,4 +1,4 @@
-package cn.staitech.system.domain.vo.organization;
+package cn.staitech.anno.domain.organization;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;

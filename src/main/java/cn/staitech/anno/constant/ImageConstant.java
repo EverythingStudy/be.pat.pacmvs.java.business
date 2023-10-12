@@ -17,6 +17,8 @@ public class ImageConstant {
     public static final String OPERATE_ERROR = "操作失败";
     public static final String IMAGE_USING_FORBID_DELETE = "该切片正在使用中，不可删除。";
 
+    public static final String IMAGE_ANNO_USING_FORBID_DELETE = "图片中有标注，无法删除！";
+
     /**
      * 图片处理过程状态 不可用原因共三种：0上传失败，1解析中,2解析失败
      */

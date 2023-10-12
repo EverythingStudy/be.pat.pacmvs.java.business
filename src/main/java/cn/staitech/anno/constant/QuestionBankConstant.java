@@ -7,7 +7,6 @@ package cn.staitech.anno.constant;
  */
 public class QuestionBankConstant {
 
-
     public static final String NUMBER_0="0";
     public static final String NUMBER_1="1";
     public static final String PROHIBIT_REPETITION = "禁止重复选择考核图片";

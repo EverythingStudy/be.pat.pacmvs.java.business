@@ -16,7 +16,7 @@ import cn.staitech.anno.domain.vo.slideVo.AddSlideVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListOutVO;
 import cn.staitech.anno.utils.PageMaster;
-import cn.staitech.common.core.domain.R;
+import cn.staitech.anno.response.R;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Param;
 

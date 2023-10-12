@@ -1,6 +1,5 @@
 package cn.staitech.anno.service.impl.manage;
 
-import cn.staitech.anno.constant.R.AnnotationManageConstant;
 import cn.staitech.anno.domain.Annotation;
 import cn.staitech.anno.mapper.AnnotationMapper;
 import org.springframework.stereotype.Service;

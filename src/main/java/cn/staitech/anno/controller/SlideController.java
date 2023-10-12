@@ -14,10 +14,9 @@ import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO;
 import cn.staitech.anno.domain.vo.slideVo.*;
 import cn.staitech.anno.domain.vo.topic.TopicListVO;
-import cn.staitech.anno.service.ImageService;
+import cn.staitech.anno.response.R;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.PageMaster;
-import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
@@ -49,12 +48,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/slide")
 public class SlideController extends BaseController {
-
     @Resource
     private SlideService slideService;
-
-    @Resource
-    private ImageService imageService;
 
     @RequiresPermissions("special:project:slicelist")
     @ApiOperation(value = "查询切片操作")
@@ -203,9 +198,7 @@ public class SlideController extends BaseController {
         return R.ok("操作成功");
     }
 
-
     // =======================================================================================================
-
 
     /**
      * 查询某个项目或者review_round_id对应的已经绑定的topic
@@ -298,10 +291,11 @@ public class SlideController extends BaseController {
     @ApiOperation(value = "逻辑批量删除切片")
     @PostMapping("/deleteBatchIds")
     public R deleteBatchIds(@RequestBody DelSlideIdsVO request) {
+        // delSlidesBatchzr返回未删除个数
         if (slideService.delSlidesBatch(request.getSlideIds()) > 0) {
-            return R.ok(ImageConstant.OPERATE_SUCCEED);
+            return R.fail(ImageConstant.IMAGE_ANNO_USING_FORBID_DELETE);
         }
-        return R.fail(ImageConstant.OPERATE_ERROR);
+        return R.ok(null, ImageConstant.OPERATE_SUCCEED);
     }
 
     /**

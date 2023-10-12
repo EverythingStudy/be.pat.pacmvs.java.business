@@ -24,10 +24,10 @@ import cn.staitech.anno.domain.vo.slideVo.AddSlideVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListOutVO;
 import cn.staitech.anno.mapper.*;
+import cn.staitech.anno.response.R;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.PageMaster;
-import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static cn.staitech.anno.aspect.LogFileAspect.response;
 
@@ -599,11 +600,12 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
      * 批量删除切片
      *
      * @param slideIds
-     * @return
+     * @return 未删除个数
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int delSlidesBatch(List<Long> slideIds) {
+        AtomicInteger count = new AtomicInteger(0);
         for (Long slideId : slideIds) {
             // 匹配图片
             QueryWrapper<Slide> queryWrapper = Wrappers.query();
@@ -614,9 +616,10 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
 
             if (slide != null && "1".equals(slide.getStatus()) && slideMapper.deleteById(slideId) > 0) {
                 updateRecentlyVisited(slideId);
+                count.getAndIncrement();
             }
         }
-        return 1;
+        return slideIds.size() - count.get();
     }
 
 

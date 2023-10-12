@@ -37,8 +37,6 @@ public class ProjectConstant {
     public static final String SLIDE_ID_NOT_NULL = "切片id不可为空";
     public static final Long ALREADY_AUDIT = 1L;
     public static final Long NOT_AUDIT = 0L;
-    public static final String ALREADY_AUDITS = "已审核";
-    public static final String NOT_AUDITS = "未审核";
     public static final String INDICATOR_EXIST = "病理指标名已存在，请检查后输入";
     public static final String ADD_INDICATOR_ERROR = "病理指标添加失败";
     public static final Integer NOT_INDICATOR_STATUS = 1;
