@@ -85,12 +85,12 @@ public class R<T> implements Serializable {
     public void setMsg(String msg) {
         // 多语言
         String language = SecurityUtils.getLoginUser().getLanguage();
-        if (language.equals("ch")) {
+        if (language == null) {
+            this.msg = msg;
+        } else if (language.equals("ch")) {
             this.msg = msg.split("#")[0];
         } else if (language.equals("en")) {
             this.msg = msg.split("#")[1];
-        } else {
-            this.msg = msg;
         }
 
 /*        Integer language = SecurityUtils.getLoginUser().getLanguage();
