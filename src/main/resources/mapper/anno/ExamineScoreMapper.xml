@@ -56,6 +56,20 @@
         SELECT
             q.image_name,
             q.question_id,
+            0 as operate_status,
+            q.slide_id,
+            qp.question_project_id
+        FROM
+            tb_question_project_rel AS qp
+                LEFT JOIN tb_question_bank AS q ON qp.question_id = q.question_id
+        where qp.question_project_id = #{questionProjectId}
+    </select>
+
+    <select id="selectQuestionProjectList" parameterType="long" resultType="cn.staitech.anno.domain.examineScore.SelectExaminationListVO">
+        SELECT
+            q.image_name,
+            q.question_id,
+            0 as operate_status,
             q.slide_id,
             qp.question_project_id
         FROM

@@ -25,6 +25,8 @@ public interface ExamineScoreMapper extends BaseMapper<ExamineScore> {
 
     SelectExaminationListVO selectQuestionProject(Long questionProjectId);
 
+    List<SelectExaminationListVO> selectQuestionProjectList(Long questionProjectId);
+
     List<ExamineScoreExportVO> selectLists(@Param("examineScoreIdList") List<Long> examineScoreIdList);
 
 }

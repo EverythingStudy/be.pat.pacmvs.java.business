@@ -78,7 +78,20 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         questionBank.setProjectId(projectId);
         questionBank.setCreateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
         questionBank.setImageName(imageName);
-        return examineScoreMapper.selectExaminationList(questionBank);
+        // 根据项目查询
+        QueryWrapper<QuestionProjectRel> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("project_id",projectId).eq("del_flag",'0');
+        QuestionProjectRel questionProjectRel = questionProjectRelMapper.selectOne(queryWrapper);
+        QueryWrapper<ExamineScore> examineScoreQueryWrapper = new QueryWrapper<>();
+        examineScoreQueryWrapper.eq("question_project_id",questionProjectRel.getQuestionProjectId()).eq("create_by", SecurityUtils.getLoginUser().getSysUser().getUserId());
+        ExamineScore examineScoreBy = examineScoreMapper.selectOne(examineScoreQueryWrapper);
+        List<SelectExaminationListVO> selectExaminationListVOS;
+        if(examineScoreBy != null){
+            selectExaminationListVOS = examineScoreMapper.selectExaminationList(questionBank);
+        }else{
+            selectExaminationListVOS = examineScoreMapper.selectQuestionProjectList(questionProjectRel.getQuestionProjectId());
+        }
+        return selectExaminationListVOS;
     }
 
     @Override
@@ -95,9 +108,6 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         }
         else{
             examinationListVO = examineScoreMapper.selectQuestionProject(questionProjectId);
-            if(examinationListVO != null){
-                examinationListVO.setOperateStatus(0L);
-            }
         }
         return examinationListVO;
     }
