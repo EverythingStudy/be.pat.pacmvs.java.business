@@ -7,10 +7,12 @@ import cn.staitech.anno.domain.geojson.Features;
 import cn.staitech.anno.domain.geojson.Properties;
 import cn.staitech.anno.domain.markingExamine.MarkingExamineInsertVO;
 import cn.staitech.anno.domain.markingExamine.MarkingExamineUpdateVO;
+import cn.staitech.anno.domain.structure.Structure;
 import cn.staitech.anno.domain.vo.BroadcastVO;
 import cn.staitech.anno.mapper.MarkingExamineMapper;
 import cn.staitech.anno.mapper.QuestionBankMapper;
 import cn.staitech.anno.mapper.QuestionProjectRelMapper;
+import cn.staitech.anno.mapper.StructureMapper;
 import cn.staitech.anno.netty.websocket.NioWebSocketHandler;
 import cn.staitech.anno.service.MarkingExamineService;
 import cn.staitech.anno.utils.SendMessage;
@@ -18,6 +20,7 @@ import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +55,8 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
 
     @Resource
     private MarkingServiceImpl markingServiceImpl;
+    @Resource
+    private StructureMapper structureMapper;
 
     @Resource
     private QuestionBankMapper questionBankMapper;
@@ -65,7 +70,19 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
             String fileUrl = questionBank.getGeojsonUrl();
             // 取出文件中需要得标注数据
             String fileContent = getAnnotation(fileUrl).getString("features");
-            return JSONArray.parseArray(fileContent);
+            JSONArray jsonArray = JSONArray.parseArray(fileContent);
+            JSONArray newJsonArray = new JSONArray();
+            for(Object feature:jsonArray){
+                JSONObject featureObject = (JSONObject) feature;
+                String labelCode = featureObject.getJSONObject("properties").getString("label_code");
+                QueryWrapper<Structure> structureQueryWrapper = new QueryWrapper<>();
+                structureQueryWrapper.eq("structure_id",labelCode).eq("name","标注区域");
+                Structure structure = structureMapper.selectOne(structureQueryWrapper);
+                if(structure != null){
+                    newJsonArray.add(feature);
+                }
+            }
+            return newJsonArray;
         } catch (Exception e) {
             return new JSONArray();
         }
@@ -155,6 +172,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
             Double perimeter = new Double(req.getPerimeter()) * MICRON;
             markingExamine.setPerimeter(String.valueOf(perimeter));
         }
+        markingExamine.setMarkingExamineId(req.getMarking_id());
         markingExamine.setUpdateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
         markingExamine.setAnnotationOwner(SecurityUtils.getLoginUser().getSysUser().getUserName());
         markingExamine.setUpdateTime(new Date());
