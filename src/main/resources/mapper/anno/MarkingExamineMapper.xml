@@ -101,7 +101,7 @@
                     "create_by",
                     t.create_by,
                     "create_time",
-                    t.create_time,
+                    DATE_FORMAT( t.create_time, '%Y-%m-%d %H:%i:%s' ),
                     "location_type",
                     t.location_type,
                     "annotation_owner",

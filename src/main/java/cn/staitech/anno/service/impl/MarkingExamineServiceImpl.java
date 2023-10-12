@@ -102,6 +102,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         markingExamine.setCreateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
         markingExamine.setAnnotationOwner(SecurityUtils.getLoginUser().getSysUser().getUserName());
         markingExamine.setCreateTime(new Date());
+        markingExamine.setCategoryId(req.getCategory_id());
         markingExamine.setLocationType(req.getLocation_type());
         // 添加数据库，添加后返回自增id
         markingExamineMapper.insert(markingExamine);
@@ -157,6 +158,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         markingExamine.setUpdateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
         markingExamine.setAnnotationOwner(SecurityUtils.getLoginUser().getSysUser().getUserName());
         markingExamine.setUpdateTime(new Date());
+        markingExamine.setCategoryId(req.getCategory_id());
         markingExamineMapper.updateById(markingExamine);
         Properties properties = markingExamineMapper.selectBy(markingExamine.getMarkingExamineId());
         Features features = markingServiceImpl.socketData("", req.getGeometry(), properties);
