@@ -15,6 +15,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.ibm.icu.text.SimpleDateFormat;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -123,14 +124,15 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         examineScore.setProjectId(questionProjectRel.getProjectId());
         examineScore.setNickName(SecurityUtils.getLoginUser().getSysUser().getNickName());
         Date date = new Date();
-        examineScore.setStartTime(date);
-        examineScore.setEndTime(DateUtil.offsetMinute(date, 20));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        examineScore.setStartTime(sdf.format(date));
+        examineScore.setEndTime(sdf.format(DateUtil.offsetMinute(date, 20)));
         if(projectMarksRelBy != null){
             examineScore.setShouldNumber(projectMarksRelBy.getShouldMarks());
         }
         examineScore.setOperateStatus("1");
         examineScore.setCreateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
-        examineScore.setCreateTime(date);
+        examineScore.setCreateTime(sdf.format(date));
         examineScore.setSlideId(questionBank.getSlideId());
         int res = examineScoreMapper.insert(examineScore);
         delayQueueExample.addDelayQueueExample(examineScore.getExamineScoreId());

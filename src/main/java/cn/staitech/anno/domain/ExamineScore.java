@@ -1,6 +1,7 @@
 package cn.staitech.anno.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -60,13 +61,15 @@ public class ExamineScore implements Serializable {
      * 开始时间
      */
     @ApiModelProperty(value = "开始时间")
-    private Date startTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private String startTime;
 
     /**
      * 结束时间
      */
     @ApiModelProperty(value = "结束时间")
-    private Date endTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private String endTime;
 
     /**
      * 应标个数
@@ -128,7 +131,8 @@ public class ExamineScore implements Serializable {
      */
     @ApiModelProperty(value = "创建时间")
     @TableField(fill = FieldFill.INSERT)
-    private Date createTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private String createTime;
 
     /**
      * 创建者
@@ -141,7 +145,8 @@ public class ExamineScore implements Serializable {
      */
     @ApiModelProperty(value = "更新时间")
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private Date updateTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private String updateTime;
 
     /**
      * 更新者

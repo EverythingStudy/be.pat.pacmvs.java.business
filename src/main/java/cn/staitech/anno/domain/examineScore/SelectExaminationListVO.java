@@ -1,5 +1,6 @@
 package cn.staitech.anno.domain.examineScore;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -26,11 +27,13 @@ public class SelectExaminationListVO {
     @ApiModelProperty(value = "答题者")
     private String nickName;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "开始时间")
-    private Date startTime;
+    private String startTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "结束时间")
-    private Date endTime;
+    private String endTime;
 
     @ApiModelProperty(value = "考试结果")
     private Long examResults;
