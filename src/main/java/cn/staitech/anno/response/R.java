@@ -87,7 +87,7 @@ public class R<T> implements Serializable {
         String language = SecurityUtils.getLoginUser().getLanguage();
         if (language == null) {
             this.msg = msg;
-        } else if (language.equals("ch")) {
+        } else if (language.equals("zh")) {
             this.msg = msg.split("#")[0];
         } else if (language.equals("en")) {
             this.msg = msg.split("#")[1];
