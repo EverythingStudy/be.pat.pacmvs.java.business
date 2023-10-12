@@ -1,13 +1,13 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.constant.ExaminationConstant;
 import cn.staitech.anno.constant.R.MeasureResponseConstant;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.service.AnnotationService;
 import cn.staitech.anno.service.ProjectRoleService;
 import cn.staitech.anno.service.PythonOpenSlideService;
 import cn.staitech.anno.service.SlideService;
-import cn.staitech.common.core.domain.R;
+//import cn.staitech.common.core.domain.R;
+import cn.staitech.anno.response.R;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysProjectRole;
 import lombok.extern.slf4j.Slf4j;
@@ -68,8 +68,8 @@ public class TestController {
 
 
     @GetMapping("/api")
-    public String sendMsg() {
-        return "测试Jenkins构建是否更新";
+    public R sendMsg() {
+        return R.ok(null,"测试多语言#ABC");
     }
 
 

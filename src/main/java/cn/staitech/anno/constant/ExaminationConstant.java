@@ -12,9 +12,7 @@ public class ExaminationConstant {
     }
     
     public static final String FILE_PATH = "annotation";
-    
-    public static final String FILE_PATH_FORMAT = ".json";
-    
+
     public static final String CHARACTER_ENCODING = "UTF-8";
     
     public static final String CONTENT_TYPE = "application/json;charset=utf-8";

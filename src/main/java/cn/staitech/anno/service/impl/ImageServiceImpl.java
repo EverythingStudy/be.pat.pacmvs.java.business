@@ -159,9 +159,9 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         Image image = new Image();
         BeanUtils.copyProperties(vo, image);
 
-        // SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-        // image.setOrganizationId(sysUser.getOrganizationId());
-        image.setOrganizationId(1L);
+        // 机构ID
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+        image.setOrganizationId(sysUser.getOrganizationId());
 
         // 业务类型 1 原始切片 2 预测切片
         Integer bizType = image.getBizType();
