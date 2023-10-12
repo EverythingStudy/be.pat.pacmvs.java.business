@@ -36,7 +36,7 @@ public class SelectExaminationListVO {
     private String endTime;
 
     @ApiModelProperty(value = "考试结果")
-    private Long examResults;
+    private String examResults;
 
     @ApiModelProperty(value = "操作状态")
     private Long operateStatus;
