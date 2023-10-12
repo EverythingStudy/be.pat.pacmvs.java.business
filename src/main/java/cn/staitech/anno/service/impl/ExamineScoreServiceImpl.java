@@ -1,6 +1,7 @@
 package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.date.DateUtil;
+import cn.staitech.anno.constant.QuestionBankConstant;
 import cn.staitech.anno.domain.*;
 import cn.staitech.anno.domain.examineScore.ExamineScoreAddVO;
 import cn.staitech.anno.domain.examineScore.ExamineScoreExportVO;
@@ -8,6 +9,7 @@ import cn.staitech.anno.domain.examineScore.SelectExaminationListVO;
 import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.queue.DelayQueueExample;
 import cn.staitech.anno.service.ExamineScoreService;
+import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.utils.ExcludeEmptyQueryWrapper;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.security.utils.SecurityUtils;
@@ -49,6 +51,9 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
 
     @Resource
     private DelayQueueExample delayQueueExample;
+
+    @Resource
+    private MarkingService markingService;
 
     @Resource
     private QuestionProjectRelMapper questionProjectRelMapper;
@@ -172,6 +177,15 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         ExamineScore examineScore = new ExamineScore();
         examineScore.setExamineScoreId(examineScoreBy.getExamineScoreId());
         examineScore.setOperateStatus("2");
+
+        String fileUrl;
+        try {
+            fileUrl = markingService.slideJsonExport(examineScoreBy.getSlideId());
+        } catch (Exception exception) {
+            log.error(exception.toString());
+            throw new RuntimeException(QuestionBankConstant.ERROR_GENERATE_JSON);
+        }
+        examineScore.setExaminationGeojsonUrl(fileUrl);
         examineScore.setRealityNumber(Long.valueOf(markingCount));
         // 更新当前评分记录
         return examineScoreMapper.updateById(examineScore);

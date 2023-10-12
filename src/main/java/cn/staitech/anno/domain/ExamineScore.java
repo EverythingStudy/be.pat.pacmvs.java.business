@@ -167,4 +167,12 @@ public class ExamineScore implements Serializable {
     private String geojsonUrl;
 
 
+    /**
+     * 考生考试json文件路径
+     */
+    @ApiModelProperty(value = "考试json文件路径")
+    private String examinationGeojsonUrl;
+
+
+
 }
