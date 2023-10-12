@@ -99,10 +99,10 @@
             e.end_time,
             e.should_number,
             e.reality_number,
-            e.miou_interval,
-            e.fiou_interval,
-            e.biou_interval,
-            e.tiou_interval,
+            e.miou,
+            e.fiou,
+            e.biou,
+            e.tiou,
             e.personal_fit,
             CASE
                 e.exam_results

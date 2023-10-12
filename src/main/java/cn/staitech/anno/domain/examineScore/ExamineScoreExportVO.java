@@ -30,16 +30,16 @@ public class ExamineScoreExportVO {
     private Long realityNumber;
 
     @ApiModelProperty(value = "算法拟合区间")
-    private String miouInterval;
+    private String miou;
 
     @ApiModelProperty(value = "算法拟合区间")
-    private String fiouInterval;
+    private String fiou;
 
     @ApiModelProperty(value = "算法拟合区间")
-    private String biouInterval;
+    private String biou;
 
     @ApiModelProperty(value = "算法拟合区间")
-    private String tiouInterval;
+    private String tiou;
 
     @ApiModelProperty(value = "个人拟合度")
     private String personalFit;
