@@ -1,13 +1,13 @@
 package cn.staitech.anno.controller;
 
 import cn.staitech.anno.constant.R.IndicatorResponseConstant;
-import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.vo.indicator.*;
 import cn.staitech.anno.service.IndicatorService;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
 import cn.staitech.anno.service.ProjectService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
@@ -75,7 +75,7 @@ public class IndicatorController extends BaseController {
 
         //添加结构指标
         indicatorService.insertIndicator(indicator);
-        return R.ok(ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
 
@@ -138,7 +138,7 @@ public class IndicatorController extends BaseController {
         ;
         //删除病理指标
         indicatorService.delIndicator(indicatorGetVO.getIndicatorId().longValue());
-        return R.ok(null, ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
     }
 
 
@@ -164,7 +164,7 @@ public class IndicatorController extends BaseController {
         indicator.setUpdateBy(String.valueOf(SecurityUtils.getUserId()));
         //修改病理指标
         indicatorService.updateIndicator(indicator);
-        return R.ok(null, ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
     }
 
 

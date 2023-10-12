@@ -4,6 +4,7 @@ import cn.staitech.anno.domain.special.Special;
 import cn.staitech.anno.domain.vo.special.*;
 import cn.staitech.anno.enums.SpecialEnum;
 import cn.staitech.anno.service.SpecialService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.utils.hasPerms;
 import cn.staitech.common.core.domain.R;
@@ -13,7 +14,6 @@ import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.annotation.RequiresPermissions;
-import cn.staitech.common.security.annotation.RequiresSpecialPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.model.LoginUser;
 import com.github.pagehelper.PageHelper;
@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
 
-import static cn.staitech.anno.constant.R.ResponseConstant.*;
 import static cn.staitech.common.security.utils.SecurityUtils.getLoginUser;
 
 /**
@@ -93,7 +92,7 @@ public class SpecialController extends BaseController {
         role.setUserId(SecurityUtils.getUserId());
         List<SpecialStatisticsListVO> list = specialService.specialStatistics(role);
         PageMaster<SpecialStatisticsListVO> pageMaster = new PageMaster<>(list);
-        return R.ok(pageMaster, OPERATE_SUCCEED);
+        return R.ok(pageMaster, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     @ApiOperationSupport(author = "gjt")
@@ -114,27 +113,27 @@ public class SpecialController extends BaseController {
         return R.ok(specialService.selectSpecialId(specialId));
     }
 
-    @Log(menu = "专题管理", subMenu = "专题创建",title = "新增专题", businessType = BusinessType.INSERT)
+    @Log(menu = "专题管理", subMenu = "专题创建", title = "新增专题", businessType = BusinessType.INSERT)
     @RequiresPermissions("special:subject:add")
     @ApiOperation(value = "专题创建")
     @ApiOperationSupport(author = "gjt")
     @PostMapping("/insert")
     public R<String> insert(@Validated @RequestBody SpecialInsertVo req) {
         specialService.insert(req);
-        return R.ok(OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_ERROR"));
     }
 
-    @Log(menu = "专题管理", subMenu = "专题创建",title = "编辑", businessType = BusinessType.UPDATE)
+    @Log(menu = "专题管理", subMenu = "专题创建", title = "编辑", businessType = BusinessType.UPDATE)
     @RequiresPermissions("special:subject:edit")
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "专题修改")
     @PostMapping("/update")
     public R<String> update(@Validated @RequestBody SpecialUpdateVo req) {
         specialService.update(req);
-        return R.ok(OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_ERROR"));
     }
 
-    @Log(menu = "专题管理", subMenu = "专题创建",title = "删除/恢复/彻底删除", businessType = BusinessType.DELETE)
+    @Log(menu = "专题管理", subMenu = "专题创建", title = "删除/恢复/彻底删除", businessType = BusinessType.DELETE)
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "专题删除")
     @PostMapping("/updateDelFlag")
@@ -144,7 +143,7 @@ public class SpecialController extends BaseController {
             throw new NotPermissionException(req.getPerms());
         }
         specialService.updateDelFlag(req);
-        return R.ok(OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_ERROR"));
     }
 
     @Log(menu = "专题管理", subMenu = "专题创建", title = "启动/暂停/锁定/解锁/完成", businessType = BusinessType.UPDATE)
@@ -157,7 +156,7 @@ public class SpecialController extends BaseController {
             throw new NotPermissionException(req.getPerms());
         }
         specialService.updateStatus(req);
-        return R.ok(OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_ERROR"));
     }
 
 

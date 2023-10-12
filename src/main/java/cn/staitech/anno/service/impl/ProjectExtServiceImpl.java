@@ -1,20 +1,10 @@
 package cn.staitech.anno.service.impl;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.lang.Snowflake;
-import cn.hutool.core.text.csv.CsvUtil;
-import cn.hutool.core.text.csv.CsvWriter;
 import cn.hutool.core.thread.ExecutorBuilder;
-import cn.hutool.core.util.CharsetUtil;
-import cn.staitech.anno.constant.ExaminationConstant;
 import cn.staitech.anno.constant.ProjectConstant;
-import cn.staitech.anno.constant.R.MeasureResponseConstant;
-import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.Group;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.RecentlyVisited;
-import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.po.ProjectPo;
 import cn.staitech.anno.domain.project.ProjectExt;
 import cn.staitech.anno.domain.project.in.OperateProjectIn;
@@ -27,13 +17,10 @@ import cn.staitech.anno.domain.projectgroup.ProjectGroup;
 import cn.staitech.anno.domain.special.Special;
 import cn.staitech.anno.enums.ReasonsEnum;
 import cn.staitech.anno.mapper.*;
-import cn.staitech.anno.project.constants.Constants;
-import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.anno.project.mapper.DownTaskMapper;
-import cn.staitech.anno.project.service.impl.ReviewServiceImpl;
-import cn.staitech.anno.project.vo.ReviewVO;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.ProjectExtService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.bean.BeanUtils;
@@ -55,15 +42,9 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StopWatch;
 
 import javax.annotation.Resource;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.OutputStream;
-import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
-
-import static cn.staitech.anno.aspect.LogFileAspect.response;
 
 /**
  * @Author: wudi
@@ -244,7 +225,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
             projectExt.setUpdateTime(new Date());
             projectExtMapper.update(projectExt);
         }
-        return R.ok(null, ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     /**
@@ -287,9 +268,9 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
         projectGroupMapper.updateDelFlag(req.getProjectId(), userId);
         // 删除最近访问表中数据
         QueryWrapper<RecentlyVisited> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("project_id",req.getProjectId());
+        queryWrapper.eq("project_id", req.getProjectId());
         recentlyVisitedMapper.delete(queryWrapper);
-        return R.ok(null, ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     /**
@@ -628,13 +609,11 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
     }
 
 
-
     private static ExecutorService executor = ExecutorBuilder.create()//
             .setCorePoolSize(1)//
             .setMaxPoolSize(1)//
             .setKeepAliveTime(0)//
             .build();
-
 
 
     @Override

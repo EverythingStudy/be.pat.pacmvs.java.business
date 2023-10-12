@@ -2,16 +2,13 @@ package cn.staitech.anno.controller;
 
 import cn.staitech.anno.constant.ExaminationConstant;
 import cn.staitech.anno.constant.R.ExaminationResponseConstant;
-import cn.staitech.anno.constant.R.ResponseConstant;
-import cn.staitech.anno.domain.*;
+import cn.staitech.anno.domain.ExaminationLog;
+import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.vo.*;
 import cn.staitech.anno.enums.ExaminationEnum;
 import cn.staitech.anno.enums.ProcessFlagEnum;
 import cn.staitech.anno.service.*;
-import cn.staitech.anno.utils.ExaminationUtils;
-import cn.staitech.anno.utils.JsonUtils;
-import cn.staitech.anno.utils.PageMaster;
-import cn.staitech.anno.utils.ProjectUtils;
+import cn.staitech.anno.utils.*;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
@@ -38,11 +35,9 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import static cn.staitech.anno.constant.ExaminationConstant.SUBMIT_REVIEW;
 import static cn.staitech.anno.constant.R.ExaminationResponseConstant.IMAGE_NOT_REVIEW;
 import static cn.staitech.anno.constant.R.ExaminationResponseConstant.REVIEW_NOT_PASS;
-import static cn.staitech.anno.constant.ImageConstant.OPERATE_SUCCEED;
 import static cn.staitech.anno.enums.ExaminationEnum.STATUS_INFO_3;
 
 /**
@@ -105,7 +100,7 @@ public class ExaminationController extends BaseController {
             ProjectUtils.updateSlideTime(slideId);
             ExaminationUtils.examinationStateLog(examinationLog, slide, slide.getExaminationFlag());
         }
-        return R.ok(null, ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     /**
@@ -163,7 +158,7 @@ public class ExaminationController extends BaseController {
             } else {
                 Slide slide = ExaminationUtils.getSlide(examinationStateVo, slideId);
                 ExaminationUtils.examinationStateLog(examinationLog, slide, slide.getExaminationFlag());
-                return R.ok(null, OPERATE_SUCCEED);
+                return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
             }
         }
         return R.fail(null, IMAGE_NOT_REVIEW);
@@ -200,7 +195,7 @@ public class ExaminationController extends BaseController {
 
         JsonUtils.createDirectories(directories);
         JsonUtils.createFile(annotationList, file, slide);
-        return R.ok(fileName.toString(), ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(fileName.toString(), MessageSource.M("OPERATE_SUCCEED"));
     }
 
 

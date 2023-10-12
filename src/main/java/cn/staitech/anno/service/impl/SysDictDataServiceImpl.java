@@ -203,7 +203,7 @@ public class SysDictDataServiceImpl implements SysDictDataService {
 				subImageMapper.updateByPrimaryKeySelective(simage);
 			}
 		}
-		return R.ok(OPERATE_SUCCEED);	
+		return R.ok(null,MessageSource.M("OPERATE_ERROR"));	
 	}*/
 
 
@@ -234,7 +234,7 @@ public class SysDictDataServiceImpl implements SysDictDataService {
 		}else{
 			return R.fail(SpecialImageConstant.DELIVERY_FAIL);
 		}
-		return R.ok(OPERATE_SUCCEED);
+		return R.ok(null,MessageSource.M("OPERATE_ERROR"));
 	}*/
 
 

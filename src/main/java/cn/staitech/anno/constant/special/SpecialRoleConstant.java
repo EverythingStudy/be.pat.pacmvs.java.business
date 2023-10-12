@@ -5,9 +5,7 @@ package cn.staitech.anno.constant.special;
  * @data 2023/6/15 10:34
  */
 public class SpecialRoleConstant {
-
     public static final String[] ROLE_TYPE = new String[]{"专题负责人", "标注员", "普通阅片员"};
-
     public static final String RESPONSIBLE_ROLE = "专题负责人";
     public static final String ANNOTATOR_ROLE = "标注员";
     public static final String READER_ROLE = "普通阅片员";

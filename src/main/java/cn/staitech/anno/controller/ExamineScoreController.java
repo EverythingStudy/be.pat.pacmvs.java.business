@@ -5,14 +5,15 @@ import cn.staitech.anno.constant.ExamineScoreConstant;
 import cn.staitech.anno.constant.ExportConstant;
 import cn.staitech.anno.domain.ExamineScore;
 import cn.staitech.anno.domain.examineScore.ExamineScoreAddVO;
-import cn.staitech.anno.domain.examineScore.ExamineScoreExportVO;
 import cn.staitech.anno.domain.examineScore.ExamineScoreExportInsertVo;
+import cn.staitech.anno.domain.examineScore.ExamineScoreExportVO;
 import cn.staitech.anno.domain.examineScore.SelectExaminationListVO;
 import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.service.ProjectService;
 import cn.staitech.anno.service.ExamineScoreService;
 import cn.staitech.anno.utils.Column;
 import cn.staitech.anno.utils.ExcelTool;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -82,7 +83,7 @@ public class ExamineScoreController {
     @PostMapping("/refreshInterval")
     public R<String> refreshInterval(@RequestBody ExamineScoreExportInsertVo examineScoreExportInsertVo) throws Exception {
         // 调用python
-        return R.ok("操作成功");
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     @ApiOperationSupport(author = "gjt")
@@ -90,7 +91,7 @@ public class ExamineScoreController {
     @PostMapping("/add")
     public R<String> add(@RequestBody ExamineScoreAddVO examineScoreAddVO) throws Exception {
         examineScoreService.add(examineScoreAddVO);
-        return R.ok("操作成功");
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     @ApiOperationSupport(author = "gjt")
@@ -98,7 +99,7 @@ public class ExamineScoreController {
     @PutMapping("/update")
     public R<String> update(@RequestBody ExamineScoreAddVO examineScoreAddVO) throws Exception {
         examineScoreService.update(examineScoreAddVO);
-        return R.ok("操作成功");
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
 

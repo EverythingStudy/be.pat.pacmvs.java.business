@@ -5,7 +5,6 @@ import cn.staitech.anno.domain.SubImage;
 import cn.staitech.anno.domain.vo.image.SubImageVo;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.service.SubImageService;
-import cn.staitech.anno.utils.LocaleMessageSourceUtil;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
@@ -75,14 +74,5 @@ public class SubImageController extends BaseController {
             r = R.ok(subImage);
         }
         return r;
-    }
-
-
-    @GetMapping("/i18n")
-    public String i18n(){
-        //String welcome = messageSourceUtil.getMessage("welcome");
-        String welcome = LocaleMessageSourceUtil.getMessage("welcome");
-        System.out.println(welcome);
-        return welcome;
     }
 }

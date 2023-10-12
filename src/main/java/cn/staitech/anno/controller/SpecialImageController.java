@@ -94,7 +94,7 @@ public class SpecialImageController {
     @PostMapping("/batchInsert")
     public R<String> batchInsert(@RequestBody InsertSpecialImageVO vo) throws Exception {
         R<String> r = specialImageService.insertSpecialImageList(vo);
-        //		String jsonStr = JSONUtil.toJsonStr(R.ok(R.ok(OPERATE_SUCCEED)));
+        //		String jsonStr = JSONUtil.toJsonStr(R.ok(R.ok(null,MessageSource.M("OPERATE_ERROR"))));
         //		log.info("批量添加专题切片:"+jsonStr);
         return r;
     }

@@ -8,7 +8,6 @@ import cn.staitech.anno.config.ICache;
 import cn.staitech.anno.constant.CacheConstant;
 import cn.staitech.anno.constant.ProjectConstant;
 import cn.staitech.anno.constant.R.MeasureResponseConstant;
-import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.*;
 import cn.staitech.anno.domain.image.in.ImageAllVO;
 import cn.staitech.anno.domain.image.in.ImageListVO;
@@ -277,9 +276,9 @@ public class ProjectExtController extends BaseController {
             }
             //刷新项目缓存
             CacheUtils.ProjectCache(new Project());
-            return R.ok(null, ResponseConstant.OPERATE_SUCCEED);
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
-        return R.fail(ResponseConstant.OPERATE_ERROR);
+        return R.fail(MessageSource.M("OPERATE_ERROR"));
     }
 
     /**
@@ -672,9 +671,9 @@ public class ProjectExtController extends BaseController {
         CacheUtils.ProjectCache(new Project());
 
         if (flag) {
-            return R.ok(ResponseConstant.OPERATE_SUCCEED);
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
-        return R.fail(ResponseConstant.OPERATE_ERROR);
+        return R.fail(MessageSource.M("OPERATE_ERROR"));
 
     }
 
@@ -800,7 +799,7 @@ public class ProjectExtController extends BaseController {
         //根据项目id，查询项目信息
         ProjectListVO projectInformation = projectService.selectProjectById(projectId);
         if (Objects.equals(project.getIndicatorId(), projectInformation.getIndicatorId())) {
-            return R.ok(ResponseConstant.OPERATE_SUCCEED);
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
         Project projectUpdate = new Project();
         projectUpdate.setProjectId(projectId);
@@ -856,7 +855,7 @@ public class ProjectExtController extends BaseController {
                 slideAnnotationResultService.insertBatch(slideAnnotationResult);
             }
         }
-        return R.ok(ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     /**
@@ -896,7 +895,7 @@ public class ProjectExtController extends BaseController {
             indicatorService.updateIndicator(indicatorReviseVO);
             CacheUtils.indicatorCache(new Indicator());
         }
-        return R.ok(null, ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     /**
@@ -1429,5 +1428,4 @@ public class ProjectExtController extends BaseController {
         }
         return R.fail(ProjectConstant.NO_DATA_TRANSFERRED);
     }
-
 }

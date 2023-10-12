@@ -15,10 +15,6 @@ public class SpecialImageConstant {
     public static final String Data_NULL = "数据不存在";
     public static final String MARK_RELEVANCY_IMAGE = "该标注尚未关联图片";
     public static final String SELECT_IMAGE_ERROR = "请选择所属专题";
-
-    public static final String OPERATE_SUCCEED = "操作成功";
-
-    public static final String OPERATE_ERROR = "操作失败";
     public static final String DELIVERY_FAIL = "存在未审核通过的切片，不可交付!";
     public static final String DELIVERY_ING = "此图像正在进行切图操作，请稍后在试";
     public static final String DELIVERY_AGAIN = "此图像已经完成切图操作，可直接查看结果";

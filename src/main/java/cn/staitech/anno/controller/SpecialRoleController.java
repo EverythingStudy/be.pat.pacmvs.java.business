@@ -4,9 +4,10 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.staitech.anno.domain.special.SpecialRole;
 import cn.staitech.anno.domain.special.SpecialRoleUser;
 import cn.staitech.anno.domain.vo.special.SpecialRoleInsertVO;
-import cn.staitech.anno.domain.vo.special.SpecialRoleUpdateVO;
 import cn.staitech.anno.domain.vo.special.SpecialRoleQueryVO;
+import cn.staitech.anno.domain.vo.special.SpecialRoleUpdateVO;
 import cn.staitech.anno.service.SpecialRoleService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.exception.ServiceException;
@@ -16,14 +17,15 @@ import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.system.api.domain.SysRole;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
 
-import static cn.staitech.anno.constant.R.ResponseConstant.OPERATE_SUCCEED;
 import static cn.staitech.common.core.utils.PageUtils.startPage;
 
 /**
@@ -55,7 +57,7 @@ public class SpecialRoleController {
         startPage(role.getPageNum(), role.getPageSize());
         List<SpecialRole> list = specialRoleService.selectRoleList(role);
         PageMaster<SpecialRole> pageMaster = new PageMaster<>(list);
-        return R.ok(pageMaster, OPERATE_SUCCEED);
+        return R.ok(pageMaster, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     /**
@@ -80,7 +82,7 @@ public class SpecialRoleController {
     @ApiOperation(value = "根据角色ID获取详细信息", notes = "YangLei", response = SysRole.class)
     @GetMapping(value = "/{roleId}")
     public R<SpecialRole> getInfo(@ApiParam(name = "roleId", value = "角色ID") @PathVariable Long roleId) {
-        return R.ok(specialRoleService.selectRoleById(roleId), OPERATE_SUCCEED);
+        return R.ok(specialRoleService.selectRoleById(roleId), MessageSource.M("OPERATE_SUCCEED"));
     }
 
     /**
@@ -102,7 +104,7 @@ public class SpecialRoleController {
         if (!specialRoleService.checkRoleKeyUnique(specialRole)) {
             return R.fail("当前权限标识已存在");
         }
-        return R.ok(specialRoleService.insertRole(specialRole), OPERATE_SUCCEED);
+        return R.ok(specialRoleService.insertRole(specialRole), MessageSource.M("OPERATE_SUCCEED"));
     }
 
     /**
@@ -130,7 +132,7 @@ public class SpecialRoleController {
         if (!specialRoleService.checkRoleKeyUnique(specialRole)) {
             return R.fail("修改角色'" + role.getRoleName() + "'失败，角色权限已存在");
         }
-        return R.ok(specialRoleService.updateRole(specialRole), OPERATE_SUCCEED);
+        return R.ok(specialRoleService.updateRole(specialRole), MessageSource.M("OPERATE_SUCCEED"));
     }
 
     /**
@@ -144,7 +146,7 @@ public class SpecialRoleController {
     @Log(title = "角色管理", menu = "专题管理", subMenu = "专题角色", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
     public R<Integer> changeStatus(@ApiParam(name = "roleId", value = "角色ID") @RequestParam("roleId") Long roleId) {
-        return R.ok(specialRoleService.updateRoleStatus(roleId), OPERATE_SUCCEED);
+        return R.ok(specialRoleService.updateRoleStatus(roleId), MessageSource.M("OPERATE_SUCCEED"));
     }
 
     /**
@@ -158,6 +160,6 @@ public class SpecialRoleController {
     @Log(title = "角色管理", menu = "专题管理", subMenu = "专题角色", businessType = BusinessType.DELETE)
     @DeleteMapping("/del/{roleId}")
     public R<Integer> remove(@ApiParam(name = "roleId", value = "角色ID") @PathVariable Long roleId) {
-        return R.ok(specialRoleService.deleteRoleById(roleId), OPERATE_SUCCEED);
+        return R.ok(specialRoleService.deleteRoleById(roleId), MessageSource.M("OPERATE_SUCCEED"));
     }
 }

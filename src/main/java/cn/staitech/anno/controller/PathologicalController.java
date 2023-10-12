@@ -1,7 +1,6 @@
 package cn.staitech.anno.controller;
 
 import cn.staitech.anno.constant.PathologicalLogConstant;
-import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.structure.Structure;
@@ -13,6 +12,7 @@ import cn.staitech.anno.domain.vo.indicator.IndicatorReviseVO;
 import cn.staitech.anno.service.IndicatorService;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
 import cn.staitech.anno.service.StructureService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.log.annotation.Log;
@@ -106,7 +106,7 @@ public class PathologicalController {
         IndicatorReviseVO indicatorReviseVO = IndicatorReviseVO.builder().indicatorId(vo.getIndicatorId().intValue()).build();
         // 更新病理表数据
         indicatorService.updateIndicator(indicatorReviseVO);
-        return R.ok(ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
 
@@ -196,7 +196,7 @@ public class PathologicalController {
 
         //修改标注类别信息
         pathologicalIndicatorCategoryService.updateByPrimaryKeySelective(category);
-        return R.ok(ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
 
 
     }
@@ -222,7 +222,7 @@ public class PathologicalController {
         IndicatorReviseVO indicatorReviseVO = IndicatorReviseVO.builder().indicatorId(category.getIndicatorId().intValue()).build();
         //更新病理表数据
         indicatorService.updateIndicator(indicatorReviseVO);
-        return R.ok(null, ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
     }
 
 

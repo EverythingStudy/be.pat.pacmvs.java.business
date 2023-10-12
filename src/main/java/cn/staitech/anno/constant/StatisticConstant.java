@@ -10,7 +10,6 @@ public class StatisticConstant {
     public static final String ANNOTATION_CATEGORY = "标注类别";
     public static final String USER = "成员";
     public static final String SLIDE = "图像";
-    public static final String TABLE_NAME = "综合统计列表";
     public static final int THIRTEEN_DAY = 13;
     public static final int THIRTY_ONE_DAY = 31;
     public static final int ONE_YEAR = 366;

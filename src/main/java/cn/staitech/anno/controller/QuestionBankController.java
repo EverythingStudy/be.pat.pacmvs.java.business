@@ -1,11 +1,6 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.domain.question.in.ConfirmSelectionIn;
-import cn.staitech.anno.domain.question.in.CreateBySlideIn;
-import cn.staitech.anno.domain.question.in.CreateQuestionIn;
-import cn.staitech.anno.domain.question.in.GetQuestionListIn;
-import cn.staitech.anno.domain.question.in.GetQuestionsIn;
-import cn.staitech.anno.domain.question.in.SettingCompletedIn;
+import cn.staitech.anno.domain.question.in.*;
 import cn.staitech.anno.domain.question.out.GetProjectBoxOut;
 import cn.staitech.anno.domain.question.out.GetQuestionListOut;
 import cn.staitech.anno.domain.question.out.GetQuestionsOut;
@@ -18,12 +13,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -73,7 +63,6 @@ public class QuestionBankController {
 
     @ApiOperation(value = "考核选片-不分页查询考题列表")
     @PostMapping("/getQuestionListExt")
-
     public R<List<GetQuestionListOut>> getQuestionListExt(@Validated @RequestBody GetQuestionsIn req) {
 
         List<GetQuestionListOut> resp = iQuestionBankService.getQuestionListExt(req);
@@ -83,7 +72,7 @@ public class QuestionBankController {
     @ApiOperation(value = "考核设置-项目下考题列表")
     @GetMapping("/getQuestionByProject")
     public R<GetQuestionsOut> getQuestionByProject(@RequestParam(value = "projectId", required = false)
-                                                            @NotNull(message = "项目id不能为空！") @ApiParam(name = "projectId", value = "项目id") Long projectId) {
+                                                   @NotNull(message = "项目id不能为空！") @ApiParam(name = "projectId", value = "项目id") Long projectId) {
 
         GetQuestionsOut resp = iQuestionBankService.getQuestionByProject(projectId);
         return R.ok(resp);

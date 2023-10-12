@@ -23,6 +23,7 @@ import cn.staitech.anno.service.SpecialImageService;
 import cn.staitech.anno.service.SpecialService;
 import cn.staitech.anno.service.SubImageService;
 import cn.staitech.anno.service.remote.SlideImageService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.WktUtil;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.uuid.IdUtils;
@@ -41,8 +42,6 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static cn.staitech.anno.constant.R.ResponseConstant.OPERATE_SUCCEED;
 
 /**
  * <p>
@@ -147,7 +146,7 @@ public class SpecialImageServiceImpl implements SpecialImageService {
                 image.setCreateTime(DateUtil.date());
                 image.setTopicId(vo.getTopicId());
                 //切图状态 0:未切图 1：生成中 2：切图完成 3：绘制中,确保在绘制中可以进行修改，且提交人是绘制
-                image.setCreateBy(0l);
+                image.setCreateBy(0L);
                 image.setSliceImageStatus(3);
                 //TODO 直接修改状态为绘制中+绘制人为AI
                 list.add(image);
@@ -182,7 +181,7 @@ public class SpecialImageServiceImpl implements SpecialImageService {
 				}
 			}*/
         }
-        return R.ok(OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_ERROR"));
     }
 
     //切全脏器服务调用
@@ -490,7 +489,7 @@ public class SpecialImageServiceImpl implements SpecialImageService {
                 //切图状态改为未切图 record.setEditBy(-1l);
                 record.setSliceImageStatus(0);
                 //这里是修改为空，恢复初始值
-                record.setEditBy(-1l);
+                record.setEditBy(-1L);
                 //更新当前批次号加1
                 record.setSliceBatchNumber(sImage.getSliceBatchNumber() + 1);
             }
@@ -525,7 +524,7 @@ public class SpecialImageServiceImpl implements SpecialImageService {
                 }
             }
         }
-        return R.ok(OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_ERROR"));
     }
 
 
@@ -549,13 +548,13 @@ public class SpecialImageServiceImpl implements SpecialImageService {
             Special special = new Special();
             special.setSpecialId(vo.getSpecialId());
             //交付状态 0：未交付 1：已交付
-            special.setDeliveryStatus(1l);
+            special.setDeliveryStatus(1L);
             special.setUpdateBy(SecurityUtils.getUserId());
             specialService.updateDeliveryStatus(special);
         } else {
             return R.fail(SpecialImageConstant.DELIVERY_FAIL);
         }
-        return R.ok(OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_ERROR"));
     }
 
     /**

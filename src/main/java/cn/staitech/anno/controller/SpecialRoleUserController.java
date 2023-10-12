@@ -4,6 +4,7 @@ import cn.staitech.anno.domain.special.SpecialRole;
 import cn.staitech.anno.domain.special.SpecialRoleUser;
 import cn.staitech.anno.domain.vo.special.*;
 import cn.staitech.anno.service.SpecialRoleUserService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.log.annotation.Log;
@@ -60,7 +61,7 @@ public class SpecialRoleUserController {
     }
 
     @ApiOperationSupport(author = "gjt")
-    @Log(menu = "专题管理", subMenu = "用户配置",title = "查询", businessType = BusinessType.QUERY)
+    @Log(menu = "专题管理", subMenu = "用户配置", title = "查询", businessType = BusinessType.QUERY)
     @ApiOperation(value = "查询专题信息")
     @PostMapping("/selectList")
     public R<PageMaster<SpecialRoleUserSelectResVo>> selectList(@Validated @RequestBody SpecialRoleUserSelectVo req) {
@@ -74,7 +75,7 @@ public class SpecialRoleUserController {
     @PostMapping("/insert")
     public R<String> insert(@Validated @RequestBody SpecialRoleUserVo req) {
         specialRoleUserService.insert(req);
-        return R.ok("操作成功");
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
 
     }
 
@@ -85,7 +86,7 @@ public class SpecialRoleUserController {
     @PostMapping("/update")
     public R<String> update(@Validated @RequestBody SpecialRoleUserVo req) {
         specialRoleUserService.updateRole(req);
-        return R.ok("操作成功");
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     @ApiOperationSupport(author = "gjt")
@@ -95,7 +96,7 @@ public class SpecialRoleUserController {
     @PostMapping("/updateStatus")
     public R<String> updateStatus(@Validated @RequestBody SpecialRoleUserStatusVo req) {
         specialRoleUserService.updateStatus(req);
-        return R.ok("操作成功");
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
 }

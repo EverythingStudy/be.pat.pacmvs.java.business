@@ -2,33 +2,22 @@ package cn.staitech.anno.controller;
 
 import cn.staitech.anno.constant.R.MeasureResponseConstant;
 import cn.staitech.anno.domain.Image;
+import cn.staitech.anno.response.R;
 import cn.staitech.anno.service.AnnotationService;
 import cn.staitech.anno.service.ProjectRoleService;
 import cn.staitech.anno.service.PythonOpenSlideService;
 import cn.staitech.anno.service.SlideService;
-//import cn.staitech.common.core.domain.R;
-import cn.staitech.anno.response.R;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysProjectRole;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.*;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -66,10 +55,9 @@ public class TestController {
     private RedissonClient redissonClient;
 
 
-
     @GetMapping("/api")
     public R sendMsg() {
-        return R.ok(null,"测试多语言#ABC");
+        return R.ok(null, "测试多语言#ABC");
     }
 
 
@@ -139,13 +127,13 @@ public class TestController {
 
 
     @GetMapping("/setStr")
-    public Long setStr(String res, Long userId,String userName) {
+    public Long setStr(String res, Long userId, String userName) {
 
         RBucket<String> rBucket = redissonClient.getBucket("slideId" + ":" + res);
 //// 设置value和key的有效期
-        Map<String,Object> map = new HashMap<>();
-        map.put("userId",userId);
-        map.put("userName",userName);
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("userName", userName);
         System.out.println(String.valueOf(map) + ">>>>>>>>>>>>>>>>>>>>>>>>>>>");
 
         rBucket.set(String.valueOf(map), 300, TimeUnit.MINUTES);
@@ -165,7 +153,7 @@ public class TestController {
 
         Iterable<String> keysByPattern = keys.getKeysByPattern("slideId:" + "*");
 
-        for(String i:keysByPattern){
+        for (String i : keysByPattern) {
 
             String o = client.getBucket(i).get().toString();
             System.out.println(o);
@@ -179,8 +167,6 @@ public class TestController {
 
         return "ok";
     }
-
-
 
 
     //Object转Map
@@ -265,27 +251,15 @@ public class TestController {
     }
 
 
-
-
-
     public static void main(String[] args) throws Exception {
-        Map<String,Object> map = new HashMap<>();
-        map.put("userId",1);
-        map.put("userName","admin");
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", 1);
+        map.put("userName", "admin");
         Object o = map;
         System.out.println(o);
         System.out.println(getFieldsValue(o));
 
     }
-
-
-
-
-
-
-
-
-
 
 
     // 删除
@@ -304,7 +278,7 @@ public class TestController {
         rLock.lock();
         try {
             //尝试5秒内获取锁，如果获取到了，最长60秒自动释放
-            boolean res = rLock.tryLock(5,  TimeUnit.MINUTES);
+            boolean res = rLock.tryLock(5, TimeUnit.MINUTES);
             if (res) {
                 return true;
             }
@@ -315,15 +289,12 @@ public class TestController {
     }
 
 
-
-
-
     @GetMapping("/acquire1")
     public boolean acquire1(String req) {
         RLock lock = redissonClient.getLock(req);
         try {
             //尝试加锁，最多等待10秒，上锁以后10秒自动解锁
-            if (lock.tryLock(10,10, TimeUnit.SECONDS)) {
+            if (lock.tryLock(10, 10, TimeUnit.SECONDS)) {
                 try {
                     //处理
 
@@ -341,10 +312,6 @@ public class TestController {
         }
         return true;
     }
-
-
-
-
 
 
     @GetMapping("/release")
@@ -368,35 +335,12 @@ public class TestController {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @GetMapping("/setHash")
-    public Long setHash(String res, Long userId,String userName) {
+    public Long setHash(String res, Long userId, String userName) {
         RMap<Object, Object> rMap = redissonClient.getMap("slideId" + ":" + res);
-        rMap.put("userId",userId);
-        rMap.put("userName",userName);
-        rMap.expire(500,TimeUnit.MINUTES);
+        rMap.put("userId", userId);
+        rMap.put("userName", userName);
+        rMap.expire(500, TimeUnit.MINUTES);
         String mValue = (String) rMap.get("userName");
         System.out.println(mValue);
         return 1L;
@@ -405,10 +349,10 @@ public class TestController {
     @GetMapping("/delHash")
     public boolean delHash(String slideId) {
         Long res = redissonClient.getKeys().delete(slideId);
-        System.out.println(res  + ">>>>");
-        if(res > 0){
+        System.out.println(res + ">>>>");
+        if (res > 0) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -426,8 +370,8 @@ public class TestController {
             return "参数异常";
         }
         List<String> SOURCE = new ArrayList<>();
-        for (int i = 0; i<str.length(); i++){
-            SOURCE.add(str.substring(i,i+1));
+        for (int i = 0; i < str.length(); i++) {
+            SOURCE.add(str.substring(i, i + 1));
         }
         List<String> unicodeList = new ArrayList(SOURCE);
         List<String> outputList = new ArrayList<String>();
@@ -494,9 +438,16 @@ public class TestController {
         return tm;
     }
 
+    @GetMapping("/i18n")
+    public String i18n() {
+        String welcome = MessageSource.M("welcome");
+        return welcome;
+    }
 
-
-
-
-
+    @GetMapping("/i18n1")
+    public String i18n1() {
+        String welcome = MessageSource.getMessage("welcome");
+        System.out.println(welcome);
+        return welcome;
+    }
 }

@@ -1,11 +1,10 @@
 package cn.staitech.anno.controller;
 
-
-import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.geojson.Features;
 import cn.staitech.anno.domain.markingExamine.MarkingExamineInsertVO;
 import cn.staitech.anno.domain.markingExamine.MarkingExamineUpdateVO;
 import cn.staitech.anno.service.MarkingExamineService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.R;
 import com.alibaba.fastjson.JSONArray;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -50,7 +49,7 @@ public class MarkingExamineController {
     @PostMapping("/insert")
     public R<Long> add(@Validated @RequestBody MarkingExamineInsertVO req) throws Exception {
         Long markingId = markingExamineService.insert(req);
-        return R.ok(markingId, ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(markingId, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     @ApiOperationSupport(author = "gjt")
@@ -59,7 +58,7 @@ public class MarkingExamineController {
     @DeleteMapping("/delete")
     public R<String> del(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) Long marking_id) throws Exception {
         markingExamineService.delete(marking_id);
-        return R.ok("操作成功");
+        return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
     }
 
     @ApiOperationSupport(author = "gjt")
@@ -67,7 +66,7 @@ public class MarkingExamineController {
     @PutMapping("/update")
     public R<Long> update(@Validated @RequestBody MarkingExamineUpdateVO req) throws Exception {
         markingExamineService.update(req);
-        return R.ok(req.getMarking_id(), ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(req.getMarking_id(), MessageSource.M("OPERATE_SUCCEED"));
     }
 
 

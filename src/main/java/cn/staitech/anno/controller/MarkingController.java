@@ -1,7 +1,6 @@
 package cn.staitech.anno.controller;
 
 
-import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.geojson.Features;
 import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
 import cn.staitech.anno.domain.geojson.in.viewAddIn;
@@ -10,8 +9,8 @@ import cn.staitech.anno.domain.vo.marking.out.SlideSelectBy;
 import cn.staitech.anno.project.service.DownTaskService;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.SlideService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.R;
-
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -72,7 +71,7 @@ public class MarkingController {
     @PostMapping("/intelligentAnno/insert")
     public R<Long> add(@Validated @RequestBody viewAddIn req) throws Exception {
         Long markingId = markingService.insert(req);
-        return R.ok(markingId, ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(markingId, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     @ApiOperationSupport(author = "gjt")
@@ -81,7 +80,7 @@ public class MarkingController {
     @DeleteMapping("/intelligentAnno/delete")
     public R<String> del(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) Long marking_id) throws Exception {
         markingService.delete(marking_id);
-        return R.ok("操作成功");
+        return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
     }
 
     @ApiOperationSupport(author = "gjt")
@@ -89,7 +88,7 @@ public class MarkingController {
     @PutMapping("/intelligentAnno/update")
     public R<Long> update(@Validated @RequestBody MarkingUpdateIn req) throws Exception {
         markingService.update(req);
-        return R.ok(req.getMarking_id(), ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(req.getMarking_id(), MessageSource.M("OPERATE_SUCCEED"));
     }
 
     @ApiOperationSupport(author = "gjt")
@@ -98,7 +97,7 @@ public class MarkingController {
     public R<String> getWebsocketPort() {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (requestAttributes == null) {
-            return R.fail(ResponseConstant.OPERATE_ERROR);
+            return R.fail(MessageSource.M("OPERATE_ERROR"));
         }
         HttpServletRequest request = requestAttributes.getRequest();
         String localAdd = request.getLocalAddr();
@@ -131,7 +130,7 @@ public class MarkingController {
     @ApiImplicitParams({@ApiImplicitParam(name = "slideId", value = "切片id", required = true, dataType = "Long", paramType = "query")})
     public R<String> batchDeleteRoi(@RequestParam @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId) {
         markingService.batchDelete(slideId);
-        return R.ok("操作成功");
+        return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
     }
 
 }

@@ -2,8 +2,6 @@ package cn.staitech.anno.controller;
 
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.staitech.anno.constant.ImageConstant;
-import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.vo.SlideDescriptionVo;
 import cn.staitech.anno.domain.vo.image.ProjectStatisticsVo;
@@ -16,6 +14,7 @@ import cn.staitech.anno.domain.vo.slideVo.*;
 import cn.staitech.anno.domain.vo.topic.TopicListVO;
 import cn.staitech.anno.response.R;
 import cn.staitech.anno.service.SlideService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
@@ -146,7 +145,7 @@ public class SlideController extends BaseController {
             slide.setUpdateBy(SecurityUtils.getUserId());
             slideService.updateDescription(slide);
         }
-        return R.ok(ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     @ApiOperation(value = "查询组内切片报表摘要")
@@ -195,7 +194,7 @@ public class SlideController extends BaseController {
             @RequestParam(name = "projectId") @ApiParam(name = "projectId", value = "项目id") Long projectId
     ) throws Exception {
         slideService.jsonExport(slideList, projectId, status);
-        return R.ok("操作成功");
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     // =======================================================================================================
@@ -293,9 +292,9 @@ public class SlideController extends BaseController {
     public R deleteBatchIds(@RequestBody DelSlideIdsVO request) {
         // delSlidesBatchzr返回未删除个数
         if (slideService.delSlidesBatch(request.getSlideIds()) > 0) {
-            return R.fail(ImageConstant.IMAGE_ANNO_USING_FORBID_DELETE);
+            return R.fail(MessageSource.M("IMAGE_ANNO_USING_FORBID_DELETE"));
         }
-        return R.ok(null, ImageConstant.OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     /**
@@ -310,9 +309,9 @@ public class SlideController extends BaseController {
     @PostMapping("/deleteAll")
     public R deleteAll(@RequestBody DelSlideVO req) {
         if (removeAll(req.getProjectId(), req.getReviewRoundId())) {
-            return R.ok(ImageConstant.OPERATE_SUCCEED);
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
-        return R.fail(ImageConstant.OPERATE_ERROR);
+        return R.fail(MessageSource.M("OPERATE_ERROR"));
     }
 
 

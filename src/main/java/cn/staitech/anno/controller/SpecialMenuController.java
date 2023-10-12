@@ -6,6 +6,7 @@ import cn.staitech.anno.domain.vo.special.RouterVo;
 import cn.staitech.anno.domain.vo.special.SpecialMenuQuery;
 import cn.staitech.anno.service.SpecialMenuService;
 import cn.staitech.anno.service.SpecialService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.domain.AjaxResult;
 import cn.staitech.common.security.utils.SecurityUtils;
@@ -13,13 +14,16 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
-import java.util.*;
-
-import static cn.staitech.anno.constant.R.ResponseConstant.OPERATE_SUCCEED;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @Description ：专题菜单信息
@@ -54,7 +58,7 @@ public class SpecialMenuController {
         Long userId = SecurityUtils.getUserId();
         R<Object> objectR = R.ok();
         objectR.setData(specialMenuService.selectMenuList(menu, userId));
-        objectR.setMsg(OPERATE_SUCCEED);
+        objectR.setMsg(MessageSource.M("OPERATE_SUCCEED"));
         return objectR;
     }
 
@@ -84,7 +88,7 @@ public class SpecialMenuController {
         List<SpecialMenu> menus = specialMenuService.selectMenuList(menu, 1L);
         R<Object> objectR = R.ok();
         objectR.setData(specialMenuService.buildMenuTreeSelect(menus));
-        objectR.setMsg(OPERATE_SUCCEED);
+        objectR.setMsg(MessageSource.M("OPERATE_SUCCEED"));
         return objectR;
     }
 
@@ -105,7 +109,7 @@ public class SpecialMenuController {
         }
         R<Object> objectR = R.ok();
         objectR.setData(specialMenuService.buildMenuTreeSelect(menus));
-        objectR.setMsg(OPERATE_SUCCEED);
+        objectR.setMsg(MessageSource.M("OPERATE_SUCCEED"));
         return objectR;
     }
 
@@ -125,7 +129,7 @@ public class SpecialMenuController {
         hashMap.put("checkedKeys", specialMenuService.selectMenuListByRoleId(roleId));
         hashMap.put("menus", specialMenuService.buildMenuTreeSelect(menus));
         ok.setData(hashMap);
-        ok.setMsg(OPERATE_SUCCEED);
+        ok.setMsg(MessageSource.M("OPERATE_SUCCEED"));
         return ok;
     }
 
@@ -152,7 +156,7 @@ public class SpecialMenuController {
     @GetMapping("/getList/{specialId}")
     public R<HashMap> getList(@ApiParam(name = "specialId", value = "专题ID") @PathVariable("specialId") Long specialId) {
         Long userId = SecurityUtils.getUserId();
-        List<SpecialMenu> list = specialMenuService.selectMenuListBySpecialId(userId,specialId);
+        List<SpecialMenu> list = specialMenuService.selectMenuListBySpecialId(userId, specialId);
         Special special = specialService.selectSpecialById(specialId);
         List<Object> permissions = new ArrayList<>();
         list.forEach(o -> {
@@ -164,6 +168,6 @@ public class SpecialMenuController {
         map.put("menus", buildMenus);
         map.put("permissions", permissions);
         map.put("specialName", special.getSpecialName());
-        return R.ok(map, OPERATE_SUCCEED);
+        return R.ok(map, MessageSource.M("OPERATE_SUCCEED"));
     }
 }

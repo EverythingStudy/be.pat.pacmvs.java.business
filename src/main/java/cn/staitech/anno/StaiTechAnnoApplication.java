@@ -1,7 +1,7 @@
 package cn.staitech.anno;
 
 import cn.staitech.anno.netty.websocket.NioWebSocketServer;
-import cn.staitech.anno.utils.LocaleMessageSourceUtil;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.security.annotation.EnableCustomConfig;
 import cn.staitech.common.security.annotation.EnableRyFeignClients;
 import cn.staitech.common.swagger.annotation.EnableCustomSwagger2;
@@ -9,7 +9,6 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.context.MessageSource;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -32,8 +31,8 @@ import java.util.TimeZone;
 @EnableElasticsearchRepositories(basePackages = {"cn.staitech.common.log.elasticsearchRepositories", "cn.staitech.anno.elasticsearchRepositories"})
 public class StaiTechAnnoApplication {
 
-    public StaiTechAnnoApplication(MessageSource messageSource) {
-        LocaleMessageSourceUtil.init(messageSource);
+    public StaiTechAnnoApplication(org.springframework.context.MessageSource messageSource) {
+        MessageSource.init(messageSource);
     }
 
     public static void main(String[] args) {

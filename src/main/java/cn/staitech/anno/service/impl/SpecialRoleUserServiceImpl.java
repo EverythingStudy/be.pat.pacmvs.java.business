@@ -1,15 +1,14 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.constant.SpecialRoleUserConstant;
-
 import cn.staitech.anno.domain.special.SpecialRole;
 import cn.staitech.anno.domain.special.SpecialRoleUser;
 import cn.staitech.anno.domain.vo.special.*;
 import cn.staitech.anno.mapper.SpecialRoleMapper;
 import cn.staitech.anno.mapper.SpecialRoleUserMapper;
 import cn.staitech.anno.service.SpecialRoleUserService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
-
 import cn.staitech.common.core.exception.ServiceException;
 import cn.staitech.common.security.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
@@ -34,7 +33,6 @@ public class SpecialRoleUserServiceImpl implements SpecialRoleUserService {
     private SpecialRoleMapper specialRoleMapper;
 
 
-
     /**
      * 查询可用的角色
      *
@@ -42,7 +40,7 @@ public class SpecialRoleUserServiceImpl implements SpecialRoleUserService {
      * @return list
      */
     @Override
-    public List<SpecialRole> selectSpecialRole(Long specialId){
+    public List<SpecialRole> selectSpecialRole(Long specialId) {
         if (!Optional.ofNullable(specialId).isPresent()) {
             throw new ServiceException("专题不可为空");
         }
@@ -54,11 +52,12 @@ public class SpecialRoleUserServiceImpl implements SpecialRoleUserService {
 
     /**
      * 查询用户所参与的专题
+     *
      * @param userId 用户id
      * @return List<SpecialRoleUser>
      */
     @Override
-    public List<SpecialRoleUser> selectUserId(Long userId){
+    public List<SpecialRoleUser> selectUserId(Long userId) {
         return specialRoleUserMapper.selectUserId(userId);
     }
 
@@ -70,9 +69,9 @@ public class SpecialRoleUserServiceImpl implements SpecialRoleUserService {
      * @return true||false
      */
     @Override
-    public SpecialRoleUserSelectResVo selectUserSpecialBy(SpecialSelectByIn req){
+    public SpecialRoleUserSelectResVo selectUserSpecialBy(SpecialSelectByIn req) {
         SpecialRoleUserSelectResVo res = specialRoleUserMapper.selectUserSpecialBy(req);
-        if(res != null){
+        if (res != null) {
             res.setStatusFlag(SpecialRoleUserConstant.SPECIAL_ROLE_STATUS_MAP.get(res.getStatus()));
         }
         return res;
@@ -92,7 +91,7 @@ public class SpecialRoleUserServiceImpl implements SpecialRoleUserService {
         specialRoleUser.setSpecialId(req.getSpecialId());
         // 根据专题id和用户判断当前用户是否在专题中
         SpecialRoleUser specialRoleUsers = specialRoleUserMapper.select(specialRoleUser);
-        if(specialRoleUsers != null){
+        if (specialRoleUsers != null) {
             throw new RuntimeException("当前专题内已有该用户，禁止重复添加");
         }
         specialRoleUser.setRoleId(req.getRoleId());
@@ -100,7 +99,7 @@ public class SpecialRoleUserServiceImpl implements SpecialRoleUserService {
         specialRoleUser.setUpdateBy(SecurityUtils.getUserId());
         int res = specialRoleUserMapper.insert(specialRoleUser);
         if (res <= 0) {
-            throw new ServiceException("操作失败");
+            throw new ServiceException(MessageSource.M("OPERATE_ERROR"));
         }
         return res;
     }
@@ -119,7 +118,7 @@ public class SpecialRoleUserServiceImpl implements SpecialRoleUserService {
         specialRoleUser.setSpecialId(req.getSpecialId());
         specialRoleUser.setUpdateBy(SecurityUtils.getUserId());
         if (specialRoleMapper.selectRoleById(req.getRoleId()) == null) {
-            throw new ServiceException("为查询到该角色信息");
+            throw new ServiceException("未查询到该角色信息");
         }
         return specialRoleUserMapper.updateRole(specialRoleUser);
     }
@@ -152,7 +151,7 @@ public class SpecialRoleUserServiceImpl implements SpecialRoleUserService {
      */
     @Override
     public PageMaster<SpecialRoleUserSelectResVo> selectList(SpecialRoleUserSelectVo specialRoleUser) {
-        startPage(specialRoleUser.getPageNum(),specialRoleUser.getPageSize());
+        startPage(specialRoleUser.getPageNum(), specialRoleUser.getPageSize());
         List<SpecialRoleUserSelectResVo> specialRoleUserSelectResVos = specialRoleUserMapper.selectList(specialRoleUser);
         for (SpecialRoleUserSelectResVo s : specialRoleUserSelectResVos) {
             s.setStatusFlag(SpecialRoleUserConstant.SPECIAL_ROLE_STATUS_MAP.get(s.getStatus()));

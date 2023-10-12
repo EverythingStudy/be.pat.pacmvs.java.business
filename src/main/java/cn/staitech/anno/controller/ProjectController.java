@@ -1,7 +1,6 @@
 package cn.staitech.anno.controller;
 
 import cn.staitech.anno.constant.ProjectConstant;
-import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.ProjectMember;
 import cn.staitech.anno.domain.RecentlyVisited;
@@ -18,6 +17,7 @@ import cn.staitech.anno.domain.vo.project.InsertProjectVO;
 import cn.staitech.anno.domain.vo.project.UpdateProjectStatusVO;
 import cn.staitech.anno.domain.vo.project.UpdateProjectVO;
 import cn.staitech.anno.service.*;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
@@ -303,9 +303,9 @@ public class ProjectController extends BaseController {
                     .organizationId(sysUser.getOrganizationId())
                     .roleId(sysUser.getRoleId()).createBy(sysUser.getUserId()).build();
             projectMemberService.save(projectMember);
-            return R.ok(ResponseConstant.OPERATE_SUCCEED);
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
-        return R.fail(ResponseConstant.OPERATE_ERROR);
+        return R.fail(MessageSource.M("OPERATE_ERROR"));
     }
 
     @ApiOperationSupport(author = "wangfeng")
@@ -339,9 +339,9 @@ public class ProjectController extends BaseController {
         project.setUpdateTime(new Date());
         project.setOrganizationId(sysUser.getOrganizationId());
         if (projectService.updateById(project)) {
-            return R.ok(ResponseConstant.OPERATE_SUCCEED);
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
-        return R.fail(ResponseConstant.OPERATE_ERROR);
+        return R.fail(MessageSource.M("OPERATE_ERROR"));
     }
 
     @ApiOperationSupport(author = "wangfeng")
@@ -370,9 +370,9 @@ public class ProjectController extends BaseController {
         }
 
         if (processCount.get() > 0) {
-            return R.ok(ResponseConstant.OPERATE_SUCCEED);
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         } else {
-            return R.fail(ResponseConstant.OPERATE_ERROR);
+            return R.fail(MessageSource.M("OPERATE_ERROR"));
         }
     }
 
@@ -404,9 +404,9 @@ public class ProjectController extends BaseController {
         project.setOrganizationId(sysUser.getOrganizationId());
 
         if (projectService.updateById(project)) {
-            return R.ok(ResponseConstant.OPERATE_SUCCEED);
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
-        return R.fail(ResponseConstant.OPERATE_ERROR);
+        return R.fail(MessageSource.M("OPERATE_ERROR"));
     }
 
 
@@ -428,6 +428,6 @@ public class ProjectController extends BaseController {
             return R.fail("参数异常");
         }
         markingService.zipExport(zipUrl, specialId);
-        return R.ok("操作成功");
+        return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
     }
 }
