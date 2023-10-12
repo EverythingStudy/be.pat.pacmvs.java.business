@@ -84,6 +84,7 @@
         where #{createBy} in (select user_id from tb_project_member where project_id = #{projectId})
           and qp.project_id = #{projectId}
           and  qp.del_flag = '0'
+          and e.create_by = #{createBy}
         <if test="imageName != null and imageName != ''">
             and qp.image_name like concat('%', #{imageName}, '%')
         </if>
