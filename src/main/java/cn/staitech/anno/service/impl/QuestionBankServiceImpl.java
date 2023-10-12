@@ -123,7 +123,8 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                 throw new RuntimeException(QuestionBankConstant.ERROR_GENERATE_JSON);
             }
             String s = StringUtils.substringAfterLast(urlPath, File.separator);
-            String s1 = StringUtils.substringBeforeLast(urlPath, File.separator);
+//            String s1 = StringUtils.substringBeforeLast(urlPath, File.separator);
+            String s1 = urlPath;
             ret.setJsonName(s);
             ret.setGeojsonUrl(s1);
             return ret;

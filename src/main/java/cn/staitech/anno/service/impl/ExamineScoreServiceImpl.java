@@ -19,6 +19,7 @@ import com.ibm.icu.text.SimpleDateFormat;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -82,6 +83,10 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         QueryWrapper<QuestionProjectRel> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("project_id",projectId).eq("del_flag",'0');
         QuestionProjectRel questionProjectRel = questionProjectRelMapper.selectOne(queryWrapper);
+        // 为空表示项目未添加切片
+        if(questionProjectRel == null){
+            return new ArrayList<>();
+        }
         QueryWrapper<ExamineScore> examineScoreQueryWrapper = new QueryWrapper<>();
         examineScoreQueryWrapper.eq("question_project_id",questionProjectRel.getQuestionProjectId()).eq("create_by", SecurityUtils.getLoginUser().getSysUser().getUserId());
         ExamineScore examineScoreBy = examineScoreMapper.selectOne(examineScoreQueryWrapper);
