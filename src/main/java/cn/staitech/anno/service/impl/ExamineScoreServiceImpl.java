@@ -2,10 +2,7 @@ package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import cn.staitech.anno.domain.*;
-import cn.staitech.anno.domain.examineScore.ExamineScoreAddVO;
-import cn.staitech.anno.domain.examineScore.ExamineScoreBy;
-import cn.staitech.anno.domain.examineScore.ExamineScoreExportVO;
-import cn.staitech.anno.domain.examineScore.SelectExaminationListVO;
+import cn.staitech.anno.domain.examineScore.*;
 import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.mapper.ProjectMapperV1;
@@ -29,6 +26,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -90,6 +88,22 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
     }
 
     @Override
+    public void refreshInterval(ExamineScoreExportInsertVo examineScoreExportInsertVo) {
+        List<Long> questionProjectRelList = new ArrayList<>();
+        for (Long examineId : examineScoreExportInsertVo.getExamineScoreIdList()) {
+            ExamineScore examineScore = examineScoreMapper.selectById(examineId);
+            QueryWrapper<QuestionProjectRel> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("question_project_id", examineScore.getQuestionProjectId());
+            QuestionProjectRel questionProjectRel = questionProjectRelMapper.selectOne(queryWrapper);
+            questionProjectRelList.add(questionProjectRel.getQuestionId());
+        }
+        List<Long> myList = questionProjectRelList.stream().distinct().collect(Collectors.toList());
+        JSONObject markingJsonObject = new JSONObject();
+        markingJsonObject.put("question_id", myList);
+        remoteLabelService.Standard(markingJsonObject);
+    }
+
+    @Override
     public List<SelectExaminationListVO> selectExaminationList(Long projectId, String imageName) {
         QuestionBank questionBank = new QuestionBank();
         questionBank.setProjectId(projectId);
@@ -133,7 +147,7 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
     }
 
     @Override
-    public ExamineScoreBy selectByIds(Long examineScoreId){
+    public ExamineScoreBy selectByIds(Long examineScoreId) {
         return examineScoreMapper.selectByIds(examineScoreId);
     }
 
@@ -147,8 +161,8 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         }
         // 校验当前项目是否暂停或者完成
         Project projectBy = projectMapperV1.selectById(questionProjectRel.getProjectId());
-        if(projectBy != null){
-            if(projectBy.getStatus() == 3 || projectBy.getStatus() == 4){
+        if (projectBy != null) {
+            if (projectBy.getStatus() == 3 || projectBy.getStatus() == 4) {
                 throw new Exception("项目暂停或已完成，不可点击开始考试按钮");
             }
         }
@@ -177,6 +191,7 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         examineScore.setCreateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
         examineScore.setCreateTime(sdf.format(date));
         examineScore.setSlideId(questionBank.getSlideId());
+        examineScore.setGeojsonUrl(questionBank.getGeojsonUrl());
         int res = examineScoreMapper.insert(examineScore);
         delayQueueExample.addDelayQueueExample(examineScore.getExamineScoreId());
         return res;
@@ -216,16 +231,16 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         examineScore.setRealityNumber(Long.valueOf(markingCount));
 
         JSONObject markingJsonObject = new JSONObject();
-        markingJsonObject.put("examine_score_id",examineScore.getExamineScoreId());
+        markingJsonObject.put("examine_score_id", examineScore.getExamineScoreId());
         remoteLabelService.marking(markingJsonObject);
         // 更新当前评分记录
         return examineScoreMapper.updateById(examineScore);
     }
 
     @Override
-    public void updatePersonalFit(Long examineScoreId){
+    public void updatePersonalFit(Long examineScoreId) {
         JSONObject markingJsonObject = new JSONObject();
-        markingJsonObject.put("examine_score_id",examineScoreId);
+        markingJsonObject.put("examine_score_id", examineScoreId);
         remoteLabelService.marking(markingJsonObject);
     }
 
