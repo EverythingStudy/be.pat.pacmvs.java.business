@@ -1,6 +1,7 @@
 package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.thread.ExecutorBuilder;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.constant.ProjectConstant;
 import cn.staitech.anno.domain.Group;
 import cn.staitech.anno.domain.Project;
@@ -434,7 +435,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
         stopWatch.stop();
         log.info(stopWatch.prettyPrint());
         //修改一键创建状态
-        projectExtMapper.updateSpecial(specialId, ProjectConstant.AUTO_CREATE_PROJECT_SUC);
+        projectExtMapper.updateSpecial(specialId, CommonConstant.AUTO_CREATE_PROJECT_SUC);
         return R.ok();
     }
 
@@ -445,7 +446,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
      */
     @Override
     public void changeSpecial(Long specialId) {
-        projectExtMapper.updateSpecial(specialId, ProjectConstant.AUTO_CREATE_PROJECT_FAL);
+        projectExtMapper.updateSpecial(specialId, CommonConstant.AUTO_CREATE_PROJECT_FAL);
 
     }
 

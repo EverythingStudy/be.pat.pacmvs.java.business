@@ -8,22 +8,6 @@ public class ProjectConstant {
     public static final String IMAGE_UPLOADED_ANNOTATION = "：该图像已有上传标注、不可上传";
     public static final String ANNOTATION_CATEGORY = "标注类别";
     public static final String NON_EXISTENT = "不存在，请添加后重试";
-    public static final String NONE = "none";
-    public static final String REGIONS = "regions";
-    public static final String REGION_ATTRIBUTES = "region_attributes";
-    public static final String BONE_MARROW = "bone_marrow";
-    public static final String SHAPE_ATTRIBUTES = "shape_attributes";
-    public static final String ALL_POINTS_X = "all_points_x";
-    public static final String ALL_POINTS_Y = "all_points_y";
-    public static final String NAME = "name";
-    public static final String POLYGON = "POLYGON";
-    public static final String POINT = "POINT";
-    public static final String LINESTRING = "LINESTRING";
-    public static final String POLYGON_WITH_HOLES = "polygon_with_holes";
-    public static final String CHILDREN_CNTS = "children_cnts";
-    public static final String VIA_IMG_METADATA = "_via_img_metadata";
-    public static final String FILENAME = "filename";
-    public static final String CHARACTER_SET = "UTF-8";
     public static final String INCORRECT_FORMAT = "请上传正确格式的json文件！";
     public static final String INDICATOR_DATA = "未发现病理指标";
     public static final String PROJECT_EXIST = "项目名已存在，请检查后输入";
@@ -31,12 +15,10 @@ public class ProjectConstant {
     public static final String NO_ATTRIBUTE = "无属性";
     public static final String IMAGE_NOT_EXIST = "图像不存在";
     public static final String SLIDE_ID_NOT_NULL = "切片id不可为空";
-    public static final Long NOT_AUDIT = 0L;
+
     public static final String INDICATOR_EXIST = "病理指标名已存在，请检查后输入";
     public static final String ADD_INDICATOR_ERROR = "病理指标添加失败";
-    public static final Integer NOT_INDICATOR_STATUS = 1;
-    public static final Integer INDICATOR_STATUS = 2;
-    public static final Integer NOT_ATTRIBUTE_STATUS = 3;
+
     public static final String STATUS_ERROR = "状态值错误";
     public static final String SERIAL_NO = "序号:";
     public static final String IN_DIMENSION = "图片标注中，不能删除";
@@ -63,7 +45,7 @@ public class ProjectConstant {
     public static final String NOT_ADDED = "未添加";
     public static final String NOT_CHANGE = "没有变动";
     public static final String MODIFIED_SUCCESSFULLY = "项目名称修改成功";
-    
+
     /**************
      * 项目模块字典值
      *************/
@@ -76,10 +58,8 @@ public class ProjectConstant {
     public static final String PROJECT_BATCH_INSERT = "一键创建项目异常";
     public static final String SPECIAL_NON_DELIVERY = "当前切片状态不满足一键创建，请先交付切片";
     public static final String SPECIAL_EXIST_PROJECT = "当前项目列表已进行过手工操作，禁止一键创建";
-    public static final Long AUTO_CREATE_PROJECT_SUC = 1L;
-    public static final Long AUTO_CREATE_PROJECT_FAL = 2L;
+
     public static final String AUTO_CREATE_REASON = "上游数据问题，一键创建项目异常";
-    public static final String LOGIN_TOKEN_KEY = "login_tokens:";
     public static final String SPECIAL_EXIST_NON_DELIVERY = "专题未交付";
     public static final String SPECIAL_NOTEXIST_GROUP = "专题内不存在分组";
 

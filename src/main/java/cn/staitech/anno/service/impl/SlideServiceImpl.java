@@ -484,7 +484,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                 // 清空response
                 response.reset();
                 OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
-                response.setCharacterEncoding(CommonConstant.CHARACTER_ENCODING);
+                response.setCharacterEncoding(CommonConstant.CHARACTER_SET_UTF8);
                 response.setContentType(CommonConstant.CONTENT_TYPE);
                 response.setHeader(CommonConstant.HEADER, "attachment;filename=" + URLEncoder.encode(projectExt.getProjectName(), "utf-8") + CommonConstant.FILE_SUFFIX_TXT);
                 outputStream.write(res.toString().getBytes());

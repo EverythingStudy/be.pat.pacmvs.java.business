@@ -240,7 +240,7 @@ public class ExaminationController extends BaseController {
             // 清空response
             response.reset();
             OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
-            response.setCharacterEncoding(CommonConstant.CHARACTER_ENCODING);
+            response.setCharacterEncoding(CommonConstant.CHARACTER_SET_UTF8);
             response.setContentType(CommonConstant.CONTENT_TYPE);
             response.setHeader(CommonConstant.HEADER, "attachment;filename=" + fileName);
             outputStream.write(jsonString.getBytes());

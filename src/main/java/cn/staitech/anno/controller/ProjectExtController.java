@@ -6,6 +6,7 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.staitech.anno.config.ICache;
 import cn.staitech.anno.constant.CacheConstant;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.constant.ProjectConstant;
 import cn.staitech.anno.domain.*;
 import cn.staitech.anno.domain.image.in.ImageAllVO;
@@ -54,7 +55,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static cn.staitech.anno.constant.CommonConstant.FILE_SUFFIX_JSON;
+import static cn.staitech.anno.constant.CommonConstant.*;
 import static cn.staitech.anno.constant.ProjectConstant.*;
 
 /**
@@ -183,14 +184,14 @@ public class ProjectExtController extends BaseController {
         final Long[] imageIdList = req.getImageIdList();
         Indicator indicator = new Indicator();
         Integer status = req.getStatus();
-        if (status < ProjectConstant.NOT_INDICATOR_STATUS || status > ProjectConstant.NOT_ATTRIBUTE_STATUS) {
+        if (status < CommonConstant.NOT_INDICATOR_STATUS || status > CommonConstant.NOT_ATTRIBUTE_STATUS) {
             return R.fail(ProjectConstant.STATUS_ERROR);
         }
         Project project = new Project();
         project.setProjectName(name);
         project.setDescription(req.getDescription());
         project.setCreateBy(loginUser);
-        if (status.equals(ProjectConstant.NOT_INDICATOR_STATUS)) {
+        if (status.equals(CommonConstant.NOT_INDICATOR_STATUS)) {
             Indicator indicatorMessage = new Indicator();
             indicatorMessage.setIndicatorName(name);
             //查询病理名称是否存在，用来判断是否可以使用
@@ -207,7 +208,7 @@ public class ProjectExtController extends BaseController {
             }
             project.setIndicatorId(Long.valueOf(indicator.getIndicatorId()));
 
-        } else if (status.equals(ProjectConstant.INDICATOR_STATUS)) {
+        } else if (status.equals(CommonConstant.INDICATOR_STATUS)) {
             project.setIndicatorId(req.getIndicatorId());
         }
 
@@ -265,7 +266,7 @@ public class ProjectExtController extends BaseController {
             slideManage.insertProjectImage(slideList, currentProjectId);
         }
         if (i > 0) {
-            if (!status.equals(ProjectConstant.NOT_ATTRIBUTE_STATUS)) {
+            if (!status.equals(CommonConstant.NOT_ATTRIBUTE_STATUS)) {
                 IndicatorReviseVO indicatorReviseVO = new IndicatorReviseVO();
                 indicatorReviseVO.setIndicatorId(project.getIndicatorId().intValue());
                 //更新病理数据
@@ -1157,7 +1158,7 @@ public class ProjectExtController extends BaseController {
         try {
             //将MultipartFile类型转换为File类型
             FileUtils.copyInputStreamToFile(multipartFile.getInputStream(), file);
-            String jsonString = FileUtils.readFileToString(file, CHARACTER_SET);
+            String jsonString = FileUtils.readFileToString(file, CHARACTER_SET_UTF8);
 
             //如果是json文件
             if (suffixName.equals(FILE_SUFFIX_JSON)) {
@@ -1325,7 +1326,7 @@ public class ProjectExtController extends BaseController {
                 zos.putNextEntry(new ZipEntry(imageName.split("\\.")[0] + "_" + slideId + FILE_SUFFIX_JSON));
 
                 //json数据转为输入流
-                bais = new ByteArrayInputStream(jsonObject0.toString().getBytes(CHARACTER_SET));
+                bais = new ByteArrayInputStream(jsonObject0.toString().getBytes(CHARACTER_SET_UTF8));
 
                 int len = 0;
                 byte[] buf = new byte[1024];
@@ -1362,7 +1363,7 @@ public class ProjectExtController extends BaseController {
             //attachment表示以附件方式下载 inline表示在线打开 "Content-Disposition: inline; filename=文件名.mp3"
             // filename表示文件的默认名称，因为网络传输只支持URL编码的相关支付，因此需要将文件名URL编码后进行传输,前端收到后需要反编码才能获取到真正的名称
             response.addHeader("Content-Disposition",
-                    "attachment;filename=" + URLEncoder.encode(filename, CHARACTER_SET));
+                    "attachment;filename=" + URLEncoder.encode(filename, CHARACTER_SET_UTF8));
             // 告知浏览器文件的大小
             response.addHeader("Content-Length", "" + zipLength);
             OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
