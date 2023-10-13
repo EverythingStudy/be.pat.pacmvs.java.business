@@ -1,7 +1,7 @@
 package cn.staitech.anno.utils;
 
 import cn.hutool.core.util.ObjectUtil;
-import cn.staitech.anno.constant.StatisticConstant;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.vo.statistic.StatisticListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticListOutVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticObjectOutVO;
@@ -24,8 +24,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static cn.staitech.anno.constant.CommonConstant.*;
-import static cn.staitech.anno.constant.ProjectConstant.NO_ATTRIBUTE;
-import static cn.staitech.anno.constant.StatisticConstant.*;
 
 /**
  * 数据统计模块通用类
@@ -451,7 +449,7 @@ public class StatisticListUtils {
                 resp = statisticService.statisticSelectAnnoCategoryList(statisticList);
                 resp.forEach(o -> {
                     if (StringUtils.isEmpty(o.getStatisticName()) && ObjectUtil.isNotNull(o.getStatisticCount())) {
-                        o.setStatisticName(NO_ATTRIBUTE);
+                        o.setStatisticName(MessageSource.M("NO_ATTRIBUTE"));
                     }
                 });
                 break;
@@ -490,7 +488,7 @@ public class StatisticListUtils {
             case ANNOTATION_CATEGORY:
                 resp = statisticService.statisticSelectImageCategoryList(statisticList);
                 break;
-            case StatisticConstant.USER:
+            case CommonConstant.USER:
                 resp = statisticService.statisticSelectImageMemberList(statisticList);
                 break;
             default:

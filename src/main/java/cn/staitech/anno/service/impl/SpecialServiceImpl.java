@@ -9,6 +9,7 @@ import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.service.SpecialMenuService;
 import cn.staitech.anno.service.SpecialRoleService;
 import cn.staitech.anno.service.SpecialService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.TimeUtils;
 import cn.staitech.common.core.exception.ServiceException;
 import cn.staitech.common.core.exception.auth.NotLoginException;
@@ -31,7 +32,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static cn.staitech.anno.constant.SpecialRoleConstant.*;
+import static cn.staitech.anno.constant.CommonConstant.*;
 import static cn.staitech.anno.enums.SpecialEnum.del_flag_1;
 import static cn.staitech.common.core.constant.SysRoleConstant.SPECIAL;
 import static cn.staitech.common.core.utils.SysRoleUtil.getSort;
@@ -401,7 +402,7 @@ public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> impl
      * @param specialId
      */
     public void insertSpecialRole(Long specialId) {
-        for (String i : ROLE_TYPE) {
+        for (String i : SPECIAL_ROLE_TYPE) {
             SpecialRole specialRole = SpecialRole.builder().specialId(specialId).roleName(i).createBy(SecurityUtils.getUserId()).build();
 
             // 设置角色编号
@@ -415,15 +416,15 @@ public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> impl
             }
 
             //添加角色表中
-            if (i.equals(RESPONSIBLE_ROLE)) {
+            if (i.equals(MessageSource.M("RESPONSIBLE_ROLE"))) {
                 specialRole.setRoleKey(RESP);
                 specialRole.setMenuIds(RESPONSIBLE_MENU);
             }
-            if (i.equals(ANNOTATOR_ROLE)) {
+            if (i.equals(MessageSource.M("ANNOTATOR_ROLE"))) {
                 specialRole.setRoleKey(ANNO);
                 specialRole.setMenuIds(ANNOTATOR_MENU);
             }
-            if (i.equals(READER_ROLE)) {
+            if (i.equals(MessageSource.M("READER_ROLE"))) {
                 specialRole.setRoleKey(READ);
                 specialRole.setMenuIds(READER_MENU);
             }
@@ -434,7 +435,7 @@ public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> impl
             specialRoleService.insertRoleMenu(specialRole);
 
             // 创建者设置为专题负责人
-            if (i.equals(RESPONSIBLE_ROLE)) {
+            if (i.equals(MessageSource.M("RESPONSIBLE_ROLE"))) {
                 // 添加到专题角色用户表中
                 SpecialRoleUser specialRoleUser = new SpecialRoleUser();
                 specialRoleUser.setRoleId(specialRole.getRoleId());

@@ -2,7 +2,6 @@ package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.thread.ExecutorBuilder;
 import cn.staitech.anno.constant.CommonConstant;
-import cn.staitech.anno.constant.ProjectConstant;
 import cn.staitech.anno.domain.Group;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.RecentlyVisited;
@@ -18,8 +17,6 @@ import cn.staitech.anno.domain.projectgroup.ProjectGroup;
 import cn.staitech.anno.domain.special.Special;
 import cn.staitech.anno.enums.ReasonsEnum;
 import cn.staitech.anno.mapper.*;
-import cn.staitech.anno.project.mapper.DownTaskMapper;
-import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.ProjectExtService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.PageResponse;
@@ -57,12 +54,8 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
 
     private static final Logger log = LoggerFactory.getLogger(ProjectExtServiceImpl.class);
     private static final String CHECK_FLAG = "1";
-
     @Resource
     private SpecialMapper specialMapper;
-
-    @Resource
-    private SlideMapper slideMapper;
 
     @Resource
     private SystemDictMapper systemDictMapper;
@@ -77,17 +70,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
     private GroupMapper groupMapper;
 
     @Resource
-    private MarkingMapper markingMapper;
-
-    @Resource
-    private MarkingService markingService;
-
-    @Resource
     private RecentlyVisitedMapper recentlyVisitedMapper;
-
-    @Resource
-    private DownTaskMapper downTaskMapper;
-
 
     /**
      * 获得系统、脏器下拉框
@@ -190,11 +173,11 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
 
         //校验项目名称
         if (!checkProject(req, CHECK_FLAG)) {
-            return R.fail(ProjectConstant.PROJECT_NAME_EXIST);
+            return R.fail(MessageSource.M("PROJECT_NAME_EXIST"));
         }
         //校验脏器
         if (!checkProject(req, null)) {
-            return R.fail(ProjectConstant.VISCUS_CODE_EXIST);
+            return R.fail(MessageSource.M("VISCUS_CODE_EXIST"));
         }
         //新增
         if (ObjectUtils.isEmpty(req.getProjectId()) || req.getProjectId() == 0) {
@@ -205,13 +188,13 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
             specialWrapper.eq(Special::getDelFlag, 0);
             Integer integer = specialMapper.selectCount(specialWrapper);
             if (integer > 0) {
-                return R.fail(ProjectConstant.SPECIAL_EXIST_NON_DELIVERY);
+                return R.fail(MessageSource.M("SPECIAL_EXIST_NON_DELIVERY"));
             }
             //判断专题分组
             LambdaQueryWrapper<Group> groupWrapper = new LambdaQueryWrapper<>();
             Integer integer1 = groupMapper.selectCount(groupWrapper);
             if (integer1 <= 0) {
-                return R.fail(ProjectConstant.SPECIAL_NOTEXIST_GROUP);
+                return R.fail(MessageSource.M("SPECIAL_NOTEXIST_GROUP"));
             }
 
             projectExt.setProjectId(null);
@@ -259,7 +242,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
         //校验是否绑定切片
         int i = projectExtMapper.selectCountSlide(req.getProjectId());
         if (i > 0) {
-            return R.fail(ProjectConstant.PROJECT_SLIDE_EXIST);
+            return R.fail(MessageSource.M("PROJECT_SLIDE_EXIST"));
         }
 
         Long userId = SecurityUtils.getUserId();
@@ -313,7 +296,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
         //判断是否存在未完成分析的切片
         int i = projectExtMapper.countNotReady(projectId);
         if (i > 0) {
-            return R.fail(ProjectConstant.PROJECT_NO_READY);
+            return R.fail(MessageSource.M("PROJECT_NO_READY"));
         }
         //todo 数据拼接返回
         return R.ok();
@@ -398,7 +381,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
         specialWrapper.eq(Special::getDelFlag, 0);
         Integer integer = specialMapper.selectCount(specialWrapper);
         if (integer > 0) {
-            return R.fail(ProjectConstant.SPECIAL_NON_DELIVERY);
+            return R.fail(MessageSource.M("SPECIAL_NON_DELIVERY"));
         }
         //是否已存在项目
         LambdaQueryWrapper<ProjectPo> projectWrapper = new LambdaQueryWrapper<>();
@@ -406,7 +389,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
         projectWrapper.eq(ProjectPo::getDelFlag, 0);
         Integer integer2 = projectExtMapper.selectCount(projectWrapper);
         if (integer2 > 0) {
-            return R.fail(ProjectConstant.SPECIAL_EXIST_PROJECT);
+            return R.fail(MessageSource.M("SPECIAL_EXIST_PROJECT"));
         }
         //获得登陆人
         Long userId = SecurityUtils.getUserId();
@@ -430,7 +413,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
 
             });
         } else {
-            R.fail(ProjectConstant.AUTO_CREATE_REASON);
+            R.fail(MessageSource.M("AUTO_CREATE_REASON"));
         }
         stopWatch.stop();
         log.info(stopWatch.prettyPrint());

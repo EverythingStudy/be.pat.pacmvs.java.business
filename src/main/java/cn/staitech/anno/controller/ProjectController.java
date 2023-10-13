@@ -1,7 +1,6 @@
 package cn.staitech.anno.controller;
 
 import cn.staitech.anno.constant.Container;
-import cn.staitech.anno.constant.ProjectConstant;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.ProjectMember;
 import cn.staitech.anno.domain.RecentlyVisited;
@@ -251,7 +250,7 @@ public class ProjectController extends BaseController {
         } catch (Exception e) {
             log.error("一键创建异常" + e);
             projectExtService.changeSpecial(specialId);
-            return R.fail(ProjectConstant.PROJECT_BATCH_INSERT);
+            return R.fail(MessageSource.M("PROJECT_BATCH_INSERT"));
         }
     }
 

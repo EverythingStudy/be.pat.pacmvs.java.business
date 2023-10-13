@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cn.staitech.anno.constant.CommonConstant.THREE_YEAR;
-import static cn.staitech.anno.constant.StatisticConstant.*;
 
 @Service
 public class StatisticServiceImpl implements StatisticService {
@@ -323,9 +322,9 @@ public class StatisticServiceImpl implements StatisticService {
         String displayQuantity = statisticSelectDictDataById(statisticList.getStatisticCategory()).getDictLabel();
         String statisticalDimension = statisticSelectDictDataById(statisticList.getStatisticDimension()).getDictLabel();
         // 数量（横轴）--标注数量
-        if (displayQuantity.equals(ANNOTATION_COUNT)) {
+        if (displayQuantity.equals(MessageSource.M("ANNOTATION_COUNT"))) {
             // 统计维度（竖轴）--标注日期
-            if (statisticalDimension.equals(ANNOTATION_DATE)) {
+            if (statisticalDimension.equals(MessageSource.M("ANNOTATION_DATE"))) {
                 // 判断startTime、endTime值，并返回日期差
                 long daysBetween = statisticListUtils.statisticSetStartEndTime(statisticList, this);
                 // 按日期差进行分类查询
@@ -344,9 +343,9 @@ public class StatisticServiceImpl implements StatisticService {
             }
         }
         // 数量（横轴）--图像数量
-        else if (displayQuantity.equals(SLIDE_COUNT)) {
+        else if (displayQuantity.equals(MessageSource.M("SLIDE_COUNT"))) {
             // 统计维度（竖轴）--标注日期
-            if (statisticalDimension.equals(ANNOTATION_DATE)) {
+            if (statisticalDimension.equals(MessageSource.M("ANNOTATION_DATE"))) {
                 // 判断startTime、endTime值，并返回日期差
                 long daysBetween = statisticListUtils.statisticSetStartEndTime(statisticList, this);
                 // 按日期差进行分类查询

@@ -5,9 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.staitech.anno.config.ICache;
-import cn.staitech.anno.constant.CacheConstant;
 import cn.staitech.anno.constant.CommonConstant;
-import cn.staitech.anno.constant.ProjectConstant;
 import cn.staitech.anno.domain.*;
 import cn.staitech.anno.domain.image.in.ImageAllVO;
 import cn.staitech.anno.domain.image.in.ImageListVO;
@@ -56,7 +54,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static cn.staitech.anno.constant.CommonConstant.*;
-import static cn.staitech.anno.constant.ProjectConstant.*;
 
 /**
  * 项目 信息操作处理  .
@@ -179,13 +176,13 @@ public class ProjectExtController extends BaseController {
         //根据项目名称查询，用来判断项目名称是否被使用
         Project projectByName = projectService.selectProjectByName(name);
         if (projectByName != null) {
-            return R.fail(ProjectConstant.PROJECT_EXIST);
+            return R.fail(MessageSource.M("PROJECT_EXIST"));
         }
         final Long[] imageIdList = req.getImageIdList();
         Indicator indicator = new Indicator();
         Integer status = req.getStatus();
         if (status < CommonConstant.NOT_INDICATOR_STATUS || status > CommonConstant.NOT_ATTRIBUTE_STATUS) {
-            return R.fail(ProjectConstant.STATUS_ERROR);
+            return R.fail(MessageSource.M("STATUS_ERROR"));
         }
         Project project = new Project();
         project.setProjectName(name);
@@ -197,14 +194,14 @@ public class ProjectExtController extends BaseController {
             //查询病理名称是否存在，用来判断是否可以使用
             List<Indicator> indicatorList = indicatorService.selectIndicator(indicatorMessage);
             if (!indicatorList.isEmpty()) {
-                return R.fail(null, ProjectConstant.INDICATOR_EXIST);
+                return R.fail(null, MessageSource.M("INDICATOR_EXIST"));
             }
             indicator.setIndicatorName(name);
             indicator.setCreateBy(loginUser);
             //添加病理
             int i = indicatorService.insertIndicator(indicator);
             if (i <= 0) {
-                return R.fail(ProjectConstant.ADD_INDICATOR_ERROR);
+                return R.fail(MessageSource.M("ADD_INDICATOR_ERROR"));
             }
             project.setIndicatorId(Long.valueOf(indicator.getIndicatorId()));
 
@@ -290,7 +287,7 @@ public class ProjectExtController extends BaseController {
             @ApiImplicitParam(name = "pageNum", value = "当前记录起始索引", dataTypeClass = Integer.class, paramType = "query", example = "1"),
             @ApiImplicitParam(name = "pageSize", value = "每页显示记录数", dataTypeClass = Integer.class, paramType = "query", example = "10")})
     public R<PageMaster<ProjectListVO>> list(Project project) {
-        Set<Map.Entry<Object, Object>> allFromMap = iCache.getAllFromMap(CacheConstant.PROJECT_CACHE_KEY);
+        Set<Map.Entry<Object, Object>> allFromMap = iCache.getAllFromMap(CommonConstant.PROJECT_CACHE_KEY);
         if (allFromMap.isEmpty()) {
             CacheUtils.ProjectCache(project);
             return R.ok();
@@ -450,9 +447,9 @@ public class ProjectExtController extends BaseController {
         for (ImageMessageVO imageMessageVO : imageList) {
             Long imageId = imageMessageVO.getImageId();
             if (imageIds.contains(imageId)) {
-                imageMessageVO.setExist(ALREADY_ADD);
+                imageMessageVO.setExist(MessageSource.M("ALREADY_ADD"));
             } else {
-                imageMessageVO.setExist(NOT_ADDED);
+                imageMessageVO.setExist(MessageSource.M("NOT_ADDED"));
             }
         }
         //分页
@@ -470,12 +467,12 @@ public class ProjectExtController extends BaseController {
     public R<List<ImageListVO>> listByProjectId(
             @RequestParam @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId) {
         if (!Optional.ofNullable(slideId).isPresent()) {
-            return R.fail(ProjectConstant.SLIDE_ID_NOT_NULL);
+            return R.fail(MessageSource.M("SLIDE_ID_NOT_NULL"));
         }
         //获取切片信息
         Slide list = slideService.selectById(slideId);
         if (!Optional.ofNullable(list).isPresent()) {
-            return R.fail(ProjectConstant.IMAGE_NOT_EXIST);
+            return R.fail(MessageSource.M("IMAGE_NOT_EXIST"));
         }
         Long projectId = list.getProjectId();
         //根据项目id获取图像信息
@@ -527,7 +524,7 @@ public class ProjectExtController extends BaseController {
                 String userName = getUserInformationService.selectById(updateBy).getUserName();
                 String categoryName = "";
                 if (categoryId == 0L) {
-                    categoryName = ProjectConstant.NO_ATTRIBUTE;
+                    categoryName = MessageSource.M("NO_ATTRIBUTE");
                 } else {
                     //获取标注类别名称
                     try {
@@ -662,7 +659,7 @@ public class ProjectExtController extends BaseController {
         Long[] slideIdList = req.getSlideId();
         boolean empty = ArrayUtil.isEmpty(slideIdList);
         if (empty) {
-            return R.fail(ProjectConstant.NOT_IMAGE);
+            return R.fail(MessageSource.M("NOT_IMAGE"));
         }
         //删除图片
         boolean flag = slideService.deleteProjectImage(slideIdList);
@@ -693,12 +690,12 @@ public class ProjectExtController extends BaseController {
         ProjectListVO project1 = projectService.selectProjectById(projectId);
         if (Objects.equals(projectName, project1.getProjectName()) && Objects.equals(project1.getIndicatorId(),
                 project.getIndicatorId())) {
-            return R.ok(null, ProjectConstant.NOT_CHANGE);
+            return R.ok(null, MessageSource.M("NOT_CHANGE"));
         }
         //查询项目名称是否被使用，除了自己
         List<Project> projectByName = projectService.selectProjectName(projectGetVO);
         if (!projectByName.isEmpty()) {
-            return R.fail(ProjectConstant.PROJECT_EXIST);
+            return R.fail(MessageSource.M("PROJECT_EXIST"));
         }
         Project projectMessage = new Project();
         projectMessage.setProjectId(projectId);
@@ -720,7 +717,7 @@ public class ProjectExtController extends BaseController {
                 }
                 //更新项目缓存
                 CacheUtils.ProjectCache(new Project());
-                return R.ok(null, ProjectConstant.MODIFIED_SUCCESSFULLY);
+                return R.ok(null, MessageSource.M("MODIFIED_SUCCESSFULLY"));
             }
             return R.ok(2);
         }
@@ -737,7 +734,7 @@ public class ProjectExtController extends BaseController {
             //查询病理是否存在
             Indicator indicatorData = indicatorService.selectIndicatorsById(project.getIndicatorId());
             if (indicatorData == null) {
-                return R.fail(ProjectConstant.INDICATOR_DATA);
+                return R.fail(MessageSource.M("INDICATOR_DATA"));
             }
             if (Objects.equals(project.getIndicatorId(), project1.getIndicatorId())) {
                 return R.ok(0);
@@ -792,7 +789,7 @@ public class ProjectExtController extends BaseController {
             //根据病理id，查询病理信息
             Indicator indicatorData = indicatorService.selectIndicatorsById(indicatorId);
             if (indicatorData == null) {
-                return R.fail(ProjectConstant.INDICATOR_DATA);
+                return R.fail(MessageSource.M("INDICATOR_DATA"));
             }
         }
         //根据项目id，查询项目信息
@@ -880,7 +877,7 @@ public class ProjectExtController extends BaseController {
                 //获取标注状态
                 int processFlag = slideService.selectById(slideId).getProcessFlag();
                 if (processFlag > 0) {
-                    return R.fail(null, ProjectConstant.UNABLE_TO_DELETE);
+                    return R.fail(null, MessageSource.M("UNABLE_TO_DELETE"));
                 }
             }
             //删除项目中的图片
@@ -888,7 +885,7 @@ public class ProjectExtController extends BaseController {
         }
         //删除项目
         projectService.deleteProjectById(projectId);
-        iCache.removeKeysFromMap(CacheConstant.PROJECT_CACHE_KEY, new String[]{projectId + ""});
+        iCache.removeKeysFromMap(CommonConstant.PROJECT_CACHE_KEY, new String[]{projectId + ""});
         //更新病理表数据
         if (Objects.nonNull(projectMessage.getIndicatorId())) {
             indicatorService.updateIndicator(indicatorReviseVO);
@@ -926,15 +923,15 @@ public class ProjectExtController extends BaseController {
     public void export(@Validated ProjectInforImageVO projectInforImageVO, HttpServletResponse response)
             throws Exception {
         Map<String, String> map = new HashMap<String, String>();
-        map.put(IMAGE_ID, "slideId");
+        map.put(MessageSource.M("IMAGE_ID"), "slideId");
         Map<String, String> map1 = new HashMap<String, String>();
-        map1.put(IMAGE_NAME, "slideName");
+        map1.put(MessageSource.M("IMAGE_NAME"), "slideName");
         Map<String, String> map2 = new HashMap<String, String>();
-        map2.put(PLATFORM_NAME, "platformName");
+        map2.put(MessageSource.M("PLATFORM_NAME"), "platformName");
         Map<String, String> map3 = new HashMap<String, String>();
-        map3.put(ENTRY_NAME, "projectName");
+        map3.put(MessageSource.M("ENTRY_NAME"), "projectName");
         Map<String, String> map4 = new HashMap<String, String>();
-        map4.put(TOTAL_NUMBER_OF_IMAGE_ANNOTATIONS, "annotationTotal");
+        map4.put(MessageSource.M("TOTAL_NUMBER_OF_IMAGE_ANNOTATIONS"), "annotationTotal");
         List<Map<String, String>> titleList = new ArrayList<>();
         titleList.add(map);
         titleList.add(map1);
@@ -968,7 +965,7 @@ public class ProjectExtController extends BaseController {
             if (category.getCategoryId() == 1) {
                 continue;
             }
-            mapCategory.put(category.getCategoryName() + NUMBER, category.getCategoryId().toString());
+            mapCategory.put(category.getCategoryName() + MessageSource.M("NUMBER"), category.getCategoryId().toString());
             titleList.add(mapCategory);
             //存储标注类别id
             categoryIdList.add(category.getCategoryId());
@@ -983,7 +980,7 @@ public class ProjectExtController extends BaseController {
         for (SlideAnnotationResult user : selectUpdateBy) {
             Map<String, String> mapUser = new HashMap<String, String>();
             SysUser sysUser = getUserInformationService.selectById(user.getUpdateBy());
-            mapUser.put(MEMBER + sysUser.getUserName() + LABEL_QUANTITY, user.getUpdateBy().toString() + MEMBER);
+            mapUser.put(MessageSource.M("MEMBER") + sysUser.getUserName() + MessageSource.M("LABEL_QUANTITY"), user.getUpdateBy().toString() + MessageSource.M("MEMBER"));
             titleList.add(mapUser);
             //存储用户id
             userIdList.add(user.getUpdateBy());
@@ -992,8 +989,8 @@ public class ProjectExtController extends BaseController {
         for (SlideAnnotationResult user : selectUpdateBy) {
             Map<String, String> mapPercentage = new HashMap<String, String>();
             SysUser sysUser = getUserInformationService.selectById(user.getUpdateBy());
-            mapPercentage.put(MEMBER + sysUser.getUserName() + PROPORTION_OF_MARKED_QUANTITY,
-                    user.getUpdateBy().toString() + PROPORTION);
+            mapPercentage.put(MessageSource.M("MEMBER") + sysUser.getUserName() + MessageSource.M("PROPORTION_OF_MARKED_QUANTITY"),
+                    user.getUpdateBy().toString() + MessageSource.M("PROPORTION"));
             titleList.add(mapPercentage);
         }
 
@@ -1007,7 +1004,7 @@ public class ProjectExtController extends BaseController {
             Map m = new HashMap<String, String>();
             m.put("slideId", projectListVO.getSlideId());
             m.put("slideName", projectListVO.getImageName());
-            m.put("platformName", NEW_ANNOTATION_PLATFORM);
+            m.put("platformName", MessageSource.M("NEW_ANNOTATION_PLATFORM"));
             m.put("projectName", projectListVO.getProjectName());
             SlideCategoryProcessFlagVO slideCategoryProcessFlagVO = new SlideCategoryProcessFlagVO();
             slideCategoryProcessFlagVO.setSlideId(projectListVO.getSlideId());
@@ -1048,23 +1045,23 @@ public class ProjectExtController extends BaseController {
                 slideCategoryProcessFlagVO1.setUpdateBy(user.longValue());
                 Integer userAnnotationNum = projectService.selectCategoryTotal(slideCategoryProcessFlagVO1);
                 if (userAnnotationNum == null) {
-                    m.put(user + MEMBER, 0);
-                    m.put(user + PROPORTION, 0);
+                    m.put(user + MessageSource.M("MEMBER"), 0);
+                    m.put(user + MessageSource.M("PROPORTION"), 0);
                     continue;
                 }
                 if (userAnnotationNum == 0) {
-                    m.put(user + MEMBER, userAnnotationNum);
-                    m.put(user + PROPORTION, 0);
+                    m.put(user + MessageSource.M("MEMBER"), userAnnotationNum);
+                    m.put(user + MessageSource.M("PROPORTION"), 0);
                     continue;
                 }
-                m.put(user + MEMBER, userAnnotationNum);
+                m.put(user + MessageSource.M("MEMBER"), userAnnotationNum);
                 String result = numberFormat.format((float) userAnnotationNum / (float) totalSum * 100);
-                m.put(user + PROPORTION, result + "%");
+                m.put(user + MessageSource.M("PROPORTION"), result + "%");
             }
             rowList.add(m);
         }
 
-        ExcelTool excelTool = new ExcelTool(PROJECT_SLICE_DATA, 15, 20);
+        ExcelTool excelTool = new ExcelTool(MessageSource.M("PROJECT_SLICE_DATA"), 15, 20);
         List<Column> titleData = excelTool.columnTransformer(titleList);
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("utf-8");
@@ -1143,7 +1140,7 @@ public class ProjectExtController extends BaseController {
         slideSelectVO.setProjectId(projectId);
         List<ProjectListOutVO> projectListOutVOS = slideService.selectByStatus(slideSelectVO);
         if (projectListOutVOS.isEmpty()) {
-            return R.fail(IMAGE_NOT_EXIST);
+            return R.fail(MessageSource.M("IMAGE_NOT_EXIST"));
         }
 
         // 获取原始文件名
@@ -1176,7 +1173,7 @@ public class ProjectExtController extends BaseController {
                     slide.setImageName(filename);
                     List<ProjectListOutVO> slideList = slideService.selectByStatus(slide);
                     if (slideList.isEmpty()) {
-                        return R.fail(IMAGE_NOT_EXIST);
+                        return R.fail(MessageSource.M("IMAGE_NOT_EXIST"));
                     }
                     slideList.forEach(t -> {
                         Long userId = SecurityUtils.getUserId();
@@ -1191,7 +1188,7 @@ public class ProjectExtController extends BaseController {
                     List<Annotation> annotationList = annotationService.queryUploadAnnotation(annotation);
                     JSONArray regions = viaImgMetadataJsonObject.getJSONArray(REGIONS);
                     if (ObjectUtil.isNotEmpty(annotationList)) {
-                        return R.fail(filename + IMAGE_UPLOADED_ANNOTATION);
+                        return R.fail(filename + MessageSource.M("IMAGE_UPLOADED_ANNOTATION"));
                     }
 
                     HashMap<Long, String> mapCategoryName = new HashMap<>();
@@ -1202,7 +1199,7 @@ public class ProjectExtController extends BaseController {
                         String categoryName = JSONObject.parseObject(
                                 regions.getJSONObject(m).getString(REGION_ATTRIBUTES)).getString(BONE_MARROW);
                         if (!categoryName.equals(NONE) && !mapCategoryName.containsValue(categoryName)) {
-                            return R.fail(ANNOTATION_CATEGORY + categoryName + NON_EXISTENT);
+                            return R.fail(MessageSource.M("ANNOTATION_CATEGORY") + categoryName + MessageSource.M("NON_EXISTENT"));
                         }
                     }
 
@@ -1280,7 +1277,7 @@ public class ProjectExtController extends BaseController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return R.fail(INCORRECT_FORMAT);
+            return R.fail(MessageSource.M("INCORRECT_FORMAT"));
         } finally {
             FileUtils.delete(file);
         }
@@ -1377,9 +1374,7 @@ public class ProjectExtController extends BaseController {
         }
     }
 
-
     //=======================================
-
 
     /**
      * 项目批量添加图片接口（去重） .
@@ -1415,16 +1410,16 @@ public class ProjectExtController extends BaseController {
                 }
             }
             if (slideList.isEmpty()) {
-                return R.fail(null, ProjectConstant.ADDED);
+                return R.fail(null, MessageSource.M("ADDED"));
             }
             //添加图片
             slideManage.insertProjectImage(slideList, pro.getProjectId());
             if (result.isEmpty()) {
-                return R.ok(null, ProjectConstant.STRING_ADD_COMPLETE);
+                return R.ok(null, MessageSource.M("STRING_ADD_COMPLETE"));
             }
-            return R.ok(ProjectConstant.ID_IS + result + ProjectConstant.PICTURE_NON_EXISTENT,
-                    ProjectConstant.STRING_ADD_COMPLETE);
+            return R.ok(MessageSource.M("ID_IS") + result + MessageSource.M("PICTURE_NON_EXISTENT"),
+                    MessageSource.M("STRING_ADD_COMPLETE"));
         }
-        return R.fail(ProjectConstant.NO_DATA_TRANSFERRED);
+        return R.fail(MessageSource.M("NO_DATA_TRANSFERRED"));
     }
 }

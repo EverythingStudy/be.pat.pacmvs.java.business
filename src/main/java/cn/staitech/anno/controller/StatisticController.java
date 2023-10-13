@@ -27,8 +27,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static cn.staitech.anno.aspect.LogFileAspect.response;
-import static cn.staitech.anno.constant.ProjectConstant.NO_ATTRIBUTE;
-import static cn.staitech.anno.constant.StatisticConstant.*;
+import static cn.staitech.anno.constant.CommonConstant.*;
 import static cn.staitech.anno.utils.StatisticListUtils.exportExcelDateUtil;
 import static cn.staitech.anno.utils.StatisticListUtils.exportExcelUtil;
 
@@ -98,7 +97,7 @@ public class StatisticController extends BaseController {
         String statisticalDimension = statisticService.statisticSelectDictDataById(statisticList.getStatisticDimension()).getDictLabel();
 
         // 数量（横轴）: 标注数量
-        if (displayQuantity.equals(ANNOTATION_COUNT)) {
+        if (displayQuantity.equals(MessageSource.M("ANNOTATION_COUNT"))) {
             List<StatisticObjectOutVO> result;
             switch (statisticalDimension) {
                 case PROJECT:
@@ -113,7 +112,7 @@ public class StatisticController extends BaseController {
                     result = statisticService.statisticSelectAnnoCategoryList(statisticList);
                     result.forEach(o -> {
                         if (StringUtils.isEmpty(o.getStatisticName()) && ObjectUtil.isNotNull(o.getStatisticCount())) {
-                            o.setStatisticName(NO_ATTRIBUTE);
+                            o.setStatisticName(MessageSource.M("NO_ATTRIBUTE"));
                         }
                     });
                     exportExcelUtil(response, displayQuantity, statisticalDimension, result);
@@ -133,7 +132,7 @@ public class StatisticController extends BaseController {
                 default:
                     throw new RuntimeException(MessageSource.M("STATISTIC_DIMENSION"));
             }
-        } else if (displayQuantity.equals(SLIDE_COUNT)) {
+        } else if (displayQuantity.equals(MessageSource.M("SLIDE_COUNT"))) {
             List<StatisticObjectOutVO> result;
             switch (statisticalDimension) {
                 case PROJECT:
@@ -225,14 +224,14 @@ public class StatisticController extends BaseController {
             statisticListInVO.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         }
         // 显示数量：标注数量
-        if (Objects.nonNull(categoryData) && categoryData.getDictLabel().equals(ANNOTATION_COUNT)) {
+        if (Objects.nonNull(categoryData) && categoryData.getDictLabel().equals(MessageSource.M("ANNOTATION_COUNT"))) {
             List<StatisticUserListOutVO> userList = statisticService.queryAnnotationMembersList(statisticListInVO);
             return R.ok(userList);
         }
         // 显示数量：图像数量
-        if (Objects.nonNull(categoryData) && Objects.nonNull(dimensionData) && categoryData.getDictLabel().equals(SLIDE_COUNT)) {
+        if (Objects.nonNull(categoryData) && Objects.nonNull(dimensionData) && categoryData.getDictLabel().equals(MessageSource.M("SLIDE_COUNT"))) {
             // 统计维度：标注类别
-            if (dimensionData.getDictLabel().equals(ANNOTATION_CATEGORY)) {
+            if (dimensionData.getDictLabel().equals(MessageSource.M("ANNOTATION_CATEGORY"))) {
                 List<StatisticUserListOutVO> userList = statisticService.queryAnnotationMembersList(statisticListInVO);
                 return R.ok(userList);
             }
@@ -292,7 +291,7 @@ public class StatisticController extends BaseController {
         String statisticCategoryDictLabel = statisticCategorySysDictData.getDictLabel();
         String statisticDimensionDictLabel = statisticDimensionSysDictData.getDictLabel();
 
-        if (ANNOTATION_COUNT.equals(statisticCategoryDictLabel)) {
+        if (MessageSource.M("ANNOTATION_COUNT").equals(statisticCategoryDictLabel)) {
             // 统计数量:标注数量
             List<AnnotationStatisticIdListOutVO> resp;
             switch (statisticDimensionDictLabel) {
@@ -346,7 +345,7 @@ public class StatisticController extends BaseController {
         String category = statisticService.statisticSelectDictDataById(statisticList.getStatisticCategory()).getDictLabel();
         // 统计维度（项目/病理指标/标注类别/成员/图像）
         String dimension = statisticService.statisticSelectDictDataById(statisticList.getStatisticDimension()).getDictLabel();
-        if (category.equals(ANNOTATION_COUNT)) {
+        if (category.equals(MessageSource.M("ANNOTATION_COUNT"))) {
             startPage();
             List<AnnotationStatisticListPageOutVO> resp;
             switch (dimension) {

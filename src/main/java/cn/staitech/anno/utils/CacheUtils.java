@@ -1,7 +1,7 @@
 package cn.staitech.anno.utils;
 
 import cn.staitech.anno.config.ICache;
-import cn.staitech.anno.constant.CacheConstant;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.Project;
@@ -9,9 +9,7 @@ import cn.staitech.anno.domain.vo.ProjectListVO;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.IndicatorService;
 import cn.staitech.anno.service.ProjectService;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +38,7 @@ public class CacheUtils {
 
     public static CacheUtils cacheUtils;
 
-//    @PostConstruct
+    //    @PostConstruct
     public void init() {
         cacheUtils = this;
         cacheUtils.iCache = this.iCache;
@@ -59,11 +57,11 @@ public class CacheUtils {
      * @param image
      */
     public static void imagesCache(Image image) {
-        cacheUtils.iCache.removeList(CacheConstant.IMAGE_CACHE_KEY);
+        cacheUtils.iCache.removeList(CommonConstant.IMAGE_CACHE_KEY);
         List<Image> images = cacheUtils.imageService.selectImageAnnotationList(image);
         Map<String, Object> imageMap = images.stream()
                 .collect(Collectors.toMap(image1 -> image1.getImageId() + "", Function.identity(), (a, b) -> a));
-        cacheUtils.iCache.putObjectAllToMap(CacheConstant.IMAGE_CACHE_KEY, imageMap, -1);
+        cacheUtils.iCache.putObjectAllToMap(CommonConstant.IMAGE_CACHE_KEY, imageMap, -1);
     }
 
     /**
@@ -72,11 +70,11 @@ public class CacheUtils {
      * @param indicator
      */
     public static void indicatorCache(Indicator indicator) {
-        cacheUtils.iCache.removeList(CacheConstant.INDICATOR_CACHE_KEY);
+        cacheUtils.iCache.removeList(CommonConstant.INDICATOR_CACHE_KEY);
         List<Indicator> indicators = cacheUtils.indicatorService.selectIndicatorList1(indicator);
         Map<String, Object> indicatorMap = indicators.stream()
                 .collect(Collectors.toMap(indicator1 -> indicator1.getIndicatorId() + "", Function.identity(), (a, b) -> a));
-        cacheUtils.iCache.putObjectAllToMap(CacheConstant.INDICATOR_CACHE_KEY, indicatorMap, -1);
+        cacheUtils.iCache.putObjectAllToMap(CommonConstant.INDICATOR_CACHE_KEY, indicatorMap, -1);
     }
 
     /**
@@ -85,11 +83,11 @@ public class CacheUtils {
      * @param project
      */
     public static void ProjectCache(Project project) {
-        cacheUtils.iCache.removeList(CacheConstant.PROJECT_CACHE_KEY);
+        cacheUtils.iCache.removeList(CommonConstant.PROJECT_CACHE_KEY);
         List<ProjectListVO> projectList = cacheUtils.projectService.selectProjectList(project);
         Map<String, Object> projectMap = projectList.stream()
                 .collect(Collectors.toMap(project1 -> project1.getProjectId() + "", Function.identity(), (a, b) -> a));
-        cacheUtils.iCache.putObjectAllToMap(CacheConstant.PROJECT_CACHE_KEY, projectMap, -1);
+        cacheUtils.iCache.putObjectAllToMap(CommonConstant.PROJECT_CACHE_KEY, projectMap, -1);
     }
 
     /**

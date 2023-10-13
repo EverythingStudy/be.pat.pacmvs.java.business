@@ -1,7 +1,6 @@
 package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.date.DateUtil;
-import cn.staitech.anno.constant.SpecialImageConstant;
 import cn.staitech.anno.domain.SubImage;
 import cn.staitech.anno.domain.marking.PointCount;
 import cn.staitech.anno.domain.specialAnnotation.SpecialAnnotation;
@@ -122,7 +121,7 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
     public R<String> updateSpecialImageList(AuditSpecialImageVO vo) {
         Long[] imageIds = vo.getSpecialImageIds();
         if (null == imageIds) {
-            return R.fail(SpecialImageConstant.DATA_NULL);
+            return R.fail(MessageSource.M("DATA_NULL"));
         }
         //参数校验
         //审核状态 0：待审核 1：审核通过 2：审核不通过
@@ -141,10 +140,10 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
         List<SpecialImage> list = specialImageMapper.selectSpecialImageListByParm(paramMap);
         if (CollectionUtils.isNotEmpty(list)) {
             if (list.size() != imageIds.length) {
-                return R.fail(SpecialImageConstant.DATA_NULL);
+                return R.fail(MessageSource.M("DATA_NULL"));
             }
         } else {
-            return R.fail(SpecialImageConstant.DATA_NULL);
+            return R.fail(MessageSource.M("DATA_NULL"));
         }
 
         SpecialImage record = new SpecialImage();
@@ -635,7 +634,7 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
             saveAnn(algorithmAnnIn);
             //算法处理表更新处理
 			/*AlgorithmSpecialImage algorithmSpecialImage = new AlgorithmSpecialImage();
-			algorithmSpecialImage.setAlgorithmUuid(SpecialImageConstant.SPECIAL_SLIDE_Algorithm);
+			algorithmSpecialImage.setAlgorithmUuid(MessageSource.M("")SPECIAL_SLIDE_Algorithm);
 			algorithmSpecialImage.setSpecialImageId(algorithmAnnIn.getSpecialImageId());
 			List<AlgorithmSpecialImage>	 asiList = algorithmSpecialImageMapper.getListByCondition(algorithmSpecialImage);
 			if(CollectionUtils.isNotEmpty(asiList)){

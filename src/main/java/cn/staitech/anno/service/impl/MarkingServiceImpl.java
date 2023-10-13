@@ -57,7 +57,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import static cn.staitech.anno.aspect.LogFileAspect.response;
-import static cn.staitech.anno.constant.AnnotationConstant.*;
+import static cn.staitech.anno.constant.CommonConstant.*;
 import static cn.staitech.anno.constant.CommonConstant.MICRON;
 
 @Service
@@ -158,7 +158,7 @@ public class MarkingServiceImpl implements MarkingService {
             slideMapperV1.updateById(slideBy);
         }
 //        if (Boolean.FALSE.equals(markIsNotFinish(slideBy.getStatus()))) {
-//            throw new Exception(AnnotationConstant.UPDATE_ANNOTATION_CATEGORY_MESSAGE);
+//            throw new Exception(CommonConstant.UPDATE_ANNOTATION_CATEGORY_MESSAGE);
 //        }
 
         // 获取规定的geoJson Id

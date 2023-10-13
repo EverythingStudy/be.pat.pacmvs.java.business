@@ -33,7 +33,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static cn.staitech.anno.constant.AnnotationConstant.*;
+import static cn.staitech.anno.constant.CommonConstant.*;
 import static cn.staitech.anno.constant.CommonConstant.GLIDE_LINE;
 import static cn.staitech.anno.constant.CommonConstant.MICRON;
 
