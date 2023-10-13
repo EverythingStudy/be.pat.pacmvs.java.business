@@ -668,11 +668,11 @@ public class MarkingServiceImpl implements MarkingService {
                         if (markingCount > 0) {
                             // 将文件生成在本地
                             String fileUrl = null;
-//                            try {
+                            try {
                                 fileUrl = slideJsonExport(slideId);
-//                            } catch (Exception e) {
-//                                throw new RuntimeException(e);
-//                            }
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
                             Slide slideBy = slideMapperV1.selectById(slideId);
                             Image image = imageMapper.selectById(slideBy);
                             Map<String, String> map = new HashMap<>();
