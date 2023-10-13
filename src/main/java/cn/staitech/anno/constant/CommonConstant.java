@@ -23,14 +23,42 @@ public class CommonConstant {
 
     public static final String PATH = "path";
     public static final String FILE_PATH = "annotation";
+    public static final String FILENAME = "filename";
     public static final String IMAGE_URL = "imageUrl";
-
-    public static final String CHARACTER_ENCODING = "UTF-8";
+    public static final String CHARACTER_SET_UTF8 = "UTF-8";
     public static final String CONTENT_TYPE = "application/json;charset=utf-8";
     public static final String HEADER = "Content-Disposition";
 
     public static final Integer NOT_START_REVIEW = 0;
     public static final Integer SUBMIT_REVIEW = 3;
+
+
+    /**
+     * Project
+     */
+    public static final String NONE = "none";
+    public static final String REGIONS = "regions";
+    public static final String REGION_ATTRIBUTES = "region_attributes";
+    public static final String BONE_MARROW = "bone_marrow";
+    public static final String SHAPE_ATTRIBUTES = "shape_attributes";
+    public static final String ALL_POINTS_X = "all_points_x";
+    public static final String ALL_POINTS_Y = "all_points_y";
+    public static final String NAME = "name";
+    public static final String POLYGON = "POLYGON";
+    public static final String POINT = "POINT";
+    public static final String LINESTRING = "LINESTRING";
+    public static final String POLYGON_WITH_HOLES = "polygon_with_holes";
+    public static final String CHILDREN_CNTS = "children_cnts";
+    public static final String VIA_IMG_METADATA = "_via_img_metadata";
+
+    public static final Integer NOT_INDICATOR_STATUS = 1;
+    public static final Integer INDICATOR_STATUS = 2;
+    public static final Integer NOT_ATTRIBUTE_STATUS = 3;
+    public static final Long NOT_AUDIT = 0L;
+    public static final Long AUTO_CREATE_PROJECT_SUC = 1L;
+    public static final Long AUTO_CREATE_PROJECT_FAL = 2L;
+    public static final String LOGIN_TOKEN_KEY = "login_tokens:";
+
 
     /**
      * Viewer

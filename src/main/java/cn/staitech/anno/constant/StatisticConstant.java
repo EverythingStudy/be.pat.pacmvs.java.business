@@ -2,6 +2,7 @@ package cn.staitech.anno.constant;
 
 /**
  * 统计模块switch case语句中用到，多语言版本暂未处理，后续建议改成Integer类型
+ * @author wangf
  */
 public class StatisticConstant {
     public static final String ANNOTATION_COUNT = "标注数量";

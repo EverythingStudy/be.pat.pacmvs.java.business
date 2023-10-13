@@ -15,8 +15,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.*;
 
-import static cn.staitech.anno.constant.ProjectConstant.*;
-import static cn.staitech.anno.constant.ProjectConstant.CHILDREN_CNTS;
+import static cn.staitech.anno.constant.CommonConstant.*;
 import static cn.staitech.anno.utils.MarkVerify.wktReader;
 
 /**
@@ -190,7 +189,7 @@ public class ProjectUtils {
 
     /**
      * 转换数据格式
-     * */
+     */
     public static JSONObject jsonExportMethod(List<Annotation> annotationList, String imageName, String size, Project project1) throws ParseException {
         JSONObject jsonObject = new JSONObject();
 
@@ -297,7 +296,7 @@ public class ProjectUtils {
                             ChildrenY.add(0 - new Float(s2));
                         }
                         childrenDict.put(ALL_POINTS_X, ChildrenX);
-                        childrenDict.put(ALL_POINTS_Y,  ChildrenY);
+                        childrenDict.put(ALL_POINTS_Y, ChildrenY);
                         childrenList.add(childrenDict);
                     }
                 } else {
@@ -314,7 +313,7 @@ public class ProjectUtils {
                 regionAttributes.put(BONE_MARROW, NONE);
             } else {
                 //获取标注类别
-                PathologicalIndicatorCategory category =  projectUtils.pathologicalIndicatorCategoryService.selectByPrimaryKey(
+                PathologicalIndicatorCategory category = projectUtils.pathologicalIndicatorCategoryService.selectByPrimaryKey(
                         annotation.getCategoryId());
                 regionAttributes.put(BONE_MARROW, category.getCategoryName());
             }
@@ -331,9 +330,5 @@ public class ProjectUtils {
             }
         }
         return jsonObject;
-
     }
-
-
-
 }
