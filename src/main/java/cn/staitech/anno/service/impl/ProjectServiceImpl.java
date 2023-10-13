@@ -117,7 +117,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             obj.setStatusName(Container.PROJECT_STATUS.get(obj.getStatus()));
 
             if (obj.getIndicatorId() == null) {
-                obj.setIndicatorName("ud");
+                obj.setIndicatorName("无关联");
             }
         }
         return projectList;
