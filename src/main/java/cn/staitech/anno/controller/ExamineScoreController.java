@@ -86,7 +86,7 @@ public class ExamineScoreController {
     }
 
     @ApiOperationSupport(author = "gjt")
-    @ApiOperation(value = "查询考核详情接口")
+    @ApiOperation(value = "添加考核信息")
     @PostMapping("/add")
     public R<String> add(@RequestBody ExamineScoreAddVO examineScoreAddVO) throws Exception {
         examineScoreService.add(examineScoreAddVO);
@@ -94,7 +94,7 @@ public class ExamineScoreController {
     }
 
     @ApiOperationSupport(author = "gjt")
-    @ApiOperation(value = "添加考核信息")
+    @ApiOperation(value = "查询考核详情接口")
     @GetMapping("/selectBy")
     public R<ExamineScore> selectBy(
             @NotNull(message = "参数异常,未传入考核id") @RequestParam(value = "examineScoreId") @ApiParam(name = "examineScoreId", value = "考核id", required = true) Long examineScoreId
