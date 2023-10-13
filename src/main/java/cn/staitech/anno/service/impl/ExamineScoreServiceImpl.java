@@ -71,14 +71,12 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
     public PageResponse<ExamineScore> selectList(Integer pageSize, Integer pageNum, Long projectId, String nickName, Long examResults) {
         PageResponse<ExamineScore> resp = new PageResponse<>();
         // 查询考核评分表中信息
-        ExcludeEmptyQueryWrapper<ExamineScore> examineScoreQueryWrapper = new ExcludeEmptyQueryWrapper<>();
-        examineScoreQueryWrapper
-                .eq("project_id", projectId)
-                .like("nick_name", nickName)
-                .eq("exam_results", examResults)
-                .orderByDesc("create_time");
         Page<ExamineScore> page = PageHelper.startPage(pageNum, pageSize);
-        List<ExamineScore> examineScoreList = examineScoreMapper.selectList(examineScoreQueryWrapper);
+        ExamineSelectVo examineSelectVo = new ExamineSelectVo();
+        examineSelectVo.setProjectId(projectId);
+        examineSelectVo.setNickName(nickName);
+        examineSelectVo.setExamResults(examResults);
+        List<ExamineScore> examineScoreList = examineScoreMapper.selectExamineList(examineSelectVo);
         resp.setTotal(page.getTotal());
         resp.setList(examineScoreList);
         resp.setPages(page.getPages());
