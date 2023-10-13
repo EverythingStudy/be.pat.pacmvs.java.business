@@ -1,9 +1,7 @@
 package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.staitech.anno.constant.ExaminationConstant;
-import cn.staitech.anno.constant.ProjectConstant;
-import cn.staitech.anno.constant.R.MeasureResponseConstant;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.*;
 import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.po.ProjectPo;
@@ -27,6 +25,7 @@ import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.response.R;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.SlideService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -168,11 +167,11 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                 projectMapper.updateProject(project);
 
             } else if (processFlag == 1) {
-                throw new Exception(ProjectConstant.SERIAL_NO + slideId + ProjectConstant.IN_DIMENSION);
+                throw new Exception(MessageSource.M("SERIAL_NO") + slideId + MessageSource.M("IN_DIMENSION"));
             } else if (processFlag == 2) {
-                throw new Exception(ProjectConstant.SERIAL_NO + slideId + ProjectConstant.DIMENSIONING_COMPLETE);
+                throw new Exception(MessageSource.M("SERIAL_NO") + slideId + MessageSource.M("DIMENSIONING_COMPLETE"));
             } else if (processFlag == 3) {
-                throw new Exception(ProjectConstant.SERIAL_NO + slideId + ProjectConstant.SUBMITTED_FOR_REVIEW);
+                throw new Exception(MessageSource.M("SERIAL_NO") + slideId + MessageSource.M("SUBMITTED_FOR_REVIEW"));
             }
         }
         if (count > 0) {
@@ -484,14 +483,14 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                 // 清空response
                 response.reset();
                 OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
-                response.setCharacterEncoding(ExaminationConstant.CHARACTER_ENCODING);
-                response.setContentType(ExaminationConstant.CONTENT_TYPE);
-                response.setHeader(ExaminationConstant.HEADER, "attachment;filename=" + URLEncoder.encode(projectExt.getProjectName(), "utf-8") + MeasureResponseConstant.FILE_SUFFIX_TXT);
+                response.setCharacterEncoding(CommonConstant.CHARACTER_SET_UTF8);
+                response.setContentType(CommonConstant.CONTENT_TYPE);
+                response.setHeader(CommonConstant.HEADER, "attachment;filename=" + URLEncoder.encode(projectExt.getProjectName(), "utf-8") + CommonConstant.FILE_SUFFIX_TXT);
                 outputStream.write(res.toString().getBytes());
                 // 关闭流
                 outputStream.close();
             } catch (Exception e) {
-                log.error(MeasureResponseConstant.DOWNLOAD_ERROR, e);
+                log.error(MessageSource.M("DOWNLOAD_ERROR"), e);
             }
         }
     }

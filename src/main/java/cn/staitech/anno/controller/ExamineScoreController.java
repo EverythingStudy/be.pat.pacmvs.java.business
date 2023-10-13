@@ -1,18 +1,15 @@
 package cn.staitech.anno.controller;
 
 
-import cn.staitech.anno.constant.ExamineScoreConstant;
-import cn.staitech.anno.constant.ExportConstant;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.ExamineScore;
-import cn.staitech.anno.domain.examineScore.ExamineScoreAddVO;
-import cn.staitech.anno.domain.examineScore.ExamineScoreExportVO;
-import cn.staitech.anno.domain.examineScore.ExamineScoreExportInsertVo;
-import cn.staitech.anno.domain.examineScore.SelectExaminationListVO;
+import cn.staitech.anno.domain.examineScore.*;
 import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.service.ProjectService;
 import cn.staitech.anno.service.ExamineScoreService;
 import cn.staitech.anno.utils.Column;
 import cn.staitech.anno.utils.ExcelTool;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -82,7 +79,7 @@ public class ExamineScoreController {
     @PostMapping("/refreshInterval")
     public R<String> refreshInterval(@RequestBody ExamineScoreExportInsertVo examineScoreExportInsertVo) throws Exception {
         // 调用python
-        return R.ok("操作成功");
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     @ApiOperationSupport(author = "gjt")
@@ -90,7 +87,16 @@ public class ExamineScoreController {
     @PostMapping("/add")
     public R<String> add(@RequestBody ExamineScoreAddVO examineScoreAddVO) throws Exception {
         examineScoreService.add(examineScoreAddVO);
-        return R.ok("操作成功");
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+    }
+
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "查询考核详情接口")
+    @GetMapping("/selectBy")
+    public R<ExamineScoreBy> selectBy(
+            @NotNull(message = "参数异常,未传入考核id") @RequestParam(value = "examineScoreId") @ApiParam(name = "examineScoreId", value = "考核id", required = true) Long examineScoreId
+    ) throws Exception {
+        return R.ok(examineScoreService.selectByIds(examineScoreId));
     }
 
     @ApiOperationSupport(author = "gjt")
@@ -98,7 +104,17 @@ public class ExamineScoreController {
     @PutMapping("/update")
     public R<String> update(@RequestBody ExamineScoreAddVO examineScoreAddVO) throws Exception {
         examineScoreService.update(examineScoreAddVO);
-        return R.ok("操作成功");
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+    }
+
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "刷新个人拟合度")
+    @GetMapping("/updatePersonalFit")
+    public R<String> updatePersonalFit(
+            @NotNull(message = "参数异常,未传入考核id") @RequestParam(value = "examineScoreId") @ApiParam(name = "examineScoreId", value = "考核id", required = true) Long examineScoreId
+    ) throws Exception {
+        examineScoreService.updatePersonalFit(examineScoreId);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
 
@@ -116,12 +132,12 @@ public class ExamineScoreController {
             projectName = projectBy.getProjectName();
         }
         // 构造表头的每个列头 定义表头
-        List<Map<String, String>> titleList = getTitleList(ExamineScoreConstant.COLHEAD_KEY, ExamineScoreConstant.COLHEAD_VALUE);
-        ExcelTool excelTool = new ExcelTool<>(ExportConstant.EXCEL_TITLE, 20, 20);
+        List<Map<String, String>> titleList = getTitleList(CommonConstant.EXAMINESCORE_COLHEAD_KEY, CommonConstant.EXAMINESCORE_COLHEAD_VALUE);
+        ExcelTool excelTool = new ExcelTool<>(MessageSource.M("EXCEL_FILE_PATH"), 20, 20);
         List<Column> titleData = excelTool.columnTransformer(titleList);
         response.setContentType("application/vnd.ms-excel;charset=utf-8");
         response.setCharacterEncoding("utf-8");
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(projectName, "UTF-8") + ExportConstant.XLSX);
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(projectName, "UTF-8") + CommonConstant.FILE_SUFFIX_XLSX);
         excelTool.exportExcel(titleData, examineScoreList, response.getOutputStream(), true, false);
     }
 

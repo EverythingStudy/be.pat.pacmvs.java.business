@@ -1,36 +1,24 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.constant.QuestionBankConstant;
-import cn.staitech.anno.domain.ExamineScore;
-import cn.staitech.anno.domain.Image;
-import cn.staitech.anno.domain.QuestionBank;
-import cn.staitech.anno.domain.QuestionProjectRel;
-import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.question.in.ConfirmSelectionIn;
-import cn.staitech.anno.domain.question.in.CreateBySlideData;
-import cn.staitech.anno.domain.question.in.CreateBySlideIn;
-import cn.staitech.anno.domain.question.in.CreateQuestionIn;
-import cn.staitech.anno.domain.question.in.GetQuestionListIn;
-import cn.staitech.anno.domain.question.in.GetQuestionsIn;
-import cn.staitech.anno.domain.question.in.SettingCompletedIn;
+import cn.staitech.anno.constant.CommonConstant;
+import cn.staitech.anno.domain.*;
+import cn.staitech.anno.domain.question.in.*;
 import cn.staitech.anno.domain.question.out.GetProjectBoxOut;
 import cn.staitech.anno.domain.question.out.GetQuestionListOut;
 import cn.staitech.anno.domain.question.out.GetQuestionsOut;
-import cn.staitech.anno.mapper.ExamineScoreMapper;
-import cn.staitech.anno.mapper.ImageMapper;
-import cn.staitech.anno.mapper.ProjectMapper;
-import cn.staitech.anno.mapper.QuestionBankMapper;
-import cn.staitech.anno.mapper.QuestionProjectRelMapper;
-import cn.staitech.anno.mapper.SlideMapper;
+import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.service.IQuestionBankService;
 import cn.staitech.anno.service.IQuestionProjectRelService;
 import cn.staitech.anno.service.MarkingService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.SpringUtils;
 import cn.staitech.common.core.utils.StringUtils;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.RemoteLabelService;
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.Page;
@@ -43,11 +31,11 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static cn.staitech.anno.constant.QuestionBankConstant.PROHIBIT_REPETITION;
 import static cn.staitech.common.security.utils.SecurityUtils.isAdmin;
 
 /**
@@ -73,6 +61,9 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
 
     @Resource
     private ImageMapper imageMapper;
+
+    @Resource
+    private RemoteLabelService remoteLabelService;
 
     @Autowired
     private MarkingService markingService;
@@ -120,10 +111,10 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                 urlPath = markingService.slideJsonExport(e.getSlideId());
             } catch (Exception exception) {
                 log.error(exception.toString());
-                throw new RuntimeException(QuestionBankConstant.ERROR_GENERATE_JSON);
+                throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
             }
             String s = StringUtils.substringAfterLast(urlPath, File.separator);
-//            String s1 = StringUtils.substringBeforeLast(urlPath, File.separator);
+            // String s1 = StringUtils.substringBeforeLast(urlPath, File.separator);
             String s1 = urlPath;
             ret.setJsonName(s);
             ret.setGeojsonUrl(s1);
@@ -132,6 +123,13 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         //插入题库表
         QuestionBankServiceImpl bean = SpringUtils.getBean(QuestionBankServiceImpl.class);
         bean.saveBatch(resp);
+        List<Long> questionBankList = new ArrayList<>();
+        for(QuestionBank questionBank:resp){
+            questionBankList.add(questionBank.getQuestionId());
+        }
+        JSONObject markingJsonObject = new JSONObject();
+        markingJsonObject.put("question_id",questionBankList);
+        remoteLabelService.Standard(markingJsonObject);
         cn.staitech.anno.domain.Project project = new cn.staitech.anno.domain.Project();
         project.setProjectId(req.getProjectId());
         project.setIfCreateQuestions("1");
@@ -166,7 +164,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                 urlPath = markingService.slideJsonExport(e.getSlideId());
             } catch (Exception exception) {
                 log.error(exception.toString());
-                throw new RuntimeException(QuestionBankConstant.ERROR_GENERATE_JSON);
+                throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
             }
             String s = StringUtils.substringAfterLast(urlPath, File.separator);
             String s1 = StringUtils.substringBeforeLast(urlPath, File.separator);
@@ -178,6 +176,13 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         }).collect(Collectors.toList());
         QuestionBankServiceImpl bean = SpringUtils.getBean(QuestionBankServiceImpl.class);
         bean.saveBatch(questionBanks);
+        List<Long> questionBankList = new ArrayList<>();
+        for(QuestionBank questionBank:questionBanks){
+            questionBankList.add(questionBank.getQuestionId());
+        }
+        JSONObject markingJsonObject = new JSONObject();
+        markingJsonObject.put("question_id",questionBankList);
+        remoteLabelService.Standard(markingJsonObject);
         return R.ok();
     }
 
@@ -234,11 +239,11 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         LambdaQueryWrapper<QuestionProjectRel> qw = new LambdaQueryWrapper<>();
         qw.eq(QuestionProjectRel::getProjectId, req.getProjectId());
         qw.eq(QuestionProjectRel::getQuestionId, req.getQuestionId());
-        qw.eq(QuestionProjectRel::getDelFlag, QuestionBankConstant.NUMBER_0);
+        qw.eq(QuestionProjectRel::getDelFlag, CommonConstant.NUMBER_0);
         List<QuestionProjectRel> questionProjectRels = questionProjectRelMapper.selectList(qw);
 
         if (!CollectionUtils.isEmpty(questionProjectRels)) {
-            return R.fail(PROHIBIT_REPETITION);
+            return R.fail(MessageSource.M("PROHIBIT_REPETITION"));
         }
 
         QuestionProjectRel entity = new QuestionProjectRel();
@@ -280,15 +285,15 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
 
         for (Long aLong : dataList) {
             LambdaQueryWrapper<ExamineScore> qw = new LambdaQueryWrapper<>();
-            qw.eq(ExamineScore::getQuestionProjectId,aLong);
+            qw.eq(ExamineScore::getQuestionProjectId, aLong);
             List<ExamineScore> examineScores = examineScoreMapper.selectList(qw);
-            if(!CollectionUtils.isEmpty(examineScores)){
-                return R.fail(QuestionBankConstant.ERROR_HAS_ALREADY);
+            if (!CollectionUtils.isEmpty(examineScores)) {
+                return R.fail(MessageSource.M("ERROR_HAS_ALREADY"));
             }
         }
         List<QuestionProjectRel> param = dataList.stream().map(e -> {
             QuestionProjectRel questionProjectRel = new QuestionProjectRel();
-            questionProjectRel.setDelFlag(QuestionBankConstant.NUMBER_1);
+            questionProjectRel.setDelFlag(CommonConstant.NUMBER_1);
             questionProjectRel.setQuestionProjectId(e);
             return questionProjectRel;
         }).collect(Collectors.toList());

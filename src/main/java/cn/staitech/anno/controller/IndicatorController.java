@@ -1,13 +1,12 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.constant.R.IndicatorResponseConstant;
-import cn.staitech.anno.constant.R.ResponseConstant;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.vo.indicator.*;
 import cn.staitech.anno.service.IndicatorService;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
 import cn.staitech.anno.service.ProjectService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
@@ -67,7 +66,7 @@ public class IndicatorController extends BaseController {
         //查询结构指标是否存在
         List<Indicator> indicatorList = indicatorService.selectIndicator(indicator);
         if (!indicatorList.isEmpty()) {
-            return R.fail(IndicatorResponseConstant.INDICATOR_EXIST);
+            return R.fail(MessageSource.M("INDICATOR_EXIST"));
         }
 
         indicator.setCreateBy(sysUser.getUserId());
@@ -75,7 +74,7 @@ public class IndicatorController extends BaseController {
 
         //添加结构指标
         indicatorService.insertIndicator(indicator);
-        return R.ok(ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
 
@@ -126,11 +125,11 @@ public class IndicatorController extends BaseController {
     @PostMapping("/del")
     public R<String> delIndicator(@RequestBody IndicatorGetVO indicatorGetVO) {
         if (!Optional.ofNullable(indicatorGetVO.getIndicatorId()).isPresent()) {
-            return R.fail(IndicatorResponseConstant.INDICATOR_ID_NOTNULL);
+            return R.fail(MessageSource.M("INDICATOR_ID_NOTNULL"));
         }
         Integer num = indicatorService.selectSpecial(indicatorGetVO.getIndicatorId().longValue());
         if (0 < num) {
-            return R.fail(IndicatorResponseConstant.ALREADY_BOUND_NO_DEL);
+            return R.fail(MessageSource.M("ALREADY_BOUND_NO_DEL"));
         }
         //删除标注类别
         PathologicalIndicatorCategory Pathological = PathologicalIndicatorCategory.builder().indicatorId(indicatorGetVO.getIndicatorId().longValue()).delFlag(1).build();
@@ -138,7 +137,7 @@ public class IndicatorController extends BaseController {
         ;
         //删除病理指标
         indicatorService.delIndicator(indicatorGetVO.getIndicatorId().longValue());
-        return R.ok(null, ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
 
@@ -152,19 +151,19 @@ public class IndicatorController extends BaseController {
     public R<Integer> edit(@Validated @RequestBody IndicatorReviseVO indicator) {
         Integer num = indicatorService.selectSpecial(indicator.getIndicatorId().longValue());
         if (0 < num) {
-            return R.fail(IndicatorResponseConstant.ALREADY_BOUND);
+            return R.fail(MessageSource.M("ALREADY_BOUND"));
         }
         IndicatorGetVO indicatorGetVo = IndicatorGetVO.builder().indicatorId(indicator.getIndicatorId())
                 .indicatorName(indicator.getIndicatorName()).build();
         //查询病理名称是否存在
         List<Indicator> indicatorList = indicatorService.selectIndicatorName(indicatorGetVo);
         if (!indicatorList.isEmpty()) {
-            return R.fail(IndicatorResponseConstant.INDICATOR_EXIST);
+            return R.fail(MessageSource.M("INDICATOR_EXIST"));
         }
         indicator.setUpdateBy(String.valueOf(SecurityUtils.getUserId()));
         //修改病理指标
         indicatorService.updateIndicator(indicator);
-        return R.ok(null, ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
 
@@ -173,7 +172,7 @@ public class IndicatorController extends BaseController {
     public R<Integer> checkEdit(@RequestParam @ApiParam(name = "indicatorId", value = "病理指标id", required = true) Long indicatorId) {
         Integer num = indicatorService.selectSpecial(indicatorId);
         if (0 < num) {
-            return R.fail(IndicatorResponseConstant.ALREADY_BOUND);
+            return R.fail(MessageSource.M("ALREADY_BOUND"));
         }
         return R.ok(1);
     }

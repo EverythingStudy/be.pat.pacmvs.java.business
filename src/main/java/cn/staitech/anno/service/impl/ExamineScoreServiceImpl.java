@@ -3,14 +3,21 @@ package cn.staitech.anno.service.impl;
 import cn.hutool.core.date.DateUtil;
 import cn.staitech.anno.domain.*;
 import cn.staitech.anno.domain.examineScore.ExamineScoreAddVO;
+import cn.staitech.anno.domain.examineScore.ExamineScoreBy;
 import cn.staitech.anno.domain.examineScore.ExamineScoreExportVO;
 import cn.staitech.anno.domain.examineScore.SelectExaminationListVO;
 import cn.staitech.anno.mapper.*;
+import cn.staitech.anno.project.domain.Project;
+import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.queue.DelayQueueExample;
 import cn.staitech.anno.service.ExamineScoreService;
+import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.utils.ExcludeEmptyQueryWrapper;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.RemoteLabelService;
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.Page;
@@ -45,10 +52,19 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
     private QuestionBankMapper questionBankMapper;
 
     @Resource
+    private RemoteLabelService remoteLabelService;
+
+    @Resource
     private ProjectMarksRelMapper projectMarksRelMapper;
 
     @Resource
     private DelayQueueExample delayQueueExample;
+
+    @Resource
+    private MarkingService markingService;
+
+    @Resource
+    private ProjectMapperV1 projectMapperV1;
 
     @Resource
     private QuestionProjectRelMapper questionProjectRelMapper;
@@ -81,48 +97,60 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         questionBank.setImageName(imageName);
         // 根据项目查询
         QueryWrapper<QuestionProjectRel> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("project_id",projectId).eq("del_flag",'0');
+        queryWrapper.eq("project_id", projectId).eq("del_flag", '0');
         QuestionProjectRel questionProjectRel = questionProjectRelMapper.selectOne(queryWrapper);
         // 为空表示项目未添加切片
-        if(questionProjectRel == null){
+        if (questionProjectRel == null) {
             return new ArrayList<>();
         }
         QueryWrapper<ExamineScore> examineScoreQueryWrapper = new QueryWrapper<>();
-        examineScoreQueryWrapper.eq("question_project_id",questionProjectRel.getQuestionProjectId()).eq("create_by", SecurityUtils.getLoginUser().getSysUser().getUserId());
+        examineScoreQueryWrapper.eq("question_project_id", questionProjectRel.getQuestionProjectId()).eq("create_by", SecurityUtils.getLoginUser().getSysUser().getUserId());
         ExamineScore examineScoreBy = examineScoreMapper.selectOne(examineScoreQueryWrapper);
         List<SelectExaminationListVO> selectExaminationListVOS;
-        if(examineScoreBy != null){
+        if (examineScoreBy != null) {
             selectExaminationListVOS = examineScoreMapper.selectExaminationList(questionBank);
-        }else{
+        } else {
             selectExaminationListVOS = examineScoreMapper.selectQuestionProjectList(questionProjectRel.getQuestionProjectId());
         }
         return selectExaminationListVOS;
     }
 
     @Override
-    public SelectExaminationListVO selectExaminationBy(Long questionProjectId){
+    public SelectExaminationListVO selectExaminationBy(Long questionProjectId) {
         QueryWrapper<ExamineScore> examineScoreQueryWrapper = new QueryWrapper<>();
-        examineScoreQueryWrapper.eq("question_project_id",questionProjectId).eq("create_by", SecurityUtils.getLoginUser().getSysUser().getUserId());
+        examineScoreQueryWrapper.eq("question_project_id", questionProjectId).eq("create_by", SecurityUtils.getLoginUser().getSysUser().getUserId());
         ExamineScore examineScoreBy = examineScoreMapper.selectOne(examineScoreQueryWrapper);
         SelectExaminationListVO examinationListVO = new SelectExaminationListVO();
-        if(examineScoreBy != null){
+        if (examineScoreBy != null) {
             ExamineScore examineScore = new ExamineScore();
             examineScore.setQuestionProjectId(questionProjectId);
             examineScore.setCreateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
             examinationListVO = examineScoreMapper.selectExaminationBy(examineScore);
-        }
-        else{
+        } else {
             examinationListVO = examineScoreMapper.selectQuestionProject(questionProjectId);
         }
         return examinationListVO;
     }
 
     @Override
+    public ExamineScoreBy selectByIds(Long examineScoreId){
+        return examineScoreMapper.selectByIds(examineScoreId);
+    }
+
+    @Override
     public int add(ExamineScoreAddVO examineScoreAddVO) throws Exception {
         // 根据题目项目id查询关系表中数据
+
         QuestionProjectRel questionProjectRel = questionProjectRelMapper.selectById(examineScoreAddVO.getQuestionProjectId());
         if (questionProjectRel == null) {
             throw new Exception("数据异常");
+        }
+        // 校验当前项目是否暂停或者完成
+        Project projectBy = projectMapperV1.selectById(questionProjectRel.getProjectId());
+        if(projectBy != null){
+            if(projectBy.getStatus() == 3 || projectBy.getStatus() == 4){
+                throw new Exception("项目暂停或已完成，不可点击开始考试按钮");
+            }
         }
         // 查询应标个数
         QueryWrapper<ProjectMarksRel> projectMarksRelQueryWrapper = new QueryWrapper<>();
@@ -142,7 +170,7 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         examineScore.setStartTime(sdf.format(date));
         examineScore.setEndTime(sdf.format(DateUtil.offsetMinute(date, 20)));
-        if(projectMarksRelBy != null){
+        if (projectMarksRelBy != null) {
             examineScore.setShouldNumber(projectMarksRelBy.getShouldMarks());
         }
         examineScore.setOperateStatus("1");
@@ -172,11 +200,34 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         ExamineScore examineScore = new ExamineScore();
         examineScore.setExamineScoreId(examineScoreBy.getExamineScoreId());
         examineScore.setOperateStatus("2");
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        examineScore.setCompleteTime(sdf.format(date));
+        examineScore.setUpdateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
+        examineScore.setUpdateTime(sdf.format(date));
+        String fileUrl;
+        try {
+            fileUrl = markingService.slideJsonExport(examineScoreBy.getSlideId());
+        } catch (Exception exception) {
+            log.error(exception.toString());
+            throw new RuntimeException(MessageSource.M("ERROR_HAS_ALREADY"));
+        }
+        examineScore.setExaminationGeojsonUrl(fileUrl);
         examineScore.setRealityNumber(Long.valueOf(markingCount));
+
+        JSONObject markingJsonObject = new JSONObject();
+        markingJsonObject.put("examine_score_id",examineScore.getExamineScoreId());
+        remoteLabelService.marking(markingJsonObject);
         // 更新当前评分记录
         return examineScoreMapper.updateById(examineScore);
     }
 
+    @Override
+    public void updatePersonalFit(Long examineScoreId){
+        JSONObject markingJsonObject = new JSONObject();
+        markingJsonObject.put("examine_score_id",examineScoreId);
+        remoteLabelService.marking(markingJsonObject);
+    }
 
 
     @Override

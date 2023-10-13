@@ -31,6 +31,9 @@ public class SelectExaminationListVO {
     @ApiModelProperty(value = "开始时间")
     private String startTime;
 
+    @ApiModelProperty(value = "操作状态")
+    private Long operateStatus;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "结束时间")
     private String endTime;
@@ -38,6 +41,7 @@ public class SelectExaminationListVO {
     @ApiModelProperty(value = "考试结果")
     private String examResults;
 
-    @ApiModelProperty(value = "操作状态")
-    private Long operateStatus;
+    @ApiModelProperty(value = "交卷时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private String completeTime;
 }

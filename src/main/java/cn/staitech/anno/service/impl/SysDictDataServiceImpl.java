@@ -131,7 +131,7 @@ public class SysDictDataServiceImpl implements SysDictDataService {
 	public  R<String> updateSpecialImageList(AuditSpecialImageVO vo) {
 		Long[]  imageIds = vo.getSpecialImageIds();
 		if (null == imageIds) {
-			return R.fail(SpecialImageConstant.Data_NULL);
+			return R.fail(MessageSource.M("")Data_NULL);
 		}
 		//参数校验
 		//审核状态 0：待审核 1：审核通过 2：审核不通过
@@ -152,13 +152,13 @@ public class SysDictDataServiceImpl implements SysDictDataService {
 		if(CollectionUtils.isNotEmpty(list)){
 			if (list.size() !=  imageIds.length) {
 				if(auditStatus == 1){
-					return R.fail(SpecialImageConstant.PASS_ERROR);
+					return R.fail(MessageSource.M("")PASS_ERROR);
 				}else{
-					return R.fail(SpecialImageConstant.NO_PASS_ERROR);
+					return R.fail(MessageSource.M("")NO_PASS_ERROR);
 				}
 			}
 		}else{
-			return R.fail(SpecialImageConstant.Data_NULL);
+			return R.fail(MessageSource.M("")Data_NULL);
 		}
 
 		SpecialImage record = new SpecialImage();
@@ -203,7 +203,7 @@ public class SysDictDataServiceImpl implements SysDictDataService {
 				subImageMapper.updateByPrimaryKeySelective(simage);
 			}
 		}
-		return R.ok(OPERATE_SUCCEED);	
+		return R.ok(null,MessageSource.M("OPERATE_ERROR"));	
 	}*/
 
 
@@ -232,9 +232,9 @@ public class SysDictDataServiceImpl implements SysDictDataService {
 			special.setUpdateBy(SecurityUtils.getUserId());
 			specialService.updateDeliveryStatus(special);
 		}else{
-			return R.fail(SpecialImageConstant.DELIVERY_FAIL);
+			return R.fail(MessageSource.M("")DELIVERY_FAIL);
 		}
-		return R.ok(OPERATE_SUCCEED);
+		return R.ok(null,MessageSource.M("OPERATE_ERROR"));
 	}*/
 
 

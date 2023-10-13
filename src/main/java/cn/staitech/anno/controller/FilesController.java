@@ -1,12 +1,11 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.constant.FileConstant;
-import cn.staitech.anno.constant.ImageConstant;
 import cn.staitech.anno.domain.files.Files;
 import cn.staitech.anno.domain.files.in.FileUploadVO;
 import cn.staitech.anno.domain.files.in.FilesListVO;
 import cn.staitech.anno.service.FileUploadService;
 import cn.staitech.anno.service.FilesService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
@@ -79,7 +78,6 @@ public class FilesController extends BaseController {
     }
 
 
-
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "文件上传并处理下游业务逻辑(大文件)", notes = "文件上传并处理下游业务逻辑 - 王峰")
     @ApiImplicitParams({
@@ -92,9 +90,9 @@ public class FilesController extends BaseController {
             @RequestParam("file") MultipartFile file, FileUploadVO fileUploadVO) throws Exception {
         fileUploadVO.setMultipartFile(file);
         if (fileUploadService.mergeChunk(fileUploadVO)) {
-            return R.ok(FileConstant.FILE_SLIDE_UPLOAD_SUCCESS);
+            return R.ok(MessageSource.M("FILE_SLIDE_UPLOAD_SUCCESS"));
         } else {
-            return R.fail(FileConstant.FILE_SLIDE_UPLOAD_FAILURE);
+            return R.fail(MessageSource.M("FILE_SLIDE_UPLOAD_FAILURE"));
         }
     }
 
@@ -142,9 +140,9 @@ public class FilesController extends BaseController {
         Files files = new Files();
         files.setFilesId(filesId);
         if (files.getFilesId() > 0 && filesService.removeById(files)) {
-            return R.ok(ImageConstant.OPERATE_SUCCEED);
+            return R.ok(MessageSource.M("OPERATE_SUCCEED"));
         }
-        return R.fail(ImageConstant.IMAGE_USING_FORBID_DELETE);
+        return R.fail(MessageSource.M("IMAGE_USING_FORBID_DELETE"));
     }
 
     /**
@@ -161,8 +159,8 @@ public class FilesController extends BaseController {
     public R updateBatchIds(@Validated @RequestBody Files files) {
         //  if (files.getFilesId() > 0 && filesService.save(files)) {
         if (files.getFilesId() > 0 && filesService.updateById(files)) {
-            return R.ok(ImageConstant.OPERATE_SUCCEED);
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
-        return R.fail(ImageConstant.OPERATE_ERROR);
+        return R.fail(MessageSource.M("OPERATE_ERROR"));
     }
 }

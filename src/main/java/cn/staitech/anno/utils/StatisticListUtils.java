@@ -1,12 +1,13 @@
 package cn.staitech.anno.utils;
 
 import cn.hutool.core.util.ObjectUtil;
-import cn.staitech.anno.constant.StatisticConstant;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.vo.statistic.StatisticListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticListOutVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticObjectOutVO;
 import cn.staitech.anno.domain.vo.statistic.TableDateOutVO;
-import cn.staitech.anno.domain.vo.statistic.excel.*;
+import cn.staitech.anno.domain.vo.statistic.excel.AnnotationCountExcelVO;
+import cn.staitech.anno.domain.vo.statistic.excel.AnnotationDateExcelVO;
 import cn.staitech.anno.service.StatisticService;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.util.ListUtils;
@@ -20,14 +21,9 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
-import static cn.staitech.anno.constant.ProjectConstant.NO_ATTRIBUTE;
-import static cn.staitech.anno.constant.StatisticConstant.*;
+import static cn.staitech.anno.constant.CommonConstant.*;
 
 /**
  * 数据统计模块通用类
@@ -453,7 +449,7 @@ public class StatisticListUtils {
                 resp = statisticService.statisticSelectAnnoCategoryList(statisticList);
                 resp.forEach(o -> {
                     if (StringUtils.isEmpty(o.getStatisticName()) && ObjectUtil.isNotNull(o.getStatisticCount())) {
-                        o.setStatisticName(NO_ATTRIBUTE);
+                        o.setStatisticName(MessageSource.M("NO_ATTRIBUTE"));
                     }
                 });
                 break;
@@ -492,7 +488,7 @@ public class StatisticListUtils {
             case ANNOTATION_CATEGORY:
                 resp = statisticService.statisticSelectImageCategoryList(statisticList);
                 break;
-            case StatisticConstant.USER:
+            case CommonConstant.USER:
                 resp = statisticService.statisticSelectImageMemberList(statisticList);
                 break;
             default:

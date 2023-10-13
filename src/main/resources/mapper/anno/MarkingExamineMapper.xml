@@ -110,6 +110,8 @@
                     c.rgb,
                     "label_code" ,
                     c.number,
+                    "measure_full_name",
+                    c.category_name,
                     "label_name",
                     c.category_name
                 ) AS properties

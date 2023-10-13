@@ -1,20 +1,10 @@
 package cn.staitech.anno.service.impl;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.lang.Snowflake;
-import cn.hutool.core.text.csv.CsvUtil;
-import cn.hutool.core.text.csv.CsvWriter;
 import cn.hutool.core.thread.ExecutorBuilder;
-import cn.hutool.core.util.CharsetUtil;
-import cn.staitech.anno.constant.ExaminationConstant;
-import cn.staitech.anno.constant.ProjectConstant;
-import cn.staitech.anno.constant.R.MeasureResponseConstant;
-import cn.staitech.anno.constant.R.ResponseConstant;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Group;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.RecentlyVisited;
-import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.po.ProjectPo;
 import cn.staitech.anno.domain.project.ProjectExt;
 import cn.staitech.anno.domain.project.in.OperateProjectIn;
@@ -27,13 +17,8 @@ import cn.staitech.anno.domain.projectgroup.ProjectGroup;
 import cn.staitech.anno.domain.special.Special;
 import cn.staitech.anno.enums.ReasonsEnum;
 import cn.staitech.anno.mapper.*;
-import cn.staitech.anno.project.constants.Constants;
-import cn.staitech.anno.project.domain.DownTask;
-import cn.staitech.anno.project.mapper.DownTaskMapper;
-import cn.staitech.anno.project.service.impl.ReviewServiceImpl;
-import cn.staitech.anno.project.vo.ReviewVO;
-import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.ProjectExtService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.bean.BeanUtils;
@@ -55,15 +40,9 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StopWatch;
 
 import javax.annotation.Resource;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.OutputStream;
-import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
-
-import static cn.staitech.anno.aspect.LogFileAspect.response;
 
 /**
  * @Author: wudi
@@ -75,12 +54,8 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
 
     private static final Logger log = LoggerFactory.getLogger(ProjectExtServiceImpl.class);
     private static final String CHECK_FLAG = "1";
-
     @Resource
     private SpecialMapper specialMapper;
-
-    @Resource
-    private SlideMapper slideMapper;
 
     @Resource
     private SystemDictMapper systemDictMapper;
@@ -95,17 +70,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
     private GroupMapper groupMapper;
 
     @Resource
-    private MarkingMapper markingMapper;
-
-    @Resource
-    private MarkingService markingService;
-
-    @Resource
     private RecentlyVisitedMapper recentlyVisitedMapper;
-
-    @Resource
-    private DownTaskMapper downTaskMapper;
-
 
     /**
      * 获得系统、脏器下拉框
@@ -208,11 +173,11 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
 
         //校验项目名称
         if (!checkProject(req, CHECK_FLAG)) {
-            return R.fail(ProjectConstant.PROJECT_NAME_EXIST);
+            return R.fail(MessageSource.M("PROJECT_NAME_EXIST"));
         }
         //校验脏器
         if (!checkProject(req, null)) {
-            return R.fail(ProjectConstant.VISCUS_CODE_EXIST);
+            return R.fail(MessageSource.M("VISCUS_CODE_EXIST"));
         }
         //新增
         if (ObjectUtils.isEmpty(req.getProjectId()) || req.getProjectId() == 0) {
@@ -223,13 +188,13 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
             specialWrapper.eq(Special::getDelFlag, 0);
             Integer integer = specialMapper.selectCount(specialWrapper);
             if (integer > 0) {
-                return R.fail(ProjectConstant.SPECIAL_EXIST_NON_DELIVERY);
+                return R.fail(MessageSource.M("SPECIAL_EXIST_NON_DELIVERY"));
             }
             //判断专题分组
             LambdaQueryWrapper<Group> groupWrapper = new LambdaQueryWrapper<>();
             Integer integer1 = groupMapper.selectCount(groupWrapper);
             if (integer1 <= 0) {
-                return R.fail(ProjectConstant.SPECIAL_NOTEXIST_GROUP);
+                return R.fail(MessageSource.M("SPECIAL_NOTEXIST_GROUP"));
             }
 
             projectExt.setProjectId(null);
@@ -244,7 +209,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
             projectExt.setUpdateTime(new Date());
             projectExtMapper.update(projectExt);
         }
-        return R.ok(null, ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     /**
@@ -277,7 +242,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
         //校验是否绑定切片
         int i = projectExtMapper.selectCountSlide(req.getProjectId());
         if (i > 0) {
-            return R.fail(ProjectConstant.PROJECT_SLIDE_EXIST);
+            return R.fail(MessageSource.M("PROJECT_SLIDE_EXIST"));
         }
 
         Long userId = SecurityUtils.getUserId();
@@ -287,9 +252,9 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
         projectGroupMapper.updateDelFlag(req.getProjectId(), userId);
         // 删除最近访问表中数据
         QueryWrapper<RecentlyVisited> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("project_id",req.getProjectId());
+        queryWrapper.eq("project_id", req.getProjectId());
         recentlyVisitedMapper.delete(queryWrapper);
-        return R.ok(null, ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     /**
@@ -331,7 +296,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
         //判断是否存在未完成分析的切片
         int i = projectExtMapper.countNotReady(projectId);
         if (i > 0) {
-            return R.fail(ProjectConstant.PROJECT_NO_READY);
+            return R.fail(MessageSource.M("PROJECT_NO_READY"));
         }
         //todo 数据拼接返回
         return R.ok();
@@ -416,7 +381,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
         specialWrapper.eq(Special::getDelFlag, 0);
         Integer integer = specialMapper.selectCount(specialWrapper);
         if (integer > 0) {
-            return R.fail(ProjectConstant.SPECIAL_NON_DELIVERY);
+            return R.fail(MessageSource.M("SPECIAL_NON_DELIVERY"));
         }
         //是否已存在项目
         LambdaQueryWrapper<ProjectPo> projectWrapper = new LambdaQueryWrapper<>();
@@ -424,7 +389,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
         projectWrapper.eq(ProjectPo::getDelFlag, 0);
         Integer integer2 = projectExtMapper.selectCount(projectWrapper);
         if (integer2 > 0) {
-            return R.fail(ProjectConstant.SPECIAL_EXIST_PROJECT);
+            return R.fail(MessageSource.M("SPECIAL_EXIST_PROJECT"));
         }
         //获得登陆人
         Long userId = SecurityUtils.getUserId();
@@ -448,12 +413,12 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
 
             });
         } else {
-            R.fail(ProjectConstant.AUTO_CREATE_REASON);
+            R.fail(MessageSource.M("AUTO_CREATE_REASON"));
         }
         stopWatch.stop();
         log.info(stopWatch.prettyPrint());
         //修改一键创建状态
-        projectExtMapper.updateSpecial(specialId, ProjectConstant.AUTO_CREATE_PROJECT_SUC);
+        projectExtMapper.updateSpecial(specialId, CommonConstant.AUTO_CREATE_PROJECT_SUC);
         return R.ok();
     }
 
@@ -464,7 +429,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
      */
     @Override
     public void changeSpecial(Long specialId) {
-        projectExtMapper.updateSpecial(specialId, ProjectConstant.AUTO_CREATE_PROJECT_FAL);
+        projectExtMapper.updateSpecial(specialId, CommonConstant.AUTO_CREATE_PROJECT_FAL);
 
     }
 
@@ -628,13 +593,11 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
     }
 
 
-
     private static ExecutorService executor = ExecutorBuilder.create()//
             .setCorePoolSize(1)//
             .setMaxPoolSize(1)//
             .setKeepAliveTime(0)//
             .build();
-
 
 
     @Override

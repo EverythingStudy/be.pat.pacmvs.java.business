@@ -1,7 +1,7 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.constant.ProjectConstant;
-import cn.staitech.anno.constant.R.ResponseConstant;
+import cn.staitech.anno.constant.Container;
+import cn.staitech.anno.domain.ExamineScore;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.ProjectMember;
 import cn.staitech.anno.domain.RecentlyVisited;
@@ -17,7 +17,9 @@ import cn.staitech.anno.domain.vo.ProjectListVO;
 import cn.staitech.anno.domain.vo.project.InsertProjectVO;
 import cn.staitech.anno.domain.vo.project.UpdateProjectStatusVO;
 import cn.staitech.anno.domain.vo.project.UpdateProjectVO;
+import cn.staitech.anno.mapper.ExamineScoreMapper;
 import cn.staitech.anno.service.*;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
@@ -28,6 +30,7 @@ import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.annotation.RequiresSpecialPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
+import co.elastic.clients.elasticsearch.watcher.QueryWatch;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -60,6 +63,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ProjectController extends BaseController {
     @Resource
     private ProjectService projectService;
+
+    @Resource
+    private ExamineScoreMapper examineScoreMapper;
     @Resource
     private ProjectMemberService projectMemberService;
     @Autowired
@@ -250,7 +256,7 @@ public class ProjectController extends BaseController {
         } catch (Exception e) {
             log.error("一键创建异常" + e);
             projectExtService.changeSpecial(specialId);
-            return R.fail(ProjectConstant.PROJECT_BATCH_INSERT);
+            return R.fail(MessageSource.M("PROJECT_BATCH_INSERT"));
         }
     }
 
@@ -273,7 +279,7 @@ public class ProjectController extends BaseController {
     @Log(title = "项目状态列表", menu = "项目状态列表", subMenu = "项目状态列表", businessType = BusinessType.QUERY)
     @GetMapping("/projectStatus")
     public R<Map<Integer, String>> colorType() {
-        Map<Integer, String> map = ProjectConstant.PROJECT_STATUS;
+        Map<Integer, String> map = Container.PROJECT_STATUS;
         return R.ok(map);
     }
 
@@ -303,9 +309,9 @@ public class ProjectController extends BaseController {
                     .organizationId(sysUser.getOrganizationId())
                     .roleId(sysUser.getRoleId()).createBy(sysUser.getUserId()).build();
             projectMemberService.save(projectMember);
-            return R.ok(ResponseConstant.OPERATE_SUCCEED);
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
-        return R.fail(ResponseConstant.OPERATE_ERROR);
+        return R.fail(MessageSource.M("OPERATE_ERROR"));
     }
 
     @ApiOperationSupport(author = "wangfeng")
@@ -339,9 +345,9 @@ public class ProjectController extends BaseController {
         project.setUpdateTime(new Date());
         project.setOrganizationId(sysUser.getOrganizationId());
         if (projectService.updateById(project)) {
-            return R.ok(ResponseConstant.OPERATE_SUCCEED);
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
-        return R.fail(ResponseConstant.OPERATE_ERROR);
+        return R.fail(MessageSource.M("OPERATE_ERROR"));
     }
 
     @ApiOperationSupport(author = "wangfeng")
@@ -370,9 +376,9 @@ public class ProjectController extends BaseController {
         }
 
         if (processCount.get() > 0) {
-            return R.ok(ResponseConstant.OPERATE_SUCCEED);
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         } else {
-            return R.fail(ResponseConstant.OPERATE_ERROR);
+            return R.fail(MessageSource.M("OPERATE_ERROR"));
         }
     }
 
@@ -396,6 +402,14 @@ public class ProjectController extends BaseController {
     @PostMapping("/editStatus")
     @Transactional
     public R<String> editProjectStatus(@Validated @RequestBody UpdateProjectStatusVO req) {
+
+        // 查询考核表中是否有未完成考试的考核信息
+        QueryWrapper<ExamineScore> examineScoreQueryWrapper = new QueryWrapper<>();
+        examineScoreQueryWrapper.eq("project_id",req.getProjectId()).eq("operate_status","1");
+        List<ExamineScore> examineScoreList = examineScoreMapper.selectList(examineScoreQueryWrapper);
+        if(examineScoreList.size() > 0){
+            return R.fail(MessageSource.M("ERROR_PROJECT_PROMPT"));
+        }
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
         Project project = new Project();
         project.setProjectId(req.getProjectId());
@@ -404,9 +418,9 @@ public class ProjectController extends BaseController {
         project.setOrganizationId(sysUser.getOrganizationId());
 
         if (projectService.updateById(project)) {
-            return R.ok(ResponseConstant.OPERATE_SUCCEED);
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
-        return R.fail(ResponseConstant.OPERATE_ERROR);
+        return R.fail(MessageSource.M("OPERATE_ERROR"));
     }
 
 
@@ -428,6 +442,6 @@ public class ProjectController extends BaseController {
             return R.fail("参数异常");
         }
         markingService.zipExport(zipUrl, specialId);
-        return R.ok("操作成功");
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 }

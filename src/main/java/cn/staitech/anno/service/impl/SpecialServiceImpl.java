@@ -1,21 +1,15 @@
 package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.util.NumberUtil;
-import cn.staitech.anno.constant.ProjectConstant;
-import cn.staitech.anno.domain.Group;
-import cn.staitech.anno.domain.project.ProjectExt;
-import cn.staitech.anno.domain.special.Special;
-import cn.staitech.anno.domain.special.SpecialMenu;
-import cn.staitech.anno.domain.special.SpecialReclaim;
-import cn.staitech.anno.domain.special.SpecialRole;
-import cn.staitech.anno.domain.special.SpecialRoleUser;
+import cn.staitech.anno.constant.CommonConstant;
+import cn.staitech.anno.domain.special.*;
 import cn.staitech.anno.domain.vo.special.*;
 import cn.staitech.anno.enums.SpecialEnum;
 import cn.staitech.anno.mapper.*;
-import cn.staitech.anno.service.GroupService;
 import cn.staitech.anno.service.SpecialMenuService;
 import cn.staitech.anno.service.SpecialRoleService;
 import cn.staitech.anno.service.SpecialService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.TimeUtils;
 import cn.staitech.common.core.exception.ServiceException;
 import cn.staitech.common.core.exception.auth.NotLoginException;
@@ -26,7 +20,6 @@ import cn.staitech.system.api.model.LoginUser;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +32,8 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static cn.staitech.anno.constant.special.SpecialRoleConstant.*;
-import static cn.staitech.anno.constant.special.SpecialRoleConstant.ANNOTATOR_MENU;
+import static cn.staitech.anno.constant.CommonConstant.*;
 import static cn.staitech.anno.enums.SpecialEnum.del_flag_1;
-
 import static cn.staitech.common.core.constant.SysRoleConstant.SPECIAL;
 import static cn.staitech.common.core.utils.SysRoleUtil.getSort;
 
@@ -75,15 +66,6 @@ public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> impl
 
     @Resource
     private SpecialRoleUserMapper specialRoleUserMapper;
-
-    @Resource
-    private GroupService groupService;
-
-    @Resource
-    private ProjectExtMapper projectExtMapper;
-
-    @Resource
-    private SlideMapper slideMapper;
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -151,16 +133,6 @@ public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> impl
         for (SpecialResVo specialResVo : specialResVos) {
             int projectNum = projectMapper.selectProjectCount(specialResVo.getSpecialId());
             specialResVo.setProjectNum((long) projectNum);
-//            ProjectExt projectExt = new ProjectExt();
-//            projectExt.setSpecialId(specialResVo.getSpecialId());
-//            // 查询项目列表
-//            int slideNum = 0;
-//            List<ProjectExt> projects = projectExtMapper.selectProjectList(projectExt);
-//            specialResVo.setProjectNum((long) projects.size());
-//            for (ProjectExt projectExt1 : projects) {
-//                // 查询项目下切片数量
-//                slideNum += slideMapper.selectCheckNum(projectExt1.getProjectId());
-//            }
             int slideNum = specialMapper.selectSpecialSlideCount(specialResVo.getSpecialId());
             specialResVo.setSlideNum((long) slideNum);
         }
@@ -210,8 +182,8 @@ public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> impl
             s.setSpecialCompletionRate("0" + "%");
         } else {
             // 统计未完成项目数
-        	int incomplete = 0;
-        	for(Long p :projectId){
+            int incomplete = 0;
+            for (Long p : projectId) {
                 // 查询项目下所有切片的人工诊断状态
                /* List<Long> longs = specialMapper.queryDiagnosisByProjectId(p);
                 if (ObjectUtils.isEmpty(longs)) {
@@ -220,25 +192,25 @@ public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> impl
                     projectIncomplete.addAndGet(longs.contains(0) ? 1 : 0);
                 }*/
                 //通过项目id查询所有切片（备注：已完成项目的定义是：当前项目下的所有切片均进行了人工诊断）
-            	 List<SpecialSlideStatisticsVO> ssvoList = specialMapper.queryDiagnosisByProjectId(p);
-            	 if(CollectionUtils.isNotEmpty(ssvoList)){
-            		 for(SpecialSlideStatisticsVO vo: ssvoList){
-            			 //人工诊断状态：0未诊断，1已诊断
-            			 int diagnosis = vo.getDiagnosis();
-            			 int totalCount = vo.getTotalCount();
-            			 if(diagnosis == 0){
-            				 if(totalCount > 0){
-            					 incomplete++;
-            					 log.info("专题名称1:"+s.getSpecialName()+" 未完成数量是："+incomplete);
-            				 }
-            			 }
-            		 }
-            	 }else{
-            		 incomplete++;
-            		 log.info("专题名称2:"+s.getSpecialName()+" 未完成数量是："+incomplete);
-            	 }
-        	}
-        	log.info("专题名称3:"+s.getSpecialName()+" 未完成数量是："+incomplete);
+                List<SpecialSlideStatisticsVO> ssvoList = specialMapper.queryDiagnosisByProjectId(p);
+                if (CollectionUtils.isNotEmpty(ssvoList)) {
+                    for (SpecialSlideStatisticsVO vo : ssvoList) {
+                        //人工诊断状态：0未诊断，1已诊断
+                        int diagnosis = vo.getDiagnosis();
+                        int totalCount = vo.getTotalCount();
+                        if (diagnosis == 0) {
+                            if (totalCount > 0) {
+                                incomplete++;
+                                log.info("专题名称1:" + s.getSpecialName() + " 未完成数量是：" + incomplete);
+                            }
+                        }
+                    }
+                } else {
+                    incomplete++;
+                    log.info("专题名称2:" + s.getSpecialName() + " 未完成数量是：" + incomplete);
+                }
+            }
+            log.info("专题名称3:" + s.getSpecialName() + " 未完成数量是：" + incomplete);
             Integer total = s.getProjectTotal();
 //            int incomplete = projectIncomplete.intValue();
             int complete = total - incomplete;
@@ -292,6 +264,7 @@ public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> impl
 
     /**
      * 创建专题后刷新权限
+     *
      * @param
      */
     private void flushPrivileges() {
@@ -324,8 +297,8 @@ public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> impl
         });
 
         loginUser.setSpecialRoleList(specialRoles);
-        String userKey = ProjectConstant.LOGIN_TOKEN_KEY+loginUser.getToken();
-        redisTemplate.opsForValue().set(userKey,loginUser,240l,TimeUnit.MINUTES);
+        String userKey = CommonConstant.LOGIN_TOKEN_KEY + loginUser.getToken();
+        redisTemplate.opsForValue().set(userKey, loginUser, 240L, TimeUnit.MINUTES);
     }
 
     /**
@@ -352,12 +325,12 @@ public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> impl
             throw new ServiceException("当前专题名称已存在,禁止重复添加");
         }
         // 判断当前指标中的标签是否标注使用
-        if(req.getIndicatorId() != null){
+        if (req.getIndicatorId() != null) {
             // 查询专题详情
             Special specialBy = specialMapper.selectSpecialById(req.getSpecialId());
-            if(!Objects.equals(specialBy.getIndicatorId(), req.getIndicatorId())){
+            if (!Objects.equals(specialBy.getIndicatorId(), req.getIndicatorId())) {
                 List<Special> specialList = specialMapper.selectSpecialCategoryList(req.getSpecialId());
-                if(specialList.size() > 0){
+                if (specialList.size() > 0) {
                     throw new ServiceException("当前病理指标使用中,禁止取消关联");
                 }
             }
@@ -429,7 +402,7 @@ public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> impl
      * @param specialId
      */
     public void insertSpecialRole(Long specialId) {
-        for (String i : ROLE_TYPE) {
+        for (String i : SPECIAL_ROLE_TYPE) {
             SpecialRole specialRole = SpecialRole.builder().specialId(specialId).roleName(i).createBy(SecurityUtils.getUserId()).build();
 
             // 设置角色编号
@@ -443,15 +416,15 @@ public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> impl
             }
 
             //添加角色表中
-            if (i.equals(RESPONSIBLE_ROLE)) {
+            if (i.equals(MessageSource.M("RESPONSIBLE_ROLE"))) {
                 specialRole.setRoleKey(RESP);
                 specialRole.setMenuIds(RESPONSIBLE_MENU);
             }
-            if (i.equals(ANNOTATOR_ROLE)) {
+            if (i.equals(MessageSource.M("ANNOTATOR_ROLE"))) {
                 specialRole.setRoleKey(ANNO);
                 specialRole.setMenuIds(ANNOTATOR_MENU);
             }
-            if (i.equals(READER_ROLE)) {
+            if (i.equals(MessageSource.M("READER_ROLE"))) {
                 specialRole.setRoleKey(READ);
                 specialRole.setMenuIds(READER_MENU);
             }
@@ -462,7 +435,7 @@ public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> impl
             specialRoleService.insertRoleMenu(specialRole);
 
             // 创建者设置为专题负责人
-            if (i.equals(RESPONSIBLE_ROLE)) {
+            if (i.equals(MessageSource.M("RESPONSIBLE_ROLE"))) {
                 // 添加到专题角色用户表中
                 SpecialRoleUser specialRoleUser = new SpecialRoleUser();
                 specialRoleUser.setRoleId(specialRole.getRoleId());
@@ -474,35 +447,4 @@ public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> impl
             }
         }
     }
-
-/*
-    */
-/**
-     * 专题下创建默认分组
-     *
-     * @param specialId 专题id
-     * @return true || false
-     *//*
-
-    public boolean insertGroup(Long specialId) {
-        for (int groupName = 1; groupName < 9; groupName++) {
-            System.out.println(groupName);
-            for (int gender = 0; gender < 2; gender++) {
-                for (int reasons = 1; reasons < 3; reasons++) {
-                    Group group = new Group();
-                    group.setGroupName(String.valueOf(groupName));
-                    group.setGender(gender);
-                    group.setReasons(reasons);
-                    group.setSpecialId(specialId);
-                    group.setCreateBy(SecurityUtils.getUserId());
-                    group.setDosage("0");
-                    groupService.insertSelective(group);
-                }
-            }
-        }
-        return false;
-    }
-
-*/
-
 }

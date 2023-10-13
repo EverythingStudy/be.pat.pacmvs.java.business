@@ -1,7 +1,6 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.constant.PathologicalLogConstant;
-import cn.staitech.anno.constant.R.ResponseConstant;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.structure.Structure;
@@ -13,6 +12,7 @@ import cn.staitech.anno.domain.vo.indicator.IndicatorReviseVO;
 import cn.staitech.anno.service.IndicatorService;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
 import cn.staitech.anno.service.StructureService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.log.annotation.Log;
@@ -70,7 +70,7 @@ public class PathologicalController {
         // 查询Indicator信息
         Indicator indicator = indicatorService.selectIndicatorsById(vo.getIndicatorId());
         if (indicator == null) {
-            return R.fail(PathologicalLogConstant.INDICATOR_ABSENT);
+            return R.fail(MessageSource.M("INDICATOR_ABSENT"));
         }
 
         PathologicalIndicatorCategory category = new PathologicalIndicatorCategory();
@@ -83,7 +83,7 @@ public class PathologicalController {
         // 验证是否存在该条件的记录    A：必填项校验。B：结构编码在当前列表内不可重复；C：结构名称在当前列表内不可重复。D：图层顺序在当前列表内不可重复；E：颜色值在当前列表不可重复
         List<PathologicalIndicatorCategory> list = pathologicalIndicatorCategoryService.selectIndicatorMessage(category);
         if (list.size() > 0) {
-            return R.fail(PathologicalLogConstant.CATEGORY_NAME_EXIST);
+            return R.fail(MessageSource.M("CATEGORY_NAME_EXIST"));
         }
 
         String structureName = "";
@@ -106,7 +106,7 @@ public class PathologicalController {
         IndicatorReviseVO indicatorReviseVO = IndicatorReviseVO.builder().indicatorId(vo.getIndicatorId().intValue()).build();
         // 更新病理表数据
         indicatorService.updateIndicator(indicatorReviseVO);
-        return R.ok(ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
 
@@ -160,13 +160,13 @@ public class PathologicalController {
     @PutMapping("/edit")
     public R<String> edit(@Validated @RequestBody PathologicalIndicatorCategory category) {
         if (category.getCategoryId() == null || category.getIndicatorId() == null) {
-            return R.fail(PathologicalLogConstant.MISSING_REQUIRED_VALUE);
+            return R.fail(MessageSource.M("MISSING_REQUIRED_VALUE"));
         }
 
         // 查询Indicator信息
         Indicator indicator = indicatorService.selectIndicatorsById(category.getIndicatorId());
         if (indicator == null) {
-            return R.fail(PathologicalLogConstant.INDICATOR_ABSENT);
+            return R.fail(MessageSource.M("INDICATOR_ABSENT"));
         }
 
 
@@ -184,19 +184,19 @@ public class PathologicalController {
         // 验证是否存在该条件的记录(排除自己)  A：必填项校验。B：结构编码在当前列表内不可重复；C：结构名称在当前列表内不可重复。D：图层顺序在当前列表内不可重复；E：颜色值在当前列表不可重复
         List<PathologicalIndicatorCategory> list = pathologicalIndicatorCategoryService.selectIndicatorMessageForUpdate(category);
         if (list.size() > 0) {
-            return R.fail(PathologicalLogConstant.CATEGORY_NAME_EXIST);
+            return R.fail(MessageSource.M("CATEGORY_NAME_EXIST"));
         }
 
         // 生成完整编码
         // category.setNumber(indicator.getNumber() + "" + category.getStructureId());
         // category.setNumber(indicator.getNumber());
-        
+
         category.setUpdateBy(sysUser.getUserId());
         category.setCreateTime(new Date());
 
         //修改标注类别信息
         pathologicalIndicatorCategoryService.updateByPrimaryKeySelective(category);
-        return R.ok(ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
 
 
     }
@@ -212,7 +212,7 @@ public class PathologicalController {
         //查询标注是否关联标签
         Integer num = pathologicalIndicatorCategoryService.selectLabelNum(categoryVO.getCategoryId());
         if (0 < num) {
-            return R.fail(PathologicalLogConstant.USED);
+            return R.fail(MessageSource.M("USED"));
         }
         //查询标签数据
         PathologicalIndicatorCategory category = pathologicalIndicatorCategoryService.selectCategoryAll(categoryVO.getCategoryId());
@@ -222,7 +222,7 @@ public class PathologicalController {
         IndicatorReviseVO indicatorReviseVO = IndicatorReviseVO.builder().indicatorId(category.getIndicatorId().intValue()).build();
         //更新病理表数据
         indicatorService.updateIndicator(indicatorReviseVO);
-        return R.ok(null, ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
 
@@ -254,13 +254,13 @@ public class PathologicalController {
         List<PathologicalIndicatorCategory> orderNumber = pathologicalIndicatorCategoryService.selectIndicatorMessage(
                 category);
         if (!categoryList.isEmpty()) {
-            return PathologicalLogConstant.CATEGORY_NAME_EXIST;
+            return MessageSource.M("CATEGORY_NAME_EXIST");
         } else if (!categories.isEmpty()) {
-            return PathologicalLogConstant.COLOR_NAME_EXIST;
+            return MessageSource.M("COLOR_NAME_EXIST");
         } else if (!orderNumber.isEmpty()) {
-            return PathologicalLogConstant.LAYER_ALREADY_EXISTS;
+            return MessageSource.M("LAYER_ALREADY_EXISTS");
         } else {
-            return PathologicalLogConstant.ONE;
+            return CommonConstant.NUMBER_1;
         }
     }
 }

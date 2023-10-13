@@ -1,11 +1,11 @@
 package cn.staitech.anno.controller;
 
 import cn.hutool.core.util.ObjectUtil;
-import cn.staitech.anno.constant.R.StatisticResponseConstant;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.vo.AnnotationBroadcastVO;
 import cn.staitech.anno.domain.vo.statistic.*;
 import cn.staitech.anno.service.*;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
@@ -18,17 +18,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Objects;
-import static cn.staitech.anno.constant.ProjectConstant.NO_ATTRIBUTE;
-import static cn.staitech.anno.constant.StatisticConstant.*;
+
+import static cn.staitech.anno.aspect.LogFileAspect.response;
+import static cn.staitech.anno.constant.CommonConstant.*;
 import static cn.staitech.anno.utils.StatisticListUtils.exportExcelDateUtil;
 import static cn.staitech.anno.utils.StatisticListUtils.exportExcelUtil;
-import static cn.staitech.anno.aspect.LogFileAspect.response;
 
 /**
  * 数据统计处理
@@ -82,10 +83,10 @@ public class StatisticController extends BaseController {
     @ApiOperation(value = "综合统计列表/导出细分筛选查询excel")
     //@Log(title = "综合统计列表Excel导出", businessType = BusinessType.EXPORT)
     @PostMapping("/exportExcel")
-    public void exportExcel( @Validated StatisticListInVO statisticList) throws IOException {
+    public void exportExcel(@Validated StatisticListInVO statisticList) throws IOException {
 
 
-        if(!SecurityUtils.isAdmin(SecurityUtils.getUserId())){
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId())) {
             statisticList.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         }
 
@@ -96,7 +97,7 @@ public class StatisticController extends BaseController {
         String statisticalDimension = statisticService.statisticSelectDictDataById(statisticList.getStatisticDimension()).getDictLabel();
 
         // 数量（横轴）: 标注数量
-        if (displayQuantity.equals(ANNOTATION_COUNT)) {
+        if (displayQuantity.equals(MessageSource.M("ANNOTATION_COUNT"))) {
             List<StatisticObjectOutVO> result;
             switch (statisticalDimension) {
                 case PROJECT:
@@ -111,7 +112,7 @@ public class StatisticController extends BaseController {
                     result = statisticService.statisticSelectAnnoCategoryList(statisticList);
                     result.forEach(o -> {
                         if (StringUtils.isEmpty(o.getStatisticName()) && ObjectUtil.isNotNull(o.getStatisticCount())) {
-                            o.setStatisticName(NO_ATTRIBUTE);
+                            o.setStatisticName(MessageSource.M("NO_ATTRIBUTE"));
                         }
                     });
                     exportExcelUtil(response, displayQuantity, statisticalDimension, result);
@@ -129,9 +130,9 @@ public class StatisticController extends BaseController {
                     exportExcelDateUtil(response, displayQuantity, statisticalDimension, result);
                     break;
                 default:
-                    throw new RuntimeException(StatisticResponseConstant.STATISTIC_DIMENSION);
+                    throw new RuntimeException(MessageSource.M("STATISTIC_DIMENSION"));
             }
-        } else if (displayQuantity.equals(SLIDE_COUNT)) {
+        } else if (displayQuantity.equals(MessageSource.M("SLIDE_COUNT"))) {
             List<StatisticObjectOutVO> result;
             switch (statisticalDimension) {
                 case PROJECT:
@@ -155,7 +156,7 @@ public class StatisticController extends BaseController {
                     exportExcelDateUtil(response, displayQuantity, statisticalDimension, result);
                     break;
                 default:
-                    throw new RuntimeException(StatisticResponseConstant.STATISTIC_DIMENSION);
+                    throw new RuntimeException(MessageSource.M("STATISTIC_DIMENSION"));
             }
         }
     }
@@ -219,18 +220,18 @@ public class StatisticController extends BaseController {
         StatisticSysDictDataOutVO categoryData = statisticService.statisticSelectDictDataById(category);
         StatisticSysDictDataOutVO dimensionData = statisticService.statisticSelectDictDataById(dimension);
 
-        if(!SecurityUtils.isAdmin(SecurityUtils.getUserId())){
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId())) {
             statisticListInVO.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         }
         // 显示数量：标注数量
-        if (Objects.nonNull(categoryData) && categoryData.getDictLabel().equals(ANNOTATION_COUNT)) {
+        if (Objects.nonNull(categoryData) && categoryData.getDictLabel().equals(MessageSource.M("ANNOTATION_COUNT"))) {
             List<StatisticUserListOutVO> userList = statisticService.queryAnnotationMembersList(statisticListInVO);
             return R.ok(userList);
         }
         // 显示数量：图像数量
-        if (Objects.nonNull(categoryData) && Objects.nonNull(dimensionData) && categoryData.getDictLabel().equals(SLIDE_COUNT)) {
+        if (Objects.nonNull(categoryData) && Objects.nonNull(dimensionData) && categoryData.getDictLabel().equals(MessageSource.M("SLIDE_COUNT"))) {
             // 统计维度：标注类别
-            if (dimensionData.getDictLabel().equals(ANNOTATION_CATEGORY)) {
+            if (dimensionData.getDictLabel().equals(MessageSource.M("ANNOTATION_CATEGORY"))) {
                 List<StatisticUserListOutVO> userList = statisticService.queryAnnotationMembersList(statisticListInVO);
                 return R.ok(userList);
             }
@@ -277,7 +278,7 @@ public class StatisticController extends BaseController {
     @PostMapping("/annotationStatisticIdList")
     public R<List<AnnotationStatisticIdListOutVO>> annotationStatisticIdList(@Valid @RequestBody StatisticListInVO statisticList) {
 
-        if(!SecurityUtils.isAdmin(SecurityUtils.getUserId())){
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId())) {
             statisticList.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         }
         // 统计类别：标注数量、图像数量
@@ -290,7 +291,7 @@ public class StatisticController extends BaseController {
         String statisticCategoryDictLabel = statisticCategorySysDictData.getDictLabel();
         String statisticDimensionDictLabel = statisticDimensionSysDictData.getDictLabel();
 
-        if (ANNOTATION_COUNT.equals(statisticCategoryDictLabel)) {
+        if (MessageSource.M("ANNOTATION_COUNT").equals(statisticCategoryDictLabel)) {
             // 统计数量:标注数量
             List<AnnotationStatisticIdListOutVO> resp;
             switch (statisticDimensionDictLabel) {
@@ -315,7 +316,7 @@ public class StatisticController extends BaseController {
                     resp = statisticService.statisticSelectAnnoImageIdList(statisticList);
                     break;
                 default:
-                    throw new RuntimeException(StatisticResponseConstant.STATISTIC_DIMENSION);
+                    throw new RuntimeException(MessageSource.M("STATISTIC_DIMENSION"));
             }
             return R.ok(resp);
         }
@@ -337,14 +338,14 @@ public class StatisticController extends BaseController {
             @ApiImplicitParam(name = "pageNum", value = "当前记录起始索引", dataTypeClass = Integer.class, paramType = "query", example = "1"),
             @ApiImplicitParam(name = "pageSize", value = "每页显示记录数", dataTypeClass = Integer.class, paramType = "query", example = "10")})
     public R<PageMaster<AnnotationStatisticListPageOutVO>> annotationStatisticPageList(@Valid @RequestBody AnnotationStatisticListPageInVO statisticList) {
-        if(!SecurityUtils.isAdmin(SecurityUtils.getUserId())){
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId())) {
             statisticList.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         }
         // 统计数量（标注/图像）
         String category = statisticService.statisticSelectDictDataById(statisticList.getStatisticCategory()).getDictLabel();
         // 统计维度（项目/病理指标/标注类别/成员/图像）
         String dimension = statisticService.statisticSelectDictDataById(statisticList.getStatisticDimension()).getDictLabel();
-        if (category.equals(ANNOTATION_COUNT)) {
+        if (category.equals(MessageSource.M("ANNOTATION_COUNT"))) {
             startPage();
             List<AnnotationStatisticListPageOutVO> resp;
             switch (dimension) {
@@ -364,13 +365,13 @@ public class StatisticController extends BaseController {
                     resp = statisticService.statisticSelectAnnoImagePageList(statisticList);
                     break;
                 default:
-                    throw new RuntimeException(StatisticResponseConstant.STATISTIC_DIMENSION);
+                    throw new RuntimeException(MessageSource.M("STATISTIC_DIMENSION"));
             }
 
             PageMaster<AnnotationStatisticListPageOutVO> pageMaster = new PageMaster<>(resp);
             return R.ok(pageMaster);
         }
-        return R.fail(StatisticResponseConstant.STATISTIC_COUNT);
+        return R.fail(MessageSource.M("STATISTIC_COUNT"));
     }
 
     /**

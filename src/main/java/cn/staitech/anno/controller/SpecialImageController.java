@@ -1,25 +1,8 @@
 package cn.staitech.anno.controller;
 
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
-import cn.staitech.anno.domain.specilaImage.SpecialImage;
-import cn.staitech.common.security.annotation.RequiresSpecialPermissions;
-import cn.staitech.common.security.utils.SecurityUtils;
-import cn.staitech.system.api.domain.SpecialRole;
-import cn.staitech.system.api.model.LoginUser;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.web.bind.annotation.*;
-
-import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-
 import cn.hutool.json.JSONUtil;
-import cn.staitech.anno.constant.SpecialImageConstant;
 import cn.staitech.anno.domain.Image;
-import cn.staitech.anno.domain.special.Special;
+import cn.staitech.anno.domain.specilaImage.SpecialImage;
 import cn.staitech.anno.domain.vo.special.SpecialResVo;
 import cn.staitech.anno.domain.vo.specialImage.InsertSpecialImageVO;
 import cn.staitech.anno.domain.vo.specialImage.SpecialImageSelectVO;
@@ -27,15 +10,23 @@ import cn.staitech.anno.domain.vo.specialImage.SpecialImageVO;
 import cn.staitech.anno.domain.vo.specialImage.WaitSpecialImageVO;
 import cn.staitech.anno.service.SpecialImageService;
 import cn.staitech.anno.service.SpecialService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.utils.SpecialPageMaster;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.PageUtils;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
+import cn.staitech.common.security.annotation.RequiresSpecialPermissions;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author wanglibei
@@ -75,9 +66,9 @@ public class SpecialImageController {
     @Log(title = "专题待选片", menu = "专题管理", subMenu = "专题选片", businessType = BusinessType.OTHER)
     @PostMapping("/selectImage")
     public R<PageMaster<WaitSpecialImageVO>> selectImage(@RequestBody SpecialImageSelectVO req) {
-    	if(req.getTopicId() == 0){
-    		 return R.fail(SpecialImageConstant.SELECT_IMAGE_ERROR);
-    	}
+        if (req.getTopicId() == 0) {
+            return R.fail(MessageSource.M("SELECT_IMAGE_ERROR"));
+        }
         PageUtils.startPage(req.getPageNum(), req.getPageSize());
         req.setDeleteFlag(1);
         req.setStatus(1);
@@ -94,7 +85,7 @@ public class SpecialImageController {
     @PostMapping("/batchInsert")
     public R<String> batchInsert(@RequestBody InsertSpecialImageVO vo) throws Exception {
         R<String> r = specialImageService.insertSpecialImageList(vo);
-        //		String jsonStr = JSONUtil.toJsonStr(R.ok(R.ok(OPERATE_SUCCEED)));
+        //		String jsonStr = JSONUtil.toJsonStr(R.ok(R.ok(null,MessageSource.M("OPERATE_ERROR"))));
         //		log.info("批量添加专题切片:"+jsonStr);
         return r;
     }
@@ -119,9 +110,9 @@ public class SpecialImageController {
         //查询已选所属专题
         int topicId = -1;
         List<Image> imageList = specialImageService.getImageBySpecialId(req);
-        if(CollectionUtils.isNotEmpty(imageList)){
-        	Image image = imageList.get(0);
-        	topicId = image.getTopicId().intValue();
+        if (CollectionUtils.isNotEmpty(imageList)) {
+            Image image = imageList.get(0);
+            topicId = image.getTopicId().intValue();
         }
         special.setTopicId(topicId);
         SpecialPageMaster<SpecialImageVO> pageMaster = new SpecialPageMaster<>(wsivList, special.getDeliveryStatus(), special);

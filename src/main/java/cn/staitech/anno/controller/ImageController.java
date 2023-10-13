@@ -1,12 +1,12 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.constant.ImageConstant;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.image.in.*;
 import cn.staitech.anno.domain.image.out.ImageListOutVO;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.SlideService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
@@ -96,11 +96,11 @@ public class ImageController extends BaseController {
             if (slideService.selectImageExist(slide).size() > 0) {
                 int deleteImageById = imageService.updateDeleteFlagById(imageId);
                 if (deleteImageById > 0) {
-                    return R.ok(ImageConstant.OPERATE_SUCCEED);
+                    return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
                 }
             }
         }
-        return R.fail(ImageConstant.IMAGE_USING_FORBID_DELETE);
+        return R.fail(MessageSource.M("IMAGE_USING_FORBID_DELETE"));
     }
 
 
@@ -117,7 +117,7 @@ public class ImageController extends BaseController {
         Long uid = SecurityUtils.getUserId();
         request.setUpdateBy(uid);
         List<Long> data = imageService.updateDeleteFlagBatchIds(request);
-        return R.ok(data, ImageConstant.OPERATE_SUCCEED);
+        return R.ok(data, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     /**
@@ -134,9 +134,9 @@ public class ImageController extends BaseController {
         request.setUpdateBy(uid);
         int result = imageService.updateBatchIds(request);
         if (result > 0) {
-            return R.ok(ImageConstant.OPERATE_SUCCEED);
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
-        return R.fail(ImageConstant.OPERATE_ERROR);
+        return R.fail(MessageSource.M("OPERATE_ERROR"));
     }
 
     /**
@@ -152,9 +152,9 @@ public class ImageController extends BaseController {
 
         int result = imageService.updateById(request);
         if (result > 0) {
-            return R.ok(ImageConstant.OPERATE_SUCCEED);
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
-        return R.fail(ImageConstant.OPERATE_ERROR);
+        return R.fail(MessageSource.M("OPERATE_ERROR"));
     }
 
 

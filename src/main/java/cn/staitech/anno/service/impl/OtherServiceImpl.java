@@ -6,6 +6,8 @@ import cn.staitech.anno.domain.MarkingExamine;
 import cn.staitech.anno.mapper.ExamineScoreMapper;
 import cn.staitech.anno.mapper.MarkingExamineMapper;
 import cn.staitech.anno.service.OtherService;
+import cn.staitech.system.api.RemoteLabelService;
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,9 @@ public class OtherServiceImpl implements OtherService {
 
     @Resource
     private MarkingExamineMapper markingExamineMapper;
+
+    @Resource
+    private RemoteLabelService remoteLabelService;
 
     @Override
     public void updateExamStatus(Long examineScoreId) {
@@ -40,6 +45,9 @@ public class OtherServiceImpl implements OtherService {
                 examineScore.setRealityNumber(Long.valueOf(markingCount));
                 // 更新当前评分记录
                 examineScoreMapper.updateById(examineScore);
+                JSONObject markingJsonObject = new JSONObject();
+                markingJsonObject.put("examine_score_id",examineScoreId);
+                remoteLabelService.marking(markingJsonObject);
             }
         }
     }

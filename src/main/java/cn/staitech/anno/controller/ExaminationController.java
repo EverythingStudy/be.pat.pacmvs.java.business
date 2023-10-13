@@ -1,17 +1,13 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.constant.ExaminationConstant;
-import cn.staitech.anno.constant.R.ExaminationResponseConstant;
-import cn.staitech.anno.constant.R.ResponseConstant;
-import cn.staitech.anno.domain.*;
+import cn.staitech.anno.constant.CommonConstant;
+import cn.staitech.anno.domain.ExaminationLog;
+import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.vo.*;
 import cn.staitech.anno.enums.ExaminationEnum;
 import cn.staitech.anno.enums.ProcessFlagEnum;
 import cn.staitech.anno.service.*;
-import cn.staitech.anno.utils.ExaminationUtils;
-import cn.staitech.anno.utils.JsonUtils;
-import cn.staitech.anno.utils.PageMaster;
-import cn.staitech.anno.utils.ProjectUtils;
+import cn.staitech.anno.utils.*;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
@@ -38,11 +34,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import static cn.staitech.anno.constant.ExaminationConstant.SUBMIT_REVIEW;
-import static cn.staitech.anno.constant.R.ExaminationResponseConstant.IMAGE_NOT_REVIEW;
-import static cn.staitech.anno.constant.R.ExaminationResponseConstant.REVIEW_NOT_PASS;
-import static cn.staitech.anno.constant.ImageConstant.OPERATE_SUCCEED;
+import static cn.staitech.anno.constant.CommonConstant.SUBMIT_REVIEW;
 import static cn.staitech.anno.enums.ExaminationEnum.STATUS_INFO_3;
 
 /**
@@ -93,7 +85,7 @@ public class ExaminationController extends BaseController {
         Integer processFlag = Integer.valueOf(slideService.selectById(slideId).getProcessFlag());
         ExaminationLog examinationLog = new ExaminationLog();
         if (processFlag == ProcessFlagEnum.STATUS_INFO_2.value()) {
-            examinationSubmitVo.setExaminationFlag(ExaminationConstant.NOT_START_REVIEW);
+            examinationSubmitVo.setExaminationFlag(CommonConstant.NOT_START_REVIEW);
             examinationSubmitVo.setProcessFlag(SUBMIT_REVIEW);
             examinationSubmitVo.setUpdateBy(SecurityUtils.getUserId());
             examinationService.updateExaminationSubmit(examinationSubmitVo);
@@ -105,7 +97,7 @@ public class ExaminationController extends BaseController {
             ProjectUtils.updateSlideTime(slideId);
             ExaminationUtils.examinationStateLog(examinationLog, slide, slide.getExaminationFlag());
         }
-        return R.ok(null, ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     /**
@@ -159,14 +151,14 @@ public class ExaminationController extends BaseController {
                 examinationStateVo.setExaminationFlag(3);
                 Slide slide = ExaminationUtils.getSlide(examinationStateVo, slideId);
                 ExaminationUtils.examinationStateLog(examinationLog, slide, SUBMIT_REVIEW);
-                return R.ok(null, REVIEW_NOT_PASS);
+                return R.ok(null, MessageSource.M("REVIEW_NOT_PASS"));
             } else {
                 Slide slide = ExaminationUtils.getSlide(examinationStateVo, slideId);
                 ExaminationUtils.examinationStateLog(examinationLog, slide, slide.getExaminationFlag());
-                return R.ok(null, OPERATE_SUCCEED);
+                return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
             }
         }
-        return R.fail(null, IMAGE_NOT_REVIEW);
+        return R.fail(null, MessageSource.M("IMAGE_NOT_REVIEW"));
     }
 
     /**
@@ -194,13 +186,13 @@ public class ExaminationController extends BaseController {
             annotationList.add(annotation);
         });
 
-        File directories = new File(path + File.separator + ExaminationConstant.FILE_PATH);
-        File fileName = new File(slideId + ExaminationResponseConstant.FILE_SUFFIX);
+        File directories = new File(path + File.separator + CommonConstant.FILE_PATH);
+        File fileName = new File(slideId + CommonConstant.FILE_SUFFIX_JSON);
         File file = new File(directories + File.separator + fileName);
 
         JsonUtils.createDirectories(directories);
         JsonUtils.createFile(annotationList, file, slide);
-        return R.ok(fileName.toString(), ResponseConstant.OPERATE_SUCCEED);
+        return R.ok(fileName.toString(), MessageSource.M("OPERATE_SUCCEED"));
     }
 
 
@@ -238,7 +230,7 @@ public class ExaminationController extends BaseController {
         ExaminationUtils.getSlide(examinationListVo, slideId);
 
         // 文件名
-        String fileName = slideId + ExaminationResponseConstant.FILE_SUFFIX;
+        String fileName = slideId + CommonConstant.FILE_SUFFIX_JSON;
 
         // 生成Json字符串
         String jsonString = JSON.toJSONString(annotationList, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue);
@@ -248,16 +240,15 @@ public class ExaminationController extends BaseController {
             // 清空response
             response.reset();
             OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
-            response.setCharacterEncoding(ExaminationConstant.CHARACTER_ENCODING);
-            response.setContentType(ExaminationConstant.CONTENT_TYPE);
-            response.setHeader(ExaminationConstant.HEADER, "attachment;filename=" + fileName);
+            response.setCharacterEncoding(CommonConstant.CHARACTER_SET_UTF8);
+            response.setContentType(CommonConstant.CONTENT_TYPE);
+            response.setHeader(CommonConstant.HEADER, "attachment;filename=" + fileName);
             outputStream.write(jsonString.getBytes());
             // 关闭流
             outputStream.close();
         } catch (Exception e) {
-            log.error(ExaminationResponseConstant.DOWNLOAD_ERROR, e);
+            log.error(MessageSource.M("DOWNLOAD_ERROR"), e);
         }
-
     }
 
 

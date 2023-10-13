@@ -1,8 +1,7 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.config.MapConstant;
-import cn.staitech.anno.constant.ColorConstant;
-import cn.staitech.anno.constant.ProjectConstant;
+import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.SlideAnnotationResult;
 import cn.staitech.anno.domain.image.in.ImageAllVO;
@@ -79,8 +78,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             project.setSpeciesName(sepeciesMap.get(project.getSpeciesId()));
         }
 
-        project.setColorTypeName(ColorConstant.COLOR_TYPE.get(project.getColorType()));
-        project.setStatusName(ProjectConstant.PROJECT_STATUS.get(project.getStatus()));
+        project.setColorTypeName(Container.COLOR_TYPE.get(project.getColorType()));
+        project.setStatusName(Container.PROJECT_STATUS.get(project.getStatus()));
         return project;
     }
 
@@ -114,8 +113,12 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                 obj.setProductSeries(productSeriesMap.get(obj.getProductSeriesId()));
             }*/
 
-            obj.setColorTypeName(ColorConstant.COLOR_TYPE.get(obj.getColorType()));
-            obj.setStatusName(ProjectConstant.PROJECT_STATUS.get(obj.getStatus()));
+            obj.setColorTypeName(Container.COLOR_TYPE.get(obj.getColorType()));
+            obj.setStatusName(Container.PROJECT_STATUS.get(obj.getStatus()));
+
+            if (obj.getIndicatorId() == null) {
+                obj.setIndicatorName("ud");
+            }
         }
         return projectList;
     }
