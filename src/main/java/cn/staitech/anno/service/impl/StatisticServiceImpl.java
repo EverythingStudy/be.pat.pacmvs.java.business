@@ -1,17 +1,9 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.constant.R.StatisticResponseConstant;
-import cn.staitech.anno.domain.vo.statistic.AnnotationStatisticIdListOutVO;
-import cn.staitech.anno.domain.vo.statistic.AnnotationStatisticListPageInVO;
-import cn.staitech.anno.domain.vo.statistic.AnnotationStatisticListPageOutVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticListInVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticListOutVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticObjectOutVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticSysDictDataOutVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticUserListOutVO;
-import cn.staitech.anno.domain.vo.statistic.TableDateOutVO;
+import cn.staitech.anno.domain.vo.statistic.*;
 import cn.staitech.anno.mapper.StatisticMapper;
 import cn.staitech.anno.service.StatisticService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.StatisticListUtils;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
@@ -22,12 +14,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cn.staitech.anno.constant.R.StatisticResponseConstant.MAX_SELECT_TIME_ERROR;
-import static cn.staitech.anno.constant.R.StatisticResponseConstant.SELECT_TIME_ERROR;
-import static cn.staitech.anno.constant.StatisticConstant.ANNOTATION_COUNT;
-import static cn.staitech.anno.constant.StatisticConstant.ANNOTATION_DATE;
-import static cn.staitech.anno.constant.StatisticConstant.SLIDE_COUNT;
-import static cn.staitech.anno.constant.StatisticConstant.THREE_YEAR;
+import static cn.staitech.anno.constant.StatisticConstant.*;
 
 @Service
 public class StatisticServiceImpl implements StatisticService {
@@ -180,7 +167,7 @@ public class StatisticServiceImpl implements StatisticService {
      */
     @Override
     public List<StatisticUserListOutVO> queryAnnotationMembersList(StatisticListInVO statisticListInVO) {
-        if(!SecurityUtils.isAdmin(SecurityUtils.getUserId())){
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId())) {
             statisticListInVO.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         }
         return statisticMapper.queryAnnotationMembersList(statisticListInVO);
@@ -317,13 +304,14 @@ public class StatisticServiceImpl implements StatisticService {
 
     /**
      * 综合统计列表
+     *
      * @param statisticList
      * @return
      */
     @Override
     public R<StatisticListOutVO> statisticList(StatisticListInVO statisticList) throws ParseException {
 
-        if(!SecurityUtils.isAdmin(SecurityUtils.getUserId())){
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId())) {
             statisticList.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         }
         // 创建返回结果实例
@@ -331,7 +319,7 @@ public class StatisticServiceImpl implements StatisticService {
         List<StatisticObjectOutVO> resp = new ArrayList<>();
         StatisticListUtils statisticListUtils = new StatisticListUtils();
         // 通过SysDictData获取统计维度值、统计数量类别
-        String displayQuantity =  statisticSelectDictDataById(statisticList.getStatisticCategory()).getDictLabel();
+        String displayQuantity = statisticSelectDictDataById(statisticList.getStatisticCategory()).getDictLabel();
         String statisticalDimension = statisticSelectDictDataById(statisticList.getStatisticDimension()).getDictLabel();
         // 数量（横轴）--标注数量
         if (displayQuantity.equals(ANNOTATION_COUNT)) {
@@ -344,9 +332,9 @@ public class StatisticServiceImpl implements StatisticService {
                     statisticListRep = statisticListUtils.statisticAnnoDateRespOut(statisticList, statisticListRep, resp, displayQuantity, statisticalDimension, daysBetween, this);
                     return R.ok(statisticListRep);
                 } else if (daysBetween >= THREE_YEAR) {
-                    return R.fail(MAX_SELECT_TIME_ERROR);
+                    return R.fail(MessageSource.M("MAX_SELECT_TIME_ERROR"));
                 } else {
-                    return R.fail(SELECT_TIME_ERROR);
+                    return R.fail(MessageSource.M("SELECT_TIME_ERROR"));
                 }
             } else {
                 // 统计维度（竖轴）--除标注日期以外的
@@ -365,9 +353,9 @@ public class StatisticServiceImpl implements StatisticService {
                     statisticListRep = statisticListUtils.statisticImageDateRespOut(statisticList, statisticListRep, resp, displayQuantity, statisticalDimension, daysBetween, this);
                     return R.ok(statisticListRep);
                 } else if (daysBetween >= THREE_YEAR) {
-                    return R.fail(MAX_SELECT_TIME_ERROR);
+                    return R.fail(MessageSource.M("MAX_SELECT_TIME_ERROR"));
                 } else {
-                    return R.fail(SELECT_TIME_ERROR);
+                    return R.fail(MessageSource.M("SELECT_TIME_ERROR"));
                 }
             } else {
                 // 统计维度（竖轴）--除标注日期以外的
@@ -375,7 +363,7 @@ public class StatisticServiceImpl implements StatisticService {
                 return R.ok(statisticListRep);
             }
         } else {
-            return R.fail(StatisticResponseConstant.STATISTIC_CATEGORY);
+            return R.fail(MessageSource.M("STATISTIC_CATEGORY"));
         }
     }
 }

@@ -2,8 +2,6 @@ package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.util.NumberUtil;
 import cn.staitech.anno.constant.ProjectConstant;
-import cn.staitech.anno.domain.Group;
-import cn.staitech.anno.domain.project.ProjectExt;
 import cn.staitech.anno.domain.special.Special;
 import cn.staitech.anno.domain.special.SpecialMenu;
 import cn.staitech.anno.domain.special.SpecialReclaim;
@@ -39,8 +37,8 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static cn.staitech.anno.constant.special.SpecialRoleConstant.*;
-import static cn.staitech.anno.constant.special.SpecialRoleConstant.ANNOTATOR_MENU;
+import static cn.staitech.anno.constant.SpecialRoleConstant.*;
+import static cn.staitech.anno.constant.SpecialRoleConstant.ANNOTATOR_MENU;
 import static cn.staitech.anno.enums.SpecialEnum.del_flag_1;
 
 import static cn.staitech.common.core.constant.SysRoleConstant.SPECIAL;

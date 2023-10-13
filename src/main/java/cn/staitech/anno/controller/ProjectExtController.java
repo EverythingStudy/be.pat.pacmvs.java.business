@@ -7,7 +7,6 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.staitech.anno.config.ICache;
 import cn.staitech.anno.constant.CacheConstant;
 import cn.staitech.anno.constant.ProjectConstant;
-import cn.staitech.anno.constant.R.MeasureResponseConstant;
 import cn.staitech.anno.domain.*;
 import cn.staitech.anno.domain.image.in.ImageAllVO;
 import cn.staitech.anno.domain.image.in.ImageListVO;
@@ -56,8 +55,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static cn.staitech.anno.constant.ProjectConstant.*;
-import static cn.staitech.anno.constant.R.ExaminationResponseConstant.FILE_SUFFIX;
-import static cn.staitech.anno.constant.R.MeasureResponseConstant.*;
+import static cn.staitech.anno.constant.ExaminationResponseConstant.FILE_SUFFIX;
 
 /**
  * 项目 信息操作处理  .
@@ -1133,10 +1131,10 @@ public class ProjectExtController extends BaseController {
         // 参数校验
         Project project = projectService.selectPrimKey(projectId);
         if (!Optional.ofNullable(project).isPresent()) {
-            return R.fail("", ARGUMENT_INVALID);
+            return R.fail("", MessageSource.M("ARGUMENT_INVALID"));
         }
         if (multipartFile.isEmpty()) {
-            return R.fail("", NO_FILE);
+            return R.fail("", MessageSource.M("NO_FILE"));
         }
 
         // 获取项目下所有图像
@@ -1285,7 +1283,7 @@ public class ProjectExtController extends BaseController {
         } finally {
             FileUtils.delete(file);
         }
-        return R.ok("", UPLOAD_SUCCESS);
+        return R.ok("", MessageSource.M("UPLOAD_SUCCESS"));
     }
 
     /**
@@ -1372,7 +1370,7 @@ public class ProjectExtController extends BaseController {
             outputStream.write(buffer);
             outputStream.flush();
         } catch (IOException ex) {
-            log.error(MeasureResponseConstant.DOWNLOAD_ERROR, ex);
+            log.error(MessageSource.M("DOWNLOAD_ERROR"), ex);
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }

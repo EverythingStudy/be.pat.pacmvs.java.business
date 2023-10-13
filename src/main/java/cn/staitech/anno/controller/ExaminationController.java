@@ -1,7 +1,7 @@
 package cn.staitech.anno.controller;
 
 import cn.staitech.anno.constant.ExaminationConstant;
-import cn.staitech.anno.constant.R.ExaminationResponseConstant;
+import cn.staitech.anno.constant.ExaminationResponseConstant;
 import cn.staitech.anno.domain.ExaminationLog;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.vo.*;
@@ -36,8 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cn.staitech.anno.constant.ExaminationConstant.SUBMIT_REVIEW;
-import static cn.staitech.anno.constant.R.ExaminationResponseConstant.IMAGE_NOT_REVIEW;
-import static cn.staitech.anno.constant.R.ExaminationResponseConstant.REVIEW_NOT_PASS;
 import static cn.staitech.anno.enums.ExaminationEnum.STATUS_INFO_3;
 
 /**
@@ -154,14 +152,14 @@ public class ExaminationController extends BaseController {
                 examinationStateVo.setExaminationFlag(3);
                 Slide slide = ExaminationUtils.getSlide(examinationStateVo, slideId);
                 ExaminationUtils.examinationStateLog(examinationLog, slide, SUBMIT_REVIEW);
-                return R.ok(null, REVIEW_NOT_PASS);
+                return R.ok(null, MessageSource.M("REVIEW_NOT_PASS"));
             } else {
                 Slide slide = ExaminationUtils.getSlide(examinationStateVo, slideId);
                 ExaminationUtils.examinationStateLog(examinationLog, slide, slide.getExaminationFlag());
                 return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
             }
         }
-        return R.fail(null, IMAGE_NOT_REVIEW);
+        return R.fail(null, MessageSource.M("IMAGE_NOT_REVIEW"));
     }
 
     /**
@@ -250,9 +248,8 @@ public class ExaminationController extends BaseController {
             // 关闭流
             outputStream.close();
         } catch (Exception e) {
-            log.error(ExaminationResponseConstant.DOWNLOAD_ERROR, e);
+            log.error(MessageSource.M("DOWNLOAD_ERROR"), e);
         }
-
     }
 
 

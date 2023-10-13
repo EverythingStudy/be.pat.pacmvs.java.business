@@ -3,7 +3,7 @@ package cn.staitech.anno.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.staitech.anno.constant.ExaminationConstant;
 import cn.staitech.anno.constant.ProjectConstant;
-import cn.staitech.anno.constant.R.MeasureResponseConstant;
+import cn.staitech.anno.constant.MeasureResponseConstant;
 import cn.staitech.anno.domain.*;
 import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.po.ProjectPo;
@@ -27,6 +27,7 @@ import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.response.R;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.SlideService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -491,7 +492,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                 // 关闭流
                 outputStream.close();
             } catch (Exception e) {
-                log.error(MeasureResponseConstant.DOWNLOAD_ERROR, e);
+                log.error(MessageSource.M("DOWNLOAD_ERROR"), e);
             }
         }
     }

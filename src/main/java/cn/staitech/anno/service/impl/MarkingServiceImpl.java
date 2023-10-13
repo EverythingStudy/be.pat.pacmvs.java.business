@@ -2,13 +2,12 @@ package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.thread.ExecutorBuilder;
-import cn.staitech.anno.constant.AnnotationConstant;
 import cn.staitech.anno.constant.ExportConstant;
-import cn.staitech.anno.constant.R.MeasureResponseConstant;
+import cn.staitech.anno.constant.MeasureResponseConstant;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
-import cn.staitech.anno.domain.geojson.*;
 import cn.staitech.anno.domain.geojson.Properties;
+import cn.staitech.anno.domain.geojson.*;
 import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
 import cn.staitech.anno.domain.geojson.in.viewAddIn;
 import cn.staitech.anno.domain.marking.Marking;
@@ -31,7 +30,6 @@ import cn.staitech.anno.project.service.SlideAttrService;
 import cn.staitech.anno.service.FileService;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.utils.*;
-import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -42,6 +40,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.*;
@@ -58,12 +57,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-import org.springframework.transaction.annotation.Transactional;
-
-
+import static cn.staitech.anno.aspect.LogFileAspect.response;
 import static cn.staitech.anno.constant.AnnotationConstant.*;
 import static cn.staitech.anno.constant.ViewerConstant.MICRON;
-import static cn.staitech.anno.aspect.LogFileAspect.response;
 
 @Service
 public class MarkingServiceImpl implements MarkingService {
@@ -454,7 +450,7 @@ public class MarkingServiceImpl implements MarkingService {
 
     public void writeMarking(List<SlideRes> slideResList, String imageName, org.json.JSONObject jsonObject) throws Exception {
 
-        Map<String,Long> categoryMap = new HashMap<>();
+        Map<String, Long> categoryMap = new HashMap<>();
         for (SlideRes slideRes : slideResList) {
             // 获取数据库文件名称
             String slideImageName = slideRes.getImageName();
@@ -476,15 +472,15 @@ public class MarkingServiceImpl implements MarkingService {
                     Properties properties1 = JSONObject.toJavaObject(JSONObject.parseObject(JSONObject.toJSONString(properties)), Properties.class);
                     cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
                     // 查询标签信息
-                    if(!Objects.equals(properties1.getLabel_code(), "") && properties1.getLabel_code() != null){
+                    if (!Objects.equals(properties1.getLabel_code(), "") && properties1.getLabel_code() != null) {
                         Long categoryId = categoryMap.get(properties1.getLabel_code());
-                        if(categoryId == null){
-                            PathologicalIndicatorCategory pathologicalIndicatorCategory = pathologicalIndicatorCategoryMapper.selectProjectAndNumber(Long.valueOf(slideBy.getProjectId()),properties1.getLabel_code());
-                            if(pathologicalIndicatorCategory != null){
+                        if (categoryId == null) {
+                            PathologicalIndicatorCategory pathologicalIndicatorCategory = pathologicalIndicatorCategoryMapper.selectProjectAndNumber(Long.valueOf(slideBy.getProjectId()), properties1.getLabel_code());
+                            if (pathologicalIndicatorCategory != null) {
                                 marking.setCategoryId(pathologicalIndicatorCategory.getCategoryId());
                                 categoryMap.put(properties1.getLabel_code(), pathologicalIndicatorCategory.getCategoryId());
                             }
-                        }else{
+                        } else {
                             marking.setCategoryId(categoryId);
                         }
                     }
@@ -556,7 +552,7 @@ public class MarkingServiceImpl implements MarkingService {
         properties.setMeasure_name("P");
         propertiesList.add(properties);
         // 生成excel文件
-        ExcelTool excelTool = new ExcelTool(MeasureResponseConstant.EXCEL_TITLE, 20, 20);
+        ExcelTool excelTool = new ExcelTool(MessageSource.M("EXCEL_TITLE"), 20, 20);
         List<Column> titleData = excelTool.columnTransformer(titleList);
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("utf-8");

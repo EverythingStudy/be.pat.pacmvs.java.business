@@ -44,18 +44,18 @@ public class MessageSource {
 
     /**
      * 自定义Local
+     *
      * @param code
      * @return
      */
     public static String M(String code) {
-        String language = SecurityUtils.getLoginUser().getLanguage();
-        if (language == null) {
-            language = "";
+        String language = "";
+        if (SecurityUtils.getLoginUser().getLanguage() != null) {
+            language = SecurityUtils.getLoginUser().getLanguage();
         }
-        System.out.println("language = " + language);
         // language = "en_US";
-        // String language = "en";
-        // String language = "zh";
+        // language = "en";
+        // language = "zh";
         Locale locale = new Locale(language);
         return messageSource.getMessage(code, null, locale);
     }

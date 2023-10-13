@@ -1,4 +1,4 @@
-package cn.staitech.anno.constant.special;
+package cn.staitech.anno.constant;
 
 /**
  * @author gjt.
