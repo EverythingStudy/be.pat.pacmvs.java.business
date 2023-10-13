@@ -129,7 +129,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         }
         JSONObject markingJsonObject = new JSONObject();
         markingJsonObject.put("question_id",questionBankList);
-        remoteLabelService.marking(markingJsonObject);
+        remoteLabelService.Standard(markingJsonObject);
         cn.staitech.anno.domain.Project project = new cn.staitech.anno.domain.Project();
         project.setProjectId(req.getProjectId());
         project.setIfCreateQuestions("1");
@@ -182,7 +182,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         }
         JSONObject markingJsonObject = new JSONObject();
         markingJsonObject.put("question_id",questionBankList);
-        remoteLabelService.marking(markingJsonObject);
+        remoteLabelService.Standard(markingJsonObject);
         return R.ok();
     }
 
