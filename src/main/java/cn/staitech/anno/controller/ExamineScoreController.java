@@ -86,7 +86,7 @@ public class ExamineScoreController {
     }
 
     @ApiOperationSupport(author = "gjt")
-    @ApiOperation(value = "添加考核信息")
+    @ApiOperation(value = "查询考核详情接口")
     @PostMapping("/add")
     public R<String> add(@RequestBody ExamineScoreAddVO examineScoreAddVO) throws Exception {
         examineScoreService.add(examineScoreAddVO);
@@ -94,10 +94,29 @@ public class ExamineScoreController {
     }
 
     @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "添加考核信息")
+    @GetMapping("/selectBy")
+    public R<ExamineScore> selectBy(
+            @NotNull(message = "参数异常,未传入考核id") @RequestParam(value = "examineScoreId") @ApiParam(name = "examineScoreId", value = "考核id", required = true) Long examineScoreId
+    ) throws Exception {
+        return R.ok( examineScoreService.getById(examineScoreId));
+    }
+
+    @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "完成考核信息")
     @PutMapping("/update")
     public R<String> update(@RequestBody ExamineScoreAddVO examineScoreAddVO) throws Exception {
         examineScoreService.update(examineScoreAddVO);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+    }
+
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "刷新个人拟合度")
+    @GetMapping("/updatePersonalFit")
+    public R<String> updatePersonalFit(
+            @NotNull(message = "参数异常,未传入考核id") @RequestParam(value = "examineScoreId") @ApiParam(name = "examineScoreId", value = "考核id", required = true) Long examineScoreId
+    ) throws Exception {
+        examineScoreService.updatePersonalFit(examineScoreId);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 

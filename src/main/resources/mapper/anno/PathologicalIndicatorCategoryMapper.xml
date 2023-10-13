@@ -237,6 +237,14 @@
         WHERE indicator_id = #{indicatorId}
     </select>
 
+    <select id="selectGeoLabel" parameterType="java.lang.Long" resultMap="GeoLabelResult">
+        SELECT category_name as label_name,
+               rgb           as label_color,
+               number        as label_code
+        FROM tb_pathological_indicator_category
+        WHERE category_id = #{categoryId}
+    </select>
+
     <delete id="delIndicatorCategory" parameterType="java.lang.Long">
         delete
         from tb_pathological_indicator_category

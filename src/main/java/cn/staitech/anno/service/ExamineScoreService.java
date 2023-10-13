@@ -31,5 +31,7 @@ public interface ExamineScoreService extends IService<ExamineScore> {
 
     int update(ExamineScoreAddVO examineScoreAddVO) throws Exception;
 
+    void updatePersonalFit(Long examineScoreId);
+
 
 }

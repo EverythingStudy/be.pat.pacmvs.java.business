@@ -62,6 +62,8 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
      */
     List<GeoLabel> selectIndicatorIdList(Long indicatorId);
 
+    GeoLabel selectGeoLabel(Long categoryId);
+
     /**
      * 根据病理指标id删除标注类别
      *
