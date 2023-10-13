@@ -110,7 +110,7 @@
             es.update_by,
             es.slide_id,
             es.complete_time,
-            pm.should_marks,
+            pm.should_marks AS should_number,
             qb.miou,
             qb.fiou,
             qb.tiou,
