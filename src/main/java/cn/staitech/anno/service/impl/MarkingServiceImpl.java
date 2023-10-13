@@ -353,6 +353,7 @@ public class MarkingServiceImpl implements MarkingService {
                 throw new RuntimeException(e);
             }
         }
+
         String fileUrl = null;
         try {
             fileUrl = fileService.createFiles(slideId, ".json");
@@ -406,6 +407,7 @@ public class MarkingServiceImpl implements MarkingService {
                 categoryList.add(geoLabel);
             }
         }
+
         // 构建geoJson数据
         GeoJson geoJson = new GeoJson();
         geoJson.setFeatures(features);

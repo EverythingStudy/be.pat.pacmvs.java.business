@@ -79,6 +79,7 @@ public class ExamineScoreController {
     @PostMapping("/refreshInterval")
     public R<String> refreshInterval(@RequestBody ExamineScoreExportInsertVo examineScoreExportInsertVo) throws Exception {
         // 调用python
+        examineScoreService.refreshInterval(examineScoreExportInsertVo);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
