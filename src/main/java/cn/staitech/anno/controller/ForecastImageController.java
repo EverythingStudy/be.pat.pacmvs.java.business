@@ -1,6 +1,5 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.constant.ImageConstant;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.image.in.ImageBatchIdsVO;
 import cn.staitech.anno.domain.image.in.ImageListVO;
@@ -86,7 +85,7 @@ public class ForecastImageController extends BaseController {
 
         int deleteImageById = imageService.updateDeleteFlagById(imageId);
         if (deleteImageById > 0) {
-            return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
         return R.fail(MessageSource.M("IMAGE_USING_FORBID_DELETE"));
     }
@@ -122,7 +121,7 @@ public class ForecastImageController extends BaseController {
         request.setUpdateBy(uid);
         int result = imageService.updateBatchIds(request);
         if (result > 0) {
-            return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
         return R.fail(MessageSource.M("OPERATE_ERROR"));
     }
@@ -140,7 +139,7 @@ public class ForecastImageController extends BaseController {
 
         int result = imageService.updateById(request);
         if (result > 0) {
-            return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
         return R.fail(MessageSource.M("OPERATE_ERROR"));
     }

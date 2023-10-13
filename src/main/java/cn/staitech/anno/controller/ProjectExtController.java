@@ -54,8 +54,8 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import static cn.staitech.anno.constant.CommonConstant.FILE_SUFFIX_JSON;
 import static cn.staitech.anno.constant.ProjectConstant.*;
-import static cn.staitech.anno.constant.ExaminationResponseConstant.FILE_SUFFIX;
 
 /**
  * 项目 信息操作处理  .
@@ -1160,7 +1160,7 @@ public class ProjectExtController extends BaseController {
             String jsonString = FileUtils.readFileToString(file, CHARACTER_SET);
 
             //如果是json文件
-            if (suffixName.equals(FILE_SUFFIX)) {
+            if (suffixName.equals(FILE_SUFFIX_JSON)) {
                 //将json字符串转为实体类
                 JSONObject jsonObject = JSONObject.parseObject(jsonString);
                 Annotation annotation = JSONObject.toJavaObject(jsonObject, Annotation.class);
@@ -1322,7 +1322,7 @@ public class ProjectExtController extends BaseController {
                 }
                 //对每个图片中的数据进行转换
                 JSONObject jsonObject0 = ProjectUtils.jsonExportMethod(annotationList, imageName, size, project1);
-                zos.putNextEntry(new ZipEntry(imageName.split("\\.")[0] + "_" + slideId + FILE_SUFFIX));
+                zos.putNextEntry(new ZipEntry(imageName.split("\\.")[0] + "_" + slideId + FILE_SUFFIX_JSON));
 
                 //json数据转为输入流
                 bais = new ByteArrayInputStream(jsonObject0.toString().getBytes(CHARACTER_SET));

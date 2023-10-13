@@ -1,6 +1,5 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.constant.ImageConstant;
 import cn.staitech.anno.domain.files.Files;
 import cn.staitech.anno.domain.files.in.FileUploadVO;
 import cn.staitech.anno.domain.files.in.FilesListVO;
@@ -160,7 +159,7 @@ public class FilesController extends BaseController {
     public R updateBatchIds(@Validated @RequestBody Files files) {
         //  if (files.getFilesId() > 0 && filesService.save(files)) {
         if (files.getFilesId() > 0 && filesService.updateById(files)) {
-            return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
         return R.fail(MessageSource.M("OPERATE_ERROR"));
     }

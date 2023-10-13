@@ -1,9 +1,8 @@
 package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.staitech.anno.constant.ExaminationConstant;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.constant.ProjectConstant;
-import cn.staitech.anno.constant.MeasureResponseConstant;
 import cn.staitech.anno.domain.*;
 import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.po.ProjectPo;
@@ -485,9 +484,9 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                 // 清空response
                 response.reset();
                 OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
-                response.setCharacterEncoding(ExaminationConstant.CHARACTER_ENCODING);
-                response.setContentType(ExaminationConstant.CONTENT_TYPE);
-                response.setHeader(ExaminationConstant.HEADER, "attachment;filename=" + URLEncoder.encode(projectExt.getProjectName(), "utf-8") + MeasureResponseConstant.FILE_SUFFIX_TXT);
+                response.setCharacterEncoding(CommonConstant.CHARACTER_ENCODING);
+                response.setContentType(CommonConstant.CONTENT_TYPE);
+                response.setHeader(CommonConstant.HEADER, "attachment;filename=" + URLEncoder.encode(projectExt.getProjectName(), "utf-8") + CommonConstant.FILE_SUFFIX_TXT);
                 outputStream.write(res.toString().getBytes());
                 // 关闭流
                 outputStream.close();

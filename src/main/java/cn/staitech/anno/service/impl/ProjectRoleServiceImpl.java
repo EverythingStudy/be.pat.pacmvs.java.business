@@ -1,6 +1,6 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.constant.ProjectRoleConstant;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.mapper.ProjectRoleMapper;
 import cn.staitech.anno.service.ProjectRoleService;
 import cn.staitech.system.api.domain.SysProjectRole;
@@ -16,11 +16,9 @@ import java.util.List;
  * @author staitech
  */
 @Service
-public class ProjectRoleServiceImpl implements ProjectRoleService
-{
+public class ProjectRoleServiceImpl implements ProjectRoleService {
     @Resource
     private ProjectRoleMapper projectRoleMapper;
-
 
 
     /**
@@ -30,11 +28,10 @@ public class ProjectRoleServiceImpl implements ProjectRoleService
      * @return 角色数据集合信息
      */
     @Override
-    public List<SysProjectRole> selectProjectRoleList(SysProjectRole projectRole)
-    {
+    public List<SysProjectRole> selectProjectRoleList(SysProjectRole projectRole) {
         return projectRoleMapper.selectProjectRoleList(projectRole);
     }
-    
+
     /**
      * 根据主键查询单条信息
      *
@@ -42,7 +39,7 @@ public class ProjectRoleServiceImpl implements ProjectRoleService
      * @return 角色数据信息
      */
     @Override
-    public SysProjectRole selectProjectRole(Long roleId){
+    public SysProjectRole selectProjectRole(Long roleId) {
         return projectRoleMapper.selectProjectRole(roleId);
     }
 
@@ -71,31 +68,30 @@ public class ProjectRoleServiceImpl implements ProjectRoleService
     public int deleteProjectRoleByIds(Long[] roleIds) {
         return projectRoleMapper.deleteProjectRoleByIds(roleIds);
     }
-    
+
     @Override
-    public List<SysProjectRole> selectByProjectId(Long projectId){
+    public List<SysProjectRole> selectByProjectId(Long projectId) {
         return projectRoleMapper.selectByProjectId(projectId);
     }
 
 
-
     /**
      * 新建项目-添加3个默认角色
+     *
      * @param projectId 项目ID
-     * @param createBy 创建人
+     * @param createBy  创建人
      * @return 返回新添加的角色，重复添加的不更新，但是返回
      */
-    public List<SysProjectRole> addProjectRoles(Long projectId,Long createBy)
-    {
+    public List<SysProjectRole> addProjectRoles(Long projectId, Long createBy) {
         List<SysProjectRole> list = new ArrayList<>(3);
 
         // 角色类型：1、项目代表；2、项目管理者；3、项目贡献者
-        for (int i = 0; i < ProjectRoleConstant.ROLE_TYPE.length; i++) {
+        for (int i = 0; i < CommonConstant.ROLE_TYPE.length; i++) {
             // 构造参数
             SysProjectRole role = SysProjectRole
                     .builder()
                     .projectId(projectId)
-                    .roleType(i+1)
+                    .roleType(i + 1)
                     .status(0)
                     .delFlag(0)
                     .build();
@@ -104,13 +100,12 @@ public class ProjectRoleServiceImpl implements ProjectRoleService
             List<SysProjectRole> srcRoleList = projectRoleMapper.selectProjectRoleList(role);
 
             // 无则插入
-            if (srcRoleList.size()<1)
-            {
-                role.setRoleName(ProjectRoleConstant.ROLE_TYPE[i]);
+            if (srcRoleList.size() < 1) {
+                role.setRoleName(CommonConstant.ROLE_TYPE[i]);
                 role.setCreateBy(createBy);
                 projectRoleMapper.insertProjectRole(role);
                 list.add(role);
-            }else {
+            } else {
                 list.add(srcRoleList.get(0));
             }
         }

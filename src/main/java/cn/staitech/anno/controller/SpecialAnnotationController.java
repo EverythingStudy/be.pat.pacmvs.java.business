@@ -156,7 +156,7 @@ public class SpecialAnnotationController {
         // 校验当前用户是否是编辑用户，确保数据只可以被同一个人编辑
         SpecialImage sImage = specialImageService.selectByPrimaryKey(specialImageId);
         if (null == sImage) {
-            return R.fail(SpecialImageConstant.Data_NULL);
+            return R.fail(SpecialImageConstant.DATA_NULL);
         }
         if (sliceStatus == 0 || sliceStatus == 3) {
             //切图状态 0:未切图 1：生成中 2：切图完成 3：绘制中,确保在绘制中可以进行修改，且提交人是绘制
@@ -222,7 +222,7 @@ public class SpecialAnnotationController {
             @RequestParam @ApiParam(name = "specialImageId", value = "切片id", required = true) Long specialImageId) {
         SpecialImage sImage = specialImageService.selectByPrimaryKey(specialImageId);
         if (null == sImage) {
-            return R.fail(SpecialImageConstant.Data_NULL);
+            return R.fail(SpecialImageConstant.DATA_NULL);
         }
         // 查询所有标注
         SpecialAnnotation annotation = new SpecialAnnotation();
@@ -253,7 +253,7 @@ public class SpecialAnnotationController {
             @RequestParam @ApiParam(name = "specialImageId", value = "切片id", required = true) Long specialImageId) {
         SpecialImage sImage = specialImageService.selectByPrimaryKey(specialImageId);
         if (null == sImage) {
-            return R.fail(SpecialImageConstant.Data_NULL);
+            return R.fail(SpecialImageConstant.DATA_NULL);
         }
         // 查询所有标注
         SpecialAnnotation annotation = new SpecialAnnotation();
@@ -306,7 +306,7 @@ public class SpecialAnnotationController {
         // 校验当前用户是否是编辑用户，确保数据只可以被同一个人编辑
         SpecialImage sImage = specialImageService.selectByPrimaryKey(Long.valueOf(specialImageId));
         if (null == sImage) {
-            return R.fail(SpecialImageConstant.Data_NULL);
+            return R.fail(SpecialImageConstant.DATA_NULL);
         }
         //切图状态 0:未切图 1：生成中 2：切图完成 3：绘制中
         if (sImage.getSliceImageStatus() == 1) {
@@ -322,7 +322,7 @@ public class SpecialAnnotationController {
         List<SpecialAnnotation> annoList = specialImageAnnoService.selectSpecialAnnotationList(annotation);
 
         if (CollectionUtil.isEmpty(annoList)) {
-            return R.fail(SpecialImageConstant.Data_NULL);
+            return R.fail(SpecialImageConstant.DATA_NULL);
         }
         // 切图通知操作 1、查询所有标注结果列表+主图信息
         SpecialCutImageVO resData = new SpecialCutImageVO();
@@ -395,7 +395,7 @@ public class SpecialAnnotationController {
                 return R.fail(SpecialImageConstant.ANNO_NO);
             }
             if (null == sImage) {
-                return R.fail(SpecialImageConstant.Data_NULL);
+                return R.fail(SpecialImageConstant.DATA_NULL);
             }
             //判断当前编辑人员和edit_by是同一个
             //切图状态 0:未切图 1：生成中 2：切图完成 3：绘制中,确保在绘制中可以进行修改，且提交人是绘制

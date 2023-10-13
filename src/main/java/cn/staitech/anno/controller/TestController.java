@@ -1,6 +1,6 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.constant.MeasureResponseConstant;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.response.R;
 import cn.staitech.anno.service.AnnotationService;
@@ -122,7 +122,7 @@ public class TestController {
 
     public String getFileName(Long slideId, String fileSuffix) {
         String updateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        return "Annotation_" + slideId + MeasureResponseConstant.FILE_CONNECTOR + updateTime + fileSuffix;
+        return "Annotation_" + slideId + CommonConstant.GLIDE_LINE + updateTime + fileSuffix;
     }
 
 
@@ -441,10 +441,10 @@ public class TestController {
     @GetMapping("/i18n")
     public String i18n() {
         String welcome = MessageSource.M("STATISTIC_COUNT");
-        log.info("STATISTIC_COUNT{}",welcome);
+        log.info("STATISTIC_COUNT{}", welcome);
 
         welcome = MessageSource.M("welcome");
-        log.info("welcome{}",welcome);
+        log.info("welcome{}", welcome);
 
         return welcome;
     }

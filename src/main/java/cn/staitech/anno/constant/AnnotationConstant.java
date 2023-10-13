@@ -9,6 +9,7 @@ public class AnnotationConstant {
     private AnnotationConstant() {
         throw new IllegalStateException("AnnotationConstant class");
     }
+
     public static final String MULTIPOLYGON = "MultiPolygon";
 
     public static final String GEOMETRYCOLLECTION = "GeometryCollection";
@@ -25,5 +26,4 @@ public class AnnotationConstant {
     public static final String DELETE_STATUS = "delete";
 
     public static final String CLEAN = "clean";
-
 }

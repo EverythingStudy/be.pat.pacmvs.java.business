@@ -1,7 +1,7 @@
 package cn.staitech.anno.project.service.impl;
 
+import cn.staitech.anno.constant.CommonConstant;
 import org.apache.commons.io.IOUtils;
-import org.apache.tomcat.util.threads.TaskThread;
 import org.slf4j.Logger;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.IoUtil;
@@ -12,7 +12,6 @@ import cn.hutool.core.thread.ExecutorBuilder;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
-import cn.staitech.anno.constant.ExportConstant;
 import cn.staitech.anno.domain.reviewround.ReviewRoundOutVO;
 import cn.staitech.anno.project.constants.Constants;
 import cn.staitech.anno.project.domain.DownTask;
@@ -42,7 +41,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.*;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.*;
@@ -234,7 +232,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
                                         reviewVO.getCreateName(), DateUtil.format(reviewVO.getCreateTime(),"yyyy-MM-dd hh24:mm:ss")};
                                 writer.write(body);
                             }
-                            map.put(ExportConstant.PATH, path);
+                            map.put(CommonConstant.PATH, path);
                             jsonObject.put(String.valueOf(slideId), map);
                             writer.flush();
                             writer.close();

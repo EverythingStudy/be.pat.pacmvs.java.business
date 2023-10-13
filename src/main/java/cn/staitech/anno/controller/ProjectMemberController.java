@@ -10,6 +10,7 @@ import cn.staitech.anno.service.AnnotationService;
 import cn.staitech.anno.service.ProjectMemberService;
 import cn.staitech.anno.service.ProjectRoleService;
 import cn.staitech.anno.service.RecentlyVisitedService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.utils.ProjectUtils;
 import cn.staitech.common.core.domain.R;
@@ -37,8 +38,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static cn.staitech.anno.constant.ProjectMemberConstant.*;
 
 /**
  * 项目成员配置
@@ -97,10 +96,10 @@ public class ProjectMemberController extends BaseController {
         }
 
         if (sum.get() > 0) {
-            return R.ok(INSERT_SUCCESS);
+            return R.ok(MessageSource.M("INSERT_SUCCESS"));
         }
 
-        return R.fail(INSERT_FAILURE);
+        return R.fail(MessageSource.M("INSERT_FAILURE"));
     }
 
     @Log(title = "项目成员表删除", businessType = BusinessType.DELETE)
@@ -121,10 +120,10 @@ public class ProjectMemberController extends BaseController {
                 QueryWrapper<RecentlyVisited> recentlyVisitedQueryWrapper = new QueryWrapper<>();
                 recentlyVisitedQueryWrapper.eq("project_id", projectId).eq("user_id", userId);
                 recentlyVisitedService.remove(recentlyVisitedQueryWrapper);
-                return R.ok(DELETE_SUCCESS);
+                return R.ok(MessageSource.M("DELETE_SUCCESS"));
             }
         }
-        return R.ok(DELETE_FAILURE);
+        return R.ok(MessageSource.M("DELETE_FAILURE"));
     }
 
     /**
@@ -143,7 +142,7 @@ public class ProjectMemberController extends BaseController {
 
         // 查询项目中是否添加当前用户
         if (projectMemberBy == null) {
-            return R.fail(DISALLOW_PROJECT_NOT_EXIST + SecurityUtils.getUsername());
+            return R.fail(MessageSource.M("DISALLOW_PROJECT_NOT_EXIST") + SecurityUtils.getUsername());
         }
 
         // 获取角色ID
@@ -152,7 +151,7 @@ public class ProjectMemberController extends BaseController {
 
         // 查询当前项目项目代表总数，项目代表至少保留1名  http://jira.shengtong.com/browse/ANNO-709
         if (projectMemberService.representationCount(projectId) == 1) {
-            return R.fail(REPRESENTATION_MUST_HAS_ONE);
+            return R.fail(MessageSource.M("REPRESENTATION_MUST_HAS_ONE"));
         }
 
         // 构造查询对象(修改前数据)
@@ -174,9 +173,9 @@ public class ProjectMemberController extends BaseController {
         if (projectMemberService.update(projectMember) > 0) {
             //更新项目时间
             ProjectUtils.updateProjectStatus(projectId);
-            return R.ok(UPDATE_SUCCESS);
+            return R.ok(MessageSource.M("UPDATE_SUCCESS"));
         }
-        return R.fail(UPDATE_FAILED);
+        return R.fail(MessageSource.M("UPDATE_FAILED"));
     }
 
     @ApiOperation(value = "查询项目成员表列表")
@@ -189,7 +188,7 @@ public class ProjectMemberController extends BaseController {
 
         // 查询项目中是否添加当前用户
         if (projectMemberBy == null) {
-            return R.fail(DISALLOW_PROJECT_NOT_EXIST + SecurityUtils.getUsername());
+            return R.fail(MessageSource.M("DISALLOW_PROJECT_NOT_EXIST") + SecurityUtils.getUsername());
         }
         // 构造查询条件 ProjectMember
         ProjectMember projectMember = ProjectMember.builder()
@@ -221,13 +220,13 @@ public class ProjectMemberController extends BaseController {
     public R<ProjectMember> selectProjectMemberBy(Long projectId) {
 
         if (!Optional.ofNullable(projectId).isPresent()) {
-            return R.fail(DISALLOW_NOT_PROJECT);
+            return R.fail(MessageSource.M("DISALLOW_NOT_PROJECT"));
         }
         ProjectMember projectMemberBy = projectMemberService.getLoginUserProjectRoleType(projectId);
 
         // 查询项目中是否添加当前用户
         if (projectMemberBy == null) {
-            return R.fail(DISALLOW_PROJECT_NOT_EXIST + SecurityUtils.getUsername());
+            return R.fail(MessageSource.M("DISALLOW_PROJECT_NOT_EXIST") + SecurityUtils.getUsername());
         }
         return R.ok(projectMemberBy);
     }

@@ -29,11 +29,13 @@ import javax.annotation.Resource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 import static cn.staitech.anno.constant.AnnotationConstant.*;
-import static cn.staitech.anno.constant.MarkingExamineConstant.GLIDE_LINE;
-import static cn.staitech.anno.constant.ViewerConstant.MICRON;
+import static cn.staitech.anno.constant.CommonConstant.GLIDE_LINE;
+import static cn.staitech.anno.constant.CommonConstant.MICRON;
 
 /**
  * <p>
@@ -72,13 +74,13 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
             String fileContent = getAnnotation(fileUrl).getString("features");
             JSONArray jsonArray = JSONArray.parseArray(fileContent);
             JSONArray newJsonArray = new JSONArray();
-            for(Object feature:jsonArray){
+            for (Object feature : jsonArray) {
                 JSONObject featureObject = (JSONObject) feature;
                 String labelCode = featureObject.getJSONObject("properties").getString("label_code");
                 QueryWrapper<Structure> structureQueryWrapper = new QueryWrapper<>();
-                structureQueryWrapper.eq("structure_id",labelCode).eq("name","标注区域");
+                structureQueryWrapper.eq("structure_id", labelCode).eq("name", "标注区域");
                 Structure structure = structureMapper.selectOne(structureQueryWrapper);
-                if(structure != null){
+                if (structure != null) {
                     newJsonArray.add(feature);
                 }
             }

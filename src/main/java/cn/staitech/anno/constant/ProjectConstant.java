@@ -35,7 +35,6 @@ public class ProjectConstant {
     public static final String NO_ATTRIBUTE = "无属性";
     public static final String IMAGE_NOT_EXIST = "图像不存在";
     public static final String SLIDE_ID_NOT_NULL = "切片id不可为空";
-    public static final Long ALREADY_AUDIT = 1L;
     public static final Long NOT_AUDIT = 0L;
     public static final String INDICATOR_EXIST = "病理指标名已存在，请检查后输入";
     public static final String ADD_INDICATOR_ERROR = "病理指标添加失败";

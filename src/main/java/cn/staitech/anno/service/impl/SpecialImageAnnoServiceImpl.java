@@ -122,7 +122,7 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
     public R<String> updateSpecialImageList(AuditSpecialImageVO vo) {
         Long[] imageIds = vo.getSpecialImageIds();
         if (null == imageIds) {
-            return R.fail(SpecialImageConstant.Data_NULL);
+            return R.fail(SpecialImageConstant.DATA_NULL);
         }
         //参数校验
         //审核状态 0：待审核 1：审核通过 2：审核不通过
@@ -141,10 +141,10 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
         List<SpecialImage> list = specialImageMapper.selectSpecialImageListByParm(paramMap);
         if (CollectionUtils.isNotEmpty(list)) {
             if (list.size() != imageIds.length) {
-                return R.fail(SpecialImageConstant.Data_NULL);
+                return R.fail(SpecialImageConstant.DATA_NULL);
             }
         } else {
-            return R.fail(SpecialImageConstant.Data_NULL);
+            return R.fail(SpecialImageConstant.DATA_NULL);
         }
 
         SpecialImage record = new SpecialImage();

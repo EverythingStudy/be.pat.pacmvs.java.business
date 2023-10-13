@@ -1,27 +1,12 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.constant.QuestionBankConstant;
-import cn.staitech.anno.domain.ExamineScore;
-import cn.staitech.anno.domain.Image;
-import cn.staitech.anno.domain.QuestionBank;
-import cn.staitech.anno.domain.QuestionProjectRel;
-import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.question.in.ConfirmSelectionIn;
-import cn.staitech.anno.domain.question.in.CreateBySlideData;
-import cn.staitech.anno.domain.question.in.CreateBySlideIn;
-import cn.staitech.anno.domain.question.in.CreateQuestionIn;
-import cn.staitech.anno.domain.question.in.GetQuestionListIn;
-import cn.staitech.anno.domain.question.in.GetQuestionsIn;
-import cn.staitech.anno.domain.question.in.SettingCompletedIn;
+import cn.staitech.anno.domain.*;
+import cn.staitech.anno.domain.question.in.*;
 import cn.staitech.anno.domain.question.out.GetProjectBoxOut;
 import cn.staitech.anno.domain.question.out.GetQuestionListOut;
 import cn.staitech.anno.domain.question.out.GetQuestionsOut;
-import cn.staitech.anno.mapper.ExamineScoreMapper;
-import cn.staitech.anno.mapper.ImageMapper;
-import cn.staitech.anno.mapper.ProjectMapper;
-import cn.staitech.anno.mapper.QuestionBankMapper;
-import cn.staitech.anno.mapper.QuestionProjectRelMapper;
-import cn.staitech.anno.mapper.SlideMapper;
+import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.service.IQuestionBankService;
 import cn.staitech.anno.service.IQuestionProjectRelService;
 import cn.staitech.anno.service.MarkingService;
@@ -280,9 +265,9 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
 
         for (Long aLong : dataList) {
             LambdaQueryWrapper<ExamineScore> qw = new LambdaQueryWrapper<>();
-            qw.eq(ExamineScore::getQuestionProjectId,aLong);
+            qw.eq(ExamineScore::getQuestionProjectId, aLong);
             List<ExamineScore> examineScores = examineScoreMapper.selectList(qw);
-            if(!CollectionUtils.isEmpty(examineScores)){
+            if (!CollectionUtils.isEmpty(examineScores)) {
                 return R.fail(QuestionBankConstant.ERROR_HAS_ALREADY);
             }
         }

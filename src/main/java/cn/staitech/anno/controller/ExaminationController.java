@@ -1,7 +1,6 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.constant.ExaminationConstant;
-import cn.staitech.anno.constant.ExaminationResponseConstant;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.ExaminationLog;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.vo.*;
@@ -35,7 +34,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cn.staitech.anno.constant.ExaminationConstant.SUBMIT_REVIEW;
+import static cn.staitech.anno.constant.CommonConstant.SUBMIT_REVIEW;
 import static cn.staitech.anno.enums.ExaminationEnum.STATUS_INFO_3;
 
 /**
@@ -86,7 +85,7 @@ public class ExaminationController extends BaseController {
         Integer processFlag = Integer.valueOf(slideService.selectById(slideId).getProcessFlag());
         ExaminationLog examinationLog = new ExaminationLog();
         if (processFlag == ProcessFlagEnum.STATUS_INFO_2.value()) {
-            examinationSubmitVo.setExaminationFlag(ExaminationConstant.NOT_START_REVIEW);
+            examinationSubmitVo.setExaminationFlag(CommonConstant.NOT_START_REVIEW);
             examinationSubmitVo.setProcessFlag(SUBMIT_REVIEW);
             examinationSubmitVo.setUpdateBy(SecurityUtils.getUserId());
             examinationService.updateExaminationSubmit(examinationSubmitVo);
@@ -187,8 +186,8 @@ public class ExaminationController extends BaseController {
             annotationList.add(annotation);
         });
 
-        File directories = new File(path + File.separator + ExaminationConstant.FILE_PATH);
-        File fileName = new File(slideId + ExaminationResponseConstant.FILE_SUFFIX);
+        File directories = new File(path + File.separator + CommonConstant.FILE_PATH);
+        File fileName = new File(slideId + CommonConstant.FILE_SUFFIX_JSON);
         File file = new File(directories + File.separator + fileName);
 
         JsonUtils.createDirectories(directories);
@@ -231,7 +230,7 @@ public class ExaminationController extends BaseController {
         ExaminationUtils.getSlide(examinationListVo, slideId);
 
         // 文件名
-        String fileName = slideId + ExaminationResponseConstant.FILE_SUFFIX;
+        String fileName = slideId + CommonConstant.FILE_SUFFIX_JSON;
 
         // 生成Json字符串
         String jsonString = JSON.toJSONString(annotationList, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue);
@@ -241,9 +240,9 @@ public class ExaminationController extends BaseController {
             // 清空response
             response.reset();
             OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
-            response.setCharacterEncoding(ExaminationConstant.CHARACTER_ENCODING);
-            response.setContentType(ExaminationConstant.CONTENT_TYPE);
-            response.setHeader(ExaminationConstant.HEADER, "attachment;filename=" + fileName);
+            response.setCharacterEncoding(CommonConstant.CHARACTER_ENCODING);
+            response.setContentType(CommonConstant.CONTENT_TYPE);
+            response.setHeader(CommonConstant.HEADER, "attachment;filename=" + fileName);
             outputStream.write(jsonString.getBytes());
             // 关闭流
             outputStream.close();

@@ -2,8 +2,7 @@ package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.thread.ExecutorBuilder;
-import cn.staitech.anno.constant.ExportConstant;
-import cn.staitech.anno.constant.MeasureResponseConstant;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.geojson.Properties;
@@ -59,7 +58,7 @@ import java.util.zip.ZipInputStream;
 
 import static cn.staitech.anno.aspect.LogFileAspect.response;
 import static cn.staitech.anno.constant.AnnotationConstant.*;
-import static cn.staitech.anno.constant.ViewerConstant.MICRON;
+import static cn.staitech.anno.constant.CommonConstant.MICRON;
 
 @Service
 public class MarkingServiceImpl implements MarkingService {
@@ -540,7 +539,7 @@ public class MarkingServiceImpl implements MarkingService {
     @Override
     public void execlExport(Long slideId) throws Exception {
         // 构造表头的每个列头 定义表头
-        List<Map<String, String>> titleList = getTitleList(MeasureResponseConstant.COLHEAD_KEY, MeasureResponseConstant.COLHEAD_VALUE);
+        List<Map<String, String>> titleList = getTitleList(CommonConstant.MEASURE_COLHEAD_KEY, CommonConstant.MEASURE_COLHEAD_VALUE);
         // 查询当前切片不为点类型的标注数据
         List<Properties> propertiesList = markingMapper.selectMeasureList(slideId);
         // 加点的记录
@@ -629,8 +628,8 @@ public class MarkingServiceImpl implements MarkingService {
                             Slide slideBy = slideMapperV1.selectById(slideId);
                             Image image = imageMapper.selectById(slideBy);
                             Map<String, String> map = new HashMap<>();
-                            map.put(ExportConstant.PATH, fileUrl);
-                            map.put(ExportConstant.IMAGE_URL, image.getImageUrl());
+                            map.put(CommonConstant.PATH, fileUrl);
+                            map.put(CommonConstant.IMAGE_URL, image.getImageUrl());
                             jsonObject.put(String.valueOf(slideId), map);
                         }
                     }
@@ -660,17 +659,17 @@ public class MarkingServiceImpl implements MarkingService {
     public void downTaskByCode(String code) throws Exception {
         DownTask downTask = downTaskService.getOne(Wrappers.query(DownTask.builder().code(code).build()));
         // 构造表头的每个列头 定义表头
-        List<Map<String, String>> titleList = getTitleList(ExportConstant.COLHEAD_KEY, ExportConstant.COLHEAD_VALUE);
+        List<Map<String, String>> titleList = getTitleList(CommonConstant.EXPORT_COLHEAD_KEY, CommonConstant.EXPORT_COLHEAD_VALUE);
         List<Map<String, String>> res = new ArrayList<>();
         JSONObject jsonObject = JSON.parseObject(String.valueOf(downTask.getPath()));
         for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
             res.add((Map<String, String>) entry.getValue());
         }
-        ExcelTool<Map<String, String>> excelTool = new ExcelTool<>(ExportConstant.EXCEL_TITLE, 20, 20);
+        ExcelTool<Map<String, String>> excelTool = new ExcelTool<>(MessageSource.M("EXCEL_FILE_PATH"), 20, 20);
         List<Column> titleData = excelTool.columnTransformer(titleList);
         response.setContentType("application/vnd.ms-excel;charset=utf-8");
         response.setCharacterEncoding("utf-8");
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(downTask.getProjectName(), "UTF-8") + ExportConstant.XLSX);
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(downTask.getProjectName(), "UTF-8") + CommonConstant.FILE_SUFFIX_XLSX);
         excelTool.exportExcel(titleData, res, response.getOutputStream(), true, false);
     }
 

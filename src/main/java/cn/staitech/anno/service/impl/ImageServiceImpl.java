@@ -1,6 +1,6 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.constant.ImageConstant;
+import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.image.in.*;
@@ -103,11 +103,11 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
                 // 提取处理状态文本描述并赋值
                 Integer status = in.getStatus();
-                out.setFileStatus(ImageConstant.IMAGE_STATUS_MAP.get(status));
+                out.setFileStatus(Container.IMAGE_STATUS_MAP.get(status));
                 // 不可用 可用 解析中
 
                 if (status == 0) {
-                    out.setProcessFlagName(ImageConstant.IMAGE_PROCESS_MAP.get(in.getProcessFlag()));
+                    out.setProcessFlagName(Container.IMAGE_PROCESS_MAP.get(in.getProcessFlag()));
                 } else {
                     out.setProcessFlagName("");
                 }
@@ -209,11 +209,11 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
                 // 提取处理状态文本描述并赋值
                 Integer status = in.getStatus();
-                out.setFileStatus(ImageConstant.IMAGE_STATUS_MAP.get(status));
+                out.setFileStatus(Container.IMAGE_STATUS_MAP.get(status));
                 // 不可用 可用 解析中
 
                 if (status == 0) {
-                    out.setProcessFlagName(ImageConstant.IMAGE_PROCESS_MAP.get(in.getProcessFlag()));
+                    out.setProcessFlagName(Container.IMAGE_PROCESS_MAP.get(in.getProcessFlag()));
                 } else {
                     out.setProcessFlagName("");
                 }

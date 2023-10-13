@@ -1,8 +1,7 @@
 package cn.staitech.anno.controller;
 
 
-import cn.staitech.anno.constant.ExamineScoreConstant;
-import cn.staitech.anno.constant.ExportConstant;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.ExamineScore;
 import cn.staitech.anno.domain.examineScore.ExamineScoreAddVO;
 import cn.staitech.anno.domain.examineScore.ExamineScoreExportInsertVo;
@@ -117,12 +116,12 @@ public class ExamineScoreController {
             projectName = projectBy.getProjectName();
         }
         // 构造表头的每个列头 定义表头
-        List<Map<String, String>> titleList = getTitleList(ExamineScoreConstant.COLHEAD_KEY, ExamineScoreConstant.COLHEAD_VALUE);
-        ExcelTool excelTool = new ExcelTool<>(ExportConstant.EXCEL_TITLE, 20, 20);
+        List<Map<String, String>> titleList = getTitleList(CommonConstant.COLHEAD_KEY, CommonConstant.COLHEAD_VALUE);
+        ExcelTool excelTool = new ExcelTool<>(MessageSource.M("EXCEL_FILE_PATH"), 20, 20);
         List<Column> titleData = excelTool.columnTransformer(titleList);
         response.setContentType("application/vnd.ms-excel;charset=utf-8");
         response.setCharacterEncoding("utf-8");
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(projectName, "UTF-8") + ExportConstant.XLSX);
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(projectName, "UTF-8") + CommonConstant.FILE_SUFFIX_XLSX);
         excelTool.exportExcel(titleData, examineScoreList, response.getOutputStream(), true, false);
     }
 

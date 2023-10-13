@@ -1,7 +1,7 @@
 package cn.staitech.anno.project.controller;
 
 import cn.hutool.core.io.IoUtil;
-import cn.staitech.anno.constant.ExportConstant;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.reviewround.ReviewRoundOutVO;
 import cn.staitech.anno.mapper.SlideMapper;
@@ -120,7 +120,7 @@ public class ReviewController {
         for (Slide slide : slideList) {
             Map<String, String> pathMap = (Map<String, String>) downTask.getPath().get(slide.getSlideId().toString());
             if (pathMap != null) {
-                String p = pathMap.get(ExportConstant.PATH);
+                String p = pathMap.get(CommonConstant.PATH);
                 out.write((p + "\n").getBytes());
             }
         }
