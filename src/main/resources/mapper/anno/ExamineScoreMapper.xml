@@ -66,6 +66,17 @@
         where qp.question_project_id = #{questionProjectId}
     </select>
 
+
+    <select id="selectByIds" parameterType="long" resultType="cn.staitech.anno.domain.examineScore.ExamineScoreBy">
+        SELECT
+            ex.* ,q.question_id
+        FROM
+            tb_examine_score AS ex
+                LEFT JOIN tb_question_project_rel AS q ON q.question_project_id = ex.question_project_id
+        WHERE
+            ex.examine_score_id = #{examineScoreId}
+    </select>
+
     <select id="selectQuestionProjectList" parameterType="long" resultType="cn.staitech.anno.domain.examineScore.SelectExaminationListVO">
         SELECT
             q.image_name,

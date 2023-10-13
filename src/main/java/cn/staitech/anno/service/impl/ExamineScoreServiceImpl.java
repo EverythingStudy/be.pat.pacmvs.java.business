@@ -3,6 +3,7 @@ package cn.staitech.anno.service.impl;
 import cn.hutool.core.date.DateUtil;
 import cn.staitech.anno.domain.*;
 import cn.staitech.anno.domain.examineScore.ExamineScoreAddVO;
+import cn.staitech.anno.domain.examineScore.ExamineScoreBy;
 import cn.staitech.anno.domain.examineScore.ExamineScoreExportVO;
 import cn.staitech.anno.domain.examineScore.SelectExaminationListVO;
 import cn.staitech.anno.mapper.*;
@@ -129,6 +130,11 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
             examinationListVO = examineScoreMapper.selectQuestionProject(questionProjectId);
         }
         return examinationListVO;
+    }
+
+    @Override
+    public ExamineScoreBy selectByIds(Long examineScoreId){
+        return examineScoreMapper.selectByIds(examineScoreId);
     }
 
     @Override

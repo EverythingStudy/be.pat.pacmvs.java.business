@@ -2,6 +2,7 @@ package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.ExamineScore;
 import cn.staitech.anno.domain.examineScore.ExamineScoreAddVO;
+import cn.staitech.anno.domain.examineScore.ExamineScoreBy;
 import cn.staitech.anno.domain.examineScore.ExamineScoreExportVO;
 import cn.staitech.anno.domain.examineScore.SelectExaminationListVO;
 import cn.staitech.common.core.domain.PageResponse;
@@ -28,6 +29,8 @@ public interface ExamineScoreService extends IService<ExamineScore> {
     SelectExaminationListVO selectExaminationBy(Long questionProjectId);
 
     int add(ExamineScoreAddVO examineScoreAddVO) throws Exception;
+
+    ExamineScoreBy selectByIds(Long examineScoreId);
 
     int update(ExamineScoreAddVO examineScoreAddVO) throws Exception;
 
