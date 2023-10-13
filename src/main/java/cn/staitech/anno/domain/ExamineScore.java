@@ -178,6 +178,7 @@ public class ExamineScore implements Serializable {
      * 交卷时间
      */
     @ApiModelProperty(value = "交卷时间")
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private String completeTime;
 
