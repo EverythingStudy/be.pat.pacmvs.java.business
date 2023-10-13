@@ -34,7 +34,7 @@ public class OtherServiceImpl implements OtherService {
         ExamineScore examineScoreBy = examineScoreMapper.selectById(examineScoreId);
         if (examineScoreBy != null) {
             // 判断是否已经交卷
-            if (Objects.equals(examineScoreBy.getOperateStatus(), "0")) {
+            if (Objects.equals(examineScoreBy.getOperateStatus(), "1")) {
                 // 查询切片表中应标数量
                 QueryWrapper<MarkingExamine> markingExamineQueryWrapper = new QueryWrapper<>();
                 markingExamineQueryWrapper.eq("question_project_id", examineScoreBy.getQuestionProjectId()).eq("create_by", examineScoreBy.getCreateBy());
