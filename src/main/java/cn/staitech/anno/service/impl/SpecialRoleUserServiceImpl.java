@@ -1,6 +1,6 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.constant.SpecialRoleUserConstant;
+import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.special.SpecialRole;
 import cn.staitech.anno.domain.special.SpecialRoleUser;
 import cn.staitech.anno.domain.vo.special.*;
@@ -72,7 +72,7 @@ public class SpecialRoleUserServiceImpl implements SpecialRoleUserService {
     public SpecialRoleUserSelectResVo selectUserSpecialBy(SpecialSelectByIn req) {
         SpecialRoleUserSelectResVo res = specialRoleUserMapper.selectUserSpecialBy(req);
         if (res != null) {
-            res.setStatusFlag(SpecialRoleUserConstant.SPECIAL_ROLE_STATUS_MAP.get(res.getStatus()));
+            res.setStatusFlag(Container.SPECIAL_ROLE_STATUS_MAP.get(res.getStatus()));
         }
         return res;
     }
@@ -154,7 +154,7 @@ public class SpecialRoleUserServiceImpl implements SpecialRoleUserService {
         startPage(specialRoleUser.getPageNum(), specialRoleUser.getPageSize());
         List<SpecialRoleUserSelectResVo> specialRoleUserSelectResVos = specialRoleUserMapper.selectList(specialRoleUser);
         for (SpecialRoleUserSelectResVo s : specialRoleUserSelectResVos) {
-            s.setStatusFlag(SpecialRoleUserConstant.SPECIAL_ROLE_STATUS_MAP.get(s.getStatus()));
+            s.setStatusFlag(Container.SPECIAL_ROLE_STATUS_MAP.get(s.getStatus()));
         }
         return new PageMaster<>(specialRoleUserSelectResVos);
     }

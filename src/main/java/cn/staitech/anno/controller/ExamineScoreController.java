@@ -116,7 +116,7 @@ public class ExamineScoreController {
             projectName = projectBy.getProjectName();
         }
         // 构造表头的每个列头 定义表头
-        List<Map<String, String>> titleList = getTitleList(CommonConstant.COLHEAD_KEY, CommonConstant.COLHEAD_VALUE);
+        List<Map<String, String>> titleList = getTitleList(CommonConstant.EXAMINESCORE_COLHEAD_KEY, CommonConstant.EXAMINESCORE_COLHEAD_VALUE);
         ExcelTool excelTool = new ExcelTool<>(MessageSource.M("EXCEL_FILE_PATH"), 20, 20);
         List<Column> titleData = excelTool.columnTransformer(titleList);
         response.setContentType("application/vnd.ms-excel;charset=utf-8");

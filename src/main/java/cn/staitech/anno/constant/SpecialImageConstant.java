@@ -20,5 +20,4 @@ public class SpecialImageConstant {
     public static final String DELIVERY_AGAIN = "此图像已经完成切图操作，可直接查看结果";
     public static final String ANNO_NO = "此图像禁止进行标注操作，请联系管理员";
     public static final String NO_DATA_AVAILABLE = "No data available !";
-
 }

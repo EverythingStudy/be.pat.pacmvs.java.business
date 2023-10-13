@@ -1,6 +1,6 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.constant.ColorConstant;
+import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.color.Color;
 import cn.staitech.anno.service.ColorService;
 import cn.staitech.common.core.domain.R;
@@ -41,7 +41,7 @@ public class ColorController {
     @Log(title = "颜色列表", menu = "颜色列表", subMenu = "颜色列表", businessType = BusinessType.QUERY)
     @GetMapping("/colorType")
     public R<Map<Integer, String>> colorType() {
-        Map<Integer, String> map = ColorConstant.COLOR_TYPE;
+        Map<Integer, String> map = Container.COLOR_TYPE;
         return R.ok(map);
     }
 

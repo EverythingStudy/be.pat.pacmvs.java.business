@@ -1,9 +1,5 @@
 package cn.staitech.anno.constant;
 
-import com.google.common.collect.ImmutableMap;
-
-import java.util.Map;
-
 /**
  * @author wangf
  */
@@ -67,7 +63,10 @@ public class ProjectConstant {
     public static final String NOT_ADDED = "未添加";
     public static final String NOT_CHANGE = "没有变动";
     public static final String MODIFIED_SUCCESSFULLY = "项目名称修改成功";
-    /*--------------------项目模块字典值-------------------------------*/
+    
+    /**************
+     * 项目模块字典值
+     *************/
     public static final String PROJECT_NAME_EXIST = "当前专题下已存在该项目，请勿重复添加";
     public static final String VISCUS_CODE_EXIST = "当前脏器已存在，请勿重复添加";
     public static final String PROJECT_SLIDE_EXIST = "当前项目已绑定切片，禁止删除";
@@ -84,13 +83,4 @@ public class ProjectConstant {
     public static final String SPECIAL_EXIST_NON_DELIVERY = "专题未交付";
     public static final String SPECIAL_NOTEXIST_GROUP = "专题内不存在分组";
 
-    /**
-     * 项目状态
-     */
-    public static final Map<Integer, String> PROJECT_STATUS = new ImmutableMap.Builder<Integer, String>()
-            .put(1, "待启动")
-            .put(2, "进行中")
-            .put(3, "暂停")
-            .put(4, "已完成")
-            .build();
 }

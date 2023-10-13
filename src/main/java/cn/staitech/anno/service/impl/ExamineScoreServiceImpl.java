@@ -1,7 +1,6 @@
 package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.date.DateUtil;
-import cn.staitech.anno.constant.QuestionBankConstant;
 import cn.staitech.anno.domain.*;
 import cn.staitech.anno.domain.examineScore.ExamineScoreAddVO;
 import cn.staitech.anno.domain.examineScore.ExamineScoreExportVO;
@@ -11,6 +10,7 @@ import cn.staitech.anno.queue.DelayQueueExample;
 import cn.staitech.anno.service.ExamineScoreService;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.utils.ExcludeEmptyQueryWrapper;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -86,37 +86,36 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         questionBank.setImageName(imageName);
         // 根据项目查询
         QueryWrapper<QuestionProjectRel> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("project_id",projectId).eq("del_flag",'0');
+        queryWrapper.eq("project_id", projectId).eq("del_flag", '0');
         QuestionProjectRel questionProjectRel = questionProjectRelMapper.selectOne(queryWrapper);
         // 为空表示项目未添加切片
-        if(questionProjectRel == null){
+        if (questionProjectRel == null) {
             return new ArrayList<>();
         }
         QueryWrapper<ExamineScore> examineScoreQueryWrapper = new QueryWrapper<>();
-        examineScoreQueryWrapper.eq("question_project_id",questionProjectRel.getQuestionProjectId()).eq("create_by", SecurityUtils.getLoginUser().getSysUser().getUserId());
+        examineScoreQueryWrapper.eq("question_project_id", questionProjectRel.getQuestionProjectId()).eq("create_by", SecurityUtils.getLoginUser().getSysUser().getUserId());
         ExamineScore examineScoreBy = examineScoreMapper.selectOne(examineScoreQueryWrapper);
         List<SelectExaminationListVO> selectExaminationListVOS;
-        if(examineScoreBy != null){
+        if (examineScoreBy != null) {
             selectExaminationListVOS = examineScoreMapper.selectExaminationList(questionBank);
-        }else{
+        } else {
             selectExaminationListVOS = examineScoreMapper.selectQuestionProjectList(questionProjectRel.getQuestionProjectId());
         }
         return selectExaminationListVOS;
     }
 
     @Override
-    public SelectExaminationListVO selectExaminationBy(Long questionProjectId){
+    public SelectExaminationListVO selectExaminationBy(Long questionProjectId) {
         QueryWrapper<ExamineScore> examineScoreQueryWrapper = new QueryWrapper<>();
-        examineScoreQueryWrapper.eq("question_project_id",questionProjectId).eq("create_by", SecurityUtils.getLoginUser().getSysUser().getUserId());
+        examineScoreQueryWrapper.eq("question_project_id", questionProjectId).eq("create_by", SecurityUtils.getLoginUser().getSysUser().getUserId());
         ExamineScore examineScoreBy = examineScoreMapper.selectOne(examineScoreQueryWrapper);
         SelectExaminationListVO examinationListVO = new SelectExaminationListVO();
-        if(examineScoreBy != null){
+        if (examineScoreBy != null) {
             ExamineScore examineScore = new ExamineScore();
             examineScore.setQuestionProjectId(questionProjectId);
             examineScore.setCreateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
             examinationListVO = examineScoreMapper.selectExaminationBy(examineScore);
-        }
-        else{
+        } else {
             examinationListVO = examineScoreMapper.selectQuestionProject(questionProjectId);
         }
         return examinationListVO;
@@ -147,7 +146,7 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         examineScore.setStartTime(sdf.format(date));
         examineScore.setEndTime(sdf.format(DateUtil.offsetMinute(date, 20)));
-        if(projectMarksRelBy != null){
+        if (projectMarksRelBy != null) {
             examineScore.setShouldNumber(projectMarksRelBy.getShouldMarks());
         }
         examineScore.setOperateStatus("1");
@@ -187,14 +186,13 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
             fileUrl = markingService.slideJsonExport(examineScoreBy.getSlideId());
         } catch (Exception exception) {
             log.error(exception.toString());
-            throw new RuntimeException(QuestionBankConstant.ERROR_GENERATE_JSON);
+            throw new RuntimeException(MessageSource.M("ERROR_HAS_ALREADY"));
         }
         examineScore.setExaminationGeojsonUrl(fileUrl);
         examineScore.setRealityNumber(Long.valueOf(markingCount));
         // 更新当前评分记录
         return examineScoreMapper.updateById(examineScore);
     }
-
 
 
     @Override

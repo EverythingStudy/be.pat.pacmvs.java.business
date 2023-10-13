@@ -260,7 +260,7 @@ public class PathologicalController {
         } else if (!orderNumber.isEmpty()) {
             return MessageSource.M("LAYER_ALREADY_EXISTS");
         } else {
-            return CommonConstant.ONE;
+            return CommonConstant.NUMBER_1;
         }
     }
 }

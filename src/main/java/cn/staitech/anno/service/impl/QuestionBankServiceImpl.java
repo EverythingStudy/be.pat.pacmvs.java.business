@@ -1,6 +1,6 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.constant.QuestionBankConstant;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.*;
 import cn.staitech.anno.domain.question.in.*;
 import cn.staitech.anno.domain.question.out.GetProjectBoxOut;
@@ -10,6 +10,7 @@ import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.service.IQuestionBankService;
 import cn.staitech.anno.service.IQuestionProjectRelService;
 import cn.staitech.anno.service.MarkingService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.SpringUtils;
@@ -32,7 +33,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static cn.staitech.anno.constant.QuestionBankConstant.PROHIBIT_REPETITION;
 import static cn.staitech.common.security.utils.SecurityUtils.isAdmin;
 
 /**
@@ -105,10 +105,10 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                 urlPath = markingService.slideJsonExport(e.getSlideId());
             } catch (Exception exception) {
                 log.error(exception.toString());
-                throw new RuntimeException(QuestionBankConstant.ERROR_GENERATE_JSON);
+                throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
             }
             String s = StringUtils.substringAfterLast(urlPath, File.separator);
-//            String s1 = StringUtils.substringBeforeLast(urlPath, File.separator);
+            // String s1 = StringUtils.substringBeforeLast(urlPath, File.separator);
             String s1 = urlPath;
             ret.setJsonName(s);
             ret.setGeojsonUrl(s1);
@@ -151,7 +151,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                 urlPath = markingService.slideJsonExport(e.getSlideId());
             } catch (Exception exception) {
                 log.error(exception.toString());
-                throw new RuntimeException(QuestionBankConstant.ERROR_GENERATE_JSON);
+                throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
             }
             String s = StringUtils.substringAfterLast(urlPath, File.separator);
             String s1 = StringUtils.substringBeforeLast(urlPath, File.separator);
@@ -219,11 +219,11 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         LambdaQueryWrapper<QuestionProjectRel> qw = new LambdaQueryWrapper<>();
         qw.eq(QuestionProjectRel::getProjectId, req.getProjectId());
         qw.eq(QuestionProjectRel::getQuestionId, req.getQuestionId());
-        qw.eq(QuestionProjectRel::getDelFlag, QuestionBankConstant.NUMBER_0);
+        qw.eq(QuestionProjectRel::getDelFlag, CommonConstant.NUMBER_0);
         List<QuestionProjectRel> questionProjectRels = questionProjectRelMapper.selectList(qw);
 
         if (!CollectionUtils.isEmpty(questionProjectRels)) {
-            return R.fail(PROHIBIT_REPETITION);
+            return R.fail(MessageSource.M("PROHIBIT_REPETITION"));
         }
 
         QuestionProjectRel entity = new QuestionProjectRel();
@@ -268,12 +268,12 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
             qw.eq(ExamineScore::getQuestionProjectId, aLong);
             List<ExamineScore> examineScores = examineScoreMapper.selectList(qw);
             if (!CollectionUtils.isEmpty(examineScores)) {
-                return R.fail(QuestionBankConstant.ERROR_HAS_ALREADY);
+                return R.fail(MessageSource.M("ERROR_HAS_ALREADY"));
             }
         }
         List<QuestionProjectRel> param = dataList.stream().map(e -> {
             QuestionProjectRel questionProjectRel = new QuestionProjectRel();
-            questionProjectRel.setDelFlag(QuestionBankConstant.NUMBER_1);
+            questionProjectRel.setDelFlag(CommonConstant.NUMBER_1);
             questionProjectRel.setQuestionProjectId(e);
             return questionProjectRel;
         }).collect(Collectors.toList());

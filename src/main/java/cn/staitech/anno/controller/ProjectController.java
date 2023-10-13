@@ -1,5 +1,6 @@
 package cn.staitech.anno.controller;
 
+import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.constant.ProjectConstant;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.ProjectMember;
@@ -273,7 +274,7 @@ public class ProjectController extends BaseController {
     @Log(title = "项目状态列表", menu = "项目状态列表", subMenu = "项目状态列表", businessType = BusinessType.QUERY)
     @GetMapping("/projectStatus")
     public R<Map<Integer, String>> colorType() {
-        Map<Integer, String> map = ProjectConstant.PROJECT_STATUS;
+        Map<Integer, String> map = Container.PROJECT_STATUS;
         return R.ok(map);
     }
 
@@ -428,6 +429,6 @@ public class ProjectController extends BaseController {
             return R.fail("参数异常");
         }
         markingService.zipExport(zipUrl, specialId);
-        return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 }
