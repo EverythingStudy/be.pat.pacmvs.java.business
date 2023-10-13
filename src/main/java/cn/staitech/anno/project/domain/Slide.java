@@ -143,6 +143,9 @@ public class Slide implements Serializable {
     @Length(max= 1,message="编码长度不能超过1")
     private String status;
 
+    @ApiModelProperty("json文件切片id")
+    private String geoImageId;
+
     /**
      * 评审轮次id
      */

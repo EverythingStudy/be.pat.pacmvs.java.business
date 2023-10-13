@@ -177,7 +177,11 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         ExamineScore examineScore = new ExamineScore();
         examineScore.setExamineScoreId(examineScoreBy.getExamineScoreId());
         examineScore.setOperateStatus("2");
-
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        examineScore.setCompleteTime(sdf.format(date));
+        examineScore.setUpdateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
+        examineScore.setUpdateTime(sdf.format(date));
         String fileUrl;
         try {
             fileUrl = markingService.slideJsonExport(examineScoreBy.getSlideId());

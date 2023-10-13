@@ -174,5 +174,13 @@ public class ExamineScore implements Serializable {
     private String examinationGeojsonUrl;
 
 
+    /**
+     * 交卷时间
+     */
+    @ApiModelProperty(value = "交卷时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private String completeTime;
+
+
 
 }
