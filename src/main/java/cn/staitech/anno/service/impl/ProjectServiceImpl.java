@@ -115,6 +115,10 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
             obj.setColorTypeName(Container.COLOR_TYPE.get(obj.getColorType()));
             obj.setStatusName(Container.PROJECT_STATUS.get(obj.getStatus()));
+
+            if (obj.getIndicatorId() == null) {
+                obj.setIndicatorName("ud");
+            }
         }
         return projectList;
     }
