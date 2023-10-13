@@ -25,9 +25,9 @@ public class FileServiceImpl implements FileService {
 
 //    String zipUrl =  "D:\\zip";
 
-    String fileUrl = "D:\\home\\pat_saas\\data";
+//    String fileUrl = "D:\\home\\pat_saas\\data";
 
-//    String fileUrl = "/home/pat_saas/Data";
+    String fileUrl = "/home/pat_saas/Data";
 
     @Resource
     private SlideMapper slideMapper;
