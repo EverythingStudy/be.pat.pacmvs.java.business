@@ -232,6 +232,7 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
 
         JSONObject markingJsonObject = new JSONObject();
         markingJsonObject.put("examine_score_id", examineScore.getExamineScoreId());
+        markingJsonObject.put("user_id",examineScoreBy.getCreateBy());
         remoteLabelService.marking(markingJsonObject);
         // 更新当前评分记录
         return examineScoreMapper.updateById(examineScore);
@@ -240,7 +241,9 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
     @Override
     public void updatePersonalFit(Long examineScoreId) {
         JSONObject markingJsonObject = new JSONObject();
+        ExamineScore examineScore = examineScoreMapper.selectById(examineScoreId);
         markingJsonObject.put("examine_score_id", examineScoreId);
+        markingJsonObject.put("user_id",examineScore.getCreateBy());
         remoteLabelService.marking(markingJsonObject);
     }
 
