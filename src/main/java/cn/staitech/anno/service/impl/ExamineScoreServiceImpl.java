@@ -227,13 +227,14 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         }
         examineScore.setExaminationGeojsonUrl(fileUrl);
         examineScore.setRealityNumber(Long.valueOf(markingCount));
+        int res = examineScoreMapper.updateById(examineScore);
 
         JSONObject markingJsonObject = new JSONObject();
         markingJsonObject.put("examine_score_id", examineScore.getExamineScoreId());
         markingJsonObject.put("user_id",examineScoreBy.getCreateBy());
         remoteLabelService.marking(markingJsonObject);
         // 更新当前评分记录
-        return examineScoreMapper.updateById(examineScore);
+        return res;
     }
 
     @Override

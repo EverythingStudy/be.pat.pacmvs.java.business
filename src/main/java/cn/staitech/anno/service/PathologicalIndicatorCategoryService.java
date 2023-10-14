@@ -122,6 +122,8 @@ public interface PathologicalIndicatorCategoryService {
      */
     List<PathologicalIndicatorCategory> selectprojectList(Long projectId);
 
+    List<PathologicalIndicatorCategory> selectProjectListFilter(Long projectId);
+
     /**
      * 查询标签在标注中的使用数量
      * */

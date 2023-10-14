@@ -149,7 +149,7 @@
         e.image_name,
         e.nick_name,
         e.start_time,
-        e.end_time,
+        e.complete_time as end_time,
         pm.should_marks AS should_number,
         e.reality_number,
         qb.miou,
