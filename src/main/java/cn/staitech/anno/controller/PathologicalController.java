@@ -138,6 +138,17 @@ public class PathologicalController {
     }
 
 
+
+    @ApiOperation(value = "根据项目查询结构指标列表(不包含标注区域)", notes = "gjt")
+    @Log(title = "配置标签-标签列表", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.QUERY)
+    @GetMapping("/selectListFilter")
+    public R<List<PathologicalIndicatorCategory>> selectListFilter(@RequestParam(value = "projectId") @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId) {
+        //获取病理指标下的标注类别
+        List<PathologicalIndicatorCategory> categoryList = pathologicalIndicatorCategoryService.selectProjectListFilter(projectId);
+        return R.ok(categoryList);
+    }
+
+
     /**
      * 标签详细 .
      */

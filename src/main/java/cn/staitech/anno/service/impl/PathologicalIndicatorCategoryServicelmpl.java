@@ -219,6 +219,15 @@ public class PathologicalIndicatorCategoryServicelmpl implements PathologicalInd
         return new ArrayList<>();
     }
 
+    @Override
+    public List<PathologicalIndicatorCategory> selectProjectListFilter(Long projectId) {
+        Project project = projectMapperv1.selectById(projectId);
+        if (project != null) {
+            return pathologicalIndicatorCategoryMapper.selectProjectListFilter(project.getIndicatorId());
+        }
+        return new ArrayList<>();
+    }
+
     /**
      * 查询标签在标注中的使用数量
      */
