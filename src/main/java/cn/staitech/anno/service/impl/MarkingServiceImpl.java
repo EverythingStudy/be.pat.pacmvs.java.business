@@ -321,15 +321,14 @@ public class MarkingServiceImpl implements MarkingService {
             JSONArray jsonArray1 = JSONArray.parseArray(i1.toString());
             for(Object i2:jsonArray1){
                 JSONArray jsonArray2 = (JSONArray) i2;
-                List<Double> list = JSONObject.parseArray(jsonArray2.toJSONString(),Double.class);
-                List<Double> newList = new ArrayList<>();
+                List<String> list = JSONObject.parseArray(jsonArray2.toJSONString(),String.class);
+                List<String> newList = new ArrayList<>();
                 newList.add(list.get(0));
-                newList.add(Math.abs(list.get(1)));
+                newList.add(String.valueOf(Math.abs(Double.parseDouble(list.get(1)))));
                 list1.add(newList);
-                lists.add(list1);
-
             }
         }
+        lists.add(list1);
         JSONObject geometryJson = new JSONObject();
         geometryJson.put("type",type);
         geometryJson.put("coordinates",lists);
@@ -557,9 +556,7 @@ public class MarkingServiceImpl implements MarkingService {
                     marking.setImageId(Long.valueOf(slideBy.getImageId()));
                     marking.setImageUrl(image.getImageUrl());
                     marking.setCreateBy(SecurityUtils.getUserId());
-//                    marking.setGeometry(updateY(geometry));
-
-                    marking.setGeometry(geometry);
+                    marking.setGeometry(updateY(geometry));
                     marking.setSlideId(slideRes.getSlideId());
                     marking.setCreateTime(new Date());
                     // 查询标注是否存在
