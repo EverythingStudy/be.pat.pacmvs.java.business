@@ -30,4 +30,11 @@ public interface MarkingExamineMapper extends BaseMapper<MarkingExamine> {
      * @return
      */
     List<Features> selectLists(MarkingExamine markingExamine);
+
+    /**
+     * 查询详情接口(json)
+     * @param questionProjectId
+     * @return
+     */
+    List<Features> selectListBy(MarkingExamine markingExamine);
 }

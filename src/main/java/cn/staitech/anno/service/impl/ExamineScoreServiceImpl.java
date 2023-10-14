@@ -285,7 +285,7 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         MarkingExamine markingExamine = new MarkingExamine();
         markingExamine.setQuestionProjectId(examineScoreBy.getQuestionProjectId());
         markingExamine.setCreateBy(examineScoreBy.getCreateBy());
-        List<Features> features = markingExamineMapper.selectLists(markingExamine);
+        List<Features> features = markingExamineMapper.selectListBy(markingExamine);
         features.forEach(i -> i.setGeometry(updateY(i.getGeometry())));
 
         // 查询项目详情
