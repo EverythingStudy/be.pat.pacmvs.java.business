@@ -94,6 +94,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         }
     }
 
+
     public static JSONObject updateY(JSONObject geometry) {
         List<Object> lists = new ArrayList<>();
         JSONArray coordinatesJsonArray1 = geometry.getJSONArray("coordinates");
