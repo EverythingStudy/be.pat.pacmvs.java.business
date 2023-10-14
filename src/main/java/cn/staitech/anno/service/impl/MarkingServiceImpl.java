@@ -480,6 +480,31 @@ public class MarkingServiceImpl implements MarkingService {
         return true;
     }
 
+    public static JSONObject updateYs(JSONObject geometry) {
+        List<Object> lists = new ArrayList<>();
+        JSONArray coordinatesJsonArray1 = geometry.getJSONArray("coordinates");
+        String type = geometry.getString("type");
+        List<Object> list1 = new ArrayList<>();
+        for(Object i1: coordinatesJsonArray1){
+            JSONArray jsonArray1 = JSONArray.parseArray(i1.toString());
+            for(Object i2:jsonArray1){
+                JSONArray jsonArray2 = (JSONArray) i2;
+                List<Double> list = JSONObject.parseArray(jsonArray2.toJSONString(),Double.class);
+                List<Double> newList = new ArrayList<>();
+                newList.add(list.get(0));
+                String res = "-" + list.get(1);
+                double y = Double.parseDouble(res);
+                newList.add(y);
+                list1.add(newList);
+            }
+        }
+        lists.add(list1);
+        JSONObject geometryJson = new JSONObject();
+        geometryJson.put("type",type);
+        geometryJson.put("coordinates",lists);
+        return geometryJson;
+    }
+
 
     @Transactional(rollbackFor = Exception.class)
     public void writeMarking(List<SlideRes> slideResList, String imageName, org.json.JSONObject jsonObject) throws Exception {
@@ -556,7 +581,7 @@ public class MarkingServiceImpl implements MarkingService {
                     marking.setImageId(Long.valueOf(slideBy.getImageId()));
                     marking.setImageUrl(image.getImageUrl());
                     marking.setCreateBy(SecurityUtils.getUserId());
-                    marking.setGeometry(updateY(geometry));
+                    marking.setGeometry(updateYs(geometry));
                     marking.setSlideId(slideRes.getSlideId());
                     marking.setCreateTime(new Date());
                     // 查询标注是否存在

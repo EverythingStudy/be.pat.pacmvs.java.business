@@ -29,6 +29,7 @@ import javax.annotation.Resource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -81,6 +82,9 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
                 structureQueryWrapper.eq("structure_id", labelCode).eq("name", "标注区域");
                 Structure structure = structureMapper.selectOne(structureQueryWrapper);
                 if (structure != null) {
+                    // 获取geometry数据
+                    JSONObject geometry = featureObject.getJSONObject("geometry");
+                    ((JSONObject) feature).put("geometry",updateY(geometry));
                     newJsonArray.add(feature);
                 }
             }
@@ -88,6 +92,31 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         } catch (Exception e) {
             return new JSONArray();
         }
+    }
+
+    public static JSONObject updateY(JSONObject geometry) {
+        List<Object> lists = new ArrayList<>();
+        JSONArray coordinatesJsonArray1 = geometry.getJSONArray("coordinates");
+        String type = geometry.getString("type");
+        List<Object> list1 = new ArrayList<>();
+        for(Object i1: coordinatesJsonArray1){
+            JSONArray jsonArray1 = JSONArray.parseArray(i1.toString());
+            for(Object i2:jsonArray1){
+                JSONArray jsonArray2 = (JSONArray) i2;
+                List<Double> list = JSONObject.parseArray(jsonArray2.toJSONString(),Double.class);
+                List<Double> newList = new ArrayList<>();
+                newList.add(list.get(0));
+                String res = "-" + list.get(1);
+                double y = Double.parseDouble(res);
+                newList.add(y);
+                list1.add(newList);
+            }
+        }
+        lists.add(list1);
+        JSONObject geometryJson = new JSONObject();
+        geometryJson.put("type",type);
+        geometryJson.put("coordinates",lists);
+        return geometryJson;
     }
 
     @Override
