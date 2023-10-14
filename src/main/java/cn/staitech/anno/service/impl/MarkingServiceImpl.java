@@ -321,10 +321,10 @@ public class MarkingServiceImpl implements MarkingService {
             JSONArray jsonArray1 = JSONArray.parseArray(i1.toString());
             for(Object i2:jsonArray1){
                 JSONArray jsonArray2 = (JSONArray) i2;
-                List<String> list = JSONObject.parseArray(jsonArray2.toJSONString(),String.class);
-                List<String> newList = new ArrayList<>();
+                List<Double> list = JSONObject.parseArray(jsonArray2.toJSONString(),Double.class);
+                List<Double> newList = new ArrayList<>();
                 newList.add(list.get(0));
-                newList.add(String.valueOf(Math.abs(Double.parseDouble(list.get(1)))));
+                newList.add(Double.valueOf(String.valueOf(Math.abs(list.get(1)))));
                 list1.add(newList);
             }
         }
