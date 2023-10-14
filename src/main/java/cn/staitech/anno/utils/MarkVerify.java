@@ -1,6 +1,6 @@
 package cn.staitech.anno.utils;
 
-import cn.staitech.anno.constant.AnnotationConstant;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.exception.AnnoException;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.WKTReader;
@@ -9,6 +9,9 @@ import com.vividsolutions.jts.operation.overlay.OverlayOp;
 import org.apache.commons.lang3.StringUtils;
 
 
+/**
+ * @author
+ */
 public class MarkVerify {
 
     // 初始化熟知文本WKT阅读器，可以将WKT文本转换为Geometry对象
@@ -27,12 +30,12 @@ public class MarkVerify {
             // 获取geometry对象类型
             String geometryType = geometry.getGeometryType();
             // 判断location是否为混合类型
-            if (!AnnotationConstant.GEOMETRYCOLLECTION.equals(geometryType)) {
+            if (!CommonConstant.GEOMETRYCOLLECTION.equals(geometryType)) {
                 // 判断是否为复杂多边形
                 geometry.union(geometry);
             }
             // 判断新增图形是否为多聚体
-            if (AnnotationConstant.MULTIPOLYGON.equals(geometryType)) {
+            if (CommonConstant.MULTIPOLYGON.equals(geometryType)) {
                 throw new AnnoException(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
             }
         } catch (Exception e) {
@@ -73,11 +76,11 @@ public class MarkVerify {
             OverlayOp op = new OverlayOp(geometry1, geometry2);
             int code = 0;
             // 如果操作为相交
-            if (AnnotationConstant.UNION.equals(operation)) {
+            if (CommonConstant.UNION.equals(operation)) {
                 code = OverlayOp.UNION;
 
                 // 操作为相差
-            } else if (AnnotationConstant.DIFFERENCE.equals(operation)) {
+            } else if (CommonConstant.DIFFERENCE.equals(operation)) {
                 code = OverlayOp.DIFFERENCE;
 
                 // 校验旧图形在新图形中(新图形不能将旧图形完全覆盖)
@@ -99,7 +102,7 @@ public class MarkVerify {
                 // 获取geometry类型
                 String geometryType = g.getGeometryType();
                 // 判断新图形是否为复杂多边型(比如大标注嵌套小标注
-                if (AnnotationConstant.MULTIPOLYGON.equals(geometryType)) {
+                if (CommonConstant.MULTIPOLYGON.equals(geometryType)) {
                     // throw new AnnoException(AnnotationResponseConstant.NEW_GRAPHICS_MARK_NOT_RULES);
                     return "0";// 新图形不符合规则
                 }

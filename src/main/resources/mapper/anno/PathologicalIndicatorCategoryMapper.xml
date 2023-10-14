@@ -237,6 +237,14 @@
         WHERE indicator_id = #{indicatorId}
     </select>
 
+    <select id="selectGeoLabel" parameterType="java.lang.Long" resultMap="GeoLabelResult">
+        SELECT category_name as label_name,
+               rgb           as label_color,
+               number        as label_code
+        FROM tb_pathological_indicator_category
+        WHERE category_id = #{categoryId}
+    </select>
+
     <delete id="delIndicatorCategory" parameterType="java.lang.Long">
         delete
         from tb_pathological_indicator_category
@@ -365,6 +373,19 @@
                  left join tb_project as p
                            on i.indicator_id = p.indicator_id
         where p.project_id = #{projectId}
+    </select>
+
+
+
+    <select id="selectProjectListFilter" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+            i.*
+        FROM
+            tb_pathological_indicator_category AS i
+                LEFT JOIN tb_structure AS s ON s.structure_id = i.structure_id
+        WHERE
+            i.indicator_id = #{indicatorId}
+          AND s.NAME != "标注区域"
     </select>
 
 

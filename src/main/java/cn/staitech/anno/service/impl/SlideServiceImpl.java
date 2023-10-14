@@ -2,7 +2,6 @@ package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.staitech.anno.constant.CommonConstant;
-import cn.staitech.anno.constant.ProjectConstant;
 import cn.staitech.anno.domain.*;
 import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.po.ProjectPo;
@@ -168,11 +167,11 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                 projectMapper.updateProject(project);
 
             } else if (processFlag == 1) {
-                throw new Exception(ProjectConstant.SERIAL_NO + slideId + ProjectConstant.IN_DIMENSION);
+                throw new Exception(MessageSource.M("SERIAL_NO") + slideId + MessageSource.M("IN_DIMENSION"));
             } else if (processFlag == 2) {
-                throw new Exception(ProjectConstant.SERIAL_NO + slideId + ProjectConstant.DIMENSIONING_COMPLETE);
+                throw new Exception(MessageSource.M("SERIAL_NO") + slideId + MessageSource.M("DIMENSIONING_COMPLETE"));
             } else if (processFlag == 3) {
-                throw new Exception(ProjectConstant.SERIAL_NO + slideId + ProjectConstant.SUBMITTED_FOR_REVIEW);
+                throw new Exception(MessageSource.M("SERIAL_NO") + slideId + MessageSource.M("SUBMITTED_FOR_REVIEW"));
             }
         }
         if (count > 0) {

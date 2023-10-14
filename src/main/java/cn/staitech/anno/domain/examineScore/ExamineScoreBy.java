@@ -1,30 +1,15 @@
-package cn.staitech.anno.domain;
+package cn.staitech.anno.domain.examineScore;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
-import java.io.Serializable;
-import java.util.Date;
-
-/**
- * <p>
- * 
- * </p>
- *
- * @author gjt
- * @since 2023-09-25
- */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
-@TableName("tb_examine_score")
-public class ExamineScore implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class ExamineScoreBy {
 
     /**
      * 主键
@@ -178,10 +163,13 @@ public class ExamineScore implements Serializable {
      * 交卷时间
      */
     @ApiModelProperty(value = "交卷时间")
-    @TableField(fill = FieldFill.INSERT_UPDATE)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private String completeTime;
 
-
+    /**
+     * 交卷时间
+     */
+    @ApiModelProperty(value = "题库id")
+    private Long questionId;
 
 }

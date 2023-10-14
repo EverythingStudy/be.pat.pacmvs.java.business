@@ -2,7 +2,6 @@ package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONUtil;
-import cn.staitech.anno.constant.SpecialImageConstant;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.SubImage;
 import cn.staitech.anno.domain.special.Special;
@@ -18,11 +17,12 @@ import cn.staitech.anno.domain.vo.specialImageAnno.SpecialAnnDataVO;
 import cn.staitech.anno.domain.vo.specialImageAnno.SpecialCutImageVO;
 import cn.staitech.anno.domain.vo.specialSliceImage.AuditSpecialImageVO;
 import cn.staitech.anno.enums.SysDictTypeEnum;
-import cn.staitech.anno.mapper.*;
+import cn.staitech.anno.mapper.ImageMapper;
+import cn.staitech.anno.mapper.SpecialImageMapper;
+import cn.staitech.anno.mapper.SubImageMapper;
 import cn.staitech.anno.service.SpecialImageService;
 import cn.staitech.anno.service.SpecialService;
 import cn.staitech.anno.service.SubImageService;
-import cn.staitech.anno.service.remote.SlideImageService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.WktUtil;
 import cn.staitech.common.core.domain.R;
@@ -55,7 +55,6 @@ import java.util.stream.Collectors;
 @Service
 public class SpecialImageServiceImpl implements SpecialImageService {
 
-
     @Resource
     private SpecialImageMapper specialImageMapper;
 
@@ -64,9 +63,6 @@ public class SpecialImageServiceImpl implements SpecialImageService {
     private SubImageMapper subImageMapper;
 
 
-/*    @Resource
-    private RabbitTemplate rabbitTemplate;*/
-
     @Resource
     private SpecialService specialService;
 
@@ -74,21 +70,7 @@ public class SpecialImageServiceImpl implements SpecialImageService {
     private SubImageService subImageService;
 
     @Resource
-    private SlideImageService slideImageService;
-
-
-    @Resource
     private ImageMapper imageMapper;
-
-    @Resource
-    private SpecialMapper specialMapper;
-
-    @Resource
-    private SysUserMapper userMapper;
-
-/*    @Resource
-    private RabbitAdmin rabbitAdmin;*/
-
 
     /**
      *
@@ -161,8 +143,8 @@ public class SpecialImageServiceImpl implements SpecialImageService {
             try {
 //					R fr = slideImageService.batchAddSpecialImage(list, SecurityConstants.INNER);
 //					log.info("批量选片通知数据2=====================================================================:{}", JSON.toJSONString(fr));
-                //    rabbitTemplate.convertAndSend("anno.direct.exchange", SpecialImageConstant.SPECIAL_ANNO_IMAGE, list);
-//					rabbitTemplate.convertAndSend("", SpecialImageConstant.SPECIAL_IMAGE_CUTTING_ROUTINGKEY, cutVo);
+                //    rabbitTemplate.convertAndSend("anno.direct.exchange", MessageSource.M("")SPECIAL_ANNO_IMAGE, list);
+//					rabbitTemplate.convertAndSend("", MessageSource.M("")SPECIAL_IMAGE_CUTTING_ROUTINGKEY, cutVo);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -298,8 +280,8 @@ public class SpecialImageServiceImpl implements SpecialImageService {
         cutVo.setImageName(imageName);
         String cutStr = JSONUtil.toJsonStr(cutVo);
         log.info("切片测试数据是：" + cutStr);
-        // rabbitTemplate.convertAndSend("anno.direct.exchange", SpecialImageConstant.SPECIAL_SLICE_IMAGE, cutVo);
-//		rabbitTemplate.convertAndSend("", SpecialImageConstant.SPECIAL_IMAGE_CUTTING_ROUTINGKEY, cutVo);
+        // rabbitTemplate.convertAndSend("anno.direct.exchange", MessageSource.M("")SPECIAL_SLICE_IMAGE, cutVo);
+//		rabbitTemplate.convertAndSend("", MessageSource.M("")SPECIAL_IMAGE_CUTTING_ROUTINGKEY, cutVo);
 
         //TODO 填充假数据
         //添加点假数据，直接往subImage里添加数据
@@ -325,7 +307,7 @@ public class SpecialImageServiceImpl implements SpecialImageService {
     /**
      * 检查是否有文件夹，没有则创建
      *
-     * @param imageUrl
+     * @param folderPath
      */
     public void checkDirectory(String folderPath) {
         // 没有文件夹则创建新文件夹
@@ -437,7 +419,7 @@ public class SpecialImageServiceImpl implements SpecialImageService {
     public R<String> updateSpecialImageList(AuditSpecialImageVO vo) {
         Long[] imageIds = vo.getSpecialImageIds();
         if (null == imageIds) {
-            return R.fail(SpecialImageConstant.DATA_NULL);
+            return R.fail(MessageSource.M("DATA_NULL"));
         }
         //参数校验
         //审核状态 0：待审核 1：审核通过 2：审核不通过
@@ -464,13 +446,13 @@ public class SpecialImageServiceImpl implements SpecialImageService {
         if (CollectionUtils.isNotEmpty(list)) {
             if (list.size() != imageIds.length) {
                 if (auditStatus == 1) {
-                    return R.fail(SpecialImageConstant.PASS_ERROR);
+                    return R.fail(MessageSource.M("PASS_ERROR"));
                 } else {
-                    return R.fail(SpecialImageConstant.NO_PASS_ERROR);
+                    return R.fail(MessageSource.M("NO_PASS_ERROR"));
                 }
             }
         } else {
-            return R.fail(SpecialImageConstant.DATA_NULL);
+            return R.fail(MessageSource.M("DATA_NULL"));
         }
 
 
@@ -552,7 +534,7 @@ public class SpecialImageServiceImpl implements SpecialImageService {
             special.setUpdateBy(SecurityUtils.getUserId());
             specialService.updateDeliveryStatus(special);
         } else {
-            return R.fail(SpecialImageConstant.DELIVERY_FAIL);
+            return R.fail(MessageSource.M("DELIVERY_FAIL"));
         }
         return R.ok(null, MessageSource.M("OPERATE_ERROR"));
     }

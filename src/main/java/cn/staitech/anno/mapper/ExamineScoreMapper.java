@@ -2,7 +2,9 @@ package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.ExamineScore;
 import cn.staitech.anno.domain.QuestionBank;
+import cn.staitech.anno.domain.examineScore.ExamineScoreBy;
 import cn.staitech.anno.domain.examineScore.ExamineScoreExportVO;
+import cn.staitech.anno.domain.examineScore.ExamineSelectVo;
 import cn.staitech.anno.domain.examineScore.SelectExaminationListVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
@@ -21,7 +23,11 @@ public interface ExamineScoreMapper extends BaseMapper<ExamineScore> {
 
     List<SelectExaminationListVO> selectExaminationList(QuestionBank questionBank);
 
+    List<ExamineScore> selectExamineList(ExamineSelectVo examineSelectVo);
+
     SelectExaminationListVO selectExaminationBy(ExamineScore examineScore);
+
+    ExamineScoreBy selectByIds(Long examineScoreId);
 
     SelectExaminationListVO selectQuestionProject(Long questionProjectId);
 

@@ -1,11 +1,11 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.constant.ProjectConstant;
 import cn.staitech.anno.domain.projectgroup.ProjectGroup;
 import cn.staitech.anno.domain.projectgroup.in.RemoveProjectGroupIn;
 import cn.staitech.anno.domain.projectgroup.out.ProjectGroupListOut;
 import cn.staitech.anno.mapper.ProjectGroupMapper;
 import cn.staitech.anno.service.ProjectGroupService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.bean.BeanUtils;
@@ -39,7 +39,7 @@ public class ProjectGroupServiceImpl implements ProjectGroupService {
      * @return 项目分组列表
      */
     @Override
-    public PageResponse<ProjectGroupListOut> projectGroupList(Long projectId,int reasons, int pageNum, int pageSize) {
+    public PageResponse<ProjectGroupListOut> projectGroupList(Long projectId, int reasons, int pageNum, int pageSize) {
         log.info("项目分组列表查询接口开始：");
         //创建响应
         PageResponse resp = new PageResponse<>();
@@ -76,7 +76,7 @@ public class ProjectGroupServiceImpl implements ProjectGroupService {
         int i = projectGroupMapper.selectCountSlide(req.getProjectId(), req.getGroupId());
 
         if (i > 0) {
-            return R.fail(ProjectConstant.PROJECT_GROUP_SLIDE_EXIST);
+            return R.fail(MessageSource.M("PROJECT_GROUP_SLIDE_EXIST"));
         }
 
         Long userId = SecurityUtils.getUserId();
@@ -98,10 +98,10 @@ public class ProjectGroupServiceImpl implements ProjectGroupService {
 
         int i = projectGroupMapper.selectProcessSlide(req.getProjectId(), req.getGroupId());
         if (i > 0) {
-            return R.fail(ProjectConstant.PROJECT_SLIDE_RUNNING);
+            return R.fail(MessageSource.M("PROJECT_SLIDE_RUNNING"));
         }
 
-        projectGroupMapper.updateStateSlide(req.getGroupId(),req.getProjectId());
+        projectGroupMapper.updateStateSlide(req.getGroupId(), req.getProjectId());
 
         return R.ok();
     }

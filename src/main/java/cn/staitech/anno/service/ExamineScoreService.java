@@ -1,9 +1,7 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.ExamineScore;
-import cn.staitech.anno.domain.examineScore.ExamineScoreAddVO;
-import cn.staitech.anno.domain.examineScore.ExamineScoreExportVO;
-import cn.staitech.anno.domain.examineScore.SelectExaminationListVO;
+import cn.staitech.anno.domain.examineScore.*;
 import cn.staitech.common.core.domain.PageResponse;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -21,6 +19,8 @@ public interface ExamineScoreService extends IService<ExamineScore> {
 
     PageResponse<ExamineScore> selectList(Integer pageSize, Integer pageNum, Long projectId, String nickName, Long examResults);
 
+    void refreshInterval(ExamineScoreExportInsertVo examineScoreExportInsertVo);
+
     List<ExamineScoreExportVO> selectLists(List<Long> examineScoreIdList);
 
     List<SelectExaminationListVO> selectExaminationList(Long projectId, String slideNumber);
@@ -29,7 +29,11 @@ public interface ExamineScoreService extends IService<ExamineScore> {
 
     int add(ExamineScoreAddVO examineScoreAddVO) throws Exception;
 
+    ExamineScoreBy selectByIds(Long examineScoreId);
+
     int update(ExamineScoreAddVO examineScoreAddVO) throws Exception;
+
+    void updatePersonalFit(Long examineScoreId);
 
 
 }

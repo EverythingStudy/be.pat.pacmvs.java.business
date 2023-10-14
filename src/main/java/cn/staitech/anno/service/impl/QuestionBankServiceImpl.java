@@ -17,6 +17,8 @@ import cn.staitech.common.core.utils.SpringUtils;
 import cn.staitech.common.core.utils.StringUtils;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.RemoteLabelService;
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.Page;
@@ -29,6 +31,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,6 +61,9 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
 
     @Resource
     private ImageMapper imageMapper;
+
+    @Resource
+    private RemoteLabelService remoteLabelService;
 
     @Autowired
     private MarkingService markingService;
@@ -117,6 +123,13 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         //插入题库表
         QuestionBankServiceImpl bean = SpringUtils.getBean(QuestionBankServiceImpl.class);
         bean.saveBatch(resp);
+        List<Long> questionBankList = new ArrayList<>();
+        for(QuestionBank questionBank:resp){
+            questionBankList.add(questionBank.getQuestionId());
+        }
+        JSONObject markingJsonObject = new JSONObject();
+        markingJsonObject.put("question_id",questionBankList);
+        remoteLabelService.Standard(markingJsonObject);
         cn.staitech.anno.domain.Project project = new cn.staitech.anno.domain.Project();
         project.setProjectId(req.getProjectId());
         project.setIfCreateQuestions("1");
@@ -154,7 +167,8 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                 throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
             }
             String s = StringUtils.substringAfterLast(urlPath, File.separator);
-            String s1 = StringUtils.substringBeforeLast(urlPath, File.separator);
+//            String s1 = StringUtils.substringBeforeLast(urlPath, File.separator);
+            String s1 = urlPath;
             ret.setJsonName(s);
             ret.setGeojsonUrl(s1);
             ret.setProjectId(e.getProjectId());
@@ -163,6 +177,13 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         }).collect(Collectors.toList());
         QuestionBankServiceImpl bean = SpringUtils.getBean(QuestionBankServiceImpl.class);
         bean.saveBatch(questionBanks);
+        List<Long> questionBankList = new ArrayList<>();
+        for(QuestionBank questionBank:questionBanks){
+            questionBankList.add(questionBank.getQuestionId());
+        }
+        JSONObject markingJsonObject = new JSONObject();
+        markingJsonObject.put("question_id",questionBankList);
+        remoteLabelService.Standard(markingJsonObject);
         return R.ok();
     }
 

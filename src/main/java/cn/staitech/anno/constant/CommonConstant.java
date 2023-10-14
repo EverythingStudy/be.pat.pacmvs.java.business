@@ -6,10 +6,16 @@ package cn.staitech.anno.constant;
  * @author admin
  */
 public class CommonConstant {
-
     private CommonConstant() {
         throw new IllegalStateException("CommonConstant class");
     }
+
+    /**
+     * cache key
+     */
+    public static final String IMAGE_CACHE_KEY = "image_cache_key";
+    public static final String INDICATOR_CACHE_KEY = "indicator_cache_key";
+    public static final String PROJECT_CACHE_KEY = "project_cache_key";
 
     public static final String NUMBER_0 = "0";
     public static final String NUMBER_1 = "1";
@@ -32,7 +38,6 @@ public class CommonConstant {
     public static final Integer NOT_START_REVIEW = 0;
     public static final Integer SUBMIT_REVIEW = 3;
 
-
     /**
      * Project
      */
@@ -50,15 +55,25 @@ public class CommonConstant {
     public static final String POLYGON_WITH_HOLES = "polygon_with_holes";
     public static final String CHILDREN_CNTS = "children_cnts";
     public static final String VIA_IMG_METADATA = "_via_img_metadata";
-
+    public static final String LOGIN_TOKEN_KEY = "login_tokens:";
     public static final Integer NOT_INDICATOR_STATUS = 1;
     public static final Integer INDICATOR_STATUS = 2;
     public static final Integer NOT_ATTRIBUTE_STATUS = 3;
     public static final Long NOT_AUDIT = 0L;
     public static final Long AUTO_CREATE_PROJECT_SUC = 1L;
     public static final Long AUTO_CREATE_PROJECT_FAL = 2L;
-    public static final String LOGIN_TOKEN_KEY = "login_tokens:";
 
+    /**
+     * Annotation
+     */
+    public static final String MULTIPOLYGON = "MultiPolygon";
+    public static final String GEOMETRYCOLLECTION = "GeometryCollection";
+    public static final String ADD_STATUS = "add";
+    public static final String UPDATE_STATUS = "update";
+    public static final String DELETE_STATUS = "delete";
+    public static final String CLEAN = "clean";
+    public static final String UNION = "UNION";
+    public static final String DIFFERENCE = "DIFFERENCE";
 
     /**
      * Viewer
@@ -74,6 +89,17 @@ public class CommonConstant {
     public static final int THREE_YEAR = 1096;
 
     /**
+     * Special Role
+     */
+    public static final String RESP = "resp";
+    public static final String ANNO = "anno";
+    public static final String READ = "read";
+    public static final Long[] RESPONSIBLE_MENU = {1001L, 1002L, 1003L, 1004L, 1005L, 1006L, 1007L, 1008L, 1009L, 1010L, 1011L, 1012L, 1013L, 1014L, 1015L, 1016L, 1017L, 1018L, 1019L, 1020L, 1021L, 1022L, 1023L, 1024L, 1025L, 1026L, 1027L, 1028L, 1029L};
+    public static final Long[] ANNOTATOR_MENU = {1001L, 1003L, 1004L, 1008L, 1009L, 1010L, 1011L, 1012L, 1013L, 1014L, 1015L};
+    public static final Long[] READER_MENU = {1002L, 1005L, 1006L, 1007L, 1016L, 1017L, 1018L, 1019L, 1020L, 1021L, 1022L, 1023L, 1024L, 1025L, 1026L, 1027L, 1028L, 1029L};
+    public static final String[] SPECIAL_ROLE_TYPE = new String[]{"专题负责人", "标注员", "普通阅片员"};
+
+    /**
      * ProjectRole:构造3个默认项目角色类型：1、项目代表；2、项目管理者；3、项目贡献者
      */
     public static final String[] ROLE_TYPE = new String[]{"项目代表", "项目管理者", "项目贡献者"};
@@ -81,7 +107,7 @@ public class CommonConstant {
     /**
      * Excel表头 - ExamineScore
      */
-    public static final String[] EXAMINESCORE_COLHEAD_KEY = {"项目名称", "切片编号", "答题者", "开始时间", "交卷时间", "应标个数(下限)", "实标个数", "miou拟合区间", "fiou拟合区间", "biou拟合区间", "tiou拟合区间", "个人拟合度", "考核结果"};
+    public static final String[] EXAMINESCORE_COLHEAD_KEY = {"项目名称", "切片编号", "答题者", "开始时间", "交卷时间", "应标个数(下限)", "实标个数", "miou拟合区间", "fiou拟合区间", "biou拟合区间", "tiou拟合区间", "个人拟合度", "考试结果"};
     public static final String[] EXAMINESCORE_COLHEAD_VALUE = {"projectName", "imageName", "nickName", "startTime", "endTime", "shouldNumber", "realityNumber", "miou", "fiou", "biou", "tiou", "personalFit", "examResults"};
 
 
@@ -96,4 +122,15 @@ public class CommonConstant {
      */
     public static final String[] EXPORT_COLHEAD_KEY = {"文件路径", "图像路径"};
     public static final String[] EXPORT_COLHEAD_VALUE = {"path", "imageUrl"};
+
+    /**
+     * TODO:统计模块switch case语句中用到，多语言版本暂未处理，后续建议优化
+     */
+    public static final String ANNOTATION_DATE = "标注日期";
+
+    public static final String PROJECT = "项目";
+    public static final String PATHOLOGY_INDICATOR = "病理指标";
+    public static final String ANNOTATION_CATEGORY = "标注类别";
+    public static final String USER = "成员";
+    public static final String SLIDE = "图像";
 }

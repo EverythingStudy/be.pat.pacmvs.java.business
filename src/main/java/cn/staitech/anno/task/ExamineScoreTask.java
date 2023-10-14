@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
 
 @Configuration
 @EnableScheduling
@@ -16,7 +17,7 @@ public class ExamineScoreTask {
 
     // 每两小时执行一次
     @Scheduled(cron = "0 0 0/2 * * ?")
-    public void handlerCouponsUserStatusTimeOutToExpired() {
+    public void handlerCouponsUserStatusTimeOutToExpired() throws ParseException {
         otherService.atRegularTimeUpdateExamStatus();
     }
 }

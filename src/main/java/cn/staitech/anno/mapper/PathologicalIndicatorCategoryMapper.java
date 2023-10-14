@@ -62,6 +62,8 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
      */
     List<GeoLabel> selectIndicatorIdList(Long indicatorId);
 
+    GeoLabel selectGeoLabel(Long categoryId);
+
     /**
      * 根据病理指标id删除标注类别
      *
@@ -129,6 +131,13 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
     * 根据indicatorId查询标注类别（不包含unLabel）
     * */
     List<LabelListVO> selectByIndicator(LabelVO labelVO);
+
+    /**
+     * 查询所有指标（除标注区域外）
+     * @param projectId
+     * @return
+     */
+    List<PathologicalIndicatorCategory> selectProjectListFilter(Long indicatorId);
 
     /**
      * 查询标签在标注中的使用数量

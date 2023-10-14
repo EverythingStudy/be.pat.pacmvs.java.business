@@ -99,5 +99,22 @@ public class QuestionBank implements Serializable {
     @TableField("update_time")
     private Date updateTime;
 
+    @ApiModelProperty(value = "miou")
+    @TableField("miou")
+    private String miou;
+
+    @ApiModelProperty(value = "fiou")
+    @TableField("fiou")
+    private String fiou;
+
+    @ApiModelProperty(value = "biou")
+    @TableField("biou")
+    private String biou;
+
+    @ApiModelProperty(value = "tiou")
+    @TableField("tiou")
+    private String tiou;
+
+
 
 }

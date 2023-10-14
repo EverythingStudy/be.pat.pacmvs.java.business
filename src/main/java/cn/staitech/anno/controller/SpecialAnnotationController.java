@@ -2,7 +2,6 @@ package cn.staitech.anno.controller;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
-import cn.staitech.anno.constant.SpecialImageConstant;
 import cn.staitech.anno.domain.SubImage;
 import cn.staitech.anno.domain.document.GeometryDoc;
 import cn.staitech.anno.domain.marking.PointCount;
@@ -44,7 +43,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static cn.staitech.anno.constant.AnnotationConstant.*;
+import static cn.staitech.anno.constant.CommonConstant.*;
 
 
 /**
@@ -97,7 +96,7 @@ public class SpecialAnnotationController {
         List<SpecialImageVO> sivList = specialImageService.selectSpecialImageList(specialImageSelectVO);
         // 校验当前用户是否是编辑用户，确保数据只可以被同一个人编辑
         if (CollectionUtil.isEmpty(sivList)) {
-            return R.fail(SpecialImageConstant.MARK_RELEVANCY_IMAGE);
+            return R.fail(MessageSource.M("MARK_RELEVANCY_IMAGE"));
         }
         SpecialImageVO sImage = sivList.get(0);
         //查看当前数据是否可以被编辑
@@ -109,11 +108,11 @@ public class SpecialAnnotationController {
                         //当前编辑人可以继续操作
                     } else {
                         //其它人不可以编辑
-                        return R.fail(SpecialImageConstant.NOT_PERMISSION);
+                        return R.fail(MessageSource.M("NOT_PERMISSION"));
                     }
                 } else {
                     //其它人不可以编辑
-                    return R.fail(SpecialImageConstant.NOT_PERMISSION);
+                    return R.fail(MessageSource.M("NOT_PERMISSION"));
                 }
             }
         }
@@ -156,13 +155,13 @@ public class SpecialAnnotationController {
         // 校验当前用户是否是编辑用户，确保数据只可以被同一个人编辑
         SpecialImage sImage = specialImageService.selectByPrimaryKey(specialImageId);
         if (null == sImage) {
-            return R.fail(SpecialImageConstant.DATA_NULL);
+            return R.fail(MessageSource.M("DATA_NULL"));
         }
         if (sliceStatus == 0 || sliceStatus == 3) {
             //切图状态 0:未切图 1：生成中 2：切图完成 3：绘制中,确保在绘制中可以进行修改，且提交人是绘制
             //操作权限控制
         } else {
-            return R.fail(SpecialImageConstant.NOT_PERMISSION);
+            return R.fail(MessageSource.M("NOT_PERMISSION"));
         }
 
         //判断当前编辑人员和edit_by是同一个
@@ -173,11 +172,11 @@ public class SpecialAnnotationController {
             } else {
                 //其它人不可以编辑
                 log.info("当前操作人id:" + SecurityUtils.getUserId().longValue() + " 数据编辑人id:" + sImage.getEditBy().longValue());
-                return R.fail(SpecialImageConstant.NOT_PERMISSION);
+                return R.fail(MessageSource.M("NOT_PERMISSION"));
             }
         } else {
             //其它人不可以编辑
-            //			return R.fail(SpecialImageConstant.NOT_PERMISSION);
+            //			return R.fail(MessageSource.M("")NOT_PERMISSION);
         }
 
         // remove source annotation 根据 标注id 删除标注信息
@@ -202,7 +201,7 @@ public class SpecialAnnotationController {
         if (deleteFlag <= 0) {
             return R.fail(MessageSource.M("OPERATE_ERROR"));
         }
-        return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
 
@@ -222,7 +221,7 @@ public class SpecialAnnotationController {
             @RequestParam @ApiParam(name = "specialImageId", value = "切片id", required = true) Long specialImageId) {
         SpecialImage sImage = specialImageService.selectByPrimaryKey(specialImageId);
         if (null == sImage) {
-            return R.fail(SpecialImageConstant.DATA_NULL);
+            return R.fail(MessageSource.M("DATA_NULL"));
         }
         // 查询所有标注
         SpecialAnnotation annotation = new SpecialAnnotation();
@@ -253,7 +252,7 @@ public class SpecialAnnotationController {
             @RequestParam @ApiParam(name = "specialImageId", value = "切片id", required = true) Long specialImageId) {
         SpecialImage sImage = specialImageService.selectByPrimaryKey(specialImageId);
         if (null == sImage) {
-            return R.fail(SpecialImageConstant.DATA_NULL);
+            return R.fail(MessageSource.M("DATA_NULL"));
         }
         // 查询所有标注
         SpecialAnnotation annotation = new SpecialAnnotation();
@@ -306,14 +305,14 @@ public class SpecialAnnotationController {
         // 校验当前用户是否是编辑用户，确保数据只可以被同一个人编辑
         SpecialImage sImage = specialImageService.selectByPrimaryKey(Long.valueOf(specialImageId));
         if (null == sImage) {
-            return R.fail(SpecialImageConstant.DATA_NULL);
+            return R.fail(MessageSource.M("DATA_NULL"));
         }
         //切图状态 0:未切图 1：生成中 2：切图完成 3：绘制中
         if (sImage.getSliceImageStatus() == 1) {
-            return R.fail(SpecialImageConstant.DELIVERY_ING);
+            return R.fail(MessageSource.M("DELIVERY_ING"));
         }
         if (sImage.getSliceImageStatus() == 2) {
-            return R.fail(SpecialImageConstant.DELIVERY_AGAIN);
+            return R.fail(MessageSource.M("DELIVERY_AGAIN"));
         }
 
         // 查询所有标注
@@ -322,7 +321,7 @@ public class SpecialAnnotationController {
         List<SpecialAnnotation> annoList = specialImageAnnoService.selectSpecialAnnotationList(annotation);
 
         if (CollectionUtil.isEmpty(annoList)) {
-            return R.fail(SpecialImageConstant.DATA_NULL);
+            return R.fail(MessageSource.M("DATA_NULL"));
         }
         // 切图通知操作 1、查询所有标注结果列表+主图信息
         SpecialCutImageVO resData = new SpecialCutImageVO();
@@ -330,7 +329,7 @@ public class SpecialAnnotationController {
         resData.setImage(sImage);
         specialImageService.cutImageNotice(resData);
 
-        return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     @PostMapping("callBackCutImage")
@@ -346,7 +345,7 @@ public class SpecialAnnotationController {
         // 校验当前用户是否是编辑用户，确保数据只可以被同一个人编辑
 		/*SpecialImage sImage = specialImageService.selectByPrimaryKey(specialImageId);
 		if (null == sImage) {
-			return R.fail(SpecialImageConstant.Data_NULL);
+			return R.fail(MessageSource.M("")Data_NULL);
 		}
 
 
@@ -360,7 +359,7 @@ public class SpecialAnnotationController {
 		List<SpecialAnnotation> annoList = specialImageAnnoService.selectSpecialAnnotationList(annotation);
 
 		if(CollectionUtil.isEmpty(annoList)){
-			return R.fail(SpecialImageConstant.Data_NULL);
+			return R.fail(MessageSource.M("")Data_NULL);
 		}
 		// 切图通知操作 1、查询所有标注结果列表+主图信息
 		// 加入 队列 resData
@@ -376,7 +375,7 @@ public class SpecialAnnotationController {
 			record.setSliceImageStatus(1);
 			specialImageService.updateByPrimaryKeySelective(record);
 		}*/
-        return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
 
@@ -392,10 +391,10 @@ public class SpecialAnnotationController {
             sImage = specialImageService.selectByPrimaryKey(annoList.get(0).getSpecialImageId());
             //切图状态 0:未切图 1：生成中 2：切图完成 3：绘制中
             if (sImage.getSliceImageStatus() == 1 || sImage.getSliceImageStatus() == 2) {
-                return R.fail(SpecialImageConstant.ANNO_NO);
+                return R.fail(MessageSource.M("ANNO_NO"));
             }
             if (null == sImage) {
-                return R.fail(SpecialImageConstant.DATA_NULL);
+                return R.fail(MessageSource.M("DATA_NULL"));
             }
             //判断当前编辑人员和edit_by是同一个
             //切图状态 0:未切图 1：生成中 2：切图完成 3：绘制中,确保在绘制中可以进行修改，且提交人是绘制
@@ -403,11 +402,11 @@ public class SpecialAnnotationController {
                 //当前编辑人可以继续操作
             } else {
                 //其它人不可以编辑
-//				return R.fail(SpecialImageConstant.NOT_PERMISSION);
+//				return R.fail(MessageSource.M("")NOT_PERMISSION);
             }
             if (sImage.getSliceImageStatus() == 1 || sImage.getSliceImageStatus() == 2) {
                 //其它人不可以编辑
-//				return R.fail(SpecialImageConstant.NOT_PERMISSION);
+//				return R.fail(MessageSource.M("")NOT_PERMISSION);
             }
 
         }
@@ -791,7 +790,7 @@ public class SpecialAnnotationController {
         // 使用websocket发送数据
         NioWebSocketHandler.sendAnnoAll(markingBy.getSpecialImageId(), broadcastVO);
         // 发送websocket
-        return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
 

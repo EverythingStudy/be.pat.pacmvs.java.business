@@ -66,6 +66,17 @@
         where qp.question_project_id = #{questionProjectId}
     </select>
 
+
+    <select id="selectByIds" parameterType="long" resultType="cn.staitech.anno.domain.examineScore.ExamineScoreBy">
+        SELECT
+            ex.* ,q.question_id
+        FROM
+            tb_examine_score AS ex
+                LEFT JOIN tb_question_project_rel AS q ON q.question_project_id = ex.question_project_id
+        WHERE
+            ex.examine_score_id = #{examineScoreId}
+    </select>
+
     <select id="selectQuestionProjectList" parameterType="long" resultType="cn.staitech.anno.domain.examineScore.SelectExaminationListVO">
         SELECT
             q.image_name,
@@ -77,6 +88,47 @@
             tb_question_project_rel AS qp
                 LEFT JOIN tb_question_bank AS q ON qp.question_id = q.question_id
         where qp.question_project_id = #{questionProjectId}
+    </select>
+
+
+    <select id="selectExamineList" parameterType="cn.staitech.anno.domain.examineScore.ExamineSelectVo" resultType="cn.staitech.anno.domain.ExamineScore">
+        SELECT
+            es.examine_score_id,
+            es.project_id,
+            es.question_project_id,
+            es.image_name,
+            es.nick_name,
+            es.start_time,
+            es.end_time,
+            es.reality_number,
+            es.personal_fit,
+            es.exam_results,
+            es.operate_status,
+            es.create_time,
+            es.create_by,
+            es.update_time,
+            es.update_by,
+            es.slide_id,
+            es.complete_time,
+            pm.should_marks AS should_number,
+            qb.miou,
+            qb.fiou,
+            qb.tiou,
+            qb.biou
+        FROM
+            tb_examine_score AS es
+                LEFT JOIN tb_question_project_rel AS qp ON qp.question_project_id = es.question_project_id
+                LEFT JOIN tb_question_bank AS qb ON qp.question_id = qb.question_id
+                LEFT JOIN tb_project_marks_rel AS pm ON pm.project_id = qb.project_id
+        WHERE
+            es.project_id = #{projectId}
+        <if test="nickName != null and nickName != ''">
+            and es.nick_name like concat('%', #{nickName}, '%')
+        </if>
+        <if test="examResults != null">
+            and es.exam_results like concat('%', #{examResults}, '%')
+        </if>
+        order by es.create_time desc
     </select>
 
 
@@ -93,30 +145,33 @@
 
     <select id="selectLists" parameterType="list" resultType="cn.staitech.anno.domain.examineScore.ExamineScoreExportVO">
         SELECT
-            p.project_name,
-            e.image_name,
-            e.nick_name,
-            e.start_time,
-            e.end_time,
-            e.should_number,
-            e.reality_number,
-            e.miou,
-            e.fiou,
-            e.biou,
-            e.tiou,
-            e.personal_fit,
-            CASE
-                e.exam_results
-                WHEN '1' THEN '通过'
-                WHEN '2' THEN '不通过'
-                ELSE null
-                END
-                as exam_results
+        p.project_name,
+        e.image_name,
+        e.nick_name,
+        e.start_time,
+        e.complete_time as end_time,
+        pm.should_marks AS should_number,
+        e.reality_number,
+        qb.miou,
+        qb.fiou,
+        qb.biou,
+        qb.tiou,
+        e.personal_fit,
+        CASE
+        e.exam_results
+        WHEN '1' THEN
+        '通过'
+        WHEN '2' THEN
+        '不通过' ELSE NULL
+        END AS exam_results
         FROM
-            tb_examine_score AS e
-                LEFT JOIN tb_project AS p ON p.project_id = e.project_id
+        tb_examine_score AS e
+        LEFT JOIN tb_project AS p ON p.project_id = e.project_id
+        LEFT JOIN tb_question_project_rel AS qp ON qp.question_project_id = e.question_project_id
+        LEFT JOIN tb_question_bank AS qb ON qp.question_id = qb.question_id
+        LEFT JOIN tb_project_marks_rel AS pm ON pm.project_id = qb.project_id
         WHERE
-            e.examine_score_id IN
+        e.examine_score_id IN
         <foreach item="examineScoreId" collection="examineScoreIdList" separator="," open="(" close=")" index="">
             #{examineScoreId, jdbcType=NUMERIC}
         </foreach>

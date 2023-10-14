@@ -3,10 +3,7 @@ package cn.staitech.anno.controller;
 
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.ExamineScore;
-import cn.staitech.anno.domain.examineScore.ExamineScoreAddVO;
-import cn.staitech.anno.domain.examineScore.ExamineScoreExportInsertVo;
-import cn.staitech.anno.domain.examineScore.ExamineScoreExportVO;
-import cn.staitech.anno.domain.examineScore.SelectExaminationListVO;
+import cn.staitech.anno.domain.examineScore.*;
 import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.service.ProjectService;
 import cn.staitech.anno.service.ExamineScoreService;
@@ -82,6 +79,7 @@ public class ExamineScoreController {
     @PostMapping("/refreshInterval")
     public R<String> refreshInterval(@RequestBody ExamineScoreExportInsertVo examineScoreExportInsertVo) throws Exception {
         // 调用python
+        examineScoreService.refreshInterval(examineScoreExportInsertVo);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
@@ -94,10 +92,29 @@ public class ExamineScoreController {
     }
 
     @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "查询考核详情接口")
+    @GetMapping("/selectBy")
+    public R<ExamineScoreBy> selectBy(
+            @NotNull(message = "参数异常,未传入考核id") @RequestParam(value = "examineScoreId") @ApiParam(name = "examineScoreId", value = "考核id", required = true) Long examineScoreId
+    ) throws Exception {
+        return R.ok(examineScoreService.selectByIds(examineScoreId));
+    }
+
+    @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "完成考核信息")
     @PutMapping("/update")
     public R<String> update(@RequestBody ExamineScoreAddVO examineScoreAddVO) throws Exception {
         examineScoreService.update(examineScoreAddVO);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+    }
+
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "刷新个人拟合度")
+    @GetMapping("/updatePersonalFit")
+    public R<String> updatePersonalFit(
+            @NotNull(message = "参数异常,未传入考核id") @RequestParam(value = "examineScoreId") @ApiParam(name = "examineScoreId", value = "考核id", required = true) Long examineScoreId
+    ) throws Exception {
+        examineScoreService.updatePersonalFit(examineScoreId);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
