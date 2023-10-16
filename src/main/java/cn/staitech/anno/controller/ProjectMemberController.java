@@ -6,7 +6,6 @@ import cn.staitech.anno.domain.vo.ProjectMemberAddVO;
 import cn.staitech.anno.domain.vo.ProjectMemberDeleteVO;
 import cn.staitech.anno.domain.vo.ProjectMemberSelectVO;
 import cn.staitech.anno.domain.vo.ProjectMemberUpdateVO;
-import cn.staitech.anno.service.AnnotationService;
 import cn.staitech.anno.service.ProjectMemberService;
 import cn.staitech.anno.service.ProjectRoleService;
 import cn.staitech.anno.service.RecentlyVisitedService;
@@ -54,8 +53,6 @@ public class ProjectMemberController extends BaseController {
     private ProjectMemberService projectMemberService;
     @Resource
     private ProjectRoleService projectRoleService;
-    @Resource
-    private AnnotationService annotationService;
 
     @Resource
     private RecentlyVisitedService recentlyVisitedService;
@@ -184,12 +181,13 @@ public class ProjectMemberController extends BaseController {
         // 获取项目ID
         Long projectId = projectMemberSelectVO.getProjectId();
 
+        /*
+        // 查询项目中是否添加当前用户:项目尚未添加xxx
         ProjectMember projectMemberBy = projectMemberService.getLoginUserProjectRoleType(projectId);
-
-        // 查询项目中是否添加当前用户
         if (projectMemberBy == null) {
-            return R.fail(MessageSource.M("DISALLOW_PROJECT_NOT_EXIST") + SecurityUtils.getUsername());
-        }
+            return R.fail(MessageSource.M("DISALLOW_PROJECT_NOT_EXIST").concat(SecurityUtils.getUsername()));
+        }*/
+
         // 构造查询条件 ProjectMember
         ProjectMember projectMember = ProjectMember.builder()
                 .projectId(projectId)
