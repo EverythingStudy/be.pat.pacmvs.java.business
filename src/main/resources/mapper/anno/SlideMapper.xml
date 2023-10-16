@@ -223,7 +223,6 @@
         <id column="topic_name" jdbcType="BIGINT" property="topicName"/>
         <result column="image_name" jdbcType="BIGINT" property="imageName"/>
         <result column="slide_type" jdbcType="VARCHAR" property="slideType"/>
-        <result column="category_number" jdbcType="INTEGER" property="categoryNumber"/>
     </resultMap>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -243,16 +242,13 @@
 
     <select id="slideReviewFileName" parameterType="java.lang.Long" resultMap="SlideFileNameResultMap">
         SELECT t.topic_name,
-               i.image_name,
-               CONCAT(p.project_type, r.round_id)      AS slide_type,
-               group_concat(cate.number SEPARATOR "-") AS category_number
+               i.file_name as image_name,
+               CONCAT(p.project_type, r.round_id)      AS slide_type
         FROM tb_slide AS s
                  LEFT JOIN tb_project AS p ON p.project_id = s.project_id
                  LEFT JOIN tb_review_round AS re on re.review_round_id = s.review_round_id
                  LEFT JOIN tb_topic AS t ON t.topic_id = re.topic_id
                  LEFT JOIN tb_image AS i ON i.image_id = s.image_id
-                 LEFT JOIN tb_pathological_indicator AS path ON path.indicator_id = p.indicator_id
-                 LEFT JOIN tb_pathological_indicator_category AS cate ON cate.indicator_id = path.indicator_id
                  LEFT JOIN tb_round AS r ON r.round_id = s.round_id
         WHERE s.slide_id = #{slideId,jdbcType=BIGINT}
         GROUP BY t.topic_name
@@ -260,15 +256,12 @@
 
     <select id="slideFileName" parameterType="java.lang.Long" resultMap="SlideFileNameResultMap">
         SELECT t.topic_name,
-               i.image_name,
-               p.project_type AS slide_type,
-               group_concat(cate.number SEPARATOR "-") AS category_number
+               i.file_name as image_name,
+               p.project_type AS slide_type
         FROM tb_slide AS s
                  LEFT JOIN tb_project AS p ON p.project_id = s.project_id
                  LEFT JOIN tb_topic AS t ON t.topic_id = s.topic_id
                  LEFT JOIN tb_image AS i ON i.image_id = s.image_id
-                 LEFT JOIN tb_pathological_indicator AS path ON path.indicator_id = p.indicator_id
-                 LEFT JOIN tb_pathological_indicator_category AS cate ON cate.indicator_id = path.indicator_id
         WHERE s.slide_id = #{slideId,jdbcType=BIGINT}
         GROUP BY t.topic_name
     </select>

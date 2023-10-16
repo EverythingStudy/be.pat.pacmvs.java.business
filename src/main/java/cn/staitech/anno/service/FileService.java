@@ -14,5 +14,7 @@ public interface FileService {
 
     String createFiles(Long slideId,String suffix) throws Exception;
 
+    String createExamineScoreFiles(Long slideId,String suffix,Long questionProjectId,Long createBy) throws Exception;
+
 
 }

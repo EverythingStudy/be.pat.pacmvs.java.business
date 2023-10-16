@@ -7,15 +7,11 @@ import cn.staitech.anno.domain.geojson.*;
 import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.domain.Slide;
-import cn.staitech.anno.project.mapper.MarkingMapperV1;
 import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.project.mapper.SlideMapperV1;
-import cn.staitech.anno.project.service.SlideAttrService;
 import cn.staitech.anno.queue.DelayQueueExample;
 import cn.staitech.anno.service.ExamineScoreService;
 import cn.staitech.anno.service.FileService;
-import cn.staitech.anno.service.MarkingService;
-import cn.staitech.anno.utils.ExcludeEmptyQueryWrapper;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.RandomUtils;
 import cn.staitech.common.core.domain.PageResponse;
@@ -251,7 +247,7 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
 
         JSONObject markingJsonObject = new JSONObject();
         markingJsonObject.put("examine_score_id", examineScore.getExamineScoreId());
-        markingJsonObject.put("user_id",examineScoreBy.getCreateBy());
+        markingJsonObject.put("user_id", examineScoreBy.getCreateBy());
         remoteLabelService.marking(markingJsonObject);
         // 更新当前评分记录
         return res;
@@ -273,13 +269,6 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        }
-
-        String fileUrl = null;
-        try {
-            fileUrl = fileService.createFiles(slideId, ".json");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
         // 标注数据
         MarkingExamine markingExamine = new MarkingExamine();
@@ -324,19 +313,18 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         QueryWrapper<MarkingExamine> markingQueryWrapper = new QueryWrapper<>();
         markingQueryWrapper
                 .select("category_id")
-                .eq("question_project_id",examineScoreBy.getQuestionProjectId())
-                .eq("create_by",examineScoreBy.getCreateBy())
-                .ne("category_id",0)
+                .eq("question_project_id", examineScoreBy.getQuestionProjectId())
+                .eq("create_by", examineScoreBy.getCreateBy())
+                .ne("category_id", 0)
                 .groupBy("category_id");
         List<MarkingExamine> markingList = markingExamineMapper.selectList(markingQueryWrapper);
         List<GeoLabel> categoryList = new ArrayList<>();
-        if(markingList.size() > 0){
-            for(MarkingExamine marking:markingList){
+        if (markingList.size() > 0) {
+            for (MarkingExamine marking : markingList) {
                 GeoLabel geoLabel = pathologicalIndicatorCategoryMapper.selectGeoLabel(marking.getCategoryId());
                 categoryList.add(geoLabel);
             }
         }
-
         // 构建geoJson数据
         GeoJson geoJson = new GeoJson();
         geoJson.setFeatures(features);
@@ -346,22 +334,30 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         geoJson.setLabel_info(categoryList);
         String jsonString = JSON.toJSONString(geoJson, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue);
         // 写入文件
+
+        String fileUrl = null;
+        try {
+            fileUrl = fileService.createExamineScoreFiles(slideId, ".json", examineScoreBy.getQuestionProjectId(), examineScoreBy.getCreateBy());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         exportJson(fileUrl, jsonString);
 //            return R.ok(fileUrl);
 //        });
         return fileUrl;
     }
 
+
     public static com.alibaba.fastjson.JSONObject updateY(com.alibaba.fastjson.JSONObject geometry) {
         List<Object> lists = new ArrayList<>();
         JSONArray coordinatesJsonArray1 = geometry.getJSONArray("coordinates");
         String type = geometry.getString("type");
         List<Object> list1 = new ArrayList<>();
-        for(Object i1: coordinatesJsonArray1){
+        for (Object i1 : coordinatesJsonArray1) {
             JSONArray jsonArray1 = JSONArray.parseArray(i1.toString());
-            for(Object i2:jsonArray1){
+            for (Object i2 : jsonArray1) {
                 JSONArray jsonArray2 = (JSONArray) i2;
-                List<Double> list = com.alibaba.fastjson.JSONObject.parseArray(jsonArray2.toJSONString(),Double.class);
+                List<Double> list = com.alibaba.fastjson.JSONObject.parseArray(jsonArray2.toJSONString(), Double.class);
                 List<Double> newList = new ArrayList<>();
                 newList.add(list.get(0));
                 newList.add(Double.valueOf(String.valueOf(Math.abs(list.get(1)))));
@@ -370,8 +366,8 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         }
         lists.add(list1);
         com.alibaba.fastjson.JSONObject geometryJson = new com.alibaba.fastjson.JSONObject();
-        geometryJson.put("type",type);
-        geometryJson.put("coordinates",lists);
+        geometryJson.put("type", type);
+        geometryJson.put("coordinates", lists);
         return geometryJson;
     }
 
@@ -392,7 +388,7 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         JSONObject markingJsonObject = new JSONObject();
         ExamineScore examineScore = examineScoreMapper.selectById(examineScoreId);
         markingJsonObject.put("examine_score_id", examineScoreId);
-        markingJsonObject.put("user_id",examineScore.getCreateBy());
+        markingJsonObject.put("user_id", examineScore.getCreateBy());
         remoteLabelService.marking(markingJsonObject);
     }
 
