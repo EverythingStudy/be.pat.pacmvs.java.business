@@ -385,8 +385,17 @@ public class MarkingServiceImpl implements MarkingService {
         image.setImage_type(jsonExport.getFormat());
         image.setImage_name(jsonExport.getImageName());
         image.setCreate_time(jsonExport.getCreateTime());
-        // 项目id + 十三位时间戳 + 两位随机数
-        String imageId = jsonExport.getProjectId() + "_" + System.currentTimeMillis() + "_" + RandomUtils.RandomNumbers();
+        // 获取切片中的geo_image_id,为空则使用以下规则进行生成（项目id + 十三位时间戳 + 两位随机数）
+        String imageId = "";
+        if(Objects.equals(slideBy.getGeoImageId(), "") || slideBy.getGeoImageId() == null){
+            imageId = jsonExport.getProjectId() + "_" + System.currentTimeMillis() + "_" + RandomUtils.RandomNumbers();
+            Slide slides = new Slide();
+            slides.setSlideId(slideId);
+            slides.setGeoImageId(imageId);
+            slideMapperV1.updateById(slides);
+        }else{
+            imageId = slideBy.getGeoImageId();
+        }
         image.setImage_id(imageId);
         image.setImage_url(jsonExport.getImageUrl());
 
@@ -462,9 +471,11 @@ public class MarkingServiceImpl implements MarkingService {
                         if (image != null) {
                             // 获取标注名称
                             String imageName = image.getString("image_name");
+
+                            String geoImageId = image.getString("image_id");
                             if (imageName != null) {
                                 // 写入数据库
-                                writeMarking(slideResList, imageName, jsonObject);
+                                writeMarking(slideResList, imageName, jsonObject, geoImageId);
                             }
                             //这里是对读取的文件内容进行处理
                             ddlList.put(ze.getName(), sb.toString());
@@ -507,7 +518,7 @@ public class MarkingServiceImpl implements MarkingService {
 
 
     @Transactional(rollbackFor = Exception.class)
-    public void writeMarking(List<SlideRes> slideResList, String imageName, org.json.JSONObject jsonObject) throws Exception {
+    public void writeMarking(List<SlideRes> slideResList, String imageName, org.json.JSONObject jsonObject,String geoImageId) throws Exception {
 
         Map<String, Long> categoryMap = new HashMap<>();
         for (SlideRes slideRes : slideResList) {
@@ -524,12 +535,10 @@ public class MarkingServiceImpl implements MarkingService {
                 QueryWrapper<cn.staitech.anno.project.domain.Marking> markingQueryWrapperBy = new QueryWrapper<>();
                 markingQueryWrapperBy.eq("slide_id",slideBy.getSlideId());
                 markingMapperV1.delete(markingQueryWrapperBy);
-                // 更新切片表中json imageId
-                // 项目id + 时间戳 + 两位随机数
-                String imageId = slideBy.getProjectId() + "_" + System.currentTimeMillis() + "_" + RandomUtils.RandomNumbers();
+                // 更新切片表中json geoImageId
                 Slide slides = new Slide();
                 slides.setSlideId(slideBy.getSlideId());
-                slides.setGeoImageId(imageId);
+                slides.setGeoImageId(geoImageId);
                 slideMapperV1.updateById(slides);
 
                 for (Object feature : jsonArray) {
@@ -601,7 +610,6 @@ public class MarkingServiceImpl implements MarkingService {
                         } else {
                             slideAttrService.saveAnnoCategory(marking.getSlideId(), Collections.singletonList(marking.getCategoryId()));
                         }
-
                     }
                 }
             }
