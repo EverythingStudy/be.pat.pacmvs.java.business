@@ -15,6 +15,7 @@ import cn.staitech.anno.mapper.QuestionProjectRelMapper;
 import cn.staitech.anno.mapper.StructureMapper;
 import cn.staitech.anno.netty.websocket.NioWebSocketHandler;
 import cn.staitech.anno.service.MarkingExamineService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.SendMessage;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
@@ -35,8 +36,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static cn.staitech.anno.constant.CommonConstant.*;
-import static cn.staitech.anno.constant.CommonConstant.GLIDE_LINE;
-import static cn.staitech.anno.constant.CommonConstant.MICRON;
 
 /**
  * <p>
@@ -84,7 +83,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
                 if (structure != null) {
                     // 获取geometry数据
                     JSONObject geometry = featureObject.getJSONObject("geometry");
-                    ((JSONObject) feature).put("geometry",updateY(geometry));
+                    ((JSONObject) feature).put("geometry", updateY(geometry));
                     newJsonArray.add(feature);
                 }
             }
@@ -100,11 +99,11 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         JSONArray coordinatesJsonArray1 = geometry.getJSONArray("coordinates");
         String type = geometry.getString("type");
         List<Object> list1 = new ArrayList<>();
-        for(Object i1: coordinatesJsonArray1){
+        for (Object i1 : coordinatesJsonArray1) {
             JSONArray jsonArray1 = JSONArray.parseArray(i1.toString());
-            for(Object i2:jsonArray1){
+            for (Object i2 : jsonArray1) {
                 JSONArray jsonArray2 = (JSONArray) i2;
-                List<Double> list = JSONObject.parseArray(jsonArray2.toJSONString(),Double.class);
+                List<Double> list = JSONObject.parseArray(jsonArray2.toJSONString(), Double.class);
                 List<Double> newList = new ArrayList<>();
                 newList.add(list.get(0));
                 String res = "-" + list.get(1);
@@ -115,8 +114,8 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         }
         lists.add(list1);
         JSONObject geometryJson = new JSONObject();
-        geometryJson.put("type",type);
-        geometryJson.put("coordinates",lists);
+        geometryJson.put("type", type);
+        geometryJson.put("coordinates", lists);
         return geometryJson;
     }
 
@@ -134,7 +133,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
     public Long insert(MarkingExamineInsertVO req) throws Exception {
         QuestionProjectRel questionProjectRel = questionProjectRelMapper.selectById(req.getQuestion_project_id());
         if (questionProjectRel == null) {
-            throw new Exception("未查询到切片信息");
+            throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
         }
         MarkingExamine markingExamine = new MarkingExamine();
         BeanUtils.copyProperties(req, markingExamine);
@@ -167,11 +166,11 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
     @Transactional(rollbackFor = Exception.class)
     public int delete(Long markingExamineId) throws Exception {
         if (!Optional.ofNullable(markingExamineId).isPresent()) {
-            throw new Exception("参数异常");
+            throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }
         MarkingExamine markingExamineBy = markingExamineMapper.selectById(markingExamineId);
         if (!Optional.ofNullable(markingExamineBy).isPresent()) {
-            throw new Exception("未查询到标注信息");
+            throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
         Properties properties = markingExamineMapper.selectBy(markingExamineId);
         Features features = markingServiceImpl.socketData("", markingExamineBy.getGeometry(), properties);
@@ -188,7 +187,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         // 查询标注表中信息
         MarkingExamine markingExamineBy = markingExamineMapper.selectById((req.getMarking_id()));
         if (!Optional.ofNullable(markingExamineBy).isPresent()) {
-            throw new Exception("未查询到标注信息");
+            throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
         // 查询标注表中信息
         // 更新前数据

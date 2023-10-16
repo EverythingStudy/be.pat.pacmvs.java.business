@@ -69,7 +69,7 @@ public class ExamineScoreController {
             @NotNull(message = "参数异常,未发现分页信息") @RequestParam(value = "pageSize") @ApiParam(name = "pageSize", value = "当前页数", required = true) Integer pageSize,
             @NotNull(message = "参数异常,未发现分页信息") @RequestParam(value = "pageNum") @ApiParam(name = "pageNum", value = "每页数量", required = true) Integer pageNum,
             @RequestParam(value = "nickName", required = false) @ApiParam(name = "nickName", value = "答题者") String nickName,
-            @RequestParam(value = "examResults", required = false) @ApiParam(name = "examResults", value = "考试结果") Long examResults) throws Exception {
+            @RequestParam(value = "examResults", required = false) @ApiParam(name = "examResults", value = "考试结果") Long examResults) {
         return R.ok(examineScoreService.selectList(pageSize, pageNum, projectId, nickName, examResults));
     }
 
@@ -77,7 +77,7 @@ public class ExamineScoreController {
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "刷新拟合区间")
     @PostMapping("/refreshInterval")
-    public R<String> refreshInterval(@RequestBody ExamineScoreExportInsertVo examineScoreExportInsertVo) throws Exception {
+    public R<String> refreshInterval(@RequestBody ExamineScoreExportInsertVo examineScoreExportInsertVo) {
         // 调用python
         examineScoreService.refreshInterval(examineScoreExportInsertVo);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));

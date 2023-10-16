@@ -288,7 +288,7 @@ public class MarkingServiceImpl implements MarkingService {
     @Transactional(rollbackFor = Exception.class)
     public int delete(Long markingId) throws Exception {
         if (!Optional.ofNullable(markingId).isPresent()) {
-            throw new Exception("参数异常");
+            throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }
         Marking markingBy = markingMapper.selectById(markingId);
         if (!Optional.ofNullable(markingBy).isPresent()) {
@@ -339,7 +339,7 @@ public class MarkingServiceImpl implements MarkingService {
     public String slideJsonExport(Long slideId) throws Exception {
         if (!Optional.ofNullable(slideId).isPresent()) {
             try {
-                throw new Exception("参数异常");
+                throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

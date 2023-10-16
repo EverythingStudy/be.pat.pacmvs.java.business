@@ -60,7 +60,6 @@ public class ImageCsvController extends ApiController {
         queryWrapper.like("lesion_degree2", imageCsvGetVO.getLesionDegree());
         queryWrapper.orderByDesc("id");
 
-
         return R.ok(this.imageCsvService.page(page, queryWrapper));
     }
 

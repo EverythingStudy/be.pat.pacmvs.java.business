@@ -50,9 +50,6 @@ public class ViewerServiceImpl implements ViewerService {
     @Resource
     private MarkingMapper markingMapper;
 
-    /*@Resource
-    private GeometryDocMapper geometryDocMapper;*/
-
     @Resource
     private SlideService slideService;
 

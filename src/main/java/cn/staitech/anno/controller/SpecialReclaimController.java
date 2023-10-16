@@ -39,13 +39,10 @@ import java.util.stream.Collectors;
 @Api(value = "专题回收", tags = "专题回收")
 @RequestMapping("/specialReclaim")
 public class SpecialReclaimController {
-
     @Resource
     private SpecialReclaimService specialReclaimService;
-
     @Resource
     private SpecialService specialService;
-
 
     @ApiOperationSupport(author = "gjt")
     @RequiresPermissions("special:recover:query")
@@ -74,6 +71,4 @@ public class SpecialReclaimController {
         pageMaster.setTotal(specialReclaimResVos.size());
         return R.ok(pageMaster);
     }
-
-
 }

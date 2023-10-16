@@ -40,8 +40,6 @@ import java.util.List;
 @Api(value = "专题选片", tags = "专题选片")
 @Slf4j
 public class SpecialImageController {
-
-
     @Resource
     private SpecialImageService specialImageService;
 

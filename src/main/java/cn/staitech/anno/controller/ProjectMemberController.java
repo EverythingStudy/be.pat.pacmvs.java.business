@@ -144,20 +144,20 @@ public class ProjectMemberController extends BaseController {
 
         // 获取角色ID
         Long roleId = projectMemberUpdateVO.getRoleId();
-        SysProjectRole sysProjectRole = projectRoleService.selectProjectRole(roleId);
+//        SysProjectRole sysProjectRole = projectRoleService.selectProjectRole(roleId);
 
         // 查询当前项目项目代表总数，项目代表至少保留1名  http://jira.shengtong.com/browse/ANNO-709
         if (projectMemberService.representationCount(projectId) == 1) {
             return R.fail(MessageSource.M("REPRESENTATION_MUST_HAS_ONE"));
         }
 
-        // 构造查询对象(修改前数据)
-        ProjectMember getProjectMember = ProjectMember.builder()
-                .userId(projectMemberUpdateVO.getUserId())
-                .projectId(projectId)
-                .build();
-        // 查询修改前的成员信息内容
-        List<ProjectMember> projectMembers = projectMemberService.select(getProjectMember);
+//        // 构造查询对象(修改前数据)
+//        ProjectMember getProjectMember = ProjectMember.builder()
+//                .userId(projectMemberUpdateVO.getUserId())
+//                .projectId(projectId)
+//                .build();
+//        // 查询修改前的成员信息内容
+//        List<ProjectMember> projectMembers = projectMemberService.select(getProjectMember);
 
         // 构造修改对象
         ProjectMember projectMember = ProjectMember.builder()

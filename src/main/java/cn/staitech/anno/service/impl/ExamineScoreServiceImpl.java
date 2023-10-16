@@ -257,7 +257,7 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         Long slideId = examineScoreBy.getSlideId();
         if (!Optional.ofNullable(slideId).isPresent()) {
             try {
-                throw new Exception("参数异常");
+                throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

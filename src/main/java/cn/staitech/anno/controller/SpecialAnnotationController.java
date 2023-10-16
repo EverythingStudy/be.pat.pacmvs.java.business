@@ -332,53 +332,6 @@ public class SpecialAnnotationController {
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
-    @PostMapping("callBackCutImage")
-    @ApiOperation(value = "切图回调接口")
-    //	@RequiresPermissions("anno:annotation:remove")
-    @Log(title = "切片配置", menu = "专题管理", subMenu = "切图回调接口", businessType = BusinessType.OTHER)
-    //	public R<String> callBackCutImage(@RequestParam(name = "specialImageId", value = "切片id", required = false) Long specialImageId){
-    public R<String> callBackCutImage() {
-        //		SpecialImage sImage = specialImageService.selectByPrimaryKey(specialImageId);
-        //数据校验
-        //重复性校验
-        //保存处理
-        // 校验当前用户是否是编辑用户，确保数据只可以被同一个人编辑
-		/*SpecialImage sImage = specialImageService.selectByPrimaryKey(specialImageId);
-		if (null == sImage) {
-			return R.fail(MessageSource.M("")Data_NULL);
-		}
-
-
-		List<SubImage> list = new ArrayList<>();
-		subImageService.saveBatch(list);
-
-
-		// 查询所有标注
-		SpecialAnnotation annotation = new SpecialAnnotation();
-		annotation.setSpecialImageId(specialImageId);
-		List<SpecialAnnotation> annoList = specialImageAnnoService.selectSpecialAnnotationList(annotation);
-
-		if(CollectionUtil.isEmpty(annoList)){
-			return R.fail(MessageSource.M("")Data_NULL);
-		}
-		// 切图通知操作 1、查询所有标注结果列表+主图信息
-		// 加入 队列 resData
-		SpecialCutImageVO  resData = new SpecialCutImageVO();
-		resData.setAnnoList(annoList);
-		resData.setImage(sImage);
-		//切图状态 0:未切图 1：生成中 2：切图完成 3：绘制中,确保在绘制中可以进行修改，且提交人是绘制
-		if(sImage.getSliceImageStatus() == 3 ){
-			//修改为生成中
-			SpecialImage record = new SpecialImage();
-			record.setSpecialImageId(specialImageId);
-			record.setEditBy(SecurityUtils.getUserId());
-			record.setSliceImageStatus(1);
-			specialImageService.updateByPrimaryKeySelective(record);
-		}*/
-        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
-    }
-
-
     //	@RequiresPermissions("anno:annotation:add")
     @SuppressWarnings("unused")
     @ApiOperation(value = "标注结果接口（批量操作）")
@@ -693,7 +646,7 @@ public class SpecialAnnotationController {
     public R<String> del(Long marking_id) throws Exception {
 
         if (!Optional.ofNullable(marking_id).isPresent()) {
-            return R.fail("参数异常");
+            return R.fail(MessageSource.M("ARGUMENT_INVALID"));
         }
         // 查询标注表中信息
         SpecialAnnotation markingBy = specialImageAnnoService.selectByPrimaryKey(Long.valueOf(marking_id));
@@ -799,7 +752,7 @@ public class SpecialAnnotationController {
     @GetMapping("/getAnnotation")
     public R<JSONObject> getAnnotation(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) {
         if (!Optional.ofNullable(slideId).isPresent()) {
-            return R.fail("参数异常");
+            return R.fail(MessageSource.M("ARGUMENT_INVALID"));
         }
 
         SpecialImage specialImage = specialImageService.selectByPrimaryKey(slideId);
@@ -948,6 +901,4 @@ public class SpecialAnnotationController {
         }
         return specialAnnotation;
     }
-
-
 }

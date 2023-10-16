@@ -7,10 +7,8 @@ import cn.staitech.anno.domain.vo.diagnosis.StatisticsBodyVo;
 import cn.staitech.anno.domain.vo.diagnosis.StatisticsHeadVo;
 import cn.staitech.anno.domain.vo.reportRecord.ReportRecordAddVO;
 import cn.staitech.anno.exception.ReportException;
-import cn.staitech.anno.mapper.SpecialDiagnosisDetailMapper;
 import cn.staitech.anno.mapper.SpecialDiagnosisMapper;
 import cn.staitech.anno.mapper.SpecialMapper;
-import cn.staitech.anno.service.DiagnosticReportService;
 import cn.staitech.anno.service.DiagnosticStatisticsService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.WordTool;
@@ -40,17 +38,13 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
     @Resource
     private SpecialDiagnosisMapper specialDiagnosisMapper;
 
-    @Resource
-    private SpecialDiagnosisDetailMapper specialDiagnosisDetailMapper;
-
     @Value("${rpt.dir:../REPORT}")
     private String RPT_DIR;
 
     @Resource
     private SpecialMapper specialMapper;
 
-    @Resource
-    private DiagnosticReportService diagnosticReportService;
+
 
     @SuppressWarnings("unused")
     @Override

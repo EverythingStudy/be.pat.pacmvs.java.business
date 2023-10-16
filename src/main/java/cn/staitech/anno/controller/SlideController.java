@@ -93,7 +93,7 @@ public class SlideController extends BaseController {
             }
             //需求要求，删除单条提示
             if (slideList.size() == 1 && list.size() == 0) {
-                return R.fail("当前切片处理中，禁止删除");
+                return R.fail(MessageSource.M("DELETE_FAILURE_SLIDE_USEING"));
             }
             if (!list.isEmpty()) {
                 slideService.updateBatchByCondition(list);

@@ -30,7 +30,6 @@ import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.annotation.RequiresSpecialPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
-import co.elastic.clients.elasticsearch.watcher.QueryWatch;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -184,11 +183,11 @@ public class ProjectController extends BaseController {
                 //添加移走原因,'1给药结束安乐死、2恢复期结束安乐死'
                 ProjectGroup pg1 = new ProjectGroup();
                 pg1.setProjectId(projectId);
-                pg1.setGroupName("给药结束安乐死");
+                pg1.setGroupName(MessageSource.M("REMOVE_REASON_1"));
                 pg1.setGroupId(1L);
                 ProjectGroup pg2 = new ProjectGroup();
                 pg2.setProjectId(projectId);
-                pg2.setGroupName("恢复期结束安乐死");
+                pg2.setGroupName(MessageSource.M("REMOVE_REASON_2"));
                 pg2.setGroupId(2L);
                 List<ProjectGroup> temp = new ArrayList<>();
                 temp.add(pg1);
@@ -439,7 +438,7 @@ public class ProjectController extends BaseController {
         Chunk chunkObj = new Chunk().setChunkNumber(chunk).setFile(file).setFileName(fileName).setTotalChunks(chunkTotal).setSpecialId(specialId).setChunkSize(chunkSize);
         String zipUrl = fileService.mergeChunk(chunkObj);
         if (!Optional.ofNullable(specialId).isPresent()) {
-            return R.fail("参数异常");
+            return R.fail(MessageSource.M("ARGUMENT_INVALID"));
         }
         markingService.zipExport(zipUrl, specialId);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));

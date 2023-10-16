@@ -33,7 +33,6 @@ import java.util.List;
 @RequestMapping("/specialRoleUser")
 @Api(value = "专题角色用户", tags = "专题角色用户")
 public class SpecialRoleUserController {
-
     @Resource
     private SpecialRoleUserService specialRoleUserService;
 

@@ -133,8 +133,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         return slideMapper.selectSlideListByProjectIdList(projectIdList);
     }
 
-//    @SuppressWarnings("checkstyle:WhitespaceAfter")
-
     /**
      * 通过切片ID查询切片信息
      *

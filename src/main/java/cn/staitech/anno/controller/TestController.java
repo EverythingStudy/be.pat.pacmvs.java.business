@@ -367,7 +367,7 @@ public class TestController {
     @GetMapping("/strFile")
     public String StrFile(String str) throws IOException {
         if (!Optional.ofNullable(str).isPresent()) {
-            return "参数异常";
+            return MessageSource.M("ARGUMENT_INVALID");
         }
         List<String> SOURCE = new ArrayList<>();
         for (int i = 0; i < str.length(); i++) {

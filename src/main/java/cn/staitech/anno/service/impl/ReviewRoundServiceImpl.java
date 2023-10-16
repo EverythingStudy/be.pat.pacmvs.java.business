@@ -37,10 +37,6 @@ import java.util.stream.Collectors;
 @Service
 public class ReviewRoundServiceImpl extends ServiceImpl<ReviewRoundMapper, ReviewRound>
         implements ReviewRoundService {
-
-    @Resource
-    private ReviewRoundMapper reviewRoundMapper;
-
     @Resource
     private TopicService topicService;
 

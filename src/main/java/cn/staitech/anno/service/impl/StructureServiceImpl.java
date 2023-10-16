@@ -20,8 +20,6 @@ import java.util.stream.Collectors;
  */
 @Service
 class StructureServiceImpl extends ServiceImpl<StructureMapper, Structure> implements StructureService {
-
-
     @Resource
     StructureMapper structureMapper;
 
