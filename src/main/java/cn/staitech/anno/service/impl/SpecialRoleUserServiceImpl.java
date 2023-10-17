@@ -7,6 +7,7 @@ import cn.staitech.anno.domain.vo.special.*;
 import cn.staitech.anno.mapper.SpecialRoleMapper;
 import cn.staitech.anno.mapper.SpecialRoleUserMapper;
 import cn.staitech.anno.service.SpecialRoleUserService;
+import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.exception.ServiceException;
@@ -72,7 +73,11 @@ public class SpecialRoleUserServiceImpl implements SpecialRoleUserService {
     public SpecialRoleUserSelectResVo selectUserSpecialBy(SpecialSelectByIn req) {
         SpecialRoleUserSelectResVo res = specialRoleUserMapper.selectUserSpecialBy(req);
         if (res != null) {
-            res.setStatusFlag(Container.SPECIAL_ROLE_STATUS_MAP.get(res.getStatus()));
+            if (LanguageUtils.isEn()) {
+                res.setStatusFlag(Container.SPECIAL_ROLE_STATUS_MAP_EN.get(res.getStatus()));
+            } else {
+                res.setStatusFlag(Container.SPECIAL_ROLE_STATUS_MAP.get(res.getStatus()));
+            }
         }
         return res;
     }
@@ -154,7 +159,11 @@ public class SpecialRoleUserServiceImpl implements SpecialRoleUserService {
         startPage(specialRoleUser.getPageNum(), specialRoleUser.getPageSize());
         List<SpecialRoleUserSelectResVo> specialRoleUserSelectResVos = specialRoleUserMapper.selectList(specialRoleUser);
         for (SpecialRoleUserSelectResVo s : specialRoleUserSelectResVos) {
-            s.setStatusFlag(Container.SPECIAL_ROLE_STATUS_MAP.get(s.getStatus()));
+            if (LanguageUtils.isEn()) {
+                s.setStatusFlag(Container.SPECIAL_ROLE_STATUS_MAP_EN.get(s.getStatus()));
+            } else {
+                s.setStatusFlag(Container.SPECIAL_ROLE_STATUS_MAP.get(s.getStatus()));
+            }
         }
         return new PageMaster<>(specialRoleUserSelectResVos);
     }

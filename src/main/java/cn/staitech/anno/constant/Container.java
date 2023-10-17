@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Map
+ *
  * @author wangf
  */
 public class Container {
@@ -28,12 +29,30 @@ public class Container {
             .build();
 
     /**
+     * Image - 图片处理过程状态 不可用原因共三种：0上传失败，1解析中,2解析失败
+     */
+    public static final Map<Integer, String> IMAGE_PROCESS_MAP_EN = new ImmutableMap.Builder<Integer, String>()
+            .put(0, "UPLOAD FAILED")
+            .put(1, "IN ANALYSIS")
+            .put(2, "ANALYSIS FAILED")
+            .build();
+
+    /**
      * Image - 可用状态：0不可用1可用
      */
     public static final Map<Integer, String> IMAGE_STATUS_MAP = new ImmutableMap.Builder<Integer, String>()
             .put(0, "不可用")
             .put(1, "可用")
             .build();
+
+    /**
+     * Image - EN - 可用状态：0不可用1可用
+     */
+    public static final Map<Integer, String> IMAGE_STATUS_MAP_EN = new ImmutableMap.Builder<Integer, String>()
+            .put(0, "Unavailable")
+            .put(1, "Available")
+            .build();
+
 
     /**
      * Image - 图片删除状态：0逻辑删除，1未逻辑删除
@@ -53,6 +72,16 @@ public class Container {
             .put(4, "已完成")
             .build();
 
+    /**
+     * 项目状态 - EN
+     */
+    public static final Map<Integer, String> PROJECT_STATUS_EN = new ImmutableMap.Builder<Integer, String>()
+            .put(1, "NOT STARTED")
+            .put(2, "PROCESSING")
+            .put(3, "PAUSE")
+            .put(4, "COMPLETED")
+            .build();
+
 
     /**
      * 专题用户状态：0开启，1禁用 SpecialRoleUser
@@ -62,6 +91,13 @@ public class Container {
             .put(1L, "禁用")
             .build();
 
+    /**
+     * 专题用户状态 - EN：0开启，1禁用 SpecialRoleUser
+     */
+    public static final Map<Long, String> SPECIAL_ROLE_STATUS_MAP_EN = new ImmutableMap.Builder<Long, String>()
+            .put(0L, "ON")
+            .put(1L, "FORBIDDEN")
+            .build();
 
     /**
      * 颜色类型
@@ -89,5 +125,33 @@ public class Container {
             /*.put(18, "免疫组织化学染色")
             .put(19, "荧光标记染色")*/
             .put(20, "其他")
+            .build();
+
+    /**
+     * 颜色类型 - EN
+     */
+    public static final Map<Integer, String> COLOR_TYPE_EN = new ImmutableMap.Builder<Integer, String>()
+            /*.put(1, "RGB")
+            .put(2, "HEX")*/
+            .put(1, "荧光标记染色EN")
+            .put(2, "免疫组织化学染色EN")
+            .put(3, "HE染色EN")
+            .put(4, "Masson染色EN")
+            .put(5, "Van Gieson染色EN")
+            .put(6, "维多利亚蓝染色EN")
+            .put(7, "苏丹III/IV染色EN")
+            .put(8, "油红O染色EN")
+            .put(9, "PAS糖原染色EN")
+            .put(10, "AB-PAS染色EN")
+            .put(11, "刚果红染色(甲醇)EN")
+            .put(12, "甲苯胺蓝染色EN")
+            .put(13, "普鲁氏蓝染色EN")
+            .put(14, "尼氏染色EN")
+            .put(15, "LFB髓鞘染色EN")
+            .put(16, "Tunel染色EN")
+            .put(17, "Ki67EN")
+            /*.put(18, "免疫组织化学染色")
+            .put(19, "荧光标记染色")*/
+            .put(20, "OTHER")
             .build();
 }

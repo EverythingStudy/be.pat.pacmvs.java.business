@@ -11,6 +11,7 @@ import cn.staitech.anno.mapper.ProjectMapper;
 import cn.staitech.anno.service.ProjectService;
 import cn.staitech.anno.service.ProjectTypeService;
 import cn.staitech.anno.service.SpeciesService;
+import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -75,8 +76,14 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             project.setSpeciesName(sepeciesMap.get(project.getSpeciesId()));
         }
 
-        project.setColorTypeName(Container.COLOR_TYPE.get(project.getColorType()));
-        project.setStatusName(Container.PROJECT_STATUS.get(project.getStatus()));
+        if (LanguageUtils.isEn()) {
+            project.setColorTypeName(Container.COLOR_TYPE_EN.get(project.getColorType()));
+            project.setStatusName(Container.PROJECT_STATUS_EN.get(project.getStatus()));
+        } else {
+            project.setColorTypeName(Container.COLOR_TYPE.get(project.getColorType()));
+            project.setStatusName(Container.PROJECT_STATUS.get(project.getStatus()));
+        }
+
         return project;
     }
 
@@ -94,9 +101,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         // 项目类型
         Map<String, String> projectTypeMap = projectTypeService.selectMap();
 
-        // 品系
-        // Map<Integer, String> productSeriesMap = productSeriesService.selectMap();
-
         for (ProjectListVO obj : projectList) {
             // 项目类型
             if (projectTypeMap.containsKey(obj.getProjectType())) {
@@ -105,13 +109,13 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             // 种属
             obj.setSpeciesName(MapConstant.getSpeciesName(obj.getSpeciesId()));
 
-            // 品系
-/*            if (productSeriesMap.containsKey(obj.getProductSeriesId())) {
-                obj.setProductSeries(productSeriesMap.get(obj.getProductSeriesId()));
-            }*/
-
-            obj.setColorTypeName(Container.COLOR_TYPE.get(obj.getColorType()));
-            obj.setStatusName(Container.PROJECT_STATUS.get(obj.getStatus()));
+            if (LanguageUtils.isEn()) {
+                obj.setColorTypeName(Container.COLOR_TYPE_EN.get(obj.getColorType()));
+                obj.setStatusName(Container.PROJECT_STATUS_EN.get(obj.getStatus()));
+            } else {
+                obj.setColorTypeName(Container.COLOR_TYPE.get(obj.getColorType()));
+                obj.setStatusName(Container.PROJECT_STATUS.get(obj.getStatus()));
+            }
 
             if (obj.getIndicatorId() == null || obj.getIndicatorId() == 0L) {
                 obj.setIndicatorName(MessageSource.M("RELEVANCE"));
@@ -183,17 +187,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         }
         return projectMapper.selectProjectStatisticList(project);
     }
-
-    /*public List<StatisticProjectListOutVO> selectProjectStatisticList(Project project) {
-        if (isAdmin(SecurityUtils.getUserId())) {
-            return projectMapper.selectProjectStatisticList(project);
-        } else if (SecurityUtils.getLoginUser().getRoles().contains("system")) {
-            project.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-            return projectMapper.selectProjectStatisticList(project);
-        } else {
-            return projectMapper.selectProjectStatisticListExt(SecurityUtils.getUserId());
-        }
-    }*/
 
     /**
      * 根据id和项目名称查询信息

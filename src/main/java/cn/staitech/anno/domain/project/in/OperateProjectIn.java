@@ -1,10 +1,10 @@
 package cn.staitech.anno.domain.project.in;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import lombok.Data;
 
 /**
  * @Author wudi
@@ -22,12 +22,11 @@ public class OperateProjectIn {
     private Long projectId;
 
     @ApiModelProperty(value = "项目名称")
-    @NotNull(message = "项目名称不能为空")
-    @Size(min = 0, max = 50, message = "项目名称长度不能超过50个字符")
+    @NotNull(message = "{OperateProjectIn.projectName.isnull}")
+    @Size(min = 0, max = 50, message = "{OperateProjectIn.projectName.length}")
     private String projectName;
 
     @ApiModelProperty(value = "病理系统id")
-    //@NotNull(message = "病理系统id不能为空")
     private Long systemCode;
 
     @ApiModelProperty(value = "脏器类型id")

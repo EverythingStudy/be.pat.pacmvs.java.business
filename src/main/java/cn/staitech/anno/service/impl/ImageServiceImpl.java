@@ -11,6 +11,7 @@ import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.RoundService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.service.SysOrganizationService;
+import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -103,11 +104,19 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
                 // 提取处理状态文本描述并赋值
                 Integer status = in.getStatus();
-                out.setFileStatus(Container.IMAGE_STATUS_MAP.get(status));
-                // 不可用 可用 解析中
+                // 可用、不可用状态解析中
+                if (LanguageUtils.isEn()) {
+                    out.setFileStatus(Container.IMAGE_STATUS_MAP_EN.get(status));
+                } else {
+                    out.setFileStatus(Container.IMAGE_STATUS_MAP.get(status));
+                }
 
                 if (status == 0) {
-                    out.setProcessFlagName(Container.IMAGE_PROCESS_MAP.get(in.getProcessFlag()));
+                    if (LanguageUtils.isEn()) {
+                        out.setProcessFlagName(Container.IMAGE_PROCESS_MAP_EN.get(in.getProcessFlag()));
+                    } else {
+                        out.setProcessFlagName(Container.IMAGE_PROCESS_MAP.get(in.getProcessFlag()));
+                    }
                 } else {
                     out.setProcessFlagName("");
                 }
@@ -129,7 +138,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                 if (slideService.selectImageExist(slide).size() > 0) {
                     out.setDeleState(1);
                 }
-
                 respList.add(out);
             }
         }

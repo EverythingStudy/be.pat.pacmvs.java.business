@@ -19,6 +19,7 @@ import cn.staitech.anno.domain.vo.project.UpdateProjectStatusVO;
 import cn.staitech.anno.domain.vo.project.UpdateProjectVO;
 import cn.staitech.anno.mapper.ExamineScoreMapper;
 import cn.staitech.anno.service.*;
+import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.PageResponse;
@@ -278,7 +279,12 @@ public class ProjectController extends BaseController {
     @Log(title = "项目状态列表", menu = "项目状态列表", subMenu = "项目状态列表", businessType = BusinessType.QUERY)
     @GetMapping("/projectStatus")
     public R<Map<Integer, String>> colorType() {
-        Map<Integer, String> map = Container.PROJECT_STATUS;
+        Map<Integer, String> map = null;
+        if (LanguageUtils.isEn()) {
+            map = Container.PROJECT_STATUS_EN;
+        } else {
+            map = Container.PROJECT_STATUS;
+        }
         return R.ok(map);
     }
 
@@ -404,9 +410,9 @@ public class ProjectController extends BaseController {
 
         // 查询考核表中是否有未完成考试的考核信息
         QueryWrapper<ExamineScore> examineScoreQueryWrapper = new QueryWrapper<>();
-        examineScoreQueryWrapper.eq("project_id",req.getProjectId()).eq("operate_status","1");
+        examineScoreQueryWrapper.eq("project_id", req.getProjectId()).eq("operate_status", "1");
         List<ExamineScore> examineScoreList = examineScoreMapper.selectList(examineScoreQueryWrapper);
-        if(examineScoreList.size() > 0){
+        if (examineScoreList.size() > 0) {
             return R.fail(MessageSource.M("ERROR_PROJECT_PROMPT"));
         }
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
