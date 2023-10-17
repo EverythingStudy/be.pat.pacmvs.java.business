@@ -152,7 +152,7 @@
                     "location_type",
                     t.location_type,
                     "annotation_owner",
-                    t.create_by,
+                    cast(t.create_by as char(200)),
                     "label_color" ,
                     c.rgb,
                     "label_code" ,
