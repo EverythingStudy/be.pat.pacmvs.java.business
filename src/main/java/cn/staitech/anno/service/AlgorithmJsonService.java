@@ -12,4 +12,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface AlgorithmJsonService extends IService<AlgorithmJson> {
 
+    void examineComparison(Long algorithmJsonId) throws Exception;
+
+
 }

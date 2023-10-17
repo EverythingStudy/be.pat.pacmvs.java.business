@@ -22,4 +22,6 @@ public interface AlgorithmAssessmentService extends IService<AlgorithmAssessment
     R createAssessment(CreateAssessmentIn req);
 
     PageResponse<GetAssessmentListOut> getAssessmentList(GetAssessmentListIn req);
+    boolean zipExport(String zipUrl, Long projectId) throws Exception;
+
 }

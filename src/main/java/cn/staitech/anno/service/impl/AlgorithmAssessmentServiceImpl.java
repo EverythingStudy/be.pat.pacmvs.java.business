@@ -8,9 +8,11 @@ import cn.staitech.anno.domain.assessment.in.CreateAssessmentIn;
 import cn.staitech.anno.domain.assessment.in.GetAssessmentListIn;
 import cn.staitech.anno.domain.assessment.out.GetAssessmentListOut;
 import cn.staitech.anno.mapper.AlgorithmAssessmentMapper;
+import cn.staitech.anno.mapper.SlideMapper;
 import cn.staitech.anno.mapper.AlgorithmJsonMapper;
 import cn.staitech.anno.mapper.SlideMapper;
 import cn.staitech.anno.service.AlgorithmAssessmentService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.date.DateUtils;
@@ -40,6 +42,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
+
 /**
  * <p>
  * 服务实现类
@@ -51,6 +64,83 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessmentMapper, AlgorithmAssessment> implements AlgorithmAssessmentService {
+
+
+    @Resource
+    private AlgorithmAssessmentMapper algorithmAssessmentMapper;
+
+    @Override
+    public boolean zipExport(String zipUrl, Long projectId) throws Exception {
+        StringBuilder sb;
+        File file1 = new File(zipUrl);
+        Map<String, String> ddlList = new HashMap<>();
+        try {
+            // 根据项目查询算法考核表中数据
+
+
+
+            //zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
+            //必须指明读取的各式，不然会存在问题
+            ZipFile zipFile = new ZipFile(file1, Charset.forName("gbk"));
+            //按流的方式读取文件，输入到管道中
+            InputStream in = new BufferedInputStream(Files.newInputStream(file1.toPath()));
+            //字节流转换为压缩文件输入流，通常用来读取压缩文件
+            ZipInputStream zp = new ZipInputStream(in);
+            //定义文件条目
+            ZipEntry ze;
+            Enumeration<? extends ZipEntry> zipEnum = zipFile.entries();
+            // 循环压缩包中解压内容
+            while (zipEnum.hasMoreElements()) {
+                // 获取下一个元素
+                ze = zipEnum.nextElement();
+                sb = new StringBuilder();
+                if (!ze.isDirectory()) {
+                    long size = ze.getSize();
+                    if (size > 0) {
+                        //读取文件内容
+                        BufferedReader bf = new BufferedReader(new InputStreamReader(zipFile.getInputStream(ze), StandardCharsets.UTF_8));
+                        String line;
+                        while ((line = bf.readLine()) != null) {
+                            sb.append(line);
+                        }
+                        // 获取文件中的内容
+                        org.json.JSONObject jsonObject = new org.json.JSONObject(sb.toString());
+                        // 获取图像相关信息
+                        org.json.JSONObject image = jsonObject.getJSONObject("image");
+                        if (image != null) {
+                            // 获取标注名称
+                            String imageName = image.getString("image_name");
+
+                            String geoImageId = image.getString("image_id");
+                            if (imageName != null) {
+                                // 写入数据库
+                                writeAlgorithm(projectId,imageName);
+                            }
+                            //这里是对读取的文件内容进行处理
+                            ddlList.put(ze.getName(), sb.toString());
+                            bf.close();
+                        }
+                    }
+                }
+                zp.closeEntry();
+            }
+        } catch (Exception e) {
+            throw new Exception("json文件解析失败");
+        }
+        return true;
+    }
+
+    public void writeAlgorithm(Long projectId, String imageName){
+        QueryWrapper<AlgorithmAssessment> algorithmAssessmentQueryWrapper = new QueryWrapper<>();
+        algorithmAssessmentQueryWrapper.eq("project_id",projectId).eq("del_flag","0");
+        List<AlgorithmAssessment> algorithmAssessments = algorithmAssessmentMapper.selectList(algorithmAssessmentQueryWrapper);
+        for(AlgorithmAssessment algorithmAssessment:algorithmAssessments){
+
+        }
+
+        //
+
+    }
 
     @Autowired
     private MarkingService markingService;
