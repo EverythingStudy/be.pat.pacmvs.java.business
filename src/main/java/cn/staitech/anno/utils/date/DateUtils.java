@@ -659,4 +659,20 @@ public class DateUtils {
         }
         return list;
     }
+
+    public static Date addAndSubtractDaysByCalendar(Date dateTime/*待处理的日期*/,int n/*加减天数*/){
+
+        //日期格式
+        com.ibm.icu.text.SimpleDateFormat df=new com.ibm.icu.text.SimpleDateFormat("yyyy-MM-dd");
+        com.ibm.icu.text.SimpleDateFormat dd=new com.ibm.icu.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        java.util.Calendar calstart = java.util.Calendar.getInstance();
+        calstart.setTime(dateTime);
+
+        calstart.add(java.util.Calendar.DAY_OF_WEEK, n);
+
+        System.out.println(df.format(calstart.getTime()));
+        //System.out.println(dd.format(calstart.getTime()));
+        return calstart.getTime();
+    }
 }

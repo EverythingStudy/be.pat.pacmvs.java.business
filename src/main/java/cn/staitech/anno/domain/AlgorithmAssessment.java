@@ -1,6 +1,7 @@
 package cn.staitech.anno.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -43,7 +44,7 @@ public class AlgorithmAssessment implements Serializable {
     /**
      * 标注类型id
      */
-    private Integer categoryId;
+    private Long categoryId;
 
     /**
      * 标注类型名称
@@ -73,7 +74,7 @@ public class AlgorithmAssessment implements Serializable {
     /**
      * 创建者
      */
-    private Integer createBy;
+    private Long createBy;
 
     /**
      * 创建时间
@@ -84,7 +85,7 @@ public class AlgorithmAssessment implements Serializable {
     /**
      * 更新者
      */
-    private Integer updateBy;
+    private Long updateBy;
 
     /**
      * 更新时间
@@ -95,7 +96,7 @@ public class AlgorithmAssessment implements Serializable {
     /**
      * 项目id
      */
-    private Integer projectId;
+    private Long projectId;
 
     /**
      * 删除标志（0：存在，1：删除）
@@ -106,6 +107,9 @@ public class AlgorithmAssessment implements Serializable {
      * 选中状态（0：未选中，1：已选中）
      */
     private String selectedStatus;
+
+    @ApiModelProperty(value = "切片编号")
+    private String imageName;
 
 
 }

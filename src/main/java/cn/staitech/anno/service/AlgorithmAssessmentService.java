@@ -1,6 +1,12 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.AlgorithmAssessment;
+import cn.staitech.anno.domain.assessment.in.CreateAssessmentIn;
+
+import cn.staitech.anno.domain.assessment.in.GetAssessmentListIn;
+import cn.staitech.anno.domain.assessment.out.GetAssessmentListOut;
+import cn.staitech.common.core.domain.PageResponse;
+import cn.staitech.common.core.domain.R;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -13,4 +19,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface AlgorithmAssessmentService extends IService<AlgorithmAssessment> {
 
+    R createAssessment(CreateAssessmentIn req);
+
+    PageResponse<GetAssessmentListOut> getAssessmentList(GetAssessmentListIn req);
 }

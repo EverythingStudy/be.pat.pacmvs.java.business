@@ -54,7 +54,7 @@ public class MessageSource {
             language = SecurityUtils.getLoginUser().getLanguage();
         }
         // language = "en_US";
-        // language = "en";
+         language = "en";
         // language = "zh";
         Locale locale = new Locale(language);
         return messageSource.getMessage(code, null, locale);
