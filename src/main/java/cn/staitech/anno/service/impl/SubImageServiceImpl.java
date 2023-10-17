@@ -16,6 +16,7 @@ import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.service.GetUserInformationService;
 import cn.staitech.anno.service.SubImageService;
 import cn.staitech.anno.service.SysDictDataService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.constant.CacheConstants;
 import cn.staitech.common.core.domain.R;
@@ -85,12 +86,12 @@ public class SubImageServiceImpl extends ServiceImpl<SubImageMapper, SubImage> i
         //期望   只有全部交付成功的切片才会在选择切片列表里展示，未进行全部交付，则选择切片列表不会有切片
         Long specialId = MapUtils.getLong(params, "specialId");
         if (specialId == null) {
-            return R.fail("专题id为空");
+            return R.fail(MessageSource.M("TOPIC_ID_IS_NULL"));
         }
         Special special = specialMapper.selectById(specialId);
         Long deliveryStatus = special.getDeliveryStatus();
         if (deliveryStatus == null || deliveryStatus == 0) {
-            return R.fail("专题未交付，交付后进行此操作");
+            return R.fail(MessageSource.M("TOPIC_ID_IS_NOT_COMMIT"));
         }
         //根据传入groupId查询分组信息
         Group group = groupMapper.selectById(MapUtils.getLong(params, "groupId", 0L));

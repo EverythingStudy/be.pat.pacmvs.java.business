@@ -45,8 +45,6 @@ import java.util.stream.Collectors;
  */
 @Service
 public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, ExamineScore> implements ExamineScoreService {
-
-
     @Resource
     private ExamineScoreMapper examineScoreMapper;
 
@@ -171,13 +169,13 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
 
         QuestionProjectRel questionProjectRel = questionProjectRelMapper.selectById(examineScoreAddVO.getQuestionProjectId());
         if (questionProjectRel == null) {
-            throw new Exception("数据异常");
+            throw new Exception(MessageSource.M("DATA_EXCEPTION"));
         }
         // 校验当前项目是否暂停或者完成
         Project projectBy = projectMapperV1.selectById(questionProjectRel.getProjectId());
         if (projectBy != null) {
             if (projectBy.getStatus() == 3 || projectBy.getStatus() == 4) {
-                throw new Exception("项目暂停或已完成，不可点击开始考试按钮");
+                throw new Exception(MessageSource.M("PROJECT_STOP_OR_OVER"));
             }
         }
         // 查询应标个数
@@ -187,7 +185,7 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         // 查询题库表中信息
         QuestionBank questionBank = questionBankMapper.selectById(questionProjectRel.getQuestionId());
         if (questionBank == null) {
-            throw new Exception("数据异常");
+            throw new Exception(MessageSource.M("DATA_EXCEPTION"));
         }
         ExamineScore examineScore = new ExamineScore();
         examineScore.setQuestionProjectId(questionProjectRel.getQuestionProjectId());
@@ -220,7 +218,7 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
                 .eq("create_by", SecurityUtils.getLoginUser().getSysUser().getUserId());
         ExamineScore examineScoreBy = examineScoreMapper.selectOne(examineScoreQueryWrapper);
         if (examineScoreBy == null) {
-            throw new Exception("数据异常");
+            throw new Exception(MessageSource.M("DATA_EXCEPTION"));
         }
         // 查询切片表中应标数量
         QueryWrapper<MarkingExamine> markingExamineQueryWrapper = new QueryWrapper<>();
@@ -253,7 +251,7 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         return res;
     }
 
-    public String slideJsonExport(ExamineScore examineScoreBy) throws Exception {
+    public String slideJsonExport(ExamineScore examineScoreBy) {
         Long slideId = examineScoreBy.getSlideId();
         if (!Optional.ofNullable(slideId).isPresent()) {
             try {
@@ -265,7 +263,7 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         Slide slideBy = slideMapperV1.selectById(slideId);
         if (!Optional.ofNullable(slideBy).isPresent()) {
             try {
-                throw new Exception("未查询到切片信息");
+                throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -397,6 +395,4 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
     public List<ExamineScoreExportVO> selectLists(List<Long> examineScoreIdList) {
         return examineScoreMapper.selectLists(examineScoreIdList);
     }
-
-
 }

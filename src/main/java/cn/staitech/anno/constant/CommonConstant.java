@@ -22,7 +22,7 @@ public class CommonConstant {
 
     public static final String GLIDE_LINE = "_";
 
-
+    public static final String FILE_SUFFIX_DOCX = ".docx";
     public static final String FILE_SUFFIX_JSON = ".json";
     public static final String FILE_SUFFIX_TXT = ".txt";
     public static final String FILE_SUFFIX_XLSX = ".xlsx";

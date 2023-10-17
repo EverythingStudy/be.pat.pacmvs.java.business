@@ -52,9 +52,6 @@ public class ProjectMemberController extends BaseController {
     @Resource
     private ProjectMemberService projectMemberService;
     @Resource
-    private ProjectRoleService projectRoleService;
-
-    @Resource
     private RecentlyVisitedService recentlyVisitedService;
 
     @Log(title = "项目成员表增加", businessType = BusinessType.INSERT)
@@ -144,20 +141,6 @@ public class ProjectMemberController extends BaseController {
 
         // 获取角色ID
         Long roleId = projectMemberUpdateVO.getRoleId();
-//        SysProjectRole sysProjectRole = projectRoleService.selectProjectRole(roleId);
-
-        // 查询当前项目项目代表总数，项目代表至少保留1名  http://jira.shengtong.com/browse/ANNO-709
-        if (projectMemberService.representationCount(projectId) == 1) {
-            return R.fail(MessageSource.M("REPRESENTATION_MUST_HAS_ONE"));
-        }
-
-//        // 构造查询对象(修改前数据)
-//        ProjectMember getProjectMember = ProjectMember.builder()
-//                .userId(projectMemberUpdateVO.getUserId())
-//                .projectId(projectId)
-//                .build();
-//        // 查询修改前的成员信息内容
-//        List<ProjectMember> projectMembers = projectMemberService.select(getProjectMember);
 
         // 构造修改对象
         ProjectMember projectMember = ProjectMember.builder()
@@ -180,13 +163,6 @@ public class ProjectMemberController extends BaseController {
     public R<List<ProjectMember>> selectProjectMember(@RequestBody ProjectMemberSelectVO projectMemberSelectVO) {
         // 获取项目ID
         Long projectId = projectMemberSelectVO.getProjectId();
-
-        /*
-        // 查询项目中是否添加当前用户:项目尚未添加xxx
-        ProjectMember projectMemberBy = projectMemberService.getLoginUserProjectRoleType(projectId);
-        if (projectMemberBy == null) {
-            return R.fail(MessageSource.M("DISALLOW_PROJECT_NOT_EXIST").concat(SecurityUtils.getUsername()));
-        }*/
 
         // 构造查询条件 ProjectMember
         ProjectMember projectMember = ProjectMember.builder()

@@ -44,7 +44,6 @@ public class ReviewRoundController {
 
     @Resource
     private ReviewRoundService reviewRoundService;
-
     @Resource
     private TopicService topicService;
     @Resource

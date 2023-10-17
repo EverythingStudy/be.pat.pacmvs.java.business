@@ -58,7 +58,6 @@ import java.util.zip.ZipInputStream;
 
 import static cn.staitech.anno.aspect.LogFileAspect.response;
 import static cn.staitech.anno.constant.CommonConstant.*;
-import static cn.staitech.anno.constant.CommonConstant.MICRON;
 
 @Service
 public class MarkingServiceImpl implements MarkingService {
@@ -219,12 +218,12 @@ public class MarkingServiceImpl implements MarkingService {
         // 查询标注表中信息
         Marking markingBy = markingMapper.selectById(req.getMarking_id());
         if (!Optional.ofNullable(markingBy).isPresent()) {
-            throw new Exception("未查询到标注信息");
+            throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
         // 查询标注表中信息
         Slide slide = slideMapperV1.selectById(markingBy.getSlide_id());
         if (!Optional.ofNullable(slide).isPresent()) {
-            throw new Exception("未查询到切片信息");
+            throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
         }
         // 更新前数据
         // 更新文件中的内容
@@ -292,11 +291,11 @@ public class MarkingServiceImpl implements MarkingService {
         }
         Marking markingBy = markingMapper.selectById(markingId);
         if (!Optional.ofNullable(markingBy).isPresent()) {
-            throw new Exception("未查询到标注信息");
+            throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
         Slide slide = slideMapperV1.selectById(markingBy.getSlide_id());
         if (!Optional.ofNullable(slide).isPresent()) {
-            throw new Exception("未查询到切片信息");
+            throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
         }
         Properties properties = markingMapper.selectBy(markingId);
         Features features = socketData(markingBy.getAnnotation_id(), markingBy.getGeometry(), properties);
@@ -336,7 +335,7 @@ public class MarkingServiceImpl implements MarkingService {
     }
 
     @Override
-    public String slideJsonExport(Long slideId) throws Exception {
+    public String slideJsonExport(Long slideId) {
         if (!Optional.ofNullable(slideId).isPresent()) {
             try {
                 throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
@@ -347,7 +346,7 @@ public class MarkingServiceImpl implements MarkingService {
         Slide slideBy = slideMapperV1.selectById(slideId);
         if (!Optional.ofNullable(slideBy).isPresent()) {
             try {
-                throw new Exception("未查询到切片信息");
+                throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -355,7 +354,7 @@ public class MarkingServiceImpl implements MarkingService {
 
         String fileUrl = null;
         try {
-            fileUrl = fileService.createFiles(slideId, ".json");
+            fileUrl = fileService.createFiles(slideId, FILE_SUFFIX_JSON);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -375,7 +374,7 @@ public class MarkingServiceImpl implements MarkingService {
         // 项目信息
         GeoProject project = new GeoProject();
         // 种属编码 + 结构编码 + 数据库项目id
-        String projectId = jsonExport.getSpeciesId() + "_" + jsonExport.getOrganId() + "_" + jsonExport.getProjectId();
+        String projectId = jsonExport.getSpeciesId() + GLIDE_LINE + jsonExport.getOrganId() + GLIDE_LINE + jsonExport.getProjectId();
         project.setProject_id(projectId);
         project.setProject_name(jsonExport.getProjectName());
 
@@ -388,7 +387,7 @@ public class MarkingServiceImpl implements MarkingService {
         // 获取切片中的geo_image_id,为空则使用以下规则进行生成（项目id + 十三位时间戳 + 两位随机数）
         String imageId = "";
         if (Objects.equals(slideBy.getGeoImageId(), "") || slideBy.getGeoImageId() == null) {
-            imageId = jsonExport.getProjectId() + "_" + System.currentTimeMillis() + "_" + RandomUtils.RandomNumbers();
+            imageId = jsonExport.getProjectId() + GLIDE_LINE + System.currentTimeMillis() + GLIDE_LINE + RandomUtils.RandomNumbers();
             Slide slides = new Slide();
             slides.setSlideId(slideId);
             slides.setGeoImageId(imageId);
@@ -650,7 +649,7 @@ public class MarkingServiceImpl implements MarkingService {
 
         Project projectBy = projectMapperV1.selectById(projectId);
         if (projectBy == null) {
-            throw new Exception("未发现项目信息");
+            throw new Exception(MessageSource.M("NOT_FOND_PROJECT"));
         }
         Snowflake snowflake = new Snowflake();
         Long userId = SecurityUtils.getUserId();

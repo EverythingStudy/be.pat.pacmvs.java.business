@@ -58,6 +58,4 @@ public class RecentlyVisitedController {
         }
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
-
-
 }

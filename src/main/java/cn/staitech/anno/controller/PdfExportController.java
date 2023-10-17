@@ -47,11 +47,8 @@ public class PdfExportController {
     
     @Autowired
     private ExaminationService reviewService;
-    
-    //    @Value("${pdfFilePath}")
-    //    private String path;
-    
-    public File pdfAddress() throws Exception {
+
+    public File pdfAddress(){
         Date date = new Date();
         DateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmss");
         //创建pdf存储路径
@@ -74,9 +71,6 @@ public class PdfExportController {
         Font CONTENT_FONT = new Font(bfChinese, 20, Font.BOLD, BaseColor.BLACK);
         //临时存储地址
         File f1 = pdfAddress();
-        //        Date date = new Date();
-        //        DateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmss");
-        //        File f1 = new File(path + fmt.format(date) + ".pdf");
         String PDF_SITE = String.valueOf(f1);
         
         Document document = new Document();
@@ -119,7 +113,6 @@ public class PdfExportController {
         document.close();
         writer.close();
         
-        //        File file = new File(String.valueOf(pdfAddress()));
         File file = new File(String.valueOf(f1));
         
         response.reset();
@@ -148,9 +141,7 @@ public class PdfExportController {
         
         //临时存储地址
         File f1 = pdfAddress();
-        //        Date date = new Date();
-        //        DateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmss");
-        //        File f1 = new File(path + fmt.format(date) + ".pdf");
+
         String PDF_SITE = String.valueOf(f1);
         
         Document document = new Document();
@@ -208,8 +199,6 @@ public class PdfExportController {
         f1.delete();
         
         return null;
-        
-        
     }
     
 }

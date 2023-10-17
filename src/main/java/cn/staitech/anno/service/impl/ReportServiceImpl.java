@@ -46,13 +46,10 @@ public class ReportServiceImpl implements ReportService {
     //报告模板缓存
     public static Map<String, byte[]> TPL_CACHE = new HashMap<>();
 
-    public static ExecutorService executorService = Executors.newFixedThreadPool(10);
-
     @Value("${rpt.dir:../REPORT}")
     private String RPT_DIR;
 
     private final static String SUFFIX = ".docx";
-
     @Resource
     private SlideMapper slideMapper;
     @Resource

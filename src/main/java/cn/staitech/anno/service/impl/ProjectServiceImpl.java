@@ -11,6 +11,7 @@ import cn.staitech.anno.mapper.ProjectMapper;
 import cn.staitech.anno.service.ProjectService;
 import cn.staitech.anno.service.ProjectTypeService;
 import cn.staitech.anno.service.SpeciesService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
@@ -28,16 +29,12 @@ import static cn.staitech.common.security.utils.SecurityUtils.isAdmin;
  */
 @Service
 public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> implements ProjectService {
-
     @Resource
     private ProjectMapper projectMapper;
     @Resource
     private ProjectTypeService projectTypeService;
     @Resource
     private SpeciesService speciesService;
-
-/*    @Resource
-    private ProductSeriesService productSeriesService;*/
 
     /**
      * 根据主键查询项目详情
@@ -117,7 +114,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             obj.setStatusName(Container.PROJECT_STATUS.get(obj.getStatus()));
 
             if (obj.getIndicatorId() == null || obj.getIndicatorId() == 0L) {
-                obj.setIndicatorName("无关联");
+                obj.setIndicatorName(MessageSource.M("RELEVANCE"));
             }
         }
         return projectList;

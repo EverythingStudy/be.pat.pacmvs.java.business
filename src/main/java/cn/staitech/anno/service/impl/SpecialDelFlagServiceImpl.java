@@ -20,13 +20,10 @@ import java.util.List;
  */
 @Service
 public class SpecialDelFlagServiceImpl implements SpecialDelFlagService {
-
     @Resource
     private SpecialMapper specialMapper;
-
     @Resource
     private SpecialReclaimMapper specialReclaimMapper;
-
 
     @Override
     @Async
@@ -54,5 +51,4 @@ public class SpecialDelFlagServiceImpl implements SpecialDelFlagService {
             }
         }
     }
-
 }

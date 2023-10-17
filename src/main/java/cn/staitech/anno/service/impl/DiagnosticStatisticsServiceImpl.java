@@ -22,6 +22,9 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.util.*;
 
+import static cn.staitech.anno.constant.CommonConstant.FILE_SUFFIX_DOCX;
+import static cn.staitech.anno.constant.CommonConstant.GLIDE_LINE;
+
 /**
  * @author wanglibei
  * @version V1.0
@@ -32,9 +35,6 @@ import java.util.*;
 @Slf4j
 @Service
 public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsService {
-
-    private final static String SUFFIX = ".docx";
-
     @Resource
     private SpecialDiagnosisMapper specialDiagnosisMapper;
 
@@ -43,7 +43,6 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
 
     @Resource
     private SpecialMapper specialMapper;
-
 
 
     @SuppressWarnings("unused")
@@ -165,8 +164,8 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
             rptDir.mkdirs();
         }
         // 按专题下项目生成word报告
-        String rptPath = basePath + File.separator + special.getSpecialNumber() + "_"
-                + DateUtils.getDateToString(new Date(), "yyyy-MM-dd") + System.currentTimeMillis() + SUFFIX;
+        String rptPath = basePath + File.separator + special.getSpecialNumber() + GLIDE_LINE
+                + DateUtils.getDateToString(new Date(), "yyyy-MM-dd") + System.currentTimeMillis() + FILE_SUFFIX_DOCX;
         if (CollectionUtils.isNotEmpty(tDataList)) {
             WordTool.generateWord(special, recordAddVO, tDataList, tableMapList, rptPath);
             log.info("路径：" + rptPath);
@@ -225,12 +224,6 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
                             retMap.put(sysVisceraName, dtMap);
                         }
                     }
-                    /*
-                     * List<String> list = dtMap.get(dataKey); if(null == list){
-                     * list = new ArrayList<>(); }
-                     * if(!list.contains(sysGradeName)){ list.add(sysGradeName);
-                     * dtMap.put(sysVisceraName, list); }
-                     */
                 } else {
                     Map<String, List<String>> dtMap = new HashMap<>();
                     List<String> graList = new ArrayList<>();

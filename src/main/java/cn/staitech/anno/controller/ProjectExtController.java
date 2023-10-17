@@ -169,8 +169,6 @@ public class ProjectExtController extends BaseController {
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
         // 获取当前登录用户Id
         Long loginUser = sysUser.getUserId();
-        Long organizationId = sysUser.getOrganizationId();
-
         String name = req.getProjectName();
 
         //根据项目名称查询，用来判断项目名称是否被使用
@@ -368,8 +366,6 @@ public class ProjectExtController extends BaseController {
                     projectListVO.getProjectId());
             if (projectMember == null) {
                 projectListVO.setRoleType(null);
-            } else {
-                //  projectListVO.setRoleType(projectMember.getRoleType());
             }
         }
         //根据条件查询项目
@@ -404,7 +400,6 @@ public class ProjectExtController extends BaseController {
             userNameList.add(userName);
             userMap.put("userId", userId);
             userMap.put("userName", userName);
-            //userMap.put("roleName", ProjectMemberEnum.getEnumLabelByValue(projectMember.getRoleId()));
             userMap.put("roleName", projectMember.getRoleId()); // 通地roleId获取角色名称
 
             userNames.add(userMap);

@@ -44,16 +44,11 @@ public class TestController {
 
     @Resource
     private AnnotationService annotationService;
-
-    @Resource
-    private SlideService slideService;
-
     @Resource
     private RedissonClient client;
 
     @Resource(name = "redissonClient")
     private RedissonClient redissonClient;
-
 
     @GetMapping("/api")
     public R sendMsg() {
