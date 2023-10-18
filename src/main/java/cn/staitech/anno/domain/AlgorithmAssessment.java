@@ -95,10 +95,6 @@ public class AlgorithmAssessment implements Serializable {
      */
     private String delFlag;
 
-    /**
-     * 选中状态（0：未选中，1：已选中）
-     */
-    private String selectedStatus;
 
     @ApiModelProperty(value = "切片编号")
     private String imageName;
