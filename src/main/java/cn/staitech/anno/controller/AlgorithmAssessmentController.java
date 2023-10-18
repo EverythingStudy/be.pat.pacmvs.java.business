@@ -4,6 +4,7 @@ package cn.staitech.anno.controller;
 import cn.staitech.anno.domain.AlgorithmAssessment;
 import cn.staitech.anno.domain.assessment.in.CreateAssessmentIn;
 import cn.staitech.anno.domain.assessment.in.GetAssessmentListIn;
+import cn.staitech.anno.domain.assessment.in.GetJsonInfoIn;
 import cn.staitech.anno.domain.assessment.in.RemoveAssessmentIn;
 import cn.staitech.anno.domain.assessment.out.GetAssessmentListOut;
 import cn.staitech.anno.domain.question.in.CreateBySlideIn;
@@ -54,10 +55,18 @@ public class AlgorithmAssessmentController {
         return R.ok(resp);
     }
 
-    @ApiOperation(value = "考核设置-删除")
+    @ApiOperation(value = "算法考核-删除")
     @PostMapping("/removeAssessment")
     public R removeAssessment(@Validated @RequestBody RemoveAssessmentIn req) {
         return algorithmAssessmentService.removeAssessment(req);
+
+
+    }
+
+    @ApiOperation(value = "算法考核-获取json")
+    @PostMapping("/getJsonInfo")
+    public R getJsonInfo(@Validated @RequestBody GetJsonInfoIn req) {
+        return algorithmAssessmentService.getJsonInfo(req);
 
 
     }

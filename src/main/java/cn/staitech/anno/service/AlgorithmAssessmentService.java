@@ -4,6 +4,7 @@ import cn.staitech.anno.domain.AlgorithmAssessment;
 import cn.staitech.anno.domain.assessment.in.CreateAssessmentIn;
 
 import cn.staitech.anno.domain.assessment.in.GetAssessmentListIn;
+import cn.staitech.anno.domain.assessment.in.GetJsonInfoIn;
 import cn.staitech.anno.domain.assessment.in.RemoveAssessmentIn;
 import cn.staitech.anno.domain.assessment.out.GetAssessmentListOut;
 import cn.staitech.common.core.domain.PageResponse;
@@ -27,4 +28,5 @@ public interface AlgorithmAssessmentService extends IService<AlgorithmAssessment
     R removeAssessment(RemoveAssessmentIn req);
     boolean zipExport(String zipUrl, Long projectId) throws Exception;
 
+    R getJsonInfo(GetJsonInfoIn req);
 }

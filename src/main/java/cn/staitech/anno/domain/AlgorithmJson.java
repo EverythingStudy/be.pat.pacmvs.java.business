@@ -58,7 +58,7 @@ public class AlgorithmJson implements Serializable {
     /**
      * 创建者
      */
-    private Integer createBy;
+    private Long createBy;
 
     /**
      * 创建时间

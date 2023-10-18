@@ -2,9 +2,13 @@ package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.AlgorithmAssessment;
 import cn.staitech.anno.domain.AlgorithmJson;
+import cn.staitech.anno.domain.ParseJson;
+import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.assessment.in.CreateAssessmentDataIn;
 import cn.staitech.anno.domain.assessment.in.CreateAssessmentIn;
 import cn.staitech.anno.domain.assessment.in.GetAssessmentListIn;
+import cn.staitech.anno.domain.assessment.in.GetJsonInfoDataIn;
+import cn.staitech.anno.domain.assessment.in.GetJsonInfoIn;
 import cn.staitech.anno.domain.assessment.in.RemoveAssessmentIn;
 import cn.staitech.anno.domain.assessment.out.GetAssessmentListOut;
 import cn.staitech.anno.mapper.AlgorithmAssessmentMapper;
@@ -12,6 +16,9 @@ import cn.staitech.anno.mapper.SlideMapper;
 import cn.staitech.anno.mapper.AlgorithmJsonMapper;
 import cn.staitech.anno.mapper.SlideMapper;
 import cn.staitech.anno.service.AlgorithmAssessmentService;
+import cn.staitech.anno.service.AlgorithmJsonService;
+import cn.staitech.anno.service.SlideService;
+import cn.staitech.anno.utils.ParseJsonUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.utils.MessageSource;
@@ -67,6 +74,9 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
     @Resource
     private AlgorithmAssessmentMapper algorithmAssessmentMapper;
 
+    @Autowired
+    private AlgorithmJsonService algorithmJsonService;
+
     @Override
     public boolean zipExport(String zipUrl, Long projectId) throws Exception {
         StringBuilder sb;
@@ -74,7 +84,6 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         Map<String, String> ddlList = new HashMap<>();
         try {
             // 根据项目查询算法考核表中数据
-
 
 
             //zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
@@ -112,7 +121,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
                             String geoImageId = image.getString("image_id");
                             if (imageName != null) {
                                 // 写入数据库
-                                writeAlgorithm(projectId,imageName);
+                                writeAlgorithm(projectId, imageName);
                             }
                             //这里是对读取的文件内容进行处理
                             ddlList.put(ze.getName(), sb.toString());
@@ -128,11 +137,51 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         return true;
     }
 
-    public void writeAlgorithm(Long projectId, String imageName){
+    @Override
+    public R getJsonInfo(GetJsonInfoIn req) {
+        log.info("获取json数据接口开始：");
+        List<GetJsonInfoDataIn> reqList = req.getReqList();
+        List<AlgorithmJson> jsonReq = new ArrayList<>();
+        for (GetJsonInfoDataIn getJsonInfoDataIn : reqList) {
+            //读取文件解析数据校验
+            ParseJson parseJson = new ParseJson();
+            try {
+                parseJson = ParseJsonUtil.parseJson(getJsonInfoDataIn.getAlgorithmJsonUrl(), 0);
+            } catch (IOException e) {
+                e.printStackTrace();
+                log.info("json格式解析异常" + e.toString());
+                return R.fail("json格式解析异常");
+            }
+            int labels = parseJson.getLabels();
+            if (labels != 1) {
+                return R.fail("json结构指标不唯一！");
+            }
+            LambdaQueryWrapper<AlgorithmAssessment> qw = new LambdaQueryWrapper<>();
+            qw.eq(AlgorithmAssessment::getImageName, getJsonInfoDataIn.getAlgorithmJsonName());
+            qw.eq(AlgorithmAssessment::getProjectId, req.getProjectId());
+            List<AlgorithmAssessment> algorithmAssessments = this.baseMapper.selectList(qw);
+            if (CollectionUtils.isEmpty(algorithmAssessments)) {
+                return R.fail("项目下无此切片算法考核信息！");
+            }
+            AlgorithmAssessment algorithmAssessment = algorithmAssessments.get(0);
+            AlgorithmJson algorithmJson = new AlgorithmJson();
+            algorithmJson.setAlgorithmAssessmentId(algorithmAssessment.getAlgorithmAssessmentId());
+            algorithmJson.setSlideId(algorithmJson.getSlideId());
+            algorithmJson.setAlgorithmJsonName(getJsonInfoDataIn.getAlgorithmJsonName());
+            algorithmJson.setAlgorithmJsonUrl(getJsonInfoDataIn.getAlgorithmJsonUrl());
+            algorithmJson.setCreateBy(SecurityUtils.getUserId());
+            algorithmJson.setCreateTime(new Date());
+            jsonReq.add(algorithmJson);
+        }
+        algorithmJsonService.saveBatch(jsonReq);
+        return R.ok();
+    }
+
+    public void writeAlgorithm(Long projectId, String imageName) {
         QueryWrapper<AlgorithmAssessment> algorithmAssessmentQueryWrapper = new QueryWrapper<>();
-        algorithmAssessmentQueryWrapper.eq("project_id",projectId).eq("del_flag","0");
+        algorithmAssessmentQueryWrapper.eq("project_id", projectId).eq("del_flag", "0");
         List<AlgorithmAssessment> algorithmAssessments = algorithmAssessmentMapper.selectList(algorithmAssessmentQueryWrapper);
-        for(AlgorithmAssessment algorithmAssessment:algorithmAssessments){
+        for (AlgorithmAssessment algorithmAssessment : algorithmAssessments) {
 
         }
 
@@ -146,8 +195,8 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
     @Resource
     private AlgorithmJsonMapper algorithmJsonMapper;
 
-    @Resource
-    private SlideMapper slideMapper;
+    @Autowired
+    private SlideService slideService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -155,8 +204,12 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         log.info("生成算法考核接口开始：");
 
         List<CreateAssessmentDataIn> slideList = req.getSlideList();
+        List<Slide> qw = new ArrayList<>();
         List<AlgorithmAssessment> algorithmAssessments = slideList.stream().map(e -> {
             AlgorithmAssessment resp = new AlgorithmAssessment();
+            Slide slide = new Slide();
+            slide.setSlideId(e.getSlideId());
+            slide.setIfCreateQuestions("1");
             BeanUtils.copyProperties(e, resp);
             resp.setCreateBy(SecurityUtils.getUserId());
             resp.setCreateTime(new Date());
@@ -171,12 +224,14 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
             String s = StringUtils.substringAfterLast(urlPath, File.separator);
             resp.setAnnotationJsonName(s);
             resp.setAnnotationJsonUrl(urlPath);
+            qw.add(slide);
             return resp;
 
         }).collect(Collectors.toList());
 
         saveBatch(algorithmAssessments);
         //修改切片是否生成状态
+        slideService.updateBatchById(qw);
         return R.ok();
     }
 
@@ -191,16 +246,9 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         qw.eq(AlgorithmAssessment::getProjectId, req.getProjectId());
         qw.eq(!ObjectUtils.isEmpty(req.getCategoryId()), AlgorithmAssessment::getCategoryId, req.getCategoryId());
         if (!CollectionUtils.isEmpty(req.getCreateTimeParams())) {
-            try {
-                Date date = DateUtils.addAndSubtractDaysByCalendar(DateUtils.stringToDate((String) req.getCreateTimeParams().get("endTime"), "yyyy-MM-dd"), 1);
-                qw.lt(AlgorithmAssessment::getCreateTime, date);
-                qw.ge(AlgorithmAssessment::getCreateTime, DateUtils.stringToDate((String) req.getCreateTimeParams().get("beginTime"), "yyyy-MM-dd"));
-            } catch (ParseException e) {
-                e.printStackTrace();
-                log.error("时间入参格式转化异常-{}", e);
-                throw new RuntimeException("时间入参格式转化异常!");
-            }
-
+            Date date = DateUtils.addAndSubtractDaysByCalendar(req.getCreateTimeParams().get("endTime"), 1);
+            qw.lt(AlgorithmAssessment::getCreateTime, date);
+            qw.ge(AlgorithmAssessment::getCreateTime, req.getCreateTimeParams().get("beginTime"));
         }
 
         Page<AlgorithmAssessment> page = PageHelper.startPage(req.getPageNum(), req.getPageSize());

@@ -4,6 +4,7 @@ import cn.staitech.common.core.domain.PageRequest;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -23,6 +24,6 @@ public class GetAssessmentListIn  extends PageRequest {
     private Long categoryId;
 
     @ApiModelProperty(value = "生成时间")
-    private Map<String, Object> createTimeParams;
+    private Map<String, Date> createTimeParams;
 
 }

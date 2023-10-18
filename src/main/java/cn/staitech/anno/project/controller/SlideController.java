@@ -9,6 +9,8 @@ import cn.staitech.anno.project.vo.*;
 import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
+
+import cn.staitech.common.security.annotation.Logical;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -39,7 +41,8 @@ public class SlideController {
     @Resource
     private OptService optService;
 
-    @RequiresPermissions("smartAnno:project:slice")
+    //@RequiresPermissions("smartAnno:project:slice")
+    @RequiresPermissions(value = {"smartAnno:project:slice", "smartAnnoInfo:slice"}, logical = Logical.OR)
     @ApiOperation(value = "智能标注-切片分页查询")
     @PostMapping("/page")
     public R<PageMaster<SlideVO>> page(@RequestBody SlideQueryIN in) throws Exception {
