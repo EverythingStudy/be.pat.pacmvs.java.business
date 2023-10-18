@@ -264,6 +264,9 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
     @Override
     public void export(AssessmentExportIN assessmentExportIN) throws Exception {
+        if(assessmentExportIN.getAlgorithmentList().size() < 1){
+            throw new Exception("未选择切片");
+        }
         List<AssessmentExportOut>  assessmentExportOutList = assessmentResultsMapper.selectExportList(assessmentExportIN);
         // 查询项目中得信息
         Project projectBy = projectMapperV1.selectById(assessmentExportIN.getProjectId());

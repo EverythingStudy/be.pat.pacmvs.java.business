@@ -63,8 +63,6 @@ public class AlgorithmAssessmentController {
     @PostMapping("/getJsonInfo")
     public R getJsonInfo(@Validated @RequestBody GetJsonInfoIn req) {
         return algorithmAssessmentService.getJsonInfo(req);
-
-
     }
 
     @ApiOperationSupport(author = "gjt")

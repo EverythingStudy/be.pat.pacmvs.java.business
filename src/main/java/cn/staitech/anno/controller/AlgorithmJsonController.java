@@ -34,7 +34,7 @@ public class AlgorithmJsonController {
 
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "获取标注数据")
-    @GetMapping("/getGeoJson")
+    @PostMapping("/getGeoJson")
     public SelectGeoJsonList getGeoJson(@RequestBody SelectGeoJson selectGeoJson)throws Exception {
         return algorithmJsonService.getGeoJson(selectGeoJson);
     }

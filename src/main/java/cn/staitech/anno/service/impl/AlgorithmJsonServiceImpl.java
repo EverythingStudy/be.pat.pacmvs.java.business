@@ -20,12 +20,14 @@ import javax.annotation.Resource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author gjt
@@ -46,63 +48,129 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
     @Override
     public void examineComparison(Long algorithmJsonId) throws Exception {
         // 查询详情信息
-        AlgorithmJson algorithmJson = algorithmJsonMapper.selectById(algorithmJsonId);
+        AlgorithmJson algorithmJsonBy = algorithmJsonMapper.selectById(algorithmJsonId);
 
-        if(algorithmJson == null){
+        if (algorithmJsonBy == null) {
             throw new Exception("未发现文件信息");
         }
         // 查询考题详情
-        AlgorithmAssessment algorithmAssessment = algorithmAssessmentMapper.selectById(algorithmJson.getAlgorithmAssessmentId());
-        if(algorithmAssessment == null){
+        AlgorithmAssessment algorithmAssessment = algorithmAssessmentMapper.selectById(algorithmJsonBy.getAlgorithmAssessmentId());
+        if (algorithmAssessment == null) {
             throw new Exception("未发现考题信息");
         }
+        // 更新当前表中选中状态
+        AlgorithmJson algorithmJson = new AlgorithmJson();
+        algorithmJson.setAlgorithmJsonId(algorithmJsonId);
+        algorithmJson.setSelectedStatus("1");
+        algorithmJsonMapper.updateById(algorithmJson);
+
         // 构建map
         com.alibaba.fastjson2.JSONObject markingJsonObject = new com.alibaba.fastjson2.JSONObject();
-        markingJsonObject.put("annotation_json_url",algorithmAssessment.getAnnotationJsonUrl());
-        markingJsonObject.put("algorithm_json_url",algorithmJson.getAlgorithmJsonUrl());
-        markingJsonObject.put("slide_id",algorithmJson.getSlideId());
-        markingJsonObject.put("json_name",algorithmJson.getAlgorithmJsonName());
+        markingJsonObject.put("annotation_json_url", algorithmAssessment.getAnnotationJsonUrl());
+        markingJsonObject.put("algorithm_json_url", algorithmJsonBy.getAlgorithmJsonUrl());
+        markingJsonObject.put("slide_id", algorithmJsonBy.getSlideId());
+        markingJsonObject.put("json_name", algorithmJsonBy.getAlgorithmJsonName());
         markingJsonObject.put("create_by", SecurityUtils.getLoginUser().getSysUser().getUserId());
         // 调用python接口
         remoteLabelService.algoExamine(markingJsonObject);
+
     }
 
     @Override
     public SelectGeoJsonList getGeoJson(SelectGeoJson selectGeoJson) throws Exception {
         // 获取json列表，判断
         List<Long> algorithmJsonList = selectGeoJson.getAlgorithmJsonList();
-        if(algorithmJsonList.size() == 1){
+        if (algorithmJsonList.size() == 1) {
             AlgorithmJson algorithmJson = algorithmJsonMapper.selectById(algorithmJsonList.get(0));
-            if(algorithmJson != null){
-                if(Objects.equals(algorithmJson.getJsonType(), "0")){
+            if (algorithmJson != null) {
+                if (Objects.equals(algorithmJson.getJsonType(), "0")) {
                     throw new Exception("禁止只选择一个人工标注的JSON");
                 }
             }
         }
         QueryWrapper<AlgorithmJson> algorithmJsonQueryWrapper = new QueryWrapper<>();
-        algorithmJsonQueryWrapper.in("algorithm_json_id",algorithmJsonList);
+        algorithmJsonQueryWrapper.in("algorithm_json_id", algorithmJsonList);
         // 查询选中的json列表
         List<AlgorithmJson> algorithmJsons = algorithmJsonMapper.selectList(algorithmJsonQueryWrapper);
         // 循环json
         JSONArray features = new JSONArray();
         JSONArray labelInfo = new JSONArray();
-        for(AlgorithmJson algorithmJson:algorithmJsons){
+        for (AlgorithmJson algorithmJson : algorithmJsons) {
             // 获取json文件路径
-            if(algorithmJson.getAlgorithmJsonUrl() != null){
+            if (algorithmJson.getAlgorithmJsonUrl() != null) {
+                System.out.println(algorithmJson.getAlgorithmJsonUrl());
                 JSONObject jsonObject = getGeoJson(algorithmJson.getAlgorithmJsonUrl());
-                JSONArray featuresJson = jsonObject.getJSONArray("features");
-                features.addAll(featuresJson);
-                JSONArray labelNameJson = jsonObject.getJSONArray("label_name");
-                labelInfo.addAll(labelNameJson);
+                if (jsonObject.size() > 0) {
+                    JSONArray featuresJson = jsonObject.getJSONArray("features");
+                    if(selectGeoJson.getLabelList().size() > 0){
+                        featuresJson = featuresJson.stream().filter(s -> selectGeoJson.getLabelList().contains(((JSONObject) s).getJSONObject("properties").getString("label_code"))).collect(Collectors.toCollection(JSONArray::new));
+                    }
+                    features.addAll(updateYs(featuresJson));
+                    JSONArray labelNameJson = jsonObject.getJSONArray("label_info");
+                    labelInfo.addAll(labelNameJson);
+                }
             }
         }
         SelectGeoJsonList selectGeoJsonList = new SelectGeoJsonList();
         selectGeoJsonList.setFeatures(features);
         selectGeoJsonList.setLabel_info(labelInfo);
         return selectGeoJsonList;
-
-
     }
+
+
+
+    public JSONArray updateYs(JSONArray features){
+        JSONArray jsonArray = new JSONArray();
+        for(Object i:features){
+            JSONObject featureObject = (JSONObject) i;
+            JSONObject geometry = featureObject.getJSONObject("geometry");
+            featureObject.put("geometry",updateY(geometry));
+            jsonArray.add(featureObject);
+        }
+        return jsonArray;
+    }
+
+
+    public static JSONObject updateY(JSONObject geometry) {
+        List<Object> lists = new ArrayList<>();
+        JSONArray coordinatesJsonArray1 = geometry.getJSONArray("coordinates");
+        String type = geometry.getString("type");
+        if (Objects.equals(type, "Polygon")) {
+            List<Object> list1 = new ArrayList<>();
+            for (Object i1 : coordinatesJsonArray1) {
+                JSONArray jsonArray1 = JSONArray.parseArray(i1.toString());
+                for (Object i2 : jsonArray1) {
+                    JSONArray jsonArray2 = JSONArray.parseArray(i2.toString());
+                    List<Double> list = JSONObject.parseArray(jsonArray2.toJSONString(), Double.class);
+                    List<Double> newList = new ArrayList<>();
+                    newList.add(list.get(0));
+                    newList.add(Double.valueOf("-" + list.get(1)));
+                    list1.add(newList);
+                }
+            }
+            lists.add(list1);
+        } else if (Objects.equals(type, "LineString")) {
+            for (Object i1 : coordinatesJsonArray1) {
+                JSONArray jsonArray2 = JSONArray.parseArray(i1.toString());
+                List<Double> list = JSONObject.parseArray(jsonArray2.toJSONString(), Double.class);
+                List<Double> newList = new ArrayList<>();
+                newList.add(list.get(0));
+                newList.add(Double.valueOf("-" + list.get(1)));
+                lists.add(newList);
+            }
+        } else if (Objects.equals(type, "Point")) {
+            List<Double> list = JSONObject.parseArray(coordinatesJsonArray1.toJSONString(), Double.class);
+            lists.add(list.get(0));
+            lists.add(Double.valueOf("-" + list.get(1)));
+        }
+        JSONObject geometryJson = new JSONObject();
+        geometryJson.put("type", type);
+        geometryJson.put("coordinates", lists);
+        return geometryJson;
+    }
+
+
+
 
 
 
@@ -138,8 +206,6 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
             return null;
         }
     }
-
-
 
 
 }
