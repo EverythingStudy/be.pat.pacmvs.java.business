@@ -2,6 +2,7 @@ package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.AlgorithmAssessment;
 import cn.staitech.anno.domain.AlgorithmJson;
+import cn.staitech.anno.domain.assessment.in.*;
 import cn.staitech.anno.domain.ParseJson;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.assessment.in.CreateAssessmentDataIn;
@@ -11,9 +12,7 @@ import cn.staitech.anno.domain.assessment.in.GetJsonInfoDataIn;
 import cn.staitech.anno.domain.assessment.in.GetJsonInfoIn;
 import cn.staitech.anno.domain.assessment.in.RemoveAssessmentIn;
 import cn.staitech.anno.domain.assessment.out.GetAssessmentListOut;
-import cn.staitech.anno.mapper.AlgorithmAssessmentMapper;
-import cn.staitech.anno.mapper.SlideMapper;
-import cn.staitech.anno.mapper.AlgorithmJsonMapper;
+import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.mapper.SlideMapper;
 import cn.staitech.anno.service.AlgorithmAssessmentService;
 import cn.staitech.anno.service.AlgorithmJsonService;
@@ -41,19 +40,16 @@ import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.net.URLEncoder;
+import java.nio.file.Paths;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -76,6 +72,18 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
     @Autowired
     private AlgorithmJsonService algorithmJsonService;
+
+    @Autowired
+    private MarkingService markingService;
+
+    @Resource
+    private AlgorithmJsonMapper algorithmJsonMapper;
+
+    @Resource
+    private SlideMapper slideMapper;
+
+    @Autowired
+    private SlideService slideService;
 
     @Override
     public boolean zipExport(String zipUrl, Long projectId) throws Exception {
@@ -110,18 +118,25 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
                         while ((line = bf.readLine()) != null) {
                             sb.append(line);
                         }
+                        // 获取文件内容并转换成string
+                        String fileContent = sb.toString();
                         // 获取文件中的内容
-                        org.json.JSONObject jsonObject = new org.json.JSONObject(sb.toString());
+                        org.json.JSONObject jsonObject = new org.json.JSONObject(fileContent);
                         // 获取图像相关信息
                         org.json.JSONObject image = jsonObject.getJSONObject("image");
+                        // 获取标签相关信息
+                        org.json.JSONArray labelInfo = jsonObject.getJSONArray("label_info");
+                        // 标签列表长度超出一个，抛出异常
+                        if (labelInfo.length() > 1) {
+                            throw new Exception("文件中存在多个标签，解析失败");
+                        }
                         if (image != null) {
                             // 获取标注名称
                             String imageName = image.getString("image_name");
 
-                            String geoImageId = image.getString("image_id");
                             if (imageName != null) {
                                 // 写入数据库
-                                writeAlgorithm(projectId, imageName);
+                                writeAlgorithm(projectId, imageName, fileContent);
                             }
                             //这里是对读取的文件内容进行处理
                             ddlList.put(ze.getName(), sb.toString());
@@ -136,6 +151,8 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         }
         return true;
     }
+
+
 
     @Override
     public R getJsonInfo(GetJsonInfoIn req) {
@@ -177,26 +194,88 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         return R.ok();
     }
 
-    public void writeAlgorithm(Long projectId, String imageName) {
+        public void writeAlgorithm(Long projectId, String imageName, String fileContent) {
         QueryWrapper<AlgorithmAssessment> algorithmAssessmentQueryWrapper = new QueryWrapper<>();
+        algorithmAssessmentQueryWrapper.eq("project_id", projectId).eq("del_flag", "0");
+        // 查询算法考核列表，获取算法考核列表
         algorithmAssessmentQueryWrapper.eq("project_id", projectId).eq("del_flag", "0");
         List<AlgorithmAssessment> algorithmAssessments = algorithmAssessmentMapper.selectList(algorithmAssessmentQueryWrapper);
         for (AlgorithmAssessment algorithmAssessment : algorithmAssessments) {
-
+            // 判断图片名称是否与json文件中图片名称是否一致
+            if (Objects.equals(algorithmAssessment.getImageName(), imageName)) {
+                // 根据切片获取文件路径
+                String algorithmJsonName = String.valueOf(algorithmAssessment.getSlideId());
+                String fileUrl = "D:\\home\\pat_saas\\Data\\test\\" + algorithmJsonName;
+                // 创建文件
+                createFile(fileUrl);
+                // 写入文件
+                exportJson(fileUrl, fileContent);
+                // 写入文件后更新算法json表中数据
+                algorithmJsonMapper.insert(setAlgorithmJson(algorithmAssessment, fileUrl, algorithmJsonName));
+            }
         }
-
-        //
-
     }
 
-    @Autowired
-    private MarkingService markingService;
 
-    @Resource
-    private AlgorithmJsonMapper algorithmJsonMapper;
+    public AlgorithmJson setAlgorithmJson(AlgorithmAssessment algorithmAssessment, String fileUrl, String algorithmJsonName) {
+        AlgorithmJson algorithmJson = new AlgorithmJson();
+        algorithmJson.setAlgorithmAssessmentId(algorithmAssessment.getAlgorithmAssessmentId());
+        algorithmJson.setSlideId(algorithmAssessment.getSlideId());
+        algorithmJson.setAlgorithmJsonUrl(fileUrl);
+        algorithmJson.setAlgorithmJsonName(algorithmJsonName);
+        algorithmJson.setCreateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
+        algorithmJson.setCreateTime(new Date());
+        return algorithmJson;
+    }
 
-    @Autowired
-    private SlideService slideService;
+
+    public void createFile(String path) {
+        if (path != null) {
+            File dir = new File(path);
+            if (!dir.exists()) {
+                if (!dir.mkdirs()) {
+                    log.error("创建文件异常");
+                }
+            }
+        }
+    }
+
+    public void exportJson(String fileUrl, String jsonString) {
+        try {
+            OutputStream outputStream = Files.newOutputStream(Paths.get(fileUrl));
+            outputStream.write(jsonString.getBytes());
+            // 关闭流
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void export(AssessmentExportIN assessmentExportIN) {
+
+//        List<AssessmentExportOut>  assessmentExportOutList =
+
+
+        // 查询考核评分列表
+//        List<ExamineScoreExportVO> examineScoreList = examineScoreService.selectLists(examineScoreExportInsertVo.getExamineScoreIdList());
+//        // 查询项目中得信息
+//        Project projectBy = projectService.getById(examineScoreExportInsertVo.getProjectId());
+//        String projectName = "";
+//        if (projectBy != null) {
+//            projectName = projectBy.getProjectName();
+//        }
+//        // 构造表头的每个列头 定义表头
+//        List<Map<String, String>> titleList = getTitleList(CommonConstant.ALGORITHMASSESSMENT_COLHEAD_KEY, CommonConstant.ALGORITHMASSESSMENT_COLHEAD_VALUE);
+//        ExcelTool excelTool = new ExcelTool<>(MessageSource.M("EXCEL_FILE_PATH"), 20, 20);
+//        List<Column> titleData = excelTool.columnTransformer(titleList);
+//        response.setContentType("application/vnd.ms-excel;charset=utf-8");
+//        response.setCharacterEncoding("utf-8");
+//        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(projectName, "UTF-8") + CommonConstant.FILE_SUFFIX_XLSX);
+//        excelTool.exportExcel(titleData, examineScoreList, response.getOutputStream(), true, false);
+//
+    }
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -234,6 +313,8 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         slideService.updateBatchById(qw);
         return R.ok();
     }
+
+
 
     @Override
     public PageResponse<GetAssessmentListOut> getAssessmentList(GetAssessmentListIn req) {
@@ -279,6 +360,9 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         return resp;
     }
 
+
+
+
     @Override
     public R removeAssessment(RemoveAssessmentIn req) {
         log.info("算法考核数据删除家口开始：");
@@ -295,4 +379,5 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         this.baseMapper.updateById(entity);
         return R.ok();
     }
+
 }

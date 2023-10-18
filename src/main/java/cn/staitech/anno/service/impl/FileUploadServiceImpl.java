@@ -42,6 +42,9 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     @Resource
     private FilesProcessService filesProcessService;
+
+    @Resource
+    private AlgorithmAssessmentService algorithmAssessmentService;
     private String basePath = "/home/pat_saas";
     private String zipPath = "/home/pat_saas/Upload/json/zip";
 
@@ -106,11 +109,10 @@ public class FileUploadServiceImpl implements FileUploadService {
                 break;
             case 5:
 
-                String path = uploadPath;
-
-                // 获取二级目录
-                // --------------------------------------------------------------------------->
+//                String path = uploadPath;
+                dirPath = zipPath;
                 break;
+
         }
         String fileName = fileUploadVO.getFileName();
         // 文件名称
@@ -158,7 +160,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 if (!Optional.ofNullable(fileUploadVO.getProjectId()).isPresent()) {
                     throw new Exception(MessageSource.M("DISALLOW_NOT_PROJECT"));
                 }
-                markingService.zipExport(files.getFilesPath(), fileUploadVO.getProjectId());
+                algorithmAssessmentService.zipExport(files.getFilesPath(), fileUploadVO.getProjectId());
                 break;
         }
         return files;

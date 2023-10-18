@@ -1,20 +1,16 @@
 package cn.staitech.anno.controller;
 
 
-import cn.staitech.anno.domain.AlgorithmAssessment;
+import cn.staitech.anno.domain.assessment.in.AssessmentExportIN;
 import cn.staitech.anno.domain.assessment.in.CreateAssessmentIn;
 import cn.staitech.anno.domain.assessment.in.GetAssessmentListIn;
 import cn.staitech.anno.domain.assessment.in.GetJsonInfoIn;
 import cn.staitech.anno.domain.assessment.in.RemoveAssessmentIn;
 import cn.staitech.anno.domain.assessment.out.GetAssessmentListOut;
-import cn.staitech.anno.domain.question.in.CreateBySlideIn;
-import cn.staitech.anno.domain.question.in.CreateQuestionIn;
-import cn.staitech.anno.domain.question.in.GetQuestionListIn;
-import cn.staitech.anno.domain.question.in.SettingCompletedIn;
-import cn.staitech.anno.domain.question.out.GetQuestionListOut;
 import cn.staitech.anno.service.AlgorithmAssessmentService;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +65,14 @@ public class AlgorithmAssessmentController {
         return algorithmAssessmentService.getJsonInfo(req);
 
 
+    }
+
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "导出标注数据")
+    @PostMapping("/export")
+    public void export(@RequestBody AssessmentExportIN assessmentExportIN
+    ) throws Exception {
+        algorithmAssessmentService.export(assessmentExportIN);
     }
 
 }

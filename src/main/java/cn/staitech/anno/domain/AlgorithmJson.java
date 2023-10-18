@@ -69,7 +69,7 @@ public class AlgorithmJson implements Serializable {
     /**
      * 更新者
      */
-    private Integer updateBy;
+    private Long updateBy;
 
     /**
      * 更新时间

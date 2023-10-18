@@ -110,6 +110,9 @@ public class CommonConstant {
     public static final String[] EXAMINESCORE_COLHEAD_KEY = {"项目名称", "切片编号", "答题者", "开始时间", "交卷时间", "应标个数(下限)", "实标个数", "miou拟合区间", "fiou拟合区间", "biou拟合区间", "tiou拟合区间", "个人拟合度", "考试结果"};
     public static final String[] EXAMINESCORE_COLHEAD_VALUE = {"projectName", "imageName", "nickName", "startTime", "endTime", "shouldNumber", "realityNumber", "miou", "fiou", "biou", "tiou", "personalFit", "examResults"};
 
+    public static final String[] ALGORITHMASSESSMENT_COLHEAD_KEY = {"项目名称", "切片编号", "标注json", "对比json", "考核人员", "考核标签", "轮廓个数", "漏检率", "误检率", "miou", "fiou", "biou", "tiou","结果时间"};
+    public static final String[] ALGORITHMASSESSMENT_COLHEAD_VALUE = {"projectName", "imageName", "nickName", "startTime", "endTime", "shouldNumber", "realityNumber", "miou", "fiou", "biou", "tiou", "personalFit", "examResults"};
+
 
     /**
      * Excel表头 - Measure - 构造表头的每个列头：名称 周长/长度 面积 内角 外角 平均间距 最小间距 最大间距 总数 测量人 创建时间

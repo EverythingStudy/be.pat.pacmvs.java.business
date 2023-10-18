@@ -315,19 +315,34 @@ public class MarkingServiceImpl implements MarkingService {
         List<Object> lists = new ArrayList<>();
         JSONArray coordinatesJsonArray1 = geometry.getJSONArray("coordinates");
         String type = geometry.getString("type");
-        List<Object> list1 = new ArrayList<>();
-        for (Object i1 : coordinatesJsonArray1) {
-            JSONArray jsonArray1 = JSONArray.parseArray(i1.toString());
-            for (Object i2 : jsonArray1) {
-                JSONArray jsonArray2 = (JSONArray) i2;
+        if (Objects.equals(type, "Polygon")) {
+            List<Object> list1 = new ArrayList<>();
+            for (Object i1 : coordinatesJsonArray1) {
+                JSONArray jsonArray1 = JSONArray.parseArray(i1.toString());
+                for (Object i2 : jsonArray1) {
+                    JSONArray jsonArray2 = JSONArray.parseArray(i2.toString());
+                    List<Double> list = JSONObject.parseArray(jsonArray2.toJSONString(), Double.class);
+                    List<Double> newList = new ArrayList<>();
+                    newList.add(list.get(0));
+                    newList.add(Double.valueOf(String.valueOf(Math.abs(list.get(1)))));
+                    list1.add(newList);
+                }
+            }
+            lists.add(list1);
+        } else if (Objects.equals(type, "LineString")) {
+            for (Object i1 : coordinatesJsonArray1) {
+                JSONArray jsonArray2 = JSONArray.parseArray(i1.toString());
                 List<Double> list = JSONObject.parseArray(jsonArray2.toJSONString(), Double.class);
                 List<Double> newList = new ArrayList<>();
                 newList.add(list.get(0));
                 newList.add(Double.valueOf(String.valueOf(Math.abs(list.get(1)))));
-                list1.add(newList);
+                lists.add(newList);
             }
+        } else if (Objects.equals(type, "Point")) {
+                List<Double> list = JSONObject.parseArray(coordinatesJsonArray1.toJSONString(), Double.class);
+                lists.add(list.get(0));
+                lists.add(Double.valueOf(String.valueOf(Math.abs(list.get(1)))));
         }
-        lists.add(list1);
         JSONObject geometryJson = new JSONObject();
         geometryJson.put("type", type);
         geometryJson.put("coordinates", lists);
