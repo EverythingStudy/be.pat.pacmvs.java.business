@@ -7,9 +7,10 @@
     <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.ProjectType">
         <id property="projectTypeId" column="project_type_id" jdbcType="VARCHAR"/>
         <result property="projectTypeName" column="project_type_name" jdbcType="VARCHAR"/>
+        <result property="projectTypeNameEn" column="project_type_name_en" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
         project_type_id
-        ,project_type_name
+        ,project_type_name,project_type_name_en
     </sql>
 </mapper>

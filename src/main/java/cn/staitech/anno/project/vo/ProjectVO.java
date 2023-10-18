@@ -18,7 +18,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProjectVO extends Project {
-
     private String indicatorName;
     @ApiModelProperty("种属")
     private String speciesVal;
@@ -28,4 +27,6 @@ public class ProjectVO extends Project {
     private String userName;
     @ApiModelProperty("品系")
     private String psName;
+    @ApiModelProperty("品系英文")
+    private String psNameEn;
 }

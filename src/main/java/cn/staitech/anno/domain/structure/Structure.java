@@ -43,7 +43,6 @@ public class Structure {
     @ApiModelProperty(value = "种属ID", required = true)
     private String speciesId;
 
-
     /**
      * 脏器ID
      */

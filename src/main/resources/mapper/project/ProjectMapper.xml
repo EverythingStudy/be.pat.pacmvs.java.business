@@ -5,7 +5,7 @@
 <mapper namespace="cn.staitech.anno.project.mapper.ProjectMapperV1">
 
     <select id="queryProject" parameterType="cn.staitech.anno.project.vo.ProjectIN" resultType="cn.staitech.anno.project.vo.ProjectVO">
-        select p.*,s.name as species_val,o.organization_name,u.user_name,i.indicator_name,ps.name as ps_name
+        select p.*,s.name as species_val,o.organization_name,u.user_name,i.indicator_name,ps.name as ps_name,ps.name_en as ps_name_en
         from tb_project p
         left join tb_project_member m on p.project_id = m.project_id
         left join tb_species s on p.species_id = s.species_id
@@ -56,7 +56,7 @@
     </select>
 
     <select id="pageProject" parameterType="cn.staitech.anno.project.vo.ProjectIN" resultType="cn.staitech.anno.project.vo.ProjectVO">
-        select p.*,s.name as species_val,o.organization_name,u.user_name,i.indicator_name,ps.name as ps_name
+        select p.*,s.name as species_val,o.organization_name,u.user_name,i.indicator_name,ps.name as ps_name,ps.name_en as ps_name_en
         from tb_project p
         left join tb_project_member m on p.project_id = m.project_id
         left join tb_species s on p.species_id = s.species_id

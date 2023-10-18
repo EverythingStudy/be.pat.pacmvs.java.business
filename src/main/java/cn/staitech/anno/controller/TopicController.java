@@ -77,7 +77,6 @@ public class TopicController {
                 .createTime(time)
                 .updateTime(time)
                 .build();
-
         topicService.save(topic);
         return R.ok();
     }

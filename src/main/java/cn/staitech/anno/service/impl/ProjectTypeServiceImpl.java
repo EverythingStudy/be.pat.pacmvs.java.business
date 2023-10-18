@@ -29,6 +29,14 @@ public class ProjectTypeServiceImpl extends ServiceImpl<ProjectTpyeMapper, Proje
                 .collect(Collectors.toMap(ProjectType::getProjectTypeId, ProjectType::getProjectTypeName));
         return map;
     }
+
+    @Override
+    public Map<String, String> selectMapEn() {
+        List<ProjectType> list = projectTpyeMapper.selectList();
+        Map<String, String> map = list.stream()
+                .collect(Collectors.toMap(ProjectType::getProjectTypeId, ProjectType::getProjectTypeNameEn));
+        return map;
+    }
 }
 
 

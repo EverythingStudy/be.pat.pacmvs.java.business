@@ -33,4 +33,11 @@ public class ProductSeries {
     @ApiModelProperty(value = "品系名称", required = true)
     @NotNull(message = "品系名称不可为空 !")
     private String name;
+
+    /**
+     * 品系名称en
+     */
+    @ApiModelProperty(value = "品系名称en", required = true)
+    @NotNull(message = "品系名称不可为空 !")
+    private String nameEn;
 }
