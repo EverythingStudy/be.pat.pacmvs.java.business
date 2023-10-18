@@ -1,6 +1,8 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.AlgorithmJson;
+import cn.staitech.anno.domain.algorithmJson.in.SelectGeoJson;
+import cn.staitech.anno.domain.algorithmJson.out.SelectGeoJsonList;
 import com.baomidou.mybatisplus.extension.service.IService;
 /**
  * <p>
@@ -13,6 +15,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface AlgorithmJsonService extends IService<AlgorithmJson> {
 
     void examineComparison(Long algorithmJsonId) throws Exception;
+
+    SelectGeoJsonList getGeoJson(SelectGeoJson selectGeoJson) throws Exception;
 
 
 }
