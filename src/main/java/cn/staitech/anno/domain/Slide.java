@@ -340,4 +340,8 @@ public class Slide {
     @ApiModelProperty(value = "所在主机ID")
     private Byte hostId;
 
+    @TableField(value = "if_create_questions")
+    @ApiModelProperty(value = "是否生成考题；0-未生成；1-已生成")
+    private String ifCreateQuestions;
+
 }

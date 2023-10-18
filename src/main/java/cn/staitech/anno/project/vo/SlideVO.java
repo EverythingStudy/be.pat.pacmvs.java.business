@@ -125,4 +125,7 @@ public class SlideVO {
     @ApiModelProperty("更新时间")
     private Date updateTime;
 
+    @ApiModelProperty(value = "是否生成考题；0-未生成；1-已生成")
+    private String ifCreateQuestions;
+
 }

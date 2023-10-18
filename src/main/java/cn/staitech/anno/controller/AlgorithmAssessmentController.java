@@ -1,8 +1,10 @@
 package cn.staitech.anno.controller;
 
 
+import cn.staitech.anno.domain.AlgorithmAssessment;
 import cn.staitech.anno.domain.assessment.in.CreateAssessmentIn;
 import cn.staitech.anno.domain.assessment.in.GetAssessmentListIn;
+import cn.staitech.anno.domain.assessment.in.RemoveAssessmentIn;
 import cn.staitech.anno.domain.assessment.out.GetAssessmentListOut;
 import cn.staitech.anno.domain.question.in.CreateBySlideIn;
 import cn.staitech.anno.domain.question.in.CreateQuestionIn;
@@ -23,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author gjt
@@ -54,9 +56,9 @@ public class AlgorithmAssessmentController {
 
     @ApiOperation(value = "考核设置-删除")
     @PostMapping("/removeAssessment")
-    public R removeQuestion(@Validated @RequestBody SettingCompletedIn req) {
+    public R removeAssessment(@Validated @RequestBody RemoveAssessmentIn req) {
+        return algorithmAssessmentService.removeAssessment(req);
 
-        return null;
 
     }
 

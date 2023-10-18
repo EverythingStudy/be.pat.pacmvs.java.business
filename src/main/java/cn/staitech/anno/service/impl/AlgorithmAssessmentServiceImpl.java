@@ -2,10 +2,10 @@ package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.AlgorithmAssessment;
 import cn.staitech.anno.domain.AlgorithmJson;
-import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.assessment.in.CreateAssessmentDataIn;
 import cn.staitech.anno.domain.assessment.in.CreateAssessmentIn;
 import cn.staitech.anno.domain.assessment.in.GetAssessmentListIn;
+import cn.staitech.anno.domain.assessment.in.RemoveAssessmentIn;
 import cn.staitech.anno.domain.assessment.out.GetAssessmentListOut;
 import cn.staitech.anno.mapper.AlgorithmAssessmentMapper;
 import cn.staitech.anno.mapper.SlideMapper;
@@ -26,8 +26,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.lucene.search.similarities.Lambda;
-import org.bouncycastle.math.ec.rfc8032.Ed25519;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -231,5 +229,22 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
 
         return resp;
+    }
+
+    @Override
+    public R removeAssessment(RemoveAssessmentIn req) {
+        log.info("算法考核数据删除家口开始：");
+        LambdaQueryWrapper<AlgorithmJson> qw = new LambdaQueryWrapper<>();
+        qw.eq(AlgorithmJson::getAlgorithmAssessmentId, req.getAlgorithmAssessmentId());
+        List<AlgorithmJson> algorithmJsons = algorithmJsonMapper.selectList(qw);
+
+        if (!CollectionUtils.isEmpty(algorithmJsons)) {
+            R.fail("有上传的JSON文件的切片禁止删除");
+        }
+        AlgorithmAssessment entity = new AlgorithmAssessment();
+        entity.setAlgorithmAssessmentId(req.getAlgorithmAssessmentId());
+        entity.setDelFlag("1");
+        this.baseMapper.updateById(entity);
+        return R.ok();
     }
 }

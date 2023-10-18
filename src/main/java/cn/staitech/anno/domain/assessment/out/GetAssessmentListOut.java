@@ -15,6 +15,9 @@ import java.util.List;
 @Data
 public class GetAssessmentListOut {
 
+    @ApiModelProperty(value = "算法考核id")
+    private Long algorithmAssessmentId;
+
     @ApiModelProperty(value = "切片编号")
     private String imageName;
 

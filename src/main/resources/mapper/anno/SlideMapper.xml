@@ -49,6 +49,7 @@
         <result column="delete_flag" jdbcType="TINYINT" property="deleteFlag"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="host_id" jdbcType="TINYINT" property="hostId"/>
+        <result column="if_create_questions" jdbcType="VARCHAR" property="ifCreateQuestions"/>
     </resultMap>
     <sql id="Base_Column_List">
         slide_id,
