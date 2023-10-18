@@ -82,5 +82,10 @@ public class AlgorithmJson implements Serializable {
      */
     private String delFlag;
 
+    /**
+     * 类型（0，考题json,1:算法json）
+     */
+    private String jsonType;
+
 
 }

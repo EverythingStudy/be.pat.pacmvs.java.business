@@ -111,7 +111,7 @@ public class CommonConstant {
     public static final String[] EXAMINESCORE_COLHEAD_VALUE = {"projectName", "imageName", "nickName", "startTime", "endTime", "shouldNumber", "realityNumber", "miou", "fiou", "biou", "tiou", "personalFit", "examResults"};
 
     public static final String[] ALGORITHMASSESSMENT_COLHEAD_KEY = {"项目名称", "切片编号", "标注json", "对比json", "考核人员", "考核标签", "轮廓个数", "漏检率", "误检率", "miou", "fiou", "biou", "tiou","结果时间"};
-    public static final String[] ALGORITHMASSESSMENT_COLHEAD_VALUE = {"projectName", "imageName", "nickName", "startTime", "endTime", "shouldNumber", "realityNumber", "miou", "fiou", "biou", "tiou", "personalFit", "examResults"};
+    public static final String[] ALGORITHMASSESSMENT_COLHEAD_VALUE = {"projectName", "imageName", "annotationJsonName", "jsonName", "examinePeople", "examineCategoryName", "outlineNumber","missedDetectionRate","falseDetectionRate", "miou", "fiou", "biou", "tiou", "createTime"};
 
 
     /**

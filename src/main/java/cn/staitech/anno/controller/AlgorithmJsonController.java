@@ -40,7 +40,7 @@ public class AlgorithmJsonController {
     public R<List<AlgorithmJson>> selectList(
             @NotNull(message = "参数异常,未传入切片id") @RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId) {
         QueryWrapper<AlgorithmJson> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("slide_id",slideId).eq("selected_status","0").eq("del_flag","0");
+        queryWrapper.eq("slide_id",slideId).eq("selected_status","0").eq("del_flag","0").eq("json_type","1");
         return R.ok(algorithmJsonService.list(queryWrapper));
     }
 

@@ -1,5 +1,6 @@
 package cn.staitech.anno.service.impl;
 
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.AlgorithmAssessment;
 import cn.staitech.anno.domain.AlgorithmJson;
 import cn.staitech.anno.domain.assessment.in.*;
@@ -11,12 +12,17 @@ import cn.staitech.anno.domain.assessment.in.GetAssessmentListIn;
 import cn.staitech.anno.domain.assessment.in.GetJsonInfoDataIn;
 import cn.staitech.anno.domain.assessment.in.GetJsonInfoIn;
 import cn.staitech.anno.domain.assessment.in.RemoveAssessmentIn;
+import cn.staitech.anno.domain.assessment.out.AssessmentExportOut;
 import cn.staitech.anno.domain.assessment.out.GetAssessmentListOut;
 import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.mapper.SlideMapper;
+import cn.staitech.anno.project.domain.Project;
+import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.service.AlgorithmAssessmentService;
 import cn.staitech.anno.service.AlgorithmJsonService;
 import cn.staitech.anno.service.SlideService;
+import cn.staitech.anno.utils.Column;
+import cn.staitech.anno.utils.ExcelTool;
 import cn.staitech.anno.utils.ParseJsonUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import cn.staitech.anno.service.MarkingService;
@@ -54,6 +60,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+import static cn.staitech.anno.aspect.LogFileAspect.response;
+
 /**
  * <p>
  * 服务实现类
@@ -80,7 +88,13 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
     private AlgorithmJsonMapper algorithmJsonMapper;
 
     @Resource
+    private AssessmentResultsMapper assessmentResultsMapper;
+
+    @Resource
     private SlideMapper slideMapper;
+
+    @Resource
+    private ProjectMapperV1 projectMapperV1;
 
     @Autowired
     private SlideService slideService;
@@ -91,9 +105,6 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         File file1 = new File(zipUrl);
         Map<String, String> ddlList = new HashMap<>();
         try {
-            // 根据项目查询算法考核表中数据
-
-
             //zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
             //必须指明读取的各式，不然会存在问题
             ZipFile zipFile = new ZipFile(file1, Charset.forName("gbk"));
@@ -252,28 +263,35 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
     }
 
     @Override
-    public void export(AssessmentExportIN assessmentExportIN) {
-
-//        List<AssessmentExportOut>  assessmentExportOutList =
-
-
-        // 查询考核评分列表
-//        List<ExamineScoreExportVO> examineScoreList = examineScoreService.selectLists(examineScoreExportInsertVo.getExamineScoreIdList());
-//        // 查询项目中得信息
-//        Project projectBy = projectService.getById(examineScoreExportInsertVo.getProjectId());
-//        String projectName = "";
-//        if (projectBy != null) {
-//            projectName = projectBy.getProjectName();
-//        }
-//        // 构造表头的每个列头 定义表头
-//        List<Map<String, String>> titleList = getTitleList(CommonConstant.ALGORITHMASSESSMENT_COLHEAD_KEY, CommonConstant.ALGORITHMASSESSMENT_COLHEAD_VALUE);
-//        ExcelTool excelTool = new ExcelTool<>(MessageSource.M("EXCEL_FILE_PATH"), 20, 20);
-//        List<Column> titleData = excelTool.columnTransformer(titleList);
-//        response.setContentType("application/vnd.ms-excel;charset=utf-8");
-//        response.setCharacterEncoding("utf-8");
-//        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(projectName, "UTF-8") + CommonConstant.FILE_SUFFIX_XLSX);
-//        excelTool.exportExcel(titleData, examineScoreList, response.getOutputStream(), true, false);
+    public void export(AssessmentExportIN assessmentExportIN) throws Exception {
+        List<AssessmentExportOut>  assessmentExportOutList = assessmentResultsMapper.selectExportList(assessmentExportIN);
+        // 查询项目中得信息
+        Project projectBy = projectMapperV1.selectById(assessmentExportIN.getProjectId());
+        String projectName = "";
+        if (projectBy != null) {
+            projectName = projectBy.getProjectName();
+        }
+        // 构造表头的每个列头 定义表头
+        List<Map<String, String>> titleList = getTitleList(CommonConstant.ALGORITHMASSESSMENT_COLHEAD_KEY, CommonConstant.ALGORITHMASSESSMENT_COLHEAD_VALUE);
+        ExcelTool excelTool = new ExcelTool<>(MessageSource.M("EXCEL_FILE_PATH"), 20, 20);
+        List<Column> titleData = excelTool.columnTransformer(titleList);
+        response.setContentType("application/vnd.ms-excel;charset=utf-8");
+        response.setCharacterEncoding("utf-8");
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(projectName, "UTF-8") + CommonConstant.FILE_SUFFIX_XLSX);
+        excelTool.exportExcel(titleData, assessmentExportOutList, response.getOutputStream(), true, false);
 //
+    }
+
+    public List<Map<String, String>> getTitleList(String[] colHeadKey, String[] colHeadValue) {
+        // 定义表头
+        List<Map<String, String>> list = new ArrayList<>();
+
+        for (int i = 0; i < colHeadKey.length; i++) {
+            Map<String, String> map = new HashMap<String, String>(1);
+            map.put(colHeadKey[i], colHeadValue[i]);
+            list.add(map);
+        }
+        return list;
     }
 
 
