@@ -56,20 +56,12 @@ public class AlgorithmAssessment implements Serializable {
      */
     private String annotationJsonName;
 
-    /**
-     * 算法json名称
-     */
-    private String algorithmJsonName;
 
     /**
      * 标注json路径
      */
     private String annotationJsonUrl;
 
-    /**
-     * 算法json路径
-     */
-    private String algorithmJsonUrl;
 
     /**
      * 创建者
