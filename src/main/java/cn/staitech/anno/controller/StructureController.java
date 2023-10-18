@@ -37,7 +37,6 @@ public class StructureController extends BaseController {
     /**
      * 轮次列表 .
      */
-    // @RequiresPermissions("anno:round:list")
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "结构列表", notes = "结构列表 - 王峰")
     @Log(title = "结构列表", menu = "结构", subMenu = "结构列表", businessType = BusinessType.QUERY)
@@ -50,7 +49,6 @@ public class StructureController extends BaseController {
     /**
      * 种属-脏器-结构-列表 .
      */
-    // @RequiresPermissions("anno:round:list")
     @ApiOperationSupport(author = "wanglibei")
     @Log(title = "结构列表", menu = "结构", subMenu = "结构列表", businessType = BusinessType.QUERY)
     @ApiOperation(value = "结构列表new", notes = "结构列表")
@@ -64,7 +62,6 @@ public class StructureController extends BaseController {
     /**
      * 种属-脏器列表 .
      */
-    // @RequiresPermissions("anno:round:list")
     @ApiOperationSupport(author = "wanglibei")
     @ApiOperation(value = "脏器列表", notes = "结构列表")
     @Log(title = "脏器列表", menu = "结构", subMenu = "脏器列表", businessType = BusinessType.QUERY)

@@ -146,7 +146,7 @@ public class MarkingServiceImpl implements MarkingService {
     public Long insert(viewAddIn req) throws Exception {
         cn.staitech.anno.project.domain.Slide slideBy = slideMapperV1.selectById(req.getSlide_id());
         if (slideBy == null) {
-            throw new Exception("未查询到切片信息");
+            throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
         }
         Marking marking = new Marking();
         BeanUtils.copyProperties(req, marking);

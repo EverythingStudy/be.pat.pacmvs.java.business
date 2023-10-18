@@ -47,7 +47,6 @@ import java.util.Map;
 @RestControllerAdvice
 @RequestMapping("/intelligentEvaluation/review")
 public class ReviewController {
-
     @Resource
     private ReviewService reviewService;
     @Resource

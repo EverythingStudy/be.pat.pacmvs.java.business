@@ -3,13 +3,11 @@ package cn.staitech.anno.project.service.impl;
 import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.project.domain.SlideAttr;
 import cn.staitech.anno.project.mapper.MarkingMapperV1;
+import cn.staitech.anno.project.mapper.SlideAttrMapper;
 import cn.staitech.anno.project.service.SlideAttrService;
 import cn.staitech.common.security.utils.SecurityUtils;
-
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import cn.staitech.anno.project.mapper.SlideAttrMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +24,9 @@ import java.util.*;
 public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr>
         implements SlideAttrService {
 
-    //属性类型：1、标注人员，2、标注类别
+    /**
+     * 属性类型：1、标注人员，2、标注类别
+     */
     private static final String USER = "1";
     private static final String CATEGORY = "2";
 
@@ -35,19 +35,20 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
 
     @Transactional
     @Override
-    public Boolean saveAnnoUsers(Long slideId, List<Long> userIds)throws Exception{
-        List<SlideAttr> slideAttrs = queryAttr(slideId,USER,userIds);
-        return save(slideId,USER,userIds,slideAttrs);
+    public Boolean saveAnnoUsers(Long slideId, List<Long> userIds) {
+        List<SlideAttr> slideAttrs = queryAttr(slideId, USER, userIds);
+        return save(slideId, USER, userIds, slideAttrs);
     }
+
     @Transactional
     @Override
-    public Boolean removeAnnoUsers(Long slideId, List<Long> userIds)throws Exception{
+    public Boolean removeAnnoUsers(Long slideId, List<Long> userIds) {
         QueryWrapper<Marking> queryWrapper = Wrappers.query();
-        queryWrapper.eq("slide_id",slideId);
-        queryWrapper.in("create_by",userIds);
+        queryWrapper.eq("slide_id", slideId);
+        queryWrapper.in("create_by", userIds);
         Integer count = markingMapperV1.selectCount(queryWrapper);
-        if (count==0){
-            List<SlideAttr> slideAttrs = queryAttr(slideId,USER,userIds);
+        if (count == 0) {
+            List<SlideAttr> slideAttrs = queryAttr(slideId, USER, userIds);
             delete(slideAttrs);
         }
         return true;
@@ -55,19 +56,20 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
 
     @Transactional
     @Override
-    public Boolean saveAnnoCategory(Long slideId, List<Long> categoryIds)throws Exception{
-        List<SlideAttr> slideAttrs = queryAttr(slideId,CATEGORY,categoryIds);
-        return save(slideId,CATEGORY,categoryIds,slideAttrs);
+    public Boolean saveAnnoCategory(Long slideId, List<Long> categoryIds) {
+        List<SlideAttr> slideAttrs = queryAttr(slideId, CATEGORY, categoryIds);
+        return save(slideId, CATEGORY, categoryIds, slideAttrs);
     }
+
     @Transactional
     @Override
-    public Boolean removeAnnoCategory(Long slideId, List<Long> categoryIds)throws Exception{
+    public Boolean removeAnnoCategory(Long slideId, List<Long> categoryIds) {
         QueryWrapper<Marking> queryWrapper = Wrappers.query();
-        queryWrapper.eq("slide_id",slideId);
-        queryWrapper.in("category_id",categoryIds);
+        queryWrapper.eq("slide_id", slideId);
+        queryWrapper.in("category_id", categoryIds);
         Integer count = markingMapperV1.selectCount(queryWrapper);
-        if (count==0){
-            List<SlideAttr> slideAttrs = queryAttr(slideId,CATEGORY,categoryIds);
+        if (count == 0) {
+            List<SlideAttr> slideAttrs = queryAttr(slideId, CATEGORY, categoryIds);
             delete(slideAttrs);
         }
         return true;
@@ -75,18 +77,19 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
 
     /**
      * 查询
+     *
      * @param slideId
      * @param attrType
      * @param attrIds
      * @return
      */
-    private List<SlideAttr> queryAttr(Long slideId,String attrType, List<Long> attrIds){
+    private List<SlideAttr> queryAttr(Long slideId, String attrType, List<Long> attrIds) {
         List<SlideAttr> slideAttrs = new ArrayList<>();
-        if (attrIds!=null&&!attrIds.isEmpty()){
+        if (attrIds != null && !attrIds.isEmpty()) {
             QueryWrapper<SlideAttr> queryWrapper = Wrappers.query();
-            queryWrapper.eq("slide_id",slideId);
-            queryWrapper.in("attr_id",attrIds);
-            queryWrapper.eq("attr_type",attrType);
+            queryWrapper.eq("slide_id", slideId);
+            queryWrapper.in("attr_id", attrIds);
+            queryWrapper.eq("attr_type", attrType);
             slideAttrs = getBaseMapper().selectList(queryWrapper);
         }
         return slideAttrs;
@@ -94,6 +97,7 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
 
     /**
      * 保存
+     *
      * @param slideId
      * @param attrType
      * @param attrIds
@@ -101,17 +105,17 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
      * @return
      * @throws Exception
      */
-    private Boolean save(Long slideId,String attrType, List<Long> attrIds,List<SlideAttr> slideAttrs)throws Exception{
+    private Boolean save(Long slideId, String attrType, List<Long> attrIds, List<SlideAttr> slideAttrs) {
         List<SlideAttr> resp = new ArrayList<>();
         Long userId = SecurityUtils.getUserId();
-        Map<Long,SlideAttr> map = new HashMap<>();
-        if (slideAttrs!=null&&!slideAttrs.isEmpty()){
+        Map<Long, SlideAttr> map = new HashMap<>();
+        if (slideAttrs != null && !slideAttrs.isEmpty()) {
             slideAttrs.forEach(slideAttr -> {
-                map.put(slideAttr.getAttrId(),slideAttr);
+                map.put(slideAttr.getAttrId(), slideAttr);
             });
         }
-        attrIds.forEach(a->{
-            if (map.get(a)==null){
+        attrIds.forEach(a -> {
+            if (map.get(a) == null) {
                 SlideAttr s = SlideAttr.builder().attrId(a).attrType(attrType).slideId(slideId).createBy(userId).createTime(new Date())
                         .updateBy(userId).updateTime(new Date()).build();
                 resp.add(s);
@@ -122,13 +126,14 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
 
     /**
      * 删除
+     *
      * @param slideAttrs
      * @return
      * @throws Exception
      */
-    private Integer delete(List<SlideAttr> slideAttrs)throws Exception{
+    private Integer delete(List<SlideAttr> slideAttrs) {
         Integer i = 0;
-        if (slideAttrs!=null&&!slideAttrs.isEmpty()){
+        if (slideAttrs != null && !slideAttrs.isEmpty()) {
             List<Long> ids = new ArrayList<>();
             slideAttrs.forEach(slideAttr -> {
                 ids.add(slideAttr.getAttrId());

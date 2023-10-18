@@ -6,5 +6,6 @@
     <resultMap type="cn.staitech.anno.domain.species.Species" id="SpeciesResult">
         <result property="speciesId" column="species_id"/>
         <result property="name" column="name"/>
+        <result property="nameEn" column="name_en"/>
     </resultMap>
 </mapper>

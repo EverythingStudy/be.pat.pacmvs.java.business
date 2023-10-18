@@ -6,14 +6,14 @@
 	<resultMap type="cn.staitech.anno.domain.structure.Structure"	id="StructureResult">
 		<result property="structureId" column="structure_id" />
 		<result property="name" column="name" />
+		<result property="nameEn" column="name_en" />
 		<result property="organId" column="organ_id" />
 		<result property="speciesId" column="species_id" />
 	</resultMap>
-	<!-- <sql id="selectList"> select structure_id, name from tb_structure </sql> -->
 	<select id="getOrganBySpeciesId" parameterType="cn.staitech.anno.domain.structure.Structure" resultType="cn.staitech.anno.domain.organ.Organ">
 		SELECT
 			DISTINCT(t1.organ_id),
-			t2.`name`
+			t2.`name`,t2.`name_en`
 		FROM
 			tb_structure t1
 		LEFT JOIN
@@ -29,6 +29,7 @@
 		SELECT
 			t1.organ_id,
 			t1.`name`,
+			t1.`name_en`,
 			t1.species_id,
 			t1.structure_id
 		FROM

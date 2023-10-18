@@ -732,7 +732,7 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
                 // 查询切片表中切片信息
                 SpecialImage specialImage = specialImageService.selectByPrimaryKey(vo.getSpecialImageId());
                 if (specialImage == null) {
-                    return R.fail("未查询到切片信息");
+                    return R.fail(MessageSource.M("NO_SLIDE_DATA"));
                 }
                 SpecialAnnotation specialAnnotation = new SpecialAnnotation();
                 BeanUtils.copyProperties(vo, specialAnnotation);

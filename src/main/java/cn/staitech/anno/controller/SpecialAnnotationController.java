@@ -390,7 +390,7 @@ public class SpecialAnnotationController {
         // 查询切片表中切片信息
         SpecialImage specialImage = specialImageService.selectByPrimaryKey(req.getSlide_id());
         if (specialImage == null) {
-            return R.fail("未查询到切片信息");
+            return R.fail(MessageSource.M("NO_SLIDE_DATA"));
         }
         SpecialAnnotation specialAnnotation = new SpecialAnnotation();
         BeanUtils.copyProperties(req, specialAnnotation);
@@ -523,7 +523,7 @@ public class SpecialAnnotationController {
         // 查询标注表中信息
 		/*Slide slide = slideService.getById(markingBy.getSlide_id());
         if (!Optional.ofNullable(slide).isPresent()) {
-            return R.fail("未查询到切片信息");
+            return R.fail(MessageSource.M("NO_SLIDE_DATA"));
         }
         if (!Optional.ofNullable(slide.getGeojsonUrl()).isPresent()) {
             return R.fail("未查询到标注信息");
@@ -659,7 +659,7 @@ public class SpecialAnnotationController {
 
         //        /Slide slide = slideService.getById(markingBy.getSlide_id());
         if (!Optional.ofNullable(specialImage).isPresent()) {
-            return R.fail("未查询到切片信息");
+            return R.fail(MessageSource.M("NO_SLIDE_DATA"));
         }
         // 删除前查询详情数据
         specialImageAnnoService.deleteAnnotationById(Long.valueOf(marking_id));

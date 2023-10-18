@@ -1,14 +1,14 @@
 package cn.staitech.anno.project.controller;
 
-import cn.hutool.core.map.MapUtil;
+import cn.staitech.anno.project.constants.Constants;
 import cn.staitech.anno.project.domain.Opt;
 import cn.staitech.anno.project.domain.Slide;
 import cn.staitech.anno.project.service.OptService;
 import cn.staitech.anno.project.service.SlideService;
 import cn.staitech.anno.project.vo.*;
+import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
-
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -34,11 +34,6 @@ import java.util.*;
 @RestControllerAdvice
 @RequestMapping("/intelligentAnno/slide_v1")
 public class SlideController {
-    private static final Map<String, String> STATUS = MapUtil.builder(new HashMap<String, String>())
-            .put("1", "未开始").put("2", "标注中")
-            .put("3", "标注完成").put("4", "未复核")
-            .put("5", "复核中").put("6", "已复核")
-            .put("7", "已交付").build();
     @Resource
     private SlideService slideService;
     @Resource
@@ -49,7 +44,7 @@ public class SlideController {
     @PostMapping("/page")
     public R<PageMaster<SlideVO>> page(@RequestBody SlideQueryIN in) throws Exception {
         Page page = new Page(in.getPageNum(), in.getPageSize());
-        return R.ok(slideService.pageSlides(page,in));
+        return R.ok(slideService.pageSlides(page, in));
     }
 
     @RequiresPermissions("smartAnno:project:slice:check")
@@ -58,16 +53,18 @@ public class SlideController {
     public R<List<SlideAnnoStatisticsVO>> getSlideAnnoStatistics(@RequestBody SlideQueryIN in) throws Exception {
         return R.ok(slideService.getSlideAnnoStatistics(in));
     }
+
     @RequiresPermissions("smartAnno:project:slice:export")
     @ApiOperation(value = "标注数据导出")
     @GetMapping("/slideAnnoStatisticsExport")
     public void slideAnnoStatisticsExport(SlideQueryIN in) throws Exception {
         slideService.slideAnnoStatisticsExport(in);
     }
+
     @RequiresPermissions("smartAnno:project:slice:remarkList")
     @ApiOperation(value = "批量修改备注")
     @PostMapping("/updateRemarkBySlideIds")
-    public R<Boolean> updateRemarkBySlideIds(@RequestBody SlideRemarkIN in) throws Exception {
+    public R<Boolean> updateRemarkBySlideIds(@RequestBody SlideRemarkIN in) {
         Collection<Slide> slides = slideService.listByIds(in.getSlideIds());
         slides.forEach(slide -> {
             slide.setRemark(in.getRemark());
@@ -75,10 +72,11 @@ public class SlideController {
         Boolean flag = slideService.updateBatchById(slides);
         return R.ok(flag);
     }
+
     @RequiresPermissions("smartAnno:project:slice:editList")
     @ApiOperation(value = "批量修改状态")
     @PostMapping("/updateStatusBySlideIds")
-    public R<Boolean> updateStatusBySlideIds(@RequestBody SlideStatusIN in) throws Exception {
+    public R<Boolean> updateStatusBySlideIds(@RequestBody SlideStatusIN in) {
         Long userId = SecurityUtils.getUserId();
         String userName = SecurityUtils.getUsername();
         List<Opt> optList = new ArrayList<>();
@@ -87,8 +85,17 @@ public class SlideController {
             slide.setStatus(in.getStatus());
             slide.setUpdateBy(userId);
             slide.setUpdateTime(new Date());
-            Opt opt = Opt.builder().slideId(slide.getSlideId()).updateBy(userId).updateTime(new Date()).createTime(new Date())
-                    .createBy(userId).optCode(in.getStatus()).optName(userName).optCode(STATUS.get(in.getStatus())).build();
+
+            Opt opt = null;
+            if (LanguageUtils.isEn()) {
+                opt = Opt.builder().slideId(slide.getSlideId()).updateBy(userId).updateTime(new Date()).createTime(new Date())
+                        .createBy(userId).optCode(in.getStatus()).optName(userName).optCode(Constants.STATUS_EN.get(in.getStatus())).build();
+                optList.add(opt);
+            } else {
+                opt = Opt.builder().slideId(slide.getSlideId()).updateBy(userId).updateTime(new Date()).createTime(new Date())
+                        .createBy(userId).optCode(in.getStatus()).optName(userName).optCode(Constants.STATUS.get(in.getStatus())).build();
+
+            }
             optList.add(opt);
         });
         optService.saveBatch(optList);
@@ -98,14 +105,23 @@ public class SlideController {
 
     @ApiOperation(value = "图像状态表查询")
     @PostMapping("/queryStatus")
-    public R<List> queryStatus() throws Exception {
-        List<Map<String,String>> mapList = new ArrayList<>();
-        STATUS.keySet().forEach(k->{
-            Map<String,String> map = new HashMap<>();
-            map.put("key",k);
-            map.put("label",STATUS.get(k));
-            mapList.add(map);
-        });
+    public R<List> queryStatus() {
+        List<Map<String, String>> mapList = new ArrayList<>();
+        if (LanguageUtils.isEn()) {
+            Constants.STATUS_EN.keySet().forEach(k -> {
+                Map<String, String> map = new HashMap<>();
+                map.put("key", k);
+                map.put("label", Constants.STATUS_EN.get(k));
+                mapList.add(map);
+            });
+        } else {
+            Constants.STATUS.keySet().forEach(k -> {
+                Map<String, String> map = new HashMap<>();
+                map.put("key", k);
+                map.put("label", Constants.STATUS.get(k));
+                mapList.add(map);
+            });
+        }
         return R.ok(mapList);
     }
 }
