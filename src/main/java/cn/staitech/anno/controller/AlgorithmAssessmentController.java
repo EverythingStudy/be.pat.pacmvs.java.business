@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author gjt
  * @since 2023-10-17
  */
-@Api(value = "算法考核")
+@Api(value = "算法考核",tags = "算法考核-切片列表")
 @RestController
 @RequestMapping("/algorithmAssessment")
 public class AlgorithmAssessmentController {

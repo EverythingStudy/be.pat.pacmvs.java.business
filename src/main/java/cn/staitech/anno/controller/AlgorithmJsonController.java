@@ -23,7 +23,7 @@ import java.util.List;
  * @author gjt
  * @since 2023-10-17
  */
-@Api(value = "算法考核", tags = "viewer页面")
+@Api(value = "算法考核-viewer页面", tags = "算法考核-viewer页面")
 @RestController
 @RequestMapping("/algorithmJson")
 public class AlgorithmJsonController {
