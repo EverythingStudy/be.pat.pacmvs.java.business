@@ -148,4 +148,6 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
      * 根据项目和结构编码查询详情数据
      */
     PathologicalIndicatorCategory selectProjectAndNumber(@Param("projectId") Long projectId, @Param("number") String number);
+
+    String selectCategoryById(@Param("split") String[] split);
 }
