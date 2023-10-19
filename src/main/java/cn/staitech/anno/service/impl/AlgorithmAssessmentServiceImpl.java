@@ -164,13 +164,17 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
     }
 
 
-
     @Override
     public R getJsonInfo(GetJsonInfoIn req) {
         log.info("获取json数据接口开始：");
         List<GetJsonInfoDataIn> reqList = req.getReqList();
         List<AlgorithmJson> jsonReq = new ArrayList<>();
         for (GetJsonInfoDataIn getJsonInfoDataIn : reqList) {
+
+            String s = StringUtils.substringAfterLast(getJsonInfoDataIn.getAlgorithmJsonName(), ".");
+            if (!"json".equals(s)) {
+                return R.fail("文件格式异常！");
+            }
             //读取文件解析数据校验
             ParseJson parseJson = new ParseJson();
             try {
@@ -191,21 +195,32 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
             if (CollectionUtils.isEmpty(algorithmAssessments)) {
                 return R.fail("项目下无此切片算法考核信息！");
             }
-            AlgorithmAssessment algorithmAssessment = algorithmAssessments.get(0);
-            AlgorithmJson algorithmJson = new AlgorithmJson();
-            algorithmJson.setAlgorithmAssessmentId(algorithmAssessment.getAlgorithmAssessmentId());
-            algorithmJson.setSlideId(algorithmJson.getSlideId());
-            algorithmJson.setAlgorithmJsonName(getJsonInfoDataIn.getAlgorithmJsonName());
-            algorithmJson.setAlgorithmJsonUrl(getJsonInfoDataIn.getAlgorithmJsonUrl());
-            algorithmJson.setCreateBy(SecurityUtils.getUserId());
-            algorithmJson.setCreateTime(new Date());
-            jsonReq.add(algorithmJson);
+            extracted(jsonReq, getJsonInfoDataIn, algorithmAssessments);
         }
         algorithmJsonService.saveBatch(jsonReq);
         return R.ok();
     }
 
-        public void writeAlgorithm(Long projectId, String imageName, String fileContent) {
+    /**
+     * json数据参数构建
+     * @param jsonReq
+     * @param getJsonInfoDataIn
+     * @param algorithmAssessments
+     */
+    private void extracted(List<AlgorithmJson> jsonReq, GetJsonInfoDataIn getJsonInfoDataIn, List<AlgorithmAssessment> algorithmAssessments) {
+        AlgorithmAssessment algorithmAssessment = algorithmAssessments.get(0);
+        AlgorithmJson algorithmJson = new AlgorithmJson();
+        algorithmJson.setAlgorithmAssessmentId(algorithmAssessment.getAlgorithmAssessmentId());
+        algorithmJson.setSlideId(algorithmJson.getSlideId());
+        algorithmJson.setAlgorithmJsonName(getJsonInfoDataIn.getAlgorithmJsonName());
+        algorithmJson.setAlgorithmJsonUrl(getJsonInfoDataIn.getAlgorithmJsonUrl());
+        algorithmJson.setCreateBy(SecurityUtils.getUserId());
+        algorithmJson.setCreateTime(new Date());
+        algorithmJson.setJsonType("0");
+        jsonReq.add(algorithmJson);
+    }
+
+    public void writeAlgorithm(Long projectId, String imageName, String fileContent) {
         QueryWrapper<AlgorithmAssessment> algorithmAssessmentQueryWrapper = new QueryWrapper<>();
         algorithmAssessmentQueryWrapper.eq("project_id", projectId).eq("del_flag", "0");
         // 查询算法考核列表，获取算法考核列表
@@ -267,7 +282,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         if(assessmentExportIN.getAlgorithmentList().size() < 1){
             throw new Exception("未选择切片");
         }
-        List<AssessmentExportOut>  assessmentExportOutList = assessmentResultsMapper.selectExportList(assessmentExportIN);
+        List<AssessmentExportOut> assessmentExportOutList = assessmentResultsMapper.selectExportList(assessmentExportIN);
         // 查询项目中得信息
         Project projectBy = projectMapperV1.selectById(assessmentExportIN.getProjectId());
         String projectName = "";
@@ -328,13 +343,25 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
             return resp;
 
         }).collect(Collectors.toList());
-
+        //批量插入考核算法
         saveBatch(algorithmAssessments);
+        List<AlgorithmJson> collect = algorithmAssessments.stream().map(e -> {
+            AlgorithmJson resp = new AlgorithmJson();
+            resp.setAlgorithmAssessmentId(e.getAlgorithmAssessmentId());
+            resp.setSlideId(e.getSlideId());
+            resp.setAlgorithmJsonName(e.getAnnotationJsonName());
+            resp.setAlgorithmJsonUrl(e.getAnnotationJsonUrl());
+            resp.setCreateBy(SecurityUtils.getUserId());
+            resp.setCreateTime(new Date());
+            resp.setJsonType("0");
+            return resp;
+        }).collect(Collectors.toList());
+        //批量插入json表
+        algorithmJsonService.saveBatch(collect);
         //修改切片是否生成状态
         slideService.updateBatchById(qw);
         return R.ok();
     }
-
 
 
     @Override
@@ -342,7 +369,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         log.info("算法考核列表分页查询接口开始：");
 
         PageResponse resp = new PageResponse();
-
+        //算法考核参数构建
         LambdaQueryWrapper<AlgorithmAssessment> qw = new LambdaQueryWrapper<>();
         qw.like(StringUtils.isNotEmpty(req.getImageName()), AlgorithmAssessment::getImageName, req.getImageName());
         qw.eq(AlgorithmAssessment::getProjectId, req.getProjectId());
@@ -355,14 +382,17 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
         Page<AlgorithmAssessment> page = PageHelper.startPage(req.getPageNum(), req.getPageSize());
         List<AlgorithmAssessment> algorithmAssessments = this.baseMapper.selectList(qw);
+        //算法json数据查询
         List<GetAssessmentListOut> collect = new ArrayList<>();
 
         if (!CollectionUtils.isEmpty(algorithmAssessments)) {
-            LambdaQueryWrapper<AlgorithmJson> qw2 = new LambdaQueryWrapper<>();
+
             collect = algorithmAssessments.stream().map(e -> {
                 GetAssessmentListOut resp2 = new GetAssessmentListOut();
-                BeanUtils.copyProperties(e, resp);
+                BeanUtils.copyProperties(e, resp2);
+                LambdaQueryWrapper<AlgorithmJson> qw2 = new LambdaQueryWrapper<>();
                 qw2.eq(AlgorithmJson::getAlgorithmAssessmentId, e.getAlgorithmAssessmentId());
+                qw2.eq(AlgorithmJson::getJsonType,"1");
                 List<AlgorithmJson> algorithmJsons = algorithmJsonMapper.selectList(qw2);
                 if (!CollectionUtils.isEmpty(algorithmJsons)) {
                     resp2.setAlgorithmJsonNames(algorithmJsons.stream().map(AlgorithmJson::getAlgorithmJsonName).collect(Collectors.toList()));
@@ -380,8 +410,6 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
         return resp;
     }
-
-
 
 
     @Override

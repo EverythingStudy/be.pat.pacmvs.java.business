@@ -59,7 +59,7 @@ public class AlgorithmAssessmentController {
 
     }
 
-    @ApiOperation(value = "算法考核-获取json")
+    @ApiOperation(value = "算法考核-获取json;路径：/home/pat_saas/Upload")
     @PostMapping("/getJsonInfo")
     public R getJsonInfo(@Validated @RequestBody GetJsonInfoIn req) {
         return algorithmAssessmentService.getJsonInfo(req);

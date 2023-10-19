@@ -7,6 +7,7 @@ import cn.staitech.anno.domain.question.out.GetQuestionsOut;
 import cn.staitech.anno.service.IQuestionBankService;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
+import cn.staitech.common.security.annotation.RequiresPermissions;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -32,6 +33,7 @@ public class QuestionBankController {
     private IQuestionBankService iQuestionBankService;
 
     @ApiOperation(value = "生成考题-根据项目")
+    @RequiresPermissions("smartAnno:project:createExamination")
     @PostMapping("/createQuestion")
     public R createQuestion(@Validated @RequestBody CreateQuestionIn req) {
 
@@ -40,6 +42,7 @@ public class QuestionBankController {
     }
 
     @ApiOperation(value = "生成考题-根据切片")
+    @RequiresPermissions("smartAnno:project:slice:batchCreateExamination")
     @PostMapping("/createBySlide")
     public R createBySlide(@Validated @RequestBody CreateBySlideIn req) {
 

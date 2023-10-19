@@ -32,28 +32,29 @@ public class StatisticJson {
         }
         while (jp.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = jp.getCurrentName();
-            // move from field name to field value
+            //开始之后元素
             current = jp.nextToken();
-            if("image".equals(fieldName)){
+            if ("image".equals(fieldName)) {
                 TreeNode treeNode = jp.readValueAsTree();
                 System.out.println(treeNode);
             }
             if ("label_info".equals(fieldName)) {
                 if (current == JsonToken.START_ARRAY) {
-                    // For each of the records in the array
+                    //标签数组
                     while (jp.nextToken() != JsonToken.END_ARRAY) {
-                        // read the record into a tree model,
-                        // this moves the parsing position to the end of it
+                        //单个数组元素
                         JsonNode node = jp.readValueAsTree();
-                        // And now we have random access to everything in the object
+
                         System.out.println("field1: " + node.get("label_name").asText());
-                        //System.out.println("field2: " + node.get("label_info").asText());
+
                     }
                 } else {
+                    //没有数组数据则跳过
                     System.out.println("Error: records should be an array: skipping.");
                     jp.skipChildren();
                 }
             } else {
+                //其他标签跳过
                 System.out.println("Unprocessed property: " + fieldName);
                 jp.skipChildren();
             }

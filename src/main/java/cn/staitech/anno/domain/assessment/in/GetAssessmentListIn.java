@@ -15,6 +15,7 @@ import java.util.Map;
 @Data
 public class GetAssessmentListIn  extends PageRequest {
     @ApiModelProperty(value = "项目id")
+
     private Long projectId;
 
     @ApiModelProperty(value = "切片编号")
