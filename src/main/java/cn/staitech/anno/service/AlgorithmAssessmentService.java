@@ -29,7 +29,7 @@ public interface AlgorithmAssessmentService extends IService<AlgorithmAssessment
     R removeAssessment(RemoveAssessmentIn req);
 
     void export(AssessmentExportIN assessmentExportIN) throws Exception;
-    boolean zipExport(String zipUrl, Long projectId) throws Exception;
+    boolean zipExport(String zipUrl, Long projectId,String fileUrl) throws Exception;
 
     R getJsonInfo(GetJsonInfoIn req);
 }

@@ -57,6 +57,18 @@ public class FileUploadVO implements Serializable {
     @ApiModelProperty(value = "项目id")
     private Long projectId;
 
+    @ApiModelProperty(value = "文件夹路径")
+    private String fileUrl;
+
+    @ApiModelProperty(value = "评审轮次")
+    private Long roundId;
+
+    @ApiModelProperty(value = "项目类型")
+    private Long projectTypeId;
+
+    @ApiModelProperty(value = "结构编码")
+    private String structureId;
+
     /**
      * 分块大小
      */

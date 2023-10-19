@@ -106,7 +106,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
     private SlideAttrMapper slideAttrMapper;
 
     @Override
-    public boolean zipExport(String zipUrl, Long projectId) throws Exception {
+    public boolean zipExport(String zipUrl, Long projectId,String fileUrl) throws Exception {
         StringBuilder sb;
         File file1 = new File(zipUrl);
         Map<String, String> ddlList = new HashMap<>();
@@ -153,7 +153,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
                             if (imageName != null) {
                                 // 写入数据库
-                                writeAlgorithm(projectId, imageName, fileContent);
+                                writeAlgorithm(projectId, imageName, fileContent, fileUrl);
                             }
                             //这里是对读取的文件内容进行处理
                             ddlList.put(ze.getName(), sb.toString());
@@ -234,7 +234,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
     }
 
-        public void writeAlgorithm(Long projectId, String imageName, String fileContent) throws Exception {
+        public void writeAlgorithm(Long projectId, String imageName, String fileContent, String filePath) throws Exception {
         QueryWrapper<AlgorithmAssessment> algorithmAssessmentQueryWrapper = new QueryWrapper<>();
         algorithmAssessmentQueryWrapper.eq("project_id", projectId).eq("del_flag", "0");
         // 查询算法考核列表，获取算法考核列表
@@ -245,7 +245,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
             if (Objects.equals(algorithmAssessment.getImageName(), imageName)) {
                 // 根据切片获取文件路径
                 String algorithmJsonName = String.valueOf(algorithmAssessment.getSlideId());
-                String fileUrl = "D:\\home\\pat_saas\\Data\\test\\" + algorithmJsonName + FILE_SUFFIX_JSON;
+                String fileUrl = filePath + File.separator + algorithmJsonName + FILE_SUFFIX_JSON;
                 // 创建文件
                 createFile(fileUrl);
                 // 写入文件

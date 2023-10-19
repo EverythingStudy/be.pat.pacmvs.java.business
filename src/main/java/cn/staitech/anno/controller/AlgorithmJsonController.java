@@ -5,6 +5,7 @@ import cn.staitech.anno.domain.AlgorithmJson;
 import cn.staitech.anno.domain.algorithmJson.in.SelectGeoJson;
 import cn.staitech.anno.domain.algorithmJson.out.SelectGeoJsonList;
 import cn.staitech.anno.service.AlgorithmJsonService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.system.api.RemoteLabelService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -62,10 +63,11 @@ public class AlgorithmJsonController {
 
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "考核比对")
-    @GetMapping("/examineComparison")
-    public void examineComparison(
+    @PostMapping("/examineComparison")
+    public R<String> examineComparison(
             @NotNull(message = "参数异常,未传入id") @RequestParam(value = "algorithmJsonId") @ApiParam(name = "algorithmJsonId", value = "算法jsonId", required = true) Long algorithmJsonId) throws Exception {
         algorithmJsonService.examineComparison(algorithmJsonId);
+        return R.ok(MessageSource.M("OPERATE_SUCCEED"));
     }
 
 

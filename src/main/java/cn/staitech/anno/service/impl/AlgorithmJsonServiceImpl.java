@@ -21,7 +21,6 @@ import javax.annotation.Resource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -72,6 +71,7 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
         markingJsonObject.put("slide_id", algorithmJsonBy.getSlideId());
         markingJsonObject.put("json_name", algorithmJsonBy.getAlgorithmJsonName());
         markingJsonObject.put("create_by", SecurityUtils.getLoginUser().getSysUser().getUserId());
+        markingJsonObject.put("algorithm_assessment_id",algorithmJsonBy.getAlgorithmAssessmentId());
         // 调用python接口
         remoteLabelService.algoExamine(markingJsonObject);
 
