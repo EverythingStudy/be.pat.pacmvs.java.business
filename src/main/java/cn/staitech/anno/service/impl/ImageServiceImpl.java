@@ -1,5 +1,6 @@
 package cn.staitech.anno.service.impl;
 
+import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.Slide;
@@ -8,7 +9,6 @@ import cn.staitech.anno.domain.image.out.ImageListOutVO;
 import cn.staitech.anno.mapper.ImageMapper;
 import cn.staitech.anno.mapper.SpecialImageMapper;
 import cn.staitech.anno.service.ImageService;
-import cn.staitech.anno.service.RoundService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.service.SysOrganizationService;
 import cn.staitech.anno.utils.LanguageUtils;
@@ -40,18 +40,13 @@ import java.util.concurrent.ExecutionException;
 public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements ImageService {
     @Resource
     private ImageMapper imageMapper;
-
     @Resource
     private SlideService slideService;
 
     @Resource
     private SpecialImageMapper specialImageMapper;
-
     @Resource
     private SysOrganizationService sysOrganizationService;
-
-    @Resource
-    private RoundService roundService;
 
     /**
      * 切片列表（原图像）
@@ -84,11 +79,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         });
         // 异步查询所有的机构Map
         CompletableFuture<Map<Long, String>> mapFuture = CompletableFuture.supplyAsync(() -> sysOrganizationService.selectMap());
-        // 异步查询所有的轮次Map
-        if (bizType.equals(2)) {
-            CompletableFuture<Map<Long, String>> roundFuture = CompletableFuture.supplyAsync(() -> roundService.selectMap());
-            roundMap = roundFuture.get();
-        }
 
         PageMaster<Image> pageMaster = listFuture.get();
         List<Image> list = pageMaster.getList();
@@ -104,11 +94,21 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
                 // 提取处理状态文本描述并赋值
                 Integer status = in.getStatus();
-                // 可用、不可用状态解析中
+
                 if (LanguageUtils.isEn()) {
+                    // 可用、不可用状态解析中
                     out.setFileStatus(Container.IMAGE_STATUS_MAP_EN.get(status));
+                    // 评审轮次
+                    if (bizType.equals(2)) {
+                        out.setRoundName(MapConstant.getRoundNameEn(in.getRoundId()));
+                    }
                 } else {
+                    // 可用、不可用状态解析中
                     out.setFileStatus(Container.IMAGE_STATUS_MAP.get(status));
+                    // 评审轮次
+                    if (bizType.equals(2)) {
+                        out.setRoundName(MapConstant.getRoundName(in.getRoundId()));
+                    }
                 }
 
                 if (status == 0) {
@@ -124,11 +124,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                 // 匹配机构名称
                 if (map.containsKey(in.getOrganizationId())) {
                     out.setOrganizationName(map.get(in.getOrganizationId()).toString());
-                }
-
-                // 匹配轮次
-                if (bizType.equals(2) && roundMap.containsKey(in.getRoundId())) {
-                    out.setRoundName(roundMap.get(in.getRoundId()).toString());
                 }
 
                 Slide slide = new Slide();
@@ -197,11 +192,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         });
         // 异步查询所有的机构Map
         CompletableFuture<Map<Long, String>> mapFuture = CompletableFuture.supplyAsync(() -> sysOrganizationService.selectMap());
-        // 异步查询所有的轮次Map
-        if (bizType.equals(2)) {
-            CompletableFuture<Map<Long, String>> roundFuture = CompletableFuture.supplyAsync(() -> roundService.selectMap());
-            roundMap = roundFuture.get();
-        }
 
         PageMaster<Image> pageMaster = listFuture.get();
         List<Image> list = pageMaster.getList();
@@ -217,9 +207,24 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
                 // 提取处理状态文本描述并赋值
                 Integer status = in.getStatus();
-                out.setFileStatus(Container.IMAGE_STATUS_MAP.get(status));
-                // 不可用 可用 解析中
 
+                if (LanguageUtils.isEn()) {
+                    // 可用、不可用状态解析中
+                    out.setFileStatus(Container.IMAGE_STATUS_MAP_EN.get(status));
+                    // 评审轮次
+                    if (bizType.equals(2)) {
+                        out.setRoundName(MapConstant.getRoundNameEn(in.getRoundId()));
+                    }
+                } else {
+                    // 可用、不可用状态解析中
+                    out.setFileStatus(Container.IMAGE_STATUS_MAP.get(status));
+                    // 评审轮次
+                    if (bizType.equals(2)) {
+                        out.setRoundName(MapConstant.getRoundName(in.getRoundId()));
+                    }
+                }
+
+                // 不可用 可用 解析中
                 if (status == 0) {
                     out.setProcessFlagName(Container.IMAGE_PROCESS_MAP.get(in.getProcessFlag()));
                 } else {
@@ -231,10 +236,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                     out.setOrganizationName(map.get(in.getOrganizationId()).toString());
                 }
 
-                // 匹配轮次
-                if (bizType.equals(2) && roundMap.containsKey(in.getRoundId())) {
-                    out.setRoundName(roundMap.get(in.getRoundId()).toString());
-                }
 
                 if (vo.getChoiceState() == null) {
                     // 查询选中状态

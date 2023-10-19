@@ -132,25 +132,27 @@ public class Container {
     public static final Map<Integer, String> COLOR_TYPE_EN = new ImmutableMap.Builder<Integer, String>()
             /*.put(1, "RGB")
             .put(2, "HEX")*/
-            .put(1, "荧光标记染色EN")
-            .put(2, "免疫组织化学染色EN")
-            .put(3, "HE染色EN")
-            .put(4, "Masson染色EN")
-            .put(5, "Van Gieson染色EN")
-            .put(6, "维多利亚蓝染色EN")
-            .put(7, "苏丹III/IV染色EN")
-            .put(8, "油红O染色EN")
-            .put(9, "PAS糖原染色EN")
-            .put(10, "AB-PAS染色EN")
-            .put(11, "刚果红染色(甲醇)EN")
-            .put(12, "甲苯胺蓝染色EN")
-            .put(13, "普鲁氏蓝染色EN")
-            .put(14, "尼氏染色EN")
-            .put(15, "LFB髓鞘染色EN")
-            .put(16, "Tunel染色EN")
-            .put(17, "Ki67EN")
+            .put(1, "Immunofluorescence")   // 荧光标记染色
+            .put(2, "Immunohistochemical") // 免疫组织化学染色
+            .put(3, "HE staining")  // HE染色
+            .put(4, "Masson染色EN")   // Masson staining
+            .put(5, "Van Gieson staining") // Van Gieson染色
+            .put(6, "Victoria Blue staining")  // 维多利亚蓝染色
+            .put(7, "Sudan III/IV") // 苏丹III/IV染色
+            .put(8, "Oil Red O")    // 油红O染色
+            .put(9, "PAS")  // PAS糖原染色
+            .put(10, "AB-PAS") // AB-PAS染色
+            .put(11, "Congo red")   // 刚果红染色(甲醇)
+            .put(12, "toluidine blue")  // 甲苯胺蓝染色
+            .put(13, "Prussian blue")   // 普鲁氏蓝染色
+            .put(14, "Nissl")   // 尼氏染色
+            .put(15, "Luxol Fast Blue myelin")// LFB髓鞘染色
+            .put(16, "Tunel")   // Tunel染色
+            .put(17, "Ki67")
             /*.put(18, "免疫组织化学染色")
             .put(19, "荧光标记染色")*/
-            .put(20, "OTHER")
+            .put(20, "Other")
             .build();
+
+
 }
