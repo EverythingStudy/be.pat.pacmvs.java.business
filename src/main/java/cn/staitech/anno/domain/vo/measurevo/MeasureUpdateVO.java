@@ -8,11 +8,11 @@ import javax.validation.constraints.NotNull;
 @Data
 public class MeasureUpdateVO {
 
-    @NotNull(message = "测量对象不可为空")
+    @NotNull(message = "{MeasureUpdateVO.measureId.isnull}")
     @ApiModelProperty(value = "测量id", required = true)
     private Long measureId;
 
-    @NotNull(message = "测量图像不可为空")
+    @NotNull(message = "{MeasureUpdateVO.location.isnull}")
     @ApiModelProperty(value = "测量id", required = true)
     private String location;
 

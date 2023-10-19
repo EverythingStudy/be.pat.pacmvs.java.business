@@ -19,7 +19,7 @@ public class SlideDescriptionVo {
     /**
      * 描述 .
      */
-    @Size(min = 0, max = 50, message = "描述不可超过50字段")
+    @Size(min = 0, max = 50, message = "{SlideUpdateVO.description.length}")
     @ApiModelProperty(value = "描述")
     private String description;
     

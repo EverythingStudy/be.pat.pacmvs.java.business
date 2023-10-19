@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class AnnotationsDetailVO extends Annotation {
     
-    @NotNull(message = "切片id不可为空")
+    @NotNull(message = "{SlideUpdateVO.slideId.isnull}")
     @ApiModelProperty(value = "切片id", required = true)
     private Long slideId;
     

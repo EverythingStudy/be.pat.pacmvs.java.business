@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class SpecialRemoveVO {
-    @NotNull(message = "标注不可为空!")
+    @NotNull(message = "{SpecialRemoveVO.annotationId.isnull}")
     @ApiModelProperty(value = "标注id", required = true)
     private Long annotationId;
     

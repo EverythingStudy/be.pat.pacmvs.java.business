@@ -23,6 +23,6 @@ public class CreateBySlideData {
 
 
     @ApiModelProperty(value = "图像ID")
-    @NotNull(message = "图像id入参不能为空！")
+    @NotNull(message = "{CreateBySlideData.imageId.isnull}")
     private Long imageId;
 }

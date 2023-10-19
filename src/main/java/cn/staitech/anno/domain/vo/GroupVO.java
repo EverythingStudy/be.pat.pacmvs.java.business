@@ -17,7 +17,7 @@ public class GroupVO {
     /**
      * 组别id
      */
-    @NotNull(message = "组别id不可为空 !")
+    @NotNull(message = "{GroupVO.groupId.isnull}")
     @ApiModelProperty(value = "组别id", required = true)
     private Long groupId;
 
@@ -37,7 +37,7 @@ public class GroupVO {
      * 组别描述
      */
     @ApiModelProperty(value = "", hidden = true)
-    @Size(min = 0, max = 100, message = "描述不可超过100字段")
+    @Size(min = 0, max = 100, message = "{GroupListVO.description.length}")
     private String description;
 
     /**
@@ -68,7 +68,7 @@ public class GroupVO {
      * 剂量
      * */
     @ApiModelProperty(required = true)
-    @Size(min = 0, max = 20, message = "剂量不可超过20字段")
+    @Size(min = 0, max = 20, message = "{SlideReportSummaryVo.dosage.length}")
     private String dosage;
 
 

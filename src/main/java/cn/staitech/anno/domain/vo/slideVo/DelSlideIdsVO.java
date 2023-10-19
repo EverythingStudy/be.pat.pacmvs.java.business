@@ -16,7 +16,7 @@ public class DelSlideIdsVO {
     /**
      * 切片id .
      */
-    @NotNull(message = "切片id不可为空 !")
+    @NotNull(message = "{SlideUpdateVO.slideId.isnull}")
     @ApiModelProperty(value = "切片id", required = true)
     private List<Long> slideIds;
 }

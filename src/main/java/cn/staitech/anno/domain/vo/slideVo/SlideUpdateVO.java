@@ -15,14 +15,14 @@ public class SlideUpdateVO extends BaseEntity {
     /**
      * 切片id .
      */
-    @NotNull(message = "切片id不可为空 !")
+    @NotNull(message = "{SlideUpdateVO.slideId.isnull}")
     @ApiModelProperty(value = "切片id", required = true)
     private List<Long> slideId;
 
     /**
      * 描述 .
      */
-    @Size(min = 0, max = 50, message = "描述不可超过50字段")
+    @Size(min = 0, max = 50, message = "{SlideUpdateVO.description.length}")
     @ApiModelProperty(value = "描述")
     private String description;
 }

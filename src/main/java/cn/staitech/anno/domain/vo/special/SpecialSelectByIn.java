@@ -8,11 +8,11 @@ import javax.validation.constraints.NotNull;
 @Data
 public class SpecialSelectByIn {
 
-    @NotNull(message = "用户不可为空")
+    @NotNull(message = "{SpecialRoleUserVo.userId.isnull}")
     @ApiModelProperty(value = "用户id")
     private Long userId;
 
-    @NotNull(message = "专题id")
+    @NotNull(message = "{SpecialSelectByIn.specialId.isnull}")
     @ApiModelProperty(value = "角色id")
     private Long specialId;
 }

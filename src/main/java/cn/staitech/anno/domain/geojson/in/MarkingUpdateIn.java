@@ -10,7 +10,8 @@ import javax.validation.constraints.NotNull;
 @Data
 public class MarkingUpdateIn {
 
-    @NotNull(message = "标注id不可为空！")
+//    @NotNull(message = "标注id不可为空！")
+    @NotNull(message = "{DescriptionUpdateVO.annotationId.isnull}")
     @ApiModelProperty(value = "标注id")
     private Long marking_id;
 

@@ -8,14 +8,14 @@ import javax.validation.constraints.NotNull;
 @Data
 public class MeasureAddVO {
 
-    @NotNull(message = "切片信息不可为空")
+    @NotNull(message = "{MeasureAddVO.slideId.isnull}")
     @ApiModelProperty(value = "切片id", required = true)
     private Long slideId;
 
     /**
      * 位置 .
      */
-    @NotNull(message = "测量信息不可为空")
+    @NotNull(message = "{MeasureAddVO.location.isnull}")
     @ApiModelProperty(value = "标注地方位置图形数据", required = true)
     private String location;
 

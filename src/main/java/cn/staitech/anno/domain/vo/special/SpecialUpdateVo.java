@@ -15,7 +15,7 @@ public class SpecialUpdateVo extends SpecialInsertVo {
     /**
      * 主键id .
      */
-    @NotNull(message = "专题信息不可为空")
+    @NotNull(message = "{SpecialDeleteVo.specialId.isnull}")
     @ApiModelProperty(value = "专题id", required = true)
     private Long specialId;
 }

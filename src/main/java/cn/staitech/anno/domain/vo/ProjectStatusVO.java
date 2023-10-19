@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
  */
 @Data
 public class ProjectStatusVO {
-    @NotNull(message = "项目id不可为空 !")
+    @NotNull(message = "{PorjectVO.projectId.isnull}")
     @ApiModelProperty(value = "项目ID", required = true)
     private Long projectId;
     @ApiModelProperty(value = "项目状态")

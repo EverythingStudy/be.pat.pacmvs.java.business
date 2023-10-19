@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class GetQuestionsIn  {
     @ApiModelProperty(value = "项目id")
-    @NotNull(message = "项目id不能为空！")
+    @NotNull(message = "{ProjectRemoveIn.projectId.isnull}")
     private String projectId;
 
     @ApiModelProperty(value = "切片编号")

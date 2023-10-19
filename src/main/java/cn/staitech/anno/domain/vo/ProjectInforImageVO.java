@@ -59,11 +59,11 @@ public class ProjectInforImageVO  {
     @ApiModelProperty(value = "标注者id")
     private Integer taggerId;
 
-    @NotNull(message = "第几页不能为空")
+    @NotNull(message = "{ProjectInforImageVO.pageNum.isnull}")
     @ApiModelProperty(value = "第几页", required = true)
     private int pageNum;
 
-    @NotNull(message = "每页记录数不能为空")
+    @NotNull(message = "{ProjectInforImageVO.pageSize.isnull}")
     @ApiModelProperty(value = "每页记录数", required = true)
     private int pageSize;
 

@@ -16,19 +16,19 @@ public class RemoveProjectGroupIn {
      * ID
      */
     @ApiModelProperty(value = "ID")
-    @NotNull(message = "项目分组id不能为空")
+    @NotNull(message = "{RemoveProjectGroupIn.projectGroupId.isnull}")
     private Long projectGroupId;
     /**
      * 项目ID
      */
     @ApiModelProperty(value = "项目ID")
-    @NotNull(message = "项目id不能为空")
+    @NotNull(message = "{CreateQuestionIn.projectId.isnull}")
     private Long projectId;
     /**
      * 分组id
      */
     @ApiModelProperty(value = "分组id" )
-    @NotNull(message = "分组id不能为空")
+    @NotNull(message = "{RemoveProjectGroupIn.groupId.isnull}")
     private Long groupId;
 
 }

@@ -13,7 +13,7 @@ import java.util.Map;
 @Data
 public class SpecialRoleUserSelectVo {
 
-    @NotNull(message = "专题不可为空")
+    @NotNull(message = "{SpecialRoleUserSelectVo.specialId.isnull}")
     @ApiModelProperty(value = "专题id")
     private Long specialId;
 

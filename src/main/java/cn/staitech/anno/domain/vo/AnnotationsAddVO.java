@@ -8,11 +8,11 @@ import javax.validation.constraints.NotNull;
 @Data
 public class AnnotationsAddVO {
     
-    @NotNull(message = "切片id不可为空")
+    @NotNull(message = "{SlideUpdateVO.slideId.isnull}")
     @ApiModelProperty(value = "切片id", required = true)
     private Long slideId;
     
-    @NotNull(message = "用户不可为空")
+    @NotNull(message = "{SpecialRoleUserVo.userId.isnull}")
     @ApiModelProperty(value = "用户id", required = true)
     private Long markingCreateBy;
     

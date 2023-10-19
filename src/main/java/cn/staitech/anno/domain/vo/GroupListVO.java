@@ -31,7 +31,7 @@ public class GroupListVO {
      * 组别描述
      */
     @ApiModelProperty(value = "描述")
-    @Size(min = 0, max = 100, message = "描述不可超过100字段")
+    @Size(min = 0, max = 100, message = "{GroupListVO.description.length}")
     private String description;
 
     /**

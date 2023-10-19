@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Data
 public class SpecialAnnoAddVO {
 
-	@NotNull(message = "切片id不可为空")
+	@NotNull(message = "{SlideUpdateVO.slideId.isnull}")
 	@ApiModelProperty(value = "切片id", required = true)
 	private Long specialImageId;
 

@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 public class IndicatorReviseVO {
     
     @ApiModelProperty(required = true, value = "病例指标id")
-    @NotNull(message = "尚未选择病理指标")
+    @NotNull(message = "{IndicatorReviseVO.indicatorId.isnull}")
     private Integer indicatorId;
     
     @ApiModelProperty(required = true, value = "病例指标名称")

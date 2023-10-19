@@ -32,13 +32,13 @@ public class Round {
      * 组别名称
      */
     @ApiModelProperty(value = "轮次名称", required = true)
-    @NotNull(message = "轮次名称不可为空!")
+    @NotNull(message = "{Round.roundName.isnull}")
     private String roundName;
 
     /**
      * 组别名称 en
      */
     @ApiModelProperty(value = "轮次名称en", required = true)
-    @NotNull(message = "轮次名称英文不可为空!")
+    @NotNull(message = "{Round.roundNameEn.isnull}")
     private String roundNameEn;
 }
