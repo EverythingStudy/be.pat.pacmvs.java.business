@@ -226,6 +226,12 @@ public class FileUploadServiceImpl implements FileUploadService {
                     }
                     markingService.zipExport(filesBy.getFilesPath(), chunk.getProjectId());
                     break;
+                case 5:
+                    if (!Optional.ofNullable(chunk.getProjectId()).isPresent()) {
+                        throw new Exception(MessageSource.M("DISALLOW_NOT_PROJECT"));
+                    }
+                    algorithmAssessmentService.zipExport(filesBy.getFilesPath(), chunk.getProjectId());
+                    break;
             }
         }
         return true;
@@ -236,6 +242,10 @@ public class FileUploadServiceImpl implements FileUploadService {
         // 根据不同的业务id生成不同的文件
         switch (fileUploadVO.getBusinessType()) {
             case 4:
+                // 若有二级目录,生成在获取文件名称上方即可
+                path = zipPath + File.separator + fileUploadVO.getFileName();
+                break;
+            case 5:
                 // 若有二级目录,生成在获取文件名称上方即可
                 path = zipPath + File.separator + fileUploadVO.getFileName();
                 break;

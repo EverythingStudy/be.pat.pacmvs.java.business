@@ -20,12 +20,12 @@ import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.service.AlgorithmAssessmentService;
 import cn.staitech.anno.service.AlgorithmJsonService;
+import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.Column;
 import cn.staitech.anno.utils.ExcelTool;
 import cn.staitech.anno.utils.ParseJsonUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.date.DateUtils;
 import cn.staitech.common.core.domain.PageResponse;
@@ -61,6 +61,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import static cn.staitech.anno.aspect.LogFileAspect.response;
+import static cn.staitech.anno.constant.CommonConstant.FILE_SUFFIX_JSON;
 
 /**
  * <p>
@@ -220,7 +221,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         jsonReq.add(algorithmJson);
     }
 
-    public void writeAlgorithm(Long projectId, String imageName, String fileContent) {
+        public void writeAlgorithm(Long projectId, String imageName, String fileContent) throws Exception {
         QueryWrapper<AlgorithmAssessment> algorithmAssessmentQueryWrapper = new QueryWrapper<>();
         algorithmAssessmentQueryWrapper.eq("project_id", projectId).eq("del_flag", "0");
         // 查询算法考核列表，获取算法考核列表
@@ -231,7 +232,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
             if (Objects.equals(algorithmAssessment.getImageName(), imageName)) {
                 // 根据切片获取文件路径
                 String algorithmJsonName = String.valueOf(algorithmAssessment.getSlideId());
-                String fileUrl = "D:\\home\\pat_saas\\Data\\test\\" + algorithmJsonName;
+                String fileUrl = "D:\\home\\pat_saas\\Data\\test\\" + algorithmJsonName + FILE_SUFFIX_JSON;
                 // 创建文件
                 createFile(fileUrl);
                 // 写入文件
@@ -255,15 +256,18 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
     }
 
 
-    public void createFile(String path) {
-        if (path != null) {
-            File dir = new File(path);
-            if (!dir.exists()) {
-                if (!dir.mkdirs()) {
-                    log.error("创建文件异常");
+    private Boolean createFile(String url) throws Exception {
+        File file = new File(url);
+        if (!file.exists()) {
+            try {
+                if (!file.createNewFile()) {
+                    throw new Exception(MessageSource.M("FILE_DOWNLOAD_ERROR"));
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
+        return true;
     }
 
     public void exportJson(String fileUrl, String jsonString) {
