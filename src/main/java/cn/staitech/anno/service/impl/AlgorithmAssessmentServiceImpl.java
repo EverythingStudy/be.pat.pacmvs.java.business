@@ -109,7 +109,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
     private PathologicalIndicatorCategoryMapper pathologicalIndicatorCategoryMapper;
 
     @Override
-    public boolean zipExport(String zipUrl, Long projectId,String fileUrl) throws Exception {
+    public boolean zipExport(String zipUrl, Long projectId, String fileUrl) throws Exception {
         StringBuilder sb;
         File file1 = new File(zipUrl);
         Map<String, String> ddlList = new HashMap<>();
@@ -212,6 +212,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
     /**
      * json数据参数构建
+     *
      * @param jsonReq
      * @param getJsonInfoDataIn
      * @param algorithmAssessments
@@ -228,16 +229,16 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         algorithmJson.setCreateTime(new Date());
         algorithmJson.setJsonType("0");
         LambdaQueryWrapper<AlgorithmJson> qw = new LambdaQueryWrapper<>();
-        qw.eq(AlgorithmJson::getAlgorithmJsonUrl,getJsonInfoDataIn.getAlgorithmJsonUrl());
-        qw.eq(AlgorithmJson::getAlgorithmAssessmentId,algorithmAssessment.getAlgorithmAssessmentId());
+        qw.eq(AlgorithmJson::getAlgorithmJsonUrl, getJsonInfoDataIn.getAlgorithmJsonUrl());
+        qw.eq(AlgorithmJson::getAlgorithmAssessmentId, algorithmAssessment.getAlgorithmAssessmentId());
         List<AlgorithmJson> algorithmJsons = algorithmJsonMapper.selectList(qw);
-        if(CollectionUtils.isEmpty(algorithmJsons)){
+        if (CollectionUtils.isEmpty(algorithmJsons)) {
             jsonReq.add(algorithmJson);
         }
 
     }
 
-        public void writeAlgorithm(Long projectId, String imageName, String fileContent, String filePath) throws Exception {
+    public void writeAlgorithm(Long projectId, String imageName, String fileContent, String filePath) throws Exception {
         QueryWrapper<AlgorithmAssessment> algorithmAssessmentQueryWrapper = new QueryWrapper<>();
         algorithmAssessmentQueryWrapper.eq("project_id", projectId).eq("del_flag", "0");
         // 查询算法考核列表，获取算法考核列表
@@ -299,7 +300,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
     @Override
     public void export(AssessmentExportIN assessmentExportIN) throws Exception {
-        if(assessmentExportIN.getAlgorithmentList().size() < 1){
+        if (assessmentExportIN.getAlgorithmentList().size() < 1) {
             throw new Exception("未选择切片");
         }
         List<AssessmentExportOut> assessmentExportOutList = assessmentResultsMapper.selectExportList(assessmentExportIN);
@@ -361,18 +362,8 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
             resp.setAnnotationJsonName(s);
             resp.setAnnotationJsonUrl(urlPath);
             //设置标注类别
-            LambdaQueryWrapper<SlideAttr> qw2 = new LambdaQueryWrapper<>();
-            qw2.eq(SlideAttr::getSlideId,e.getSlideId());
-            qw2.eq(SlideAttr::getAttrType,"2");
-            qw2.eq(SlideAttr::getDelFlag,"0");
-            List<SlideAttr> slideAttrs = slideAttrMapper.selectList(qw2);
-            if(!CollectionUtils.isEmpty(slideAttrs)){
-                StringBuilder sb = new StringBuilder();
-                for (SlideAttr slideAttr : slideAttrs) {
-                    sb.append(slideAttr.getAttrId());
-                }
-                resp.setCategoryIds(sb.toString());
-            }
+            String slideAttrs = slideAttrMapper.selectCategoryIds(e.getSlideId());
+            resp.setCategoryIds(slideAttrs);
             qw.add(slide);
             return resp;
 
@@ -407,7 +398,8 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         LambdaQueryWrapper<AlgorithmAssessment> qw = new LambdaQueryWrapper<>();
         qw.like(StringUtils.isNotEmpty(req.getImageName()), AlgorithmAssessment::getImageName, req.getImageName());
         qw.eq(AlgorithmAssessment::getProjectId, req.getProjectId());
-        qw.apply((!ObjectUtils.isEmpty(req.getCategoryId())&&req.getCategoryId()!=0),"(find_in_set("+req.getCategoryId()+",category_ids))");
+        qw.eq(AlgorithmAssessment::getDelFlag, "0");
+        qw.apply((!ObjectUtils.isEmpty(req.getCategoryId()) && req.getCategoryId() != 0), "(find_in_set(" + req.getCategoryId() + ",category_ids))");
         //qw.eq(!ObjectUtils.isEmpty(req.getCategoryId()), AlgorithmAssessment::getCategoryId, req.getCategoryId());
         if (!CollectionUtils.isEmpty(req.getCreateTimeParams())) {
             Date date = DateUtils.addAndSubtractDaysByCalendar(req.getCreateTimeParams().get("endTime"), 1);
@@ -426,14 +418,14 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
                 GetAssessmentListOut resp2 = new GetAssessmentListOut();
 
                 resp2.setCategoryIds(e.getCategoryIds().split(","));
-                String str=pathologicalIndicatorCategoryMapper.selectCategoryById(e.getCategoryIds().split(","));
+                String str = pathologicalIndicatorCategoryMapper.selectCategoryById(e.getCategoryIds().split(","));
 
                 BeanUtils.copyProperties(e, resp2);
                 resp2.setCategoryName(str);
                 resp2.setImageCode(e.getImageName());
                 LambdaQueryWrapper<AlgorithmJson> qw2 = new LambdaQueryWrapper<>();
                 qw2.eq(AlgorithmJson::getAlgorithmAssessmentId, e.getAlgorithmAssessmentId());
-                qw2.eq(AlgorithmJson::getJsonType,"1");
+                qw2.eq(AlgorithmJson::getJsonType, "1");
                 List<AlgorithmJson> algorithmJsons = algorithmJsonMapper.selectList(qw2);
                 if (!CollectionUtils.isEmpty(algorithmJsons)) {
                     resp2.setAlgorithmJsonNames(algorithmJsons.stream().map(AlgorithmJson::getAlgorithmJsonName).collect(Collectors.toList()));
