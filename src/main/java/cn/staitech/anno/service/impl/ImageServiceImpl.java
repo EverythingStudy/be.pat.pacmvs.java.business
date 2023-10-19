@@ -66,8 +66,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
         // 业务类型 1 原始切片 2 预测切片
         Integer bizType = image.getBizType();
-        // 所有的轮次Map
-        Map<Long, String> roundMap = null;
 
         // 异步查询图像列表
         CompletableFuture<PageMaster<Image>> listFuture = CompletableFuture.supplyAsync(() -> {
@@ -168,8 +166,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
         // 业务类型 1 原始切片 2 预测切片
         Integer bizType = image.getBizType();
-        // 所有的轮次Map
-        Map<Long, String> roundMap = null;
 
         // 异步查询图像列表
         CompletableFuture<PageMaster<Image>> listFuture = CompletableFuture.supplyAsync(() -> {
