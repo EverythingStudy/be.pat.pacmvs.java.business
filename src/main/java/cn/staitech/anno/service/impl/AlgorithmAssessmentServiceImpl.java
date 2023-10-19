@@ -105,6 +105,9 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
     @Resource
     private SlideAttrMapper slideAttrMapper;
 
+    @Resource
+    private PathologicalIndicatorCategoryMapper pathologicalIndicatorCategoryMapper;
+
     @Override
     public boolean zipExport(String zipUrl, Long projectId,String fileUrl) throws Exception {
         StringBuilder sb;
@@ -421,8 +424,12 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
             collect = algorithmAssessments.stream().map(e -> {
                 GetAssessmentListOut resp2 = new GetAssessmentListOut();
+
                 resp2.setCategoryIds(e.getCategoryIds().split(","));
+                String str=pathologicalIndicatorCategoryMapper.selectCategoryById(e.getCategoryIds().split(","));
+
                 BeanUtils.copyProperties(e, resp2);
+                resp2.setCategoryName(str);
                 resp2.setImageCode(e.getImageName());
                 LambdaQueryWrapper<AlgorithmJson> qw2 = new LambdaQueryWrapper<>();
                 qw2.eq(AlgorithmJson::getAlgorithmAssessmentId, e.getAlgorithmAssessmentId());

@@ -36,6 +36,9 @@ public class GetAssessmentListOut {
     @ApiModelProperty(value = "标注类型id")
     private Long categoryId;
 
+    @ApiModelProperty(value = "标注类型描述")
+    private String categoryName;
+
     @ApiModelProperty(value = "标注类型数据集")
     private String [] categoryIds;
 
