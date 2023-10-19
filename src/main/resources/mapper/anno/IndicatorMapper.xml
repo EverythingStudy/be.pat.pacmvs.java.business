@@ -209,7 +209,7 @@
     <!--查询专题数量-->
     <select id="selectSpecial" parameterType="java.lang.Long" resultType="java.lang.Integer">
         select count(*)
-        from tb_special
-        where del_flag!=2 and indicator_id=#{indicatorId}
+        from tb_project
+        where del_flag!=1 and indicator_id=#{indicatorId}
     </select>
 </mapper>
