@@ -214,6 +214,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
      * @param algorithmAssessments
      */
     private void extracted(List<AlgorithmJson> jsonReq, GetJsonInfoDataIn getJsonInfoDataIn, List<AlgorithmAssessment> algorithmAssessments) {
+
         AlgorithmAssessment algorithmAssessment = algorithmAssessments.get(0);
         AlgorithmJson algorithmJson = new AlgorithmJson();
         algorithmJson.setAlgorithmAssessmentId(algorithmAssessment.getAlgorithmAssessmentId());
@@ -223,7 +224,14 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         algorithmJson.setCreateBy(SecurityUtils.getUserId());
         algorithmJson.setCreateTime(new Date());
         algorithmJson.setJsonType("0");
-        jsonReq.add(algorithmJson);
+        LambdaQueryWrapper<AlgorithmJson> qw = new LambdaQueryWrapper<>();
+        qw.eq(AlgorithmJson::getAlgorithmJsonUrl,getJsonInfoDataIn.getAlgorithmJsonUrl());
+        qw.eq(AlgorithmJson::getAlgorithmAssessmentId,algorithmAssessment.getAlgorithmAssessmentId());
+        List<AlgorithmJson> algorithmJsons = algorithmJsonMapper.selectList(qw);
+        if(CollectionUtils.isEmpty(algorithmJsons)){
+            jsonReq.add(algorithmJson);
+        }
+
     }
 
         public void writeAlgorithm(Long projectId, String imageName, String fileContent) throws Exception {
