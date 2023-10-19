@@ -33,7 +33,7 @@ import java.util.Optional;
  */
 @Api(value = "结构指标接口", tags = "结构指标")
 @RestController
-@RequestMapping("/indicator")
+@RequestMapping("indicator")
 public class IndicatorController extends BaseController {
 
     @Resource
@@ -120,7 +120,7 @@ public class IndicatorController extends BaseController {
      * 病理指标删除接口 .
      */
     @ApiOperation(value = "病理指标删除接口", notes = "ZMJ")
-    @RequiresPermissions("project:pathology:remove")
+    @RequiresPermissions("special:pathology:remove")
     @Log(title = "病理指标删除接口", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.UPDATE)
     @PostMapping("/del")
     public R<String> delIndicator(@RequestBody IndicatorGetVO indicatorGetVO) {
@@ -145,7 +145,7 @@ public class IndicatorController extends BaseController {
      * 病理指标修改接口 .
      */
     @ApiOperation(value = "病理指标修改接口", notes = "ZMJ")
-    @RequiresPermissions("project:pathology:edit")
+    @RequiresPermissions("special:pathology:edit")
     @Log(title = "病理指标修改接口", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.UPDATE)
     @PutMapping("/edit")
     public R<Integer> edit(@Validated @RequestBody IndicatorReviseVO indicator) {
