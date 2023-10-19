@@ -73,6 +73,12 @@ public class Project extends BaseEntity {
     private String indicatorName;
 
     /**
+     * 病理指标名称英文
+     */
+    @ApiModelProperty(value = "结构指标名称英文")
+    private String indicatorNameEn;
+
+    /**
      * 创建者id
      */
     @ApiModelProperty(value = "所属管理者ID")

@@ -39,7 +39,7 @@ import java.util.List;
  */
 @Api(value = "pdf导出接口", tags = "pdf导出")
 @RestController
-@RequestMapping("pdf")
+@RequestMapping("/pdf")
 public class PdfExportController {
     
     @Autowired

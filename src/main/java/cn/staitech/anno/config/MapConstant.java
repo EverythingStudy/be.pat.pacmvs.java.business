@@ -1,9 +1,6 @@
 package cn.staitech.anno.config;
 
-import cn.staitech.anno.service.GroupService;
-import cn.staitech.anno.service.ProjectTypeService;
-import cn.staitech.anno.service.RoundService;
-import cn.staitech.anno.service.SpeciesService;
+import cn.staitech.anno.service.*;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -19,14 +16,15 @@ import java.util.Map;
 public class MapConstant {
     @Resource
     private SpeciesService speciesService;
-
     @Resource
     private GroupService groupService;
-
     @Resource
     private RoundService roundService;
     @Resource
     private ProjectTypeService projectTypeService;
+
+    @Resource
+    private ProductSeriesService productSeriesService;
 
     /**
      * 种属
@@ -38,6 +36,8 @@ public class MapConstant {
     public static Map<Long, String> ROUND_MAP_EN;
     public static Map<String, String> PROJECT_TYPE_MAP;
     public static Map<String, String> PROJECT_TYPE_MAP_EN;
+    public static Map<Integer, String> PRODUCT_SERIES_MAP;
+    public static Map<Integer, String> PRODUCT_SERIES_MAP_EN;
 
     @PostConstruct
     public void init() {
@@ -49,7 +49,10 @@ public class MapConstant {
         ROUND_MAP_EN = roundService.selectMapEn();
 
         PROJECT_TYPE_MAP = projectTypeService.selectMap();
-        PROJECT_TYPE_MAP_EN = projectTypeService.selectMap();
+        PROJECT_TYPE_MAP_EN = projectTypeService.selectMapEn();
+
+        PRODUCT_SERIES_MAP = productSeriesService.selectMap();
+        PRODUCT_SERIES_MAP_EN = productSeriesService.selectMapEn();
     }
 
     /**
@@ -143,6 +146,33 @@ public class MapConstant {
     public static String getProjectTypeEn(String getProjectTypeId) {
         if (PROJECT_TYPE_MAP_EN.containsKey(getProjectTypeId)) {
             return PROJECT_TYPE_MAP_EN.get(getProjectTypeId);
+        }
+        return "";
+    }
+
+
+    /**
+     * 获取品系名称
+     *
+     * @param productSeriesId
+     * @return
+     */
+    public static String getProductSeries(Integer productSeriesId) {
+        if (PRODUCT_SERIES_MAP.containsKey(productSeriesId)) {
+            return PRODUCT_SERIES_MAP.get(productSeriesId);
+        }
+        return "";
+    }
+
+    /**
+     * 获取品系名称 - en
+     *
+     * @param productSeriesId
+     * @return
+     */
+    public static String getProductSeriesEn(Integer productSeriesId) {
+        if (PRODUCT_SERIES_MAP_EN.containsKey(productSeriesId)) {
+            return PRODUCT_SERIES_MAP_EN.get(productSeriesId);
         }
         return "";
     }
