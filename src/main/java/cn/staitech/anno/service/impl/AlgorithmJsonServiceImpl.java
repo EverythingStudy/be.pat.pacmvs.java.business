@@ -8,6 +8,7 @@ import cn.staitech.anno.domain.marking.SlideRes;
 import cn.staitech.anno.mapper.AlgorithmAssessmentMapper;
 import cn.staitech.anno.mapper.AlgorithmJsonMapper;
 import cn.staitech.anno.service.AlgorithmJsonService;
+import cn.staitech.anno.utils.GeometryUtil;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.RemoteLabelService;
 import com.alibaba.fastjson.JSONArray;
@@ -117,61 +118,16 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
         return selectGeoJsonList;
     }
 
-
-
     public JSONArray updateYs(JSONArray features){
         JSONArray jsonArray = new JSONArray();
         for(Object i:features){
             JSONObject featureObject = (JSONObject) i;
             JSONObject geometry = featureObject.getJSONObject("geometry");
-            featureObject.put("geometry",updateY(geometry));
+            featureObject.put("geometry", GeometryUtil.updateYAxle(geometry));
             jsonArray.add(featureObject);
         }
         return jsonArray;
     }
-
-
-    public static JSONObject updateY(JSONObject geometry) {
-        List<Object> lists = new ArrayList<>();
-        JSONArray coordinatesJsonArray1 = geometry.getJSONArray("coordinates");
-        String type = geometry.getString("type");
-        if (Objects.equals(type, "Polygon")) {
-            List<Object> list1 = new ArrayList<>();
-            for (Object i1 : coordinatesJsonArray1) {
-                JSONArray jsonArray1 = JSONArray.parseArray(i1.toString());
-                for (Object i2 : jsonArray1) {
-                    JSONArray jsonArray2 = JSONArray.parseArray(i2.toString());
-                    List<Double> list = JSONObject.parseArray(jsonArray2.toJSONString(), Double.class);
-                    List<Double> newList = new ArrayList<>();
-                    newList.add(list.get(0));
-                    newList.add(Double.valueOf("-" + list.get(1)));
-                    list1.add(newList);
-                }
-            }
-            lists.add(list1);
-        } else if (Objects.equals(type, "LineString")) {
-            for (Object i1 : coordinatesJsonArray1) {
-                JSONArray jsonArray2 = JSONArray.parseArray(i1.toString());
-                List<Double> list = JSONObject.parseArray(jsonArray2.toJSONString(), Double.class);
-                List<Double> newList = new ArrayList<>();
-                newList.add(list.get(0));
-                newList.add(Double.valueOf("-" + list.get(1)));
-                lists.add(newList);
-            }
-        } else if (Objects.equals(type, "Point")) {
-            List<Double> list = JSONObject.parseArray(coordinatesJsonArray1.toJSONString(), Double.class);
-            lists.add(list.get(0));
-            lists.add(Double.valueOf("-" + list.get(1)));
-        }
-        JSONObject geometryJson = new JSONObject();
-        geometryJson.put("type", type);
-        geometryJson.put("coordinates", lists);
-        return geometryJson;
-    }
-
-
-
-
 
 
     public static JSONObject getGeoJson(String jsonUrl) {

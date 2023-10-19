@@ -311,44 +311,6 @@ public class MarkingServiceImpl implements MarkingService {
     }
 
 
-    public static JSONObject updateY(JSONObject geometry) {
-        List<Object> lists = new ArrayList<>();
-        JSONArray coordinatesJsonArray1 = geometry.getJSONArray("coordinates");
-        String type = geometry.getString("type");
-        if (Objects.equals(type, "Polygon")) {
-            List<Object> list1 = new ArrayList<>();
-            for (Object i1 : coordinatesJsonArray1) {
-                JSONArray jsonArray1 = JSONArray.parseArray(i1.toString());
-                for (Object i2 : jsonArray1) {
-                    JSONArray jsonArray2 = JSONArray.parseArray(i2.toString());
-                    List<Double> list = JSONObject.parseArray(jsonArray2.toJSONString(), Double.class);
-                    List<Double> newList = new ArrayList<>();
-                    newList.add(list.get(0));
-                    newList.add(Double.valueOf(String.valueOf(Math.abs(list.get(1)))));
-                    list1.add(newList);
-                }
-            }
-            lists.add(list1);
-        } else if (Objects.equals(type, "LineString")) {
-            for (Object i1 : coordinatesJsonArray1) {
-                JSONArray jsonArray2 = JSONArray.parseArray(i1.toString());
-                List<Double> list = JSONObject.parseArray(jsonArray2.toJSONString(), Double.class);
-                List<Double> newList = new ArrayList<>();
-                newList.add(list.get(0));
-                newList.add(Double.valueOf(String.valueOf(Math.abs(list.get(1)))));
-                lists.add(newList);
-            }
-        } else if (Objects.equals(type, "Point")) {
-                List<Double> list = JSONObject.parseArray(coordinatesJsonArray1.toJSONString(), Double.class);
-                lists.add(list.get(0));
-                lists.add(Double.valueOf(String.valueOf(Math.abs(list.get(1)))));
-        }
-        JSONObject geometryJson = new JSONObject();
-        geometryJson.put("type", type);
-        geometryJson.put("coordinates", lists);
-        return geometryJson;
-    }
-
     @Override
     public String slideJsonExport(Long slideId) {
         if (!Optional.ofNullable(slideId).isPresent()) {
@@ -375,7 +337,7 @@ public class MarkingServiceImpl implements MarkingService {
         }
         // 标注数据
         List<Features> features = markingMapper.selectLists(slideId);
-        features.forEach(i -> i.setGeometry(updateY(i.getGeometry())));
+        features.forEach(i -> i.setGeometry(GeometryUtil.updateYAxle(i.getGeometry())));
 
         // 查询项目详情
         JsonExport jsonExport = null;
@@ -505,30 +467,7 @@ public class MarkingServiceImpl implements MarkingService {
         return true;
     }
 
-    public static JSONObject updateYs(JSONObject geometry) {
-        List<Object> lists = new ArrayList<>();
-        JSONArray coordinatesJsonArray1 = geometry.getJSONArray("coordinates");
-        String type = geometry.getString("type");
-        List<Object> list1 = new ArrayList<>();
-        for (Object i1 : coordinatesJsonArray1) {
-            JSONArray jsonArray1 = JSONArray.parseArray(i1.toString());
-            for (Object i2 : jsonArray1) {
-                JSONArray jsonArray2 = (JSONArray) i2;
-                List<Double> list = JSONObject.parseArray(jsonArray2.toJSONString(), Double.class);
-                List<Double> newList = new ArrayList<>();
-                newList.add(list.get(0));
-                String res = "-" + list.get(1);
-                double y = Double.parseDouble(res);
-                newList.add(y);
-                list1.add(newList);
-            }
-        }
-        lists.add(list1);
-        JSONObject geometryJson = new JSONObject();
-        geometryJson.put("type", type);
-        geometryJson.put("coordinates", lists);
-        return geometryJson;
-    }
+
 
 
     @Transactional(rollbackFor = Exception.class)
@@ -604,7 +543,7 @@ public class MarkingServiceImpl implements MarkingService {
                     marking.setImageId(Long.valueOf(slideBy.getImageId()));
                     marking.setImageUrl(image.getImageUrl());
                     marking.setCreateBy(SecurityUtils.getUserId());
-                    marking.setGeometry(updateYs(geometry));
+                    marking.setGeometry(GeometryUtil.updateYAxle(geometry));
                     marking.setSlideId(slideRes.getSlideId());
                     marking.setCreateTime(new Date());
                     // 查询标注是否存在

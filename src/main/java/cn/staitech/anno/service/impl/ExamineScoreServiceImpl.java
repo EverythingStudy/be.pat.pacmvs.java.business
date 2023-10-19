@@ -12,6 +12,7 @@ import cn.staitech.anno.project.mapper.SlideMapperV1;
 import cn.staitech.anno.queue.DelayQueueExample;
 import cn.staitech.anno.service.ExamineScoreService;
 import cn.staitech.anno.service.FileService;
+import cn.staitech.anno.utils.GeometryUtil;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.RandomUtils;
 import cn.staitech.common.core.domain.PageResponse;
@@ -273,7 +274,7 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         markingExamine.setQuestionProjectId(examineScoreBy.getQuestionProjectId());
         markingExamine.setCreateBy(examineScoreBy.getCreateBy());
         List<Features> features = markingExamineMapper.selectListBy(markingExamine);
-        features.forEach(i -> i.setGeometry(updateY(i.getGeometry())));
+        features.forEach(i -> i.setGeometry(GeometryUtil.updateYAxle(i.getGeometry())));
 
         // 查询项目详情
         JsonExport jsonExport = null;
@@ -345,29 +346,6 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         return fileUrl;
     }
 
-
-    public static com.alibaba.fastjson.JSONObject updateY(com.alibaba.fastjson.JSONObject geometry) {
-        List<Object> lists = new ArrayList<>();
-        JSONArray coordinatesJsonArray1 = geometry.getJSONArray("coordinates");
-        String type = geometry.getString("type");
-        List<Object> list1 = new ArrayList<>();
-        for (Object i1 : coordinatesJsonArray1) {
-            JSONArray jsonArray1 = JSONArray.parseArray(i1.toString());
-            for (Object i2 : jsonArray1) {
-                JSONArray jsonArray2 = (JSONArray) i2;
-                List<Double> list = com.alibaba.fastjson.JSONObject.parseArray(jsonArray2.toJSONString(), Double.class);
-                List<Double> newList = new ArrayList<>();
-                newList.add(list.get(0));
-                newList.add(Double.valueOf(String.valueOf(Math.abs(list.get(1)))));
-                list1.add(newList);
-            }
-        }
-        lists.add(list1);
-        com.alibaba.fastjson.JSONObject geometryJson = new com.alibaba.fastjson.JSONObject();
-        geometryJson.put("type", type);
-        geometryJson.put("coordinates", lists);
-        return geometryJson;
-    }
 
     public void exportJson(String fileUrl, String jsonString) {
         try {
