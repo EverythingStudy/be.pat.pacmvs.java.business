@@ -76,12 +76,11 @@ public class Container {
      * 项目状态 - EN
      */
     public static final Map<Integer, String> PROJECT_STATUS_EN = new ImmutableMap.Builder<Integer, String>()
-            .put(1, "NOT STARTED")
-            .put(2, "PROCESSING")
-            .put(3, "PAUSE")
-            .put(4, "COMPLETED")
+            .put(1, "Pending Started")
+            .put(2, "In process")
+            .put(3, "Pause")
+            .put(4, "Done")
             .build();
-
 
     /**
      * 专题用户状态：0开启，1禁用 SpecialRoleUser

@@ -73,7 +73,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         for (ProjectListVO obj : projectList) {
             obj = projectLanguage(obj);
             if (obj.getIndicatorId() == null || obj.getIndicatorId() == 0L) {
-                obj.setIndicatorName(MessageSource.M("RELEVANCE"));
+                obj.setIndicatorName(MessageSource.M("UNRELATED"));
             }
         }
         return projectList;
