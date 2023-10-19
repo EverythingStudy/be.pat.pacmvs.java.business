@@ -404,7 +404,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         LambdaQueryWrapper<AlgorithmAssessment> qw = new LambdaQueryWrapper<>();
         qw.like(StringUtils.isNotEmpty(req.getImageName()), AlgorithmAssessment::getImageName, req.getImageName());
         qw.eq(AlgorithmAssessment::getProjectId, req.getProjectId());
-        qw.apply(!ObjectUtils.isEmpty(req.getCategoryId()),"(find_in_set("+req.getCategoryId()+",category_ids))");
+        qw.apply((!ObjectUtils.isEmpty(req.getCategoryId())&&req.getCategoryId()!=0),"(find_in_set("+req.getCategoryId()+",category_ids))");
         //qw.eq(!ObjectUtils.isEmpty(req.getCategoryId()), AlgorithmAssessment::getCategoryId, req.getCategoryId());
         if (!CollectionUtils.isEmpty(req.getCreateTimeParams())) {
             Date date = DateUtils.addAndSubtractDaysByCalendar(req.getCreateTimeParams().get("endTime"), 1);
