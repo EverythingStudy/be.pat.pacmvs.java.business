@@ -38,5 +38,8 @@ public class CreateAssessmentDataIn {
     @ApiModelProperty(value = "切片编号")
     private String imageName;
 
+    @ApiModelProperty(value = "切片编号-真实")
+    private String imageCode;
+
 
 }

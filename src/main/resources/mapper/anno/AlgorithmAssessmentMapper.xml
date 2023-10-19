@@ -10,21 +10,19 @@
         <result column="category_id" property="categoryId" />
         <result column="category_name" property="categoryName" />
         <result column="annotation_json_name" property="annotationJsonName" />
-        <result column="algorithm_json_name" property="algorithmJsonName" />
         <result column="annotation_json_url" property="annotationJsonUrl" />
-        <result column="algorithm_json_url" property="algorithmJsonUrl" />
         <result column="create_by" property="createBy" />
         <result column="create_time" property="createTime" />
         <result column="update_by" property="updateBy" />
         <result column="update_time" property="updateTime" />
         <result column="project_id" property="projectId" />
         <result column="del_flag" property="delFlag" />
-        <result column="selected_status" property="selectedStatus" />
+        <result column="category_ids" property="categoryIds" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        algorithm_assessment_id, slide_id, thumb_url, category_id, category_name, annotation_json_name, algorithm_json_name, annotation_json_url, algorithm_json_url, create_by, create_time, update_by, update_time, project_id, del_flag, selected_status
+        algorithm_assessment_id, slide_id, thumb_url, category_id, category_name, annotation_json_name, annotation_json_url, create_by, create_time, update_by, update_time, project_id, del_flag, category_ids
     </sql>
 
 </mapper>

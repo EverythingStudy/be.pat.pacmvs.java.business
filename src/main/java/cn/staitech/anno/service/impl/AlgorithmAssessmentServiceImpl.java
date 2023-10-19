@@ -17,7 +17,9 @@ import cn.staitech.anno.domain.assessment.out.GetAssessmentListOut;
 import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.mapper.SlideMapper;
 import cn.staitech.anno.project.domain.Project;
+import cn.staitech.anno.project.domain.SlideAttr;
 import cn.staitech.anno.project.mapper.ProjectMapperV1;
+import cn.staitech.anno.project.mapper.SlideAttrMapper;
 import cn.staitech.anno.service.AlgorithmAssessmentService;
 import cn.staitech.anno.service.AlgorithmJsonService;
 import cn.staitech.anno.service.MarkingService;
@@ -99,6 +101,9 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
     @Autowired
     private SlideService slideService;
+
+    @Resource
+    private SlideAttrMapper slideAttrMapper;
 
     @Override
     public boolean zipExport(String zipUrl, Long projectId) throws Exception {
@@ -330,6 +335,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
             slide.setSlideId(e.getSlideId());
             slide.setIfCreateQuestions("1");
             BeanUtils.copyProperties(e, resp);
+            resp.setImageName(e.getImageCode());
             resp.setCreateBy(SecurityUtils.getUserId());
             resp.setCreateTime(new Date());
             // 插入json文件返回数据
@@ -343,6 +349,19 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
             String s = StringUtils.substringAfterLast(urlPath, File.separator);
             resp.setAnnotationJsonName(s);
             resp.setAnnotationJsonUrl(urlPath);
+            //设置标注类别
+            LambdaQueryWrapper<SlideAttr> qw2 = new LambdaQueryWrapper<>();
+            qw2.eq(SlideAttr::getSlideId,e.getSlideId());
+            qw2.eq(SlideAttr::getAttrType,"2");
+            qw2.eq(SlideAttr::getDelFlag,"0");
+            List<SlideAttr> slideAttrs = slideAttrMapper.selectList(qw2);
+            if(!CollectionUtils.isEmpty(slideAttrs)){
+                StringBuilder sb = new StringBuilder();
+                for (SlideAttr slideAttr : slideAttrs) {
+                    sb.append(slideAttr.getAttrId());
+                }
+                resp.setCategoryIds(sb.toString());
+            }
             qw.add(slide);
             return resp;
 
@@ -377,7 +396,8 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         LambdaQueryWrapper<AlgorithmAssessment> qw = new LambdaQueryWrapper<>();
         qw.like(StringUtils.isNotEmpty(req.getImageName()), AlgorithmAssessment::getImageName, req.getImageName());
         qw.eq(AlgorithmAssessment::getProjectId, req.getProjectId());
-        qw.eq(!ObjectUtils.isEmpty(req.getCategoryId()), AlgorithmAssessment::getCategoryId, req.getCategoryId());
+        qw.apply(!ObjectUtils.isEmpty(req.getCategoryId()),"(find_in_set("+req.getCategoryId()+",category_ids))");
+        //qw.eq(!ObjectUtils.isEmpty(req.getCategoryId()), AlgorithmAssessment::getCategoryId, req.getCategoryId());
         if (!CollectionUtils.isEmpty(req.getCreateTimeParams())) {
             Date date = DateUtils.addAndSubtractDaysByCalendar(req.getCreateTimeParams().get("endTime"), 1);
             qw.lt(AlgorithmAssessment::getCreateTime, date);
@@ -393,7 +413,9 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
             collect = algorithmAssessments.stream().map(e -> {
                 GetAssessmentListOut resp2 = new GetAssessmentListOut();
+                resp2.setCategoryIds(e.getCategoryIds().split(","));
                 BeanUtils.copyProperties(e, resp2);
+                resp2.setImageCode(e.getImageName());
                 LambdaQueryWrapper<AlgorithmJson> qw2 = new LambdaQueryWrapper<>();
                 qw2.eq(AlgorithmJson::getAlgorithmAssessmentId, e.getAlgorithmAssessmentId());
                 qw2.eq(AlgorithmJson::getJsonType,"1");

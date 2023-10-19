@@ -21,6 +21,9 @@ public class GetAssessmentListOut {
     @ApiModelProperty(value = "切片编号")
     private String imageName;
 
+    @ApiModelProperty(value = "切片编号")
+    private String imageCode;
+
     /**
      * 缩略图地址
      */
@@ -32,6 +35,9 @@ public class GetAssessmentListOut {
      */
     @ApiModelProperty(value = "标注类型id")
     private Long categoryId;
+
+    @ApiModelProperty(value = "标注类型数据集")
+    private String [] categoryIds;
 
 
     @ApiModelProperty(value = "标注json名称")
