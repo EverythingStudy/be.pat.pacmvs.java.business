@@ -188,6 +188,12 @@ public class IndicatorServicelmpl implements IndicatorService {
      */
     @Override
     public List<Indicator> selectIndicatorInformation(Indicator indicator) {
-        return indicatorMapper.selectIndicatorInformation(indicator);
+        List<Indicator> list = indicatorMapper.selectIndicatorInformation(indicator);
+        for (Indicator obj : list) {
+            if (LanguageUtils.isEn()) {
+                obj.setIndicatorName(obj.getIndicatorNameEn());
+            }
+        }
+        return list;
     }
 }
