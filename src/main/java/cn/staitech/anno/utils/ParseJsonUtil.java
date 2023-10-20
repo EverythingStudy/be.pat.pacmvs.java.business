@@ -33,10 +33,10 @@ public class ParseJsonUtil {
             // move from field name to field value
             current = jp.nextToken();
             if ("image".equals(fieldName)) {
-                TreeNode treeNode = jp.readValueAsTree();
+                JsonNode treeNode = jp.readValueAsTree();
 
                 System.out.println(treeNode);
-                String imageName = treeNode.get("image_name").toString();
+                String imageName = treeNode.get("image_name").asText();
                 resp.setImageName(imageName);
                 System.out.println(imageName);
             }
