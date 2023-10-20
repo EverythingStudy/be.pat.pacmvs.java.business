@@ -135,7 +135,7 @@ public class Container {
             .put(1, "Immunofluorescence")   // 荧光标记染色
             .put(2, "Immunohistochemical") // 免疫组织化学染色
             .put(3, "HE staining")  // HE染色
-            .put(4, "Masson染色EN")   // Masson staining
+            .put(4, "Masson staining")   // Masson染色EN
             .put(5, "Van Gieson staining") // Van Gieson染色
             .put(6, "Victoria Blue staining")  // 维多利亚蓝染色
             .put(7, "Sudan III/IV") // 苏丹III/IV染色
