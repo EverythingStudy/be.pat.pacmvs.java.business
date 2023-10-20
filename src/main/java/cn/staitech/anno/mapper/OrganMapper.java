@@ -12,6 +12,7 @@ import java.util.List;
  */
 
 public interface OrganMapper extends BaseMapper<Organ> {
-
     List<Organ> selectList();
+
+    List<Organ> getOrganBySpeciesId(String speciesCode);
 }

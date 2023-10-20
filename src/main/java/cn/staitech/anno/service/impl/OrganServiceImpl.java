@@ -3,6 +3,7 @@ package cn.staitech.anno.service.impl;
 import cn.staitech.anno.domain.organ.Organ;
 import cn.staitech.anno.mapper.OrganMapper;
 import cn.staitech.anno.service.OrganService;
+import cn.staitech.anno.utils.LanguageUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +38,28 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
         Map<String, String> map = list.stream()
                 .collect(Collectors.toMap(Organ::getOrganId, Organ::getNameEn));
         return map;
+    }
+
+    /**
+     * 根据种属编号获取脏器列表
+     *
+     * @param speciesId
+     * @return
+     */
+    @Override
+    public List<Organ> getOrganBySpeciesId(String speciesId) {
+        List<Organ> list = organMapper.getOrganBySpeciesId(speciesId);
+        if (list.size() == 0) {
+            Organ organDefault = new Organ("0", "其他", "Other", speciesId);
+            list.add(organDefault);
+        }
+        for (Organ organ : list) {
+            // 中英文
+            if (LanguageUtils.isEn()) {
+                organ.setName(organ.getNameEn());
+            }
+        }
+        return list;
     }
 
 }

@@ -1,10 +1,12 @@
 package cn.staitech.anno.config;
 
+import cn.staitech.anno.domain.organ.Organ;
 import cn.staitech.anno.service.*;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,6 +44,8 @@ public class MapConstant {
 
     public static Map<String, String> ORGAN_MAP;
     public static Map<String, String> ORGAN_MAP_EN;
+
+    public static List<Organ> ORGAN_LIST;
 
     @PostConstruct
     public void init() {
