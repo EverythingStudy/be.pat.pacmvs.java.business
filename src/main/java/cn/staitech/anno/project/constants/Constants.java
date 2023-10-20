@@ -19,14 +19,21 @@ public class Constants {
     public static final String DOWN_STATE_FINISH = "2";
 
     public static final Map<String, String> STATUS = MapUtil.builder(new HashMap<String, String>())
-            .put("1", "未开始").put("2", "标注中")
-            .put("3", "标注完成").put("4", "未复核")
-            .put("5", "复核中").put("6", "已复核")
-            .put("7", "已交付").build();
-
+            .put("1", "待标注")
+            .put("2", "标注中")
+            .put("3", "标注完成")
+            .put("4", "未复核")
+            .put("5", "复核中")
+            .put("6", "已复核")
+            .put("7", "已交付")
+            .build();
     public static final Map<String, String> STATUS_EN = MapUtil.builder(new HashMap<String, String>())
-            .put("1", "未开始en").put("2", "标注中en")
-            .put("3", "标注完成en").put("4", "未复核en")
-            .put("5", "复核中en").put("6", "已复核en")
-            .put("7", "已交付en").build();
+            .put("1", "Ready Annotation")
+            .put("2", "Annotating")
+            .put("3", "Complete Annotation")
+            .put("4", "Not Reviewed")
+            .put("5", "Under Review")
+            .put("6", "Complete Review")
+            .put("7", "Delivered")
+            .build();
 }
