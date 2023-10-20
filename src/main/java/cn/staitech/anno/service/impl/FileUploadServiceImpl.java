@@ -168,6 +168,10 @@ public class FileUploadServiceImpl implements FileUploadService {
                 }else{
                     // 获取文件路径
                     fileUrl = uploadPath + File.separator + getFileUrl(fileUploadVO);
+                    File dir = new File(fileUrl);
+                    if (!dir.exists()) {
+                        dir.mkdirs();
+                    }
                 }
                 // 解析zip压缩包
                 algorithmAssessmentService.zipExport(files.getFilesPath(), fileUploadVO.getProjectId(), fileUrl);
@@ -317,10 +321,11 @@ public class FileUploadServiceImpl implements FileUploadService {
         String filesName = getFolderName(uploadPath, fileName);
         String filePath;
         if(Objects.equals(filesName, filesName)){
-            filePath = filesName + File.separator + System.currentTimeMillis();
+            filePath = filesName + GLIDE_LINE + System.currentTimeMillis();
         }else {
             filePath = filesName;
         }
+        // 创建二级目录
         return filePath;
     }
 
