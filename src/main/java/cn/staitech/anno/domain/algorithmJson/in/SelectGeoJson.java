@@ -12,7 +12,7 @@ public class SelectGeoJson {
     private List<String> labelList;
 
     @ApiModelProperty(value = "json文件集合")
-    private List<Long> algorithmJsonList;
+    private List<Long> algorithmJsonIdList;
 
 
 }

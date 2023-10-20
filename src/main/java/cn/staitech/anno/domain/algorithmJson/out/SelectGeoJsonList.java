@@ -9,10 +9,10 @@ import java.util.List;
 @Data
 public class SelectGeoJsonList {
 
-    @ApiModelProperty(value = "标签集合")
-    private JSONArray features;
+    @ApiModelProperty(value = "用户列表")
+    private List<Long> userList;
 
 
     @ApiModelProperty(value = "标签集合")
-    private JSONArray label_info;
+    private JSONArray labelInfoList;
 }

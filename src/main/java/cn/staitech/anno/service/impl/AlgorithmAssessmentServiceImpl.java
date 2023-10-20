@@ -247,7 +247,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         List<AlgorithmAssessment> algorithmAssessments = algorithmAssessmentMapper.selectList(algorithmAssessmentQueryWrapper);
         for (AlgorithmAssessment algorithmAssessment : algorithmAssessments) {
             // 判断图片名称是否与json文件中图片名称是否一致
-            if (Objects.equals(algorithmAssessment.getImageName(), imageName)) {
+            if (Objects.equals(algorithmAssessment.getFileName(), imageName)) {
                 // 根据切片获取文件路径
                 String algorithmJsonName = String.valueOf(algorithmAssessment.getSlideId());
                 String fileUrl = filePath + File.separator + algorithmJsonName + FILE_SUFFIX_JSON;
@@ -267,6 +267,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         algorithmJson.setAlgorithmAssessmentId(algorithmAssessment.getAlgorithmAssessmentId());
         algorithmJson.setSlideId(algorithmAssessment.getSlideId());
         algorithmJson.setAlgorithmJsonUrl(fileUrl);
+        algorithmJson.setJsonType("1");
         algorithmJson.setAlgorithmJsonName(algorithmJsonName);
         algorithmJson.setCreateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
         algorithmJson.setCreateTime(new Date());

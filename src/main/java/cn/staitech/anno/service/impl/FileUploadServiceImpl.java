@@ -164,7 +164,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 String fileUrl;
                 // 获取json文件最终存储路径
                 if(fileUploadVO.getFileUrl() != null){
-                    fileUrl = uploadPath + File.separator + fileUploadVO.getFileUrl();
+                    fileUrl = fileUploadVO.getFileUrl();
                 }else{
                     // 获取文件路径
                     fileUrl = uploadPath + File.separator + getFileUrl(fileUploadVO);

@@ -8,6 +8,7 @@ import cn.staitech.anno.service.AlgorithmJsonService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.system.api.RemoteLabelService;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
@@ -36,8 +37,8 @@ public class AlgorithmJsonController {
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "获取标注数据")
     @PostMapping("/getGeoJson")
-    public SelectGeoJsonList getGeoJson(@RequestBody SelectGeoJson selectGeoJson)throws Exception {
-        return algorithmJsonService.getGeoJson(selectGeoJson);
+    public R<JSONObject> getGeoJson(@RequestBody SelectGeoJson selectGeoJson)throws Exception {
+        return R.ok(algorithmJsonService.getGeoJson(selectGeoJson));
     }
 
 
@@ -68,6 +69,13 @@ public class AlgorithmJsonController {
             @RequestParam(value = "algorithmJsonId") @ApiParam(name = "algorithmJsonId", value = "算法jsonId", required = true) Long algorithmJsonId) throws Exception {
         algorithmJsonService.examineComparison(algorithmJsonId);
         return R.ok(MessageSource.M("OPERATE_SUCCEED"));
+    }
+
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "查询切片下标签和用户")
+    @PostMapping("/selectUserAndLabelList")
+    public R<SelectGeoJsonList> selectUserAndLabelList(@RequestBody SelectGeoJson selectGeoJson) throws Exception {
+        return R.ok(algorithmJsonService.selectUserAndLabelList(selectGeoJson));
     }
 
 
