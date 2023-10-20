@@ -24,6 +24,9 @@ public class GetAssessmentListOut {
     @ApiModelProperty(value = "切片编号")
     private String imageCode;
 
+    @ApiModelProperty(value = "切片id")
+    private Long slideId;
+
     /**
      * 缩略图地址
      */
