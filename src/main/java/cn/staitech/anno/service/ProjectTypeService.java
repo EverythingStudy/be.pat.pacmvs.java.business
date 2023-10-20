@@ -12,4 +12,6 @@ import java.util.Map;
  */
 public interface ProjectTypeService extends IService<ProjectType> {
     Map<String, String> selectMap();
+
+    Map<String, String> selectMapEn();
 }

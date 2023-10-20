@@ -14,7 +14,7 @@ public class PorjectVO {
     /**
      * 项目ID
      */
-    @NotNull(message = "项目id不可为空 ！")
+    @NotNull(message = "{PorjectVO.projectId.isnull}")
     @ApiModelProperty(required = true, value = "项目id")
     private Long projectId;
     
@@ -51,8 +51,8 @@ public class PorjectVO {
     /**
      * 项目名称
      */
-    @NotNull(message = "项目名称不可为空 ！")
-    @Size(min = 0, max = 50, message = "名称不能超过50个字符")
+    @NotNull(message = "{PorjectVO.projectName.isnull}")
+    @Size(min = 0, max = 50, message = "{InsertProjectVO.projectName.length}")
     @ApiModelProperty(required = true,value = "项目名称")
     private String projectName;
 

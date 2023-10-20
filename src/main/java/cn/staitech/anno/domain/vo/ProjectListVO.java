@@ -82,6 +82,12 @@ public class ProjectListVO extends BaseEntity {
     private String indicatorName;
 
     /**
+     * 病理指标名称英文
+     */
+    @ApiModelProperty(value = "结构指标名称英文")
+    private String indicatorNameEn;
+
+    /**
      * 创建者id
      */
     @ApiModelProperty(value = "创建者id")
@@ -180,9 +186,9 @@ public class ProjectListVO extends BaseEntity {
     /**
      * 项目类型:1标注2评审3标准训练集
      */
-    @Size(max = 255, message = "编码长度不能超过255")
+    @Size(max = 255, message = "{projectType.length}")
     @ApiModelProperty("项目类型:1标注2评审3标准训练集")
-    @Length(max = 255, message = "编码长度不能超过255")
+    @Length(max = 255, message = "{projectType.length}")
     private String projectType;
 
     @ApiModelProperty("项目类型名称")

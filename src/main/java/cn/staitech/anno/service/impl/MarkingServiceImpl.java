@@ -58,7 +58,6 @@ import java.util.zip.ZipInputStream;
 
 import static cn.staitech.anno.aspect.LogFileAspect.response;
 import static cn.staitech.anno.constant.CommonConstant.*;
-import static cn.staitech.anno.constant.CommonConstant.MICRON;
 
 @Service
 public class MarkingServiceImpl implements MarkingService {
@@ -147,7 +146,7 @@ public class MarkingServiceImpl implements MarkingService {
     public Long insert(viewAddIn req) throws Exception {
         cn.staitech.anno.project.domain.Slide slideBy = slideMapperV1.selectById(req.getSlide_id());
         if (slideBy == null) {
-            throw new Exception("未查询到切片信息");
+            throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
         }
         Marking marking = new Marking();
         BeanUtils.copyProperties(req, marking);
@@ -219,12 +218,12 @@ public class MarkingServiceImpl implements MarkingService {
         // 查询标注表中信息
         Marking markingBy = markingMapper.selectById(req.getMarking_id());
         if (!Optional.ofNullable(markingBy).isPresent()) {
-            throw new Exception("未查询到标注信息");
+            throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
         // 查询标注表中信息
         Slide slide = slideMapperV1.selectById(markingBy.getSlide_id());
         if (!Optional.ofNullable(slide).isPresent()) {
-            throw new Exception("未查询到切片信息");
+            throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
         }
         // 更新前数据
         // 更新文件中的内容
@@ -288,15 +287,15 @@ public class MarkingServiceImpl implements MarkingService {
     @Transactional(rollbackFor = Exception.class)
     public int delete(Long markingId) throws Exception {
         if (!Optional.ofNullable(markingId).isPresent()) {
-            throw new Exception("参数异常");
+            throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }
         Marking markingBy = markingMapper.selectById(markingId);
         if (!Optional.ofNullable(markingBy).isPresent()) {
-            throw new Exception("未查询到标注信息");
+            throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
         Slide slide = slideMapperV1.selectById(markingBy.getSlide_id());
         if (!Optional.ofNullable(slide).isPresent()) {
-            throw new Exception("未查询到切片信息");
+            throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
         }
         Properties properties = markingMapper.selectBy(markingId);
         Features features = socketData(markingBy.getAnnotation_id(), markingBy.getGeometry(), properties);
@@ -312,34 +311,11 @@ public class MarkingServiceImpl implements MarkingService {
     }
 
 
-    public static JSONObject updateY(JSONObject geometry) {
-        List<Object> lists = new ArrayList<>();
-        JSONArray coordinatesJsonArray1 = geometry.getJSONArray("coordinates");
-        String type = geometry.getString("type");
-        List<Object> list1 = new ArrayList<>();
-        for(Object i1: coordinatesJsonArray1){
-            JSONArray jsonArray1 = JSONArray.parseArray(i1.toString());
-            for(Object i2:jsonArray1){
-                JSONArray jsonArray2 = (JSONArray) i2;
-                List<Double> list = JSONObject.parseArray(jsonArray2.toJSONString(),Double.class);
-                List<Double> newList = new ArrayList<>();
-                newList.add(list.get(0));
-                newList.add(Double.valueOf(String.valueOf(Math.abs(list.get(1)))));
-                list1.add(newList);
-            }
-        }
-        lists.add(list1);
-        JSONObject geometryJson = new JSONObject();
-        geometryJson.put("type",type);
-        geometryJson.put("coordinates",lists);
-        return geometryJson;
-    }
-
     @Override
-    public String slideJsonExport(Long slideId) throws Exception {
+    public String slideJsonExport(Long slideId) {
         if (!Optional.ofNullable(slideId).isPresent()) {
             try {
-                throw new Exception("参数异常");
+                throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -347,7 +323,7 @@ public class MarkingServiceImpl implements MarkingService {
         Slide slideBy = slideMapperV1.selectById(slideId);
         if (!Optional.ofNullable(slideBy).isPresent()) {
             try {
-                throw new Exception("未查询到切片信息");
+                throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -355,13 +331,13 @@ public class MarkingServiceImpl implements MarkingService {
 
         String fileUrl = null;
         try {
-            fileUrl = fileService.createFiles(slideId, ".json");
+            fileUrl = fileService.createFiles(slideId, FILE_SUFFIX_JSON);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         // 标注数据
         List<Features> features = markingMapper.selectLists(slideId);
-        features.forEach(i -> i.setGeometry(updateY(i.getGeometry())));
+        features.forEach(i -> i.setGeometry(GeometryUtil.updateYAxle(i.getGeometry())));
 
         // 查询项目详情
         JsonExport jsonExport = null;
@@ -375,7 +351,7 @@ public class MarkingServiceImpl implements MarkingService {
         // 项目信息
         GeoProject project = new GeoProject();
         // 种属编码 + 结构编码 + 数据库项目id
-        String projectId = jsonExport.getSpeciesId() + "_" + jsonExport.getOrganId() + "_" + jsonExport.getProjectId();
+        String projectId = jsonExport.getSpeciesId() + GLIDE_LINE + jsonExport.getOrganId() + GLIDE_LINE + jsonExport.getProjectId();
         project.setProject_id(projectId);
         project.setProject_name(jsonExport.getProjectName());
 
@@ -385,8 +361,17 @@ public class MarkingServiceImpl implements MarkingService {
         image.setImage_type(jsonExport.getFormat());
         image.setImage_name(jsonExport.getImageName());
         image.setCreate_time(jsonExport.getCreateTime());
-        // 项目id + 十三位时间戳 + 两位随机数
-        String imageId = jsonExport.getProjectId() + "_" + System.currentTimeMillis() + "_" + RandomUtils.RandomNumbers();
+        // 获取切片中的geo_image_id,为空则使用以下规则进行生成（项目id + 十三位时间戳 + 两位随机数）
+        String imageId = "";
+        if (Objects.equals(slideBy.getGeoImageId(), "") || slideBy.getGeoImageId() == null) {
+            imageId = jsonExport.getProjectId() + GLIDE_LINE + System.currentTimeMillis() + GLIDE_LINE + RandomUtils.RandomNumbers();
+            Slide slides = new Slide();
+            slides.setSlideId(slideId);
+            slides.setGeoImageId(imageId);
+            slideMapperV1.updateById(slides);
+        } else {
+            imageId = slideBy.getGeoImageId();
+        }
         image.setImage_id(imageId);
         image.setImage_url(jsonExport.getImageUrl());
 
@@ -397,11 +382,11 @@ public class MarkingServiceImpl implements MarkingService {
 
         // 标签信息
         QueryWrapper<cn.staitech.anno.project.domain.Marking> markingQueryWrapper = new QueryWrapper<>();
-        markingQueryWrapper.select("category_id").eq("slide_id",slideId).ne("category_id",0).groupBy("category_id");
+        markingQueryWrapper.select("category_id").eq("slide_id", slideId).ne("category_id", 0).groupBy("category_id");
         List<cn.staitech.anno.project.domain.Marking> markingList = markingMapperV1.selectList(markingQueryWrapper);
         List<GeoLabel> categoryList = new ArrayList<>();
-        if(markingList.size() > 0){
-            for(cn.staitech.anno.project.domain.Marking marking:markingList){
+        if (markingList.size() > 0) {
+            for (cn.staitech.anno.project.domain.Marking marking : markingList) {
                 GeoLabel geoLabel = pathologicalIndicatorCategoryMapper.selectGeoLabel(marking.getCategoryId());
                 categoryList.add(geoLabel);
             }
@@ -428,7 +413,7 @@ public class MarkingServiceImpl implements MarkingService {
         StringBuilder sb;
         File file1 = new File(zipUrl);
         Map<String, String> ddlList = new HashMap<>();
-//        try {
+        try {
             // 查询切片列表
             List<SlideRes> slideResList = slideMapper.selectImageList(projectId);
             //zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
@@ -462,9 +447,11 @@ public class MarkingServiceImpl implements MarkingService {
                         if (image != null) {
                             // 获取标注名称
                             String imageName = image.getString("image_name");
+
+                            String geoImageId = image.getString("image_id");
                             if (imageName != null) {
                                 // 写入数据库
-                                writeMarking(slideResList, imageName, jsonObject);
+                                writeMarking(slideResList, imageName, jsonObject, geoImageId);
                             }
                             //这里是对读取的文件内容进行处理
                             ddlList.put(ze.getName(), sb.toString());
@@ -474,40 +461,17 @@ public class MarkingServiceImpl implements MarkingService {
                 }
                 zp.closeEntry();
             }
-//        } catch (Exception e) {
-//            throw new Exception("json文件解析失败");
-//        }
+        } catch (Exception e) {
+            throw new Exception("json文件解析失败");
+        }
         return true;
     }
 
-    public static JSONObject updateYs(JSONObject geometry) {
-        List<Object> lists = new ArrayList<>();
-        JSONArray coordinatesJsonArray1 = geometry.getJSONArray("coordinates");
-        String type = geometry.getString("type");
-        List<Object> list1 = new ArrayList<>();
-        for(Object i1: coordinatesJsonArray1){
-            JSONArray jsonArray1 = JSONArray.parseArray(i1.toString());
-            for(Object i2:jsonArray1){
-                JSONArray jsonArray2 = (JSONArray) i2;
-                List<Double> list = JSONObject.parseArray(jsonArray2.toJSONString(),Double.class);
-                List<Double> newList = new ArrayList<>();
-                newList.add(list.get(0));
-                String res = "-" + list.get(1);
-                double y = Double.parseDouble(res);
-                newList.add(y);
-                list1.add(newList);
-            }
-        }
-        lists.add(list1);
-        JSONObject geometryJson = new JSONObject();
-        geometryJson.put("type",type);
-        geometryJson.put("coordinates",lists);
-        return geometryJson;
-    }
+
 
 
     @Transactional(rollbackFor = Exception.class)
-    public void writeMarking(List<SlideRes> slideResList, String imageName, org.json.JSONObject jsonObject) throws Exception {
+    public void writeMarking(List<SlideRes> slideResList, String imageName, org.json.JSONObject jsonObject, String geoImageId) throws Exception {
 
         Map<String, Long> categoryMap = new HashMap<>();
         for (SlideRes slideRes : slideResList) {
@@ -522,14 +486,12 @@ public class MarkingServiceImpl implements MarkingService {
                 JSONArray jsonArray = JSONArray.parseArray(String.valueOf(features));
                 // 删除当前切片中所有标注
                 QueryWrapper<cn.staitech.anno.project.domain.Marking> markingQueryWrapperBy = new QueryWrapper<>();
-                markingQueryWrapperBy.eq("slide_id",slideBy.getSlideId());
+                markingQueryWrapperBy.eq("slide_id", slideBy.getSlideId());
                 markingMapperV1.delete(markingQueryWrapperBy);
-                // 更新切片表中json imageId
-                // 项目id + 时间戳 + 两位随机数
-                String imageId = slideBy.getProjectId() + "_" + System.currentTimeMillis() + "_" + RandomUtils.RandomNumbers();
+                // 更新切片表中json geoImageId
                 Slide slides = new Slide();
                 slides.setSlideId(slideBy.getSlideId());
-                slides.setGeoImageId(imageId);
+                slides.setGeoImageId(geoImageId);
                 slideMapperV1.updateById(slides);
 
                 for (Object feature : jsonArray) {
@@ -581,7 +543,7 @@ public class MarkingServiceImpl implements MarkingService {
                     marking.setImageId(Long.valueOf(slideBy.getImageId()));
                     marking.setImageUrl(image.getImageUrl());
                     marking.setCreateBy(SecurityUtils.getUserId());
-                    marking.setGeometry(updateYs(geometry));
+                    marking.setGeometry(GeometryUtil.updateYAxle(geometry));
                     marking.setSlideId(slideRes.getSlideId());
                     marking.setCreateTime(new Date());
                     // 查询标注是否存在
@@ -601,7 +563,6 @@ public class MarkingServiceImpl implements MarkingService {
                         } else {
                             slideAttrService.saveAnnoCategory(marking.getSlideId(), Collections.singletonList(marking.getCategoryId()));
                         }
-
                     }
                 }
             }
@@ -642,7 +603,7 @@ public class MarkingServiceImpl implements MarkingService {
 
         Project projectBy = projectMapperV1.selectById(projectId);
         if (projectBy == null) {
-            throw new Exception("未发现项目信息");
+            throw new Exception(MessageSource.M("NOT_FOND_PROJECT"));
         }
         Snowflake snowflake = new Snowflake();
         Long userId = SecurityUtils.getUserId();
@@ -825,9 +786,6 @@ public class MarkingServiceImpl implements MarkingService {
 //    public Boolean markIsNotFinish(String status) {
 //        return Objects.equals(status, "7");
 //    }
-
-
-
 
 
 }

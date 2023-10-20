@@ -14,22 +14,22 @@ import javax.validation.constraints.NotNull;
 @Data
 public class PathologicalIndicatorCategoryVO {
     @ApiModelProperty(required = true, value = "结构ID")
-    @NotBlank(message = "结构ID不能为空!")
+    @NotBlank(message = "{PathologicalIndicatorCategoryVO.structureId.isnull}")
     private String structureId;
 
-    @NotBlank(message = "颜色值不可为空")
+    @NotBlank(message = "{StatisticCategoryListOutVO.rgb.isnull}")
     @ApiModelProperty(required = true, value = "颜色RBG值")
     private String rgb;
 
-    @NotBlank(message = "颜色值不可为空")
+    @NotBlank(message = "{StatisticCategoryListOutVO.rgb.isnull}")
     @ApiModelProperty(required = true, value = "颜色值HEX")
     private String hex;
 
-    @NotNull(message = "病理指标不能为空")
+    @NotNull(message = "{PathologicalIndicatorCategoryVO.indicatorId.isnull}")
     @ApiModelProperty(required = true, value = "结构指标ID")
     private Long indicatorId;
 
     @ApiModelProperty(value = "图层顺序")
-    @NotNull(message = "图层顺序不可为空!")
+    @NotNull(message = "{StatisticCategoryListOutVO.orderNumber.isnull}")
     private Integer orderNumber;
 }

@@ -21,8 +21,6 @@ public interface ProjectMapperV1 extends BaseMapper<Project> {
     List<ProjectVO> queryProject(@Param("params") ProjectIN params);
 
     IPage<ProjectVO> pageProject(@Param("page") Page page, @Param("params") ProjectIN params)throws Exception;
-
-
 }
 
 

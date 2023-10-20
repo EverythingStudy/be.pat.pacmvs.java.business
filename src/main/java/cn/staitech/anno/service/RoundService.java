@@ -2,7 +2,6 @@ package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.round.Round;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
@@ -13,6 +12,7 @@ import java.util.Map;
  * @Description: 软次
  */
 public interface RoundService extends IService<Round> {
-
     Map<Long, String> selectMap();
+
+    Map<Long, String> selectMapEn();
 }

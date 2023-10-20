@@ -14,7 +14,4 @@ public class SlideFileName {
 
     @ApiModelProperty(value = "切片类型")
     private String slideType;
-
-    @ApiModelProperty(value = "结构编码")
-    private String categoryNumber;
 }

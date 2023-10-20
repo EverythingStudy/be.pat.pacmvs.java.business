@@ -19,6 +19,7 @@ import cn.staitech.anno.domain.vo.project.UpdateProjectStatusVO;
 import cn.staitech.anno.domain.vo.project.UpdateProjectVO;
 import cn.staitech.anno.mapper.ExamineScoreMapper;
 import cn.staitech.anno.service.*;
+import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.PageResponse;
@@ -30,7 +31,6 @@ import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.annotation.RequiresSpecialPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
-import co.elastic.clients.elasticsearch.watcher.QueryWatch;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -184,11 +184,11 @@ public class ProjectController extends BaseController {
                 //添加移走原因,'1给药结束安乐死、2恢复期结束安乐死'
                 ProjectGroup pg1 = new ProjectGroup();
                 pg1.setProjectId(projectId);
-                pg1.setGroupName("给药结束安乐死");
+                pg1.setGroupName(MessageSource.M("REMOVE_REASON_1"));
                 pg1.setGroupId(1L);
                 ProjectGroup pg2 = new ProjectGroup();
                 pg2.setProjectId(projectId);
-                pg2.setGroupName("恢复期结束安乐死");
+                pg2.setGroupName(MessageSource.M("REMOVE_REASON_2"));
                 pg2.setGroupId(2L);
                 List<ProjectGroup> temp = new ArrayList<>();
                 temp.add(pg1);
@@ -279,7 +279,12 @@ public class ProjectController extends BaseController {
     @Log(title = "项目状态列表", menu = "项目状态列表", subMenu = "项目状态列表", businessType = BusinessType.QUERY)
     @GetMapping("/projectStatus")
     public R<Map<Integer, String>> colorType() {
-        Map<Integer, String> map = Container.PROJECT_STATUS;
+        Map<Integer, String> map = null;
+        if (LanguageUtils.isEn()) {
+            map = Container.PROJECT_STATUS_EN;
+        } else {
+            map = Container.PROJECT_STATUS;
+        }
         return R.ok(map);
     }
 
@@ -405,9 +410,9 @@ public class ProjectController extends BaseController {
 
         // 查询考核表中是否有未完成考试的考核信息
         QueryWrapper<ExamineScore> examineScoreQueryWrapper = new QueryWrapper<>();
-        examineScoreQueryWrapper.eq("project_id",req.getProjectId()).eq("operate_status","1");
+        examineScoreQueryWrapper.eq("project_id", req.getProjectId()).eq("operate_status", "1");
         List<ExamineScore> examineScoreList = examineScoreMapper.selectList(examineScoreQueryWrapper);
-        if(examineScoreList.size() > 0){
+        if (examineScoreList.size() > 0) {
             return R.fail(MessageSource.M("ERROR_PROJECT_PROMPT"));
         }
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
@@ -439,7 +444,7 @@ public class ProjectController extends BaseController {
         Chunk chunkObj = new Chunk().setChunkNumber(chunk).setFile(file).setFileName(fileName).setTotalChunks(chunkTotal).setSpecialId(specialId).setChunkSize(chunkSize);
         String zipUrl = fileService.mergeChunk(chunkObj);
         if (!Optional.ofNullable(specialId).isPresent()) {
-            return R.fail("参数异常");
+            return R.fail(MessageSource.M("ARGUMENT_INVALID"));
         }
         markingService.zipExport(zipUrl, specialId);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));

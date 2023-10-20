@@ -394,8 +394,8 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
         //获得登陆人
         Long userId = SecurityUtils.getUserId();
         //查询专题下所有脏器名称
-        StopWatch stopWatch = new StopWatch("一键创建");
-        stopWatch.start("总效率");
+        StopWatch stopWatch = new StopWatch(MessageSource.M("ONE_KEY_CREATE"));
+        stopWatch.start(MessageSource.M("TOTAL_RATE"));
         List<ViscusQueryOut> viscusQueryOuts = projectExtMapper.selectViscusBySpecial(specialId);
         if (!CollectionUtils.isEmpty(viscusQueryOuts)) {
             viscusQueryOuts.forEach(e -> {

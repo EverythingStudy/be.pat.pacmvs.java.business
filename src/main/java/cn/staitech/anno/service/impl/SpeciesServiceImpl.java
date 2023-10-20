@@ -31,4 +31,14 @@ class SpeciesServiceImpl extends ServiceImpl<SpeciesMapper, Species> implements 
                 .collect(Collectors.toMap(Species::getSpeciesId, Species::getName));
         return map;
     }
+
+    @Override
+    public Map<Long, String> selectMapEn() {
+
+        List<Species> list = speciesMapper.selectList();
+        Map<Long, String> map = list.stream()
+                .collect(Collectors.toMap(Species::getSpeciesId, Species::getNameEn));
+        return map;
+    }
+
 }

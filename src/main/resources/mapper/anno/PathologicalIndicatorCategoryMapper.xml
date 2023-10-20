@@ -265,6 +265,19 @@
           AND pic.number = #{number}
     </select>
 
+    <select id="selectCategoryById" resultType="java.lang.String">
+       select group_concat(category_name) from tb_pathological_indicator_category
+        <where>
+            <if test="split != null and split.length>0">
+                AND category_id IN
+                <foreach item="item" index="index" collection="split" open="("  close=")" separator=",">
+                #{item}
+                </foreach>
+            </if>
+        </where>
+
+    </select>
+
 
 
     <!--

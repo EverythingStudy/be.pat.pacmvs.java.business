@@ -3,9 +3,6 @@ package cn.staitech.anno.service.impl;
 import cn.staitech.anno.mapper.SysUserMapper;
 import cn.staitech.anno.service.SysUserService;
 import cn.staitech.system.api.domain.SysUser;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +14,10 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class SysUserServiceImpl implements SysUserService {
-    
-    private static final Logger log = LoggerFactory.getLogger(SysUserServiceImpl.class);
-    
     @Autowired
     private SysUserMapper userMapper;
-    
 
-    
+
     /**
      * 通过用户ID查询用户
      *
@@ -35,9 +28,4 @@ public class SysUserServiceImpl implements SysUserService {
     public SysUser selectUserById(Long userId) {
         return userMapper.selectUserById(userId);
     }
-    
-   
-    
-
-    
 }

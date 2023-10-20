@@ -8,11 +8,13 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class MarkingJsonIn {
-    @NotNull(message = "图片id")
+//    @NotNull(message = "图片id")
+    @NotNull(message = "{MarkingJsonIn.imageId.notNull}")
     @ApiModelProperty(value = "图片id")
     private Long imageId;
 
-    @NotNull(message = "状态不可为空")
+//    @NotNull(message = "状态不可为空")
+    @NotNull(message = "{MarkingJsonIn.status.notNull}")
     @ApiModelProperty(value = "(1:导出测量数据,2:导出标注数据)")
     private Long status;
 

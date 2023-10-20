@@ -19,15 +19,27 @@ import lombok.NoArgsConstructor;
 @TableName("tb_organ")
 public class Organ {
     /**
-     * 脏器key
+     * 脏器ID
      */
     @TableId(value = "organ_id", type = IdType.NONE)
     @ApiModelProperty(value = "脏器ID", hidden = true)
     private String organId;
 
     /**
-     * 脏器value
+     * 脏器名称
      */
     @ApiModelProperty(value = "脏器名称", required = true)
     private String name;
+
+    /**
+     * 脏器名称 - en
+     */
+    @ApiModelProperty(value = "脏器名称en", required = true)
+    private String nameEn;
+
+    /**
+     * 种属编码
+     */
+    @ApiModelProperty(value = "种属编码", required = true)
+    private String speciesCode;
 }

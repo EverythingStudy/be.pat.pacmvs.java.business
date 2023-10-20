@@ -157,7 +157,6 @@ public class FilesController extends BaseController {
     @ApiOperation(value = "编辑单个文件")
     @PostMapping("/update")
     public R updateBatchIds(@Validated @RequestBody Files files) {
-        //  if (files.getFilesId() > 0 && filesService.save(files)) {
         if (files.getFilesId() > 0 && filesService.updateById(files)) {
             return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }

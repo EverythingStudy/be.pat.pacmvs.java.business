@@ -13,6 +13,7 @@ import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
 import cn.staitech.anno.service.StructureService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -54,9 +55,9 @@ public class PathologicalIndicatorCategoryServicelmpl implements PathologicalInd
     @Override
     public String updateByPrimaryKeySelective(PathologicalIndicatorCategory indicator) {
         if (pathologicalIndicatorCategoryMapper.updateByPrimaryKeySelective(indicator) > 0) {
-            return "修改成功";
+            return MessageSource.M("UPDATE_SUCCESS_1");
         } else {
-            return "该标签不存在";
+            return MessageSource.M("NOT_THIS_INDICATOR");
         }
     }
 
@@ -65,12 +66,11 @@ public class PathologicalIndicatorCategoryServicelmpl implements PathologicalInd
      */
     @Override
     public String deleteByPrimaryKey(Long categoryId) {
-
         // 查询标签是否存在
         if (pathologicalIndicatorCategoryMapper.deleteByPrimaryKey(categoryId) > 0) {
-            return "删除成功";
+            return MessageSource.M("DELETE_SUCCESS");
         } else {
-            return "此标签不存在";
+            return MessageSource.M("NOT_THIS_INDICATOR");
         }
     }
 
@@ -149,8 +149,6 @@ public class PathologicalIndicatorCategoryServicelmpl implements PathologicalInd
     }
 
 
-
-
     /**
      * 通过项目id统计标注类别
      *
@@ -200,8 +198,8 @@ public class PathologicalIndicatorCategoryServicelmpl implements PathologicalInd
                 Structure structure = structureService.getOneStructure(listVO.getSpeciesId(), listVO.getOrganId(), listVO.getStructureId());
                 // 结构名称
                 listVO.setStructureName(structure.getName());
-            }catch (Exception e){
-                log.error("{};;;{};;;;{}",listVO.getSpeciesId(), listVO.getOrganId(), listVO.getStructureId());
+            } catch (Exception e) {
+                log.error("{};;;{};;;;{}", listVO.getSpeciesId(), listVO.getOrganId(), listVO.getStructureId());
             }
 
         }

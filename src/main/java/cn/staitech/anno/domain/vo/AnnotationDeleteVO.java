@@ -21,14 +21,14 @@ public class AnnotationDeleteVO {
     /**
      * 项目id .
      */
-    @NotNull(message = "项目id不能为空")
+    @NotNull(message = "{ProjectRemoveIn.projectId.isnull}")
     @ApiModelProperty(value = "项目id", required = true)
     private Long projectId;
 
     /**
      * 创建者id .
      */
-    @NotNull(message = "用户id列表不能为空")
+    @NotNull(message = "{AnnotationDeleteVO.createBy.isnull}")
     @ApiModelProperty(value = "创建者id", required = true)
     private Long[] createBy;
 }

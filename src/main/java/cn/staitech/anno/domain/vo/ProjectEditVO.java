@@ -11,7 +11,7 @@ public class ProjectEditVO {
     /**
      * 项目ID
      */
-    @NotNull(message = "项目id不可为空 ！")
+    @NotNull(message = "{PorjectVO.projectId.isnull}")
     @ApiModelProperty(value = "项目id",required = true)
     private Long projectId;
 

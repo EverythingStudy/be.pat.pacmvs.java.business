@@ -2,13 +2,10 @@ package cn.staitech.anno.service.impl.manage;
 
 import cn.staitech.anno.domain.ProjectMember;
 import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.vo.ProjectListVO;
 import cn.staitech.anno.domain.vo.ProjectMemberVO;
 import cn.staitech.anno.mapper.ProjectMemberMapper;
 import cn.staitech.anno.service.GetUserInformationService;
-import cn.staitech.anno.service.ProjectService;
 import cn.staitech.anno.service.SlideService;
-import cn.staitech.common.core.constant.SecurityConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -19,14 +16,13 @@ import java.util.List;
 
 /**
  * ROI 无属性标注
+ * @author wangf
  */
 @Slf4j
 @Service
 public class ProjectMemberManage {
     @Resource
     private SlideService slideService;
-    @Resource
-    private ProjectService projectService;
     @Resource
     private ProjectMemberMapper projectMemberMapper;
     @Resource
@@ -48,12 +44,7 @@ public class ProjectMemberManage {
 
         //查询projectId
         Long projectId = slide.getProjectId();
-
-        //查询项目信息
-//        ProjectListVO project = projectService.selectProjectById(projectId);
-
         ProjectMember pm = new ProjectMember();
-//        pm.setProjectId(project.getProjectId());
         pm.setProjectId(projectId);
 
         //查询项目成员

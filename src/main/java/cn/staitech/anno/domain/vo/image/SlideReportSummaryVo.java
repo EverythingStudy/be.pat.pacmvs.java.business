@@ -30,7 +30,7 @@ public class SlideReportSummaryVo {
      * 剂量
      * */
     @ApiModelProperty(required = true)
-    @Size(min = 0, max = 20, message = "剂量不可超过20字段")
+    @Size(min = 0, max = 20, message = "{SlideReportSummaryVo.dosage.length}")
     private String dosage;
 
 

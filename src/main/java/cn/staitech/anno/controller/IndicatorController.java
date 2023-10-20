@@ -1,5 +1,6 @@
 package cn.staitech.anno.controller;
 
+import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.vo.indicator.*;
@@ -33,7 +34,7 @@ import java.util.Optional;
  */
 @Api(value = "结构指标接口", tags = "结构指标")
 @RestController
-@RequestMapping("indicator")
+@RequestMapping("/indicator")
 public class IndicatorController extends BaseController {
 
     @Resource
@@ -45,9 +46,8 @@ public class IndicatorController extends BaseController {
     @Resource
     private PathologicalIndicatorCategoryService pathologicalService;
 
-
     /**
-     * 添加结构指标 .
+     * 添加结构指标 2.0SAAS .
      */
     @SneakyThrows
     @ApiOperation(value = "添加结构指标", notes = "wangfeng")
@@ -60,8 +60,6 @@ public class IndicatorController extends BaseController {
         Indicator indicator = new Indicator();
         indicator.setSpeciesId(req.getSpeciesId());
         indicator.setOrganId(req.getOrganId());
-        indicator.setOrganizationId(sysUser.getOrganizationId());
-        indicator.setIndicatorName(req.getSpeciesName() + req.getOrganName());
 
         //查询结构指标是否存在
         List<Indicator> indicatorList = indicatorService.selectIndicator(indicator);
@@ -69,8 +67,10 @@ public class IndicatorController extends BaseController {
             return R.fail(MessageSource.M("INDICATOR_EXIST"));
         }
 
+        indicator.setIndicatorName(MapConstant.getOrgan(req.getOrganId()));
+        indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getOrganId()));
+        indicator.setNumber(indicator.getSpeciesId().toString().concat(indicator.getOrganId().toString()));
         indicator.setCreateBy(sysUser.getUserId());
-        indicator.setNumber(indicator.getSpeciesId() + "" + indicator.getOrganId());
 
         //添加结构指标
         indicatorService.insertIndicator(indicator);
@@ -177,10 +177,8 @@ public class IndicatorController extends BaseController {
         return R.ok(1);
     }
 
-    // 2.0 新修改====================================
-
     /**
-     * 关联病理指标列表2.0 .
+     * 关联病理指标列表 2.0SAAS .
      */
     @ApiOperation(value = "关联病理指标列表", notes = "wangfeng")
     @GetMapping("/getIndicatorList")

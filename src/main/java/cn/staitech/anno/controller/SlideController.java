@@ -12,10 +12,12 @@ import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO;
 import cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO;
 import cn.staitech.anno.domain.vo.slideVo.*;
 import cn.staitech.anno.domain.vo.topic.TopicListVO;
-import cn.staitech.anno.response.R;
+
+
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
@@ -93,7 +95,7 @@ public class SlideController extends BaseController {
             }
             //需求要求，删除单条提示
             if (slideList.size() == 1 && list.size() == 0) {
-                return R.fail("当前切片处理中，禁止删除");
+                return R.fail(MessageSource.M("DELETE_FAILURE_SLIDE_USEING"));
             }
             if (!list.isEmpty()) {
                 slideService.updateBatchByCondition(list);

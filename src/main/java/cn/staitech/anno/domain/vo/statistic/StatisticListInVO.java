@@ -10,11 +10,11 @@ import java.util.List;
 
 @Data
 public class StatisticListInVO {
-    @NotNull(message="统计维度不能为空")
+    @NotNull(message="{AnnotationStatisticListPageInVO.statisticDimension.isnull}")
     @ApiModelProperty(value = "统计维度：项目、病理指标、标注类别、成员、图像", required = true)
     private Long statisticDimension;
 
-    @NotNull(message="显示数量不能为空")
+    @NotNull(message="{StatisticListInVO.statisticCategory.isnull}")
     @ApiModelProperty(value = "显示数量：标注数量、图像数量", required = true)
     private Long statisticCategory;
     

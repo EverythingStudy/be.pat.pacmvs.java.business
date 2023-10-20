@@ -22,11 +22,11 @@ import cn.staitech.anno.domain.vo.slideVo.AddSlideVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListOutVO;
 import cn.staitech.anno.mapper.*;
-import cn.staitech.anno.response.R;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
@@ -132,8 +132,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         }
         return slideMapper.selectSlideListByProjectIdList(projectIdList);
     }
-
-//    @SuppressWarnings("checkstyle:WhitespaceAfter")
 
     /**
      * 通过切片ID查询切片信息

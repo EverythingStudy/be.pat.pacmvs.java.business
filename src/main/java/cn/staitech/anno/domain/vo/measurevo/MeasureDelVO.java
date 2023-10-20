@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class MeasureDelVO {
     
-    @NotNull(message = "测量不可为空!")
+    @NotNull(message = "{MeasureDelVO.measureId.isnull}")
     @ApiModelProperty(value = "测量id", required = true)
     private Long measureId;
     

@@ -20,13 +20,13 @@ import javax.validation.constraints.NotNull;
 @Data
 public class ProjectMemberUpdateVO {
 
-    @NotNull(message = "项目id不可为空")
+    @NotNull(message = "{PorjectVO.projectId.isnull}")
     @ApiModelProperty(value = "项目id", required = true)
     private Long projectId;
-    @NotNull(message = "用户id不可为空")
+    @NotNull(message = "{ProjectMemberUpdateVO.userId.isnull}")
     @ApiModelProperty(value = "用户id", required = true)
     private Long userId;
-    @NotBlank(message = "角色ID不可为空")
+    @NotBlank(message = "{ProjectMemberUpdateVO.roleId.isnull}")
     @ApiModelProperty(value = "角色ID", required = true)
     private Long roleId;
 }

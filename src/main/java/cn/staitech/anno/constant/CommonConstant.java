@@ -22,7 +22,7 @@ public class CommonConstant {
 
     public static final String GLIDE_LINE = "_";
 
-
+    public static final String FILE_SUFFIX_DOCX = ".docx";
     public static final String FILE_SUFFIX_JSON = ".json";
     public static final String FILE_SUFFIX_TXT = ".txt";
     public static final String FILE_SUFFIX_XLSX = ".xlsx";
@@ -109,6 +109,9 @@ public class CommonConstant {
      */
     public static final String[] EXAMINESCORE_COLHEAD_KEY = {"项目名称", "切片编号", "答题者", "开始时间", "交卷时间", "应标个数(下限)", "实标个数", "miou拟合区间", "fiou拟合区间", "biou拟合区间", "tiou拟合区间", "个人拟合度", "考试结果"};
     public static final String[] EXAMINESCORE_COLHEAD_VALUE = {"projectName", "imageName", "nickName", "startTime", "endTime", "shouldNumber", "realityNumber", "miou", "fiou", "biou", "tiou", "personalFit", "examResults"};
+
+    public static final String[] ALGORITHMASSESSMENT_COLHEAD_KEY = {"项目名称", "切片编号", "标注json", "对比json", "考核人员", "考核标签", "轮廓个数", "漏检率", "误检率", "miou", "fiou", "biou", "tiou","结果时间"};
+    public static final String[] ALGORITHMASSESSMENT_COLHEAD_VALUE = {"projectName", "imageName", "annotationJsonName", "jsonName", "examinePeople", "examineCategoryName", "outlineNumber","missedDetectionRate","falseDetectionRate", "miou", "fiou", "biou", "tiou", "createTime"};
 
 
     /**

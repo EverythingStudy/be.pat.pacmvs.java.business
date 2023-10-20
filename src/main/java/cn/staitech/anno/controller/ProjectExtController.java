@@ -133,9 +133,9 @@ public class ProjectExtController extends BaseController {
         projectService.selectProjectList(new Project());
         CacheUtils.ProjectCache(new Project());
         if (res > 0) {
-            return R.ok("项目描述修改成功");
+            return R.ok(MessageSource.M("OPERATE_SUCCEED"));
         } else {
-            return R.fail("项目描述修改失败");
+            return R.fail(MessageSource.M("OPERATE_ERROR"));
         }
     }
 
@@ -169,8 +169,6 @@ public class ProjectExtController extends BaseController {
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
         // 获取当前登录用户Id
         Long loginUser = sysUser.getUserId();
-        Long organizationId = sysUser.getOrganizationId();
-
         String name = req.getProjectName();
 
         //根据项目名称查询，用来判断项目名称是否被使用
@@ -368,8 +366,6 @@ public class ProjectExtController extends BaseController {
                     projectListVO.getProjectId());
             if (projectMember == null) {
                 projectListVO.setRoleType(null);
-            } else {
-                //  projectListVO.setRoleType(projectMember.getRoleType());
             }
         }
         //根据条件查询项目
@@ -404,21 +400,12 @@ public class ProjectExtController extends BaseController {
             userNameList.add(userName);
             userMap.put("userId", userId);
             userMap.put("userName", userName);
-            //userMap.put("roleName", ProjectMemberEnum.getEnumLabelByValue(projectMember.getRoleId()));
             userMap.put("roleName", projectMember.getRoleId()); // 通地roleId获取角色名称
 
             userNames.add(userMap);
         }
         list.setUserNames(userNameList.stream().toArray(String[]::new));
         list.setUserMap(userNames);
-/*
-        Long createBy = list.getCreateBy();
-        if (createBy != null) {
-            //获取创建者信息
-            SysUser userInformation = getUserInformationService.selectById(createBy);
-            String username = userInformation.getUserName();
-            list.setCreateByName(username);
-        }*/
 
         return R.ok(list);
     }
@@ -492,8 +479,7 @@ public class ProjectExtController extends BaseController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageNum", value = "当前记录起始索引", dataTypeClass = Integer.class, paramType = "query", example = "1"),
             @ApiImplicitParam(name = "pageSize", value = "每页显示记录数", dataTypeClass = Integer.class, paramType = "query", example = "10")})
-    public R<PageMaster<ProjectListOutVO>> listByProjectId(@Valid ProjectInforImageVO projectInforImage)
-            throws Exception {
+    public R<PageMaster<ProjectListOutVO>> listByProjectId(@Valid ProjectInforImageVO projectInforImage) {
         SlideSelectVO slideSelectVO = new SlideSelectVO();
         BeanUtils.copyProperties(projectInforImage, slideSelectVO);
         //根据条件查询对应的切片信息
@@ -957,7 +943,7 @@ public class ProjectExtController extends BaseController {
         for (StatisticCategoryListOutVO category : categoryList) {
             Map<String, String> mapCategory = new HashMap<String, String>();
             if (category.getCategoryName() == null) {
-                mapCategory.put("无属性数量", "0");
+                mapCategory.put(MessageSource.M("NO_ENTITY_COUNT"), "0");
                 titleList.add(mapCategory);
                 continue;
             }
@@ -1320,7 +1306,7 @@ public class ProjectExtController extends BaseController {
                 }
                 //对每个图片中的数据进行转换
                 JSONObject jsonObject0 = ProjectUtils.jsonExportMethod(annotationList, imageName, size, project1);
-                zos.putNextEntry(new ZipEntry(imageName.split("\\.")[0] + "_" + slideId + FILE_SUFFIX_JSON));
+                zos.putNextEntry(new ZipEntry(imageName.split("\\.")[0] + GLIDE_LINE + slideId + FILE_SUFFIX_JSON));
 
                 //json数据转为输入流
                 bais = new ByteArrayInputStream(jsonObject0.toString().getBytes(CHARACTER_SET_UTF8));

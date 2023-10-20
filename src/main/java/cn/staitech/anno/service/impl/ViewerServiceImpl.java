@@ -10,13 +10,13 @@ import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
 import cn.staitech.anno.domain.geojson.in.viewAddIn;
 import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.marking.SlideRes;
-import cn.staitech.anno.elasticsearchRepositories.GeometryDocMapper;
 import cn.staitech.anno.mapper.MarkingMapper;
 import cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.service.ViewerService;
 import cn.staitech.anno.utils.CustomizationIdUtils;
 import cn.staitech.anno.utils.FileUtils;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -24,7 +24,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -38,9 +37,11 @@ import static cn.staitech.anno.utils.FileUtils.getFileNameNoEx;
 import static cn.staitech.anno.utils.TimeUtils.CurrentTime;
 import static org.reflections.Reflections.log;
 
+/**
+ * @author wangf
+ */
 @Service
 public class ViewerServiceImpl implements ViewerService {
-
     @Resource
     private PathologicalIndicatorCategoryMapper pathologicalIndicatorCategoryMapper;
 
@@ -49,9 +50,6 @@ public class ViewerServiceImpl implements ViewerService {
 
     @Resource
     private MarkingMapper markingMapper;
-
-    /*@Resource
-    private GeometryDocMapper geometryDocMapper;*/
 
     @Resource
     private SlideService slideService;
@@ -104,7 +102,7 @@ public class ViewerServiceImpl implements ViewerService {
             }
         }
         String date = CurrentTime();
-//        properties.setAnnotation_owner(SecurityUtils.getUserId());
+        // properties.setAnnotation_owner(SecurityUtils.getUserId());
         properties.setAnnotation_type("Draw");
         properties.setCreate_time(date);
         properties.setCategory_id(req.getCategory_id());
@@ -126,7 +124,7 @@ public class ViewerServiceImpl implements ViewerService {
         // 更新标注信息
         Features marking = new Features();
         Properties properties = new Properties();
-//        marking.setId(req.getAnnotation_id());
+        // marking.setId(req.getAnnotation_id());
         marking.setGeometry(req.getGeometry());
         properties.setArea(req.getArea());
         properties.setPerimeter(req.getPerimeter());
@@ -169,16 +167,15 @@ public class ViewerServiceImpl implements ViewerService {
             while (zipEnum.hasMoreElements()) {//判断是否还有元素
 
 
-
                 ze = (ZipEntry) zipEnum.nextElement();//返回下一对象
 
                 String fileNames = ze.getName();
                 if (!fileNames.contains(".")) {
-                    throw new Exception("未检测到json文件");
+                    throw new Exception(MessageSource.M("JSON_FILE_NOT_HAS"));
                 }
                 String suffix = (fileNames.split("\\.")[fileNames.split("\\.").length - 1]);
                 if (!Objects.equals(suffix, "json")) {
-                    throw new Exception("未检测到json文件");
+                    throw new Exception(MessageSource.M("JSON_FILE_NOT_HAS"));
                 }
                 sb = new StringBuilder();
                 if (ze.isDirectory()) {
@@ -275,7 +272,7 @@ public class ViewerServiceImpl implements ViewerService {
 //            DeleteFolder(zipUrl);
             // 查询
         } catch (Exception e) {
-            throw new Exception("json文件解析失败");
+            throw new Exception(MessageSource.M("JSON_FILE_PARSE_FAILURE"));
         }
         return true;
     }

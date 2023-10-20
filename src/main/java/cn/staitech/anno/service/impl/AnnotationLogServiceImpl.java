@@ -16,30 +16,30 @@ import java.util.List;
  */
 @Service
 public class AnnotationLogServiceImpl implements AnnotationLogService {
-    
-    
+
+
     @Resource
     private AnnotationLogMapper annotationLogMapper;
-    
+
     @Override
-    public int insertAnnotationLogList(@Param("annotationLogList") List<AnnotationLog> annotationLogList){
+    public int insertAnnotationLogList(@Param("annotationLogList") List<AnnotationLog> annotationLogList) {
         return annotationLogMapper.insertAnnotationLogList(annotationLogList);
     }
-    
+
     @Override
     public List<AnnotationLog> selectAnnotationLogById(Long annotationId) {
         return annotationLogMapper.selectAnnotationLogById(annotationId);
     }
-    
+
     @Override
     public List<AnnotationLog> selectAnnotationLog() {
         return annotationLogMapper.selectAnnotationLog();
     }
-    
+
     @Override
     public int insertAnnotationLog(AnnotationLog annotationLog) {
         return annotationLogMapper.insertAnnotationLog(annotationLog);
     }
-    
-    
+
+
 }

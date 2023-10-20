@@ -3,43 +3,31 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.StructureMapper">
-	<resultMap type="cn.staitech.anno.domain.structure.Structure"	id="StructureResult">
-		<result property="structureId" column="structure_id" />
-		<result property="name" column="name" />
-		<result property="organId" column="organ_id" />
-		<result property="speciesId" column="species_id" />
-	</resultMap>
-	<!-- <sql id="selectList"> select structure_id, name from tb_structure </sql> -->
-	<select id="getOrganBySpeciesId" parameterType="cn.staitech.anno.domain.structure.Structure" resultType="cn.staitech.anno.domain.organ.Organ">
-		SELECT
-			DISTINCT(t1.organ_id),
-			t2.`name`
-		FROM
-			tb_structure t1
-		LEFT JOIN
-			tb_organ t2 ON t1.organ_id = t2.organ_id
-		<where>
-			<if test="speciesId != null">
-				AND t1.species_id = #{speciesId}
-			</if>
-		</where>
-	</select>
-	
-	<select id="getStructureList" parameterType="cn.staitech.anno.domain.structure.Structure" resultType="cn.staitech.anno.domain.structure.Structure">
-		SELECT
-			t1.organ_id,
-			t1.`name`,
-			t1.species_id,
-			t1.structure_id
-		FROM
-			tb_structure t1
-		<where>
-			<if test="speciesId != null">
-				AND t1.species_id = #{speciesId}
-			</if>
-			<if test="organId != null">
-				AND t1.organ_id = #{organId}
-			</if>
-		</where>
-	</select>
+    <resultMap type="cn.staitech.anno.domain.structure.Structure" id="StructureResult">
+        <result property="structureId" column="structure_id"/>
+        <result property="name" column="name"/>
+        <result property="nameEn" column="name_en"/>
+        <result property="organId" column="organ_id"/>
+        <result property="speciesId" column="species_id"/>
+    </resultMap>
+
+    <select id="getStructureList" parameterType="cn.staitech.anno.domain.structure.Structure"
+            resultType="cn.staitech.anno.domain.structure.Structure">
+        SELECT
+        t1.organ_id,
+        t1.`name`,
+        t1.`name_en`,
+        t1.species_id,
+        t1.structure_id
+        FROM
+        tb_structure t1
+        <where>
+            <if test="speciesId != null">
+                AND t1.species_id = #{speciesId}
+            </if>
+            <if test="organId != null">
+                AND t1.organ_id = #{organId}
+            </if>
+        </where>
+    </select>
 </mapper>

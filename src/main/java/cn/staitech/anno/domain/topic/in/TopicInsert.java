@@ -18,7 +18,7 @@ public class TopicInsert implements Serializable {
     /**
      * 专题名称 .
      */
-    @Size(min = 1, max = 100, message = "专题名称长度不能超过100个字符")
+    @Size(min = 1, max = 100, message = "{ImageTopicBatchIdsVO.topicName.length}")
     @ApiModelProperty(value = "专题名称")
     private String topicName;
 

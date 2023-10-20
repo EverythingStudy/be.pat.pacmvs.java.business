@@ -1,6 +1,5 @@
 package cn.staitech.anno.service.impl.manage;
 
-import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.service.ProjectService;
@@ -24,8 +23,8 @@ public class SlideManage {
 
     /**
      * 项目批量添加图片
-     * */
-    public int insertProjectImage(List<Slide> slideList,Long projectId) {
+     */
+    public int insertProjectImage(List<Slide> slideList, Long projectId) {
         slideService.insertSlide(slideList);
         Project project = new Project();
         project.setUpdateBy(SecurityUtils.getUserId());

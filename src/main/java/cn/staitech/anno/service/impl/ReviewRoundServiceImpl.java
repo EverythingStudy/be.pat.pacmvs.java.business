@@ -12,6 +12,7 @@ import cn.staitech.anno.project.mapper.SlideMapperV1;
 import cn.staitech.anno.service.ReviewRoundService;
 import cn.staitech.anno.service.SysUserService;
 import cn.staitech.anno.service.TopicService;
+import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -37,10 +38,6 @@ import java.util.stream.Collectors;
 @Service
 public class ReviewRoundServiceImpl extends ServiceImpl<ReviewRoundMapper, ReviewRound>
         implements ReviewRoundService {
-
-    @Resource
-    private ReviewRoundMapper reviewRoundMapper;
-
     @Resource
     private TopicService topicService;
 
@@ -122,10 +119,17 @@ public class ReviewRoundServiceImpl extends ServiceImpl<ReviewRoundMapper, Revie
             ReviewRoundOutVO reviewRoundOutVO = new ReviewRoundOutVO();
             BeanUtils.copyProperties(round, reviewRoundOutVO);
 
-            // 评审轮次
-            reviewRoundOutVO.setRoundName(MapConstant.getRoundName(round.getRoundId()));
+            if (LanguageUtils.isEn()) {
+                // 评审轮次
+                reviewRoundOutVO.setRoundName(MapConstant.getRoundNameEn(round.getRoundId()));
+            } else {
+                // 评审轮次
+                reviewRoundOutVO.setRoundName(MapConstant.getRoundName(round.getRoundId()));
+            }
+
             // 组别
             reviewRoundOutVO.setGroupName(MapConstant.getGroupName(round.getGroupId()));
+
             //专题编号
             if (topicMap.containsKey(round.getTopicId())) {
                 reviewRoundOutVO.setTopicName(topicMap.get(round.getTopicId()));

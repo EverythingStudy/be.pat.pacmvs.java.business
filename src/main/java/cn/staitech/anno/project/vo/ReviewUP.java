@@ -14,22 +14,22 @@ public class ReviewUP {
     /**
      * 详情
      */
-    @NotBlank(message="[详情]不能为空")
-    @Size(max= 100,message="编码长度不能超过100")
+    @NotBlank(message="{Review.details.isnull}")
+    @Size(max= 100,message="{PathologicalIndicatorCategory.structureId.length}")
     @ApiModelProperty("详情")
-    @Length(max= 100,message="编码长度不能超过100")
+    @Length(max= 100,message="{PathologicalIndicatorCategory.structureId.length}")
     private String details;
     /**
      * 分数
      */
-    @NotNull(message="[分数]不能为空")
+    @NotNull(message="{ReviewIN.score.isnull}")
     @ApiModelProperty("分数")
     private Long score;
 
     /**
      * 分数
      */
-    @NotNull(message="[评审id]不能为空")
+    @NotNull(message="{ReviewUP.reviewId.isnull}")
     @ApiModelProperty("评审id")
     private Long reviewId;
 }

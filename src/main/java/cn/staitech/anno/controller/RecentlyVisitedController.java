@@ -50,7 +50,7 @@ public class RecentlyVisitedController {
     @GetMapping("/visited")
     public R<String> add(Long slideId) {
         if (!Optional.ofNullable(slideId).isPresent()) {
-            return R.fail("参数异常");
+            return R.fail(MessageSource.M("ARGUMENT_INVALID"));
         }
         // 判断当前角色是否为admin或者超级管理员
         if (!SysUser.isAdmin(SecurityUtils.getUserId())) {
@@ -58,6 +58,4 @@ public class RecentlyVisitedController {
         }
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
-
-
 }

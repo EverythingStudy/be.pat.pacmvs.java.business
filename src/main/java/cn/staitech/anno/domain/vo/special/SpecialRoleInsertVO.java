@@ -30,23 +30,23 @@ public class SpecialRoleInsertVO implements Serializable {
      * 角色名称
      */
     @ApiModelProperty(value = "角色名称(必填，只允许输入汉字，限制15个字)", required = true)
-    @NotBlank(message = "角色名称不能为空")
-    @Size(min = 0, max = 15, message = "角色名称长度不能超过15个汉字")
+    @NotBlank(message = "{SpecialRole.roleName.isnull}")
+    @Size(min = 0, max = 15, message = "{SpecialRole.roleName.length}")
     private String roleName;
 
     /**
      * 权限标识
      */
     @ApiModelProperty(value = "权限标识(必填，只允许输入字母和数字)", required = true)
-    @NotBlank(message = "权限标识不能为空")
-    @Size(min = 0, max = 100, message = "权限标识长度不能超过100个字符")
+    @NotBlank(message = "{SpecialRole.roleKey.isnull}")
+    @Size(min = 0, max = 100, message = "{SpecialRole.roleKey.length}")
     private String roleKey;
 
     /**
      * 功能权限
      */
     @ApiModelProperty(value = "功能权限", required = true)
-    @NotEmpty(message = "功能权限列表不能为空")
+    @NotEmpty(message = "{SpecialRoleInsertVO.menuIds.isnull}")
     private Long[] menuIds;
 
     /**
@@ -59,6 +59,6 @@ public class SpecialRoleInsertVO implements Serializable {
      * 角色描述
      */
     @ApiModelProperty(value = "角色描述")
-    @Size(min = 0, max = 50, message = "角色描述长度过长")
+    @Size(min = 0, max = 50, message = "{SpecialRole.remark.length}")
     private String remark;
 }

@@ -22,10 +22,13 @@ import java.io.Serializable;
  */
 @Data
 public class ImageTopicVO extends Pager implements Serializable {
-    @Size(min = 0, max = 200, message = "切片编号长度不能超过100个字符")
+//    @Size(min = 0, max = 200, message = "切片编号长度不能超过100个字符")
+    @Size(min = 0, max = 200, message = "{ImageTopicVO.imageName.length}")
     @ApiModelProperty(value = "文件名称-切片编号")
     private String imageName;
-    @Size(min = 0, max = 200, message = "专题名称长度不能超过100个字符")
+
+//    @Size(min = 0, max = 200, message = "专题名称长度不能超过100个字符")
+    @Size(min = 0, max = 200, message = "{ImageTopicBatchIdsVO.topicName.length}")
     @ApiModelProperty(value = "所属专题-专题名称")
     private String topicName;
     @ApiModelProperty(value = "添加状态：NULL查全部、0未添加、1已添加")

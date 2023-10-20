@@ -12,14 +12,14 @@ public class AnnotationEditVO {
     /**
      * 标注id
      */
-    @NotNull(message = "标注id不可为空！")
+    @NotNull(message = "{MarkingDelIn.annotationId.notBlank}")
     @ApiModelProperty(value = "标注id", required = true)
     private Long annotationId;
 
     /**
      * 详细地理位置信息（第二个图形）
      */
-    @NotBlank(message = "确认状态不可为空字符串！")
+    @NotBlank(message = "{SpecialAnnotationEditVO.location.isnull}")
     @ApiModelProperty(value = "详细地理位置信息（第二个图形）", required = true)
     private String location;
 

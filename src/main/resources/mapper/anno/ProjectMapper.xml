@@ -20,6 +20,7 @@
         <result property="projectType" column="project_type"/><!-- 项目类型 -->
         <result property="organizationId" column="organization_id"/><!-- 机构 -->
         <result property="indicatorName" column="indicator_name"/>
+        <result property="indicatorNameEn" column="indicator_name_en"/>
         <result property="productSeries" column="product_series"/>
         <result property="organizationName" column="organization_name"/>
     </resultMap>
@@ -35,6 +36,7 @@
         <result property="updateTime" column="update_time"/>
         <result property="updateBy" column="update_by"/>
         <result property="indicatorName" column="indicator_name"/>
+        <result property="indicatorNameEn" column="indicator_name_en"/>
         <result property="imageName" column="image_name"/>
         <result property="slideId" column="slide_id"/>
         <result property="status" column="status"/>
@@ -124,6 +126,7 @@
                p.product_series_id,
                u.user_name,
                i.indicator_name,
+               i.indicator_name_en,
                ps.name as product_series,
                org.organization_name
         from tb_project p
@@ -199,13 +202,16 @@
             <if test="indicatorId != null and indicatorId != ''">
                 AND p.indicator_id = #{indicatorId}
             </if>
-            <if test="speciesId != null"><!-- 种属 -->
+            <if test="speciesId != null">
+                <!-- 种属 -->
                 AND p.species_id = #{speciesId}
             </if>
-            <if test="productSeriesId != null"><!-- 品系 -->
+            <if test="productSeriesId != null">
+                <!-- 品系 -->
                 AND p.product_series_id = #{productSeriesId}
             </if>
-            <if test="organizationId != null"><!-- 组织机构ID -->
+            <if test="organizationId != null">
+                <!-- 组织机构ID -->
                 AND p.organization_id = #{organizationId}
             </if>
             <if test="status != null">
@@ -218,10 +224,12 @@
                 AND p.create_by = #{createBy}
             </if>
             <if test="createTimeParams != null">
-                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''"><!-- 开始时间检索 -->
+                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
+                    <!-- 开始时间检索 -->
                     and date_format(p.create_time,'%y%m%d') &gt;= date_format(#{createTimeParams.beginTime},'%y%m%d')
                 </if>
-                <if test="createTimeParams.endTime != null and createTimeParams.endTime != ''"><!-- 结束时间检索 -->
+                <if test="createTimeParams.endTime != null and createTimeParams.endTime != ''">
+                    <!-- 结束时间检索 -->
                     and date_format(p.create_time,'%y%m%d') &lt;= date_format(#{createTimeParams.endTime},'%y%m%d')
                 </if>
             </if>
@@ -232,28 +240,64 @@
     <insert id="insertProject" parameterType="cn.staitech.anno.domain.Project" useGeneratedKeys="true"
             keyProperty="projectId">
         insert into tb_project (
-        <if test="projectName != null and projectName != '' ">project_name,</if>
-        <if test="createBy != null and createBy != '' ">create_by,</if>
-        <if test="indicatorId != null and indicatorId != ''">indicator_id,</if>
-        <if test="colorType != null">color_type,</if>
-        <if test="speciesId != null">species_id,</if>
-        <if test="productSeriesId != null">product_series_id,</if>
-        <if test="projectType != null">project_type,</if>
-        <if test="description != null">description,</if>
-        <if test="organizationId != null">organization_id,</if>
+        <if test="projectName != null and projectName != '' ">
+            project_name,
+        </if>
+        <if test="createBy != null and createBy != '' ">
+            create_by,
+        </if>
+        <if test="indicatorId != null and indicatorId != ''">
+            indicator_id,
+        </if>
+        <if test="colorType != null">
+            color_type,
+        </if>
+        <if test="speciesId != null">
+            species_id,
+        </if>
+        <if test="productSeriesId != null">
+            product_series_id,
+        </if>
+        <if test="projectType != null">
+            project_type,
+        </if>
+        <if test="description != null">
+            description,
+        </if>
+        <if test="organizationId != null">
+            organization_id,
+        </if>
         create_time,
         image_total,
         update_time
         )values(
-        <if test="projectName != null and projectName != ''">#{projectName},</if>
-        <if test="createBy != null and createBy != '' ">#{createBy},</if>
-        <if test="indicatorId != null and indicatorId != ''">#{indicatorId},</if>
-        <if test="colorType != null">#{colorType},</if>
-        <if test="speciesId != null">#{speciesId},</if>
-        <if test="productSeriesId != null">#{productSeriesId},</if>
-        <if test="projectType != null">#{projectType},</if>
-        <if test="description != null">#{description},</if>
-        <if test="organizationId != null">#{organizationId},</if>
+        <if test="projectName != null and projectName != ''">
+            #{projectName},
+        </if>
+        <if test="createBy != null and createBy != '' ">
+            #{createBy},
+        </if>
+        <if test="indicatorId != null and indicatorId != ''">
+            #{indicatorId},
+        </if>
+        <if test="colorType != null">
+            #{colorType},
+        </if>
+        <if test="speciesId != null">
+            #{speciesId},
+        </if>
+        <if test="productSeriesId != null">
+            #{productSeriesId},
+        </if>
+        <if test="projectType != null">
+            #{projectType},
+        </if>
+        <if test="description != null">
+            #{description},
+        </if>
+        <if test="organizationId != null">
+            #{organizationId},
+        </if>
         sysdate(),
         0,
         sysdate()
@@ -263,8 +307,12 @@
     <update id="updateProject" parameterType="cn.staitech.anno.domain.Project">
         update tb_project
         <set>
-            <if test="projectName != null and projectName != ''">project_name = #{projectName},</if>
-            <if test="indicatorId != null and indicatorId != ''">indicator_id = #{indicatorId},</if>
+            <if test="projectName != null and projectName != ''">
+                project_name = #{projectName},
+            </if>
+            <if test="indicatorId != null and indicatorId != ''">
+                indicator_id = #{indicatorId},
+            </if>
             image_total=(select count(*) from tb_slide where project_id=#{projectId}),
             update_time = sysdate(),
             update_by=#{updateBy}
@@ -277,7 +325,9 @@
         update tb_project
         <set>
             description = #{description},
-            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateBy != null and updateBy != ''">
+                update_by = #{updateBy},
+            </if>
             update_time = sysdate()
         </set>
         where project_id = #{projectId}
@@ -314,7 +364,6 @@
         <if test="processFlag != null and processFlag != ''">
             AND process_flag = #{processFlag}
         </if>
-
     </select>
 
 
@@ -347,10 +396,12 @@
         <if test="imageName != null and imageName != ''">
             AND image_name like concat('%', #{imageName}, '%')
         </if>
-        <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+        <if test="params.beginTime != null and params.beginTime != ''">
+            <!-- 开始时间检索 -->
             AND date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
         </if>
-        <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+        <if test="params.endTime != null and params.endTime != ''">
+            <!-- 结束时间检索 -->
             AND date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
         </if>
         order by image_id desc
@@ -416,7 +467,9 @@
     <update id="updateProjectIndicator" parameterType="cn.staitech.anno.domain.Project">
         update tb_project
         <set>
-            <if test="projectName != null and projectName != ''">project_name = #{projectName},</if>
+            <if test="projectName != null and projectName != ''">
+                project_name = #{projectName},
+            </if>
             indicator_id=null,
             update_time = sysdate(),
             update_by=#{updateBy},
@@ -467,7 +520,9 @@
     <update id="updateProjectStatus" parameterType="cn.staitech.anno.domain.vo.ProjectStatusVO">
         update tb_project
         <set>
-            <if test="status != null">status=#{status},</if>
+            <if test="status != null">
+                status=#{status},
+            </if>
             update_by=#{updateBy},
             update_time = sysdate(),
         </set>

@@ -6,7 +6,7 @@
     <resultMap type="cn.staitech.anno.domain.Indicator" id="IndicatorResult">
         <result property="indicatorId" column="indicator_id"/>
         <result property="indicatorName" column="indicator_name"/>
-        <result property="createTime" column="create_time"/>
+        <result property="indicatorNameEn" column="indicator_name_en"/>
         <result property="projectTotal" column="project_total"/>
         <result property="annotationCategoryTotal" column="annotation_category_total"/>
         <result property="speciesId" column="species_id"/>
@@ -30,6 +30,7 @@
     <sql id="selectIndicatorVo">
         select i.indicator_id,
                i.indicator_name,
+               i.indicator_name_en,
                i.create_time,
                i.project_total,
                i.annotation_category_total,
@@ -49,22 +50,52 @@
     <insert id="insertIndicator" parameterType="cn.staitech.anno.domain.Indicator" useGeneratedKeys="true"
             keyProperty="indicatorId">
         insert into tb_pathological_indicator(
-        <if test="indicatorName != null and indicatorName != '' ">indicator_name,</if><!-- 指标名称：暂未使用-->
-        <if test="speciesId != null">species_id,</if><!-- 种属编号 -->
-        <if test="organId != null">organ_id,</if><!-- 脏器编号-->
-        <if test="createBy != null and createBy != ''">create_by,</if>
-        <if test="organizationId != null">organization_id,</if><!-- 机构编号-->
-        <if test="number != null">number,</if><!-- 指标编号：暂未使用-->
+        <if test="indicatorName != null and indicatorName != '' ">
+            indicator_name,
+        </if><!-- 指标名称：暂未使用-->
+        <if test="indicatorNameEn != null and indicatorNameEn != '' ">
+            indicator_name_en,
+        </if><!-- 指标名称英文：暂未使用-->
+        <if test="speciesId != null">
+            species_id,
+        </if><!-- 种属编号 -->
+        <if test="organId != null">
+            organ_id,
+        </if><!-- 脏器编号-->
+        <if test="createBy != null and createBy != ''">
+            create_by,
+        </if>
+        <if test="organizationId != null">
+            organization_id,
+        </if><!-- 机构编号-->
+        <if test="number != null">
+            number,
+        </if><!-- 指标编号：暂未使用-->
         create_time,
         project_total,
         annotation_category_total
         )values (
-        <if test="indicatorName != null and indicatorName != ''">#{indicatorName},</if><!-- 指标名称：暂未使用-->
-        <if test="speciesId != null">#{speciesId},</if><!-- 种属编号 -->
-        <if test="organId != null">#{organId},</if><!-- 脏器编号-->
-        <if test="createBy != null and createBy != ''">#{createBy},</if>
-        <if test="organizationId != null">#{organizationId},</if><!-- 机构编号-->
-        <if test="number != null">#{number},</if><!-- 指标编号：暂未使用-->
+        <if test="indicatorName != null and indicatorName != ''">
+            #{indicatorName},
+        </if><!-- 指标名称：暂未使用-->
+        <if test="indicatorNameEn != null and indicatorNameEn != ''">
+            #{indicatorNameEn},
+        </if><!-- 指标名称：暂未使用-->
+        <if test="speciesId != null">
+            #{speciesId},
+        </if><!-- 种属编号 -->
+        <if test="organId != null">
+            #{organId},
+        </if><!-- 脏器编号-->
+        <if test="createBy != null and createBy != ''">
+            #{createBy},
+        </if>
+        <if test="organizationId != null">
+            #{organizationId},
+        </if><!-- 机构编号-->
+        <if test="number != null">
+            #{number},
+        </if><!-- 指标编号：暂未使用-->
         sysdate(),
         0,
         0
@@ -78,13 +109,19 @@
             <if test="indicatorName != null and indicatorName != ''">
                 AND i.indicator_name like concat('%', #{indicatorName}, '%')
             </if>
-            <if test="speciesId != null and speciesId != ''"><!-- 种属编码 -->
+            <if test="indicatorNameEn != null and indicatorNameEn != ''">
+                AND i.indicator_name_en like concat('%', #{indicatorNameEn}, '%')
+            </if>
+            <if test="speciesId != null and speciesId != ''">
+                <!-- 种属编码 -->
                 AND i.species_id like concat('%', #{speciesId}, '%')
             </if>
-            <if test="organId != null and organId != ''"><!-- 脏器编码 -->
+            <if test="organId != null and organId != ''">
+                <!-- 脏器编码 -->
                 AND i.organ_id like concat('%', #{organId}, '%')
             </if>
-            <if test="organizationId != null and organizationId != ''"><!-- 机构ID -->
+            <if test="organizationId != null and organizationId != ''">
+                <!-- 机构ID -->
                 AND i.organization_id like concat('%', #{organizationId}, '%')
             </if>
             <if test="createBy != null and createBy != ''">
@@ -94,10 +131,12 @@
                 AND u.user_name like concat('%', #{userName}, '%')
             </if>
             <if test="createTimeParams != null">
-                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''"><!-- 开始时间检索 -->
+                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
+                    <!-- 开始时间检索 -->
                     AND date_format(i.create_time,'%y%m%d') &gt;= date_format(#{createTimeParams.beginTime},'%y%m%d')
                 </if>
-                <if test="createTimeParams.endTime != null and createTimeParams.endTime != ''"><!-- 结束时间检索 -->
+                <if test="createTimeParams.endTime != null and createTimeParams.endTime != ''">
+                    <!-- 结束时间检索 -->
                     AND date_format(i.create_time,'%y%m%d') &lt;= date_format(#{createTimeParams.endTime},'%y%m%d')
                 </if>
             </if>
@@ -110,6 +149,7 @@
     <select id="selectIndicatorById" parameterType="java.lang.Long" resultMap="IndicatorResult">
         select pa.indicator_id,
                pa.indicator_name,
+               pa.indicator_name_en,
                pa.project_total,
                pa.annotation_category_total,
                pa.species_id,
@@ -125,7 +165,6 @@
         from tb_pathological_indicator pa
                  left join sys_user u on pa.create_by = u.user_id
         where pa.indicator_id = #{indicatorId}
-
     </select>
 
     <select id="selectIndicatorStatisticList" parameterType="java.lang.Integer" resultMap="SysIndicatorStatisticResult">
@@ -133,16 +172,16 @@
         from tb_pathological_indicator as pi
         left join tb_project as p on p.indicator_id = pi.indicator_id
         <where>
-        <if test="projectIdList.size() != 0 and projectIdList != null ">
-            and p.project_id in
-            <foreach collection="projectIdList" item="project_id" open="(" separator="," close=")">
-                #{project_id}
-            </foreach>
-        </if>
+            <if test="projectIdList.size() != 0 and projectIdList != null ">
+                and p.project_id in
+                <foreach collection="projectIdList" item="project_id" open="(" separator="," close=")">
+                    #{project_id}
+                </foreach>
+            </if>
 
-        <if test="organizationId !=null and organizationId !=0">
-            and pi.organization_id = #{organizationId}
-        </if>
+            <if test="organizationId !=null and organizationId !=0">
+                and pi.organization_id = #{organizationId}
+            </if>
         </where>
         Group by pi.indicator_id
         order by pi.indicator_id desc
@@ -151,8 +190,12 @@
     <update id="updateIndicator" parameterType="map">
         update tb_pathological_indicator
         <set>
-            <if test="indicatorName != null and indicatorName != ''">indicator_name = #{indicatorName},</if>
-            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="indicatorName != null and indicatorName != ''">
+                indicator_name = #{indicatorName},
+            </if>
+            <if test="updateBy != null and updateBy != ''">
+                update_by = #{updateBy},
+            </if>
             annotation_category_total = (select count(*)from tb_pathological_indicator_category where
             indicator_id=#{indicatorId} and del_flag=0),
             project_total =(select count(*) from tb_project where indicator_id=#{indicatorId} and del_flag=0),
@@ -172,7 +215,8 @@
         where indicator_id = #{indicatorId}
     </update>
 
-    <select id="selectIndicatorInformation" parameterType="cn.staitech.anno.domain.Indicator" resultMap="IndicatorResult">
+    <select id="selectIndicatorInformation" parameterType="cn.staitech.anno.domain.Indicator"
+            resultMap="IndicatorResult">
         select *
         from tb_pathological_indicator
         <where>
@@ -209,7 +253,7 @@
     <!--查询专题数量-->
     <select id="selectSpecial" parameterType="java.lang.Long" resultType="java.lang.Integer">
         select count(*)
-        from tb_special
-        where del_flag!=2 and indicator_id=#{indicatorId}
+        from tb_project
+        where del_flag!=1 and indicator_id=#{indicatorId}
     </select>
 </mapper>

@@ -68,7 +68,5 @@ public class MarkingExamineController {
         markingExamineService.update(req);
         return R.ok(req.getMarking_id(), MessageSource.M("OPERATE_SUCCEED"));
     }
-
-
 }
 

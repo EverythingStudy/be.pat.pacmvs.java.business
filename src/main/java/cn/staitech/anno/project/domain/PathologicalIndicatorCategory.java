@@ -34,42 +34,42 @@ public class PathologicalIndicatorCategory implements Serializable {
     /**
      * 标注类别名称
      */
-    @Size(max= 200,message="编码长度不能超过200")
+    @Size(max= 200,message="{PathologicalIndicatorCategory.categoryName.length}")
     @ApiModelProperty("标注类别名称")
-    @Length(max= 200,message="编码长度不能超过200")
+    @Length(max= 200,message="{PathologicalIndicatorCategory.categoryName.length}")
     private String categoryName;
     /**
      * 结构ID
      */
-    @Size(max= 100,message="编码长度不能超过100")
+    @Size(max= 100,message="{PathologicalIndicatorCategory.structureId.length}")
     @ApiModelProperty("结构ID")
-    @Length(max= 100,message="编码长度不能超过100")
+    @Length(max= 100,message="{{PathologicalIndicatorCategory.structureId.length}}")
     private String structureId;
     /**
      * 颜色的RGB值
      */
-    @Size(max= 255,message="编码长度不能超过255")
+    @Size(max= 255,message="{projectType.length}")
     @ApiModelProperty("颜色的RGB值")
-    @Length(max= 255,message="编码长度不能超过255")
+    @Length(max= 255,message="{projectType.length}")
     private String rgb;
     /**
      * 颜色的HEX值
      */
-    @Size(max= 200,message="编码长度不能超过200")
+    @Size(max= 200,message="{PathologicalIndicatorCategory.categoryName.length}")
     @ApiModelProperty("颜色的HEX值")
-    @Length(max= 200,message="编码长度不能超过200")
+    @Length(max= 200,message="{PathologicalIndicatorCategory.categoryName.length}")
     private String hex;
     /**
      * 完整编码
      */
-    @Size(max= 50,message="编码长度不能超过50")
+    @Size(max= 50,message="{PathologicalIndicatorCategory.number.length}")
     @ApiModelProperty("完整编码")
-    @Length(max= 50,message="编码长度不能超过50")
+    @Length(max= 50,message="{PathologicalIndicatorCategory.number.length}")
     private String number;
     /**
      * 图层顺序
      */
-    @Size(max= 50,message="编码长度不能超过50")
+    @Size(max= 50,message="{PathologicalIndicatorCategory.number.length}")
     @ApiModelProperty("图层顺序")
     private Integer orderNumber;
     /**

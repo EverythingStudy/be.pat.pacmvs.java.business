@@ -11,6 +11,7 @@ import cn.staitech.anno.service.GroupService;
 import cn.staitech.anno.service.ReviewRoundService;
 import cn.staitech.anno.service.RoundService;
 import cn.staitech.anno.service.TopicService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
@@ -43,7 +44,6 @@ public class ReviewRoundController {
 
     @Resource
     private ReviewRoundService reviewRoundService;
-
     @Resource
     private TopicService topicService;
     @Resource
@@ -78,8 +78,8 @@ public class ReviewRoundController {
     @GetMapping("/query")
     public R<List<ReviewRound>> query(@RequestParam("projectId") Long projectId) {
         QueryWrapper<ReviewRound> queryWrapper = Wrappers.query(ReviewRound.builder().projectId(projectId).build());
-        queryWrapper.select("review_content","content_id");
-        queryWrapper.groupBy("review_content","content_id");
+        queryWrapper.select("review_content", "content_id");
+        queryWrapper.groupBy("review_content", "content_id");
         return R.ok(reviewRoundService.list(queryWrapper));
     }
 
@@ -97,14 +97,14 @@ public class ReviewRoundController {
         QueryWrapper<ReviewRound> queryWrapper = Wrappers.query(ReviewRound.builder().projectId(reviewRoundBatchInVO.getProjectId()).build());
         List<ReviewRound> reviewRoundList = reviewRoundService.list(queryWrapper);
         List<ReviewRoundInsertInVO> reviewRoundInsertInVOS = new ArrayList<>();
-        for (ReviewRoundInsertInVO vo:reviewRoundBatchInVO.getInsertList()){
+        for (ReviewRoundInsertInVO vo : reviewRoundBatchInVO.getInsertList()) {
             Boolean flag = true;
-            for (ReviewRound reviewRound:reviewRoundList){
-                if (vo.getRoundId()==reviewRound.getRoundId()&&vo.getGroupId()==vo.getGroupId()&&vo.getTopicId()==reviewRound.getTopicId()){
+            for (ReviewRound reviewRound : reviewRoundList) {
+                if (vo.getRoundId() == reviewRound.getRoundId() && vo.getGroupId() == vo.getGroupId() && vo.getTopicId() == reviewRound.getTopicId()) {
                     flag = false;
                 }
             }
-            if (flag){
+            if (flag) {
                 reviewRoundInsertInVOS.add(vo);
             }
         }
@@ -118,22 +118,22 @@ public class ReviewRoundController {
     public R remove(@RequestBody DelReviewRoundIdsVO reviewRoundInVO) {
         List<Long> reviewRoundIds = reviewRoundInVO.getReviewRoundIds();
         QueryWrapper<Slide> queryWrapper = Wrappers.query();
-        queryWrapper.select("slide_id","review_round_id");
-        queryWrapper.in("review_round_id",reviewRoundIds);
+        queryWrapper.select("slide_id", "review_round_id");
+        queryWrapper.in("review_round_id", reviewRoundIds);
         List<Slide> slides = slideService.list(queryWrapper);
         boolean flag = false;
-        if (slides!=null&&!slides.isEmpty()){
+        if (slides != null && !slides.isEmpty()) {
             Map<Long, List<Slide>> stringListMap = slides.stream().collect(Collectors.groupingBy(Slide::getReviewRoundId));
-            for (Long id:reviewRoundIds){
+            for (Long id : reviewRoundIds) {
                 List<Slide> slideList = stringListMap.get(id);
-                if (slideList!=null&&!slideList.isEmpty()){
+                if (slideList != null && !slideList.isEmpty()) {
                     flag = true;
                     break;
                 }
             }
         }
-        if (flag){
-            return R.fail("存在关联数据，不能执行此操作");
+        if (flag) {
+            return R.fail(MessageSource.M("EXISTS_UNION_DATA"));
         }
         return R.ok(reviewRoundService.removeByIds(reviewRoundInVO.getReviewRoundIds()));
     }
@@ -145,11 +145,11 @@ public class ReviewRoundController {
         QueryWrapper<Slide> queryWrapper = Wrappers.query();
         //queryWrapper.select("slide_id","review_round_id");
         queryWrapper.select("review_round_id");
-        queryWrapper.eq("review_round_id",reviewRoundInVO.getReviewRoundId());
+        queryWrapper.eq("review_round_id", reviewRoundInVO.getReviewRoundId());
         int slides = 0;
         slides = slideService.count(queryWrapper);
-        if (slides>0){
-            return R.fail("存在关联数据，不能执行此操作");
+        if (slides > 0) {
+            return R.fail(MessageSource.M("EXISTS_UNION_DATA"));
         }
         ReviewRound reviewRound = new ReviewRound();
         BeanUtils.copyProperties(reviewRoundInVO, reviewRound);

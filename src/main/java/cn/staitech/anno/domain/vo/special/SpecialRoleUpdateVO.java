@@ -44,8 +44,8 @@ public class SpecialRoleUpdateVO implements Serializable {
      */
     @ApiModelProperty(value = "角色名称(必填，只允许输入汉字，限制15个字)", required = true)
     @Excel(name = "角色名称")
-    @NotBlank(message = "角色名称不能为空")
-    @Size(min = 0, max = 15, message = "角色名称长度不能超过15个汉字")
+    @NotBlank(message = "{SpecialRole.roleName.isnull}")
+    @Size(min = 0, max = 15, message = "{SpecialRole.roleName.length}")
     private String roleName;
 
     /**
@@ -53,8 +53,8 @@ public class SpecialRoleUpdateVO implements Serializable {
      */
     @ApiModelProperty(value = "权限标识(必填，只允许输入字母和数字)", required = true)
     @Excel(name = "权限标识")
-    @NotBlank(message = "权限标识不能为空")
-    @Size(min = 0, max = 100, message = "权限标识长度不能超过100个字符")
+    @NotBlank(message = "{SpecialRole.roleKey.isnull}")
+    @Size(min = 0, max = 100, message = "{SpecialRole.roleKey.length}")
     private String roleKey;
 
     /**
@@ -67,6 +67,6 @@ public class SpecialRoleUpdateVO implements Serializable {
      * 角色描述
      */
     @ApiModelProperty(value = "角色描述")
-    @Size(min = 0, max = 50, message = "角色描述长度过长")
+    @Size(min = 0, max = 50, message = "{SpecialRole.remark.length}")
     private String remark;
 }

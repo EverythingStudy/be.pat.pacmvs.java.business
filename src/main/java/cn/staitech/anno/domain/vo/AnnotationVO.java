@@ -11,14 +11,14 @@ public class AnnotationVO {
     /**
      * 标注id
      */
-    @NotNull(message = "标注不可为空!")
+    @NotNull(message = "{SpecialRemoveVO.annotationId.isnull}")
     @ApiModelProperty(required = true, value = "标注id")
     private Long annotationId;
 
     /**
      * ROI正方形标注边长512或1024;默认512.
      */
-    @NotNull(message = "distance不可为空!")
+    @NotNull(message = "{AnnotationVO.distance.isnull}")
     @ApiModelProperty(required = true, value = "ROI正方形标注边长512或1024，默认512")
     private int distance = 512 ;
 }

@@ -2,12 +2,11 @@ package cn.staitech.anno.controller;
 
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Image;
-import cn.staitech.anno.response.R;
 import cn.staitech.anno.service.AnnotationService;
 import cn.staitech.anno.service.ProjectRoleService;
 import cn.staitech.anno.service.PythonOpenSlideService;
-import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysProjectRole;
 import lombok.extern.slf4j.Slf4j;
@@ -44,16 +43,11 @@ public class TestController {
 
     @Resource
     private AnnotationService annotationService;
-
-    @Resource
-    private SlideService slideService;
-
     @Resource
     private RedissonClient client;
 
     @Resource(name = "redissonClient")
     private RedissonClient redissonClient;
-
 
     @GetMapping("/api")
     public R sendMsg() {
@@ -202,8 +196,9 @@ public class TestController {
             field.setAccessible(true);
             String keyName = field.getName();
             Object value = field.get(obj);
-            if (value == null)
+            if (value == null) {
                 value = "";
+            }
             map.put(keyName, value);
         }
         return map;
@@ -367,7 +362,7 @@ public class TestController {
     @GetMapping("/strFile")
     public String StrFile(String str) throws IOException {
         if (!Optional.ofNullable(str).isPresent()) {
-            return "参数异常";
+            return MessageSource.M("ARGUMENT_INVALID");
         }
         List<String> SOURCE = new ArrayList<>();
         for (int i = 0; i < str.length(); i++) {

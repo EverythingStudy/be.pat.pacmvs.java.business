@@ -198,7 +198,7 @@ public class StatisticController extends BaseController {
         List<StatisticCategoryListOutVO> list = pathologicalIndicatorCategoryService.selectAnnotationCategoryStatisticList(indicatorProjectIdList);
         StatisticCategoryListOutVO statisticCategoryListOutVO = new StatisticCategoryListOutVO();
         statisticCategoryListOutVO.setCategoryId(0);
-        statisticCategoryListOutVO.setCategoryName("无属性");
+        statisticCategoryListOutVO.setCategoryName(MessageSource.M("NO_ATTRIBUTE"));
         list.add(0, statisticCategoryListOutVO);
         return R.ok(list);
     }

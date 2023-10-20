@@ -29,4 +29,8 @@ public class ProjectType implements Serializable {
      */
     private String projectTypeName;
 
+    /**
+     * 项目类型名称 en
+     */
+    private String projectTypeNameEn;
 }

@@ -2,6 +2,7 @@ package cn.staitech.anno.controller;
 
 import cn.staitech.anno.domain.species.Species;
 import cn.staitech.anno.service.SpeciesService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
@@ -33,7 +34,7 @@ public class SpeciesController extends BaseController {
     private SpeciesService speciesService;
 
     /**
-     * 轮次列表 .
+     * 轮次列表 . /anno/species/list
      */
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "种属列表", notes = "种属列表 - 王峰")
@@ -41,7 +42,7 @@ public class SpeciesController extends BaseController {
     @GetMapping("/list")
     public R<List<Species>> list() throws ExecutionException, InterruptedException {
         List<Species> list = speciesService.list();
-        return R.ok(list);
+        return R.ok(list, MessageSource.M("OPERATE_SUCCEED"));
     }
 
 }

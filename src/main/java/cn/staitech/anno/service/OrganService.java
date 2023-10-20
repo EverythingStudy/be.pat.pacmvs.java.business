@@ -2,8 +2,8 @@ package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.organ.Organ;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -15,4 +15,8 @@ import java.util.Map;
 public interface OrganService extends IService<Organ> {
 
     Map<String, String> selectMap();
+
+    Map<String, String> selectMapEn();
+
+    List<Organ> getOrganBySpeciesId(String speciesId);
 }

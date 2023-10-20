@@ -10,7 +10,7 @@ public class ExaminationSubmitVO {
     /**
      * 切片id
      */
-    @NotNull(message = "切片id不能为空")
+    @NotNull(message = "{SlideUpdateVO.slideId.isnull}")
     @ApiModelProperty(required = true, value = "切片id")
     private Long slideId;
 

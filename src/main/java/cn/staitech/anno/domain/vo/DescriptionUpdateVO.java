@@ -15,14 +15,14 @@ public class DescriptionUpdateVO {
     /**
      * 标注id .
      */
-    @NotNull(message = "标注id不可为空 !")
+    @NotNull(message = "{DescriptionUpdateVO.annotationId.isnull}")
     @ApiModelProperty(value = "标注id", required = true)
     private Long annotationId;
     
     /**
      * 描述 .
      */
-    @Size(min = 0, max = 50, message = "标注描述不可超过50字段")
+    @Size(min = 0, max = 50, message = "{DescriptionUpdateVO.description.length}")
     @ApiModelProperty(value = "描述")
     private String description;
     

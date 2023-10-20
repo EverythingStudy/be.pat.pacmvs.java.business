@@ -19,16 +19,22 @@ import java.util.stream.Collectors;
  */
 @Service
 class ProductSeriesServiceImpl extends ServiceImpl<ProductSeriesMapper, ProductSeries> implements ProductSeriesService {
-
     @Resource
     private ProductSeriesMapper productSeriesMapper;
 
     @Override
     public Map<Integer, String> selectMap() {
-
         List<ProductSeries> list = productSeriesMapper.selectList();
         Map<Integer, String> map = list.stream()
                 .collect(Collectors.toMap(ProductSeries::getProductSeriesId, ProductSeries::getName));
+        return map;
+    }
+
+    @Override
+    public Map<Integer, String> selectMapEn() {
+        List<ProductSeries> list = productSeriesMapper.selectList();
+        Map<Integer, String> map = list.stream()
+                .collect(Collectors.toMap(ProductSeries::getProductSeriesId, ProductSeries::getNameEn));
         return map;
     }
 }

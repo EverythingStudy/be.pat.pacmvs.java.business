@@ -1,6 +1,5 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.domain.organ.Organ;
 import cn.staitech.anno.domain.structure.Structure;
 import cn.staitech.anno.mapper.StructureMapper;
 import cn.staitech.anno.service.StructureService;
@@ -20,8 +19,6 @@ import java.util.stream.Collectors;
  */
 @Service
 class StructureServiceImpl extends ServiceImpl<StructureMapper, Structure> implements StructureService {
-
-
     @Resource
     StructureMapper structureMapper;
 
@@ -40,14 +37,6 @@ class StructureServiceImpl extends ServiceImpl<StructureMapper, Structure> imple
         structure.setSpeciesId(speciesId);
         structure.setOrganId(organId);
         List<Structure> list = structureMapper.getStructureList(structure);
-        return list;
-    }
-
-    @Override
-    public List<Organ> getOrganBySpeciesId(String speciesId) {
-        Structure structure = new Structure();
-        structure.setSpeciesId(speciesId);
-        List<Organ> list = structureMapper.getOrganBySpeciesId(structure);
         return list;
     }
 
