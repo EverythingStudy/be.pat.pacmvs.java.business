@@ -182,7 +182,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
             String s = StringUtils.substringAfterLast(getJsonInfoDataIn.getAlgorithmJsonName(), ".");
             if (!"json".equals(s)) {
-                return R.fail("文件格式异常！");
+                return R.fail(MessageSource.M("FILE_TYPE_ERROR"));
             }
             //读取文件解析数据校验
             ParseJson parseJson = new ParseJson();
@@ -190,19 +190,19 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
                 parseJson = ParseJsonUtil.parseJson(getJsonInfoDataIn.getAlgorithmJsonUrl(), 0);
             } catch (IOException e) {
                 e.printStackTrace();
-                log.info("json格式解析异常" + e.toString());
-                return R.fail("json格式解析异常");
+                log.info(MessageSource.M("JSON_FILE_PARSE_FAILURE") + e.toString());
+                return R.fail(MessageSource.M("JSON_FILE_PARSE_FAILURE"));
             }
             int labels = parseJson.getLabels();
             if (labels != 1) {
-                return R.fail("json结构指标不唯一！");
+                return R.fail(MessageSource.M("JSON_NOT_ONLY"));
             }
             LambdaQueryWrapper<AlgorithmAssessment> qw = new LambdaQueryWrapper<>();
             qw.eq(AlgorithmAssessment::getImageName, getJsonInfoDataIn.getAlgorithmJsonName());
             qw.eq(AlgorithmAssessment::getProjectId, req.getProjectId());
             List<AlgorithmAssessment> algorithmAssessments = this.baseMapper.selectList(qw);
             if (CollectionUtils.isEmpty(algorithmAssessments)) {
-                return R.fail("项目下无此切片算法考核信息！");
+                return R.fail(MessageSource.M("PROJECT_NOT_INFO"));
             }
             extracted(jsonReq, getJsonInfoDataIn, algorithmAssessments);
         }
@@ -453,7 +453,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         List<AlgorithmJson> algorithmJsons = algorithmJsonMapper.selectList(qw);
 
         if (!CollectionUtils.isEmpty(algorithmJsons)) {
-            R.fail("有上传的JSON文件的切片禁止删除");
+            R.fail(MessageSource.M("JSON_HAS_ALREADY"));
         }
         AlgorithmAssessment entity = new AlgorithmAssessment();
         entity.setAlgorithmAssessmentId(req.getAlgorithmAssessmentId());

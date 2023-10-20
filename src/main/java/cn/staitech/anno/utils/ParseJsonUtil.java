@@ -26,7 +26,7 @@ public class ParseJsonUtil {
         JsonToken current;
         current = jp.nextToken();
         if (current != JsonToken.START_OBJECT) {
-            throw new RemoteException("json格式异常！");
+            throw new RemoteException("json type error！");
         }
         while (jp.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = jp.getCurrentName();
