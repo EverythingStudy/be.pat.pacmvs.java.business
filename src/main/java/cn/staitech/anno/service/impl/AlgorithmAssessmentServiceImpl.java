@@ -131,6 +131,8 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
                 sb = new StringBuilder();
                 if (!ze.isDirectory()) {
                     long size = ze.getSize();
+                    // 获取文件名称
+                    String fileNames = ze.getName();
                     if (size > 0) {
                         //读取文件内容
                         BufferedReader bf = new BufferedReader(new InputStreamReader(zipFile.getInputStream(ze), StandardCharsets.UTF_8));
@@ -156,7 +158,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
                             if (imageName != null) {
                                 // 写入数据库
-                                writeAlgorithm(projectId, imageName, fileContent, fileUrl);
+                                writeAlgorithm(projectId, imageName, fileContent, fileUrl, fileNames);
                             }
                             //这里是对读取的文件内容进行处理
                             ddlList.put(ze.getName(), sb.toString());
@@ -239,7 +241,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
     }
 
-    public void writeAlgorithm(Long projectId, String imageName, String fileContent, String filePath) throws Exception {
+    public void writeAlgorithm(Long projectId, String imageName, String fileContent, String filePath, String fileNames) throws Exception {
         QueryWrapper<AlgorithmAssessment> algorithmAssessmentQueryWrapper = new QueryWrapper<>();
         algorithmAssessmentQueryWrapper.eq("project_id", projectId).eq("del_flag", "0");
         // 查询算法考核列表，获取算法考核列表
@@ -249,26 +251,25 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
             // 判断图片名称是否与json文件中图片名称是否一致
             if (Objects.equals(algorithmAssessment.getFileName(), imageName)) {
                 // 根据切片获取文件路径
-                String algorithmJsonName = String.valueOf(algorithmAssessment.getSlideId());
-                String fileUrl = filePath + File.separator + algorithmJsonName + FILE_SUFFIX_JSON;
+                String fileUrl = filePath + File.separator + fileNames;
                 // 创建文件
                 createFile(fileUrl);
                 // 写入文件
                 exportJson(fileUrl, fileContent);
                 // 写入文件后更新算法json表中数据
-                algorithmJsonMapper.insert(setAlgorithmJson(algorithmAssessment, fileUrl, algorithmJsonName));
+                algorithmJsonMapper.insert(setAlgorithmJson(algorithmAssessment, fileUrl, fileNames));
             }
         }
     }
 
 
-    public AlgorithmJson setAlgorithmJson(AlgorithmAssessment algorithmAssessment, String fileUrl, String algorithmJsonName) {
+    public AlgorithmJson setAlgorithmJson(AlgorithmAssessment algorithmAssessment, String fileUrl, String fileName) {
         AlgorithmJson algorithmJson = new AlgorithmJson();
         algorithmJson.setAlgorithmAssessmentId(algorithmAssessment.getAlgorithmAssessmentId());
         algorithmJson.setSlideId(algorithmAssessment.getSlideId());
         algorithmJson.setAlgorithmJsonUrl(fileUrl);
         algorithmJson.setJsonType("1");
-        algorithmJson.setAlgorithmJsonName(algorithmJsonName);
+        algorithmJson.setAlgorithmJsonName(fileName);
         algorithmJson.setCreateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
         algorithmJson.setCreateTime(new Date());
         return algorithmJson;
