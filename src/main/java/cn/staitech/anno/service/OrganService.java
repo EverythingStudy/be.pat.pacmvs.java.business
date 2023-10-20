@@ -15,4 +15,6 @@ import java.util.Map;
 public interface OrganService extends IService<Organ> {
 
     Map<String, String> selectMap();
+
+    Map<String, String> selectMapEn();
 }

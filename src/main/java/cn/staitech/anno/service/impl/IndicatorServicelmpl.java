@@ -1,5 +1,6 @@
 package cn.staitech.anno.service.impl;
 
+import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.vo.indicator.IndicatorAndOrganizationIdVO;
 import cn.staitech.anno.domain.vo.indicator.IndicatorGetVO;
@@ -8,11 +9,9 @@ import cn.staitech.anno.domain.vo.statistic.StatisticIndicatorListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticIndicatorListOutVO;
 import cn.staitech.anno.mapper.IndicatorMapper;
 import cn.staitech.anno.service.IndicatorService;
-import cn.staitech.anno.service.OrganService;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
-import cn.staitech.anno.service.SpeciesService;
+import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.PageMaster;
-import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -20,21 +19,12 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
 public class IndicatorServicelmpl implements IndicatorService {
-
     @Resource
     private IndicatorMapper indicatorMapper;
-
-    @Resource
-    private SpeciesService speciesService;
-
-    @Resource
-    private OrganService organService;
-
     @Resource
     private PathologicalIndicatorCategoryService pathologicalIndicatorCategoryService;
 
@@ -50,45 +40,47 @@ public class IndicatorServicelmpl implements IndicatorService {
     }
 
     /**
+     * 查询List<Indicator>并进行格式化
+     *
+     * @param indicator
+     * @return
+     */
+    private List<Indicator> getIndicatorList(Indicator indicator) {
+        List<Indicator> list = indicatorMapper.selectIndicatorList(indicator);
+        for (Indicator obj : list) {
+            if (LanguageUtils.isEn()) {
+                // 种属
+                obj.setSpeciesName(MapConstant.getSpeciesNameEn(obj.getSpeciesId()));
+                // 脏器
+                obj.setOrganName(MapConstant.getOrganEn(obj.getOrganId()));
+            } else {
+                // 种属
+                obj.setSpeciesName(MapConstant.getSpeciesName(obj.getSpeciesId()));
+                // 脏器
+                obj.setOrganName(MapConstant.getOrgan(obj.getOrganId()));
+            }
+
+            IndicatorAndOrganizationIdVO indicatorAndOrganizationIdVO = new IndicatorAndOrganizationIdVO();
+            indicatorAndOrganizationIdVO.setIndicatorId(obj.getIndicatorId());
+            // 查询总数
+            obj.setAnnotationCategoryTotal(pathologicalIndicatorCategoryService.selectCategoryNumber(indicatorAndOrganizationIdVO));
+        }
+        return list;
+    }
+
+    /**
      * 展示病例指标
      *
      * @param indicator 查询的条件
      * @return 结果
      */
-    @RequiresPermissions("project:pathology:query")
     @Override
     public PageMaster<Indicator> selectIndicatorList(Indicator indicator, Integer pageNum, Integer pageSize) {
-        // 种属
-        Map<Long, String> sepeciesMap = speciesService.selectMap();
-        // 脏器
-        Map<String, String> organMap = organService.selectMap();
-
-        // Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-        // indicator.setOrganizationId(organizationId);
-
-
         PageHelper.startPage(pageNum, pageSize).setReasonable(true);
-
-        List<Indicator> list = indicatorMapper.selectIndicatorList(indicator);
-
-        for (Indicator obj : list) {
-            if (sepeciesMap.containsKey(obj.getSpeciesId())) {
-                obj.setSpeciesName(sepeciesMap.get(obj.getSpeciesId()));
-            }
-            if (organMap.containsKey(obj.getOrganId())) {
-                obj.setOrganName(organMap.get(obj.getOrganId()));
-            }
-
-            IndicatorAndOrganizationIdVO indicatorAndOrganizationIdVO = new IndicatorAndOrganizationIdVO();
-            indicatorAndOrganizationIdVO.setIndicatorId(obj.getIndicatorId());
-            // indicatorAndOrganizationIdVO.setOrganizationId(organizationId);
-            // 查询总数
-            //obj.setAnnotationCategoryTotal(pathologicalIndicatorCategoryService.selectCategoryNumber(indicatorAndOrganizationIdVO));
-        }
+        List<Indicator> list = getIndicatorList(indicator);
         PageMaster<Indicator> pageMaster = new PageMaster<>(list);
         return pageMaster;
     }
-
 
     /**
      * 展示病例指标
@@ -98,34 +90,10 @@ public class IndicatorServicelmpl implements IndicatorService {
      */
     @Override
     public List<Indicator> selectIndicatorList1(Indicator indicator) {
-        // 种属
-        Map<Long, String> sepeciesMap = speciesService.selectMap();
-        // 脏器
-        Map<String, String> organMap = organService.selectMap();
-
-        Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-        indicator.setOrganizationId(organizationId);
-
-        List<Indicator> list = indicatorMapper.selectIndicatorList(indicator);
-
-        for (Indicator obj : list) {
-            if (sepeciesMap.containsKey(obj.getSpeciesId())) {
-                obj.setSpeciesName(sepeciesMap.get(obj.getSpeciesId()));
-            }
-            if (organMap.containsKey(obj.getOrganId())) {
-                obj.setOrganName(organMap.get(obj.getOrganId()));
-            }
-
-            IndicatorAndOrganizationIdVO indicatorAndOrganizationIdVO = new IndicatorAndOrganizationIdVO();
-            indicatorAndOrganizationIdVO.setIndicatorId(obj.getIndicatorId());
-            indicatorAndOrganizationIdVO.setOrganizationId(organizationId);
-            // 查询总数
-            obj.setAnnotationCategoryTotal(pathologicalIndicatorCategoryService.selectCategoryNumber(indicatorAndOrganizationIdVO));
-
-        }
-
+        List<Indicator> list = getIndicatorList(indicator);
         return list;
     }
+
 
     /**
      * 展示病例指标详情
@@ -174,7 +142,6 @@ public class IndicatorServicelmpl implements IndicatorService {
         return indicatorMapper.selectIndicatorStatisticList(projectIdList);
     }
 
-
     /**
      * 查询指标列表
      *
@@ -212,9 +179,6 @@ public class IndicatorServicelmpl implements IndicatorService {
     public Integer selectSpecial(Long indicatorId) {
         return indicatorMapper.selectSpecial(indicatorId);
     }
-
-
-    // 2.0 新修改====================================
 
     /**
      * 查询指标列表
