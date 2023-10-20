@@ -396,10 +396,10 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         PageResponse resp = new PageResponse();
         //算法考核参数构建
         LambdaQueryWrapper<AlgorithmAssessment> qw = new LambdaQueryWrapper<>();
-        qw.like(StringUtils.isNotEmpty(req.getImageName()), AlgorithmAssessment::getImageName, req.getImageName());
+        qw.like(StringUtils.isNotEmpty(req.getImageCode()), AlgorithmAssessment::getImageName, req.getImageCode());
         qw.eq(AlgorithmAssessment::getProjectId, req.getProjectId());
         qw.eq(AlgorithmAssessment::getDelFlag, "0");
-        qw.apply((!ObjectUtils.isEmpty(req.getCategoryId()) && req.getCategoryId() != 0), "(find_in_set(" + req.getCategoryId() + ",category_ids))");
+        qw.apply((!ObjectUtils.isEmpty(req.getAnnoCategory()) && req.getAnnoCategory() != 0), "(find_in_set(" + req.getAnnoCategory() + ",category_ids))");
         //qw.eq(!ObjectUtils.isEmpty(req.getCategoryId()), AlgorithmAssessment::getCategoryId, req.getCategoryId());
         if (!CollectionUtils.isEmpty(req.getCreateTimeParams())) {
             Date date = DateUtils.addAndSubtractDaysByCalendar(req.getCreateTimeParams().get("endTime"), 1);

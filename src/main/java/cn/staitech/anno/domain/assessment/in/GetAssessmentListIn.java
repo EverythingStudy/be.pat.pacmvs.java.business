@@ -21,8 +21,11 @@ public class GetAssessmentListIn  extends PageRequest {
     @ApiModelProperty(value = "切片编号")
     private String imageName;
 
+    @ApiModelProperty(value = "图片名称")
+    private String imageCode;
+
     @ApiModelProperty(value = "标注类型id")
-    private Long categoryId;
+    private Long annoCategory;
 
     @ApiModelProperty(value = "生成时间")
     private Map<String, Date> createTimeParams;
