@@ -223,7 +223,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         AlgorithmAssessment algorithmAssessment = algorithmAssessments.get(0);
         AlgorithmJson algorithmJson = new AlgorithmJson();
         algorithmJson.setAlgorithmAssessmentId(algorithmAssessment.getAlgorithmAssessmentId());
-        algorithmJson.setSlideId(algorithmJson.getSlideId());
+        algorithmJson.setSlideId(algorithmAssessment.getSlideId());
         algorithmJson.setAlgorithmJsonName(getJsonInfoDataIn.getAlgorithmJsonName());
         algorithmJson.setAlgorithmJsonUrl(getJsonInfoDataIn.getAlgorithmJsonUrl());
         algorithmJson.setCreateBy(SecurityUtils.getUserId());
