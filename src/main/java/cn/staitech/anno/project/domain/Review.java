@@ -38,35 +38,35 @@ public class Review implements Serializable {
     /**
      * 分值
      */
-    @NotNull(message="[分值]不能为空")
+    @NotNull(message="{Review.score.isnull}")
     @ApiModelProperty("分值")
     private Long score;
     /**
      * 详情
      */
-    @NotBlank(message="[详情]不能为空")
-    @Size(max= 200,message="编码长度不能超过200")
+    @NotBlank(message="{Review.details.isnull}")
+    @Size(max= 200,message="{PathologicalIndicatorCategory.categoryName.length}")
     @ApiModelProperty("详情")
-    @Length(max= 200,message="编码长度不能超过200")
+    @Length(max= 200,message="{PathologicalIndicatorCategory.categoryName.length}")
     private String details;
     /**
      * 评审人
      */
-    @NotBlank(message="[评审人]不能为空")
-    @Size(max= 255,message="编码长度不能超过255")
+    @NotBlank(message="{Review.reviewPeople.isnull}")
+    @Size(max= 255,message="{projectType.length}")
     @ApiModelProperty("评审人")
-    @Length(max= 255,message="编码长度不能超过255")
+    @Length(max= 255,message="{projectType.length}")
     private String reviewPeople;
     /**
      * 评审时间
      */
-    @NotNull(message="[评审时间]不能为空")
+    @NotNull(message="{Review.reviewTime.isnull}")
     @ApiModelProperty("评审时间")
     private Date reviewTime;
     /**
      * 切片id
      */
-    @NotNull(message="[切片id]不能为空")
+    @NotNull(message="{Review.slideId.isnull}")
     @ApiModelProperty("切片id")
     private Long slideId;
     /**
@@ -77,62 +77,62 @@ public class Review implements Serializable {
     /**
      * 评审内容
      */
-    @NotBlank(message="[评审内容]不能为空")
-    @Size(max= 255,message="编码长度不能超过255")
+    @NotBlank(message="{Review.reviewContent.isnull}")
+    @Size(max= 255,message="{projectType.length}")
     @ApiModelProperty("评审内容")
-    @Length(max= 255,message="编码长度不能超过255")
+    @Length(max= 255,message="{projectType.length}")
     private String reviewContent;
     /**
      * 评审伦次
      */
-    @NotNull(message="[评审伦次]不能为空")
+    @NotNull(message="{Review.reviewRound.isnull}")
     @ApiModelProperty("评审伦次")
     private Long reviewRound;
     /**
      * 专题编号
      */
-    @NotBlank(message="[专题编号]不能为空")
-    @Size(max= 255,message="编码长度不能超过255")
+    @NotBlank(message="{Review.topicName.isnull}")
+    @Size(max= 255,message="{projectType.length}")
     @ApiModelProperty("专题编号")
-    @Length(max= 255,message="编码长度不能超过255")
+    @Length(max= 255,message="{projectType.length}")
     private String topicName;
     /**
      * 专题id
      */
-    @NotNull(message="[专题id]不能为空")
+    @NotNull(message="{Review.topicId.isnull}")
     @ApiModelProperty("专题id")
     private String topicId;
     /**
      * 分组id
      */
-    @NotNull(message="[分组id]不能为空")
+    @NotNull(message="{Review.groupId.isnull}")
     @ApiModelProperty("分组id")
     private Long groupId;
     /**
      * 分组名称
      */
-    @NotNull(message="[分组名称]不能为空")
+    @NotNull(message="{Review.groupName.isnull}")
     @ApiModelProperty("分组名称")
     private String groupName;
     /**
      * 创建者名称
      */
-    @NotBlank(message="[创建者名称]不能为空")
-    @Size(max= 255,message="编码长度不能超过255")
+    @NotBlank(message="{Review.createName.isnull}")
+    @Size(max= 255,message="{projectType.length}")
     @ApiModelProperty("创建者名称")
-    @Length(max= 255,message="编码长度不能超过255")
+    @Length(max= 255,message="{projectType.length}")
     private String createName;
     /**
      * 创建时间
      */
-    @NotNull(message="[创建时间]不能为空")
+    @NotNull(message="{Opt.createTime.isnull}")
     @ApiModelProperty("创建时间")
     @JsonFormat(pattern = "yyyy-mm-ss HH:mm:ss")
     private String createTime;
     /**
      * 创建者
      */
-    @NotNull(message="[创建者]不能为空")
+    @NotNull(message="{Opt.createBy.isnull}")
     @ApiModelProperty("创建者")
     private Long createBy;
     /**

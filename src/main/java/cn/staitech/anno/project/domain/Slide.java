@@ -91,9 +91,9 @@ public class Slide implements Serializable {
     /**
      * 切片描述
      */
-    @Size(max= 50,message="编码长度不能超过50")
+    @Size(max= 50,message="{PathologicalIndicatorCategory.number.length}")
     @ApiModelProperty("切片描述")
-    @Length(max= 50,message="编码长度不能超过50")
+    @Length(max= 50,message="{PathologicalIndicatorCategory.number.length}")
     private String description;
     /**
      * 分组id
@@ -123,24 +123,24 @@ public class Slide implements Serializable {
     /**
      * geojson文件地址
      */
-    @Size(max= 255,message="编码长度不能超过255")
+    @Size(max= 255,message="{projectType.length}")
     @ApiModelProperty("geojson文件地址")
-    @Length(max= 255,message="编码长度不能超过255")
+    @Length(max= 255,message="{projectType.length}")
     private String geojsonUrl;
     /**
      * 备注
      */
-    @Size(max= 4096,message="编码长度不能超过4096")
+    @Size(max= 4096,message="{Slide.remark.isnull}")
     @ApiModelProperty("备注")
-    @Length(max= 4096,message="编码长度不能超过4096")
+    @Length(max= 4096,message="{Slide.remark.isnull}")
     private String remark;
     /**
      * 状态
      */
-    @NotBlank(message="[状态]不能为空")
-    @Size(max= 1,message="编码长度不能超过1")
+    @NotBlank(message="{Slide.status.isnull}")
+    @Size(max= 1,message="{Slide.status.length}")
     @ApiModelProperty("状态(0未开始 1标注中 2标注完成 3提交复核(未复核) 4开始复核(复核中) 5复核通过(已复核) 6交付)")
-    @Length(max= 1,message="编码长度不能超过1")
+    @Length(max= 1,message="{Slide.status.length}")
     private String status;
 
     @ApiModelProperty("json文件切片id")

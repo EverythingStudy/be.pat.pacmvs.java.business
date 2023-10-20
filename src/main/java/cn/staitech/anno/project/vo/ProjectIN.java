@@ -23,9 +23,9 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProjectIN {
-    @Size(max= 50,message="编码长度不能超过50")
+    @Size(max= 50,message="{PathologicalIndicatorCategory.number.length}")
     @ApiModelProperty("项目名称")
-    @Length(max= 50,message="编码长度不能超过50")
+    @Length(max= 50,message="{PathologicalIndicatorCategory.number.length}")
     private String projectName;
 
     @ApiModelProperty("种属ID")
@@ -34,9 +34,9 @@ public class ProjectIN {
     @ApiModelProperty("品系ID")
     private Integer productSeriesId;
 
-    @Size(max= 255,message="编码长度不能超过255")
+    @Size(max= 255,message="{projectType.length}")
     @ApiModelProperty("项目类型:1标注2评审3标准训练集")
-    @Length(max= 255,message="编码长度不能超过255")
+    @Length(max= 255,message="{projectType.length}")
     private String projectType;
 
     @ApiModelProperty("染色类型（1RGB，2HEX）")

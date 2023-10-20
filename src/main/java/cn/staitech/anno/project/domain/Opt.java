@@ -38,54 +38,54 @@ public class Opt implements Serializable {
     /**
      * 切片主键id
      */
-    @NotNull(message="[切片主键id]不能为空")
+    @NotNull(message="{Opt.slideId.isnull}")
     @ApiModelProperty("切片主键id")
     private Long slideId;
     /**
      * 操作名称
      */
-    @NotBlank(message="[操作名称]不能为空")
-    @Size(max= 255,message="编码长度不能超过255")
+    @NotBlank(message="{Opt.optName.isnull}")
+    @Size(max= 255,message="{Opt.optName.length}")
     @ApiModelProperty("操作名称")
-    @Length(max= 255,message="编码长度不能超过255")
+    @Length(max= 255,message="{Opt.optName.length}")
     private String optName;
     /**
      * 操作编码
      */
-    @NotBlank(message="[操作编码]不能为空")
-    @Size(max= 255,message="编码长度不能超过255")
+    @NotBlank(message="{Opt.optCode.isnull}")
+    @Size(max= 255,message="{Opt.optName.length}")
     @ApiModelProperty("操作编码")
-    @Length(max= 255,message="编码长度不能超过255")
+    @Length(max= 255,message="{Opt.optName.length}")
     private String optCode;
     /**
      * 删除标志（0代表存在 1代表删除）
      */
-    @NotNull(message="[删除标志（0代表存在 1代表删除）]不能为空")
+    @NotNull(message="{Opt.delFlag.isnull}")
     @ApiModelProperty("删除标志（0代表存在 1代表删除）")
     private String delFlag;
     /**
      * 创建者
      */
-    @NotNull(message="[创建者]不能为空")
+    @NotNull(message="{Opt.createBy.isnull}")
     @ApiModelProperty("创建者")
     private Long createBy;
     /**
      * 创建时间
      */
-    @NotNull(message="[创建时间]不能为空")
+    @NotNull(message="{Opt.createTime.isnull}")
     @ApiModelProperty("创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
     /**
      * 更新者
      */
-    @NotNull(message="[更新者]不能为空")
+    @NotNull(message="{Opt.updateBy.isnull}")
     @ApiModelProperty("更新者")
     private Long updateBy;
     /**
      * 更新时间
      */
-    @NotNull(message="[更新时间]不能为空")
+    @NotNull(message="{Opt.updateTime.isnull}")
     @ApiModelProperty("更新时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;

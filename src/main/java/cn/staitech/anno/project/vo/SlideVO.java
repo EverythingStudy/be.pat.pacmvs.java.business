@@ -39,43 +39,43 @@ public class SlideVO {
     @ApiModelProperty("项目名称")
     private String projectName;
 
-    @Size(max= 200,message="编码长度不能超过200")
+    @Size(max= 200,message="{PathologicalIndicatorCategory.categoryName.length}")
     @ApiModelProperty("缩略图URL地址")
-    @Length(max= 200,message="编码长度不能超过200")
+    @Length(max= 200,message="{PathologicalIndicatorCategory.categoryName.length}")
     private String thumbUrl;
 
-    @Size(max= 255,message="编码长度不能超过255")
+    @Size(max= 255,message="{projectType.length}")
     @ApiModelProperty("图片（切片）编号")
-    @Length(max= 255,message="编码长度不能超过255")
+    @Length(max= 255,message="{projectType.length}")
     private String imageCode;
 
     /**
      * 组别
      */
-    @Size(max= 255,message="编码长度不能超过255")
+    @Size(max= 255,message="{projectType.length}")
     @ApiModelProperty("组别")
-    @Length(max= 255,message="编码长度不能超过255")
+    @Length(max= 255,message="{projectType.length}")
     private String groupName;
     /**
      * 性别
      */
-    @Size(max= 255,message="编码长度不能超过255")
+    @Size(max= 255,message="{projectType.length}")
     @ApiModelProperty("性别")
-    @Length(max= 255,message="编码长度不能超过255")
+    @Length(max= 255,message="{projectType.length}")
     private String gender;
     /**
      * 种属
      */
-    @Size(max= 255,message="编码长度不能超过255")
+    @Size(max= 255,message="{projectType.length}")
     @ApiModelProperty("种属")
-    @Length(max= 255,message="编码长度不能超过255")
+    @Length(max= 255,message="{projectType.length}")
     private String species;
     /**
      * 品系
      */
-    @Size(max= 255,message="编码长度不能超过255")
+    @Size(max= 255,message="{projectType.length}")
     @ApiModelProperty("品系")
-    @Length(max= 255,message="编码长度不能超过255")
+    @Length(max= 255,message="{projectType.length}")
     private String productSeries;
 
     @ApiModelProperty("人工标注数")
@@ -89,17 +89,17 @@ public class SlideVO {
     /**
      * 备注
      */
-    @Size(max= 4096,message="编码长度不能超过4096")
+    @Size(max= 4096,message="{Slide.remark.isnull}")
     @ApiModelProperty("备注")
-    @Length(max= 4096,message="编码长度不能超过4096")
+    @Length(max= 4096,message="{Slide.remark.isnull}")
     private String remark;
     /**
      * 状态
      */
-    @NotBlank(message="[状态]不能为空")
-    @Size(max= 1,message="编码长度不能超过1")
+    @NotBlank(message="{Slide.status.isnull}")
+    @Size(max= 1,message="{Slide.status.length}")
     @ApiModelProperty("状态(0未开始 1标注中 2标注完成 3提交复核(未复核) 4开始复核(复核中) 5复核通过(已复核) 6交付)")
-    @Length(max= 1,message="编码长度不能超过1")
+    @Length(max= 1,message="{Slide.status.length}")
     private String status;
 
     /**
