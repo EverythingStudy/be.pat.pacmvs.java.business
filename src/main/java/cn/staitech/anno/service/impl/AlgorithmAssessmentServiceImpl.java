@@ -148,7 +148,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
                         org.json.JSONArray labelInfo = jsonObject.getJSONArray("label_info");
                         // 标签列表长度超出一个，抛出异常
                         if (labelInfo.length() > 1) {
-                            throw new Exception("文件中存在多个标签，解析失败");
+                            throw new Exception(MessageSource.M("JSON_MULTIPLE_LABElS"));
                         }
                         if (image != null) {
                             // 获取标注名称
@@ -167,7 +167,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
                 zp.closeEntry();
             }
         } catch (Exception e) {
-            throw new Exception("json文件解析失败");
+            throw new Exception(MessageSource.M("JSON_FILE_PARSE_FAILURE"));
         }
         return true;
     }
@@ -301,7 +301,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
     @Override
     public void export(AssessmentExportIN assessmentExportIN) throws Exception {
         if (assessmentExportIN.getAlgorithmentList().size() < 1) {
-            throw new Exception("未选择切片");
+            throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }
         List<AssessmentExportOut> assessmentExportOutList = assessmentResultsMapper.selectExportList(assessmentExportIN);
         // 查询项目中得信息

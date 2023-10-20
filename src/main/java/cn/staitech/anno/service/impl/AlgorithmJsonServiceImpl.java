@@ -9,6 +9,7 @@ import cn.staitech.anno.mapper.AlgorithmAssessmentMapper;
 import cn.staitech.anno.mapper.AlgorithmJsonMapper;
 import cn.staitech.anno.service.AlgorithmJsonService;
 import cn.staitech.anno.utils.GeometryUtil;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.RemoteLabelService;
 import com.alibaba.fastjson.JSONArray;
@@ -51,12 +52,12 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
         AlgorithmJson algorithmJsonBy = algorithmJsonMapper.selectById(algorithmJsonId);
 
         if (algorithmJsonBy == null) {
-            throw new Exception("未发现文件信息");
+            throw new Exception(MessageSource.M("NOT_FOND_FILE"));
         }
         // 查询考题详情
         AlgorithmAssessment algorithmAssessment = algorithmAssessmentMapper.selectById(algorithmJsonBy.getAlgorithmAssessmentId());
         if (algorithmAssessment == null) {
-            throw new Exception("未发现考题信息");
+            throw new Exception(MessageSource.M("NOT_FOND_ALGORITHM_ASSESSMENT"));
         }
         // 更新当前表中选中状态
         AlgorithmJson algorithmJson = new AlgorithmJson();
@@ -85,7 +86,7 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
             AlgorithmJson algorithmJson = algorithmJsonMapper.selectById(algorithmJsonList.get(0));
             if (algorithmJson != null) {
                 if (Objects.equals(algorithmJson.getJsonType(), "0")) {
-                    throw new Exception("禁止只选择一个人工标注的JSON");
+                    throw new Exception(MessageSource.M("PROHIBIT_SELECT_ONE_JSON"));
                 }
             }
         }

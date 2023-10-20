@@ -45,9 +45,9 @@ public class AlgorithmJsonController {
     @ApiOperation(value = "查询切片下的算法json文件（下拉框）")
     @GetMapping("/selectList")
     public R<List<AlgorithmJson>> selectList(
-            @NotNull(message = "参数异常,未传入切片id") @RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId) {
+            @RequestParam(value = "algorithmAssessmentId") @ApiParam(name = "algorithmAssessmentId", value = "算法考核id", required = true) Long algorithmAssessmentId) {
         QueryWrapper<AlgorithmJson> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("slide_id",slideId).eq("selected_status","0").eq("del_flag","0").eq("json_type","1");
+        queryWrapper.eq("algorithm_assessment_id",algorithmAssessmentId).eq("selected_status","0").eq("del_flag","0").eq("json_type","1");
         return R.ok(algorithmJsonService.list(queryWrapper));
     }
 
@@ -55,9 +55,9 @@ public class AlgorithmJsonController {
     @ApiOperation(value = "对比json列表")
     @GetMapping("/contrastJsonList")
     public R<List<AlgorithmJson>> contrastJsonList(
-            @NotNull(message = "参数异常,未传入切片id") @RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId) {
+            @RequestParam(value = "algorithmAssessmentId") @ApiParam(name = "algorithmAssessmentId", value = "算法考核id", required = true) Long algorithmAssessmentId) {
         QueryWrapper<AlgorithmJson> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("slide_id",slideId).eq("del_flag","0");
+        queryWrapper.eq("algorithm_assessment_id",algorithmAssessmentId).eq("del_flag","0");
         return R.ok(algorithmJsonService.list(queryWrapper));
     }
 
@@ -65,7 +65,7 @@ public class AlgorithmJsonController {
     @ApiOperation(value = "考核比对")
     @PostMapping("/examineComparison")
     public R<String> examineComparison(
-            @NotNull(message = "参数异常,未传入id") @RequestParam(value = "algorithmJsonId") @ApiParam(name = "algorithmJsonId", value = "算法jsonId", required = true) Long algorithmJsonId) throws Exception {
+            @RequestParam(value = "algorithmJsonId") @ApiParam(name = "algorithmJsonId", value = "算法jsonId", required = true) Long algorithmJsonId) throws Exception {
         algorithmJsonService.examineComparison(algorithmJsonId);
         return R.ok(MessageSource.M("OPERATE_SUCCEED"));
     }

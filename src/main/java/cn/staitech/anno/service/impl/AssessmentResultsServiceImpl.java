@@ -38,7 +38,8 @@ public class AssessmentResultsServiceImpl extends ServiceImpl<AssessmentResultsM
         queryWrapper
                 .like("json_name", req.getJsonName())
                 .like("examine_people", req.getExaminePeople())
-                .eq("examine_category_name", req.getExamineCategoryName())
+                .eq("algorithm_assessment_id", req.getAlgorithmAssessmentId())
+                .like("examine_category_name", req.getExamineCategoryName())
                 .orderByDesc("create_time");
         if (req.getCreateTimeParams() != null) {
             if (req.getCreateTimeParams().getBeginTime() != null) {
