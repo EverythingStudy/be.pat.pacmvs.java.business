@@ -228,7 +228,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         algorithmJson.setAlgorithmJsonUrl(getJsonInfoDataIn.getAlgorithmJsonUrl());
         algorithmJson.setCreateBy(SecurityUtils.getUserId());
         algorithmJson.setCreateTime(new Date());
-        algorithmJson.setJsonType("0");
+        algorithmJson.setJsonType("1");
         LambdaQueryWrapper<AlgorithmJson> qw = new LambdaQueryWrapper<>();
         qw.eq(AlgorithmJson::getAlgorithmJsonUrl, getJsonInfoDataIn.getAlgorithmJsonUrl());
         qw.eq(AlgorithmJson::getAlgorithmAssessmentId, algorithmAssessment.getAlgorithmAssessmentId());
