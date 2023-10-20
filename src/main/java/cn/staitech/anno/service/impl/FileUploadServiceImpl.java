@@ -308,16 +308,19 @@ public class FileUploadServiceImpl implements FileUploadService {
         if (!Optional.ofNullable(fileUploadVO.getTopicName()).isPresent()) {
             throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }
+        if(fileUploadVO.getTopicName().length() > 50){
+            throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
+        }
         if (!Optional.ofNullable(fileUploadVO.getProjectTypeId()).isPresent()) {
             throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }
         if (!Optional.ofNullable(fileUploadVO.getRoundId()).isPresent()) {
             throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }
-        if (!Optional.ofNullable(fileUploadVO.getStructureId()).isPresent()) {
+        if (!Optional.ofNullable(fileUploadVO.getNumber()).isPresent()) {
             throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }
-        String fileName = fileUploadVO.getTopicName() + GLIDE_LINE + fileUploadVO.getProjectTypeId() + fileUploadVO.getRoundId() + GLIDE_LINE + fileUploadVO.getStructureId();
+        String fileName = fileUploadVO.getTopicName() + GLIDE_LINE + fileUploadVO.getProjectTypeId() + fileUploadVO.getRoundId() + GLIDE_LINE + fileUploadVO.getNumber();
         String filesName = getFolderName(uploadPath, fileName);
         String filePath;
         if(Objects.equals(filesName, filesName)){

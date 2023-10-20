@@ -67,7 +67,7 @@ public class FileUploadVO implements Serializable {
     private Long projectTypeId;
 
     @ApiModelProperty(value = "结构编码")
-    private String structureId;
+    private String number;
 
     /**
      * 分块大小
