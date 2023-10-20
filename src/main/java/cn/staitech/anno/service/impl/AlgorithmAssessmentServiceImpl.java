@@ -197,8 +197,9 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
             if (labels != 1) {
                 return R.fail(MessageSource.M("JSON_NOT_ONLY"));
             }
+            //查询算法考核数据是否存在此切片
             LambdaQueryWrapper<AlgorithmAssessment> qw = new LambdaQueryWrapper<>();
-            qw.eq(AlgorithmAssessment::getImageName, getJsonInfoDataIn.getAlgorithmJsonName());
+            qw.eq(AlgorithmAssessment::getFileName, parseJson.getImageName());
             qw.eq(AlgorithmAssessment::getProjectId, req.getProjectId());
             List<AlgorithmAssessment> algorithmAssessments = this.baseMapper.selectList(qw);
             if (CollectionUtils.isEmpty(algorithmAssessments)) {
@@ -348,6 +349,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
             slide.setIfCreateQuestions("1");
             BeanUtils.copyProperties(e, resp);
             resp.setImageName(e.getImageCode());
+            resp.setFileName(StringUtils.substringBeforeLast(e.getImageCode(),"."));
             resp.setCreateBy(SecurityUtils.getUserId());
             resp.setCreateTime(new Date());
             // 插入json文件返回数据

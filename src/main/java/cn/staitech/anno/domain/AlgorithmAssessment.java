@@ -99,6 +99,9 @@ public class AlgorithmAssessment implements Serializable {
     @ApiModelProperty(value = "切片编号")
     private String imageName;
 
+    @ApiModelProperty(value = "文件名称")
+    private String fileName;
+
     @ApiModelProperty(value = "标注类别")
     private String categoryIds;
 
