@@ -312,7 +312,7 @@ public class MarkingServiceImpl implements MarkingService {
 
 
     @Override
-    public String slideJsonExport(Long slideId) {
+    public String slideJsonExport(Long slideId) throws Exception {
         if (!Optional.ofNullable(slideId).isPresent()) {
             try {
                 throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
@@ -330,11 +330,11 @@ public class MarkingServiceImpl implements MarkingService {
         }
 
         String fileUrl = null;
-        try {
+//        try {
             fileUrl = fileService.createFiles(slideId, FILE_SUFFIX_JSON);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
         // 标注数据
         List<Features> features = markingMapper.selectLists(slideId);
         features.forEach(i -> i.setGeometry(GeometryUtil.updateYAxle(i.getGeometry())));
@@ -653,11 +653,11 @@ public class MarkingServiceImpl implements MarkingService {
                         if (markingCount > 0) {
                             // 将文件生成在本地
                             String fileUrl = null;
-                            try {
+//                            try {
                                 fileUrl = slideJsonExport(slideId);
-                            } catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
+//                            } catch (Exception e) {
+//                                throw new RuntimeException(e);
+//                            }
                             Slide slideBy = slideMapperV1.selectById(slideId);
                             Image image = imageMapper.selectById(slideBy);
                             Map<String, String> map = new HashMap<>();
