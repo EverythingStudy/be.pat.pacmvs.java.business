@@ -61,14 +61,14 @@ public class IndicatorController extends BaseController {
         indicator.setSpeciesId(req.getSpeciesId());
         indicator.setOrganId(req.getOrganId());
 
-        //查询结构指标是否存在
+        // 查询结构指标是否存在
         List<Indicator> indicatorList = indicatorService.selectIndicator(indicator);
         if (!indicatorList.isEmpty()) {
             return R.fail(MessageSource.M("INDICATOR_EXIST"));
         }
 
-        indicator.setIndicatorName(MapConstant.getOrgan(req.getOrganId()));
-        indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getOrganId()));
+        indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().toString().concat(req.getOrganId().toString())));
+        indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().toString().concat(req.getOrganId().toString())));
         indicator.setNumber(indicator.getSpeciesId().toString().concat(indicator.getOrganId().toString()));
         indicator.setCreateBy(sysUser.getUserId());
 
@@ -120,15 +120,15 @@ public class IndicatorController extends BaseController {
      * 病理指标删除接口 .
      */
     @ApiOperation(value = "病理指标删除接口", notes = "ZMJ")
-    @RequiresPermissions("special:pathology:remove")
+    // @RequiresPermissions("special:pathology:remove")
     @Log(title = "病理指标删除接口", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.UPDATE)
     @PostMapping("/del")
     public R<String> delIndicator(@RequestBody IndicatorGetVO indicatorGetVO) {
         if (!Optional.ofNullable(indicatorGetVO.getIndicatorId()).isPresent()) {
             return R.fail(MessageSource.M("INDICATOR_ID_NOTNULL"));
         }
-        Integer num = indicatorService.selectSpecial(indicatorGetVO.getIndicatorId().longValue());
-        if (0 < num) {
+        Integer num = indicatorService.selectIndicatorCountInProject(indicatorGetVO.getIndicatorId().longValue());
+        if (num > 0) {
             return R.fail(MessageSource.M("ALREADY_BOUND_NO_DEL"));
         }
         //删除标注类别
@@ -145,24 +145,35 @@ public class IndicatorController extends BaseController {
      * 病理指标修改接口 .
      */
     @ApiOperation(value = "病理指标修改接口", notes = "ZMJ")
-    @RequiresPermissions("special:pathology:edit")
+    // @RequiresPermissions("special:pathology:edit")
     @Log(title = "病理指标修改接口", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.UPDATE)
     @PutMapping("/edit")
-    public R<Integer> edit(@Validated @RequestBody IndicatorReviseVO indicator) {
-        Integer num = indicatorService.selectSpecial(indicator.getIndicatorId().longValue());
-        if (0 < num) {
+    public R<Integer> edit(@Validated @RequestBody IndicatorReviseVO req) {
+        // 和项目绑定的不能修改
+        Integer num = indicatorService.selectIndicatorCountInProject(req.getIndicatorId().longValue());
+        if (num > 0) {
             return R.fail(MessageSource.M("ALREADY_BOUND"));
         }
-        IndicatorGetVO indicatorGetVo = IndicatorGetVO.builder().indicatorId(indicator.getIndicatorId())
-                .indicatorName(indicator.getIndicatorName()).build();
-        //查询病理名称是否存在
-        List<Indicator> indicatorList = indicatorService.selectIndicatorName(indicatorGetVo);
+
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+
+        Indicator indicator = new Indicator();
+        indicator.setSpeciesId(req.getSpeciesId());
+        indicator.setOrganId(req.getOrganId());
+
+        // 查询结构指标是否存在
+        List<Indicator> indicatorList = indicatorService.selectIndicator(indicator);
         if (!indicatorList.isEmpty()) {
             return R.fail(MessageSource.M("INDICATOR_EXIST"));
         }
-        indicator.setUpdateBy(String.valueOf(SecurityUtils.getUserId()));
+
+        indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().toString().concat(req.getOrganId().toString())));
+        indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().toString().concat(req.getOrganId().toString())));
+        indicator.setNumber(indicator.getSpeciesId().toString().concat(indicator.getOrganId().toString()));
+        indicator.setCreateBy(sysUser.getUserId());
+
         //修改病理指标
-        indicatorService.updateIndicator(indicator);
+        indicatorService.updateIndicator(req);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
@@ -170,7 +181,7 @@ public class IndicatorController extends BaseController {
     @ApiOperation(value = "病理指标查重接口", notes = "ZMJ")
     @GetMapping("/check")
     public R<Integer> checkEdit(@RequestParam @ApiParam(name = "indicatorId", value = "病理指标id", required = true) Long indicatorId) {
-        Integer num = indicatorService.selectSpecial(indicatorId);
+        Integer num = indicatorService.selectIndicatorCountInProject(indicatorId);
         if (0 < num) {
             return R.fail(MessageSource.M("ALREADY_BOUND"));
         }

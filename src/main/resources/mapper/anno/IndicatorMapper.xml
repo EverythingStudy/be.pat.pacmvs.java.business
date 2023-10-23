@@ -231,9 +231,15 @@
     <select id="selectIndicator" parameterType="cn.staitech.anno.domain.Indicator" resultMap="IndicatorResult">
         select *
         from tb_pathological_indicator
-        where indicator_name = #{indicatorName}
-          and organization_id = #{organizationId}
-          and del_flag = 0
+        <where>
+            del_flag = 0
+            <if test="speciesId !=null">
+                and species_id = #{speciesId}
+            </if>
+            <if test="organId !=null">
+                and organ_id = #{organId}
+            </if>
+        </where>
     </select>
 
     <select id="selectIndicatorName" parameterType="cn.staitech.anno.domain.vo.indicator.IndicatorGetVO"
@@ -250,8 +256,8 @@
         from tb_pathological_indicator
     </select>
 
-    <!--查询专题数量-->
-    <select id="selectSpecial" parameterType="java.lang.Long" resultType="java.lang.Integer">
+    <!--查询指标在项目表中的记录数量-->
+    <select id="selectIndicatorCountInProject" parameterType="java.lang.Long" resultType="java.lang.Integer">
         select count(*)
         from tb_project
         where del_flag!=1 and indicator_id=#{indicatorId}

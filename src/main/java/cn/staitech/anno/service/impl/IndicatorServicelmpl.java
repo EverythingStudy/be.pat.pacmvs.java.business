@@ -52,12 +52,12 @@ public class IndicatorServicelmpl implements IndicatorService {
                 // 种属
                 obj.setSpeciesName(MapConstant.getSpeciesNameEn(obj.getSpeciesId()));
                 // 脏器
-                obj.setOrganName(MapConstant.getOrganEn(obj.getOrganId()));
+                obj.setOrganName(MapConstant.getOrganEn(obj.getSpeciesId().toString().concat(obj.getOrganId().toString())));
             } else {
                 // 种属
                 obj.setSpeciesName(MapConstant.getSpeciesName(obj.getSpeciesId()));
                 // 脏器
-                obj.setOrganName(MapConstant.getOrgan(obj.getOrganId()));
+                obj.setOrganName(MapConstant.getOrgan(obj.getSpeciesId().toString().concat(obj.getOrganId().toString())));
             }
 
             IndicatorAndOrganizationIdVO indicatorAndOrganizationIdVO = new IndicatorAndOrganizationIdVO();
@@ -173,11 +173,11 @@ public class IndicatorServicelmpl implements IndicatorService {
     }
 
     /**
-     * 查询专题数量
+     * 查询指标在项目表中的记录数量
      */
     @Override
-    public Integer selectSpecial(Long indicatorId) {
-        return indicatorMapper.selectSpecial(indicatorId);
+    public Integer selectIndicatorCountInProject(Long indicatorId) {
+        return indicatorMapper.selectIndicatorCountInProject(indicatorId);
     }
 
     /**

@@ -87,12 +87,14 @@ public interface IndicatorMapper {
      */
     public Integer selectIndicatorNum();
 
-    /**
-     * 查询专题数量
-     */
-    public Integer selectSpecial(Long indicatorId);
-
     // 2.0 新修改====================================
+
+    /**
+     * 查询指标在项目表中的记录数量
+     */
+    public Integer selectIndicatorCountInProject(Long indicatorId);
+
+
 
     /**
      * 查询指标列表 不分页

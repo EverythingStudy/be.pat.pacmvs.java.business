@@ -45,8 +45,6 @@ public class MapConstant {
     public static Map<String, String> ORGAN_MAP;
     public static Map<String, String> ORGAN_MAP_EN;
 
-    public static List<Organ> ORGAN_LIST;
-
     @PostConstruct
     public void init() {
         // 分组
@@ -198,12 +196,12 @@ public class MapConstant {
     /**
      * 获取脏器名称
      *
-     * @param organId
+     * @param speciesIdConnectOrganId
      * @return
      */
-    public static String getOrgan(String organId) {
-        if (ORGAN_MAP.containsKey(organId)) {
-            return ORGAN_MAP.get(organId);
+    public static String getOrgan(String speciesIdConnectOrganId) {
+        if (ORGAN_MAP.containsKey(speciesIdConnectOrganId)) {
+            return ORGAN_MAP.get(speciesIdConnectOrganId);
         }
         return "";
     }
@@ -211,12 +209,12 @@ public class MapConstant {
     /**
      * 获取脏器名称 - en
      *
-     * @param organId
+     * @param speciesIdConnectOrganId
      * @return
      */
-    public static String getOrganEn(String organId) {
-        if (ORGAN_MAP_EN.containsKey(organId)) {
-            return ORGAN_MAP_EN.get(organId);
+    public static String getOrganEn(String speciesIdConnectOrganId) {
+        if (ORGAN_MAP_EN.containsKey(speciesIdConnectOrganId)) {
+            return ORGAN_MAP_EN.get(speciesIdConnectOrganId);
         }
         return "";
     }

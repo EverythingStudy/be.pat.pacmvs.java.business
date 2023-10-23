@@ -13,6 +13,7 @@ import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
 import cn.staitech.anno.service.StructureService;
+import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -197,7 +198,15 @@ public class PathologicalIndicatorCategoryServicelmpl implements PathologicalInd
             try {
                 Structure structure = structureService.getOneStructure(listVO.getSpeciesId(), listVO.getOrganId(), listVO.getStructureId());
                 // 结构名称
-                listVO.setStructureName(structure.getName());
+                if (structure == null) {
+                    if (LanguageUtils.isEn()) {
+                        listVO.setStructureName("Unrelated");
+                    } else {
+                        listVO.setStructureName("无关联");
+                    }
+                } else {
+                    listVO.setStructureName(structure.getName());
+                }
             } catch (Exception e) {
                 log.error("{};;;{};;;;{}", listVO.getSpeciesId(), listVO.getOrganId(), listVO.getStructureId());
             }
