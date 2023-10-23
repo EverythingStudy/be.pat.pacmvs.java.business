@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
@@ -74,6 +75,32 @@ public class TestController {
 
         return 1L;
     }
+
+    @GetMapping("/createFile")
+    public String createFile(String folderName) throws Exception {
+        if(createFolder(folderName)){
+            return "成功";
+        }else{
+            return "失败";
+        }
+    }
+
+    private static Boolean createFolder(String folderName) throws Exception {
+        File file = new File(folderName);
+        if (!file.exists() && !file.isDirectory()) {
+            if (file.mkdir()) {
+                return true;
+            } else {
+                throw new Exception(MessageSource.M("FILE_DOWNLOAD_ERROR"));
+            }
+        }
+        return true;
+    }
+
+
+
+
+
 
 
     /**
