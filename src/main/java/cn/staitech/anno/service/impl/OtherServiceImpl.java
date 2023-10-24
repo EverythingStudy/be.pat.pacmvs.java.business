@@ -51,8 +51,8 @@ public class OtherServiceImpl implements OtherService {
                 // 更新当前评分记录
                 examineScoreMapper.updateById(examineScore);
                 JSONObject markingJsonObject = new JSONObject();
-                markingJsonObject.put("examine_score_id",examineScoreId);
-                markingJsonObject.put("user_id",examineScoreBy.getCreateBy());
+                markingJsonObject.put("examine_score_id", examineScoreId);
+                markingJsonObject.put("user_id", examineScoreBy.getCreateBy());
                 remoteLabelService.marking(markingJsonObject);
             }
         }

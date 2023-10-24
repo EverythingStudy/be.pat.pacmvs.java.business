@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author gjt
@@ -17,6 +17,6 @@ import java.util.List;
  */
 public interface AssessmentResultsMapper extends BaseMapper<AssessmentResults> {
 
-    List<AssessmentExportOut>  selectExportList(AssessmentExportIN assessmentExportIN);
+    List<AssessmentExportOut> selectExportList(AssessmentExportIN assessmentExportIN);
 
 }

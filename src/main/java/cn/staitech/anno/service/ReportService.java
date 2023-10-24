@@ -9,10 +9,11 @@ public interface ReportService {
 
     /**
      * 创建报告
+     *
      * @return
      * @throws Exception
      */
-    String createRpt(ReportRecordAddVO recordAddVO)throws Exception;
+    String createRpt(ReportRecordAddVO recordAddVO) throws Exception;
 
 }
 

@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class AnnotationVO {
-    
+
     /**
      * 标注id
      */
@@ -20,5 +20,5 @@ public class AnnotationVO {
      */
     @NotNull(message = "{AnnotationVO.distance.isnull}")
     @ApiModelProperty(required = true, value = "ROI正方形标注边长512或1024，默认512")
-    private int distance = 512 ;
+    private int distance = 512;
 }

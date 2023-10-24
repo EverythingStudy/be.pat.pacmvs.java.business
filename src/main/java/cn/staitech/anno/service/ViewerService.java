@@ -14,7 +14,7 @@ public interface ViewerService {
      * @param geojsonUrls 文件地址,slideId 切片id
      * @return geojsonUrl
      */
-    String getGeojsonUrls(String geojsonUrls,Long slideId);
+    String getGeojsonUrls(String geojsonUrls, Long slideId);
 
     /**
      * 构建标注数据
@@ -30,11 +30,9 @@ public interface ViewerService {
      * @param req 入参数据
      * @return geojsonUrl
      */
-    Features constructUpdMarking(MarkingUpdateIn req,String measureFullName);
+    Features constructUpdMarking(MarkingUpdateIn req, String measureFullName);
 
     boolean zipExport(String zipUrl, Long specialId) throws Exception;
-
-
 
 
 }

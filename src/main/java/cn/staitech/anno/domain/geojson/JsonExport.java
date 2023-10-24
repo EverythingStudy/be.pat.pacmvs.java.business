@@ -4,13 +4,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.Date;
-
 @Data
 public class JsonExport {
 
     @ApiModelProperty(value = "专题名称")
-    private String  topicName;
+    private String topicName;
 
     @ApiModelProperty(value = "项目名称")
     private String projectName;

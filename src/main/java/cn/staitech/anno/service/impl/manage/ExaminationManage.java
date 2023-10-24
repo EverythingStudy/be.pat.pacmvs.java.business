@@ -17,12 +17,12 @@ public class ExaminationManage {
 
     /**
      * 查询用户在项目中的角色
-     * */
-    public List<ProjectMember> projectMemberList(Slide slide){
-        ProjectMember projectMember=new ProjectMember();
+     */
+    public List<ProjectMember> projectMemberList(Slide slide) {
+        ProjectMember projectMember = new ProjectMember();
         projectMember.setUserId(SecurityUtils.getUserId());
         projectMember.setProjectId(slide.getProjectId());
-        List<ProjectMember> projectMemberList=projectMemberService.select(projectMember);
+        List<ProjectMember> projectMemberList = projectMemberService.select(projectMember);
 
         return projectMemberList;
     }

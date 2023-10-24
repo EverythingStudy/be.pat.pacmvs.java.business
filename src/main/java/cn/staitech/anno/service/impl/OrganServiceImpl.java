@@ -28,7 +28,7 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
     public Map<String, String> selectMap() {
         List<Organ> list = organMapper.selectList();
         Map<String, String> map = list.stream()
-                .collect(Collectors.toMap(Organ::getOrganId, Organ::getName));
+                .collect(Collectors.toMap(item -> item.getSpeciesCode().toString().concat(item.getOrganId().toString()), Organ::getName));
         return map;
     }
 
@@ -36,7 +36,7 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
     public Map<String, String> selectMapEn() {
         List<Organ> list = organMapper.selectList();
         Map<String, String> map = list.stream()
-                .collect(Collectors.toMap(Organ::getOrganId, Organ::getNameEn));
+                .collect(Collectors.toMap(item -> item.getSpeciesCode().toString().concat(item.getOrganId().toString()), Organ::getNameEn));
         return map;
     }
 
@@ -49,10 +49,6 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
     @Override
     public List<Organ> getOrganBySpeciesId(String speciesId) {
         List<Organ> list = organMapper.getOrganBySpeciesId(speciesId);
-        if (list.size() == 0) {
-            Organ organDefault = new Organ("0", "其他", "Other", speciesId);
-            list.add(organDefault);
-        }
         for (Organ organ : list) {
             // 中英文
             if (LanguageUtils.isEn()) {

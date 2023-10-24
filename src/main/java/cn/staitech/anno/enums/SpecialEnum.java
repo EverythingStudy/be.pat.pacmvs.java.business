@@ -1,7 +1,6 @@
 package cn.staitech.anno.enums;
 
 /**
- *
  * @author gjt.
  * &#064;data  2023/5/29 13:37
  */
@@ -17,6 +16,7 @@ public enum SpecialEnum {
         this.label = label;
         this.value = value;
     }
+
     public Long value() {
         return value;
     }

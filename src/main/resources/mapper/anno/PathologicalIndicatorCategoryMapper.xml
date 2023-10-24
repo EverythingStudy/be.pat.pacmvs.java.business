@@ -3,24 +3,23 @@
 <mapper namespace="cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper">
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.PathologicalIndicatorCategory">
-        <id column="category_id" property="categoryId" />
-        <result column="indicator_id" property="indicatorId" />
-        <result column="category_name" property="categoryName" />
-        <result column="structure_id" property="structureId" />
-        <result column="rgb" property="rgb" />
-        <result column="hex" property="hex" />
-        <result column="color" property="color" />
-        <result column="number" property="number" />
-        <result column="order_number" property="orderNumber" />
-        <result column="organization_id" property="organizationId" />
-        <result column="anno_type" property="annoType" />
-        <result column="del_flag" property="delFlag" />
-        <result column="create_by" property="createBy" />
-        <result column="update_by" property="updateBy" />
-        <result column="create_time" property="createTime" />
-        <result column="update_time" property="updateTime" />
+        <id column="category_id" property="categoryId"/>
+        <result column="indicator_id" property="indicatorId"/>
+        <result column="category_name" property="categoryName"/>
+        <result column="structure_id" property="structureId"/>
+        <result column="rgb" property="rgb"/>
+        <result column="hex" property="hex"/>
+        <result column="color" property="color"/>
+        <result column="number" property="number"/>
+        <result column="order_number" property="orderNumber"/>
+        <result column="organization_id" property="organizationId"/>
+        <result column="anno_type" property="annoType"/>
+        <result column="del_flag" property="delFlag"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
     </resultMap>
-
 
 
     <resultMap type="cn.staitech.anno.domain.vo.statistic.StatisticCategoryListOutVO"
@@ -53,7 +52,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        category_id, indicator_id, category_name, structure_id, rgb, hex, color, number, order_number, organization_id, anno_type, del_flag, create_by, update_by, create_time, update_time
+        category_id
+        , indicator_id, category_name, structure_id, rgb, hex, color, number, order_number, organization_id, anno_type, del_flag, create_by, update_by, create_time, update_time
     </sql>
 
     <!--  根据主键查询单条标注信息-->
@@ -266,18 +266,16 @@
     </select>
 
     <select id="selectCategoryById" resultType="java.lang.String">
-       select group_concat(category_name) from tb_pathological_indicator_category
+        select group_concat(category_name) from tb_pathological_indicator_category
         <where>
             <if test="split != null and split.length>0">
                 AND category_id IN
-                <foreach item="item" index="index" collection="split" open="("  close=")" separator=",">
-                #{item}
+                <foreach item="item" index="index" collection="split" open="(" close=")" separator=",">
+                    #{item}
                 </foreach>
             </if>
         </where>
-
     </select>
-
 
 
     <!--
@@ -336,7 +334,7 @@
             AND indicator_id = #{indicatorId}
         </if>
         <if test="categoryId != null">
-            AND category_id  &lt;&gt; #{categoryId}
+            AND category_id &lt;&gt; #{categoryId}
         </if>
         <if test="orderNumber !=null">
             AND order_number = #{orderNumber}
@@ -389,15 +387,11 @@
     </select>
 
 
-
     <select id="selectProjectListFilter" parameterType="java.lang.Long" resultMap="BaseResultMap">
-        SELECT
-            i.*
-        FROM
-            tb_pathological_indicator_category AS i
-                LEFT JOIN tb_structure AS s ON s.structure_id = i.structure_id
-        WHERE
-            i.indicator_id = #{indicatorId}
+        SELECT i.*
+        FROM tb_pathological_indicator_category AS i
+                 LEFT JOIN tb_structure AS s ON s.structure_id = i.structure_id
+        WHERE i.indicator_id = #{indicatorId}
           AND s.NAME != "标注区域"
     </select>
 

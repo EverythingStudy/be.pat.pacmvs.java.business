@@ -1,7 +1,5 @@
 package cn.staitech.anno.enums;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * 切片复核枚举
  *

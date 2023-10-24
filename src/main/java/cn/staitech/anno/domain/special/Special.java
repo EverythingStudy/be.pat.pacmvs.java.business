@@ -76,7 +76,7 @@ public class Special implements Serializable {
      */
     @TableField(value = "status")
     private Long status;
-    
+
     /**
      * 交付状态 0：未交付 1：已交付 .
      */

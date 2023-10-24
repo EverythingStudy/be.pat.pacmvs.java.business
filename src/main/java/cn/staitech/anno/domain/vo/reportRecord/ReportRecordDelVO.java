@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class ReportRecordDelVO {
-    @ApiModelProperty(required = true,value = "报告id")
+    @ApiModelProperty(required = true, value = "报告id")
     private Long reportId;
 
-    @ApiModelProperty(required = true,value = "专题id")
+    @ApiModelProperty(required = true, value = "专题id")
     private Long specialId;
 }

@@ -10,12 +10,15 @@ import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 图像 信息操作处理 .
@@ -57,20 +60,20 @@ public class SubImageController extends BaseController {
     public R<SubImage> getSubImageBySlideId(@PathVariable("slideId") @ApiParam(value = "切片ID") Long slideId) {
         Slide slide = slideService.selectById(slideId);
         SubImage subImage = null;
-        if (slide!=null){
+        if (slide != null) {
             subImage = subImageService.getById(slide.getImageId());
         }
         return R.ok(subImage);
     }
 
 
-    @Log(title = "专题配置",menu = "专题配置",subMenu = "项目配置",businessType = BusinessType.INSERT)
+    @Log(title = "专题配置", menu = "专题配置", subMenu = "项目配置", businessType = BusinessType.INSERT)
     @ApiOperation(value = "添加切片操作")
     @PostMapping("/add")
-    public R addSubImage(@RequestBody SubImage subImage){
+    public R addSubImage(@RequestBody SubImage subImage) {
         boolean flag = subImageService.saveOrUpdate(subImage);
         R r = R.fail(subImage);
-        if (flag){
+        if (flag) {
             r = R.ok(subImage);
         }
         return r;

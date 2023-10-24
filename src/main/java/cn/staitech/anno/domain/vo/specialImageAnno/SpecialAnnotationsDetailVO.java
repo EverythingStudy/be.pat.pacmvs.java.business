@@ -6,13 +6,12 @@ import lombok.Data;
 
 @Data
 public class SpecialAnnotationsDetailVO extends SpecialAnnotation {
-    
-    
+
 
     /**
      * 数量 .
      */
-    @ApiModelProperty(hidden = true,value = "数量")
+    @ApiModelProperty(hidden = true, value = "数量")
     private int sum;
 
     /**
@@ -40,6 +39,6 @@ public class SpecialAnnotationsDetailVO extends SpecialAnnotation {
     /**
      * ROI正方形标注边长512或1024;默认512.
      */
-    @ApiModelProperty(hidden = true,value = "ROI正方形标注边长512或1024，默认512")
-    private int distance = 512 ;
+    @ApiModelProperty(hidden = true, value = "ROI正方形标注边长512或1024，默认512")
+    private int distance = 512;
 }

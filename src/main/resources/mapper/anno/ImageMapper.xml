@@ -407,10 +407,6 @@
     </select>
 
 
-
-
-
-
     <!--标注组选片入口预览图像列表-->
     <select id="selectImageChooseList" parameterType="cn.staitech.anno.domain.Image" resultMap="BaseResultMap">
         <include refid="selectImageVo">

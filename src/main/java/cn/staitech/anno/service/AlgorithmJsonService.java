@@ -5,9 +5,10 @@ import cn.staitech.anno.domain.algorithmJson.in.SelectGeoJson;
 import cn.staitech.anno.domain.algorithmJson.out.SelectGeoJsonList;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
+
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author gjt

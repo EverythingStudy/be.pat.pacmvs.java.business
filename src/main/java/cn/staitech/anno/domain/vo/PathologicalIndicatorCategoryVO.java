@@ -7,8 +7,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
- *
  * 添加标签VO
+ *
  * @author wangf
  */
 @Data

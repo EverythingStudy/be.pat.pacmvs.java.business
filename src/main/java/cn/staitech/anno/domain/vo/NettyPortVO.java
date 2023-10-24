@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 public class NettyPortVO {
-    
+
     @Value("${netty.port}")
     private Integer nettyPort;
-    
+
 }

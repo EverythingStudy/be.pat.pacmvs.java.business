@@ -30,8 +30,6 @@ import org.springframework.util.ResourceUtils;
 import javax.annotation.Resource;
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * @author mugw
@@ -43,13 +41,11 @@ import java.util.concurrent.Executors;
 @Service
 public class ReportServiceImpl implements ReportService {
 
+    private final static String SUFFIX = ".docx";
     //报告模板缓存
     public static Map<String, byte[]> TPL_CACHE = new HashMap<>();
-
     @Value("${rpt.dir:../REPORT}")
     private String RPT_DIR;
-
-    private final static String SUFFIX = ".docx";
     @Resource
     private SlideMapper slideMapper;
     @Resource
@@ -61,6 +57,22 @@ public class ReportServiceImpl implements ReportService {
 
     @Resource
     private DiagnosticStatisticsService diagnosticStatisticsService;
+
+    /**
+     * 根据参数集合，合并单元格
+     *
+     * @param table
+     * @param
+     * @throws Exception
+     */
+    public static void mergeCells(XWPFTable table, Map<Integer, List<Map<String, Integer>>> paramMap) throws Exception {
+        paramMap.keySet().forEach(key -> {
+            List<Map<String, Integer>> mergeCellsParams = paramMap.get(key);
+            for (Map<String, Integer> param : mergeCellsParams) {
+                PoiUtils.mergeCellsVertically(table, key, MapUtils.getInteger(param, "startRow"), MapUtils.getInteger(param, "endRow"));
+            }
+        });
+    }
 
     @Override
     public String createRpt(ReportRecordAddVO recordAddVO) throws Exception {
@@ -337,22 +349,6 @@ public class ReportServiceImpl implements ReportService {
         }
     }
 
-    /**
-     * 根据参数集合，合并单元格
-     *
-     * @param table
-     * @param
-     * @throws Exception
-     */
-    public static void mergeCells(XWPFTable table, Map<Integer, List<Map<String, Integer>>> paramMap) throws Exception {
-        paramMap.keySet().forEach(key -> {
-            List<Map<String, Integer>> mergeCellsParams = paramMap.get(key);
-            for (Map<String, Integer> param : mergeCellsParams) {
-                PoiUtils.mergeCellsVertically(table, key, MapUtils.getInteger(param, "startRow"), MapUtils.getInteger(param, "endRow"));
-            }
-        });
-    }
-
     /********************************************模板加载********************************************************/
 
     /**
@@ -425,7 +421,7 @@ public class ReportServiceImpl implements ReportService {
      * @return
      * @throws Exception
      */
-    public XWPFTable getHeaderTable(Map<String, Object> params){
+    public XWPFTable getHeaderTable(Map<String, Object> params) {
         XWPFTable table = getTPLTable();
         PoiUtils.convertTable(table, params);
         table.removeRow(5);

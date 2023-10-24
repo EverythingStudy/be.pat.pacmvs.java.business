@@ -188,7 +188,6 @@ public interface SlideService extends IService<Slide> {
     boolean addAnnoSlidesBatch(AddSlideVO addSlideVO);
 
 
-
     /**
      * 选片 - 添加切片（新） .
      *
@@ -220,6 +219,7 @@ public interface SlideService extends IService<Slide> {
 
     /**
      * 查询切片、图片信息接口
+     *
      * @param slideId 切片id
      * @return
      */

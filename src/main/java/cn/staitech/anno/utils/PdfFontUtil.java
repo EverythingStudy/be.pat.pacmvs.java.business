@@ -8,10 +8,10 @@ import java.util.List;
 
 
 public class PdfFontUtil {
-    
+
     private PdfFontUtil() {
     }
-    
+
     /**
      * 段落样式获取
      */
@@ -22,7 +22,7 @@ public class PdfFontUtil {
         }
         return paragraph;
     }
-    
+
     //    /**
     //     * 图片样式
     //     */
@@ -34,7 +34,7 @@ public class PdfFontUtil {
     //        }
     //        return image ;
     //    }
-    
+
     /**
      * 表格生成
      */
@@ -63,7 +63,7 @@ public class PdfFontUtil {
     //    public static PdfPCell getPdfPCell (Phrase phrase){
     //        return new PdfPCell (phrase) ;
     //    }
-    
+
     /**
      * 表格内容带样式
      */

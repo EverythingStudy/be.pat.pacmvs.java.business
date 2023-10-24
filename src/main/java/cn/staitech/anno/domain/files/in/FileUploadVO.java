@@ -15,7 +15,7 @@ import java.io.Serializable;
  */
 @Data
 public class FileUploadVO implements Serializable {
-//    @NotNull(message = "业务类型不可为空")
+    //    @NotNull(message = "业务类型不可为空")
     @NotNull(message = "{FileUploadVO.businessType.notNull}")
     @ApiModelProperty(value = "业务类型(1原始切片，2预测图片，3切片信息表CSV，4:json压缩包(zip)")
     private Integer businessType;
@@ -26,7 +26,7 @@ public class FileUploadVO implements Serializable {
     @ApiModelProperty(value = "机构ID")
     private Long organizationId;
 
-//    @NotBlank(message = "文件名称不可为空")
+    //    @NotBlank(message = "文件名称不可为空")
     @NotBlank(message = "{FileUploadVO.fileName.notBlank}")
     @ApiModelProperty(value = "文件名称")
     private String fileName;

@@ -295,7 +295,7 @@ public class ProjectController extends BaseController {
     @RequiresPermissions("projectConfig:projectList:create")
     @Log(title = "添加项目", menu = "专题管理", subMenu = "项目管理", businessType = BusinessType.INSERT)
     @PostMapping("/add")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public R<String> addProject(@Validated @RequestBody InsertProjectVO req) {
         Project project = new Project();
         BeanUtils.copyProperties(req, project);
@@ -340,7 +340,7 @@ public class ProjectController extends BaseController {
     @RequiresPermissions("projectConfig:projectList:edit")
     @Log(title = "编辑项目", menu = "编辑项目", subMenu = "编辑项目", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public R<String> editProject(@Validated @RequestBody UpdateProjectVO req) {
         Project project = new Project();
         BeanUtils.copyProperties(req, project);
@@ -405,7 +405,7 @@ public class ProjectController extends BaseController {
     //@RequiresPermissions("anno:project:addproject")
     @Log(title = "编辑项目", menu = "编辑项目", subMenu = "编辑项目", businessType = BusinessType.UPDATE)
     @PostMapping("/editStatus")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public R<String> editProjectStatus(@Validated @RequestBody UpdateProjectStatusVO req) {
 
         // 查询考核表中是否有未完成考试的考核信息

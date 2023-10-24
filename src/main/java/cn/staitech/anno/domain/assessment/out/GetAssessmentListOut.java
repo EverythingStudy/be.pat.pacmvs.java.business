@@ -30,7 +30,7 @@ public class GetAssessmentListOut {
     /**
      * 缩略图地址
      */
-    @ApiModelProperty(value ="缩略图地址" )
+    @ApiModelProperty(value = "缩略图地址")
     private String thumbUrl;
 
     /**
@@ -43,7 +43,7 @@ public class GetAssessmentListOut {
     private String categoryName;
 
     @ApiModelProperty(value = "标注类型数据集")
-    private String [] categoryIds;
+    private String[] categoryIds;
 
 
     @ApiModelProperty(value = "标注json名称")

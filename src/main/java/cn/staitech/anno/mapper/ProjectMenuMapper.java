@@ -11,9 +11,9 @@ public interface ProjectMenuMapper {
     int insert(ProjectMenu record);
 
     int insertSelective(ProjectMenu record);
-    
+
     ProjectMenu selectByPrimaryKey(Long menuId);
-    
+
     List<ProjectMenu> selectList();
 
     int updateByPrimaryKeySelective(ProjectMenu record);

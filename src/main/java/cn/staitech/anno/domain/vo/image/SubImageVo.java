@@ -2,15 +2,14 @@ package cn.staitech.anno.domain.vo.image;
 
 import cn.staitech.anno.domain.Group;
 import cn.staitech.anno.domain.SubImage;
-
-import java.util.List;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 /**
  * @author mugw
@@ -40,7 +39,7 @@ public class SubImageVo extends SubImage {
 
     //当前分组信息
     private Group group;
-    
+
     private List<Long> imageIds;
 
 }

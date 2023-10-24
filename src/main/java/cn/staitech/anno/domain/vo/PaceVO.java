@@ -15,5 +15,4 @@ public class PaceVO {
     private Integer pace;
 
 
-
 }

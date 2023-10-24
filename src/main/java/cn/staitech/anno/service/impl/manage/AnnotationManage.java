@@ -9,29 +9,29 @@ import javax.annotation.Resource;
 
 @Service
 public class AnnotationManage {
-    
+
     @Resource
     private AnnotationMapper annotationMapper;
-    
+
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
     @Transactional(rollbackFor = Exception.class)
     public int updateAnnotation(Annotation annotation) {
         return annotationMapper.updateAnnotation(annotation);
-        
+
     }
-    
+
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
     @Transactional(rollbackFor = Exception.class)
     public int deleteAnnotationById(Long annotationId) {
         return annotationMapper.deleteAnnotationById(annotationId);
     }
-    
+
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
     @Transactional(rollbackFor = Exception.class)
     public int insertAnnotation(Annotation annotation) {
         return annotationMapper.insertAnnotation(annotation);
     }
-    
+
 }
 
 

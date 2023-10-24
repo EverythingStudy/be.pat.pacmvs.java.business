@@ -1,77 +1,77 @@
 package cn.staitech.anno.utils;
 
 public class SnowFlakeGenerateIdWorker {
-    
+
     /**
      * 开始时间截 .
      */
     private final long twepoch = 1420041600000L;
-    
+
     /**
      * 机器id所占的位数 .
      */
     private final long workerIdBits = 5L;
-    
+
     /**
      * 数据标识id所占的位数.
      */
     private final long datacenterIdBits = 5L;
-    
+
     /**
      * 支持的最大机器id，结果是31 (这个移位算法可以很快的计算出几位二进制数所能表示的最大十进制数).
      */
     private final long maxWorkerId = ~(-1L << workerIdBits);
-    
+
     /**
      * 支持的最大数据标识id，结果是31 .
      */
     private final long maxDatacenterId = ~(-1L << datacenterIdBits);
-    
+
     /**
      * 序列在id中占的位数 .
      */
     private final long sequenceBits = 12L;
-    
+
     /**
      * 机器ID向左移12位 .
      */
     private final long workerIdShift = sequenceBits;
-    
+
     /**
      * 数据标识id向左移17位(12+5) .
      */
     private final long datacenterIdShift = sequenceBits + workerIdBits;
-    
+
     /**
      * 时间截向左移22位(5+5+12) .
      */
     private final long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
-    
+
     /**
      * 生成序列的掩码，这里为4095 (0b111111111111=0xfff=4095) .
      */
     private final long sequenceMask = ~(-1L << sequenceBits);
-    
+
     /**
      * 工作机器ID(0~31) .
      */
     private long workerId;
-    
+
     /**
      * 数据中心ID(0~31) .
      */
     private long datacenterId;
-    
+
     /**
      * 毫秒内序列(0~4095) .
      */
     private long sequence = 0L;
-    
+
     /**
      * 上次生成ID的时间截 .
      */
     private long lastTimestamp = -1L;
-    
+
     /**
      * 构造函数 .
      *
@@ -90,14 +90,21 @@ public class SnowFlakeGenerateIdWorker {
         this.workerId = workerId;
         this.datacenterId = datacenterId;
     }
-    
+
+    public static void main(String[] args) {
+        SnowFlakeGenerateIdWorker snowFlakeGenerateIdWorker = new SnowFlakeGenerateIdWorker(0L, 0L);
+        String id = snowFlakeGenerateIdWorker.generateNextId();
+        System.out.println(id);
+
+    }
+
     /**
      * 获得下一个ID (该方法是线程安全的) .
      *
      * @return long
      */
     public synchronized long nextId() {
-        
+
         long timestamp = timeGen();
         timestamp = generateId(timestamp);
         return ((timestamp - twepoch) << timestampLeftShift) //
@@ -105,7 +112,7 @@ public class SnowFlakeGenerateIdWorker {
                 | (workerId << workerIdShift) //
                 | sequence;
     }
-    
+
     @SuppressWarnings("checkstyle:LeftCurly")
     private long generateId(long timestamp) {
         //如果当前时间小于上一次ID生成的时间戳，说明系统时钟回退过这个时候应当抛出异常
@@ -131,7 +138,7 @@ public class SnowFlakeGenerateIdWorker {
         lastTimestamp = timestamp;
         return timestamp;
     }
-    
+
     /**
      * 获得下一个ID (string).
      **/
@@ -143,7 +150,7 @@ public class SnowFlakeGenerateIdWorker {
                 ((timestamp - twepoch) << timestampLeftShift) | (datacenterId << datacenterIdShift) | (workerId
                         << workerIdShift) | sequence);
     }
-    
+
     /**
      * 阻塞到下一个毫秒，直到获得新的时间戳.
      *
@@ -157,7 +164,7 @@ public class SnowFlakeGenerateIdWorker {
         }
         return timestamp;
     }
-    
+
     /**
      * 返回以毫秒为单位的当前时间.
      *
@@ -166,12 +173,5 @@ public class SnowFlakeGenerateIdWorker {
     protected long timeGen() {
         return System.currentTimeMillis();
     }
-    
-    public static void main(String[] args) {
-        SnowFlakeGenerateIdWorker snowFlakeGenerateIdWorker = new SnowFlakeGenerateIdWorker(0L, 0L);
-        String id = snowFlakeGenerateIdWorker.generateNextId();
-        System.out.println(id);
-        
-    }
-    
+
 }

@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.Map;
-
 /**
  * @author gjt.
  * @data 2023/5/31 10:01

@@ -54,6 +54,37 @@ public class FileUploadServiceImpl implements FileUploadService {
     private String uploadPath = File.separator + "home" + File.separator + "pat_saas" + File.separator + "Upload";
 
     /**
+     * @param fileUrl  上传文件路径
+     * @param filename 文件名称
+     * @return
+     */
+    public static String getFolderName(String fileUrl, String filename) {
+        File file = new File(fileUrl);
+        List<FileNode> fileNodeList = new ArrayList<>();
+        if (file.isDirectory()) {
+            File[] fileArray = file.listFiles();
+            for (File f : fileArray) {
+                String type = f.isDirectory() ? "dir" : "file";
+                FileNode node = new FileNode(f.getName(), f.getAbsolutePath(), type, f.length());
+                System.out.println();
+                fileNodeList.add(node);
+            }
+        }
+
+        for (FileNode fileNode : fileNodeList) {
+            String name = fileNode.getName();
+            System.out.println(name);
+            if (name.contains("_")) {
+                String res = name.substring(0, name.lastIndexOf("_"));
+                if (res.equals(filename)) {
+                    return name;
+                }
+            }
+        }
+        return filename;
+    }
+
+    /**
      * @param file 上传的文件MultipartFile
      * @return
      * @throws IOException
@@ -163,9 +194,9 @@ public class FileUploadServiceImpl implements FileUploadService {
                 }
                 String fileUrl;
                 // 获取json文件最终存储路径
-                if(fileUploadVO.getFileUrl() != null){
+                if (fileUploadVO.getFileUrl() != null) {
                     fileUrl = fileUploadVO.getFileUrl();
-                }else{
+                } else {
                     // 获取文件路径
                     fileUrl = uploadPath + File.separator + getFileUrl(fileUploadVO);
                     File dir = new File(fileUrl);
@@ -246,9 +277,9 @@ public class FileUploadServiceImpl implements FileUploadService {
                     }
                     String fileUrl;
                     // 获取json文件最终存储路径
-                    if(chunk.getFileUrl() != null){
+                    if (chunk.getFileUrl() != null) {
                         fileUrl = uploadPath + File.separator + chunk.getFileUrl();
-                    }else{
+                    } else {
                         // 获取文件路径
                         fileUrl = uploadPath + File.separator + getFileUrl(chunk);
                     }
@@ -303,12 +334,11 @@ public class FileUploadServiceImpl implements FileUploadService {
         return files.getFilesId();
     }
 
-
     public String getFileUrl(FileUploadVO fileUploadVO) throws Exception {
         if (!Optional.ofNullable(fileUploadVO.getTopicName()).isPresent()) {
             throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }
-        if(fileUploadVO.getTopicName().length() > 50){
+        if (fileUploadVO.getTopicName().length() > 50) {
             throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }
         if (!Optional.ofNullable(fileUploadVO.getProjectTypeId()).isPresent()) {
@@ -323,49 +353,14 @@ public class FileUploadServiceImpl implements FileUploadService {
         String fileName = fileUploadVO.getTopicName() + GLIDE_LINE + fileUploadVO.getProjectTypeId() + fileUploadVO.getRoundId() + GLIDE_LINE + fileUploadVO.getNumber();
         String filesName = getFolderName(uploadPath, fileName);
         String filePath;
-        if(Objects.equals(filesName, filesName)){
+        if (Objects.equals(filesName, filesName)) {
             filePath = filesName + GLIDE_LINE + System.currentTimeMillis();
-        }else {
+        } else {
             filePath = filesName;
         }
         // 创建二级目录
         return filePath;
     }
-
-    /**
-     *
-     * @param fileUrl 上传文件路径
-     * @param filename 文件名称
-     * @return
-     */
-    public static String getFolderName(String fileUrl, String filename){
-        File file = new File(fileUrl);
-        List<FileNode> fileNodeList = new ArrayList<>();
-        if (file.isDirectory()) {
-            File[] fileArray = file.listFiles();
-            for (File f : fileArray) {
-                String type = f.isDirectory() ? "dir" : "file";
-                FileNode node = new FileNode(f.getName(), f.getAbsolutePath(), type, f.length());
-                System.out.println();
-                fileNodeList.add(node);
-            }
-        }
-
-        for (FileNode fileNode : fileNodeList) {
-            String name = fileNode.getName();
-            System.out.println(name);
-            if (name.contains("_")) {
-                String res = name.substring(0, name.lastIndexOf("_"));
-                if(res.equals(filename)){
-                    return name;
-                }
-            }
-        }
-        return filename;
-    }
-
-
-
 
 
 }

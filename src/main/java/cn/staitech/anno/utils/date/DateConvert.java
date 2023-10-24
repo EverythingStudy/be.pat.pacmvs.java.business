@@ -17,7 +17,7 @@ public class DateConvert implements Converter<String, Date> {
 
     @Override
     public Date convert(String stringDate) {
-        if(StringUtils.isBlank(stringDate)) {
+        if (StringUtils.isBlank(stringDate)) {
             return null;
         }
         log.info("日期参数:" + stringDate);

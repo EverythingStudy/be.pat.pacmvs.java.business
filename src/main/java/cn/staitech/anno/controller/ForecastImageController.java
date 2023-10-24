@@ -80,7 +80,7 @@ public class ForecastImageController extends BaseController {
     @Log(title = "删除", menu = "切片管理", subMenu = "预测图片", businessType = BusinessType.DELETE)
     @ApiOperation(value = "逻辑删除单个切片")
     @GetMapping("/deleteById/{imageId}")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public R deleteById(@PathVariable("imageId") @ApiParam(value = "图像ID") Long imageId) {
 
         int deleteImageById = imageService.updateDeleteFlagById(imageId);

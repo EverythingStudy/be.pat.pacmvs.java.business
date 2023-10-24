@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class AnnotationStatisticListPageInVO {
 
-    @NotNull(message ="{AnnotationStatisticListPageInVO.statisticDimension.isnull}" )
+    @NotNull(message = "{AnnotationStatisticListPageInVO.statisticDimension.isnull}")
     @ApiModelProperty(value = "统计维度：项目、病理指标、标注类别、成员、图像", required = true)
     private Long statisticDimension;
 

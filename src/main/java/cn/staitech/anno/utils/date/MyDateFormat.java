@@ -4,12 +4,10 @@ import java.text.*;
 import java.util.Date;
 
 /**
- *
  * @author kingtiger
  */
 public class MyDateFormat extends DateFormat {
     private DateFormat dateFm = new SimpleDateFormat(DateUtils.DEFAULT_PATTERN);
-
 
 
     /**
@@ -56,6 +54,7 @@ public class MyDateFormat extends DateFormat {
     private DateFormat getDateFmByParam(String dateStr) {
         return DateUtils.getDateFmByParam(dateStr);
     }
+
     private DateFormat getDefaultFm() {
         dateFm = new SimpleDateFormat(DateUtils.DEFAULT_PATTERN);
         return dateFm;

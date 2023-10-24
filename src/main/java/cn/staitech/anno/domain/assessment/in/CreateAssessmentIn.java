@@ -1,9 +1,7 @@
 package cn.staitech.anno.domain.assessment.in;
 
-import cn.staitech.common.core.utils.StringUtils;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
 
 import javax.validation.constraints.NotEmpty;
 import java.util.List;

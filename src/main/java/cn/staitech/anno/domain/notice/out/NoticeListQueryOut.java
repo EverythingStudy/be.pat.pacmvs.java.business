@@ -1,7 +1,6 @@
 package cn.staitech.anno.domain.notice.out;
 
 import cn.staitech.anno.domain.notice.out.data.NoticeQueryOutData;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -15,10 +14,10 @@ import java.util.List;
 @Data
 public class NoticeListQueryOut {
 
-    @ApiModelProperty(name = "未读消息列表",notes = "未读消息列表")
+    @ApiModelProperty(name = "未读消息列表", notes = "未读消息列表")
     private List<NoticeQueryOutData> unreadList;
-    @ApiModelProperty(name = "已读消息列表",notes = "已读消息列表")
+    @ApiModelProperty(name = "已读消息列表", notes = "已读消息列表")
     private List<NoticeQueryOutData> readList;
-    @ApiModelProperty(name="公告列表",notes = "公告列表")
+    @ApiModelProperty(name = "公告列表", notes = "公告列表")
     private List<NoticeQueryOutData> boardList;
 }

@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
  * 项目成员表
  * tb_project_member
  *
- * @author  王峰
+ * @author 王峰
  */
 @Builder
 @AllArgsConstructor

@@ -62,41 +62,35 @@ import static cn.staitech.anno.constant.CommonConstant.*;
 @Service
 public class MarkingServiceImpl implements MarkingService {
 
+    private static ExecutorService executor = ExecutorBuilder.create()//
+            .setCorePoolSize(1)//
+            .setMaxPoolSize(1)//
+            .setKeepAliveTime(0)//
+            .build();
     @Resource
     private SlideMapperV1 slideMapperV1;
-
     @Resource
     private SlideMapper slideMapper;
     @Resource
     private SlideAttrService slideAttrService;
-
     @Resource
     private PathologicalIndicatorCategoryMapper pathologicalIndicatorCategoryMapper;
-
     @Resource
     private MarkingMapper markingMapper;
-
     @Resource
     private FileService fileService;
-
     @Resource
     private ImageMapper imageMapper;
-
     @Resource
     private SysUserMapper userMapper;
-
     @Resource
     private ProjectMapperV1 projectMapperV1;
-
     @Resource
     private DownTaskMapper downTaskMapper;
-
     @Resource
     private MarkingMapperV1 markingMapperV1;
-
     @Resource
     private DownTaskService downTaskService;
-
 
     @Override
     public List<MarkingSelectListVo> selectList(Long slideId) throws Exception {
@@ -119,7 +113,6 @@ public class MarkingServiceImpl implements MarkingService {
         return markingMapper.selectListBy(slideId);
     }
 
-
     @Override
     public List<SlideRes> selectSlideList(Long specialId) {
         return markingMapper.selectSlideList(specialId);
@@ -134,7 +127,6 @@ public class MarkingServiceImpl implements MarkingService {
     public List<PointCount> selectCategoryCountList(Long slideId) {
         return markingMapper.selectCategoryCountList(slideId);
     }
-
 
     @Override
     public Marking selectById(Long markingId) {
@@ -310,9 +302,8 @@ public class MarkingServiceImpl implements MarkingService {
         return res;
     }
 
-
     @Override
-    public String slideJsonExport(Long slideId) {
+    public String slideJsonExport(Long slideId) throws Exception {
         if (!Optional.ofNullable(slideId).isPresent()) {
             try {
                 throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
@@ -407,7 +398,6 @@ public class MarkingServiceImpl implements MarkingService {
         return fileUrl;
     }
 
-
     @Override
     public boolean zipExport(String zipUrl, Long projectId) throws Exception {
         StringBuilder sb;
@@ -466,9 +456,6 @@ public class MarkingServiceImpl implements MarkingService {
         }
         return true;
     }
-
-
-
 
     @Transactional(rollbackFor = Exception.class)
     public void writeMarking(List<SlideRes> slideResList, String imageName, org.json.JSONObject jsonObject, String geoImageId) throws Exception {
@@ -591,13 +578,6 @@ public class MarkingServiceImpl implements MarkingService {
         excelTool.exportExcel(titleData, propertiesList, response.getOutputStream(), true, false);
     }
 
-
-    private static ExecutorService executor = ExecutorBuilder.create()//
-            .setCorePoolSize(1)//
-            .setMaxPoolSize(1)//
-            .setKeepAliveTime(0)//
-            .build();
-
     @Override
     public DownTask projectJsonExport(Long projectId, List<Long> slideIds) throws Exception {
 
@@ -616,6 +596,106 @@ public class MarkingServiceImpl implements MarkingService {
 
     }
 
+    @Override
+    public void batchDelete(Long slideId) {
+        QueryWrapper<cn.staitech.anno.project.domain.Marking> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("slide_id", slideId);
+        markingMapperV1.delete(queryWrapper);
+        BroadcastVO broadcastVO = SendMessage.sendOneMessages(CLEAN, new Features());
+        NioWebSocketHandler.sendAll(slideId, broadcastVO);
+    }
+
+    @Override
+    public void downTaskByCode(String code) throws Exception {
+        DownTask downTask = downTaskService.getOne(Wrappers.query(DownTask.builder().code(code).build()));
+        // 构造表头的每个列头 定义表头
+        List<Map<String, String>> titleList = getTitleList(CommonConstant.EXPORT_COLHEAD_KEY, CommonConstant.EXPORT_COLHEAD_VALUE);
+        List<Map<String, String>> res = new ArrayList<>();
+        JSONObject jsonObject = JSON.parseObject(String.valueOf(downTask.getPath()));
+        for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
+            res.add((Map<String, String>) entry.getValue());
+        }
+        ExcelTool<Map<String, String>> excelTool = new ExcelTool<>(MessageSource.M("EXCEL_FILE_PATH"), 20, 20);
+        List<Column> titleData = excelTool.columnTransformer(titleList);
+        response.setContentType("application/vnd.ms-excel;charset=utf-8");
+        response.setCharacterEncoding("utf-8");
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(downTask.getProjectName(), "UTF-8") + CommonConstant.FILE_SUFFIX_XLSX);
+        excelTool.exportExcel(titleData, res, response.getOutputStream(), true, false);
+    }
+
+    /**
+     * 封装socket发送数据
+     *
+     * @param annotationId
+     * @param geometry
+     * @param properties
+     * @return
+     */
+    public Features socketData(String annotationId, JSONObject geometry, Properties properties) {
+        Features features = new Features();
+        features.setGeometry(geometry);
+        features.setId(annotationId);
+        features.setType("Feature");
+        JSONObject jsonObject = (JSONObject) JSON.toJSON(properties);
+        features.setProperties(jsonObject);
+        return features;
+    }
+
+    /**
+     * 统计不同类型点的数量
+     *
+     * @param locationType
+     * @param marking
+     * @return
+     */
+    public List<PointCount> updatePoint(String locationType, Marking marking) {
+        List<PointCount> pointCountList = new ArrayList<>();
+        if (Objects.equals(locationType, "Point")) {
+            PointCount pointCounts = markingMapper.selectCategoryCount(marking);
+            marking.setPoint_count(pointCounts.getPoint_count());
+            markingMapper.updatePointCount(marking);
+            pointCountList.add(pointCounts);
+        }
+        return pointCountList;
+    }
+
+    //    @SneakyThrows
+//    @Async
+    public void exportJson(String fileUrl, String jsonString) {
+        try {
+            OutputStream outputStream = Files.newOutputStream(Paths.get(fileUrl));
+            outputStream.write(jsonString.getBytes());
+            // 关闭流
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 更新切片表中数据
+     *
+     * @param slideId 切片id
+     * @return
+     */
+    public void updateSLide(Long slideId) {
+        Slide slide = new Slide();
+        slide.setSlideId(slideId);
+        slide.setUpdateTime(new Date());
+        slideMapperV1.updateById(slide);
+    }
+
+    public List<Map<String, String>> getTitleList(String[] colHeadKey, String[] colHeadValue) {
+        // 定义表头
+        List<Map<String, String>> list = new ArrayList<>();
+
+        for (int i = 0; i < colHeadKey.length; i++) {
+            Map<String, String> map = new HashMap<String, String>(1);
+            map.put(colHeadKey[i], colHeadValue[i]);
+            list.add(map);
+        }
+        return list;
+    }
 
     class TaskThread implements Runnable {
 
@@ -676,111 +756,6 @@ public class MarkingServiceImpl implements MarkingService {
                 e.printStackTrace();
             }
         }
-    }
-
-    @Override
-    public void batchDelete(Long slideId) {
-        QueryWrapper<cn.staitech.anno.project.domain.Marking> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("slide_id", slideId);
-        markingMapperV1.delete(queryWrapper);
-        BroadcastVO broadcastVO = SendMessage.sendOneMessages(CLEAN, new Features());
-        NioWebSocketHandler.sendAll(slideId, broadcastVO);
-    }
-
-
-    @Override
-    public void downTaskByCode(String code) throws Exception {
-        DownTask downTask = downTaskService.getOne(Wrappers.query(DownTask.builder().code(code).build()));
-        // 构造表头的每个列头 定义表头
-        List<Map<String, String>> titleList = getTitleList(CommonConstant.EXPORT_COLHEAD_KEY, CommonConstant.EXPORT_COLHEAD_VALUE);
-        List<Map<String, String>> res = new ArrayList<>();
-        JSONObject jsonObject = JSON.parseObject(String.valueOf(downTask.getPath()));
-        for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
-            res.add((Map<String, String>) entry.getValue());
-        }
-        ExcelTool<Map<String, String>> excelTool = new ExcelTool<>(MessageSource.M("EXCEL_FILE_PATH"), 20, 20);
-        List<Column> titleData = excelTool.columnTransformer(titleList);
-        response.setContentType("application/vnd.ms-excel;charset=utf-8");
-        response.setCharacterEncoding("utf-8");
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(downTask.getProjectName(), "UTF-8") + CommonConstant.FILE_SUFFIX_XLSX);
-        excelTool.exportExcel(titleData, res, response.getOutputStream(), true, false);
-    }
-
-
-    /**
-     * 封装socket发送数据
-     *
-     * @param annotationId
-     * @param geometry
-     * @param properties
-     * @return
-     */
-    public Features socketData(String annotationId, JSONObject geometry, Properties properties) {
-        Features features = new Features();
-        features.setGeometry(geometry);
-        features.setId(annotationId);
-        features.setType("Feature");
-        JSONObject jsonObject = (JSONObject) JSON.toJSON(properties);
-        features.setProperties(jsonObject);
-        return features;
-    }
-
-
-    /**
-     * 统计不同类型点的数量
-     *
-     * @param locationType
-     * @param marking
-     * @return
-     */
-    public List<PointCount> updatePoint(String locationType, Marking marking) {
-        List<PointCount> pointCountList = new ArrayList<>();
-        if (Objects.equals(locationType, "Point")) {
-            PointCount pointCounts = markingMapper.selectCategoryCount(marking);
-            marking.setPoint_count(pointCounts.getPoint_count());
-            markingMapper.updatePointCount(marking);
-            pointCountList.add(pointCounts);
-        }
-        return pointCountList;
-    }
-
-    //    @SneakyThrows
-//    @Async
-    public void exportJson(String fileUrl, String jsonString) {
-        try {
-            OutputStream outputStream = Files.newOutputStream(Paths.get(fileUrl));
-            outputStream.write(jsonString.getBytes());
-            // 关闭流
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    /**
-     * 更新切片表中数据
-     *
-     * @param slideId 切片id
-     * @return
-     */
-    public void updateSLide(Long slideId) {
-        Slide slide = new Slide();
-        slide.setSlideId(slideId);
-        slide.setUpdateTime(new Date());
-        slideMapperV1.updateById(slide);
-    }
-
-    public List<Map<String, String>> getTitleList(String[] colHeadKey, String[] colHeadValue) {
-        // 定义表头
-        List<Map<String, String>> list = new ArrayList<>();
-
-        for (int i = 0; i < colHeadKey.length; i++) {
-            Map<String, String> map = new HashMap<String, String>(1);
-            map.put(colHeadKey[i], colHeadValue[i]);
-            list.add(map);
-        }
-        return list;
     }
 
 //    public Boolean markIsNotFinish(String status) {

@@ -33,14 +33,14 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
     @Resource
     private MarkingMapperV1 markingMapperV1;
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Boolean saveAnnoUsers(Long slideId, List<Long> userIds) {
         List<SlideAttr> slideAttrs = queryAttr(slideId, USER, userIds);
         return save(slideId, USER, userIds, slideAttrs);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Boolean removeAnnoUsers(Long slideId, List<Long> userIds) {
         QueryWrapper<Marking> queryWrapper = Wrappers.query();
@@ -54,14 +54,14 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
         return true;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Boolean saveAnnoCategory(Long slideId, List<Long> categoryIds) {
         List<SlideAttr> slideAttrs = queryAttr(slideId, CATEGORY, categoryIds);
         return save(slideId, CATEGORY, categoryIds, slideAttrs);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Boolean removeAnnoCategory(Long slideId, List<Long> categoryIds) {
         QueryWrapper<Marking> queryWrapper = Wrappers.query();

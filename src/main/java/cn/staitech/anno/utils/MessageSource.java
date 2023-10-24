@@ -56,7 +56,7 @@ public class MessageSource {
             language = SecurityUtils.getLoginUser().getLanguage();
         }
 
-        if (language.equals("en-us")) {
+        if ("en-us".equals(language)) {
             language = "en";
         } else {
             language = "zh";

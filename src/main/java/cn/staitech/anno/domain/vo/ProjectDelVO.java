@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 public class ProjectDelVO {
-    
+
     @ApiModelProperty(required = true, value = "项目id")
     private Long projectId;
 

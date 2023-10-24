@@ -3,21 +3,13 @@ package cn.staitech.anno.service.impl;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.AlgorithmAssessment;
 import cn.staitech.anno.domain.AlgorithmJson;
-import cn.staitech.anno.domain.assessment.in.*;
 import cn.staitech.anno.domain.ParseJson;
 import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.assessment.in.CreateAssessmentDataIn;
-import cn.staitech.anno.domain.assessment.in.CreateAssessmentIn;
-import cn.staitech.anno.domain.assessment.in.GetAssessmentListIn;
-import cn.staitech.anno.domain.assessment.in.GetJsonInfoDataIn;
-import cn.staitech.anno.domain.assessment.in.GetJsonInfoIn;
-import cn.staitech.anno.domain.assessment.in.RemoveAssessmentIn;
+import cn.staitech.anno.domain.assessment.in.*;
 import cn.staitech.anno.domain.assessment.out.AssessmentExportOut;
 import cn.staitech.anno.domain.assessment.out.GetAssessmentListOut;
 import cn.staitech.anno.mapper.*;
-import cn.staitech.anno.mapper.SlideMapper;
 import cn.staitech.anno.project.domain.Project;
-import cn.staitech.anno.project.domain.SlideAttr;
 import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.project.mapper.SlideAttrMapper;
 import cn.staitech.anno.service.AlgorithmAssessmentService;
@@ -26,9 +18,8 @@ import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.Column;
 import cn.staitech.anno.utils.ExcelTool;
-import cn.staitech.anno.utils.ParseJsonUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.utils.ParseJsonUtil;
 import cn.staitech.anno.utils.date.DateUtils;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
@@ -36,6 +27,7 @@ import cn.staitech.common.core.utils.StringUtils;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -47,23 +39,19 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
-import java.io.File;
-import java.net.URLEncoder;
-import java.nio.file.Paths;
-import java.text.ParseException;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import java.io.*;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import static cn.staitech.anno.aspect.LogFileAspect.response;
-import static cn.staitech.anno.constant.CommonConstant.FILE_SUFFIX_JSON;
 
 /**
  * <p>
@@ -302,13 +290,13 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
     }
 
     @Override
-    public void export(AssessmentExportIN assessmentExportIN) throws Exception {
-        if (assessmentExportIN.getAlgorithmentList().size() < 1) {
+    public void export(AssessmentExportIN assessmentExportIn) throws Exception {
+        if (assessmentExportIn.getAlgorithmentList().size() < 1) {
             throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }
-        List<AssessmentExportOut> assessmentExportOutList = assessmentResultsMapper.selectExportList(assessmentExportIN);
+        List<AssessmentExportOut> assessmentExportOutList = assessmentResultsMapper.selectExportList(assessmentExportIn);
         // 查询项目中得信息
-        Project projectBy = projectMapperV1.selectById(assessmentExportIN.getProjectId());
+        Project projectBy = projectMapperV1.selectById(assessmentExportIn.getProjectId());
         String projectName = "";
         if (projectBy != null) {
             projectName = projectBy.getProjectName();
@@ -351,7 +339,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
             slide.setIfCreateQuestions("1");
             BeanUtils.copyProperties(e, resp);
             resp.setImageName(e.getImageCode());
-            resp.setFileName(StringUtils.substringBeforeLast(e.getImageCode(),"."));
+            resp.setFileName(StringUtils.substringBeforeLast(e.getImageCode(), "."));
             resp.setCreateBy(SecurityUtils.getUserId());
             resp.setCreateTime(new Date());
             // 插入json文件返回数据

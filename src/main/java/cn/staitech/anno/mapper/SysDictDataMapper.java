@@ -1,12 +1,12 @@
 package cn.staitech.anno.mapper;
 
 
-import java.util.List;
-import java.util.Map;
-
 import cn.staitech.anno.domain.SysDictData;
 import cn.staitech.anno.domain.vo.diagnosis.SysDictDataVo;
 import cn.staitech.anno.domain.vo.diagnosis.SysDictTagVo;
+
+import java.util.List;
+import java.util.Map;
 
 public interface SysDictDataMapper {
     int deleteByPrimaryKey(Long dictCode);
@@ -20,12 +20,12 @@ public interface SysDictDataMapper {
     int updateByPrimaryKeySelective(SysDictData record);
 
     int updateByPrimaryKey(SysDictData record);
-    
-    public List<SysDictData> getSysDictDataListByParm(Map<String,Object> map);
-    
-    public SysDictData getMaxDictSortByParm(Map<String,Object> map);
-    
-    public List<SysDictDataVo> getSysDictDataVoListByParm(Map<String,Object> map);
-    
+
+    public List<SysDictData> getSysDictDataListByParm(Map<String, Object> map);
+
+    public SysDictData getMaxDictSortByParm(Map<String, Object> map);
+
+    public List<SysDictDataVo> getSysDictDataVoListByParm(Map<String, Object> map);
+
     public SysDictData getLabelNameByParm(SysDictTagVo sysDictTagVo);
 }

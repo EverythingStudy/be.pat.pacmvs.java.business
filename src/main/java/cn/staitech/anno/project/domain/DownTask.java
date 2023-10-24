@@ -5,79 +5,70 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import java.util.Date;
-
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+import java.util.Date;
+
 /**
  * 文件下载任务
+ *
  * @TableName tb_down_task
  */
-@TableName(value ="tb_down_task", autoResultMap = true)
+@TableName(value = "tb_down_task", autoResultMap = true)
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class DownTask implements Serializable {
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
     /**
      * 主键id
      */
     @TableId(type = IdType.AUTO)
     private Long downTaskId;
-
     /**
      * 文件路径
      */
     @TableField(typeHandler = JacksonTypeHandler.class)
     private JSONObject path;
-
     /**
      * 任务编码
      */
     private String code;
-
     /**
      * 项目名称
      */
     private String projectName;
-
     /**
      * 任务状态：1、运行中，2、完成
      */
     private String status;
-
     /**
      * 创建者
      */
     private Long createBy;
-
     /**
      * 创建时间
      */
     private Date createTime;
-
     /**
      * 更新者
      */
     private Long updateBy;
-
     /**
      * 更新时间
      */
     private Date updateTime;
-
     /**
      * 项目id
      */
     private Long projectId;
-
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
 
     @Override
     public boolean equals(Object that) {
@@ -92,13 +83,13 @@ public class DownTask implements Serializable {
         }
         DownTask other = (DownTask) that;
         return (this.getDownTaskId() == null ? other.getDownTaskId() == null : this.getDownTaskId().equals(other.getDownTaskId()))
-            && (this.getPath() == null ? other.getPath() == null : this.getPath().equals(other.getPath()))
-            && (this.getCode() == null ? other.getCode() == null : this.getCode().equals(other.getCode()))
-            && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
-            && (this.getCreateBy() == null ? other.getCreateBy() == null : this.getCreateBy().equals(other.getCreateBy()))
-            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
-            && (this.getUpdateBy() == null ? other.getUpdateBy() == null : this.getUpdateBy().equals(other.getUpdateBy()))
-            && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()));
+                && (this.getPath() == null ? other.getPath() == null : this.getPath().equals(other.getPath()))
+                && (this.getCode() == null ? other.getCode() == null : this.getCode().equals(other.getCode()))
+                && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
+                && (this.getCreateBy() == null ? other.getCreateBy() == null : this.getCreateBy().equals(other.getCreateBy()))
+                && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
+                && (this.getUpdateBy() == null ? other.getUpdateBy() == null : this.getUpdateBy().equals(other.getUpdateBy()))
+                && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()));
     }
 
     @Override

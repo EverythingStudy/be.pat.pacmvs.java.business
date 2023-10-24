@@ -31,7 +31,6 @@ import javax.annotation.Resource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -63,6 +62,26 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
 
     @Resource
     private QuestionBankMapper questionBankMapper;
+
+    public static String getStr(File jsonFile) {
+        String jsonStr;
+        try {
+            FileReader fileReader = new FileReader(jsonFile);
+            Reader reader = new InputStreamReader(Files.newInputStream(jsonFile.toPath()), StandardCharsets.UTF_8);
+            int ch;
+            StringBuilder sb = new StringBuilder();
+            while ((ch = reader.read()) != -1) {
+                sb.append((char) ch);
+            }
+            fileReader.close();
+            reader.close();
+            jsonStr = sb.toString();
+            return jsonStr;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     @Override
     public JSONArray selectQuestionMarkingList(Long questionId) {
@@ -101,7 +120,6 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         markingExamine.setCreateBy(createBy);
         return markingExamineMapper.selectLists(markingExamine);
     }
-
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -193,7 +211,6 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         return markingExamine.getMarkingExamineId();
     }
 
-
     public JSONObject getAnnotation(String fileUrl) {
         JSONObject parse = new JSONObject();
         File jsonFile = new File(fileUrl);
@@ -205,27 +222,6 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
             return parse;
         }
         return parse;
-    }
-
-
-    public static String getStr(File jsonFile) {
-        String jsonStr;
-        try {
-            FileReader fileReader = new FileReader(jsonFile);
-            Reader reader = new InputStreamReader(Files.newInputStream(jsonFile.toPath()), StandardCharsets.UTF_8);
-            int ch;
-            StringBuilder sb = new StringBuilder();
-            while ((ch = reader.read()) != -1) {
-                sb.append((char) ch);
-            }
-            fileReader.close();
-            reader.close();
-            jsonStr = sb.toString();
-            return jsonStr;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
 }

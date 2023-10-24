@@ -3,7 +3,8 @@ package cn.staitech.anno.enums;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- *  项目角色类型
+ * 项目角色类型
+ *
  * @author 王峰
  */
 public enum ProjectMemberRoleType {

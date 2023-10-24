@@ -1,270 +1,275 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.SpecialImageMapper">
-  <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.specilaImage.SpecialImage">
-    <id column="special_image_id" jdbcType="BIGINT" property="specialImageId" />
-    <result column="image_id" jdbcType="BIGINT" property="imageId"  javaType="Long" />
-    <result column="special_id" jdbcType="BIGINT" property="specialId" />
-    <result column="topic_id" jdbcType="BIGINT" property="topicId" />
-    <result column="status" jdbcType="SMALLINT" property="status" />
-    <result column="delete_flag" jdbcType="SMALLINT" property="deleteFlag" />
-    <result column="delivery_status" jdbcType="SMALLINT" property="deliveryStatus" />
-    <result column="audit_status" jdbcType="SMALLINT" property="auditStatus" />
-    <result column="slice_batch_number" jdbcType="SMALLINT" property="sliceBatchNumber" />
-    <result column="slice_image_status" jdbcType="SMALLINT" property="sliceImageStatus" />
-    <result column="create_by" jdbcType="BIGINT" property="createBy" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="update_by" jdbcType="BIGINT" property="updateBy" />
-    <result column="edit_by" jdbcType="BIGINT" property="editBy" />
-    <result column="audit_time" jdbcType="TIMESTAMP" property="auditTime" />
-    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="update_by_token" jdbcType="VARCHAR" property="updateByToken" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.specilaImage.SpecialImage">
+        <id column="special_image_id" jdbcType="BIGINT" property="specialImageId"/>
+        <result column="image_id" jdbcType="BIGINT" property="imageId" javaType="Long"/>
+        <result column="special_id" jdbcType="BIGINT" property="specialId"/>
+        <result column="topic_id" jdbcType="BIGINT" property="topicId"/>
+        <result column="status" jdbcType="SMALLINT" property="status"/>
+        <result column="delete_flag" jdbcType="SMALLINT" property="deleteFlag"/>
+        <result column="delivery_status" jdbcType="SMALLINT" property="deliveryStatus"/>
+        <result column="audit_status" jdbcType="SMALLINT" property="auditStatus"/>
+        <result column="slice_batch_number" jdbcType="SMALLINT" property="sliceBatchNumber"/>
+        <result column="slice_image_status" jdbcType="SMALLINT" property="sliceImageStatus"/>
+        <result column="create_by" jdbcType="BIGINT" property="createBy"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_by" jdbcType="BIGINT" property="updateBy"/>
+        <result column="edit_by" jdbcType="BIGINT" property="editBy"/>
+        <result column="audit_time" jdbcType="TIMESTAMP" property="auditTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="update_by_token" jdbcType="VARCHAR" property="updateByToken"/>
+    </resultMap>
 
-  <sql id="Base_Column_List">
-    special_image_id, image_id, special_id,topic_id, status, delete_flag, create_by, create_time, 
+    <sql id="Base_Column_List">
+        special_image_id
+        , image_id, special_id,topic_id, status, delete_flag, create_by, create_time,
     update_by, update_time,delivery_status,audit_status,slice_batch_number,slice_image_status,audit_time,edit_by,update_by_token
-  </sql>
-  <sql id="COLUMNS_WITHOUT_ID">
-    image_id, special_id,topic_id, create_by, create_time
-  </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from tb_special_image
-    where special_image_id = #{specialImageId,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from tb_special_image
-    where special_image_id = #{specialImageId,jdbcType=BIGINT}
-  </delete>
-  <insert id="insert" parameterType="cn.staitech.anno.domain.specilaImage.SpecialImage">
-    insert into tb_special_image (special_image_id, image_id, special_id, 
-      status, delete_flag, create_by, 
-      create_time, update_by, update_time
-      )
-    values (#{specialImageId,jdbcType=BIGINT}, #{imageId,jdbcType=BIGINT}, #{specialId,jdbcType=BIGINT}, 
-      #{status,jdbcType=SMALLINT}, #{deleteFlag,jdbcType=SMALLINT}, #{createBy,jdbcType=BIGINT}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}
-      )
-  </insert>
-  <insert id="insertSelective" parameterType="cn.staitech.anno.domain.specilaImage.SpecialImage" useGeneratedKeys="true" keyProperty="specialImageId">
-    insert into tb_special_image
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="specialImageId != null">
-        special_image_id,
-      </if>
-      <if test="imageId != null">
-        image_id,
-      </if>
-      <if test="specialId != null">
-        special_id,
-      </if>
-      <if test="status != null">
-        status,
-      </if>
-      <if test="deleteFlag != null">
-        delete_flag,
-      </if>
-      <if test="createBy != null">
-        create_by,
-      </if>
-      <if test="createTime != null">
-        create_time,
-      </if>
-      <if test="updateBy != null">
-        update_by,
-      </if>
-      <if test="updateTime != null">
-        update_time,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="specialImageId != null">
-        #{specialImageId,jdbcType=BIGINT},
-      </if>
-      <if test="imageId != null">
-        #{imageId,jdbcType=BIGINT},
-      </if>
-      <if test="specialId != null">
-        #{specialId,jdbcType=BIGINT},
-      </if>
-      <if test="status != null">
-        #{status,jdbcType=SMALLINT},
-      </if>
-      <if test="deleteFlag != null">
-        #{deleteFlag,jdbcType=SMALLINT},
-      </if>
-      <if test="createBy != null">
-        #{createBy,jdbcType=BIGINT},
-      </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateBy != null">
-        #{updateBy,jdbcType=BIGINT},
-      </if>
-      <if test="updateTime != null">
-        #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-    </trim>
-  </insert>
-  
-  <insert id="insertSpecialImageList" keyProperty="specialImageId" useGeneratedKeys="true">
+    </sql>
+    <sql id="COLUMNS_WITHOUT_ID">
+        image_id
+        , special_id,topic_id, create_by, create_time
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_special_image
+        where special_image_id = #{specialImageId,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete
+        from tb_special_image
+        where special_image_id = #{specialImageId,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="cn.staitech.anno.domain.specilaImage.SpecialImage">
+        insert into tb_special_image (special_image_id, image_id, special_id,
+                                      status, delete_flag, create_by,
+                                      create_time, update_by, update_time)
+        values (#{specialImageId,jdbcType=BIGINT}, #{imageId,jdbcType=BIGINT}, #{specialId,jdbcType=BIGINT},
+                #{status,jdbcType=SMALLINT}, #{deleteFlag,jdbcType=SMALLINT}, #{createBy,jdbcType=BIGINT},
+                #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective" parameterType="cn.staitech.anno.domain.specilaImage.SpecialImage"
+            useGeneratedKeys="true" keyProperty="specialImageId">
+        insert into tb_special_image
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="specialImageId != null">
+                special_image_id,
+            </if>
+            <if test="imageId != null">
+                image_id,
+            </if>
+            <if test="specialId != null">
+                special_id,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="deleteFlag != null">
+                delete_flag,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="specialImageId != null">
+                #{specialImageId,jdbcType=BIGINT},
+            </if>
+            <if test="imageId != null">
+                #{imageId,jdbcType=BIGINT},
+            </if>
+            <if test="specialId != null">
+                #{specialId,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=SMALLINT},
+            </if>
+            <if test="deleteFlag != null">
+                #{deleteFlag,jdbcType=SMALLINT},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy,jdbcType=BIGINT},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertSpecialImageList" keyProperty="specialImageId" useGeneratedKeys="true">
         INSERT INTO tb_special_image
-        (<include refid="COLUMNS_WITHOUT_ID" />)
+        (<include refid="COLUMNS_WITHOUT_ID"/>)
         VALUES
         <foreach collection="specialImageList" item="item" index="index" separator=",">
             (#{item.imageId},#{item.specialId},#{item.topicId},#{item.createBy},#{item.createTime})
         </foreach>
     </insert>
-    
-  <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.specilaImage.SpecialImage">
-    update tb_special_image
-    <set>
-      <if test="imageId != null">
-        image_id = #{imageId,jdbcType=BIGINT},
-      </if>
-      <if test="specialId != null">
-        special_id = #{specialId,jdbcType=BIGINT},
-      </if>
-      <if test="status != null">
-        status = #{status,jdbcType=SMALLINT},
-      </if>
-       <if test="sliceImageStatus != null">
-        slice_image_status = #{sliceImageStatus,jdbcType=SMALLINT},
-      </if>
-       <if test="sliceBatchNumber != null">
-        slice_batch_number = #{sliceBatchNumber,jdbcType=BIGINT},
-      </if>
-       <if test="auditStatus != null">
-        audit_status = #{auditStatus,jdbcType=SMALLINT},
-      </if>
-       <if test="auditTime != null">
-        audit_time = #{auditTime,jdbcType=TIMESTAMP},
-      </if>
-       <if test="deliveryStatus != null">
-        delivery_status = #{deliveryStatus,jdbcType=SMALLINT},
-      </if>
-      <if test="deleteFlag != null">
-        delete_flag = #{deleteFlag,jdbcType=SMALLINT},
-      </if>
-      <if test="createBy != null">
-        create_by = #{createBy,jdbcType=BIGINT},
-      </if>
-      <if test="updateByToken != null">
-		update_by_token = #{updateByToken,jdbcType=VARCHAR},
-	  </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateBy != null">
-      	update_by = #{updateBy,jdbcType=BIGINT},
-      </if>
-      <if test="editBy != null">
-      		edit_by = #{editBy},
-      		<if test="editBy != -1l">
-      			edit_by = #{editBy},
-      		</if>
-      		<if test="editBy == -1l">
-      			edit_by = null,
-      		</if>
-      </if>
-      <if test="updateTime != null">
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    <where>
-    	 <if test="specialId != null">
-       		AND special_id = #{specialId}
-      	</if>
-      	<!-- <if test="auditStatus != null">
-       		AND audit_status = #{auditStatus}
-      	</if> -->
-      	<if test="specialImageId != null">
-       		AND special_image_id = #{specialImageId}
-      	</if>
-      	<if test="specialImageIds != null">
-		    AND  special_image_id in
-		            <foreach collection="specialImageIds" item="sImageId" index="index" open="(" close=")" separator=",">
-			  			#{sImageId}
-					</foreach>
-	    </if>
-    </where>
-  </update>
-  <update id="updateByPrimaryKey" parameterType="cn.staitech.anno.domain.specilaImage.SpecialImage">
-    update tb_special_image
-    set image_id = #{imageId,jdbcType=BIGINT},
-      special_id = #{specialId,jdbcType=BIGINT},
-      status = #{status,jdbcType=SMALLINT},
-      delete_flag = #{deleteFlag,jdbcType=SMALLINT},
-      create_by = #{createBy,jdbcType=BIGINT},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_by = #{updateBy,jdbcType=BIGINT},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
-    where special_image_id = #{specialImageId,jdbcType=BIGINT}
-  </update>
-  
-  <select id="selectWaitSpecialImage" parameterType="cn.staitech.anno.domain.vo.specialImage.SpecialImageSelectVO" resultType="cn.staitech.anno.domain.vo.specialImage.WaitSpecialImageVO">
-	SELECT
-		p.image_id,
-		p.thumb_url,
-		p.image_url,
-		p.image_code,
-		p.create_time,
-		p.image_name,
-		p.special_image_id
-		<!-- ,IFNULL( p.special_image_id,- 1 ) part_status  -->
-	FROM
-		(
-		SELECT
-			t1.thumb_url,
-			t1.image_url,
-			t1.image_code,
-			t1.create_time,
-			t1.image_id,
-			t1.image_name,
-			(SELECT t2.special_image_id FROM tb_special_image t2 WHERE t2.image_id = t1.image_id AND t2.special_id = #{belongSpecialId} ) special_image_id 
-		FROM
-			tb_image t1 
-			<where>
-				<if test="topicName != null and topicName != ''">
-	               AND  t1.topic_name like concat('%', #{topicName}, '%')
-	            </if>
-	            <if test="topicId != null and topicId != ''">
-	               AND  t1.topic_id = #{topicId}
-	            </if>
-	            <if test="status != null">
-                	AND t1.status = #{status}
-           		 </if>
-	            <if test="createBy != null and createBy != ''">
-	                AND t1.create_by = #{createBy}
-	            </if>
-	            <if test="deleteFlag != null">
-	                AND t1.delete_flag = #{deleteFlag}
-	            </if>
-			</where>
-		) p 
-		<where>
+
+    <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.specilaImage.SpecialImage">
+        update tb_special_image
+        <set>
+            <if test="imageId != null">
+                image_id = #{imageId,jdbcType=BIGINT},
+            </if>
+            <if test="specialId != null">
+                special_id = #{specialId,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=SMALLINT},
+            </if>
+            <if test="sliceImageStatus != null">
+                slice_image_status = #{sliceImageStatus,jdbcType=SMALLINT},
+            </if>
+            <if test="sliceBatchNumber != null">
+                slice_batch_number = #{sliceBatchNumber,jdbcType=BIGINT},
+            </if>
+            <if test="auditStatus != null">
+                audit_status = #{auditStatus,jdbcType=SMALLINT},
+            </if>
+            <if test="auditTime != null">
+                audit_time = #{auditTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deliveryStatus != null">
+                delivery_status = #{deliveryStatus,jdbcType=SMALLINT},
+            </if>
+            <if test="deleteFlag != null">
+                delete_flag = #{deleteFlag,jdbcType=SMALLINT},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="updateByToken != null">
+                update_by_token = #{updateByToken,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy,jdbcType=BIGINT},
+            </if>
+            <if test="editBy != null">
+                edit_by = #{editBy},
+                <if test="editBy != -1l">
+                    edit_by = #{editBy},
+                </if>
+                <if test="editBy == -1l">
+                    edit_by = null,
+                </if>
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        <where>
+            <if test="specialId != null">
+                AND special_id = #{specialId}
+            </if>
+            <!-- <if test="auditStatus != null">
+                 AND audit_status = #{auditStatus}
+            </if> -->
+            <if test="specialImageId != null">
+                AND special_image_id = #{specialImageId}
+            </if>
+            <if test="specialImageIds != null">
+                AND special_image_id in
+                <foreach collection="specialImageIds" item="sImageId" index="index" open="(" close=")" separator=",">
+                    #{sImageId}
+                </foreach>
+            </if>
+        </where>
+    </update>
+    <update id="updateByPrimaryKey" parameterType="cn.staitech.anno.domain.specilaImage.SpecialImage">
+        update tb_special_image
+        set image_id    = #{imageId,jdbcType=BIGINT},
+            special_id  = #{specialId,jdbcType=BIGINT},
+            status      = #{status,jdbcType=SMALLINT},
+            delete_flag = #{deleteFlag,jdbcType=SMALLINT},
+            create_by   = #{createBy,jdbcType=BIGINT},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_by   = #{updateBy,jdbcType=BIGINT},
+            update_time = #{updateTime,jdbcType=TIMESTAMP}
+        where special_image_id = #{specialImageId,jdbcType=BIGINT}
+    </update>
+
+    <select id="selectWaitSpecialImage" parameterType="cn.staitech.anno.domain.vo.specialImage.SpecialImageSelectVO"
+            resultType="cn.staitech.anno.domain.vo.specialImage.WaitSpecialImageVO">
+        SELECT
+        p.image_id,
+        p.thumb_url,
+        p.image_url,
+        p.image_code,
+        p.create_time,
+        p.image_name,
+        p.special_image_id
+        <!-- ,IFNULL( p.special_image_id,- 1 ) part_status  -->
+        FROM
+        (
+        SELECT
+        t1.thumb_url,
+        t1.image_url,
+        t1.image_code,
+        t1.create_time,
+        t1.image_id,
+        t1.image_name,
+        (SELECT t2.special_image_id FROM tb_special_image t2 WHERE t2.image_id = t1.image_id AND t2.special_id =
+        #{belongSpecialId} ) special_image_id
+        FROM
+        tb_image t1
+        <where>
+            <if test="topicName != null and topicName != ''">
+                AND t1.topic_name like concat('%', #{topicName}, '%')
+            </if>
+            <if test="topicId != null and topicId != ''">
+                AND t1.topic_id = #{topicId}
+            </if>
+            <if test="status != null">
+                AND t1.status = #{status}
+            </if>
+            <if test="createBy != null and createBy != ''">
+                AND t1.create_by = #{createBy}
+            </if>
+            <if test="deleteFlag != null">
+                AND t1.delete_flag = #{deleteFlag}
+            </if>
+        </where>
+        ) p
+        <where>
             <if test="imageName != null and imageName != ''">
-               AND p.image_name like concat('%', #{imageName}, '%')
+                AND p.image_name like concat('%', #{imageName}, '%')
             </if>
             <if test="imageCode != null and imageCode != ''">
-               AND p.image_code like concat('%', #{imageCode}, '%')
+                AND p.image_code like concat('%', #{imageCode}, '%')
             </if>
-            
+
             <!-- 添加状态 0：全部 1：已添加 2：未添加 -->
-            
+
             <!-- 1：已添加 -->
-             <if test="joinStatus != null and joinStatus == 1">
-                AND p.special_image_id  IS NOT NULL
+            <if test="joinStatus != null and joinStatus == 1">
+                AND p.special_image_id IS NOT NULL
             </if>
             <!--  2：未添加 -->
-             <if test="joinStatus != null and joinStatus == 2">
-                AND p.special_image_id  IS  NULL
+            <if test="joinStatus != null and joinStatus == 2">
+                AND p.special_image_id IS NULL
             </if>
             <if test="createTimeParams != null">
-                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''"><!-- 开始时间检索 -->
+                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
+                    <!-- 开始时间检索 -->
                     AND date_format(p.create_time,'%y%m%d') &gt;= date_format(#{createTimeParams.beginTime},'%y%m%d')
                 </if>
                 <if test="createTimeParams.endTime != null and createTimeParams.endTime != '' ">
@@ -272,79 +277,82 @@
                 </if>
             </if>
         </where>
-         ORDER BY p.create_time desc
+        ORDER BY p.create_time desc
     </select>
-    
-    
-    <select id="getImageBySpecialId" parameterType="cn.staitech.anno.domain.vo.specialImage.SpecialImageSelectVO" resultType="cn.staitech.anno.domain.Image">
-   		SELECT
-			t1.topic_id 
-		FROM
-		tb_image t1 
-		WHERE
-			t1.image_id IN (
-			SELECT
-				min( t2.image_id ) 
-			FROM
-				tb_special_image t2 
-			 <if test="specialId != null and specialId != ''">
-				where t2.special_id = #{specialId} 
-			</if>
-			)
+
+
+    <select id="getImageBySpecialId" parameterType="cn.staitech.anno.domain.vo.specialImage.SpecialImageSelectVO"
+            resultType="cn.staitech.anno.domain.Image">
+        SELECT
+        t1.topic_id
+        FROM
+        tb_image t1
+        WHERE
+        t1.image_id IN (
+        SELECT
+        min( t2.image_id )
+        FROM
+        tb_special_image t2
+        <if test="specialId != null and specialId != ''">
+            where t2.special_id = #{specialId}
+        </if>
+        )
     </select>
-    
-    
-    <select id="selectSpecialImageList" parameterType="cn.staitech.anno.domain.vo.specialImage.SpecialImageSelectVO" resultType="cn.staitech.anno.domain.vo.specialImage.SpecialImageVO">
-		SELECT
-			t1.special_image_id,
-			t1.image_id,
-			t1.special_id,
-			t1.slice_image_status,
-			t1.audit_status,
-			t1.edit_by,
-			t1.delivery_status,
-			t1.topic_id,
-			t1.slice_batch_number,
-			t2.image_name,
-			t2.topic_name,
-			t2.image_code,
-			t2.image_path,
-			t2.image_url,
-			t2.thumb_url,
-			t1.`status`,
-			t1.delete_flag,
-			t1.create_time,
-			t1.create_by,
-			t1.update_by,
-			t1.update_time,
-			t2.host_id 	
-		FROM
-			tb_special_image t1
-			LEFT JOIN tb_image t2 ON t1.image_id = t2.image_id 
-		<where>
-             <if test="imageCode != null and imageCode != ''">
-             		AND t2.image_code like concat('%', #{imageCode}, '%')
-        	 </if>
-        	  <if test="imageName != null and imageName != ''">
-             		AND t2.image_name like concat('%', #{imageName}, '%')
-        	 </if>
-        	  <if test="specialImageId != null and specialImageId != ''">
-             		AND t1.special_image_id  =  #{specialImageId}
-        	 </if>
-        	 <if test="belongSpecialId != null and belongSpecialId != ''">
-              		AND t1.special_id =  #{belongSpecialId}
-        	 </if>
-        	  <if test="specialId != null and specialId != ''">
-              		AND t1.special_id =  #{specialId}
-        	 </if>
-        	 <if test="specialImageIdList != null and specialImageIdList.size() > 0">
-        	 		AND t1.special_image_id in 
-	            <foreach collection="specialImageIdList" item="specialImageId" open="(" separator="," close=")">
-	                #{specialImageId}
-	            </foreach>
-       		 </if>
+
+
+    <select id="selectSpecialImageList" parameterType="cn.staitech.anno.domain.vo.specialImage.SpecialImageSelectVO"
+            resultType="cn.staitech.anno.domain.vo.specialImage.SpecialImageVO">
+        SELECT
+        t1.special_image_id,
+        t1.image_id,
+        t1.special_id,
+        t1.slice_image_status,
+        t1.audit_status,
+        t1.edit_by,
+        t1.delivery_status,
+        t1.topic_id,
+        t1.slice_batch_number,
+        t2.image_name,
+        t2.topic_name,
+        t2.image_code,
+        t2.image_path,
+        t2.image_url,
+        t2.thumb_url,
+        t1.`status`,
+        t1.delete_flag,
+        t1.create_time,
+        t1.create_by,
+        t1.update_by,
+        t1.update_time,
+        t2.host_id
+        FROM
+        tb_special_image t1
+        LEFT JOIN tb_image t2 ON t1.image_id = t2.image_id
+        <where>
+            <if test="imageCode != null and imageCode != ''">
+                AND t2.image_code like concat('%', #{imageCode}, '%')
+            </if>
+            <if test="imageName != null and imageName != ''">
+                AND t2.image_name like concat('%', #{imageName}, '%')
+            </if>
+            <if test="specialImageId != null and specialImageId != ''">
+                AND t1.special_image_id = #{specialImageId}
+            </if>
+            <if test="belongSpecialId != null and belongSpecialId != ''">
+                AND t1.special_id = #{belongSpecialId}
+            </if>
+            <if test="specialId != null and specialId != ''">
+                AND t1.special_id = #{specialId}
+            </if>
+            <if test="specialImageIdList != null and specialImageIdList.size() > 0">
+                AND t1.special_image_id in
+                <foreach collection="specialImageIdList" item="specialImageId" open="(" separator="," close=")">
+                    #{specialImageId}
+                </foreach>
+            </if>
             <if test="createTimeParams != null">
-                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''"><!-- 开始时间检索 -->
+                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
+                    <!-- 开始时间检索 -->
                     AND date_format(t1.create_time,'%y%m%d') &gt;= date_format(#{createTimeParams.beginTime},'%y%m%d')
                 </if>
                 <if test="createTimeParams.endTime != null and createTimeParams.endTime != '' ">
@@ -356,99 +364,102 @@
             		AND t1.slice_image_status = #{sliceImageStatus}
        	 	</if> -->
         </where>
-         ORDER BY t1.create_time desc
+        ORDER BY t1.create_time desc
     </select>
-    
-    
-    <select id="selectSpecialSliceVoList" parameterType="cn.staitech.anno.domain.vo.specialSliceImage.SpecialSliceSelectVO" resultType="cn.staitech.anno.domain.vo.specialSliceImage.SpecialSliceVo">
-		SELECT
-			t1.special_image_id,
-			t1.special_id,
-			t2.thumb_url,
-			t2.image_url,
-			t2.image_name,
-			t2.image_code,
-			t1.image_id,
-			t1.slice_batch_number,
-			t1.slice_image_status,
-			t1.audit_status,
-			t1.audit_time,
-			t1.edit_by,
-			t3.nick_name 
-		FROM
-			tb_special_image t1
-			LEFT JOIN tb_image t2 ON t1.image_id = t2.image_id 
-			LEFT JOIN sys_user t3 ON t1.edit_by = t3.user_id 
-		<where>		
-			 <if test="imageCode != null and imageCode != ''">
-             		AND t2.image_code like concat('%', #{imageCode}, '%')
-        	 </if>
-        	 <if test="imageName != null and imageName != ''">
-             		AND t2.image_name like concat('%', #{imageName}, '%')
-        	 </if>
-        	 
-        	 <if test="sliceImageStatus != null and sliceImageStatus != ''">
-             		AND t1.slice_image_status = #{sliceImageStatus}
-        	 </if>
-        	  <if test="auditStatus != null and auditStatus != ''">
-             		AND t1.audit_status  = #{auditStatus}
-        	 </if>
-			
-			<if test="newImageName != null and newImageName != ''">
-             		<!-- AND t1.image_id IN (
-						SELECT
-							t3.parent_image_id 
-						FROM
-							tb_sub_image t3 
-						<where>
-				        	 <if test="newImageName != null and newImageName != ''">
-				             	AND t3.image_name like concat('%', #{newImageName}, '%')
-				        	 </if>
-						</where>
-						)
-					AND t1.slice_image_status = 2 -->
-					AND t1.special_image_id IN (
-					SELECT
-						p1.special_image_id 
-					FROM
-						tb_sub_image p1
-						LEFT JOIN tb_special_image p2 
-						ON p1.special_image_id = p2.special_image_id 
-					WHERE
-						p1.slice_batch_number = p2.slice_batch_number 
-						AND p1.special_id = #{belongSpecialId}
-						 <if test="newImageName != null and newImageName != ''"> 
-							AND p1.image_name LIKE concat('%',#{newImageName},'%')
-						</if>
-					)
-        	 </if>
-        	 
-        	 <if test="newImageCode != null and newImageCode != ''">
-             		AND t1.image_id IN (
-						SELECT
-							t3.parent_image_id 
-						FROM
-							tb_sub_image t3 
-						WHERE
-						<where>
-							<if test="newImageCode != null and newImageCode != ''">
-             					AND t3.image_code like concat('%', #{newImageCode}, '%')
-        	 				</if>
-						</where>
-						)
-        	 </if>
-             
-        	 <if test="belongSpecialId != null and belongSpecialId != ''">
-              		AND t1.special_id =  #{belongSpecialId}
-              		
-        	 </if>
-        	  <if test="belongSpecialId != null and belongSpecialId != ''">
-              		AND t1.special_image_id IN (
-              			select DISTINCT(t6.special_image_id) from tb_algorithm_special_image t6 where t6.algorithm_uuid = '20230811_anno'  and t6.`status` in (2,3)
-              		)
-        	 </if>
+
+
+    <select id="selectSpecialSliceVoList"
+            parameterType="cn.staitech.anno.domain.vo.specialSliceImage.SpecialSliceSelectVO"
+            resultType="cn.staitech.anno.domain.vo.specialSliceImage.SpecialSliceVo">
+        SELECT
+        t1.special_image_id,
+        t1.special_id,
+        t2.thumb_url,
+        t2.image_url,
+        t2.image_name,
+        t2.image_code,
+        t1.image_id,
+        t1.slice_batch_number,
+        t1.slice_image_status,
+        t1.audit_status,
+        t1.audit_time,
+        t1.edit_by,
+        t3.nick_name
+        FROM
+        tb_special_image t1
+        LEFT JOIN tb_image t2 ON t1.image_id = t2.image_id
+        LEFT JOIN sys_user t3 ON t1.edit_by = t3.user_id
+        <where>
+            <if test="imageCode != null and imageCode != ''">
+                AND t2.image_code like concat('%', #{imageCode}, '%')
+            </if>
+            <if test="imageName != null and imageName != ''">
+                AND t2.image_name like concat('%', #{imageName}, '%')
+            </if>
+
+            <if test="sliceImageStatus != null and sliceImageStatus != ''">
+                AND t1.slice_image_status = #{sliceImageStatus}
+            </if>
+            <if test="auditStatus != null and auditStatus != ''">
+                AND t1.audit_status = #{auditStatus}
+            </if>
+
+            <if test="newImageName != null and newImageName != ''">
+                <!-- AND t1.image_id IN (
+                   SELECT
+                       t3.parent_image_id
+                   FROM
+                       tb_sub_image t3
+                   <where>
+                        <if test="newImageName != null and newImageName != ''">
+                            AND t3.image_name like concat('%', #{newImageName}, '%')
+                        </if>
+                   </where>
+                   )
+               AND t1.slice_image_status = 2 -->
+                AND t1.special_image_id IN (
+                SELECT
+                p1.special_image_id
+                FROM
+                tb_sub_image p1
+                LEFT JOIN tb_special_image p2
+                ON p1.special_image_id = p2.special_image_id
+                WHERE
+                p1.slice_batch_number = p2.slice_batch_number
+                AND p1.special_id = #{belongSpecialId}
+                <if test="newImageName != null and newImageName != ''">
+                    AND p1.image_name LIKE concat('%',#{newImageName},'%')
+                </if>
+                )
+            </if>
+
+            <if test="newImageCode != null and newImageCode != ''">
+                AND t1.image_id IN (
+                SELECT
+                t3.parent_image_id
+                FROM
+                tb_sub_image t3
+                WHERE
+                <where>
+                    <if test="newImageCode != null and newImageCode != ''">
+                        AND t3.image_code like concat('%', #{newImageCode}, '%')
+                    </if>
+                </where>
+                )
+            </if>
+
+            <if test="belongSpecialId != null and belongSpecialId != ''">
+                AND t1.special_id = #{belongSpecialId}
+            </if>
+            <if test="belongSpecialId != null and belongSpecialId != ''">
+                AND t1.special_image_id IN (
+                select DISTINCT(t6.special_image_id) from tb_algorithm_special_image t6 where t6.algorithm_uuid =
+                '20230811_anno' and t6.`status` in (2,3)
+                )
+            </if>
             <if test="createTimeParams != null">
-                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''"><!-- 开始时间检索 -->
+                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
+                    <!-- 开始时间检索 -->
                     AND date_format(t1.audit_time,'%y%m%d') &gt;= date_format(#{createTimeParams.beginTime},'%y%m%d')
                 </if>
                 <if test="createTimeParams.endTime != null and createTimeParams.endTime != '' ">
@@ -456,13 +467,13 @@
                 </if>
             </if>
         </where>
-         ORDER BY	t1.create_time DESC
+        ORDER BY t1.create_time DESC
     </select>
-    
-    
+
+
     <select id="selectSpecialImageListByParm" parameterType="java.util.Map" resultMap="BaseResultMap">
-        select 
-        <include refid="Base_Column_List" />
+        select
+        <include refid="Base_Column_List"/>
         from tb_special_image t
         <where>
             <if test="params.imageId != null and params.imageId != ''">
@@ -471,7 +482,7 @@
             <if test="params.specialId != null and params.specialId != ''">
                 AND t.special_id = #{params.specialId}
             </if>
-             <if test="params.specialImageId != null and params.specialImageId != ''">
+            <if test="params.specialImageId != null and params.specialImageId != ''">
                 AND t.special_image_id = #{params.specialImageId}
             </if>
             <if test="params.auditStatus!= null">
@@ -483,14 +494,14 @@
             </if>
             <if test="params.userName != null and params.userName != ''">
                 AND t.edit_by IN (
-				SELECT
-					u.user_id 
-				FROM
-					sys_user u 
-				WHERE
-				u.user_name = #{params.userName})
+                SELECT
+                u.user_id
+                FROM
+                sys_user u
+                WHERE
+                u.user_name = #{params.userName})
             </if>
-           <!--  审核状态 0：待审核 1：审核通过 2：审核不通过 -->
+            <!--  审核状态 0：待审核 1：审核通过 2：审核不通过 -->
             <if test="params.auditSucess!= null and params.auditSucess != ''">
                 AND t.audit_status in (0,1)
             </if>
@@ -498,27 +509,27 @@
                 AND t.audit_status in (0,2)
             </if>
             <if test="params.specialImageIds != null">
-		    	AND  t.special_image_id in
-		            <foreach collection="params.specialImageIds" item="sImageId" index="index" open="(" close=")" separator=",">
-			  			#{sImageId}
-					</foreach>
-	    	</if>
-	    	<if test="params.imageIds != null">
-		    	AND  t.image_id in
-		            <foreach collection="params.imageIds" item="imageId" index="index" open="(" close=")" separator=",">
-			  			#{imageId}
-					</foreach>
-	    	</if>
+                AND t.special_image_id in
+                <foreach collection="params.specialImageIds" item="sImageId" index="index" open="(" close=")"
+                         separator=",">
+                    #{sImageId}
+                </foreach>
+            </if>
+            <if test="params.imageIds != null">
+                AND t.image_id in
+                <foreach collection="params.imageIds" item="imageId" index="index" open="(" close=")" separator=",">
+                    #{imageId}
+                </foreach>
+            </if>
             <if test="params.deliveryStatus != null and params.deliveryStatus != ''">
                 AND t.delivery_status = #{params.deliveryStatus}
             </if>
-            
         </where>
     </select>
-    
+
     <select id="selectEditIdListByParm" parameterType="java.util.Map" resultMap="BaseResultMap">
-        select 
-        	distinct(t.edit_by)
+        select
+        distinct(t.edit_by)
         from tb_special_image t
         <where>
             <if test="params.imageId != null and params.imageId != ''">
@@ -534,7 +545,7 @@
             <if test="params.sliceImageStatus!= null">
                 AND t.slice_image_status = #{params.sliceImageStatus}
             </if>
-           <!--  审核状态 0：待审核 1：审核通过 2：审核不通过 -->
+            <!--  审核状态 0：待审核 1：审核通过 2：审核不通过 -->
             <if test="params.auditSucess!= null and params.auditSucess != ''">
                 AND t.audit_status in (0,1)
             </if>
@@ -542,21 +553,21 @@
                 AND t.audit_status in (0,2)
             </if>
             <if test="params.specialImageIds != null">
-		    	AND  t.special_image_id in
-		            <foreach collection="params.specialImageIds" item="sImageId" index="index" open="(" close=")" separator=",">
-			  			#{sImageId}
-					</foreach>
-	    	</if>
-	    	<if test="params.imageIds != null">
-		    	AND  t.image_id in
-		            <foreach collection="params.imageIds" item="imageId" index="index" open="(" close=")" separator=",">
-			  			#{imageId}
-					</foreach>
-	    	</if>
+                AND t.special_image_id in
+                <foreach collection="params.specialImageIds" item="sImageId" index="index" open="(" close=")"
+                         separator=",">
+                    #{sImageId}
+                </foreach>
+            </if>
+            <if test="params.imageIds != null">
+                AND t.image_id in
+                <foreach collection="params.imageIds" item="imageId" index="index" open="(" close=")" separator=",">
+                    #{imageId}
+                </foreach>
+            </if>
             <if test="params.deliveryStatus != null and params.deliveryStatus != ''">
                 AND t.delivery_status = #{params.deliveryStatus}
             </if>
-            
         </where>
     </select>
 
@@ -564,16 +575,17 @@
     <select id="selectListByImageId" resultMap="BaseResultMap" parameterType="java.lang.Long">
         <if test="imageId != null and imageId != ''">
             select
-            <include refid="Base_Column_List" />
+            <include refid="Base_Column_List"/>
             from tb_special_image
             where `status` = 1 and `delete_flag` =1 and image_id = #{imageId};
         </if>
     </select>
 
     <!-- 通过切片ID（imageId）批量查询SpecialImageList -->
-    <select id="selectListByImageIds" resultMap="BaseResultMap" parameterType="cn.staitech.anno.domain.image.in.ImageBatchIdsVO">
+    <select id="selectListByImageIds" resultMap="BaseResultMap"
+            parameterType="cn.staitech.anno.domain.image.in.ImageBatchIdsVO">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from tb_special_image
         where `status` = 1 and `delete_flag` =1 and image_id in
         <foreach collection="imageIdList" item="imageId" open="(" separator="," close=")">
@@ -582,7 +594,8 @@
     </select>
 
     <!-- 通过切片ID（imageId）批量查询selectImageIdsListByImageIds -->
-    <select id="selectImageIdsListByImageIds" resultType="java.lang.Long" parameterType="cn.staitech.anno.domain.image.in.ImageBatchIdsVO">
+    <select id="selectImageIdsListByImageIds" resultType="java.lang.Long"
+            parameterType="cn.staitech.anno.domain.image.in.ImageBatchIdsVO">
         select distinct image_id
         from tb_special_image
         where `status` = 1 and `delete_flag` =1 and image_id in
@@ -596,11 +609,10 @@
         select *
         from tb_special_image
         where
-            `status` = 1
-            AND `delivery_status` = 1
+        `status` = 1
+        AND `delivery_status` = 1
         <if test="specialId != null">
             AND special_id = #{specialId}
         </if>
     </select>
-
 </mapper>

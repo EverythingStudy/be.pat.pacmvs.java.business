@@ -14,13 +14,8 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 
 /**
  * JSON生成工具类
@@ -164,10 +159,9 @@ public class JsonUtils {
 
 
     /**
-     *
      * @param jsonString 要保存的JSON串
-     * @param filePath 保存到的文件路径
-     * @param fileName  文件名称
+     * @param filePath   保存到的文件路径
+     * @param fileName   文件名称
      * @return
      */
     //保存json 文件
@@ -228,15 +222,15 @@ public class JsonUtils {
     }
 
     /**
-     *
      * JSON文件反序列化 参考：https://blog.csdn.net/weixin_44077403/article/details/127430738
      * String json = JsonUtils.convertStreamToString(file.getInputStream());
-     *
+     * <p>
      * 读取文件转换json
+     *
      * @param inputStream
      * @return
      */
-    public static String convertStreamToString(InputStream inputStream){
+    public static String convertStreamToString(InputStream inputStream) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder sb = new StringBuilder();
 

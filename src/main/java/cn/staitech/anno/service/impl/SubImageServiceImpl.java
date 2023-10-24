@@ -178,7 +178,7 @@ public class SubImageServiceImpl extends ServiceImpl<SubImageMapper, SubImage> i
                 }
                 ssv.setSubImageList(subList);
                 //增加是否可以被编辑的状态标识 是否可编辑 1:不可以编辑 2：可以编辑
-                if (sliceImageStatus == 0 || sliceImageStatus == 3 && null != ssv.getEditBy() && ssv.getEditBy() == SecurityUtils.getUserId()) {
+                if (sliceImageStatus == 0 || sliceImageStatus == 3 && null != ssv.getEditBy() && ssv.getEditBy().equals(SecurityUtils.getUserId())) {
                     ssv.setEditStatus(2);
                 }
             });
@@ -237,7 +237,7 @@ public class SubImageServiceImpl extends ServiceImpl<SubImageMapper, SubImage> i
 
             if (CollectionUtils.isNotEmpty(idsList)) {
                 SpecialImage record = new SpecialImage();
-                record.setEditBy(-1l);
+                record.setEditBy(-1L);
                 record.setSliceImageStatus(0);
                 Long[] idArray = idsList.toArray(new Long[idsList.size()]);
                 record.setSpecialImageIds(idArray);
@@ -289,7 +289,7 @@ public class SubImageServiceImpl extends ServiceImpl<SubImageMapper, SubImage> i
 
             if (CollectionUtils.isNotEmpty(idsList)) {
                 SpecialImage record = new SpecialImage();
-                record.setEditBy(-1l);
+                record.setEditBy(-1L);
                 record.setSliceImageStatus(0);
                 Long[] idArray = idsList.toArray(new Long[idsList.size()]);
                 record.setSpecialImageIds(idArray);

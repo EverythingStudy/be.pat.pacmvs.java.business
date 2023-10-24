@@ -1,9 +1,9 @@
 package cn.staitech.anno.domain.vo.specialImageAnno;
 
-import java.util.List;
-
 import cn.staitech.anno.domain.marking.PointCount;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class AnnoBroadcastVO {
@@ -15,5 +15,5 @@ public class AnnoBroadcastVO {
     private AnnoFeatures data;
 
     private List<PointCount> point_count_list;
-    
+
 }

@@ -26,64 +26,63 @@ public class ReportRecordServiceImpl implements ReportRecordService {
 
     /**
      * 添加数据
-     * */
+     */
     @Override
-    public int insertSelective(ReportRecord record){
+    public int insertSelective(ReportRecord record) {
         return reportRecordMapper.insertSelective(record);
     }
 
 
     /**
      * 查询单条数据
-     * */
+     */
     @Override
-    public List<ReportRecordAllVO> selectByPrimaryKey(ReportRecordViewVO recordViewVO){
+    public List<ReportRecordAllVO> selectByPrimaryKey(ReportRecordViewVO recordViewVO) {
         return reportRecordMapper.selectByPrimaryKey(recordViewVO);
     }
 
 
     /**
      * 更新数据
-     * */
+     */
     @Override
-    public int updateByPrimaryKeySelective(ReportRecord record){
+    public int updateByPrimaryKeySelective(ReportRecord record) {
         return reportRecordMapper.updateByPrimaryKeySelective(record);
     }
 
 
     /**
      * 查询专题下的所有项目
-     * */
+     */
     @Override
-    public List<ProjectAllVO> selectProjectList(ProjectAllVO projectAllVO){
+    public List<ProjectAllVO> selectProjectList(ProjectAllVO projectAllVO) {
         return reportRecordMapper.selectProjectList(projectAllVO);
     }
 
     /**
      * 条件查新切片编号
-     * */
+     */
     @Override
-    public List<ReportRecordExportVO> selectSlideNumber(ReportRecordSingleVO recordSingleVO){
+    public List<ReportRecordExportVO> selectSlideNumber(ReportRecordSingleVO recordSingleVO) {
         return reportRecordMapper.selectSlideNumber(recordSingleVO);
     }
 
     /**
      * 查询单条报告数据
-     * */
-   @Override
-   public ReportRecordAllVO selectReport(Long reportId){
+     */
+    @Override
+    public ReportRecordAllVO selectReport(Long reportId) {
         return reportRecordMapper.selectReport(reportId);
     }
 
 
     /**
      * 查询专题下的图片
-     * */
+     */
     @Override
-    public List<SubImage> selectImage(Long specialId){
+    public List<SubImage> selectImage(Long specialId) {
         return reportRecordMapper.selectImage(specialId);
     }
-
 
 
 }

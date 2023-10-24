@@ -23,6 +23,7 @@ public class hasPerms {
 
     /**
      * 判断当前用户是否拥有该权限
+     *
      * @param permission 权限字符
      * @return true || false
      */

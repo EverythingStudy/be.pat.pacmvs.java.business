@@ -1,6 +1,7 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.config.RedisClientUtil;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.document.GeometryDoc;
@@ -138,7 +139,7 @@ public class ViewerServiceImpl implements ViewerService {
                 properties.setLabel_color(categoryBy.getHex());
                 properties.setLabel_name(categoryBy.getCategoryName());
                 String res1 = String.valueOf(measureFullName.charAt(measureFullName.length() - 1));
-                if (res1.equals("_")) {
+                if (CommonConstant.GLIDE_LINE.equals(res1)) {
                     measureFullName = measureFullName + categoryBy.getCategoryName();
                 } else {
                     measureFullName = measureFullName.replaceAll(measureFullName.split("_")[measureFullName.split("_").length - 1], categoryBy.getCategoryName());

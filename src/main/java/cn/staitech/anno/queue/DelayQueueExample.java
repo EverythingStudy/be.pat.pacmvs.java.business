@@ -17,7 +17,7 @@ public class DelayQueueExample {
 
 
     @Async
-    public  void addDelayQueueExample(Long examineScoreId) throws InterruptedException {
+    public void addDelayQueueExample(Long examineScoreId) throws InterruptedException {
         DelayQueue<DelayedElement> delayQueue = new DelayQueue<>();
         // 添加元素到 DelayQueue 中
         delayQueue.put(new DelayedElement(examineScoreId, 20, TimeUnit.MINUTES));

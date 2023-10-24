@@ -1,7 +1,6 @@
 package cn.staitech.anno.utils;
 
 import static cn.staitech.anno.utils.RandomUtils.RandomNumbers;
-
 import static cn.staitech.anno.utils.TimeUtils.MillisDefaultZone;
 
 public class CustomizationIdUtils {

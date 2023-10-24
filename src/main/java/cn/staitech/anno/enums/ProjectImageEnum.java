@@ -10,42 +10,42 @@ public enum ProjectImageEnum implements ProcessFlagValue {
     CONDUNT(1, "标注中"),
     COMPLETE(2, "标注完成"),
     SUBMITTED(3, "已提交复核");
-    
+
     private int value;
-    
+
     private String label;
-    
+
     ProjectImageEnum(int value, String label) {
         this.label = label;
         this.value = value;
     }
-    
+
     public static String getEnumStatusByValue(Integer value) {
-        
+
         if (value == null) {
             return StringUtils.EMPTY;
         }
         for (ProjectImageEnum item : ProjectImageEnum.values()) {
-            
+
             if (item.getValue() == value) {
                 return item.getLabel();
             }
         }
         return StringUtils.EMPTY;
     }
-    
+
     /**
      * @return
      */
     public int getValue() {
         return value;
     }
-    
+
     /**
      * @return
      */
     public String getLabel() {
         return label;
     }
-    
+
 }

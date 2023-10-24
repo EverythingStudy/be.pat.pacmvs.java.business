@@ -49,18 +49,38 @@
     <!--更新切片审核日志-->
     <insert id="insertExaminationLog" parameterType="cn.staitech.anno.domain.ExaminationLog">
         insert into tb_examination_log (
-        <if test="slideId != null and slideId != '' ">slide_id,</if>
-        <if test="projectId != null and projectId != '' ">project_id,</if>
-        <if test="imageId != null and imageId != '' ">image_id,</if>
-        <if test="examinationFlag != null and examinationFlag != '' or examinationFlag == 0 ">examination_flag,</if>
-        <if test="createBy != null and createBy != '' ">create_by,</if>
+        <if test="slideId != null and slideId != '' ">
+            slide_id,
+        </if>
+        <if test="projectId != null and projectId != '' ">
+            project_id,
+        </if>
+        <if test="imageId != null and imageId != '' ">
+            image_id,
+        </if>
+        <if test="examinationFlag != null and examinationFlag != '' or examinationFlag == 0 ">
+            examination_flag,
+        </if>
+        <if test="createBy != null and createBy != '' ">
+            create_by,
+        </if>
         examination_type,create_time
         )values(
-        <if test="slideId != null and slideId != '' ">#{slideId},</if>
-        <if test="projectId != null and projectId != '' ">#{projectId},</if>
-        <if test="imageId != null and imageId != '' ">#{imageId},</if>
-        <if test="examinationFlag != null and examinationFlag != '' or examinationFlag == 0  ">#{examinationFlag},</if>
-        <if test="createBy != null and createBy != '' ">#{createBy},</if>
+        <if test="slideId != null and slideId != '' ">
+            #{slideId},
+        </if>
+        <if test="projectId != null and projectId != '' ">
+            #{projectId},
+        </if>
+        <if test="imageId != null and imageId != '' ">
+            #{imageId},
+        </if>
+        <if test="examinationFlag != null and examinationFlag != '' or examinationFlag == 0  ">
+            #{examinationFlag},
+        </if>
+        <if test="createBy != null and createBy != '' ">
+            #{createBy},
+        </if>
         3,sysdate()
         )
     </insert>

@@ -1,7 +1,6 @@
 package cn.staitech.anno.domain.vo.image;
 
 import cn.staitech.anno.domain.project.ProjectExt;
-import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -39,7 +38,6 @@ public class ProjectStatisticsVo extends ProjectExt {
      */
     @ApiModelProperty(name = "人工诊断")
     private Integer diagnosisTotal;
-
 
 
 }

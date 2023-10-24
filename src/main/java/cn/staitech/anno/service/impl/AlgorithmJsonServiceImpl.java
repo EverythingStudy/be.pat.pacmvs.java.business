@@ -4,7 +4,6 @@ import cn.staitech.anno.domain.AlgorithmAssessment;
 import cn.staitech.anno.domain.AlgorithmJson;
 import cn.staitech.anno.domain.algorithmJson.in.SelectGeoJson;
 import cn.staitech.anno.domain.algorithmJson.out.SelectGeoJsonList;
-import cn.staitech.anno.domain.marking.SlideRes;
 import cn.staitech.anno.mapper.AlgorithmAssessmentMapper;
 import cn.staitech.anno.mapper.AlgorithmJsonMapper;
 import cn.staitech.anno.service.AlgorithmJsonService;
@@ -47,6 +46,39 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
     @Resource
     private RemoteLabelService remoteLabelService;
 
+    public static JSONObject getGeoJson(String jsonUrl) {
+        JSONObject parse = new com.alibaba.fastjson.JSONObject();
+        File jsonFile = new File(jsonUrl);
+        if (jsonFile.exists()) {
+            //通过getStr方法获取json文件的内容
+            String jsonData = getStr(jsonFile);
+            //转json对象
+            parse = (JSONObject) JSONObject.parse(jsonData);
+            return parse;
+        }
+        return parse;
+    }
+
+    public static String getStr(File jsonFile) {
+        String jsonStr;
+        try {
+            FileReader fileReader = new FileReader(jsonFile);
+            Reader reader = new InputStreamReader(Files.newInputStream(jsonFile.toPath()), StandardCharsets.UTF_8);
+            int ch;
+            StringBuilder sb = new StringBuilder();
+            while ((ch = reader.read()) != -1) {
+                sb.append((char) ch);
+            }
+            fileReader.close();
+            reader.close();
+            jsonStr = sb.toString();
+            return jsonStr;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     @Override
     public void examineComparison(Long algorithmJsonId) throws Exception {
         // 查询详情信息
@@ -73,7 +105,7 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
         markingJsonObject.put("slide_id", algorithmJsonBy.getSlideId());
         markingJsonObject.put("json_name", algorithmJsonBy.getAlgorithmJsonName());
         markingJsonObject.put("create_by", SecurityUtils.getLoginUser().getSysUser().getUserId());
-        markingJsonObject.put("algorithm_assessment_id",algorithmJsonBy.getAlgorithmAssessmentId());
+        markingJsonObject.put("algorithm_assessment_id", algorithmJsonBy.getAlgorithmAssessmentId());
         // 调用python接口
         remoteLabelService.algoExamine(markingJsonObject);
 
@@ -106,7 +138,7 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
                 JSONObject jsonObject = getGeoJson(algorithmJson.getAlgorithmJsonUrl());
                 if (jsonObject.size() > 0) {
                     JSONArray featuresJson = jsonObject.getJSONArray("features");
-                    if(selectGeoJson.getLabelList().size() > 0){
+                    if (selectGeoJson.getLabelList().size() > 0) {
                         featuresJson = featuresJson.stream().filter(s -> selectGeoJson.getLabelList().contains(((JSONObject) s).getJSONObject("properties").getString("label_code"))).collect(Collectors.toCollection(JSONArray::new));
                     }
                     features.addAll(updateYs(featuresJson));
@@ -119,11 +151,8 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
         return resJsonObject;
     }
 
-
-
-
     @Override
-    public SelectGeoJsonList selectUserAndLabelList(SelectGeoJson selectGeoJson)  {
+    public SelectGeoJsonList selectUserAndLabelList(SelectGeoJson selectGeoJson) {
         // 获取json列表，判断
         List<Long> algorithmJsonList = selectGeoJson.getAlgorithmJsonIdList();
         QueryWrapper<AlgorithmJson> algorithmJsonQueryWrapper = new QueryWrapper<>();
@@ -132,21 +161,22 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
         List<AlgorithmJson> algorithmJsons = algorithmJsonMapper.selectList(algorithmJsonQueryWrapper);
         // 循环json
         JSONArray labelInfo = new JSONArray();
-        List<Long> userList = new ArrayList<>();
+        List<Long> userListBy = new ArrayList<>();
         for (AlgorithmJson algorithmJson : algorithmJsons) {
             // 获取json文件路径
             if (algorithmJson.getAlgorithmJsonUrl() != null) {
                 JSONObject jsonObject = getGeoJson(algorithmJson.getAlgorithmJsonUrl());
                 if (jsonObject.size() > 0) {
                     JSONArray featuresJson = jsonObject.getJSONArray("features");
-                    userList = featuresJson.stream().map(s -> ((JSONObject) s).getJSONObject("properties").getLong("annotation_owner")).collect(Collectors.toList());
+                    List<Long> userList = featuresJson.stream().map(s -> ((JSONObject) s).getJSONObject("properties").getLong("annotation_owner")).collect(Collectors.toList());
+                    userListBy.addAll(userList);
                     JSONArray labelNameJson = jsonObject.getJSONArray("label_info");
                     labelInfo.addAll(labelNameJson);
                 }
             }
         }
         // 对结果进行去重
-        List<Long> userLists = userList.stream().distinct().collect(Collectors.toList());
+        List<Long> userLists = userListBy.stream().distinct().collect(Collectors.toList());
         JSONArray labelInfoList = labelInfo.stream().distinct().collect(Collectors.toCollection(JSONArray::new));
         // 封装数据
         SelectGeoJsonList selectGeoJsonList = new SelectGeoJsonList();
@@ -155,52 +185,15 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
         return selectGeoJsonList;
     }
 
-
-
-
-    public JSONArray updateYs(JSONArray features){
+    public JSONArray updateYs(JSONArray features) {
         JSONArray jsonArray = new JSONArray();
-        for(Object i:features){
+        for (Object i : features) {
             JSONObject featureObject = (JSONObject) i;
             JSONObject geometry = featureObject.getJSONObject("geometry");
             featureObject.put("geometry", GeometryUtil.updateYAxle(geometry));
             jsonArray.add(featureObject);
         }
         return jsonArray;
-    }
-
-
-    public static JSONObject getGeoJson(String jsonUrl) {
-        JSONObject parse = new com.alibaba.fastjson.JSONObject();
-        File jsonFile = new File(jsonUrl);
-        if (jsonFile.exists()) {
-            //通过getStr方法获取json文件的内容
-            String jsonData = getStr(jsonFile);
-            //转json对象
-            parse = (JSONObject) JSONObject.parse(jsonData);
-            return parse;
-        }
-        return parse;
-    }
-
-    public static String getStr(File jsonFile) {
-        String jsonStr;
-        try {
-            FileReader fileReader = new FileReader(jsonFile);
-            Reader reader = new InputStreamReader(Files.newInputStream(jsonFile.toPath()), StandardCharsets.UTF_8);
-            int ch;
-            StringBuilder sb = new StringBuilder();
-            while ((ch = reader.read()) != -1) {
-                sb.append((char) ch);
-            }
-            fileReader.close();
-            reader.close();
-            jsonStr = sb.toString();
-            return jsonStr;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
 

@@ -65,7 +65,7 @@ public class ReportRecordAllVO {
     private Integer delFlag;
 
     /**
-     *  报告类型（1单切片报告，2组件报告）
+     * 报告类型（1单切片报告，2组件报告）
      */
     @ApiModelProperty(value = "报告类型号（1单切片报告，2组件报告）")
     private Integer reportType;
@@ -80,7 +80,7 @@ public class ReportRecordAllVO {
     /**
      * 要导出的json数据
      */
-    @ApiModelProperty(hidden = true,value = "要导出的json数据")
+    @ApiModelProperty(hidden = true, value = "要导出的json数据")
     private String reportFile;
 
     @ApiModelProperty(value = "任务进度")

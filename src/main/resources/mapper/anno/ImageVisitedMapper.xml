@@ -3,7 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.ImageVisitedMapper">
-
     <resultMap type="cn.staitech.anno.domain.ImageVisited" id="ImageVisitedResult">
         <result property="imageVisitedId" column="image_visited_id"/>
         <result property="recentlyVisitedId" column="recently_visited_id"/>
@@ -27,6 +26,4 @@
         where recently_visited_id = #{recentlyVisitedId}
         ORDER BY create_time DESC
     </select>
-
-
 </mapper>

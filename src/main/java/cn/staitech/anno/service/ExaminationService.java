@@ -1,6 +1,9 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.vo.*;
+import cn.staitech.anno.domain.vo.ExaminationListVO;
+import cn.staitech.anno.domain.vo.ExaminationSelectVO;
+import cn.staitech.anno.domain.vo.ExaminationStateVO;
+import cn.staitech.anno.domain.vo.ExaminationSubmitVO;
 
 import java.util.List;
 

@@ -2,6 +2,10 @@ package cn.staitech.anno.enums;
 
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * @author wangf
+ */
+
 public enum ReportRecordEnum {
 
     TYPE_1(1, "单切片报告"),

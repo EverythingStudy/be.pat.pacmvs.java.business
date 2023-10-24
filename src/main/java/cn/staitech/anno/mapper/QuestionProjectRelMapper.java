@@ -19,9 +19,11 @@ public interface QuestionProjectRelMapper extends BaseMapper<QuestionProjectRel>
 
     List<GetQuestionListOut> selectListByProject(Long projectId);
 
-    int insertShouldMarks(@Param("projectId") Long projectId, @Param("shouldMarks")Long shouldMarks);
-    int updateShouldMarks(@Param("projectId") Long projectId, @Param("shouldMarks")Long shouldMarks);
-    int countShouldMarks( Long projectId);
+    int insertShouldMarks(@Param("projectId") Long projectId, @Param("shouldMarks") Long shouldMarks);
 
-    Long selectShouldMarks( Long projectId);
+    int updateShouldMarks(@Param("projectId") Long projectId, @Param("shouldMarks") Long shouldMarks);
+
+    int countShouldMarks(Long projectId);
+
+    Long selectShouldMarks(Long projectId);
 }

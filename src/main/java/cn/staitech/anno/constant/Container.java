@@ -102,8 +102,6 @@ public class Container {
      * 颜色类型
      */
     public static final Map<Integer, String> COLOR_TYPE = new ImmutableMap.Builder<Integer, String>()
-            /*.put(1, "RGB")
-            .put(2, "HEX")*/
             .put(1, "荧光标记染色")
             .put(2, "免疫组织化学染色")
             .put(3, "HE染色")
@@ -130,27 +128,23 @@ public class Container {
      * 颜色类型 - EN
      */
     public static final Map<Integer, String> COLOR_TYPE_EN = new ImmutableMap.Builder<Integer, String>()
-            /*.put(1, "RGB")
-            .put(2, "HEX")*/
-            .put(1, "Immunofluorescence")   // 荧光标记染色
-            .put(2, "Immunohistochemical") // 免疫组织化学染色
-            .put(3, "HE staining")  // HE染色
-            .put(4, "Masson staining")   // Masson染色EN
-            .put(5, "Van Gieson staining") // Van Gieson染色
-            .put(6, "Victoria Blue staining")  // 维多利亚蓝染色
-            .put(7, "Sudan III/IV") // 苏丹III/IV染色
-            .put(8, "Oil Red O")    // 油红O染色
-            .put(9, "PAS")  // PAS糖原染色
-            .put(10, "AB-PAS") // AB-PAS染色
-            .put(11, "Congo red")   // 刚果红染色(甲醇)
-            .put(12, "toluidine blue")  // 甲苯胺蓝染色
-            .put(13, "Prussian blue")   // 普鲁氏蓝染色
-            .put(14, "Nissl")   // 尼氏染色
-            .put(15, "Luxol Fast Blue myelin")// LFB髓鞘染色
-            .put(16, "Tunel")   // Tunel染色
+            .put(1, "Immunofluorescence")
+            .put(2, "Immunohistochemical")
+            .put(3, "HE staining")
+            .put(4, "Masson staining")
+            .put(5, "Van Gieson staining")
+            .put(6, "Victoria Blue staining")
+            .put(7, "Sudan III/IV")
+            .put(8, "Oil Red O")
+            .put(9, "PAS")
+            .put(10, "AB-PAS")
+            .put(11, "Congo red")
+            .put(12, "toluidine blue")
+            .put(13, "Prussian blue")
+            .put(14, "Nissl")
+            .put(15, "Luxol Fast Blue myelin")
+            .put(16, "Tunel")
             .put(17, "Ki67")
-            /*.put(18, "免疫组织化学染色")
-            .put(19, "荧光标记染色")*/
             .put(20, "Other")
             .build();
 

@@ -3,8 +3,6 @@ package cn.staitech.anno.domain.project.out;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * @Author wudi
  * @Date 2023/5/30 15:46

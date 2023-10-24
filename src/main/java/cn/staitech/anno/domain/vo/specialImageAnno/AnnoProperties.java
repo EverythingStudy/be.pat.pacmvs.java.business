@@ -77,7 +77,7 @@ public class AnnoProperties {
 
 //    @ApiModelProperty(value = "标签总点数")
 //    private Long point_count;
-    
+
     @ApiModelProperty(value = "修改作者")
     private String annotation_update_owner;
 

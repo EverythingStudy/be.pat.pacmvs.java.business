@@ -17,7 +17,7 @@ import java.util.List;
 public class SendMessage {
 
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
-    public static BroadcastVO sendOneMessages(String status, Features features,List<PointCount> pointCountRes) {
+    public static BroadcastVO sendOneMessages(String status, Features features, List<PointCount> pointCountRes) {
         BroadcastVO broadcast = new BroadcastVO();
         broadcast.setData(features);
         broadcast.setType(status);
@@ -48,8 +48,8 @@ public class SendMessage {
         BroadcastVO broadcast = new BroadcastVO();
         return broadcast;
     }
-    
-    public static AnnoBroadcastVO sendAnnoMessages(String status, AnnoFeatures features,List<PointCount> pointCountRes) {
+
+    public static AnnoBroadcastVO sendAnnoMessages(String status, AnnoFeatures features, List<PointCount> pointCountRes) {
         AnnoBroadcastVO broadcast = new AnnoBroadcastVO();
         broadcast.setData(features);
         broadcast.setType(status);

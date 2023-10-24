@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class MarkingExamineUpdateVO {
 
-//    @NotNull(message = "项目题库id不可为空")
+    //    @NotNull(message = "项目题库id不可为空")
     @NotNull(message = "{MarkingExamineInsertVO.questionProjectId.isnull}")
     @ApiModelProperty(value = "项目题库id")
     private Long marking_id;

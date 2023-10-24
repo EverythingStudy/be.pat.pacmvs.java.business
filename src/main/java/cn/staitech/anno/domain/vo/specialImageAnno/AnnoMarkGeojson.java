@@ -1,4 +1,5 @@
 package cn.staitech.anno.domain.vo.specialImageAnno;
+
 import lombok.Data;
 
 import java.util.List;

@@ -5,34 +5,26 @@ import cn.staitech.anno.domain.vo.BroadcastVO;
 import cn.staitech.anno.domain.vo.specialImageAnno.AnnoBroadcastVO;
 import cn.staitech.anno.netty.global.ChannelSupervise;
 import cn.staitech.anno.netty.global.ChatGroup;
-import cn.staitech.anno.service.*;
+import cn.staitech.anno.service.SlideService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
-import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.PongWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.WebSocketFrame;
-import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
-import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
+import io.netty.handler.codec.http.websocketx.*;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.Date;
+import java.util.Map;
+import java.util.Objects;
 
 import static io.netty.handler.codec.http.HttpUtil.isKeepAlive;
 
@@ -41,19 +33,80 @@ import static io.netty.handler.codec.http.HttpUtil.isKeepAlive;
 public class NioWebSocketHandler extends SimpleChannelInboundHandler<Object> {
 
 
-
     /**
      * . 注入的时候，给类的 service 注入 ,直接使用装饰符进行装饰会报错 空指针异常
      */
-    private static SlideService slideService ;
+    private static SlideService slideService;
+    private WebSocketServerHandshaker handshaker;
+
+    /**
+     * . 循环map里面的每一对键值对，然后获取key和value 判断value是否等于slide，若是相等，就进行发送
+     */
+    public static void sendAll(Long slideId, BroadcastVO message) {
+        String jsonStr = JSONObject.toJSONString(message, SerializerFeature.WriteMapNullValue);
+        for (Map.Entry<Channel, Long> vo : ChannelSupervise.CHANNEL_MAP.entrySet()) {
+            if (vo.getValue().equals(slideId)) {
+                TextWebSocketFrame tws = new TextWebSocketFrame(jsonStr);
+                vo.getKey().writeAndFlush(tws);
+            }
+        }
+    }
+
+    public static void sendQuestionProject(String questionProjectId, BroadcastVO message) {
+        String jsonStr = JSONObject.toJSONString(message, SerializerFeature.WriteMapNullValue);
+        for (Map.Entry<Channel, String> vo : ChannelSupervise.QUESTION_CHANNEL_MAP.entrySet()) {
+            if (vo.getValue().equals(questionProjectId)) {
+                TextWebSocketFrame tws = new TextWebSocketFrame(jsonStr);
+                vo.getKey().writeAndFlush(tws);
+            }
+        }
+    }
+
+    public static void sendAnnoAll(Long slideId, AnnoBroadcastVO message) {
+        JSON json = (JSON) JSON.toJSON(message);
+        for (Map.Entry<Channel, Long> vo : ChannelSupervise.CHANNEL_MAP.entrySet()) {
+            if (vo.getValue().equals(slideId)) {
+                TextWebSocketFrame tws = new TextWebSocketFrame(String.valueOf(json));
+                vo.getKey().writeAndFlush(tws);
+            }
+        }
+    }
+
+    /**
+     * . 拒绝不合法的请求，并返回错误信息
+     */
+    private static void sendHttpResponse(ChannelHandlerContext ctx, FullHttpRequest req, DefaultFullHttpResponse res) {
+        // 返回应答给客户端
+        if (res.status().code() != 200) {
+            ByteBuf buf = Unpooled.copiedBuffer(res.status().toString(), CharsetUtil.UTF_8);
+            res.content().writeBytes(buf);
+            buf.release();
+        }
+        ChannelFuture f = ctx.channel().writeAndFlush(res);
+        // 如果是非Keep-Alive，关闭连接
+        if (!isKeepAlive(req) || res.status().code() != 200) {
+            f.addListener(ChannelFutureListener.CLOSE);
+        }
+    }
+
+    static void connectSend(Long slideId, ChannelHandlerContext ctx) {
+        Slide slideBy = slideService.getById(slideId);
+        Slide slide = new Slide();
+        if (slideBy != null) {
+            slide.setGeojsonUrl(slideBy.getGeojsonUrl());
+        }
+        JSON json = (JSON) JSON.toJSON(slide);
+        // 连接成功进行发送
+        TextWebSocketFrame tws = new TextWebSocketFrame(String.valueOf(json));
+        ctx.channel().writeAndFlush(tws);
+    }
+
+    // 数据发送时根据键来判断发送给谁
 
     @Resource
     public void setSubImageService(SlideService slideService) {
         NioWebSocketHandler.slideService = slideService;
     }
-
-
-    private WebSocketServerHandshaker handshaker;
 
     /**
      * . 使用channelRead0不用释放资源,jvm会自动释放
@@ -95,44 +148,6 @@ public class NioWebSocketHandler extends SimpleChannelInboundHandler<Object> {
 
         ChatGroup.CHANNEL_MAP.values().removeIf(value -> value.toString().contains(channel.toString()));
 
-    }
-
-    // 数据发送时根据键来判断发送给谁
-
-    /**
-     * . 循环map里面的每一对键值对，然后获取key和value 判断value是否等于slide，若是相等，就进行发送
-     */
-    public static void sendAll(Long slideId, BroadcastVO message) {
-        String jsonStr = JSONObject.toJSONString(message, SerializerFeature.WriteMapNullValue);
-        for (Map.Entry<Channel, Long> vo : ChannelSupervise.CHANNEL_MAP.entrySet()) {
-            if (vo.getValue().equals(slideId)) {
-                TextWebSocketFrame tws = new TextWebSocketFrame(jsonStr);
-                vo.getKey().writeAndFlush(tws);
-            }
-        }
-    }
-
-
-    public static void sendQuestionProject(String questionProjectId, BroadcastVO message) {
-        String jsonStr = JSONObject.toJSONString(message, SerializerFeature.WriteMapNullValue);
-        for (Map.Entry<Channel, String> vo : ChannelSupervise.QUESTION_CHANNEL_MAP.entrySet()) {
-            if (vo.getValue().equals(questionProjectId)) {
-                TextWebSocketFrame tws = new TextWebSocketFrame(jsonStr);
-                vo.getKey().writeAndFlush(tws);
-            }
-        }
-    }
-
-    
-    
-    public static void sendAnnoAll(Long slideId, AnnoBroadcastVO message) {
-        JSON json = (JSON) JSON.toJSON(message);
-        for (Map.Entry<Channel, Long> vo : ChannelSupervise.CHANNEL_MAP.entrySet()) {
-            if (vo.getValue().equals(slideId)) {
-                TextWebSocketFrame tws = new TextWebSocketFrame(String.valueOf(json));
-                vo.getKey().writeAndFlush(tws);
-            }
-        }
     }
 
     @Override
@@ -183,10 +198,10 @@ public class NioWebSocketHandler extends SimpleChannelInboundHandler<Object> {
 
         String type = (req.getUri().split("/")[req.getUri().split("/").length - 2]);
         // 判断socket连接类型
-        if(Objects.equals(type, "slide")){
+        if (Objects.equals(type, "slide")) {
             long slideId = Long.parseLong(req.getUri().split("/")[req.getUri().split("/").length - 1]);
             ChannelSupervise.addChannelTest(ctx.channel(), slideId);
-        }else if(Objects.equals(type, "questionProject")){
+        } else if (Objects.equals(type, "questionProject")) {
 
             String questionProjectId = req.getUri().split("/")[req.getUri().split("/").length - 1];
             ChannelSupervise.addQuestionChannel(ctx.channel(), questionProjectId);
@@ -201,35 +216,6 @@ public class NioWebSocketHandler extends SimpleChannelInboundHandler<Object> {
             // 连接后发送数据
 //            connectSend(slideId, ctx);
         }
-    }
-
-    /**
-     * . 拒绝不合法的请求，并返回错误信息
-     */
-    private static void sendHttpResponse(ChannelHandlerContext ctx, FullHttpRequest req, DefaultFullHttpResponse res) {
-        // 返回应答给客户端
-        if (res.status().code() != 200) {
-            ByteBuf buf = Unpooled.copiedBuffer(res.status().toString(), CharsetUtil.UTF_8);
-            res.content().writeBytes(buf);
-            buf.release();
-        }
-        ChannelFuture f = ctx.channel().writeAndFlush(res);
-        // 如果是非Keep-Alive，关闭连接
-        if (!isKeepAlive(req) || res.status().code() != 200) {
-            f.addListener(ChannelFutureListener.CLOSE);
-        }
-    }
-
-    static void connectSend(Long slideId, ChannelHandlerContext ctx) {
-        Slide slideBy = slideService.getById(slideId);
-        Slide slide = new Slide();
-        if (slideBy != null) {
-            slide.setGeojsonUrl(slideBy.getGeojsonUrl());
-        }
-        JSON json = (JSON) JSON.toJSON(slide);
-        // 连接成功进行发送
-        TextWebSocketFrame tws = new TextWebSocketFrame(String.valueOf(json));
-        ctx.channel().writeAndFlush(tws);
     }
 
 }

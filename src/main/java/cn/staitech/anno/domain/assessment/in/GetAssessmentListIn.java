@@ -13,7 +13,7 @@ import java.util.Map;
  * @desc
  */
 @Data
-public class GetAssessmentListIn  extends PageRequest {
+public class GetAssessmentListIn extends PageRequest {
     @ApiModelProperty(value = "项目id")
 
     private Long projectId;

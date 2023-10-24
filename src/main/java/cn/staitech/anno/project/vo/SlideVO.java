@@ -1,7 +1,5 @@
 package cn.staitech.anno.project.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -39,43 +37,43 @@ public class SlideVO {
     @ApiModelProperty("项目名称")
     private String projectName;
 
-    @Size(max= 200,message="{PathologicalIndicatorCategory.categoryName.length}")
+    @Size(max = 200, message = "{PathologicalIndicatorCategory.categoryName.length}")
     @ApiModelProperty("缩略图URL地址")
-    @Length(max= 200,message="{PathologicalIndicatorCategory.categoryName.length}")
+    @Length(max = 200, message = "{PathologicalIndicatorCategory.categoryName.length}")
     private String thumbUrl;
 
-    @Size(max= 255,message="{projectType.length}")
+    @Size(max = 255, message = "{projectType.length}")
     @ApiModelProperty("图片（切片）编号")
-    @Length(max= 255,message="{projectType.length}")
+    @Length(max = 255, message = "{projectType.length}")
     private String imageCode;
 
     /**
      * 组别
      */
-    @Size(max= 255,message="{projectType.length}")
+    @Size(max = 255, message = "{projectType.length}")
     @ApiModelProperty("组别")
-    @Length(max= 255,message="{projectType.length}")
+    @Length(max = 255, message = "{projectType.length}")
     private String groupName;
     /**
      * 性别
      */
-    @Size(max= 255,message="{projectType.length}")
+    @Size(max = 255, message = "{projectType.length}")
     @ApiModelProperty("性别")
-    @Length(max= 255,message="{projectType.length}")
+    @Length(max = 255, message = "{projectType.length}")
     private String gender;
     /**
      * 种属
      */
-    @Size(max= 255,message="{projectType.length}")
+    @Size(max = 255, message = "{projectType.length}")
     @ApiModelProperty("种属")
-    @Length(max= 255,message="{projectType.length}")
+    @Length(max = 255, message = "{projectType.length}")
     private String species;
     /**
      * 品系
      */
-    @Size(max= 255,message="{projectType.length}")
+    @Size(max = 255, message = "{projectType.length}")
     @ApiModelProperty("品系")
-    @Length(max= 255,message="{projectType.length}")
+    @Length(max = 255, message = "{projectType.length}")
     private String productSeries;
 
     @ApiModelProperty("人工标注数")
@@ -89,17 +87,17 @@ public class SlideVO {
     /**
      * 备注
      */
-    @Size(max= 4096,message="{Slide.remark.isnull}")
+    @Size(max = 4096, message = "{Slide.remark.isnull}")
     @ApiModelProperty("备注")
-    @Length(max= 4096,message="{Slide.remark.isnull}")
+    @Length(max = 4096, message = "{Slide.remark.isnull}")
     private String remark;
     /**
      * 状态
      */
-    @NotBlank(message="{Slide.status.isnull}")
-    @Size(max= 1,message="{Slide.status.length}")
+    @NotBlank(message = "{Slide.status.isnull}")
+    @Size(max = 1, message = "{Slide.status.length}")
     @ApiModelProperty("状态(0未开始 1标注中 2标注完成 3提交复核(未复核) 4开始复核(复核中) 5复核通过(已复核) 6交付)")
-    @Length(max= 1,message="{Slide.status.length}")
+    @Length(max = 1, message = "{Slide.status.length}")
     private String status;
 
     /**

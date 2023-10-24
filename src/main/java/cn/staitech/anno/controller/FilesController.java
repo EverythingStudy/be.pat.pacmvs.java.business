@@ -135,7 +135,7 @@ public class FilesController extends BaseController {
     @Log(title = "物理删除单个文件记录", menu = "物理删除单个文件记录", subMenu = "物理删除单个文件记录", businessType = BusinessType.DELETE)
     @ApiOperation(value = "删除单个文件记录")
     @GetMapping("/deleteById/{filesId}")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public R deleteById(@PathVariable("filesId") @ApiParam(value = "文件ID") Long filesId) {
         Files files = new Files();
         files.setFilesId(filesId);

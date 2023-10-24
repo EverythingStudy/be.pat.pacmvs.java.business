@@ -1,11 +1,7 @@
 package cn.staitech.anno.controller;
 
 
-import cn.staitech.anno.domain.assessment.in.AssessmentExportIN;
-import cn.staitech.anno.domain.assessment.in.CreateAssessmentIn;
-import cn.staitech.anno.domain.assessment.in.GetAssessmentListIn;
-import cn.staitech.anno.domain.assessment.in.GetJsonInfoIn;
-import cn.staitech.anno.domain.assessment.in.RemoveAssessmentIn;
+import cn.staitech.anno.domain.assessment.in.*;
 import cn.staitech.anno.domain.assessment.out.GetAssessmentListOut;
 import cn.staitech.anno.service.AlgorithmAssessmentService;
 import cn.staitech.common.core.domain.PageResponse;
@@ -28,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author gjt
  * @since 2023-10-17
  */
-@Api(value = "算法考核",tags = "算法考核-切片列表")
+@Api(value = "算法考核", tags = "算法考核-切片列表")
 @RestController
 @RequestMapping("/algorithmAssessment")
 public class AlgorithmAssessmentController {
@@ -68,9 +64,9 @@ public class AlgorithmAssessmentController {
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "导出考核结果")
     @PostMapping("/export")
-    public void export(@RequestBody AssessmentExportIN assessmentExportIN
+    public void export(@RequestBody AssessmentExportIN assessmentExportIn
     ) throws Exception {
-        algorithmAssessmentService.export(assessmentExportIN);
+        algorithmAssessmentService.export(assessmentExportIn);
     }
 
 }

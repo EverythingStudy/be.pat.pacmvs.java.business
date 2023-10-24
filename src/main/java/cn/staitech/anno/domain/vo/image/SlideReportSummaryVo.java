@@ -22,13 +22,13 @@ public class SlideReportSummaryVo {
     private String description;
     /**
      * 移走原因
-     * */
+     */
     @ApiModelProperty(required = true)
     private Integer reasons;
 
     /**
      * 剂量
-     * */
+     */
     @ApiModelProperty(required = true)
     @Size(min = 0, max = 20, message = "{SlideReportSummaryVo.dosage.length}")
     private String dosage;
