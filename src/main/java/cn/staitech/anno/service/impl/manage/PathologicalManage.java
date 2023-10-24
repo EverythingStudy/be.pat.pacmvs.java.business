@@ -28,10 +28,11 @@ public class PathologicalManage {
 
     /**
      * 根据slideId查询所有标注类别
+     *
      * @param slideId 标注ID
      * @return 标注类别列表
      */
-    public List<PathologicalIndicatorCategory> list(Long slideId)  {
+    public List<PathologicalIndicatorCategory> list(Long slideId) {
         //查询切片是否存在
         Slide slide = slideService.selectById(slideId);
 
@@ -48,7 +49,7 @@ public class PathologicalManage {
 
         return list;
     }
-    
+
 }
 
 

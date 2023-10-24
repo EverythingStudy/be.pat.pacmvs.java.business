@@ -9,20 +9,19 @@ import java.text.DecimalFormat;
 
 @Component
 public class SeqNo {
-    private static final String SEQ_KEY="serial_number:";
+    private static final String SEQ_KEY = "serial_number:";
 
     @Autowired
     private RedisTemplate redisTemplate;
 
     /**
-     *
      * @param seqKey 根据业务区分
      * @param format 编码格式
      * @return
      */
-    public String incr(String seqKey,String format) {
+    public String incr(String seqKey, String format) {
         //serial_number为redis键
-        RedisAtomicLong entityIdCounter = new RedisAtomicLong(SEQ_KEY+seqKey, redisTemplate.getConnectionFactory());
+        RedisAtomicLong entityIdCounter = new RedisAtomicLong(SEQ_KEY + seqKey, redisTemplate.getConnectionFactory());
         //新增然后获得原子操作
         Long increment = entityIdCounter.incrementAndGet();
 

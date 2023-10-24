@@ -10,8 +10,8 @@ public class SpecialRemoveVO {
     @NotNull(message = "{SpecialRemoveVO.annotationId.isnull}")
     @ApiModelProperty(value = "标注id", required = true)
     private Long annotationId;
-    
+
     @ApiModelProperty(value = "权限字符")
     private String permission;
-    
+
 }

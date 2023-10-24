@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.Map;
 
 @Data
-public class ProjectInforImageVO  {
+public class ProjectInforImageVO {
     /**
      * 切片ID
      */
@@ -44,13 +44,13 @@ public class ProjectInforImageVO  {
     /**
      * 排序字段
      */
-    @ApiModelProperty(value = "排序字段:人工总数human_annotation_total、切片创建时间create_time、切片更新时间update_time",hidden = true)
-    private String orderBy ;
+    @ApiModelProperty(value = "排序字段:人工总数human_annotation_total、切片创建时间create_time、切片更新时间update_time", hidden = true)
+    private String orderBy;
 
     /**
      * 排序顺序
      */
-    @ApiModelProperty(value = "排序顺序:倒序desc、正序asc",hidden = true)
+    @ApiModelProperty(value = "排序顺序:倒序desc、正序asc", hidden = true)
     private String sort;
 
     /**

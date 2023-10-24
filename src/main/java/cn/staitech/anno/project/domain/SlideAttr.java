@@ -4,72 +4,64 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import java.util.Date;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+import java.util.Date;
+
 /**
  * 切片属性表
+ *
  * @TableName tb_slide_attr
  */
-@TableName(value ="tb_slide_attr")
+@TableName(value = "tb_slide_attr")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class SlideAttr implements Serializable {
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
     /**
      * 主键id
      */
     @TableId(type = IdType.AUTO)
     private Long slideAttrId;
-
     /**
      * 切片主键id
      */
     private Long slideId;
-
     /**
      * 属性主键id
      */
     private Long attrId;
-
     /**
      * 属性类型：1、标注人员，2、标注类别
      */
     private String attrType;
-
     /**
      * 删除标志（0代表存在 1代表删除）
      */
     private String delFlag;
-
     /**
      * 创建者
      */
     private Long createBy;
-
     /**
      * 创建时间
      */
     private Date createTime;
-
     /**
      * 更新者
      */
     private Long updateBy;
-
     /**
      * 更新时间
      */
     private Date updateTime;
-
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
 
     @Override
     public boolean equals(Object that) {

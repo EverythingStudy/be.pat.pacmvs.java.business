@@ -261,7 +261,7 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
             // 器官诊断数量
             visceraMap = countData(visceraMap, visceraKey);
             // 未见明显异常
-            if (sysGradeName.equalsIgnoreCase("未见明显异常")) {
+            if ("未见明显异常".equalsIgnoreCase(sysGradeName)) {
                 visceraNoMap = countData(visceraNoMap, gradeKey);
             } else {
                 // 病理病变+部位

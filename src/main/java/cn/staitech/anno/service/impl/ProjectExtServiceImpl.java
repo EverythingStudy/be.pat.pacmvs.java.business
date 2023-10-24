@@ -54,21 +54,21 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
 
     private static final Logger log = LoggerFactory.getLogger(ProjectExtServiceImpl.class);
     private static final String CHECK_FLAG = "1";
+    private static ExecutorService executor = ExecutorBuilder.create()//
+            .setCorePoolSize(1)//
+            .setMaxPoolSize(1)//
+            .setKeepAliveTime(0)//
+            .build();
     @Resource
     private SpecialMapper specialMapper;
-
     @Resource
     private SystemDictMapper systemDictMapper;
-
     @Resource
     private ProjectExtMapper projectExtMapper;
-
     @Resource
     private ProjectGroupMapper projectGroupMapper;
-
     @Resource
     private GroupMapper groupMapper;
-
     @Resource
     private RecentlyVisitedMapper recentlyVisitedMapper;
 
@@ -111,7 +111,6 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
 
         }
     }
-
 
     /**
      * 项目列表查询
@@ -591,14 +590,6 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
         }
 
     }
-
-
-    private static ExecutorService executor = ExecutorBuilder.create()//
-            .setCorePoolSize(1)//
-            .setMaxPoolSize(1)//
-            .setKeepAliveTime(0)//
-            .build();
-
 
     @Override
     public boolean saveBatch(Collection<Project> entityList) {

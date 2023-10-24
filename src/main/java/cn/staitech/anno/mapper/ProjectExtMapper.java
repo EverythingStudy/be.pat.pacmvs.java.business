@@ -18,6 +18,7 @@ import java.util.List;
 public interface ProjectExtMapper extends BaseMapper<ProjectPo> {
     /**
      * 列表查询
+     *
      * @param project
      * @return 项目列表
      */
@@ -40,7 +41,6 @@ public interface ProjectExtMapper extends BaseMapper<ProjectPo> {
     int update(ProjectExt rojectExt);
 
     /**
-     *
      * @param rojectExt
      * @return 项目列表
      */
@@ -50,64 +50,66 @@ public interface ProjectExtMapper extends BaseMapper<ProjectPo> {
 
     /**
      * 根据专题id查询关联的项目总数
+     *
      * @param specialId 专题id
      * @return 项目详情
      */
-    int selectSpecialId (Long specialId);
+    int selectSpecialId(Long specialId);
 
     /**
      * 根据主键id查询项目详情
+     *
      * @param projectId
      * @return 项目详情
      */
-    ProjectExt selectById (Long projectId);
+    ProjectExt selectById(Long projectId);
 
     /**
-     *  修改项目为删除状态
+     * 修改项目为删除状态
+     *
      * @param projectId
      * @return
      */
     int updateDelFlag(@Param("projectId") Long projectId, @Param("createBy") Long createBy);
 
     /**
-     *
      * @param specialId
      * @return 导航栏数据
      */
     List<NavigationBarData> selectProjectAll(Long specialId);
 
     /**
-     *
      * @param projectId
      * @return 项目切片数
      */
     int selectCountSlide(Long projectId);
+
     /**
-     *
      * @param projectId
      * @return 项目内切片还没有分析完成的数量
      */
     int countNotReady(Long projectId);
 
     /**
-     *
      * @param specialId
      * @return 状体内脏器类型
      */
-    List<ViscusQueryOut>selectViscusBySpecial(Long specialId);
+    List<ViscusQueryOut> selectViscusBySpecial(Long specialId);
 
     /**
      * 查询状体
+     *
      * @param specialId
      * @return
      */
-    CreateStatusOut selectSpecial (Long specialId);
+    CreateStatusOut selectSpecial(Long specialId);
 
     /**
      * 修改专题
+     *
      * @return
      */
-    int updateSpecial(@Param("specialId") Long specialId,@Param("resultDesc")Long resultDesc);
+    int updateSpecial(@Param("specialId") Long specialId, @Param("resultDesc") Long resultDesc);
 
 
 }

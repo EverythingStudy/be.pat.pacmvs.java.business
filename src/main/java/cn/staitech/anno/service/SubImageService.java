@@ -17,24 +17,24 @@ import java.util.Map;
  */
 public interface SubImageService extends IService<SubImage> {
 
-	R<PageMaster<SubImageVo>> pageSubImage(Map params);
+    R<PageMaster<SubImageVo>> pageSubImage(Map params);
 
-	R<List<SubImageVo>> querySubImageByGroup(Map params);
+    R<List<SubImageVo>> querySubImageByGroup(Map params);
 
-	List<SpecialSliceVo> selectSpecialSliceVo(SpecialSliceSelectVO sisv);
+    List<SpecialSliceVo> selectSpecialSliceVo(SpecialSliceSelectVO sisv);
 
 
-	List<SubImage> selectSubImageList(SubImage subImage);
+    List<SubImage> selectSubImageList(SubImage subImage);
 
-	void selectExpireSpecialSlice(SpecialSliceSelectVO sisv);
-	
-	public Map<String,String> getDictInfo(String dictType);
-	
-	
-	void logOutSpecial(String userName);
+    void selectExpireSpecialSlice(SpecialSliceSelectVO sisv);
 
-	List<SubImage> selectImageCount(Long organizationId);
+    public Map<String, String> getDictInfo(String dictType);
 
-	SysOrganizationAuthorization selectOrganization(Long userId);
+
+    void logOutSpecial(String userName);
+
+    List<SubImage> selectImageCount(Long organizationId);
+
+    SysOrganizationAuthorization selectOrganization(Long userId);
 
 }

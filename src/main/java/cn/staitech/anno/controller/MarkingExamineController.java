@@ -58,7 +58,7 @@ public class MarkingExamineController {
     @DeleteMapping("/delete")
     public R<String> del(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) Long marking_id) throws Exception {
         markingExamineService.delete(marking_id);
-        return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     @ApiOperationSupport(author = "gjt")

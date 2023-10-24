@@ -11,16 +11,16 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
-* @author 86186
-* @description 针对表【tb_project(项目表)】的数据库操作Mapper
-* @createDate 2023-09-13 17:20:12
-* @Entity cn.staitech.anno.project.domain.Project
-*/
+ * @author 86186
+ * @description 针对表【tb_project(项目表)】的数据库操作Mapper
+ * @createDate 2023-09-13 17:20:12
+ * @Entity cn.staitech.anno.project.domain.Project
+ */
 public interface ProjectMapperV1 extends BaseMapper<Project> {
 
     List<ProjectVO> queryProject(@Param("params") ProjectIN params);
 
-    IPage<ProjectVO> pageProject(@Param("page") Page page, @Param("params") ProjectIN params)throws Exception;
+    IPage<ProjectVO> pageProject(@Param("page") Page page, @Param("params") ProjectIN params) throws Exception;
 }
 
 

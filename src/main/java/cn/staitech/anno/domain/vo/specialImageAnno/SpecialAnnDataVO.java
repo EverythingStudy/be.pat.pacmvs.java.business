@@ -1,9 +1,9 @@
 package cn.staitech.anno.domain.vo.specialImageAnno;
 
-import java.util.List;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.List;
 
 
 @Data

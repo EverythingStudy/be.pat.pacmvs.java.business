@@ -1,23 +1,19 @@
 package cn.staitech.anno.project.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import org.hibernate.validator.constraints.Length;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 /**
  * 项目表
+ *
  * @TableName tb_project
  */
-@TableName(value ="tb_project")
+@TableName(value = "tb_project")
 @Data
 public class Project implements Serializable {
     private static final long serialVersionUID = 1L;

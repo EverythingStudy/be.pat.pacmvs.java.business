@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class InsertSpecialImageVO extends SpecialImage {
 
-	@ApiModelProperty(required = true, value = "切片列表")
-	private Long[] imageIdList;
+    @ApiModelProperty(required = true, value = "切片列表")
+    private Long[] imageIdList;
 
 }

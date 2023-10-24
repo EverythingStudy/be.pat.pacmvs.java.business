@@ -12,7 +12,7 @@ import java.util.Date;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author gjt
@@ -21,7 +21,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName(value = "tb_marking_examine",autoResultMap = true)
+@TableName(value = "tb_marking_examine", autoResultMap = true)
 public class MarkingExamine implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -53,20 +54,20 @@ public class GroupVO {
     private Integer delFlag;
 
     /**
-     *专题id
+     * 专题id
      */
     @ApiModelProperty(value = "专题id", required = true)
     private Long specialId;
 
     /**
      * 移走原因
-     * */
+     */
     @ApiModelProperty(required = true)
     private Integer reasons;
 
     /**
      * 剂量
-     * */
+     */
     @ApiModelProperty(required = true)
     @Size(min = 0, max = 20, message = "{SlideReportSummaryVo.dosage.length}")
     private String dosage;

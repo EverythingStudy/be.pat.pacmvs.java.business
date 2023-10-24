@@ -27,10 +27,10 @@ public class MeasureJson {
     /**
      * `measure_type'类型(0:标注）List
      */
-    private List<MeasureJsonVO> subList= null;
+    private List<MeasureJsonVO> subList = null;
 
     /**
      * `measure_type'类型(1:测量）List
      */
-    private List<MeasureJsonVO> parentList= null;
+    private List<MeasureJsonVO> parentList = null;
 }

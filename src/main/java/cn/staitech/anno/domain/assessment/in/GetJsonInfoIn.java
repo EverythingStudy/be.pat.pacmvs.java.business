@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Data
 public class GetJsonInfoIn {
-//    @NotEmpty(message = "json数据不能为空！")
+    //    @NotEmpty(message = "json数据不能为空！")
     @NotEmpty(message = "{GetJsonInfoIn.reqList.isnull}")
     @ApiModelProperty("算法数据")
     private List<GetJsonInfoDataIn> reqList;

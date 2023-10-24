@@ -42,6 +42,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ReviewRoundController {
 
+    public static Map<Long, String> roundMap = new HashMap<>();
+    public static Map<Long, String> topicMap = new HashMap<>();
+    public static Map<Long, String> groupMap = new HashMap<>();
     @Resource
     private ReviewRoundService reviewRoundService;
     @Resource
@@ -52,11 +55,6 @@ public class ReviewRoundController {
     private RoundService roundService;
     @Resource
     private SlideService slideService;
-
-    public static Map<Long, String> roundMap = new HashMap<>();
-    public static Map<Long, String> topicMap = new HashMap<>();
-    public static Map<Long, String> groupMap = new HashMap<>();
-
 
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "查询评审轮次列表")
@@ -100,7 +98,7 @@ public class ReviewRoundController {
         for (ReviewRoundInsertInVO vo : reviewRoundBatchInVO.getInsertList()) {
             Boolean flag = true;
             for (ReviewRound reviewRound : reviewRoundList) {
-                if (vo.getRoundId() == reviewRound.getRoundId() && vo.getGroupId() == vo.getGroupId() && vo.getTopicId() == reviewRound.getTopicId()) {
+                if (vo.getRoundId().equals(reviewRound.getRoundId()) && vo.getGroupId().equals(vo.getGroupId()) && vo.getTopicId().equals(reviewRound.getTopicId())) {
                     flag = false;
                 }
             }

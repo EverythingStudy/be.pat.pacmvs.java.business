@@ -1,9 +1,9 @@
 package cn.staitech.anno.mapper;
 
+import cn.staitech.anno.domain.diagnosis.SpecialDiagnosisDetail;
+
 import java.util.List;
 import java.util.Map;
-
-import cn.staitech.anno.domain.diagnosis.SpecialDiagnosisDetail;
 
 public interface SpecialDiagnosisDetailMapper {
     int deleteByPrimaryKey(Long specialDiagnosisDetailId);
@@ -17,6 +17,6 @@ public interface SpecialDiagnosisDetailMapper {
     int updateByPrimaryKeySelective(SpecialDiagnosisDetail record);
 
     int updateByPrimaryKey(SpecialDiagnosisDetail record);
-    
-    public List<SpecialDiagnosisDetail> getSpecialDiagnosisDetailListByParm(Map<String,Object> map);
+
+    public List<SpecialDiagnosisDetail> getSpecialDiagnosisDetailListByParm(Map<String, Object> map);
 }

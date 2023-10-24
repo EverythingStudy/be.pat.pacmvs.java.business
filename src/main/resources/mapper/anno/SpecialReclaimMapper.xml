@@ -3,7 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.SpecialReclaimMapper">
-
     <resultMap type="cn.staitech.anno.domain.special.SpecialReclaim" id="SpecialReclaimResult">
         <result property="specialReclaimId" column="special_reclaim_id"/>
         <result property="specialId" column="special_id"/>
@@ -65,11 +64,6 @@
                     AND date_format(expire_time,'%y%m%d') &lt;= date_format(#{expirationTimeParams.endTime},'%y%m%d')
                 </if>
             </if>
-
-
-
-
-
         </where>
         ORDER BY reclaim_time DESC LIMIT 1
     </select>
@@ -77,21 +71,39 @@
     <insert id="insert" parameterType="cn.staitech.anno.domain.special.SpecialReclaim" useGeneratedKeys="true"
             keyProperty="specialReclaimId">
         insert into tb_special_reclaim (
-        <if test="specialId != null and specialId != '' ">special_id,</if>
-        <if test="projectNum != null and projectNum != '' ">project_num,</if>
-        <if test="slideNum != null and slideNum != '' ">slide_num,</if>
-        <if test="reclaimBy != null and reclaimBy != ''">reclaim_by ,</if>
-        <if test="expireTime != null and expireTime != '' ">expire_time,</if>
+        <if test="specialId != null and specialId != '' ">
+            special_id,
+        </if>
+        <if test="projectNum != null and projectNum != '' ">
+            project_num,
+        </if>
+        <if test="slideNum != null and slideNum != '' ">
+            slide_num,
+        </if>
+        <if test="reclaimBy != null and reclaimBy != ''">
+            reclaim_by ,
+        </if>
+        <if test="expireTime != null and expireTime != '' ">
+            expire_time,
+        </if>
         reclaim_time
         )values(
-        <if test="specialId != null and specialId != ''">#{specialId},</if>
-        <if test="projectNum != null and projectNum != ''">#{projectNum},</if>
-        <if test="slideNum != null and slideNum != ''">#{slideNum},</if>
-        <if test="reclaimBy != null and reclaimBy != ''">#{reclaimBy},</if>
-        <if test="expireTime != null and expireTime != ''">#{expireTime},</if>
+        <if test="specialId != null and specialId != ''">
+            #{specialId},
+        </if>
+        <if test="projectNum != null and projectNum != ''">
+            #{projectNum},
+        </if>
+        <if test="slideNum != null and slideNum != ''">
+            #{slideNum},
+        </if>
+        <if test="reclaimBy != null and reclaimBy != ''">
+            #{reclaimBy},
+        </if>
+        <if test="expireTime != null and expireTime != ''">
+            #{expireTime},
+        </if>
         sysdate()
         )
     </insert>
-
-
 </mapper>

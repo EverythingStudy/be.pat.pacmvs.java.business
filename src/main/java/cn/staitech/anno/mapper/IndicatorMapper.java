@@ -1,9 +1,9 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.Indicator;
-import cn.staitech.anno.domain.vo.project.InsertProjectVO;
 import cn.staitech.anno.domain.vo.indicator.IndicatorGetVO;
 import cn.staitech.anno.domain.vo.indicator.IndicatorReviseVO;
+import cn.staitech.anno.domain.vo.project.InsertProjectVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticIndicatorListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticIndicatorListOutVO;
 import org.springframework.stereotype.Repository;
@@ -93,7 +93,6 @@ public interface IndicatorMapper {
      * 查询指标在项目表中的记录数量
      */
     public Integer selectIndicatorCountInProject(Long indicatorId);
-
 
 
     /**

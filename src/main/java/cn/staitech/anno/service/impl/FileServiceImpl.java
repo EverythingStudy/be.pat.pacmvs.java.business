@@ -46,6 +46,80 @@ public class FileServiceImpl implements FileService {
     @Resource
     private MarkingExamineMapper markingExamineMapper;
 
+    private static Boolean createFile(String url) throws Exception {
+        File file = new File(url);
+        if (!file.exists()) {
+            try {
+                if (!file.createNewFile()) {
+                    throw new Exception(MessageSource.M("FILE_DOWNLOAD_ERROR"));
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return true;
+    }
+
+    private static Boolean createFolder(String folder) throws Exception {
+        File file = new File(folder);
+        if (!file.exists() && !file.isDirectory()) {
+            if (file.mkdir()) {
+                return true;
+            } else {
+                throw new Exception(MessageSource.M("FILE_DOWNLOAD_ERROR"));
+            }
+        }
+        return true;
+    }
+
+    private static void merge(String dest, File files) {
+        // TODO 自动生成的方法存根
+        String filename = files.getName();
+        System.out.println(files.getName());
+        filename = files.getName().substring(0, filename.lastIndexOf("-"));
+        try {
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(dest + File.separator + filename));
+            BufferedInputStream bis = null;
+            byte bytes[] = new byte[1024 * 1024];
+            int len = -1;
+
+            bis = new BufferedInputStream(new FileInputStream(files));
+            while ((len = bis.read(bytes)) != -1) {
+                bos.write(bytes, 0, len);
+            }
+        } catch (FileNotFoundException e) {
+            // TODO 自动生成的 catch 块
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO 自动生成的 catch 块
+            e.printStackTrace();
+        }
+    }
+
+    private static Boolean merge1(Chunk chunk, File files, String dest) {
+//         TODO 自动生成的方法存根
+        String filename = files.getName();
+        filename = files.getName().substring(0, filename.lastIndexOf("-"));
+        try (BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(files.toPath())); RandomAccessFile raf = new RandomAccessFile(new FileOutputStream(dest + File.separator + filename).toString(), "rw")) {
+            int len = -1;
+            // byte[] buffer = new byte[1024*4];
+            byte[] buffer = new byte[1024 * 4 * 10];
+            // 指针移动到当前块开始写的位置，chunk.getChunkNumber()是指当前是第几块，减一后乘
+            // 以每个块的大小 得到前面块的偏移量，即当前块的起始位置
+            raf.seek((chunk.getChunkNumber()) * chunk.getChunkSize());
+
+            //log.info(" ---------------------------> seek:{}", (chunk.getChunkNumber()) * chunk.getChunkSize());
+            //把当前块的内容写入
+            // java.util.ConcurrentModificationException: null,并发修改异常
+            while ((len = bis.read(buffer)) != -1) {
+                raf.write(buffer, 0, len);
+            }
+        } catch (IOException e) {
+
+            return false;
+        }
+        return true;
+    }
 
     /**
      * @param slideId 切片id
@@ -99,7 +173,6 @@ public class FileServiceImpl implements FileService {
         return fileUrl;
     }
 
-
     public String createExamineScoreFiles(Long slideId, String suffix, Long questionProjectId, Long createBy) throws Exception {
         // 查询项目表中信息，判断项目是什么类型
         cn.staitech.anno.domain.Slide slide = slideMapper.selectById(slideId);
@@ -150,35 +223,6 @@ public class FileServiceImpl implements FileService {
         return fileUrl;
     }
 
-
-    private static Boolean createFile(String url) throws Exception {
-        File file = new File(url);
-        if (!file.exists()) {
-            try {
-                if (!file.createNewFile()) {
-                    throw new Exception(MessageSource.M("FILE_DOWNLOAD_ERROR"));
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return true;
-    }
-
-
-    private static Boolean createFolder(String folder) throws Exception {
-        File file = new File(folder);
-        if (!file.exists() && !file.isDirectory()) {
-            if (file.mkdir()) {
-                return true;
-            } else {
-                throw new Exception(MessageSource.M("FILE_DOWNLOAD_ERROR"));
-            }
-        }
-        return true;
-    }
-
-
     @Override
     public String mergeChunk(Chunk chunk) throws Exception {
         // 切片名称
@@ -216,7 +260,6 @@ public class FileServiceImpl implements FileService {
         return zipFIleUrl;
     }
 
-
     public String upload(MultipartFile file) throws Exception {
         if (file == null || file.isEmpty()) {
             return null;
@@ -246,57 +289,6 @@ public class FileServiceImpl implements FileService {
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
-    }
-
-
-    private static void merge(String dest, File files) {
-        // TODO 自动生成的方法存根
-        String filename = files.getName();
-        System.out.println(files.getName());
-        filename = files.getName().substring(0, filename.lastIndexOf("-"));
-        try {
-            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(dest + File.separator + filename));
-            BufferedInputStream bis = null;
-            byte bytes[] = new byte[1024 * 1024];
-            int len = -1;
-
-            bis = new BufferedInputStream(new FileInputStream(files));
-            while ((len = bis.read(bytes)) != -1) {
-                bos.write(bytes, 0, len);
-            }
-        } catch (FileNotFoundException e) {
-            // TODO 自动生成的 catch 块
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO 自动生成的 catch 块
-            e.printStackTrace();
-        }
-    }
-
-
-    private static Boolean merge1(Chunk chunk, File files, String dest) {
-//         TODO 自动生成的方法存根
-        String filename = files.getName();
-        filename = files.getName().substring(0, filename.lastIndexOf("-"));
-        try (BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(files.toPath())); RandomAccessFile raf = new RandomAccessFile(new FileOutputStream(dest + File.separator + filename).toString(), "rw")) {
-            int len = -1;
-            // byte[] buffer = new byte[1024*4];
-            byte[] buffer = new byte[1024 * 4 * 10];
-            // 指针移动到当前块开始写的位置，chunk.getChunkNumber()是指当前是第几块，减一后乘
-            // 以每个块的大小 得到前面块的偏移量，即当前块的起始位置
-            raf.seek((chunk.getChunkNumber()) * chunk.getChunkSize());
-
-            //log.info(" ---------------------------> seek:{}", (chunk.getChunkNumber()) * chunk.getChunkSize());
-            //把当前块的内容写入
-            // java.util.ConcurrentModificationException: null,并发修改异常
-            while ((len = bis.read(buffer)) != -1) {
-                raf.write(buffer, 0, len);
-            }
-        } catch (IOException e) {
-
-            return false;
-        }
-        return true;
     }
 
 

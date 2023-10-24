@@ -20,45 +20,4 @@ public class AnnoFeatures {
     private AnnoProperties properties;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

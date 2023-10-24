@@ -11,7 +11,7 @@ import io.netty.handler.stream.ChunkedWriteHandler;
  * .
  */
 public class NioWebSocketChannelInitializer extends ChannelInitializer<SocketChannel> {
-    
+
     @Override
     protected void initChannel(SocketChannel ch) {
         //设置log监听器，并且日志级别为debug，方便观察运行流程
@@ -24,6 +24,6 @@ public class NioWebSocketChannelInitializer extends ChannelInitializer<SocketCha
         ch.pipeline().addLast("http-chunked", new ChunkedWriteHandler());
         //自定义的业务handler
         ch.pipeline().addLast("handler", new NioWebSocketHandler());
-        
+
     }
 }

@@ -31,11 +31,11 @@ public class SpecialStatisticsQueryVO implements Serializable {
     @ApiModelProperty(value = "每页数据条数")
     private int pageSize;
 
-    public boolean isAdmin() {
-        return isAdmin(this.userId);
-    }
-
     public static boolean isAdmin(Long userId) {
         return userId != null && 1L == userId;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin(this.userId);
     }
 }

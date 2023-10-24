@@ -15,6 +15,6 @@ public interface NoticeMapper extends BaseMapper<Notice> {
 
     List<Notice> selectReadList(Long recipient);
 
-    int batchUpdate( @Param("noticeId")Long noticeId);
+    int batchUpdate(@Param("noticeId") Long noticeId);
 
 }

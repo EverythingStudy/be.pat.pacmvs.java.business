@@ -42,7 +42,7 @@ public class RecentlyVisitedServiceImpl extends ServiceImpl<RecentlyVisitedMappe
 
         List<RecentlyVisitedSelectVO> recentlyVisitedSelectVOS = new ArrayList<>();
         // 判断用户为admin或者超级管理员
-        if(SysUser.isAdmin(SecurityUtils.getUserId())){
+        if (SysUser.isAdmin(SecurityUtils.getUserId())) {
             return recentlyVisitedSelectVOS;
         }
         for (RecentlyVisited recentlyVisited1 : recentlyVisitedList) {

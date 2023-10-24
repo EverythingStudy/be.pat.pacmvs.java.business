@@ -4,9 +4,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -18,80 +15,81 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 切片操作表
+ *
  * @TableName tb_opt
  */
-@TableName(value ="tb_opt")
+@TableName(value = "tb_opt")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Opt implements Serializable {
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
     /**
      * 主键id
      */
     @TableId(type = IdType.AUTO)
     private Long optId;
-
     /**
      * 切片主键id
      */
-    @NotNull(message="{Opt.slideId.isnull}")
+    @NotNull(message = "{Opt.slideId.isnull}")
     @ApiModelProperty("切片主键id")
     private Long slideId;
     /**
      * 操作名称
      */
-    @NotBlank(message="{Opt.optName.isnull}")
-    @Size(max= 255,message="{Opt.optName.length}")
+    @NotBlank(message = "{Opt.optName.isnull}")
+    @Size(max = 255, message = "{Opt.optName.length}")
     @ApiModelProperty("操作名称")
-    @Length(max= 255,message="{Opt.optName.length}")
+    @Length(max = 255, message = "{Opt.optName.length}")
     private String optName;
     /**
      * 操作编码
      */
-    @NotBlank(message="{Opt.optCode.isnull}")
-    @Size(max= 255,message="{Opt.optName.length}")
+    @NotBlank(message = "{Opt.optCode.isnull}")
+    @Size(max = 255, message = "{Opt.optName.length}")
     @ApiModelProperty("操作编码")
-    @Length(max= 255,message="{Opt.optName.length}")
+    @Length(max = 255, message = "{Opt.optName.length}")
     private String optCode;
     /**
      * 删除标志（0代表存在 1代表删除）
      */
-    @NotNull(message="{Opt.delFlag.isnull}")
+    @NotNull(message = "{Opt.delFlag.isnull}")
     @ApiModelProperty("删除标志（0代表存在 1代表删除）")
     private String delFlag;
     /**
      * 创建者
      */
-    @NotNull(message="{Opt.createBy.isnull}")
+    @NotNull(message = "{Opt.createBy.isnull}")
     @ApiModelProperty("创建者")
     private Long createBy;
     /**
      * 创建时间
      */
-    @NotNull(message="{Opt.createTime.isnull}")
+    @NotNull(message = "{Opt.createTime.isnull}")
     @ApiModelProperty("创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
     /**
      * 更新者
      */
-    @NotNull(message="{Opt.updateBy.isnull}")
+    @NotNull(message = "{Opt.updateBy.isnull}")
     @ApiModelProperty("更新者")
     private Long updateBy;
     /**
      * 更新时间
      */
-    @NotNull(message="{Opt.updateTime.isnull}")
+    @NotNull(message = "{Opt.updateTime.isnull}")
     @ApiModelProperty("更新时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
-
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
 
     @Override
     public boolean equals(Object that) {
@@ -106,14 +104,14 @@ public class Opt implements Serializable {
         }
         Opt other = (Opt) that;
         return (this.getOptId() == null ? other.getOptId() == null : this.getOptId().equals(other.getOptId()))
-            && (this.getSlideId() == null ? other.getSlideId() == null : this.getSlideId().equals(other.getSlideId()))
-            && (this.getOptName() == null ? other.getOptName() == null : this.getOptName().equals(other.getOptName()))
-            && (this.getOptCode() == null ? other.getOptCode() == null : this.getOptCode().equals(other.getOptCode()))
-            && (this.getDelFlag() == null ? other.getDelFlag() == null : this.getDelFlag().equals(other.getDelFlag()))
-            && (this.getCreateBy() == null ? other.getCreateBy() == null : this.getCreateBy().equals(other.getCreateBy()))
-            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
-            && (this.getUpdateBy() == null ? other.getUpdateBy() == null : this.getUpdateBy().equals(other.getUpdateBy()))
-            && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()));
+                && (this.getSlideId() == null ? other.getSlideId() == null : this.getSlideId().equals(other.getSlideId()))
+                && (this.getOptName() == null ? other.getOptName() == null : this.getOptName().equals(other.getOptName()))
+                && (this.getOptCode() == null ? other.getOptCode() == null : this.getOptCode().equals(other.getOptCode()))
+                && (this.getDelFlag() == null ? other.getDelFlag() == null : this.getDelFlag().equals(other.getDelFlag()))
+                && (this.getCreateBy() == null ? other.getCreateBy() == null : this.getCreateBy().equals(other.getCreateBy()))
+                && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
+                && (this.getUpdateBy() == null ? other.getUpdateBy() == null : this.getUpdateBy().equals(other.getUpdateBy()))
+                && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()));
     }
 
     @Override

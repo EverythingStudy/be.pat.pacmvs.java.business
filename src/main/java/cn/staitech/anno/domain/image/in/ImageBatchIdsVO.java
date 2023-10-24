@@ -13,7 +13,7 @@ public class ImageBatchIdsVO {
     /**
      * 图像id
      */
-    @ApiModelProperty(value = "图像ID",required = true)
+    @ApiModelProperty(value = "图像ID", required = true)
     private List<Long> imageIdList;
 
     @ApiModelProperty(value = "修改人", required = false, hidden = true)

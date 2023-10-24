@@ -31,10 +31,10 @@ public class ImageAllVO extends BaseEntity {
     @ApiModelProperty(value = "", hidden = true)
     private String remark;
 
-    @ApiModelProperty(hidden = true,value = "项目id")
+    @ApiModelProperty(hidden = true, value = "项目id")
     private Long projectId;
 
-    @ApiModelProperty(value="创建时间",hidden = true)
+    @ApiModelProperty(value = "创建时间", hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 

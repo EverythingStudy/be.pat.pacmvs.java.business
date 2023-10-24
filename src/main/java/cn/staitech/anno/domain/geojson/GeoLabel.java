@@ -3,8 +3,6 @@ package cn.staitech.anno.domain.geojson;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 public class GeoLabel {
 
@@ -16,7 +14,6 @@ public class GeoLabel {
 
     @ApiModelProperty(value = "结构编码")
     private String label_code;
-
 
 
 }

@@ -20,7 +20,7 @@ import java.util.List;
 public interface QuestionBankMapper extends BaseMapper<QuestionBank> {
     List<GetQuestionListOut> selectQuestionList(GetQuestionListIn getQuestionListIn);
 
-    List<GetProjectBoxOut>  selectProjectList(Long organizationId);
+    List<GetProjectBoxOut> selectProjectList(Long organizationId);
 
     List<GetQuestionListOut> selectQuestionListExt(GetQuestionsIn getQuestionListIn);
 }

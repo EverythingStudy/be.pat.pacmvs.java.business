@@ -4,8 +4,6 @@ import cn.staitech.anno.project.domain.SlideAttr;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Select;
 
-import java.util.List;
-
 /**
  * @author 86186
  * @description 针对表【tb_slide_attr(切片属性表)】的数据库操作Mapper

@@ -36,54 +36,21 @@ import static cn.staitech.anno.aspect.LogFileAspect.response;
 @RequestMapping("/test")
 public class TestController {
 
+    //输出名称
+    private static final String FILE_NAME = "output_dict.txt";
+    private static List<String> typeLists = Arrays.asList("java.lang.Integer", "java.lang.Double", "java.lang.Float", "java.lang.Long", "java.lang.Short", "java.lang.Byte", "java.lang.Boolean", "java.lang.Char", "java.lang.String", "int", "double", "long", "short", "byte", "boolean", "char", "float");
+    private static int LENGTH = 5000;
+    private static Random random = new Random();
     @Resource
     PythonOpenSlideService pythonOpenSlideService;
-
     @Resource
     ProjectRoleService projectRoleService;
-
     @Resource
     private AnnotationService annotationService;
     @Resource
     private RedissonClient client;
-
     @Resource(name = "redissonClient")
     private RedissonClient redissonClient;
-
-    @GetMapping("/api")
-    public R sendMsg() {
-        return R.ok(null, "测试多语言#ABC");
-    }
-
-
-    /**
-     * 获取Redis自增ID
-     *
-     * @return
-     */
-    @GetMapping("/sid")
-    public Long getAndAddLong(String res) {
-//        return CacheUtils.getAndAddLong("measure:test_id_incr1", 1L);
-//        return client.getAtomicLong(res).getAndAdd(1L);
-        System.out.println(redissonClient + ">>>>");
-
-        RBucket<String> rBucket = redissonClient.getBucket("str");
-//// 设置value和key的有效期
-        rBucket.set("张三", 30, TimeUnit.SECONDS);
-        Object o = rBucket.get();
-        System.out.println(o);
-
-        return 1L;
-    }
-
-    @GetMapping("/createFile")
-    public String createFile(String folderName) throws Exception {
-        if(createFolder(folderName)){
-            return "成功";
-        }else{
-            return "失败";
-        }
-    }
 
     private static Boolean createFolder(String folderName) throws Exception {
         File file = new File(folderName);
@@ -96,121 +63,6 @@ public class TestController {
         }
         return true;
     }
-
-
-
-
-
-
-
-    /**
-     * 获取用户ID
-     *
-     * @return
-     */
-    @GetMapping("/uid")
-    public Long getUserId() {
-        return SecurityUtils.getUserId();
-    }
-
-    /**
-     * 获取用户ID
-     *
-     * @return
-     */
-    @RequestMapping("/python/{imageId}")
-    public Image python(@PathVariable("imageId") Long imageId) {
-        return pythonOpenSlideService.getImageDetail(imageId);
-    }
-
-
-    @GetMapping("/pr/add/{projectId}/{createBy}")
-    public List<SysProjectRole> projectRoleAdd(@PathVariable("projectId") Long projectId, @PathVariable("createBy") Long createBy) {
-        // 默认3个角色
-        return projectRoleService.addProjectRoles(projectId, createBy);
-    }
-
-    @PostMapping("test/11")
-    public String test1125(Long projectId, String req) throws Exception {
-        boolean res = annotationService.getPermission(projectId, req);
-        if (!res) {
-            return "失败";
-        } else {
-            return "ok";
-        }
-    }
-
-
-    public String getFileName(Long slideId, String fileSuffix) {
-        String updateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        return "Annotation_" + slideId + CommonConstant.GLIDE_LINE + updateTime + fileSuffix;
-    }
-
-
-    @GetMapping("/setStr")
-    public Long setStr(String res, Long userId, String userName) {
-
-        RBucket<String> rBucket = redissonClient.getBucket("slideId" + ":" + res);
-//// 设置value和key的有效期
-        Map<String, Object> map = new HashMap<>();
-        map.put("userId", userId);
-        map.put("userName", userName);
-        System.out.println(String.valueOf(map) + ">>>>>>>>>>>>>>>>>>>>>>>>>>>");
-
-        rBucket.set(String.valueOf(map), 300, TimeUnit.MINUTES);
-
-        Object o = rBucket.get();
-        System.out.println(o);
-        return 1L;
-    }
-
-
-    @GetMapping("/getStr")
-    public String getStr(String res) throws Exception {
-
-
-        RKeys keys = redissonClient.getKeys();
-
-
-        Iterable<String> keysByPattern = keys.getKeysByPattern("slideId:" + "*");
-
-        for (String i : keysByPattern) {
-
-            String o = client.getBucket(i).get().toString();
-            System.out.println(o);
-
-//            JSONObject parseObject = JSONArray.parseObject(o);
-//            System.out.println(parseObject);
-//            JSONObject obj = parseObject.getJSONObject("obj");
-//            String uid = obj.getString("uid");
-
-        }
-
-        return "ok";
-    }
-
-
-    //Object转Map
-//    public static Map<String, Object> objectToMap(Object object){
-//        Map<String,Object> dataMap = new HashMap<>();
-//        Class<?> clazz = object.getClass();
-//        for (Field field : clazz.getDeclaredFields()) {
-//            try {
-//                field.setAccessible(true);
-//                dataMap.put(field.getName(),field.get(object));
-//            } catch (IllegalAccessException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        return dataMap;
-//    }
-
-
-//    public static Map<?, ?> objectToMap(Object obj) {
-//        if(obj == null)
-//            return null;
-//        return new org.apache.commons.beanutils.BeanMap(obj);
-//    }
 
     //Object转Map
     public static Map<String, Object> getObjectToMap(Object obj) throws IllegalAccessException {
@@ -233,12 +85,11 @@ public class TestController {
 
     public static Map<?, ?> objectToMap(Object obj) {
 
-        if (obj == null)
+        if (obj == null) {
             return null;
+        }
         return new org.apache.commons.beanutils.BeanMap(obj);
     }
-
-    private static List<String> typeLists = Arrays.asList("java.lang.Integer", "java.lang.Double", "java.lang.Float", "java.lang.Long", "java.lang.Short", "java.lang.Byte", "java.lang.Boolean", "java.lang.Char", "java.lang.String", "int", "double", "long", "short", "byte", "boolean", "char", "float");
 
     public static Map<String, Object> getFieldsValue(Object obj) {
         //通过反射获取所有的字段，getFileds()获取public的修饰的字段
@@ -272,7 +123,6 @@ public class TestController {
         return map;
     }
 
-
     public static void main(String[] args) throws Exception {
         Map<String, Object> map = new HashMap<>();
         map.put("userId", 1);
@@ -283,6 +133,151 @@ public class TestController {
 
     }
 
+    private static String getRandomString(List<String> list) {
+        String tm;
+        int s = random.nextInt(list.size());
+        tm = list.get(s);
+        return tm;
+    }
+
+    @GetMapping("/api")
+    public R sendMsg() {
+        return R.ok(null, "测试多语言#ABC");
+    }
+
+
+    //Object转Map
+//    public static Map<String, Object> objectToMap(Object object){
+//        Map<String,Object> dataMap = new HashMap<>();
+//        Class<?> clazz = object.getClass();
+//        for (Field field : clazz.getDeclaredFields()) {
+//            try {
+//                field.setAccessible(true);
+//                dataMap.put(field.getName(),field.get(object));
+//            } catch (IllegalAccessException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        return dataMap;
+//    }
+
+
+//    public static Map<?, ?> objectToMap(Object obj) {
+//        if(obj == null)
+//            return null;
+//        return new org.apache.commons.beanutils.BeanMap(obj);
+//    }
+
+    /**
+     * 获取Redis自增ID
+     *
+     * @return
+     */
+    @GetMapping("/sid")
+    public Long getAndAddLong(String res) {
+//        return CacheUtils.getAndAddLong("measure:test_id_incr1", 1L);
+//        return client.getAtomicLong(res).getAndAdd(1L);
+        System.out.println(redissonClient + ">>>>");
+
+        RBucket<String> rBucket = redissonClient.getBucket("str");
+//// 设置value和key的有效期
+        rBucket.set("张三", 30, TimeUnit.SECONDS);
+        Object o = rBucket.get();
+        System.out.println(o);
+
+        return 1L;
+    }
+
+    @GetMapping("/createFile")
+    public String createFile(String folderName) throws Exception {
+        if (createFolder(folderName)) {
+            return "成功";
+        } else {
+            return "失败";
+        }
+    }
+
+    /**
+     * 获取用户ID
+     *
+     * @return
+     */
+    @GetMapping("/uid")
+    public Long getUserId() {
+        return SecurityUtils.getUserId();
+    }
+
+    /**
+     * 获取用户ID
+     *
+     * @return
+     */
+    @RequestMapping("/python/{imageId}")
+    public Image python(@PathVariable("imageId") Long imageId) {
+        return pythonOpenSlideService.getImageDetail(imageId);
+    }
+
+    @GetMapping("/pr/add/{projectId}/{createBy}")
+    public List<SysProjectRole> projectRoleAdd(@PathVariable("projectId") Long projectId, @PathVariable("createBy") Long createBy) {
+        // 默认3个角色
+        return projectRoleService.addProjectRoles(projectId, createBy);
+    }
+
+    @PostMapping("test/11")
+    public String test1125(Long projectId, String req) throws Exception {
+        boolean res = annotationService.getPermission(projectId, req);
+        if (!res) {
+            return "失败";
+        } else {
+            return "ok";
+        }
+    }
+
+    public String getFileName(Long slideId, String fileSuffix) {
+        String updateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        return "Annotation_" + slideId + CommonConstant.GLIDE_LINE + updateTime + fileSuffix;
+    }
+
+    @GetMapping("/setStr")
+    public Long setStr(String res, Long userId, String userName) {
+
+        RBucket<String> rBucket = redissonClient.getBucket("slideId" + ":" + res);
+        // 设置value和key的有效期
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("userName", userName);
+        // System.out.println(String.valueOf(map) + ">>>>>>>>>>>>>>>>>>>>>>>>>>>");
+
+        rBucket.set(String.valueOf(map), 300, TimeUnit.MINUTES);
+
+        Object o = rBucket.get();
+        System.out.println(o);
+        return 1L;
+    }
+
+    @GetMapping("/getStr")
+    public String getStr(String res) throws Exception {
+
+
+        RKeys keys = redissonClient.getKeys();
+
+
+        Iterable<String> keysByPattern = keys.getKeysByPattern("slideId:" + "*");
+
+        for (String i : keysByPattern) {
+
+            String o = client.getBucket(i).get().toString();
+            System.out.println(o);
+
+//            JSONObject parseObject = JSONArray.parseObject(o);
+//            System.out.println(parseObject);
+//            JSONObject obj = parseObject.getJSONObject("obj");
+//            String uid = obj.getString("uid");
+
+        }
+
+        return "ok";
+    }
 
     // 删除
     @GetMapping("/delStr")
@@ -310,7 +305,6 @@ public class TestController {
         return false;
     }
 
-
     @GetMapping("/acquire1")
     public boolean acquire1(String req) {
         RLock lock = redissonClient.getLock(req);
@@ -335,7 +329,6 @@ public class TestController {
         return true;
     }
 
-
     @GetMapping("/release")
     public boolean release(String req) {
         RLock rLock = redissonClient.getLock(req);
@@ -355,7 +348,6 @@ public class TestController {
         return true;
 
     }
-
 
     @GetMapping("/setHash")
     public Long setHash(String res, Long userId, String userName) {
@@ -378,13 +370,6 @@ public class TestController {
             return false;
         }
     }
-
-
-    private static int LENGTH = 5000;
-    //输出名称
-    private static final String FILE_NAME = "output_dict.txt";
-
-    private static Random random = new Random();
 
     @GetMapping("/strFile")
     public String StrFile(String str) throws IOException {
@@ -451,13 +436,6 @@ public class TestController {
             return "下载过程发生异常";
         }
         return "操作成功";
-    }
-
-    private static String getRandomString(List<String> list) {
-        String tm;
-        int s = random.nextInt(list.size());
-        tm = list.get(s);
-        return tm;
     }
 
     @GetMapping("/i18n")

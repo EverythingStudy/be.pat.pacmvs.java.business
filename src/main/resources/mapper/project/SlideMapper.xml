@@ -3,7 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.project.mapper.SlideMapperV1">
-
     <resultMap id="BaseResultMap" type="cn.staitech.anno.project.domain.Slide">
         <id property="slideId" column="slide_id" jdbcType="BIGINT"/>
         <result property="projectId" column="project_id" jdbcType="INTEGER"/>
@@ -72,7 +71,7 @@
     </select>
     <select id="querySlides" resultType="cn.staitech.anno.project.vo.SlideExportVO"
             parameterType="cn.staitech.anno.project.vo.SlideQueryIN">
-        select s.*, i.thumb_url,  i.image_name as image_code,p.project_name
+        select s.*, i.thumb_url, i.image_name as image_code,p.project_name
         from tb_slide s
         left join tb_image i on s.image_id = i.image_id
         left join tb_project p on s.project_id = p.project_id
@@ -134,7 +133,7 @@
         s.diagnosis,
         s.ai_analyzed,
         s.ai_check,
-        case when r.review_count >2 then '2' else '1' end  as review_status,
+        case when r.review_count >2 then '2' else '1' end as review_status,
         r.score,
         s.image_id,
         s.group_name,
@@ -167,7 +166,8 @@
         s.host_id
         from tb_slide s
         left join tb_image m on m.image_id = s.image_id
-        left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score from tb_review t group by t.slide_id) r on s.slide_id = r.slide_id
+        left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score from
+        tb_review t group by t.slide_id) r on s.slide_id = r.slide_id
         <where>
             <if test="params.imageCode != null ">
                 AND m.image_name like CONCAT('%',#{params.imageCode},'%')

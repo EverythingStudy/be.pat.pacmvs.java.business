@@ -3,8 +3,6 @@ package cn.staitech.anno.domain.vo.special;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.Map;
-
 /**
  * @author gjt.
  * @data 2023/6/1 14:54

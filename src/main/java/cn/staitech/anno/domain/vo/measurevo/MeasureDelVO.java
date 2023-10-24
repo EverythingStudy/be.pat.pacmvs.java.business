@@ -7,11 +7,11 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class MeasureDelVO {
-    
+
     @NotNull(message = "{MeasureDelVO.measureId.isnull}")
     @ApiModelProperty(value = "测量id", required = true)
     private Long measureId;
-    
+
     @ApiModelProperty(value = "权限字符")
     private String permission;
 }

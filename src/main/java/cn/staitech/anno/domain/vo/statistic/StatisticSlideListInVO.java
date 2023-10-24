@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 public class StatisticSlideListInVO {
-    
+
     @ApiModelProperty(value = "项目ID列表", required = true)
     private List<Long> projectIdList;
     @JsonIgnore

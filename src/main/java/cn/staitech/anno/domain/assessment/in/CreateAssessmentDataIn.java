@@ -17,7 +17,7 @@ public class CreateAssessmentDataIn {
     /**
      * 缩略图地址
      */
-    @ApiModelProperty(value ="缩略图地址" )
+    @ApiModelProperty(value = "缩略图地址")
     private String thumbUrl;
 
     /**

@@ -9,14 +9,13 @@ import cn.staitech.anno.domain.marking.SlideRes;
 import cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo;
 import cn.staitech.anno.project.domain.DownTask;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 public interface MarkingService {
 
     /**
      * 查看当前切片下所有的切片
+     *
      * @param slideId 标注信息
      * @return List<Slide>
      */
@@ -28,6 +27,7 @@ public interface MarkingService {
 
     /**
      * 根据专题查看当前专题下所有的切片
+     *
      * @param specialId 标注信息
      * @return List<Slide>
      */
@@ -35,6 +35,7 @@ public interface MarkingService {
 
     /**
      * 根据切片id查询当前切片下当前标签的总数
+     *
      * @param marking 标注信息
      * @return PointCount
      */
@@ -42,6 +43,7 @@ public interface MarkingService {
 
     /**
      * 根据切片id查询当前切片下的标签总数
+     *
      * @param slideId 切片id
      * @return List<PointCount>
      */
@@ -49,6 +51,7 @@ public interface MarkingService {
 
     /**
      * 根据主键查询详情信息
+     *
      * @param markingId 标注id
      * @return true || false
      */
@@ -56,6 +59,7 @@ public interface MarkingService {
 
     /**
      * 添加标注
+     *
      * @param req 标注数据
      * @return true || false
      */
@@ -63,6 +67,7 @@ public interface MarkingService {
 
     /**
      * 删除标注
+     *
      * @param marking 标注数据
      * @return true || false
      */
@@ -70,6 +75,7 @@ public interface MarkingService {
 
     /**
      * 更新标注点数
+     *
      * @param marking 标注数据
      * @return true || false
      */
@@ -77,6 +83,7 @@ public interface MarkingService {
 
     /**
      * 删除标注
+     *
      * @param markingId 标注id
      * @return true || false
      */
@@ -84,6 +91,7 @@ public interface MarkingService {
 
     /**
      * 导出json数据
+     *
      * @param slideId
      * @return
      */
@@ -91,6 +99,7 @@ public interface MarkingService {
 
     /**
      * 导入zip压缩包
+     *
      * @param zipUrl
      * @param specialId
      * @return
@@ -109,6 +118,7 @@ public interface MarkingService {
 
     /**
      * 删除页面所有标注
+     *
      * @param slideId 切片id
      * @return
      */

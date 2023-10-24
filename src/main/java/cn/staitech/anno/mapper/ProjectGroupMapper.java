@@ -8,18 +8,18 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 
-public interface ProjectGroupMapper{
+public interface ProjectGroupMapper {
     /**
      * @param projectId
      * @return 项目分组信息
      */
-    List<ProjectGroup> selectProjectGroupList(@Param("projectId")Long projectId,@Param("reasons")int reasons);
+    List<ProjectGroup> selectProjectGroupList(@Param("projectId") Long projectId, @Param("reasons") int reasons);
 
     /**
      * @param projectIds
      * @return 根据项目id集合查询分组列表
      */
-    List<ProjectGroup> selectProjectGroupByProjectId(@Param("projectIds") List<Long> projectIds,@Param("groupName") String groupName,@Param("reasons") Long reasons);
+    List<ProjectGroup> selectProjectGroupByProjectId(@Param("projectIds") List<Long> projectIds, @Param("groupName") String groupName, @Param("reasons") Long reasons);
 
     /**
      * 主键查询
@@ -70,16 +70,18 @@ public interface ProjectGroupMapper{
      */
     int selectProcessSlide(@Param("projectId") Long projectId, @Param("groupId") Long groupId);
 
-    int updateStateSlide(@Param("groupId") Long groupId,@Param("projectId") Long projectId);
+    int updateStateSlide(@Param("groupId") Long groupId, @Param("projectId") Long projectId);
 
     /**
-     *  修改项目分组为删除状态
+     * 修改项目分组为删除状态
+     *
      * @param projectId
      * @return
      */
     int updateDelFlag(@Param("projectId") Long projectId, @Param("createBy") Long createBy);
+
     /**
-     *查询项目分组下的移走原因
+     * 查询项目分组下的移走原因
      */
     List<Integer> selectReasonsList(Long projectId);
 

@@ -11,7 +11,6 @@ public interface SystemDictMapper {
     List<SystemDictOut> selectFirst(Long parentId);
 
     /**
-     *
      * @param reclaimBy
      * @return 消息列表
      */

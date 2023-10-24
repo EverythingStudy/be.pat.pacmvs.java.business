@@ -23,5 +23,5 @@ public class TimeRangeIN {
     private Date beginTime;
 
     @ApiModelProperty("结束时间")
-    private Date  endTime;
+    private Date endTime;
 }

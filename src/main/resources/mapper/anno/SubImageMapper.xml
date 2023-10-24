@@ -3,7 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.SubImageMapper">
-
     <resultMap type="cn.staitech.anno.domain.organization.SysOrganizationAuthorization" id="organizationResult">
         <result property="organizationId" column="organization_id"/>
         <result property="authorizationImageLimit" column="authorization_image_limit"/>
@@ -27,7 +26,8 @@
                 AND m.viscera_type = #{params.visceraType}
             </if>
             <if test="params.groupId != null and params.groupId != ''">
-                AND m.image_id in (select s.image_id from tb_slide s where s.is_delete = 0 and s.project_id = #{params.projectId}
+                AND m.image_id in (select s.image_id from tb_slide s where s.is_delete = 0 and s.project_id =
+                #{params.projectId}
                 and s.group_id = #{params.groupId})
             </if>
             <if test="params.accessTime!=null and params.accessTime.beginTime != null and params.accessTime.beginTime != ''">
@@ -59,32 +59,32 @@
         </if>
         group by image_id
     </select>
-	
-	<update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.specilaImage.SpecialImage">
-    	update tb_sub_image
-	    <set>
-	       <if test="auditStatus != null">
-	        audit_status = #{auditStatus},
-	      </if>
-	      <if test="updateBy != null">
-	        update_by = #{updateBy},
-	      </if>
-	      <if test="updateTime != null">
-	        update_time = #{updateTime},
-	      </if>
-	    </set>
-	    <where>
-	      	<if test="imageId != null">
-	       		AND image_id = #{imageId}
-	      	</if>
-	      	<if test="imageIds != null">
-			    AND  image_id in
-			            <foreach collection="imageIds" item="subImageId" index="index" open="(" close=")" separator=",">
-				  			#{subImageId}
-						</foreach>
-		    </if>
-	    </where>
-  </update>
+
+    <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.specilaImage.SpecialImage">
+        update tb_sub_image
+        <set>
+            <if test="auditStatus != null">
+                audit_status = #{auditStatus},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        <where>
+            <if test="imageId != null">
+                AND image_id = #{imageId}
+            </if>
+            <if test="imageIds != null">
+                AND image_id in
+                <foreach collection="imageIds" item="subImageId" index="index" open="(" close=")" separator=",">
+                    #{subImageId}
+                </foreach>
+            </if>
+        </where>
+    </update>
 
     <select id="selectSpecialCounts" parameterType="Long" resultType="int">
         select count(image_id)
@@ -97,28 +97,22 @@
         </where>
     </select>
 
-    <select id="selectImageCount" parameterType="java.lang.Long" resultType="cn.staitech.anno.domain.vo.image.SubImageVo">
-        SELECT
-            si.special_image_id
-        FROM
-            sys_organization AS o
-                LEFT JOIN sys_user AS u ON u.organization_id = o.organization_id
-                LEFT JOIN tb_special_role_user AS spe ON spe.user_id = u.user_id
-                LEFT JOIN tb_special_image AS si ON si.special_id = spe.special_id
-        WHERE
-            o.organization_id = #{organizationId}
+    <select id="selectImageCount" parameterType="java.lang.Long"
+            resultType="cn.staitech.anno.domain.vo.image.SubImageVo">
+        SELECT si.special_image_id
+        FROM sys_organization AS o
+                 LEFT JOIN sys_user AS u ON u.organization_id = o.organization_id
+                 LEFT JOIN tb_special_role_user AS spe ON spe.user_id = u.user_id
+                 LEFT JOIN tb_special_image AS si ON si.special_id = spe.special_id
+        WHERE o.organization_id = #{organizationId}
           AND si.STATUS = 1
     </select>
 
     <select id="selectOrganization" parameterType="java.lang.Long" resultMap="organizationResult">
-        SELECT
-            o.organization_id,
-            o.authorization_image_limit
-        FROM
-            sys_organization_authorization AS o
-                LEFT JOIN sys_user AS u ON u.organization_id = o.organization_id
-        WHERE
-            u.user_id = #{userId}
+        SELECT o.organization_id,
+               o.authorization_image_limit
+        FROM sys_organization_authorization AS o
+                 LEFT JOIN sys_user AS u ON u.organization_id = o.organization_id
+        WHERE u.user_id = #{userId}
     </select>
-
 </mapper>

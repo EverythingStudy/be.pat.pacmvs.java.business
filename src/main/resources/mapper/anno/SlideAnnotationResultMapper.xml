@@ -3,7 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.SlideAnnotationResultMapper">
-
     <resultMap type="cn.staitech.anno.domain.SlideAnnotationResult" id="SlideAnnotationResult">
         <result property="slideId" column="slide_id"/>
         <result property="categoryId" column="category_id"/>
@@ -57,7 +56,8 @@
 
     <!--根据切片ID、更新者ID、标注类别统计标注数量-->
     <select id="selectSum" parameterType="cn.staitech.anno.domain.SlideAnnotationResult" resultType="java.lang.Integer">
-        <include refid="selectSumVo"></include>
+        <include refid="selectSumVo">
+        </include>
         <where>
             <if test="slideId != null and slideId != '' ">
                 AND slide_id = #{slideId}
@@ -93,7 +93,7 @@
         <where>
             r.category_id != 1
             <if test="projectId != null and projectId != '' ">
-               AND p.project_id = #{projectId}
+                AND p.project_id = #{projectId}
             </if>
         </where>
         GROUP BY
@@ -103,18 +103,34 @@
     <!--添加标注-->
     <insert id="insertBatch" parameterType="cn.staitech.anno.domain.SlideAnnotationResult">
         insert into tb_slide_annotation_result (
-        <if test="slideId != null and slideId != '' ">slide_id,</if>
-        <if test="categoryId != null ">category_id,</if>
+        <if test="slideId != null and slideId != '' ">
+            slide_id,
+        </if>
+        <if test="categoryId != null ">
+            category_id,
+        </if>
         update_by,
-        <if test="processFlag != null and processFlag != '' ">process_flag,</if>
-        <if test="sum != null and sum != '' ">sum,</if>
+        <if test="processFlag != null and processFlag != '' ">
+            process_flag,
+        </if>
+        <if test="sum != null and sum != '' ">
+            sum,
+        </if>
         update_time
         )values(
-        <if test="slideId != null and slideId != '' ">#{slideId},</if>
-        <if test="categoryId != null">#{categoryId},</if>
+        <if test="slideId != null and slideId != '' ">
+            #{slideId},
+        </if>
+        <if test="categoryId != null">
+            #{categoryId},
+        </if>
         #{updateBy},
-        <if test="processFlag != null and processFlag != '' ">#{processFlag},</if>
-        <if test="sum != null and sum != '' ">#{sum},</if>
+        <if test="processFlag != null and processFlag != '' ">
+            #{processFlag},
+        </if>
+        <if test="sum != null and sum != '' ">
+            #{sum},
+        </if>
         sysdate()
         )
     </insert>
@@ -123,9 +139,15 @@
     <update id="updateBatch" parameterType="cn.staitech.anno.domain.SlideAnnotationResult">
         update tb_slide_annotation_result
         <set>
-            <if test="sum != null">sum = #{sum},</if>
-            <if test="processFlag != null and processFlag != ''">process_flag = #{processFlag},</if>
-            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="sum != null">
+                sum = #{sum},
+            </if>
+            <if test="processFlag != null and processFlag != ''">
+                process_flag = #{processFlag},
+            </if>
+            <if test="updateBy != null and updateBy != ''">
+                update_by = #{updateBy},
+            </if>
             update_time = sysdate()
         </set>
         <where>
@@ -207,5 +229,4 @@
         </where>
         GROUP BY r.update_by
     </select>
-
 </mapper>

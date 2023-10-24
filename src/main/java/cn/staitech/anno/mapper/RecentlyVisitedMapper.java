@@ -37,7 +37,6 @@ public interface RecentlyVisitedMapper extends BaseMapper<RecentlyVisited> {
     RecentlyVisited selectQueryBy(RecentlyVisited recentlyVisited);
 
 
-
     /**
      * 根据切片id查询专题、图片、切片信息
      *

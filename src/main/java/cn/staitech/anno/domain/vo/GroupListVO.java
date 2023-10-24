@@ -74,34 +74,33 @@ public class GroupListVO {
 
     /**
      * 关联项目数
-     * */
+     */
     @ApiModelProperty(value = "关联项目数")
     private int total;
 
     /**
      * 专题id
-     * */
+     */
     @ApiModelProperty(value = "专题id")
     private Long specialId;
 
     /**
      * 移走原因标识
-     * */
+     */
     @ApiModelProperty(value = "移走原因标识")
     private Integer reasons;
 
     /**
      * 移走原因
-     * */
+     */
     @ApiModelProperty(value = "移走原因")
     private String cause;
 
     /**
      * 剂量
-     * */
+     */
     @ApiModelProperty(value = "剂量")
     private String dosage;
-
 
 
 }

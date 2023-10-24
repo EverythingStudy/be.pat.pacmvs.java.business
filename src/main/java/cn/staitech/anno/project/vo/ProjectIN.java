@@ -1,6 +1,5 @@
 package cn.staitech.anno.project.vo;
 
-import cn.staitech.anno.project.domain.Project;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +8,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Size;
-import java.util.Date;
-import java.util.Map;
 
 /**
  * @author mugw
@@ -23,9 +20,9 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProjectIN {
-    @Size(max= 50,message="{PathologicalIndicatorCategory.number.length}")
+    @Size(max = 50, message = "{PathologicalIndicatorCategory.number.length}")
     @ApiModelProperty("项目名称")
-    @Length(max= 50,message="{PathologicalIndicatorCategory.number.length}")
+    @Length(max = 50, message = "{PathologicalIndicatorCategory.number.length}")
     private String projectName;
 
     @ApiModelProperty("种属ID")
@@ -34,9 +31,9 @@ public class ProjectIN {
     @ApiModelProperty("品系ID")
     private Integer productSeriesId;
 
-    @Size(max= 255,message="{projectType.length}")
+    @Size(max = 255, message = "{projectType.length}")
     @ApiModelProperty("项目类型:1标注2评审3标准训练集")
-    @Length(max= 255,message="{projectType.length}")
+    @Length(max = 255, message = "{projectType.length}")
     private String projectType;
 
     @ApiModelProperty("染色类型（1RGB，2HEX）")

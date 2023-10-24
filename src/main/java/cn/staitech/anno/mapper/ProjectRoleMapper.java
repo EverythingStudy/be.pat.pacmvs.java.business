@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * 项目角色表 数据层
+ *
  * @author wangfeng
  * 2023-03-25
  */
@@ -66,7 +67,7 @@ public interface ProjectRoleMapper {
      * @return 结果
      */
     public int deleteProjectRoleByIds(Long[] roleIds);
-    
+
     /**
      * 根据项目id查询数据
      *
@@ -74,7 +75,6 @@ public interface ProjectRoleMapper {
      * @return 结果
      */
     List<SysProjectRole> selectByProjectId(Long projectId);
-
 
 
 }

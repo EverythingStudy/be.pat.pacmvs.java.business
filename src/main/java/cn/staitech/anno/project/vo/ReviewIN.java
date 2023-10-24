@@ -25,21 +25,21 @@ public class ReviewIN {
     /**
      * 详情
      */
-    @NotBlank(message="{Review.details.isnull}")
-    @Size(max= 100,message="{PathologicalIndicatorCategory.structureId.length}")
+    @NotBlank(message = "{Review.details.isnull}")
+    @Size(max = 100, message = "{PathologicalIndicatorCategory.structureId.length}")
     @ApiModelProperty("详情")
-    @Length(max= 100,message="{PathologicalIndicatorCategory.structureId.length}")
+    @Length(max = 100, message = "{PathologicalIndicatorCategory.structureId.length}")
     private String details;
     /**
      * 分数
      */
-    @NotNull(message="{ReviewIN.score.isnull}")
+    @NotNull(message = "{ReviewIN.score.isnull}")
     @ApiModelProperty("分数")
     private Long score;
     /**
      * 切片id
      */
-    @NotNull(message="{Review.slideId.isnull}")
+    @NotNull(message = "{Review.slideId.isnull}")
     @ApiModelProperty("切片id")
     private Long slideId;
 }

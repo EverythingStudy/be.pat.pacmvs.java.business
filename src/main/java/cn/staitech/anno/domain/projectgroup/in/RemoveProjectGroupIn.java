@@ -27,7 +27,7 @@ public class RemoveProjectGroupIn {
     /**
      * 分组id
      */
-    @ApiModelProperty(value = "分组id" )
+    @ApiModelProperty(value = "分组id")
     @NotNull(message = "{RemoveProjectGroupIn.groupId.isnull}")
     private Long groupId;
 

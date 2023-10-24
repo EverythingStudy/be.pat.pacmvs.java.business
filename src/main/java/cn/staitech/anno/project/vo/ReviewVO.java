@@ -23,10 +23,10 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReviewVO {
-    @NotBlank(message="{Review.details.isnull}")
+    @NotBlank(message = "{Review.details.isnull}")
     @ApiModelProperty("详情")
     private String details;
-    @NotNull(message="{Review.score.isnull}")
+    @NotNull(message = "{Review.score.isnull}")
     @ApiModelProperty("分值")
     private Long score;
     @ApiModelProperty("创建者名称")
@@ -36,10 +36,10 @@ public class ReviewVO {
     /**
      * 评审人
      */
-    @NotBlank(message="{Review.reviewPeople.isnull}")
-    @Size(max= 255,message="{projectType.length}")
+    @NotBlank(message = "{Review.reviewPeople.isnull}")
+    @Size(max = 255, message = "{projectType.length}")
     @ApiModelProperty("评审人")
-    @Length(max= 255,message="{projectType.length}")
+    @Length(max = 255, message = "{projectType.length}")
     private String reviewPeople;
 
     @ApiModelProperty("项目名称")
@@ -61,7 +61,7 @@ public class ReviewVO {
     /**
      * 切片id
      */
-    @NotNull(message="{Review.slideId.isnull}")
+    @NotNull(message = "{Review.slideId.isnull}")
     @ApiModelProperty("切片id")
     private Long slideId;
 }

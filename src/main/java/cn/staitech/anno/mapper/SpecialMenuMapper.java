@@ -2,7 +2,6 @@ package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.special.SpecialMenu;
 import cn.staitech.anno.domain.vo.special.SpecialMenuQuery;
-import cn.staitech.anno.domain.vo.special.SpecialRolePerms;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

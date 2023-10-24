@@ -20,9 +20,12 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 
+/**
+ * @author wangf
+ */
 @Slf4j
 @Service
-public class IndicatorServicelmpl implements IndicatorService {
+public class IndicatorServiceImpl implements IndicatorService {
     @Resource
     private IndicatorMapper indicatorMapper;
     @Resource

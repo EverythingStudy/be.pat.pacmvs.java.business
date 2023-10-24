@@ -22,7 +22,6 @@ import java.util.List;
 
 import static cn.staitech.common.core.constant.SysRoleConstant.*;
 import static cn.staitech.common.core.constant.UserConstants.*;
-import static cn.staitech.common.core.constant.UserConstants.VERIFY_LETTER_NUMBER;
 import static cn.staitech.common.core.utils.SysRoleUtil.getSort;
 
 /**

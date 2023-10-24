@@ -13,14 +13,14 @@ import java.util.List;
  */
 
 public interface AnnotationLogService {
-    
+
     int insertAnnotationLogList(@Param("annotationLogList") List<AnnotationLog> annotationLogList);
-    
-    List<AnnotationLog> selectAnnotationLogById (Long annotationId);
-    
+
+    List<AnnotationLog> selectAnnotationLogById(Long annotationId);
+
     List<AnnotationLog> selectAnnotationLog();
-    
+
     int insertAnnotationLog(AnnotationLog annotationLog);
-    
+
 
 }

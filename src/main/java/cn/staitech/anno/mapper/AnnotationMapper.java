@@ -2,7 +2,10 @@ package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.Annotation;
 import cn.staitech.anno.domain.SlideViewer;
-import cn.staitech.anno.domain.vo.*;
+import cn.staitech.anno.domain.vo.AnnotationBroadcastVO;
+import cn.staitech.anno.domain.vo.AnnotationJsonVO;
+import cn.staitech.anno.domain.vo.AnnotationPageVO;
+import cn.staitech.anno.domain.vo.AnnotationStateVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

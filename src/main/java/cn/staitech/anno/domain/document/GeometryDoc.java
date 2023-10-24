@@ -11,17 +11,23 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 @Document(indexName = "geo_location")
 public class GeometryDoc {
 
-    /** 主键 */
+    /**
+     * 主键
+     */
     @Id
     @ApiModelProperty(value = "操作序号ID")
     private Long id;
 
-    /** 标注地方位置图形数据 */
+    /**
+     * 标注地方位置图形数据
+     */
     @Field(type = FieldType.Long, store = true)
     @ApiModelProperty(value = "标注地方位置图形数据")
     private Long marking_id;
 
-    /** 标注地方位置图形数据 */
+    /**
+     * 标注地方位置图形数据
+     */
     @Field(type = FieldType.Text, store = true)
     @ApiModelProperty(value = "标注地方位置图形数据")
     private String geometry;
@@ -66,7 +72,7 @@ public class GeometryDoc {
     @ApiModelProperty(value = "标注名称")
     private String measure_full_name;
 
-    @Field(type = FieldType.Keyword,store = true)
+    @Field(type = FieldType.Keyword, store = true)
     @ApiModelProperty(value = "标签名称")
     private String label_name;
 

@@ -27,7 +27,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class PathologicalIndicatorCategoryServicelmpl implements PathologicalIndicatorCategoryService {
+public class PathologicalIndicatorCategoryServiceImpl implements PathologicalIndicatorCategoryService {
     @Resource
     private PathologicalIndicatorCategoryMapper pathologicalIndicatorCategoryMapper;
 

@@ -76,6 +76,7 @@ public class Project extends BaseEntity {
      * 病理指标名称英文
      */
     @ApiModelProperty(value = "结构指标名称英文")
+    @TableField(exist = false)
     private String indicatorNameEn;
 
     /**

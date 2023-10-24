@@ -3,7 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.SpecialMapper">
-
     <resultMap type="cn.staitech.anno.domain.special.Special" id="SpecialResult">
         <result property="specialId" column="special_id"/>
         <result property="specialNumber" column="special_number"/>
@@ -90,14 +89,11 @@
     </sql>
 
     <select id="selectSpecialSlideCount" parameterType="Long" resultType="int">
-        SELECT
-            count(sl.slide_id)
-        FROM
-            tb_special AS s
-                LEFT JOIN tb_project AS p ON s.special_id = p.special_id
-                LEFT JOIN tb_slide AS sl ON sl.project_id = p.project_id
-        WHERE
-            s.special_id = #{specialId}
+        SELECT count(sl.slide_id)
+        FROM tb_special AS s
+                 LEFT JOIN tb_project AS p ON s.special_id = p.special_id
+                 LEFT JOIN tb_slide AS sl ON sl.project_id = p.project_id
+        WHERE s.special_id = #{specialId}
           AND p.del_flag = 0
           AND sl.is_delete = 0
     </select>
@@ -146,7 +142,8 @@
     </select>
 
     <!--查询专题表中使用的标签-->
-    <select id="selectSpecialCategoryList" parameterType="Long" resultType="cn.staitech.anno.domain.PathologicalIndicatorCategory">
+    <select id="selectSpecialCategoryList" parameterType="Long"
+            resultType="cn.staitech.anno.domain.PathologicalIndicatorCategory">
         SELECT DISTINCT
         c.category_Id as category_Id
         FROM
@@ -205,7 +202,8 @@
                 AND s.special_id != #{specialId}
             </if>
             <if test="createTimeParams != null">
-                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''"><!-- 开始时间检索 -->
+                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
+                    <!-- 开始时间检索 -->
                     AND date_format(s.create_time,'%y%m%d') &gt;= date_format(#{createTimeParams.beginTime},'%y%m%d')
                 </if>
                 <if test="createTimeParams.endTime != null and createTimeParams.endTime != '' ">
@@ -320,7 +318,8 @@
     </select>
 
     <!--查询项目下的人工诊断状态-->
-    <select id="queryDiagnosisByProjectId" parameterType="java.lang.Long" resultType="cn.staitech.anno.domain.vo.special.SpecialSlideStatisticsVO">
+    <select id="queryDiagnosisByProjectId" parameterType="java.lang.Long"
+            resultType="cn.staitech.anno.domain.vo.special.SpecialSlideStatisticsVO">
         <!-- SELECT
         diagnosis
         FROM
@@ -331,16 +330,15 @@
             </if>
         </where> -->
         SELECT
-			t.diagnosis,
-			count( 1 ) total_count 
-		FROM
-			tb_slide t 
-		WHERE
-			t.project_id = #{projectId} 
-			and t.is_delete = 0
-		GROUP BY
-			t.diagnosis
-        
+        t.diagnosis,
+        count( 1 ) total_count
+        FROM
+        tb_slide t
+        WHERE
+        t.project_id = #{projectId}
+        and t.is_delete = 0
+        GROUP BY
+        t.diagnosis
     </select>
 
     <!--查询专题阅片-->
@@ -348,7 +346,7 @@
         <include refid="selectLists"/>
         <where>
             s.status != 0
-                AND s.status != 2
+            AND s.status != 2
             <if test="sruStatus != null">
                 AND sru.status = 0
             </if>
@@ -383,7 +381,8 @@
                 AND s.special_id != #{specialId}
             </if>
             <if test="createTimeParams != null">
-                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''"><!-- 开始时间检索 -->
+                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
+                    <!-- 开始时间检索 -->
                     AND date_format(s.create_time,'%y%m%d') &gt;= date_format(#{createTimeParams.beginTime},'%y%m%d')
                 </if>
                 <if test="createTimeParams.endTime != null and createTimeParams.endTime != '' ">
@@ -412,25 +411,57 @@
     <insert id="insert" parameterType="cn.staitech.anno.domain.special.Special" useGeneratedKeys="true"
             keyProperty="specialId">
         insert into tb_special (
-        <if test="specialNumber != null and specialNumber != '' ">special_number,</if>
-        <if test="specialName != null and specialName != '' ">special_name,</if>
-        <if test="species != null and species != '' ">species,</if>
-        <if test="stainType != null and stainType != ''">stain_type ,</if>
-        <if test="indicatorId != null">indicator_id,</if>
-        <if test="createBy != null and createBy != ''">create_by,</if>
-        <if test="updateBy != null and updateBy != ''">update_by,</if>
-        <if test="trialType != null and trialType != ''">trial_type,</if>
+        <if test="specialNumber != null and specialNumber != '' ">
+            special_number,
+        </if>
+        <if test="specialName != null and specialName != '' ">
+            special_name,
+        </if>
+        <if test="species != null and species != '' ">
+            species,
+        </if>
+        <if test="stainType != null and stainType != ''">
+            stain_type ,
+        </if>
+        <if test="indicatorId != null">
+            indicator_id,
+        </if>
+        <if test="createBy != null and createBy != ''">
+            create_by,
+        </if>
+        <if test="updateBy != null and updateBy != ''">
+            update_by,
+        </if>
+        <if test="trialType != null and trialType != ''">
+            trial_type,
+        </if>
         create_time,
         update_time
         )values(
-        <if test="specialNumber != null and specialNumber != ''">#{specialNumber},</if>
-        <if test="specialName != null and specialName != ''">#{specialName},</if>
-        <if test="species != null and species != ''">#{species},</if>
-        <if test="stainType != null and stainType != ''">#{stainType},</if>
-        <if test="indicatorId != null">#{indicatorId},</if>
-        <if test="createBy != null and createBy != ''">#{createBy},</if>
-        <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
-        <if test="trialType != null and trialType != ''">#{trialType},</if>
+        <if test="specialNumber != null and specialNumber != ''">
+            #{specialNumber},
+        </if>
+        <if test="specialName != null and specialName != ''">
+            #{specialName},
+        </if>
+        <if test="species != null and species != ''">
+            #{species},
+        </if>
+        <if test="stainType != null and stainType != ''">
+            #{stainType},
+        </if>
+        <if test="indicatorId != null">
+            #{indicatorId},
+        </if>
+        <if test="createBy != null and createBy != ''">
+            #{createBy},
+        </if>
+        <if test="updateBy != null and updateBy != ''">
+            #{updateBy},
+        </if>
+        <if test="trialType != null and trialType != ''">
+            #{trialType},
+        </if>
         sysdate(),
         sysdate()
         )
@@ -440,14 +471,30 @@
             keyProperty="specialId">
         update tb_special
         <set>
-            <if test="specialNumber != null and specialNumber != ''">special_number = #{specialNumber},</if>
-            <if test="specialName != null and specialName != ''">special_name = #{specialName},</if>
-            <if test="species != null and species != ''">species = #{species},</if>
-            <if test="stainType  != null and stainType != ''">stain_type = #{stainType},</if>
-            <if test="deliveryStatus  != null and deliveryStatus != ''">delivery_status = #{deliveryStatus},</if>
-            <if test="indicatorId != null">indicator_id = #{indicatorId},</if>
-            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
-            <if test="trialType != null and trialType != ''">trial_type = #{trialType},</if>
+            <if test="specialNumber != null and specialNumber != ''">
+                special_number = #{specialNumber},
+            </if>
+            <if test="specialName != null and specialName != ''">
+                special_name = #{specialName},
+            </if>
+            <if test="species != null and species != ''">
+                species = #{species},
+            </if>
+            <if test="stainType  != null and stainType != ''">
+                stain_type = #{stainType},
+            </if>
+            <if test="deliveryStatus  != null and deliveryStatus != ''">
+                delivery_status = #{deliveryStatus},
+            </if>
+            <if test="indicatorId != null">
+                indicator_id = #{indicatorId},
+            </if>
+            <if test="updateBy != null and updateBy != ''">
+                update_by = #{updateBy},
+            </if>
+            <if test="trialType != null and trialType != ''">
+                trial_type = #{trialType},
+            </if>
             update_time = sysdate()
         </set>
         where special_id = #{specialId}
@@ -457,8 +504,12 @@
             keyProperty="specialId">
         update tb_special
         <set>
-            <if test="delFlag != null">del_flag = #{delFlag},</if>
-            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag},
+            </if>
+            <if test="updateBy != null and updateBy != ''">
+                update_by = #{updateBy},
+            </if>
             update_time = sysdate()
         </set>
         where special_id = #{specialId}
@@ -468,8 +519,12 @@
             keyProperty="specialId">
         update tb_special
         <set>
-            <if test="status != null">status = #{status},</if>
-            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="updateBy != null and updateBy != ''">
+                update_by = #{updateBy},
+            </if>
             update_time = sysdate()
         </set>
         where special_id = #{specialId}

@@ -164,7 +164,7 @@ public class ProjectExtController extends BaseController {
     @RequiresPermissions("anno:project:addproject")
     @Log(title = "添加项目", menu = "专题管理", subMenu = "项目管理", businessType = BusinessType.INSERT)
     @PostMapping("/addProject")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public R<String> addProject(@Validated @RequestBody InsertProjectVO req) {
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
         // 获取当前登录用户Id

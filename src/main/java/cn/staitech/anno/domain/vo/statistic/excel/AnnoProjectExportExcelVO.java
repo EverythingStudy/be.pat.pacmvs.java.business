@@ -6,11 +6,11 @@ import lombok.Data;
 
 @Data
 public class AnnoProjectExportExcelVO {
-    
+
     @Excel(name = "项目")
     @ApiModelProperty(value = "统计维度名称")
     private String statisticName;
-    
+
     @Excel(name = "标注数量")
     @ApiModelProperty(value = "统计数量")
     private Long statisticCount;

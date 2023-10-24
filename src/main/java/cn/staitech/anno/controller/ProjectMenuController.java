@@ -25,17 +25,17 @@ import java.util.List;
 @RestController
 @RequestMapping("/projectMenu")
 public class ProjectMenuController extends BaseController {
-    
-    
+
+
     @Resource
     private ProjectMemberService projectMemberService;
-    
+
     @ApiOperation(value = "根据用户id查询项目菜单")
     @GetMapping("/byUserId")
     public List<ProjectMember> byUserId(Long userId) {
         List<ProjectMember> projectMemberList = projectMemberService.selectByUserId(userId);
         return projectMemberList;
     }
-    
-    
+
+
 }

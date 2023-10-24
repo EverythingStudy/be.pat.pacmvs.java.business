@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author gjt
@@ -19,6 +19,7 @@ public interface MarkingExamineMapper extends BaseMapper<MarkingExamine> {
 
     /**
      * 查询单个切片详情信息
+     *
      * @param markingExamineId 考核标注id
      * @return
      */
@@ -26,6 +27,7 @@ public interface MarkingExamineMapper extends BaseMapper<MarkingExamine> {
 
     /**
      * 查询详情接口
+     *
      * @param questionProjectId
      * @return
      */
@@ -33,6 +35,7 @@ public interface MarkingExamineMapper extends BaseMapper<MarkingExamine> {
 
     /**
      * 查询详情接口(json)
+     *
      * @param questionProjectId
      * @return
      */

@@ -13,7 +13,7 @@ import lombok.Data;
  */
 
 @Data
-public class AnnotationCountExcelVO  {
+public class AnnotationCountExcelVO {
 
     @ApiModelProperty(value = "统计维度名称")
     private String statisticName;

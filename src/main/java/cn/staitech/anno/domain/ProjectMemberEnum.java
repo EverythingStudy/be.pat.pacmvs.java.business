@@ -39,7 +39,7 @@ public enum ProjectMemberEnum {
         }
         for (ProjectMemberEnum item : ProjectMemberEnum.values()) {
 
-            if (item.getLabel().equals(label) ) {
+            if (item.getLabel().equals(label)) {
                 return item.getValue();
             }
         }

@@ -1,6 +1,5 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.special.Special;
 import cn.staitech.anno.domain.special.SpecialReclaim;
 import cn.staitech.anno.domain.vo.special.SpecialReclaimResVo;
 import cn.staitech.anno.domain.vo.special.SpecialReclaimSelectVo;
@@ -16,6 +15,7 @@ public interface SpecialReclaimService {
 
     /**
      * 添加回收记录
+     *
      * @param specialReclaim 回收信息
      * @return 0||1
      */
@@ -24,6 +24,7 @@ public interface SpecialReclaimService {
 
     /**
      * 查询出结果集，并进行合并
+     *
      * @param specialList 专题信息
      * @return 0||1
      */

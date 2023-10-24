@@ -5,11 +5,11 @@ import lombok.Data;
 
 @Data
 public class StatisticIndicatorListOutVO {
-    
+
     @ApiModelProperty(value = "病例指标id")
     private Integer indicatorId;
-    
+
     @ApiModelProperty(value = "病例指标名称")
     private String indicatorName;
-    
+
 }

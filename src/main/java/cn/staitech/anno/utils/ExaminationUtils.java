@@ -22,25 +22,13 @@ import javax.annotation.Resource;
 @Component
 public class ExaminationUtils {
 
+    public static ExaminationUtils examinationUtils;
     @Resource
     private ExaminationService examinationService;
-
     @Resource
     private ExaminationLogService examinationLogService;
-
     @Resource
     private SlideService slideService;
-
-    public static ExaminationUtils examinationUtils;
-
-    @PostConstruct
-    public void init() {
-        examinationUtils = this;
-        examinationUtils.examinationService = this.examinationService;
-        examinationUtils.examinationLogService = this.examinationLogService;
-        examinationUtils.slideService = this.slideService;
-    }
-
 
     /**
      * 修改复核状态并查看切片信息
@@ -68,5 +56,13 @@ public class ExaminationUtils {
         examinationLog.setExaminationFlag(slide1);
         examinationLog.setCreateBy(SecurityUtils.getUserId());
         examinationUtils.examinationLogService.insertExaminationLog(examinationLog);
+    }
+
+    @PostConstruct
+    public void init() {
+        examinationUtils = this;
+        examinationUtils.examinationService = this.examinationService;
+        examinationUtils.examinationLogService = this.examinationLogService;
+        examinationUtils.slideService = this.slideService;
     }
 }

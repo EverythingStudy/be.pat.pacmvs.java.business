@@ -63,26 +63,21 @@ import java.util.concurrent.ExecutorService;
 public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
         implements ReviewService {
 
-    @Autowired
-    private HttpServletResponse httpServletResponse;
-
-    @Resource
-    private ReviewMapper reviewMapper;
-
-    @Resource
-    private SlideMapperV1 slideMapperV1;
-
-    @Resource
-    private FileService fileService;
-
-    @Resource
-    private DownTaskMapper downTaskMapper;
-
     private static ExecutorService executor = ExecutorBuilder.create()
             .setCorePoolSize(1)
             .setMaxPoolSize(1)
             .setKeepAliveTime(0)
             .build();
+    @Autowired
+    private HttpServletResponse httpServletResponse;
+    @Resource
+    private ReviewMapper reviewMapper;
+    @Resource
+    private SlideMapperV1 slideMapperV1;
+    @Resource
+    private FileService fileService;
+    @Resource
+    private DownTaskMapper downTaskMapper;
 
     @Override
     public void exportReview(Long projectId, Long slideId) throws Exception {
@@ -127,7 +122,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
         IoUtil.close(excelOut);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void csvExportReviewCurrent(Long projectId, List<Long> slideIds) throws Exception {
         String projectName = "";
@@ -179,7 +174,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public DownTask csvExportReview(Long projectId, List<Long> slideIds) {
         Snowflake snowflake = new Snowflake();
@@ -188,6 +183,60 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
         downTaskMapper.insert(task);
         executor.submit(new TaskThread(task, projectId, slideIds));
         return task;
+    }
+
+    @Override
+    public int insert(ReviewIN req) throws Exception {
+        Slide slideBy = slideMapperV1.selectById(req.getSlideId());
+        if (slideBy == null) {
+            throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
+        }
+        Review reviewBys = reviewMapper.selectOne(Wrappers.query(Review.builder().slideId(req.getSlideId()).createBy(SecurityUtils.getUserId()).build()));
+        if (reviewBys != null) {
+            throw new Exception(MessageSource.M("RE_REVIEW_ERROR"));
+        }
+        Review reviewBy = reviewMapper.selectSlide(req.getSlideId());
+        Review review = new Review();
+        BeanUtils.copyProperties(reviewBy, review);
+        review.setCreateName(SecurityUtils.getUsername());
+        review.setCreateBy(SecurityUtils.getUserId());
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        review.setCreateTime(sdf.format(date));
+        review.setReviewPeople(SecurityUtils.getUsername());
+        review.setReviewTime(new Date());
+        review.setUpdateBy(SecurityUtils.getUserId());
+        review.setScore(req.getScore());
+        review.setDetails(req.getDetails());
+        return reviewMapper.insert(review);
+    }
+
+    @Override
+    public int update(ReviewUP req) throws Exception {
+        Review reviewBy = reviewMapper.selectById(req.getReviewId());
+        if (reviewBy == null) {
+            throw new Exception(MessageSource.M("NO_REVIEW_DATA"));
+        }
+        if (!Objects.equals(reviewBy.getCreateBy(), SecurityUtils.getUserId())) {
+            throw new Exception(MessageSource.M("FORBID_EDIT_OTHERS_INFO"));
+        }
+        Review review = new Review();
+        review.setReviewId(req.getReviewId());
+        review.setDetails(req.getDetails());
+        review.setScore(req.getScore());
+        review.setUpdateBy(SecurityUtils.getUserId());
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        review.setUpdateTime(sdf.format(date));
+        return reviewMapper.updateById(review);
+    }
+
+    @Override
+    public PageMaster<ReviewRoundOutVO> pageReviewRound(Page page, ReviewRoundIN params) {
+        getBaseMapper().pageReviewRound(page, params);
+        PageMaster<ReviewRoundOutVO> pageMaster = PageMaster.of(page.getRecords());
+        pageMaster.setTotal(page.getTotal());
+        return pageMaster;
     }
 
     public class TaskThread implements Runnable {
@@ -259,60 +308,5 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
                 log.error(e.getMessage());
             }
         }
-    }
-
-
-    @Override
-    public int insert(ReviewIN req) throws Exception {
-        Slide slideBy = slideMapperV1.selectById(req.getSlideId());
-        if (slideBy == null) {
-            throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
-        }
-        Review reviewBys = reviewMapper.selectOne(Wrappers.query(Review.builder().slideId(req.getSlideId()).createBy(SecurityUtils.getUserId()).build()));
-        if (reviewBys != null) {
-            throw new Exception(MessageSource.M("RE_REVIEW_ERROR"));
-        }
-        Review reviewBy = reviewMapper.selectSlide(req.getSlideId());
-        Review review = new Review();
-        BeanUtils.copyProperties(reviewBy, review);
-        review.setCreateName(SecurityUtils.getUsername());
-        review.setCreateBy(SecurityUtils.getUserId());
-        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        review.setCreateTime(sdf.format(date));
-        review.setReviewPeople(SecurityUtils.getUsername());
-        review.setReviewTime(new Date());
-        review.setUpdateBy(SecurityUtils.getUserId());
-        review.setScore(req.getScore());
-        review.setDetails(req.getDetails());
-        return reviewMapper.insert(review);
-    }
-
-    @Override
-    public int update(ReviewUP req) throws Exception {
-        Review reviewBy = reviewMapper.selectById(req.getReviewId());
-        if (reviewBy == null) {
-            throw new Exception(MessageSource.M("NO_REVIEW_DATA"));
-        }
-        if (!Objects.equals(reviewBy.getCreateBy(), SecurityUtils.getUserId())) {
-            throw new Exception(MessageSource.M("FORBID_EDIT_OTHERS_INFO"));
-        }
-        Review review = new Review();
-        review.setReviewId(req.getReviewId());
-        review.setDetails(req.getDetails());
-        review.setScore(req.getScore());
-        review.setUpdateBy(SecurityUtils.getUserId());
-        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        review.setUpdateTime(sdf.format(date));
-        return reviewMapper.updateById(review);
-    }
-
-    @Override
-    public PageMaster<ReviewRoundOutVO> pageReviewRound(Page page, ReviewRoundIN params) {
-        getBaseMapper().pageReviewRound(page, params);
-        PageMaster<ReviewRoundOutVO> pageMaster = PageMaster.of(page.getRecords());
-        pageMaster.setTotal(page.getTotal());
-        return pageMaster;
     }
 }

@@ -34,7 +34,7 @@ public class SpecialAnnotationEditVO {
      */
     @ApiModelProperty(value = "权限标识", required = true)
     private String permission;
-    
-    @ApiModelProperty(name = "dictId" , value = "脏器标签ID")
-	private Long dictId;
+
+    @ApiModelProperty(name = "dictId", value = "脏器标签ID")
+    private Long dictId;
 }

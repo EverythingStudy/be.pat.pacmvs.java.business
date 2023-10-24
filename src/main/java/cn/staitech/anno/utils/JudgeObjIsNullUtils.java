@@ -25,29 +25,37 @@ public class JudgeObjIsNullUtils {
      * @return
      */
     public static boolean judgeObjIsNull(Object object) {
-        Class clazz = object.getClass(); // 得到类对象
-        Field fields[] = clazz.getDeclaredFields(); // 利用反射得到所有属性
-        boolean flag = true; //定义标志flag
+        // 得到类对象
+        Class clazz = object.getClass();
+        // 利用反射得到所有属性
+        Field[] fields = clazz.getDeclaredFields();
+        // 定义标志flag
+        boolean flag = true;
         /**
          * 循环遍历反射得到的属性数组，判断每个属性值是否为空
          */
         for (Field f : fields) {
-            f.setAccessible(true);//由于考虑到某些私有属性直接访问肯能访问不到，此属性设置为true确保可以访问到
+            // 由于考虑到某些私有属性直接访问肯能访问不到，此属性设置为true确保可以访问到
+            f.setAccessible(true);
             Object fieldValue = null;
             try {
-                fieldValue = f.get(object); //得到属性值
-                Type fieldType = f.getGenericType();//得到属性类型
-                String fieldName = f.getName(); // 得到属性名
-                if (fieldName.equals("serialVersionUID")) {
+                // 得到属性值
+                fieldValue = f.get(object);
+                // 得到属性类型
+                Type fieldType = f.getGenericType();
+                // 得到属性名
+                String fieldName = f.getName();
+                if ("serialVersionUID".equals(fieldName)) {
                     continue;
                 }
-                System.out.println("属性类型：" + fieldType + ",属性名：" + fieldName + ",属性值：" + fieldValue);
+                // System.out.println("属性类型：" + fieldType + ",属性名：" + fieldName + ",属性值：" + fieldValue);
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
-            if (fieldValue != null) {  //只要有一个属性值不为null 就返回false 表示对象不为null
+            // 只要有一个属性值不为null 就返回false 表示对象不为null
+            if (fieldValue != null) {
                 flag = false;
                 break;
             }

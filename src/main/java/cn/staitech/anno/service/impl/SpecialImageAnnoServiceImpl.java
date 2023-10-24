@@ -55,41 +55,72 @@ import java.util.stream.Collectors;
 public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
 
 
+    DecimalFormat decimalFormat = new DecimalFormat("0.00000");
     @Resource
     private SpecialImageMapper specialImageMapper;
-
-
     @Resource
     private SubImageMapper subImageMapper;
-
     @Resource
     private SpecialAnnotationMapper specialAnnotationMapper;
     @Resource
     private SpecialImageService specialImageService;
-
     @Resource
     private GetUserInformationService getUserInformationService;
 
-    DecimalFormat decimalFormat = new DecimalFormat("0.00000");
+    /**
+     * 求交集
+     *
+     * @param m 传入的集合
+     * @param n 查询到的集合
+     * @return
+     */
+    private static Long[] getJ(Long[] m, List<Long> n) {
+        List<Long> a1 = Arrays.asList(m);
+        List<Long> accountIdList = a1.stream().filter(n::contains).collect(Collectors.toList());
+        Long[] arr = {};
+        arr = accountIdList.toArray(arr);
+        return arr;
+    }
 
+    /**
+     * 求差集
+     *
+     * @param m 传入的集合
+     * @param n 交集集合
+     * @return
+     */
+    private static Long[] getC(Long[] m, Long[] n) {
+        // 将较长的数组转换为set
+        Set<Long> set = new HashSet<Long>(Arrays.asList(m.length > n.length ? m : n));
+
+        // 遍历较短的数组，实现最少循环
+        for (Long i : m.length > n.length ? n : m) {
+            // 若是集合里有相同的就删掉，若是没有就将值添加到集合
+            if (set.contains(i)) {
+                set.remove(i);
+            } else {
+                set.add(i);
+            }
+        }
+
+        Long[] arr = {};
+        return set.toArray(arr);
+    }
 
     @Override
     public int insertSpecialAnnotation(SpecialAnnotation anno) {
         return specialAnnotationMapper.insertSelective(anno);
     }
 
-
     @Override
     public int updatePointCount(SpecialAnnotation specialAnnotation) {
         return specialAnnotationMapper.updatePointCount(specialAnnotation);
     }
 
-
     @Override
     public PointCount selectCategoryCount(SpecialAnnotation anno) {
         return specialAnnotationMapper.selectCategoryCount(anno);
     }
-
 
     /**
      * 获取geojsonUrl
@@ -189,7 +220,6 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
-
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public R<String> updateDeliveryBySpecialId(AuditSpecialImageVO vo) {
@@ -226,7 +256,6 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
         return specialImageMapper.selectWaitSpecialImage(specialImageSelectVO);
     }
 
-
     @Override
     public List<SpecialAnnotation> selectSpecialAnnotationList(SpecialAnnotation annotation) {
         return specialAnnotationMapper.selectSpecialAnnotationList(annotation);
@@ -236,7 +265,6 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
     public List<SpecialAnnoProperties> selectSpecialPropertiesList(SpecialAnnotation annotation) {
         return specialAnnotationMapper.selectSpecialPropertiesList(annotation);
     }
-
 
     @Override
     public AnnoMarkGeojson getMarkGeojsonByList(List<SpecialAnnotation> list) {
@@ -292,47 +320,6 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
         }
         markGeojson.setFeatures(featuresList);
         return markGeojson;
-    }
-
-
-    /**
-     * 求交集
-     *
-     * @param m 传入的集合
-     * @param n 查询到的集合
-     * @return
-     */
-    private static Long[] getJ(Long[] m, List<Long> n) {
-        List<Long> a1 = Arrays.asList(m);
-        List<Long> accountIdList = a1.stream().filter(n::contains).collect(Collectors.toList());
-        Long[] arr = {};
-        arr = accountIdList.toArray(arr);
-        return arr;
-    }
-
-    /**
-     * 求差集
-     *
-     * @param m 传入的集合
-     * @param n 交集集合
-     * @return
-     */
-    private static Long[] getC(Long[] m, Long[] n) {
-        // 将较长的数组转换为set
-        Set<Long> set = new HashSet<Long>(Arrays.asList(m.length > n.length ? m : n));
-
-        // 遍历较短的数组，实现最少循环
-        for (Long i : m.length > n.length ? n : m) {
-            // 若是集合里有相同的就删掉，若是没有就将值添加到集合
-            if (set.contains(i)) {
-                set.remove(i);
-            } else {
-                set.add(i);
-            }
-        }
-
-        Long[] arr = {};
-        return set.toArray(arr);
     }
 
     @Override

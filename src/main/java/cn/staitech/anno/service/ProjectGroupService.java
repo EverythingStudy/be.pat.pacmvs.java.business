@@ -12,24 +12,23 @@ import cn.staitech.common.core.domain.R;
  */
 public interface ProjectGroupService {
     /**
-     *
      * @param projectId
-     * @return  项目分组列表
+     * @return 项目分组列表
      */
-    PageResponse<ProjectGroupListOut> projectGroupList(Long projectId,int reasons,int pageNum,int pageSize);
+    PageResponse<ProjectGroupListOut> projectGroupList(Long projectId, int reasons, int pageNum, int pageSize);
 
     /**
-     *
      * @param req
      * @return 项目分组列表删除
      */
-    R removeProjectGroup( RemoveProjectGroupIn req);
+    R removeProjectGroup(RemoveProjectGroupIn req);
 
     /**
      * 清除项目分组切片
+     *
      * @param req
      * @return
      */
-    R cleanProjectGroup( RemoveProjectGroupIn req);
+    R cleanProjectGroup(RemoveProjectGroupIn req);
 
 }

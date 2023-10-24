@@ -1,225 +1,233 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.ReportRecordMapper">
-  <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.ReportRecord">
-    <id column="report_id" jdbcType="BIGINT" property="reportId" />
-    <result column="file_name" jdbcType="VARCHAR" property="fileName" />
-    <result column="format" jdbcType="VARCHAR" property="format" />
-    <result column="file_size" jdbcType="VARCHAR" property="fileSize" />
-    <result column="user_id" jdbcType="BIGINT" property="userId" />
-    <result column="apply_time" jdbcType="TIMESTAMP" property="applyTime" />
-    <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
-    <result column="report_type" jdbcType="INTEGER" property="reportType" />
-    <result column="report_file" jdbcType="VARCHAR" property="reportFile" />
-    <result column="special_id" jdbcType="BIGINT" property="specialId" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.ReportRecord">
+        <id column="report_id" jdbcType="BIGINT" property="reportId"/>
+        <result column="file_name" jdbcType="VARCHAR" property="fileName"/>
+        <result column="format" jdbcType="VARCHAR" property="format"/>
+        <result column="file_size" jdbcType="VARCHAR" property="fileSize"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="apply_time" jdbcType="TIMESTAMP" property="applyTime"/>
+        <result column="del_flag" jdbcType="INTEGER" property="delFlag"/>
+        <result column="report_type" jdbcType="INTEGER" property="reportType"/>
+        <result column="report_file" jdbcType="VARCHAR" property="reportFile"/>
+        <result column="special_id" jdbcType="BIGINT" property="specialId"/>
+    </resultMap>
 
-  <resultMap id="BaseResult" type="cn.staitech.anno.domain.vo.reportRecord.ReportRecordAllVO">
-    <id column="report_id" jdbcType="BIGINT" property="reportId" />
-    <result column="file_name" jdbcType="VARCHAR" property="fileName" />
-    <result column="format" jdbcType="VARCHAR" property="format" />
-    <result column="file_size" jdbcType="VARCHAR" property="fileSize" />
-    <result column="user_name" jdbcType="VARCHAR" property="userName" />
-    <result column="user_id" jdbcType="BIGINT" property="userId" />
-    <result column="apply_time" jdbcType="TIMESTAMP" property="applyTime" />
-    <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
-    <result column="report_type" jdbcType="INTEGER" property="reportType" />
-    <result column="special_id" jdbcType="BIGINT" property="specialId" />
-    <result column="report_file" jdbcType="VARCHAR" property="reportFile" />
-    <result column="pace" jdbcType="INTEGER" property="pace" />
-    <result column="status" jdbcType="INTEGER" property="status" />
-    <result column="reasons" jdbcType="INTEGER" property="reasons" />
-    <result column="report_url" jdbcType="VARCHAR" property="reportUrl" />
-  </resultMap>
+    <resultMap id="BaseResult" type="cn.staitech.anno.domain.vo.reportRecord.ReportRecordAllVO">
+        <id column="report_id" jdbcType="BIGINT" property="reportId"/>
+        <result column="file_name" jdbcType="VARCHAR" property="fileName"/>
+        <result column="format" jdbcType="VARCHAR" property="format"/>
+        <result column="file_size" jdbcType="VARCHAR" property="fileSize"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="apply_time" jdbcType="TIMESTAMP" property="applyTime"/>
+        <result column="del_flag" jdbcType="INTEGER" property="delFlag"/>
+        <result column="report_type" jdbcType="INTEGER" property="reportType"/>
+        <result column="special_id" jdbcType="BIGINT" property="specialId"/>
+        <result column="report_file" jdbcType="VARCHAR" property="reportFile"/>
+        <result column="pace" jdbcType="INTEGER" property="pace"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="reasons" jdbcType="INTEGER" property="reasons"/>
+        <result column="report_url" jdbcType="VARCHAR" property="reportUrl"/>
+    </resultMap>
 
-  <resultMap id="ProjectResult" type="cn.staitech.anno.domain.vo.ProjectAllVO">
-    <id column="project_id" jdbcType="BIGINT" property="projectId" />
-    <id column="special_id" jdbcType="BIGINT" property="specialId" />
-    <result column="project_name" jdbcType="VARCHAR" property="projectName" />
-  </resultMap>
+    <resultMap id="ProjectResult" type="cn.staitech.anno.domain.vo.ProjectAllVO">
+        <id column="project_id" jdbcType="BIGINT" property="projectId"/>
+        <id column="special_id" jdbcType="BIGINT" property="specialId"/>
+        <result column="project_name" jdbcType="VARCHAR" property="projectName"/>
+    </resultMap>
 
-  <resultMap id="slideNumberResult" type="cn.staitech.anno.domain.vo.reportRecord.ReportRecordExportVO">
-    <id column="slide_id" jdbcType="BIGINT" property="slideId" />
-    <result column="image_code" jdbcType="VARCHAR" property="imageCode" />
-  </resultMap>
+    <resultMap id="slideNumberResult" type="cn.staitech.anno.domain.vo.reportRecord.ReportRecordExportVO">
+        <id column="slide_id" jdbcType="BIGINT" property="slideId"/>
+        <result column="image_code" jdbcType="VARCHAR" property="imageCode"/>
+    </resultMap>
 
 
-  <sql id="Base_Column_List">
-    r.report_id, r.file_name, r.format, r.file_size, r.user_id, r.apply_time, r.del_flag, r.report_type,
+    <sql id="Base_Column_List">
+        r
+        .
+        report_id
+        , r.file_name, r.format, r.file_size, r.user_id, r.apply_time, r.del_flag, r.report_type,
     r.report_file,r.special_id, u.user_name,r.pace,r.status,r.reasons
-  </sql>
-  <select id="selectByPrimaryKey" parameterType="cn.staitech.anno.domain.vo.reportRecord.ReportRecordViewVO" resultMap="BaseResult">
-    select 
-    <include refid="Base_Column_List" />
-    from tb_report_record as r left join sys_user as u on r.user_id=u.user_id
-    <where>
-    <if test="fileName != null and fileName != ''">
-      AND r.file_name like concat('%', #{fileName}, '%')
-    </if>
-      <if test="reportType != null and reportType != ''">
-        AND  r.report_type =#{reportType}
-      </if>
-      <if test="specialId != null and specialId != ''">
-        AND  r.special_id =#{specialId}
-      </if>
-        and r.del_flag=0
-    </where>
-      order by r.apply_time desc
-  </select>
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="cn.staitech.anno.domain.vo.reportRecord.ReportRecordViewVO"
+            resultMap="BaseResult">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_report_record as r left join sys_user as u on r.user_id=u.user_id
+        <where>
+            <if test="fileName != null and fileName != ''">
+                AND r.file_name like concat('%', #{fileName}, '%')
+            </if>
+            <if test="reportType != null and reportType != ''">
+                AND r.report_type =#{reportType}
+            </if>
+            <if test="specialId != null and specialId != ''">
+                AND r.special_id =#{specialId}
+            </if>
+            and r.del_flag=0
+        </where>
+        order by r.apply_time desc
+    </select>
 
 
-  <insert id="insertSelective" keyColumn="report_id" keyProperty="reportId" parameterType="cn.staitech.anno.domain.ReportRecord" useGeneratedKeys="true">
-    insert into tb_report_record
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="fileName != null">
-        file_name,
-      </if>
-      <if test="format != null">
-        format,
-      </if>
-      <if test="fileSize != null">
-        file_size,
-      </if>
-      <if test="userId != null">
-        user_id,
-      </if>
-        apply_time,
-      <if test="delFlag != null">
-        del_flag,
-      </if>
-      <if test="reportType != null">
-        report_type,
-      </if>
-      <if test="reportFile != null">
-        report_file,
-      </if>
-      <if test="specialId != null">
-        special_id,
-      </if>
-      <if test="reasons != null">
-        reasons,
-      </if>
-      <if test="reportUrl != null">
-        report_url,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="fileName != null">
-        #{fileName,jdbcType=VARCHAR},
-      </if>
-      <if test="format != null">
-        #{format,jdbcType=VARCHAR},
-      </if>
-      <if test="fileSize != null">
-        #{fileSize,jdbcType=VARCHAR},
-      </if>
-      <if test="userId != null">
-        #{userId,jdbcType=BIGINT},
-      </if>
-      sysdate(),
-      <if test="delFlag != null">
-        #{delFlag,jdbcType=INTEGER},
-      </if>
-      <if test="reportType != null">
-        #{reportType,jdbcType=INTEGER},
-      </if>
-      <if test="reportFile != null">
-        #{reportFile,jdbcType=VARCHAR},
-      </if>
-      <if test="specialId != null">
-        #{specialId,jdbcType=BIGINT},
-      </if>
-      <if test="reasons != null">
-        #{reasons,jdbcType=INTEGER},
-      </if>
-      <if test="reportUrl != null">
-        #{reportUrl,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.ReportRecord">
-    update tb_report_record
-    <set>
-      <if test="fileName != null">
-        file_name = #{fileName,jdbcType=VARCHAR},
-      </if>
-      <if test="format != null">
-        format = #{format,jdbcType=VARCHAR},
-      </if>
-      <if test="fileSize != null">
-        file_size = #{fileSize,jdbcType=VARCHAR},
-      </if>
-      <if test="userId != null">
-        user_id = #{userId,jdbcType=BIGINT},
-      </if>
-      <if test="applyTime != null">
-        apply_time = #{applyTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="delFlag != null">
-        del_flag = #{delFlag,jdbcType=INTEGER},
-      </if>
-      <if test="reportType != null">
-        report_type = #{reportType,jdbcType=INTEGER},
-      </if>
-      <if test="reportFile != null">
-        report_file = #{reportFile,jdbcType=VARCHAR},
-      </if>
-      <if test="pace != null">
-        pace = #{pace,jdbcType=INTEGER},
-      </if>
-      <if test="status != null">
-        status = #{status,jdbcType=INTEGER},
-      </if>
-    </set>
-    where report_id = #{reportId,jdbcType=BIGINT}
-  </update>
+    <insert id="insertSelective" keyColumn="report_id" keyProperty="reportId"
+            parameterType="cn.staitech.anno.domain.ReportRecord" useGeneratedKeys="true">
+        insert into tb_report_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fileName != null">
+                file_name,
+            </if>
+            <if test="format != null">
+                format,
+            </if>
+            <if test="fileSize != null">
+                file_size,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            apply_time,
+            <if test="delFlag != null">
+                del_flag,
+            </if>
+            <if test="reportType != null">
+                report_type,
+            </if>
+            <if test="reportFile != null">
+                report_file,
+            </if>
+            <if test="specialId != null">
+                special_id,
+            </if>
+            <if test="reasons != null">
+                reasons,
+            </if>
+            <if test="reportUrl != null">
+                report_url,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fileName != null">
+                #{fileName,jdbcType=VARCHAR},
+            </if>
+            <if test="format != null">
+                #{format,jdbcType=VARCHAR},
+            </if>
+            <if test="fileSize != null">
+                #{fileSize,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            sysdate(),
+            <if test="delFlag != null">
+                #{delFlag,jdbcType=INTEGER},
+            </if>
+            <if test="reportType != null">
+                #{reportType,jdbcType=INTEGER},
+            </if>
+            <if test="reportFile != null">
+                #{reportFile,jdbcType=VARCHAR},
+            </if>
+            <if test="specialId != null">
+                #{specialId,jdbcType=BIGINT},
+            </if>
+            <if test="reasons != null">
+                #{reasons,jdbcType=INTEGER},
+            </if>
+            <if test="reportUrl != null">
+                #{reportUrl,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.ReportRecord">
+        update tb_report_record
+        <set>
+            <if test="fileName != null">
+                file_name = #{fileName,jdbcType=VARCHAR},
+            </if>
+            <if test="format != null">
+                format = #{format,jdbcType=VARCHAR},
+            </if>
+            <if test="fileSize != null">
+                file_size = #{fileSize,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="applyTime != null">
+                apply_time = #{applyTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag,jdbcType=INTEGER},
+            </if>
+            <if test="reportType != null">
+                report_type = #{reportType,jdbcType=INTEGER},
+            </if>
+            <if test="reportFile != null">
+                report_file = #{reportFile,jdbcType=VARCHAR},
+            </if>
+            <if test="pace != null">
+                pace = #{pace,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+        </set>
+        where report_id = #{reportId,jdbcType=BIGINT}
+    </update>
 
-  <!--查询专题下的所有项目-->
-  <select id="selectProjectList" parameterType="cn.staitech.anno.domain.vo.ProjectAllVO" resultMap="ProjectResult">
+    <!--查询专题下的所有项目-->
+    <select id="selectProjectList" parameterType="cn.staitech.anno.domain.vo.ProjectAllVO" resultMap="ProjectResult">
         select project_id,project_name,special_id from tb_project
-    <where>
-      <if test="systemCode != null and systemCode != ''">
-        AND system_code=#{systemCode}
-      </if>
-      <if test="specialId != null and specialId != ''">
-        AND special_id=#{specialId}
-      </if>
-        and del_flag=0
-    </where>
-  </select>
+        <where>
+            <if test="systemCode != null and systemCode != ''">
+                AND system_code=#{systemCode}
+            </if>
+            <if test="specialId != null and specialId != ''">
+                AND special_id=#{specialId}
+            </if>
+            and del_flag=0
+        </where>
+    </select>
 
-  <select id="selectSlideNumber" parameterType="cn.staitech.anno.domain.vo.reportRecord.ReportRecordSingleVO"  resultMap="slideNumberResult">
-    select i.image_code,s.slide_id from tb_project as p left join tb_slide as s on p.project_id=s.project_id
+    <select id="selectSlideNumber" parameterType="cn.staitech.anno.domain.vo.reportRecord.ReportRecordSingleVO"
+            resultMap="slideNumberResult">
+        select i.image_code,s.slide_id from tb_project as p left join tb_slide as s on p.project_id=s.project_id
         left join tb_sub_image as i on s.image_id=i.image_id
-    <where>
-      <if test="systemCode != null and systemCode != ''">
-        AND p.system_code=#{systemCode}
-      </if>
-      <if test="viscusCode != null and viscusCode != ''">
-        AND p.viscus_code=#{viscusCode}
-      </if>
-      <if test="projectId != null and projectId != ''">
-        AND p.project_id=#{projectId}
-      </if>
-      <if test="groupId != null and groupId != ''">
-        AND s.group_id=#{groupId}
-      </if>
-      <if test="imageCode != null and imageCode != ''">
-        AND i.image_code=#{imageCode}
-      </if>
-      and p.del_flag=0
-      and s.is_delete=0
-    </where>
-  </select>
+        <where>
+            <if test="systemCode != null and systemCode != ''">
+                AND p.system_code=#{systemCode}
+            </if>
+            <if test="viscusCode != null and viscusCode != ''">
+                AND p.viscus_code=#{viscusCode}
+            </if>
+            <if test="projectId != null and projectId != ''">
+                AND p.project_id=#{projectId}
+            </if>
+            <if test="groupId != null and groupId != ''">
+                AND s.group_id=#{groupId}
+            </if>
+            <if test="imageCode != null and imageCode != ''">
+                AND i.image_code=#{imageCode}
+            </if>
+            and p.del_flag=0
+            and s.is_delete=0
+        </where>
+    </select>
 
-  <select id="selectReport" parameterType="java.lang.Long" resultMap="BaseResult">
-    select * from tb_report_record where report_id=#{reportId} and del_flag=0
-  </select>
+    <select id="selectReport" parameterType="java.lang.Long" resultMap="BaseResult">
+        select *
+        from tb_report_record
+        where report_id = #{reportId}
+          and del_flag = 0
+    </select>
 
-  <select id="selectImage" parameterType="java.lang.Long" resultType="cn.staitech.anno.domain.SubImage">
-    select * from tb_sub_image where special_id=#{specialId}
-  </select>
-
-
-
+    <select id="selectImage" parameterType="java.lang.Long" resultType="cn.staitech.anno.domain.SubImage">
+        select *
+        from tb_sub_image
+        where special_id = #{specialId}
+    </select>
 </mapper>

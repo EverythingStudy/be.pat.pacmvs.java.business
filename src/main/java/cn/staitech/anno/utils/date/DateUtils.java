@@ -11,14 +11,13 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 
-
 /**
  * 时间格式化
  */
 public class DateUtils {
 
+    public static final String DEFAULT_PATTERN = "yyyy-MM-dd HH:mm:ss";
     private static Logger logger = LogManager.getLogger(DateUtils.class);
-
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static SimpleDateFormat sdfYMD = new SimpleDateFormat("yyyy-MM-dd");
     private static SimpleDateFormat sdfLongTimeS = new SimpleDateFormat("yyyyMMddHHmmssSSS");
@@ -26,8 +25,6 @@ public class DateUtils {
     private static SimpleDateFormat sdfLongTimePlusMill = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSSS");
     private static SimpleDateFormat sdfLongU = new SimpleDateFormat("MMM dd,yyyy", Locale.ENGLISH);
     private static long DAY_IN_MILLISECOND = 0x5265c00L;
-
-    public static final String DEFAULT_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
     public DateUtils() {
     }
@@ -244,8 +241,9 @@ public class DateUtils {
         Calendar cal = Calendar.getInstance();
         cal.setTime(dt);
         int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
-        if (w < 0)
+        if (w < 0) {
             w = 0;
+        }
         return weekDays[w];
     }
 
@@ -621,13 +619,14 @@ public class DateUtils {
 
     /**
      * 获取开始时间到结束时间中的每一天
+     *
      * @param start 开始时间
-     * @param end 结束时间
+     * @param end   结束时间
      * @return 返回日期集合
      */
     public static List<Date> getDaysByStartEnd(String start, String end) throws ParseException {
         List<Date> list = new ArrayList<>();
-        Calendar tempStart =Calendar.getInstance();
+        Calendar tempStart = Calendar.getInstance();
         tempStart.setTime(sdfYMD.parse(start));
         tempStart.add(Calendar.DAY_OF_YEAR, 1);
 
@@ -642,13 +641,14 @@ public class DateUtils {
 
     /**
      * 获取开始时间到结束时间中的每一天字符串
+     *
      * @param start 开始时间
-     * @param end 结束时间
+     * @param end   结束时间
      * @return 返回日期字符串集合
      */
     public static List<String> getDaysStringByStartEnd(String start, String end) throws ParseException {
         List<String> list = new ArrayList<>();
-        Calendar tempStart =Calendar.getInstance();
+        Calendar tempStart = Calendar.getInstance();
         tempStart.setTime(sdfYMD.parse(start));
 
         Calendar tempEnd = Calendar.getInstance();
@@ -660,11 +660,11 @@ public class DateUtils {
         return list;
     }
 
-    public static Date addAndSubtractDaysByCalendar(Date dateTime/*待处理的日期*/,int n/*加减天数*/){
+    public static Date addAndSubtractDaysByCalendar(Date dateTime/*待处理的日期*/, int n/*加减天数*/) {
 
         //日期格式
-        com.ibm.icu.text.SimpleDateFormat df=new com.ibm.icu.text.SimpleDateFormat("yyyy-MM-dd");
-        com.ibm.icu.text.SimpleDateFormat dd=new com.ibm.icu.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        com.ibm.icu.text.SimpleDateFormat df = new com.ibm.icu.text.SimpleDateFormat("yyyy-MM-dd");
+        com.ibm.icu.text.SimpleDateFormat dd = new com.ibm.icu.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         java.util.Calendar calstart = java.util.Calendar.getInstance();
         calstart.setTime(dateTime);

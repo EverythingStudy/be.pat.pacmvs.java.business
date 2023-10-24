@@ -33,20 +33,22 @@ public interface ProjectMemberService {
 
     /**
      * 查询用户id（结果去重的）
-     * */
+     */
     List<ProjectMember> selectByPrimaryKey(ProjectMember projectMember);
 
 
     /**
      * 查询对应项目ID、用户ID是否项目代表总
+     *
      * @param projectId 项目ID
-     * @param userId 用户ID
+     * @param userId    用户ID
      * @return 符合条件的记录总数
      */
     int representationCount(Long projectId, Long userId);
 
     /**
      * 查询对应项目ID项目代表总
+     *
      * @param projectId 项目ID
      * @return 符合条件的记录总数
      */
@@ -55,20 +57,22 @@ public interface ProjectMemberService {
 
     /**
      * 获取当前登录用户在某项目的角色
+     *
      * @param projectId 项目ID
-     * @return  角色类型值
+     * @return 角色类型值
      */
     ProjectMember getLoginUserProjectRoleType(Long projectId);
 
 
     /**
      * 检查登录用户是否匹配对应角色
+     *
      * @param projectId 项目ID
      * @param roleType
      * @return
      */
-    boolean checkLonginUserRoleType(int userRoleType,int roleType);
-    
+    boolean checkLonginUserRoleType(int userRoleType, int roleType);
+
     /**
      * 根据用户和项目查询详情
      *

@@ -7,7 +7,6 @@ import cn.staitech.anno.domain.algorithmJson.out.SelectGeoJsonList;
 import cn.staitech.anno.service.AlgorithmJsonService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.R;
-import cn.staitech.system.api.RemoteLabelService;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -17,11 +16,9 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- *
  * @author gjt
  * @since 2023-10-17
  */
@@ -37,7 +34,7 @@ public class AlgorithmJsonController {
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "获取标注数据")
     @PostMapping("/getGeoJson")
-    public R<JSONObject> getGeoJson(@RequestBody SelectGeoJson selectGeoJson)throws Exception {
+    public R<JSONObject> getGeoJson(@RequestBody SelectGeoJson selectGeoJson) throws Exception {
         return R.ok(algorithmJsonService.getGeoJson(selectGeoJson));
     }
 
@@ -48,7 +45,7 @@ public class AlgorithmJsonController {
     public R<List<AlgorithmJson>> selectList(
             @RequestParam(value = "algorithmAssessmentId") @ApiParam(name = "algorithmAssessmentId", value = "算法考核id", required = true) Long algorithmAssessmentId) {
         QueryWrapper<AlgorithmJson> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("algorithm_assessment_id",algorithmAssessmentId).eq("selected_status","0").eq("del_flag","0").eq("json_type","1");
+        queryWrapper.eq("algorithm_assessment_id", algorithmAssessmentId).eq("selected_status", "0").eq("del_flag", "0").eq("json_type", "1");
         return R.ok(algorithmJsonService.list(queryWrapper));
     }
 
@@ -58,7 +55,7 @@ public class AlgorithmJsonController {
     public R<List<AlgorithmJson>> contrastJsonList(
             @RequestParam(value = "algorithmAssessmentId") @ApiParam(name = "algorithmAssessmentId", value = "算法考核id", required = true) Long algorithmAssessmentId) {
         QueryWrapper<AlgorithmJson> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("algorithm_assessment_id",algorithmAssessmentId).eq("del_flag","0");
+        queryWrapper.eq("algorithm_assessment_id", algorithmAssessmentId).eq("del_flag", "0");
         return R.ok(algorithmJsonService.list(queryWrapper));
     }
 
@@ -77,8 +74,6 @@ public class AlgorithmJsonController {
     public R<SelectGeoJsonList> selectUserAndLabelList(@RequestBody SelectGeoJson selectGeoJson) throws Exception {
         return R.ok(algorithmJsonService.selectUserAndLabelList(selectGeoJson));
     }
-
-
 
 
 }

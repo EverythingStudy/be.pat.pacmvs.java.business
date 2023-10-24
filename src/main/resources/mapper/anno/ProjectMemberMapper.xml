@@ -7,20 +7,23 @@
         <result column="project_id" jdbcType="BIGINT" property="projectId"/>
         <result column="role_id" jdbcType="BIGINT" property="roleId"/>
         <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
-        <result column="user_name" jdbcType="VARCHAR" property="userName"  />
-        <result column="nick_name" jdbcType="VARCHAR" property="nickName"  />
-        <result column="sex" jdbcType="INTEGER" property="sex"  />
-        <result column="phonenumber" jdbcType="VARCHAR" property="phonenumber"  />
-        <result column="role_id" jdbcType="BIGINT" property="roleId"  />
-        <result column="role_name" jdbcType="VARCHAR" property="roleName"  />
-        <result column="create_by" jdbcType="VARCHAR" property="createBy"  />
-        <result column="update_by" jdbcType="VARCHAR" property="updateBy"  />
-        <result column="create_time" jdbcType="VARCHAR" property="createTime"  />
-        <result column="update_time" jdbcType="VARCHAR" property="updateTime"  />
-        <result column="organization_id" jdbcType="BIGINT" property="organizationId"  />
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
+        <result column="sex" jdbcType="INTEGER" property="sex"/>
+        <result column="phonenumber" jdbcType="VARCHAR" property="phonenumber"/>
+        <result column="role_id" jdbcType="BIGINT" property="roleId"/>
+        <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="create_time" jdbcType="VARCHAR" property="createTime"/>
+        <result column="update_time" jdbcType="VARCHAR" property="updateTime"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
     </resultMap>
     <sql id="Base_Column_List">
-        pm.user_id, pm.project_id, u.role_id,pr.role_name,u.user_name,u.nick_name,u.sex,u.phonenumber,u.organization_id,pm.create_by,pm.update_by,pm.create_time,pm.update_time
+        pm
+        .
+        user_id
+        , pm.project_id, u.role_id,pr.role_name,u.user_name,u.nick_name,u.sex,u.phonenumber,u.organization_id,pm.create_by,pm.update_by,pm.create_time,pm.update_time
     </sql>
     <select id="selectByProjectId" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
@@ -30,38 +33,38 @@
         left join sys_role pr on u.role_id = pr.role_id
         where pm.project_id = #{ProjectId,jdbcType=BIGINT}
     </select>
-<!--
-    <select id="select" parameterType="cn.staitech.anno.domain.ProjectMember" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from tb_project_member pm
-        left join sys_user u on pm.user_id = u.user_id
-        left join sys_role pr on u.role_id = pr.role_id
-        <where>
-            <if test="projectId != null">
-                AND pm.project_id = #{projectId,jdbcType=BIGINT}
-            </if>
-            <if test="roleId != null">
-                AND u.role_id = #{roleId,jdbcType=BIGINT}
-            </if>
-            <if test="sex != null">
-                AND u.sex = #{sex,jdbcType=INTEGER}
-            </if>
-            <if test="userId != null">
-                AND pm.user_id = #{userId,jdbcType=BIGINT}
-            </if>
-            <if test="organizationId != null">
-                AND pm.organization_id = #{organizationId,jdbcType=BIGINT}
-            </if>
-            <if test="userName != null and userName != ''">
-                AND u.user_name like concat('%', #{userName}, '%')
-            </if>
-            <if test="nickName != null and nickName != ''">
-                AND u.nick_name like concat('%', #{nickName}, '%')
-            </if>
-        </where>
-    </select>
--->
+    <!--
+        <select id="select" parameterType="cn.staitech.anno.domain.ProjectMember" resultMap="BaseResultMap">
+            select
+            <include refid="Base_Column_List"/>
+            from tb_project_member pm
+            left join sys_user u on pm.user_id = u.user_id
+            left join sys_role pr on u.role_id = pr.role_id
+            <where>
+                <if test="projectId != null">
+                    AND pm.project_id = #{projectId,jdbcType=BIGINT}
+                </if>
+                <if test="roleId != null">
+                    AND u.role_id = #{roleId,jdbcType=BIGINT}
+                </if>
+                <if test="sex != null">
+                    AND u.sex = #{sex,jdbcType=INTEGER}
+                </if>
+                <if test="userId != null">
+                    AND pm.user_id = #{userId,jdbcType=BIGINT}
+                </if>
+                <if test="organizationId != null">
+                    AND pm.organization_id = #{organizationId,jdbcType=BIGINT}
+                </if>
+                <if test="userName != null and userName != ''">
+                    AND u.user_name like concat('%', #{userName}, '%')
+                </if>
+                <if test="nickName != null and nickName != ''">
+                    AND u.nick_name like concat('%', #{nickName}, '%')
+                </if>
+            </where>
+        </select>
+    -->
 
 
     <!-- 项目用户查询 -->
@@ -69,19 +72,19 @@
         <choose>
             <when test="roleId != null">
                 SELECT us.user_name,
-                       us.nick_name,
-                       us.user_id,
-                       us.role_id,
-                       us.sex,
-                       us.phonenumber,
-                       us.organization_id,
-                       r.role_name
+                us.nick_name,
+                us.user_id,
+                us.role_id,
+                us.sex,
+                us.phonenumber,
+                us.organization_id,
+                r.role_name
                 FROM sys_user_role u
-                         LEFT JOIN sys_role r ON r.role_id = u.role_id
-                         LEFT JOIN sys_user us ON us.user_id = u.user_id
+                LEFT JOIN sys_role r ON r.role_id = u.role_id
+                LEFT JOIN sys_user us ON us.user_id = u.user_id
                 WHERE u.user_id IN (SELECT user_id
-                                    FROM tb_project_member
-                                    WHERE project_id = #{projectId,jdbcType=BIGINT})
+                FROM tb_project_member
+                WHERE project_id = #{projectId,jdbcType=BIGINT})
                 <if test="roleId != null">
                     AND u.role_id = #{roleId,jdbcType=BIGINT}
                 </if>
@@ -154,14 +157,10 @@
     </select>
 
     <select id="selectUserBy" parameterType="cn.staitech.anno.domain.ProjectMember" resultMap="BaseResultMap">
-        select
-            *
+        select *
         from tb_project_member
-        where
-            project_id = #{projectId,jdbcType=BIGINT}
-            AND user_id = #{userId,jdbcType=BIGINT}
-
-
+        where project_id = #{projectId,jdbcType=BIGINT}
+          AND user_id = #{userId,jdbcType=BIGINT}
     </select>
     <select id="selectByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
@@ -200,7 +199,9 @@
             <if test="projectId != null">
                 project_id,
             </if>
-            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="createBy != null and createBy != ''">
+                create_by,
+            </if>
             create_time
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -210,7 +211,9 @@
             <if test="projectId != null">
                 #{projectId,jdbcType=BIGINT},
             </if>
-            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="createBy != null and createBy != ''">
+                #{createBy},
+            </if>
             sysdate()
         </trim>
     </insert>
@@ -223,22 +226,22 @@
             <if test="roleId != null">
                 role_id = #{roleId,jdbcType=BIGINT},
             </if>
-            update_by  = #{updateBy},
+            update_by = #{updateBy},
             update_time = sysdate()
         </set>
         where user_id = #{userId,jdbcType=BIGINT}
     </update>
     <update id="updateByPrimaryKey" parameterType="cn.staitech.anno.domain.ProjectMember">
         update tb_project_member
-        set project_id = #{projectId,jdbcType=BIGINT},
-            update_by  = #{updateBy},
+        set project_id  = #{projectId,jdbcType=BIGINT},
+            update_by   = #{updateBy},
             update_time = sysdate()
         where user_id = #{userId,jdbcType=BIGINT}
     </update>
 
-    <update id="update"  parameterType="cn.staitech.anno.domain.ProjectMember">
+    <update id="update" parameterType="cn.staitech.anno.domain.ProjectMember">
         update tb_project_member
-        set update_by  = #{updateBy,jdbcType=BIGINT},
+        set update_by   = #{updateBy,jdbcType=BIGINT},
             update_time = sysdate()
         where user_id = #{userId,jdbcType=BIGINT}
           and project_id = #{projectId,jdbcType=BIGINT}
@@ -250,7 +253,7 @@
         <where>
         </where>
     </select>
-    
+
     <select id="selectProject" parameterType="cn.staitech.anno.domain.ProjectMember" resultMap="BaseResultMap">
         select *
         from tb_project_member

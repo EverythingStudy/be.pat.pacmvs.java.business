@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class ProjectExt implements Serializable,Cloneable {
+public class ProjectExt implements Serializable, Cloneable {
 
     @ApiModelProperty(name = "项目ID")
     private Long projectId;

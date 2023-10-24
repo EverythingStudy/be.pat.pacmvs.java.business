@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
  * @desc 题库列表查询
  */
 @Data
-public class GetQuestionsIn  {
+public class GetQuestionsIn {
     @ApiModelProperty(value = "项目id")
     @NotNull(message = "{ProjectRemoveIn.projectId.isnull}")
     private String projectId;

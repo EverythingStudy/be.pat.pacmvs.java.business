@@ -42,24 +42,25 @@ public class OptController {
     @GetMapping("/page")
     public R<PageMaster<Opt>> page(@NotNull(message = "分页参数为空！") @RequestParam("pageNum") @ApiParam(name = "pageNum", value = "分页参数", required = true) Integer pageNum,
                                    @NotNull(message = "分页参数为空！") @RequestParam("pageSize") @ApiParam(name = "pageSize", value = "分页参数", required = true) Integer pageSize,
-                                   ProjectIN in) throws Exception{
+                                   ProjectIN in) throws Exception {
         Page page = new Page(pageNum, pageSize);
         optService.page(page);
         PageMaster<Opt> pageMaster = PageMaster.of(page.getRecords());
         pageMaster.setTotal(page.getTotal());
         return R.ok(pageMaster);
     }
+
     @RequiresPermissions("smartAnno:project:slice:operation")
     @ApiOperation(value = "列表查询")
     @GetMapping("/query")
-    public R<List<Opt>> query(@NotNull(message = "切片id！") @RequestParam("slideId") @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId) throws Exception{
+    public R<List<Opt>> query(@NotNull(message = "切片id！") @RequestParam("slideId") @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId) throws Exception {
         Opt opt = Opt.builder().slideId(slideId).build();
         return R.ok(optService.list(Wrappers.query(opt)));
     }
 
     @ApiOperation(value = "添加操作记录")
     @PostMapping("/add")
-    public R<Opt> query(Opt in) throws Exception{
+    public R<Opt> query(Opt in) throws Exception {
         Long userId = SecurityUtils.getUserId();
         in.setCreateBy(userId);
         in.setUpdateBy(userId);

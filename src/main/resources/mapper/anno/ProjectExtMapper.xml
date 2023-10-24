@@ -3,7 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.ProjectExtMapper">
-
     <resultMap type="cn.staitech.anno.domain.project.ProjectExt" id="ProjectMap">
         <result property="projectId" column="project_id"/>
         <result property="projectName" column="project_name"/>
@@ -67,10 +66,12 @@
         <if test="viscusCode != null and viscusCode != 0">
             AND p.viscus_code = #{viscusCode}
         </if>
-        <if test="beginTime != null "><!-- 开始时间检索 -->
+        <if test="beginTime != null ">
+            <!-- 开始时间检索 -->
             AND date_format(p.create_time,'%Y-%m-%d') &gt;= date_format(#{beginTime},'%Y-%m-%d')
         </if>
-        <if test="endTime != null "><!-- 结束时间检索 -->
+        <if test="endTime != null ">
+            <!-- 结束时间检索 -->
             AND date_format(p.create_time,'%Y-%m-%d') &lt;= date_format(#{endTime},'%Y-%m-%d')
         </if>
 
@@ -257,7 +258,6 @@
         from tb_slide
         where is_delete = 0
           and project_id = #{projectId}
-
     </select>
     <!--统计项目内切片未完成的数量-->
     <select id="countNotReady" resultType="java.lang.Integer">
@@ -266,8 +266,6 @@
         where is_delete = 0
           and ai_analyzed<![CDATA[ <> ]]>2
           and project_id = #{projectId}
-
-
     </select>
 
     <select id="selectViscusBySpecial" resultType="cn.staitech.anno.domain.project.out.ViscusQueryOut">
@@ -282,13 +280,14 @@
         group by sdd.dict_value, sdd.dict_label;
     </select>
     <select id="selectSpecial" resultType="cn.staitech.anno.domain.project.out.CreateStatusOut">
-        select autocreate_status createStatus,result_desc resultDesc
-        from  tb_special
-        where special_id=#{specialId}
+        select autocreate_status createStatus, result_desc resultDesc
+        from tb_special
+        where special_id = #{specialId}
     </select>
-    <update id="updateSpecial" >
+    <update id="updateSpecial">
         update tb_special
-        set autocreate_status=1,result_desc=#{resultDesc}
-        where special_id=#{specialId}
+        set autocreate_status=1,
+            result_desc=#{resultDesc}
+        where special_id = #{specialId}
     </update>
 </mapper>

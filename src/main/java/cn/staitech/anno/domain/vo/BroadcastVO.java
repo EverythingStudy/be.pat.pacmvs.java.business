@@ -18,5 +18,5 @@ public class BroadcastVO {
     private List<Features> dataList;
 
     private List<PointCount> point_count_list;
-    
+
 }

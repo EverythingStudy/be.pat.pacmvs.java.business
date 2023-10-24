@@ -6,7 +6,6 @@ import cn.staitech.common.core.domain.R;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +27,7 @@ public class SysUserController {
     @PostMapping("/selectUserIdList")
     public R<List<cn.staitech.anno.project.domain.SysUser>> selectUserIdList(@RequestBody SelectUserIdListIN req) {
         QueryWrapper<cn.staitech.anno.project.domain.SysUser> sysUserQueryWrapper = new QueryWrapper<>();
-        sysUserQueryWrapper.in("user_id",req.getUserIdList()).eq("del_flag","0");
+        sysUserQueryWrapper.in("user_id", req.getUserIdList()).eq("del_flag", "0");
         return R.ok(userMapper.selectList(sysUserQueryWrapper));
     }
 }

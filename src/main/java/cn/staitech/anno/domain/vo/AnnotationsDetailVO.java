@@ -8,23 +8,23 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class AnnotationsDetailVO extends Annotation {
-    
+
     @NotNull(message = "{SlideUpdateVO.slideId.isnull}")
     @ApiModelProperty(value = "切片id", required = true)
     private Long slideId;
-    
+
     /**
      * 位置 .
      */
     @ApiModelProperty(value = "标注地方位置图形数据", required = true)
     private String location;
-    
+
     /**
      * 标注类型 .
      */
     @ApiModelProperty(value = "标注类型")
     private String locationType;
-    
+
     /**
      * 标注类别id .
      */
@@ -34,13 +34,13 @@ public class AnnotationsDetailVO extends Annotation {
     /**
      * 项目id .
      */
-    @ApiModelProperty(hidden = true,value = "项目id")
+    @ApiModelProperty(hidden = true, value = "项目id")
     private Long projectId;
 
     /**
      * 数量 .
      */
-    @ApiModelProperty(hidden = true,value = "数量")
+    @ApiModelProperty(hidden = true, value = "数量")
     private int sum;
 
     /**
@@ -55,7 +55,7 @@ public class AnnotationsDetailVO extends Annotation {
     /**
      * 创建者id .
      */
-    @ApiModelProperty(hidden = true,value = "创建者id")
+    @ApiModelProperty(hidden = true, value = "创建者id")
     private Long createBy;
 
     /**
@@ -73,6 +73,6 @@ public class AnnotationsDetailVO extends Annotation {
     /**
      * ROI正方形标注边长512或1024;默认512.
      */
-    @ApiModelProperty(hidden = true,value = "ROI正方形标注边长512或1024，默认512")
-    private int distance = 512 ;
+    @ApiModelProperty(hidden = true, value = "ROI正方形标注边长512或1024，默认512")
+    private int distance = 512;
 }

@@ -127,13 +127,14 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
      */
     List<PathologicalIndicatorCategory> selectProjectCategory(Long projectId);
 
-   /**
-    * 根据indicatorId查询标注类别（不包含unLabel）
-    * */
+    /**
+     * 根据indicatorId查询标注类别（不包含unLabel）
+     */
     List<LabelListVO> selectByIndicator(LabelVO labelVO);
 
     /**
      * 查询所有指标（除标注区域外）
+     *
      * @param projectId
      * @return
      */
@@ -141,7 +142,7 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
 
     /**
      * 查询标签在标注中的使用数量
-     * */
+     */
     Integer selectLabelNum(Long categoryId);
 
     /**

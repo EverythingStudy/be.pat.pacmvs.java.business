@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 public class ReportRecordVO {
-    @ApiModelProperty(required = true,value = "专题id")
+    @ApiModelProperty(required = true, value = "专题id")
     private Long specialId;
 
-    @ApiModelProperty(required = true,value = "系统类型id")
+    @ApiModelProperty(required = true, value = "系统类型id")
     private long systemCode;
 
 }

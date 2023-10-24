@@ -138,17 +138,16 @@ public class Annotation {
      * 标注图的质心y
      */
     private String y;
-    
+
     /**
      * 标注类型
      */
     private Long annoType;
-    
+
     /**
      * 标注类别创建人
      */
     private Long createCategoryId;
-    
-    
-    
+
+
 }

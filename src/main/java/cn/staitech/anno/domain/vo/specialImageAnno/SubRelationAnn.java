@@ -9,11 +9,9 @@ public class SubRelationAnn {
     @ApiModelProperty(value = "", hidden = true)
     private Long imageId;
 
-    
+
     @ApiModelProperty(value = "标注对应annId")
     private Long specialAnnotationId;
-
-
 
 
 }

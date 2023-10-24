@@ -24,9 +24,9 @@ import java.io.Serializable;
  */
 @Data
 public class UpdateProjectVO implements Serializable {
+    private static final long serialVersionUID = 1L;
     @ApiModelProperty(required = true, value = "项目ID")
     private Long projectId;
-    private static final long serialVersionUID = 1L;
     @NotBlank(message = "{InsertProjectVO.projectName.isnull}")
     @ApiModelProperty(required = true, value = "项目名称")
     @Size(min = 0, max = 200, message = "{UpdateProjectVO.projectName.length}")
