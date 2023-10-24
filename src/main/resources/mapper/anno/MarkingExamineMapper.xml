@@ -129,39 +129,6 @@
     </select>
 
     <select id="selectListBy" parameterType="cn.staitech.anno.domain.MarkingExamine" resultMap="featuresResult">
-<<<<<<< src/main/resources/mapper/anno/MarkingExamineMapper.xml
-        SELECT geometry,
-               JSON_OBJECT(
-                       "marking_id",
-                       t.marking_examine_id,
-                       "area",
-                       t.area,
-                       "perimeter",
-                       t.perimeter,
-                       "description",
-                       t.description,
-                       "category_id",
-                       t.category_id,
-                       "create_by",
-                       t.create_by,
-                       "create_time",
-                       DATE_FORMAT(t.create_time, '%Y-%m-%d %H:%i:%s'),
-                       "location_type",
-                       t.location_type,
-                       "annotation_owner",
-                       t.create_by,
-                       "label_color",
-                       c.rgb,
-                       "label_code",
-                       c.number,
-                       "measure_full_name",
-                       c.category_name,
-                       "label_name",
-                       c.category_name
-                   ) AS properties
-        FROM tb_marking_examine AS t
-                 LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
-=======
         SELECT
             geometry,
             JSON_OBJECT(
@@ -195,7 +162,6 @@
         FROM
             tb_marking_examine AS t
                 LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
->>>>>>> src/main/resources/mapper/anno/MarkingExamineMapper.xml
         where t.question_project_id = #{questionProjectId}
           and t.create_by = #{createBy}
     </select>
