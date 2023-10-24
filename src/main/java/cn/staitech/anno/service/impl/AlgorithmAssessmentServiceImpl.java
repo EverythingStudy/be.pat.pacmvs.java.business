@@ -138,7 +138,8 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
                         org.json.JSONArray labelInfo = jsonObject.getJSONArray("label_info");
                         // 标签列表长度超出一个，抛出异常
                         if (labelInfo.length() > 1) {
-                            throw new Exception(MessageSource.M("JSON_MULTIPLE_LABElS"));
+//                            throw new Exception(MessageSource.M("JSON_MULTIPLE_LABElS"));
+                            continue;
                         }
                         if (image != null) {
                             // 获取标注名称
