@@ -132,21 +132,22 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
         List<AlgorithmJson> algorithmJsons = algorithmJsonMapper.selectList(algorithmJsonQueryWrapper);
         // 循环json
         JSONArray labelInfo = new JSONArray();
-        List<Long> userList = new ArrayList<>();
+        List<Long> userListBy = new ArrayList<>();
         for (AlgorithmJson algorithmJson : algorithmJsons) {
             // 获取json文件路径
             if (algorithmJson.getAlgorithmJsonUrl() != null) {
                 JSONObject jsonObject = getGeoJson(algorithmJson.getAlgorithmJsonUrl());
                 if (jsonObject.size() > 0) {
                     JSONArray featuresJson = jsonObject.getJSONArray("features");
-                    userList = featuresJson.stream().map(s -> ((JSONObject) s).getJSONObject("properties").getLong("annotation_owner")).collect(Collectors.toList());
+                    List<Long> userList = featuresJson.stream().map(s -> ((JSONObject) s).getJSONObject("properties").getLong("annotation_owner")).collect(Collectors.toList());
+                    userListBy.addAll(userList);
                     JSONArray labelNameJson = jsonObject.getJSONArray("label_info");
                     labelInfo.addAll(labelNameJson);
                 }
             }
         }
         // 对结果进行去重
-        List<Long> userLists = userList.stream().distinct().collect(Collectors.toList());
+        List<Long> userLists = userListBy.stream().distinct().collect(Collectors.toList());
         JSONArray labelInfoList = labelInfo.stream().distinct().collect(Collectors.toCollection(JSONArray::new));
         // 封装数据
         SelectGeoJsonList selectGeoJsonList = new SelectGeoJsonList();
