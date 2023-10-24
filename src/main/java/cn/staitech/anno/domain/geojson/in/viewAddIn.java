@@ -7,7 +7,7 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class viewAddIn {
+public class ViewAddIn {
 
     //    @NotNull(message = "切片不可为空")
     @NotNull(message = "{MarkingDelIn.slideId.notNull}")

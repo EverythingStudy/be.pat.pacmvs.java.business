@@ -1,7 +1,7 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.AssessmentResults;
-import cn.staitech.anno.domain.assessmentResults.AssessmentResultsQueryIN;
+import cn.staitech.anno.domain.assessmentResults.AssessmentResultsQueryIn;
 import cn.staitech.common.core.domain.PageResponse;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -15,6 +15,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface AssessmentResultsService extends IService<AssessmentResults> {
 
-    PageResponse<AssessmentResults> selectPageList(AssessmentResultsQueryIN in);
+    PageResponse<AssessmentResults> selectPageList(AssessmentResultsQueryIn in);
 
 }

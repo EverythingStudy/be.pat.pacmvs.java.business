@@ -1,4 +1,4 @@
-package cn.staitech.anno.domain.vo.slideVo;
+package cn.staitech.anno.domain.vo.slide;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -11,9 +11,9 @@ import java.util.List;
  * @Description:
  */
 @Data
-public class AddSlideIdsVO {
-    @ApiModelProperty(value = "图像ID", required = true)
-    private List<Long> imageIds;
+public class AddSlideVO {
+    @ApiModelProperty(value = "专题ID", required = true)
+    private List<Long> topicIds;
 
     @ApiModelProperty(value = "项目ID", required = true, hidden = true)
     private Long projectId;

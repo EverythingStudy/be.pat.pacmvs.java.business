@@ -2,7 +2,7 @@ package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.geojson.Features;
 import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
-import cn.staitech.anno.domain.geojson.in.viewAddIn;
+import cn.staitech.anno.domain.geojson.in.ViewAddIn;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,7 +22,7 @@ public interface ViewerService {
      * @param req 入参数据
      * @return geojsonUrl
      */
-    Features constructAddMarking(viewAddIn req);
+    Features constructAddMarking(ViewAddIn req);
 
     /**
      * 构建标注数据

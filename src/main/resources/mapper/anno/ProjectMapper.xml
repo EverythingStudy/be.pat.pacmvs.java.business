@@ -355,7 +355,7 @@
     </select>
 
 
-    <select id="selectUserMessage" parameterType="cn.staitech.anno.domain.vo.SlideCategoryProcessFlagVO"
+    <select id="selectUserMessage" parameterType="cn.staitech.anno.domain.vo.slide.SlideCategoryProcessFlagVO"
             resultMap="SlideAnnotationResult">
         select sum(sum) as sum from tb_slide_annotation_result where category_id =0
         <if test="slideId != null and slideId != ''">
@@ -374,7 +374,7 @@
     </select>
 
     <!--根据标注类别查询标注数量1-->
-    <select id="selectByCategoryId" parameterType="cn.staitech.anno.domain.vo.SlideCategoryProcessFlagVO"
+    <select id="selectByCategoryId" parameterType="cn.staitech.anno.domain.vo.slide.SlideCategoryProcessFlagVO"
             resultMap="SlideAnnotationResult">
         select sum(sum) as sum from tb_slide_annotation_result where 1=1
         <if test="slideId != null and slideId != ''">
@@ -438,7 +438,7 @@
         </if>
     </select>
 
-    <select id="selectCategorySum" parameterType="cn.staitech.anno.domain.vo.SlideCategoryProcessFlagVO"
+    <select id="selectCategorySum" parameterType="cn.staitech.anno.domain.vo.slide.SlideCategoryProcessFlagVO"
             resultType="java.lang.Integer">
         select sum(sum)
         from tb_slide_annotation_result
@@ -477,7 +477,7 @@
         where project_id = #{projectId}
     </update>
 
-    <select id="selectProjectDetails" parameterType="cn.staitech.anno.domain.vo.ProjectInforImageVO"
+    <select id="selectProjectDetails" parameterType="cn.staitech.anno.domain.vo.ProjectInForImageVO"
             resultMap="ProjectMessage">
         SELECT DISTINCT
         s.project_id,
@@ -503,7 +503,7 @@
         order by s.update_time desc
     </select>
 
-    <select id="selectCategoryTotal" parameterType="cn.staitech.anno.domain.vo.SlideCategoryProcessFlagVO"
+    <select id="selectCategoryTotal" parameterType="cn.staitech.anno.domain.vo.slide.SlideCategoryProcessFlagVO"
             resultType="java.lang.Integer">
         select sum(sum) from tb_slide_annotation_result
         <where>
@@ -552,7 +552,7 @@
     </select>
 
     <!--根据projectId 和 createBy查询slideId-->
-    <select id="selectSlideId" parameterType="cn.staitech.anno.domain.vo.ProjectInforImageVO" resultMap="annotationSum">
+    <select id="selectSlideId" parameterType="cn.staitech.anno.domain.vo.ProjectInForImageVO" resultMap="annotationSum">
         select distinct slide_id from tb_annotation
         <where>
             <if test="projectId != null and projectId != '' ">

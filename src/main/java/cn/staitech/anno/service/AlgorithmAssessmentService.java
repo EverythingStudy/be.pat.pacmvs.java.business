@@ -23,7 +23,7 @@ public interface AlgorithmAssessmentService extends IService<AlgorithmAssessment
 
     R removeAssessment(RemoveAssessmentIn req);
 
-    void export(AssessmentExportIN assessmentExportIn) throws Exception;
+    void export(AssessmentExportIn assessmentExportIn) throws Exception;
 
     boolean zipExport(String zipUrl, Long projectId, String fileUrl) throws Exception;
 

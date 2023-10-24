@@ -3,7 +3,7 @@ package cn.staitech.anno.controller;
 
 import cn.staitech.anno.domain.geojson.Features;
 import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
-import cn.staitech.anno.domain.geojson.in.viewAddIn;
+import cn.staitech.anno.domain.geojson.in.ViewAddIn;
 import cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo;
 import cn.staitech.anno.domain.vo.marking.out.SlideSelectBy;
 import cn.staitech.anno.service.MarkingService;
@@ -65,7 +65,7 @@ public class MarkingController {
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "添加标注")
     @PostMapping("/intelligentAnno/insert")
-    public R<Long> add(@Validated @RequestBody viewAddIn req) throws Exception {
+    public R<Long> add(@Validated @RequestBody ViewAddIn req) throws Exception {
         Long markingId = markingService.insert(req);
         return R.ok(markingId, MessageSource.M("OPERATE_SUCCEED"));
     }

@@ -8,7 +8,7 @@ import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.geojson.Properties;
 import cn.staitech.anno.domain.geojson.*;
 import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
-import cn.staitech.anno.domain.geojson.in.viewAddIn;
+import cn.staitech.anno.domain.geojson.in.ViewAddIn;
 import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.marking.PointCount;
 import cn.staitech.anno.domain.marking.SlideRes;
@@ -135,7 +135,7 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Long insert(viewAddIn req) throws Exception {
+    public Long insert(ViewAddIn req) throws Exception {
         cn.staitech.anno.project.domain.Slide slideBy = slideMapperV1.selectById(req.getSlide_id());
         if (slideBy == null) {
             throw new Exception(MessageSource.M("NO_SLIDE_DATA"));

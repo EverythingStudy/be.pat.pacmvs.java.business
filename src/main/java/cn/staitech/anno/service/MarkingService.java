@@ -2,7 +2,7 @@ package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.geojson.Features;
 import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
-import cn.staitech.anno.domain.geojson.in.viewAddIn;
+import cn.staitech.anno.domain.geojson.in.ViewAddIn;
 import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.marking.PointCount;
 import cn.staitech.anno.domain.marking.SlideRes;
@@ -63,7 +63,7 @@ public interface MarkingService {
      * @param req 标注数据
      * @return true || false
      */
-    Long insert(viewAddIn req) throws Exception;
+    Long insert(ViewAddIn req) throws Exception;
 
     /**
      * 删除标注

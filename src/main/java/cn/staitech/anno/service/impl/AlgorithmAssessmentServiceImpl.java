@@ -80,11 +80,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
     @Resource
     private AssessmentResultsMapper assessmentResultsMapper;
-
-    @Resource
-    private SlideMapper slideMapper;
-
-    @Resource
+        @Resource
     private ProjectMapperV1 projectMapperV1;
 
     @Autowired
@@ -291,7 +287,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
     }
 
     @Override
-    public void export(AssessmentExportIN assessmentExportIn) throws Exception {
+    public void export(AssessmentExportIn assessmentExportIn) throws Exception {
         if (assessmentExportIn.getAlgorithmentList().size() < 1) {
             throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }

@@ -5,8 +5,11 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * @author wangf
+ */
 @Data
-public class AssessmentExportIN {
+public class AssessmentExportIn {
     @ApiModelProperty(value = "项目id")
     private Long projectId;
 

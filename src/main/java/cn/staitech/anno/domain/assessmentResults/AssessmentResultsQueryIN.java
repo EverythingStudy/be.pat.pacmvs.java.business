@@ -7,7 +7,7 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class AssessmentResultsQueryIN {
+public class AssessmentResultsQueryIn {
 
     @ApiModelProperty(value = "json文件名称")
     private String jsonName;

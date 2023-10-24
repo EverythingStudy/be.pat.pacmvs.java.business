@@ -1,11 +1,11 @@
 package cn.staitech.anno.domain.vo.specialImageAnno.in;
 
-import cn.staitech.anno.domain.geojson.in.viewAddIn;
+import cn.staitech.anno.domain.geojson.in.ViewAddIn;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class SpecialAnnAddIn extends viewAddIn {
+public class SpecialAnnAddIn extends ViewAddIn {
     //slide_id 相当于我的special_image_id
     //marking_id相当于我的slice_annotation_id
     @ApiModelProperty(name = "special_id", value = "专题ID")

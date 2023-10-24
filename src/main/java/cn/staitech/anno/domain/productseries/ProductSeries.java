@@ -31,7 +31,6 @@ public class ProductSeries {
      * 品系名称
      */
     @ApiModelProperty(value = "品系名称", required = true)
-//    @NotNull(message = "品系名称不可为空 !")
     @NotNull(message = "{ProductSeries.name.isnull}")
     private String name;
 
@@ -39,7 +38,6 @@ public class ProductSeries {
      * 品系名称en
      */
     @ApiModelProperty(value = "品系名称en", required = true)
-//    @NotNull(message = "品系名称不可为空 !")
     @NotNull(message = "{ProductSeries.name.isnull}")
     private String nameEn;
 }

@@ -274,17 +274,17 @@ public class DateUtils {
     /**
      * 根据秒数返回时分秒
      *
-     * @param _second 秒数
+     * @param second 秒数
      * @return String
      * @throws Exception
      */
-    public static String getTimeBySecond(String _second) throws Exception {
+    public static String getTimeBySecond(String second) throws Exception {
         String returnTime = "";
         long longHour = 0;
         long longMinu = 0;
         long longSec = 0;
         try {
-            longSec = Long.parseLong(_second);
+            longSec = Long.parseLong(second);
             if (longSec == 0) {
                 returnTime = "0时0分0秒";
                 return returnTime;

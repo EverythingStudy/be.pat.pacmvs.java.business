@@ -13,6 +13,4 @@ public class SelectGeoJson {
 
     @ApiModelProperty(value = "json文件集合")
     private List<Long> algorithmJsonIdList;
-
-
 }

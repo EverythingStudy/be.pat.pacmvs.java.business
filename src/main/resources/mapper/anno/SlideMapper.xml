@@ -318,7 +318,7 @@
           and project_id = #{projectId}
     </select>
 
-    <select id="selectByStatus" parameterType="cn.staitech.anno.domain.vo.SlideSelectVO" resultMap="projectSlideResult">
+    <select id="selectByStatus" parameterType="cn.staitech.anno.domain.vo.slide.SlideSelectVO" resultMap="projectSlideResult">
         SELECT s.slide_id,
         s.human_annotation_total,
         i.image_name,
@@ -684,8 +684,8 @@
     </select>
 
     <!--分页查询切片列表信息-->
-    <select id="pageImageCsvListVOList" parameterType="cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO"
-            resultType="cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO">
+    <select id="pageImageCsvListVOList" parameterType="cn.staitech.anno.domain.vo.imagecsv.ImageCsvGetVO"
+            resultType="cn.staitech.anno.domain.vo.imagecsv.ImageCsvListVO">
         select s.slide_id,
         s.review_round_id,
         s.diagnosis,
@@ -774,8 +774,8 @@
     </select>
 
 
-    <select id="pageImageCsvListVOList1" parameterType="cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO"
-            resultType="cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO">
+    <select id="pageImageCsvListVOList1" parameterType="cn.staitech.anno.domain.vo.imagecsv.ImageCsvGetVO"
+            resultType="cn.staitech.anno.domain.vo.imagecsv.ImageCsvListVO">
         select s.slide_id,
         s.review_round_id,
         s.diagnosis,

@@ -2,7 +2,7 @@ package cn.staitech.anno.controller;
 
 
 import cn.staitech.anno.domain.AssessmentResults;
-import cn.staitech.anno.domain.assessmentResults.AssessmentResultsQueryIN;
+import cn.staitech.anno.domain.assessmentResults.AssessmentResultsQueryIn;
 import cn.staitech.anno.service.AssessmentResultsService;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
@@ -34,7 +34,7 @@ public class AssessmentResultsController {
 
     @ApiOperation(value = "考核结果-分页查询")
     @PostMapping("/pageList")
-    public R<PageResponse<AssessmentResults>> page(@Validated @RequestBody AssessmentResultsQueryIN in) {
+    public R<PageResponse<AssessmentResults>> page(@Validated @RequestBody AssessmentResultsQueryIn in) {
         return R.ok(assessmentResultsService.selectPageList(in));
     }
 

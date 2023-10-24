@@ -8,7 +8,7 @@ import cn.staitech.anno.domain.document.GeometryDoc;
 import cn.staitech.anno.domain.geojson.Features;
 import cn.staitech.anno.domain.geojson.Properties;
 import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
-import cn.staitech.anno.domain.geojson.in.viewAddIn;
+import cn.staitech.anno.domain.geojson.in.ViewAddIn;
 import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.marking.SlideRes;
 import cn.staitech.anno.mapper.MarkingMapper;
@@ -81,7 +81,7 @@ public class ViewerServiceImpl implements ViewerService {
      * @return geojsonUrl
      */
     @Override
-    public Features constructAddMarking(viewAddIn req) {
+    public Features constructAddMarking(ViewAddIn req) {
         Features marking = new Features();
         Properties properties = new Properties();
         String id = CustomizationIdUtils.getSdId();
