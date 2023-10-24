@@ -529,7 +529,8 @@ public class MarkingServiceImpl implements MarkingService {
                     marking.setProjectId(Long.valueOf(slideBy.getProjectId()));
                     marking.setImageId(Long.valueOf(slideBy.getImageId()));
                     marking.setImageUrl(image.getImageUrl());
-                    marking.setCreateBy(SecurityUtils.getUserId());
+                    // 使用json文件中标注作者
+                    marking.setCreateBy(Long.valueOf(properties1.getAnnotation_owner()));
                     marking.setGeometry(GeometryUtil.updateYAxle(geometry));
                     marking.setSlideId(slideRes.getSlideId());
                     marking.setCreateTime(new Date());
