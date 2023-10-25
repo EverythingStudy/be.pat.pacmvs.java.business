@@ -1,6 +1,5 @@
-package cn.staitech.anno.domain.vo.imageCsv;
+package cn.staitech.anno.domain.vo.imagecsv;
 
-import cn.staitech.anno.domain.Pager;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
@@ -18,7 +17,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Data
-public class ImageCsvGetPagerVO extends Pager implements Serializable {
+public class ImageCsvGetVO implements Serializable {
 
     /**
      * 项目ID

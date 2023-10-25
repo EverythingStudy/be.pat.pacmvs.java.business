@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.Map;
 
 @Data
-public class ProjectInforImageVO {
+public class ProjectInForImageVO {
     /**
      * 切片ID
      */

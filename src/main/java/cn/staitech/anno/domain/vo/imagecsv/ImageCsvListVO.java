@@ -1,4 +1,4 @@
-package cn.staitech.anno.domain.vo.imageCsv;
+package cn.staitech.anno.domain.vo.imagecsv;
 
 import cn.staitech.anno.domain.ImageCsv;
 
