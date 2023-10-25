@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class SelectUserIdListIN {
+public class SelectUserIdListIn {
 
     @ApiModelProperty(value = "用户列表")
     private List<Long> userIdList;

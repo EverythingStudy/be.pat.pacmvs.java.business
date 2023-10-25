@@ -6,7 +6,7 @@ import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.ProjectMember;
 import cn.staitech.anno.domain.RecentlyVisited;
 import cn.staitech.anno.domain.file.Chunk;
-import cn.staitech.anno.domain.po.ProjectPo;
+import cn.staitech.anno.domain.project.ProjectPo;
 import cn.staitech.anno.domain.project.in.OperateProjectIn;
 import cn.staitech.anno.domain.project.in.ProjectIdsVO;
 import cn.staitech.anno.domain.project.in.ProjectListQueryIn;
@@ -243,24 +243,7 @@ public class ProjectController extends BaseController {
         return projectExtService.getSpecialGroup(specialId);
 
     }
-
-    @ApiOperation(value = "一键创建项目")
-    @Log(title = "项目配置-一键创建", menu = "专题管理", subMenu = "专题创建", businessType = BusinessType.INSERT)
-    @GetMapping("/autoCreateProject")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "specialId", value = "专题id:必填", dataTypeClass = Long.class, paramType = "query", example = "1")})
-    public R autoCreateProject(@RequestParam("specialId") Long specialId) {
-        try {
-            return projectExtService.autoCreateProject(specialId);
-
-        } catch (Exception e) {
-            log.error("一键创建异常" + e);
-            projectExtService.changeSpecial(specialId);
-            return R.fail(MessageSource.M("PROJECT_BATCH_INSERT"));
-        }
-    }
-
-    @ApiOperation(value = "是否已经点击自动创建")
+        @ApiOperation(value = "是否已经点击自动创建")
     @GetMapping("/getCreateInfo")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "specialId", value = "专题id:必填", dataTypeClass = Long.class, paramType = "query", example = "1")})

@@ -9,12 +9,10 @@ import javax.validation.constraints.NotNull;
 @Data
 public class ViewAddIn {
 
-    //    @NotNull(message = "切片不可为空")
     @NotNull(message = "{MarkingDelIn.slideId.notNull}")
     @ApiModelProperty(value = "切片id")
     private Long slide_id;
 
-    //    @NotNull(message = "标注绘制者不可为空")
     @NotNull(message = "{viewAddIn.createBy.notNull}")
     @ApiModelProperty(value = "标注作者(绘制者)")
     private Long create_by;
@@ -69,6 +67,4 @@ public class ViewAddIn {
 
     @ApiModelProperty(value = "中心")
     private String center_point;
-
-
 }

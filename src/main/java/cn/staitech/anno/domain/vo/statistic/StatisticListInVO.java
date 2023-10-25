@@ -8,6 +8,9 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 
+/**
+ * @author wangf
+ */
 @Data
 public class StatisticListInVO {
     @NotNull(message = "{AnnotationStatisticListPageInVO.statisticDimension.isnull}")

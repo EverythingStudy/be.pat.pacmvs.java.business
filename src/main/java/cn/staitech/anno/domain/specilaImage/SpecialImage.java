@@ -71,13 +71,6 @@ public class SpecialImage {
     private Long editBy;
 
     /**
-     * 编辑开始时间
-     */
-//	@ApiModelProperty(value = "编辑开始时间")
-//	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-//	private Date editTime;
-
-    /**
      * 切片批次号 默认为第一批次
      */
     @ApiModelProperty(value = "切片批次号 默认为第一批次")
@@ -124,17 +117,12 @@ public class SpecialImage {
     @ApiModelProperty(value = "更新人token")
     private String updateByToken;
 
-
-//	@ApiModelProperty(value = "geojson文件url地址")
-//	private String geojsonUrl;
-
     /**
      * 更新时间
      */
     @ApiModelProperty(value = "更新时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
-
 
     @ApiModelProperty(required = true, value = "topicId专题")
     private Long topicId;

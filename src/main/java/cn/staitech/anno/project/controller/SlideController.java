@@ -40,7 +40,6 @@ public class SlideController {
     @Resource
     private OptService optService;
 
-    //@RequiresPermissions("smartAnno:project:slice")
     @RequiresPermissions(value = {"smartAnno:project:slice", "smartAnnoInfo:slice"}, logical = Logical.OR)
     @ApiOperation(value = "智能标注-切片分页查询")
     @PostMapping("/page")

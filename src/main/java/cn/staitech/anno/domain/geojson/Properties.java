@@ -3,6 +3,9 @@ package cn.staitech.anno.domain.geojson;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * @author wangf
+ */
 @Data
 public class Properties {
 

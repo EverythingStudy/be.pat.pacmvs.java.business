@@ -268,17 +268,6 @@
           and project_id = #{projectId}
     </select>
 
-    <select id="selectViscusBySpecial" resultType="cn.staitech.anno.domain.project.out.ViscusQueryOut">
-        select sdd.dict_value viscusCode, sdd.dict_label viscusName
-        from tb_sub_image si
-                 left join sys_dict_data sdd
-                           on si.viscera_type = sdd.dict_value
-        where si.special_id = #{specialId}
-          and si.audit_status = 1
-          and sdd.status = 0
-          and sdd.dict_type = 'sys_viscera_organization'
-        group by sdd.dict_value, sdd.dict_label;
-    </select>
     <select id="selectSpecial" resultType="cn.staitech.anno.domain.project.out.CreateStatusOut">
         select autocreate_status createStatus, result_desc resultDesc
         from tb_special

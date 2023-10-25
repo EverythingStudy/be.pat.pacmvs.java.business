@@ -1,9 +1,8 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.po.ProjectPo;
 import cn.staitech.anno.domain.project.ProjectExt;
+import cn.staitech.anno.domain.project.ProjectPo;
 import cn.staitech.anno.domain.project.out.CreateStatusOut;
-import cn.staitech.anno.domain.project.out.ViscusQueryOut;
 import cn.staitech.anno.domain.project.out.data.NavigationBarData;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
@@ -89,12 +88,6 @@ public interface ProjectExtMapper extends BaseMapper<ProjectPo> {
      * @return 项目内切片还没有分析完成的数量
      */
     int countNotReady(Long projectId);
-
-    /**
-     * @param specialId
-     * @return 状体内脏器类型
-     */
-    List<ViscusQueryOut> selectViscusBySpecial(Long specialId);
 
     /**
      * 查询状体

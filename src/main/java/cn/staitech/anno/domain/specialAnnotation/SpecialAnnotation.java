@@ -119,9 +119,6 @@ public class SpecialAnnotation {
     @ApiModelProperty(name = "geometry", value = "新标注数据")
     private String geometry;
 
-
     @ApiModelProperty(name = "OldAnnotationId", value = "OldAnnotationId")
     private Long OldAnnotationId;
-
-
 }
