@@ -60,9 +60,22 @@
         </dependency>
 
         <!-- Staitech Common DataSource -->
-        <dependency>
+        <!--<dependency>
             <groupId>cn.staitech</groupId>
             <artifactId>staitech-common-datasource</artifactId>
+        </dependency>-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>${druid.version}</version>
+        </dependency>
+
+
+
+        <!-- SpringBoot Seata -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
         </dependency>
 
         <!-- Staitech Common DataScope -->
@@ -283,13 +296,23 @@
             <version>2.8.6</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>
+            <version>5.1.1</version>
+        </dependency>
 
+        <!--<dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
+            <version>4.0.1</version>
+        </dependency>-->
         <!-- csv文件解析 -->
-        <!--        <dependency>
-                    <groupId>net.sourceforge.javacsv</groupId>
-                    <artifactId>javacsv</artifactId>
-                    <version>2.0</version>
-                </dependency>-->
+<!--        <dependency>
+            <groupId>net.sourceforge.javacsv</groupId>
+            <artifactId>javacsv</artifactId>
+            <version>2.0</version>
+        </dependency>-->
     </dependencies>
 
 
@@ -410,21 +433,6 @@
                 <nacosAddress>http://192.168.52.114:8848</nacosAddress>
                 <nacosGroup>DEFAULT_GROUP</nacosGroup>
                 <serverAddr>192.168.52.114:8848</serverAddr>
-            </properties>
-        </profile>
-
-        <profile>
-            <!--184预生产环境-->
-            <id>preprodsaas</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <activatedProperties>preprodsaas</activatedProperties>
-                <nacosNamespace>b9d9d54e-4660-4a29-837f-019909d49028</nacosNamespace>
-                <nacosAddress>http://192.168.52.184:8848</nacosAddress>
-                <nacosGroup>DEFAULT_GROUP</nacosGroup>
-                <serverAddr>192.168.52.184:8848</serverAddr>
             </properties>
         </profile>
     </profiles>
