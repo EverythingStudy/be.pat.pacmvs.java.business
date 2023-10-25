@@ -207,8 +207,8 @@
         where special_image_id = #{specialImageId,jdbcType=BIGINT}
     </update>
 
-    <select id="selectWaitSpecialImage" parameterType="cn.staitech.anno.domain.vo.specialImage.SpecialImageSelectVO"
-            resultType="cn.staitech.anno.domain.vo.specialImage.WaitSpecialImageVO">
+    <select id="selectWaitSpecialImage" parameterType="cn.staitech.anno.domain.vo.specialimage.SpecialImageSelectVO"
+            resultType="cn.staitech.anno.domain.vo.specialimage.WaitSpecialImageVO">
         SELECT
         p.image_id,
         p.thumb_url,
@@ -281,7 +281,7 @@
     </select>
 
 
-    <select id="getImageBySpecialId" parameterType="cn.staitech.anno.domain.vo.specialImage.SpecialImageSelectVO"
+    <select id="getImageBySpecialId" parameterType="cn.staitech.anno.domain.vo.specialimage.SpecialImageSelectVO"
             resultType="cn.staitech.anno.domain.Image">
         SELECT
         t1.topic_id
@@ -300,8 +300,8 @@
     </select>
 
 
-    <select id="selectSpecialImageList" parameterType="cn.staitech.anno.domain.vo.specialImage.SpecialImageSelectVO"
-            resultType="cn.staitech.anno.domain.vo.specialImage.SpecialImageVO">
+    <select id="selectSpecialImageList" parameterType="cn.staitech.anno.domain.vo.specialimage.SpecialImageSelectVO"
+            resultType="cn.staitech.anno.domain.vo.specialimage.SpecialImageVO">
         SELECT
         t1.special_image_id,
         t1.image_id,
@@ -369,8 +369,8 @@
 
 
     <select id="selectSpecialSliceVoList"
-            parameterType="cn.staitech.anno.domain.vo.specialSliceImage.SpecialSliceSelectVO"
-            resultType="cn.staitech.anno.domain.vo.specialSliceImage.SpecialSliceVo">
+            parameterType="cn.staitech.anno.domain.vo.specialsliceimage.SpecialSliceSelectVO"
+            resultType="cn.staitech.anno.domain.vo.specialsliceimage.SpecialSliceVo">
         SELECT
         t1.special_image_id,
         t1.special_id,

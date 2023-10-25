@@ -10,19 +10,18 @@ public class ProjectDelVO {
 
     @ApiModelProperty(required = true, value = "项目id")
     private Long projectId;
-
-
+    
     /**
      * 通过项目id查询对应的图像列表
      */
     @ApiModelProperty(value = "", hidden = true)
-    private int pageNum;
+    private Integer pageNum;
 
     @ApiModelProperty(value = "", hidden = true)
-    private int pageSize;
+    private Integer pageSize;
 
     @ApiModelProperty(value = "", hidden = true)
-    private boolean flag;
+    private Boolean flag;
 
     @ApiModelProperty(value = "", hidden = true)
     private List<ProjectListOutVO> result;

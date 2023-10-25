@@ -62,10 +62,10 @@ import static cn.staitech.anno.constant.CommonConstant.*;
 @Service
 public class MarkingServiceImpl implements MarkingService {
 
-    private static ExecutorService executor = ExecutorBuilder.create()//
-            .setCorePoolSize(1)//
-            .setMaxPoolSize(1)//
-            .setKeepAliveTime(0)//
+    private static ExecutorService executor = ExecutorBuilder.create()
+            .setCorePoolSize(1)
+            .setMaxPoolSize(1)
+            .setKeepAliveTime(0)
             .build();
     @Resource
     private SlideMapperV1 slideMapperV1;
@@ -402,18 +402,18 @@ public class MarkingServiceImpl implements MarkingService {
     public boolean zipExport(String zipUrl, Long projectId) throws Exception {
         StringBuilder sb;
         File file1 = new File(zipUrl);
-        Map<String, String> ddlList = new HashMap<>();
+        Map<String, String> ddlList = new HashMap<>(16);
         try {
             // 查询切片列表
             List<SlideRes> slideResList = slideMapper.selectImageList(projectId);
-            //zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
-            //必须指明读取的各式，不然会存在问题
+            // zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
+            // 必须指明读取的各式，不然会存在问题
             ZipFile zipFile = new ZipFile(file1, Charset.forName("gbk"));
-            //按流的方式读取文件，输入到管道中
+            // 按流的方式读取文件，输入到管道中
             InputStream in = new BufferedInputStream(Files.newInputStream(file1.toPath()));
-            //字节流转换为压缩文件输入流，通常用来读取压缩文件
+            // 字节流转换为压缩文件输入流，通常用来读取压缩文件
             ZipInputStream zp = new ZipInputStream(in);
-            //定义文件条目
+            // 定义文件条目
             ZipEntry ze;
             Enumeration<? extends ZipEntry> zipEnum = zipFile.entries();
             // 循环压缩包中解压内容
@@ -460,7 +460,7 @@ public class MarkingServiceImpl implements MarkingService {
     @Transactional(rollbackFor = Exception.class)
     public void writeMarking(List<SlideRes> slideResList, String imageName, org.json.JSONObject jsonObject, String geoImageId) throws Exception {
 
-        Map<String, Long> categoryMap = new HashMap<>();
+        Map<String, Long> categoryMap = new HashMap<>(16);
         for (SlideRes slideRes : slideResList) {
             // 获取数据库文件名称
             String slideImageName = slideRes.getImageName();
@@ -741,7 +741,7 @@ public class MarkingServiceImpl implements MarkingService {
                             }
                             Slide slideBy = slideMapperV1.selectById(slideId);
                             Image image = imageMapper.selectById(slideBy);
-                            Map<String, String> map = new HashMap<>();
+                            Map<String, String> map = new HashMap<>(16);
                             map.put(CommonConstant.PATH, fileUrl);
                             map.put(CommonConstant.IMAGE_URL, image.getImageUrl());
                             jsonObject.put(String.valueOf(slideId), map);

@@ -174,7 +174,7 @@ public class ReviewRoundController {
                 List<ReviewRound> rs = reviewContentGroup.get(contentId);
                 if (rs != null && !rs.isEmpty()) {
                     ReviewRound temp = rs.get(0);
-                    Map<String, Object> node = new HashMap<>();
+                    Map<String, Object> node = new HashMap<>(16);
                     node.put("key", contentId);
                     node.put("label", temp.getReviewContent());
                     //处理轮次信息
@@ -203,11 +203,10 @@ public class ReviewRoundController {
 
     //处理轮次信息
     private void processRound(List<ReviewRound> reviewRoundList, Map<String, Object> node) {
-        Map<String, List<ReviewRound>> map = new HashMap<>();
+        Map<String, List<ReviewRound>> map = new HashMap<>(16);
         for (ReviewRound reviewRound : reviewRoundList) {
             String contentId = reviewRound.getContentId();
             Long roundId = reviewRound.getRoundId();
-            //Long id = reviewRound.getReviewRoundId();
             String k = contentId + "_" + roundId + "_";
             List<ReviewRound> rounds = map.get(k);
             if (rounds == null) {
@@ -218,9 +217,8 @@ public class ReviewRoundController {
         }
         List<Map<String, Object>> list = new ArrayList<>();
         for (String key : map.keySet()) {
-            Map<String, Object> roundNode = new HashMap<>();
+            Map<String, Object> roundNode = new HashMap<>(16);
             String[] strings = key.split("_");
-            //roundNode.put("key",strings[1]);
             roundNode.put("key", key);
             roundNode.put("label", roundMap.get(Long.parseLong(strings[1])));
             //处理下级专题
@@ -232,11 +230,10 @@ public class ReviewRoundController {
 
     //处理专题信息
     private void processTopic(List<ReviewRound> reviewTopicList, Map<String, Object> node) {
-        Map<String, List<ReviewRound>> map = new HashMap<>();
+        Map<String, List<ReviewRound>> map = new HashMap<>(16);
         for (ReviewRound reviewRound : reviewTopicList) {
             String contentId = reviewRound.getContentId();
             Long roundId = reviewRound.getRoundId();
-            //Long id = reviewRound.getReviewRoundId();
             Long topicId = reviewRound.getTopicId();
             String k = contentId + "_" + roundId + "_" + topicId;
             List<ReviewRound> rounds = map.get(k);
@@ -248,9 +245,8 @@ public class ReviewRoundController {
         }
         List<Map<String, Object>> list = new ArrayList<>();
         for (String key : map.keySet()) {
-            Map<String, Object> topicNode = new HashMap<>();
+            Map<String, Object> topicNode = new HashMap<>(16);
             String[] strings = key.split("_");
-            //topicNode.put("key",strings[2]);
             topicNode.put("key", key);
             topicNode.put("label", topicMap.get(Long.parseLong(strings[2])));
             processGroup(map.get(key), topicNode);
@@ -263,7 +259,7 @@ public class ReviewRoundController {
     private void processGroup(List<ReviewRound> reviewGroupList, Map<String, Object> node) {
         List<Map<String, Object>> list = new ArrayList<>();
         for (ReviewRound reviewRound : reviewGroupList) {
-            Map<String, Object> groupNode = new HashMap<>();
+            Map<String, Object> groupNode = new HashMap<>(16);
             groupNode.put("key", String.valueOf(reviewRound.getReviewRoundId()));
             groupNode.put("label", groupMap.get(reviewRound.getGroupId()));
             list.add(groupNode);

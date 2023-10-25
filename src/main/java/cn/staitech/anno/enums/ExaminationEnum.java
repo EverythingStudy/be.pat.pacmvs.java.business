@@ -8,7 +8,9 @@ import org.apache.commons.lang3.StringUtils;
  * @author YL
  */
 public enum ExaminationEnum {
-    //    (0提交复核(未复核) 1开始复核(复核中) 2复核通过(已复核) 3复核不通过 4交付)
+    /**
+     * 提交复核(未复核) 1开始复核(复核中) 2复核通过(已复核) 3复核不通过 4交付)
+     */
     STATUS_INFO_0(0, "未复核"),
     STATUS_INFO_1(1, "复核中"),
     STATUS_INFO_2(2, "已复核"),

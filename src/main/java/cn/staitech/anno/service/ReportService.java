@@ -1,6 +1,6 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.vo.reportRecord.ReportRecordAddVO;
+import cn.staitech.anno.domain.vo.reportrecord.ReportRecordAddVO;
 
 /**
  * 报告服务

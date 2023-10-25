@@ -361,7 +361,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
      */
     @Override
     public R queryProjectWithGroupByUserId(Long userId) {
-        Map<Long, ProjectWithGroupsVo> resultProjectMap = new HashMap<>();
+        Map<Long, ProjectWithGroupsVo> resultProjectMap = new HashMap<>(16);
         //查询专题
         Map<String, Object> querySpecialParams = ImmutableMap.of("delFlag", "0", "userId", userId);
         Object o = querySpecialParams.get("delFlag");

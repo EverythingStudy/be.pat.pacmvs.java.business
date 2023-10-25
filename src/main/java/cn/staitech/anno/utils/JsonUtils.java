@@ -17,6 +17,8 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static cn.staitech.anno.constant.CommonConstant.FILE_SUFFIX_JSON;
+
 /**
  * JSON生成工具类
  *
@@ -169,7 +171,7 @@ public class JsonUtils {
         // 标记文件生成是否成功
         boolean flag = true;
         // 拼接文件完整路径
-        String fullPath = filePath + File.separator + fileName + ".json";
+        String fullPath = filePath + File.separator + fileName + FILE_SUFFIX_JSON;
 
         // 生成json格式文件
         try {

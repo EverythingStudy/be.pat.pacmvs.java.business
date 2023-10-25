@@ -35,6 +35,8 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static cn.staitech.anno.constant.CommonConstant.FILE_SUFFIX_JSON;
+
 /**
  * <p>
  * 服务实现类
@@ -331,17 +333,15 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         geoJson.setAttribute(attribute);
         geoJson.setLabel_info(categoryList);
         String jsonString = JSON.toJSONString(geoJson, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue);
-        // 写入文件
 
+        // 写入文件
         String fileUrl = null;
         try {
-            fileUrl = fileService.createExamineScoreFiles(slideId, ".json", examineScoreBy.getQuestionProjectId(), examineScoreBy.getCreateBy());
+            fileUrl = fileService.createExamineScoreFiles(slideId, FILE_SUFFIX_JSON, examineScoreBy.getQuestionProjectId(), examineScoreBy.getCreateBy());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         exportJson(fileUrl, jsonString);
-//            return R.ok(fileUrl);
-//        });
         return fileUrl;
     }
 

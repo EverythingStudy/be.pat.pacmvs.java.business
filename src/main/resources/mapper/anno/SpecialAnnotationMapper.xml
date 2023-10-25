@@ -522,7 +522,7 @@
 
 
     <select id="selectSpecialPropertiesList" parameterType="cn.staitech.anno.domain.special.SpecialAnnotation"
-            resultType="cn.staitech.anno.domain.vo.specialImageAnno.in.SpecialAnnoProperties">
+            resultType="cn.staitech.anno.domain.vo.specialimageanno.in.SpecialAnnoProperties">
         SELECT
         t1.slice_annotation_id,
         t1.annotation_id,

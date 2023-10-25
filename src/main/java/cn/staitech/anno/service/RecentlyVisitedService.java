@@ -1,7 +1,7 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.RecentlyVisited;
-import cn.staitech.anno.domain.vo.RecentlyVisitedVO.RecentlyVisitedSelectVO;
+import cn.staitech.anno.domain.vo.recentlyvisited.RecentlyVisitedSelectVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;

@@ -61,11 +61,11 @@ public class ProjectInForImageVO {
 
     @NotNull(message = "{ProjectInforImageVO.pageNum.isnull}")
     @ApiModelProperty(value = "第几页", required = true)
-    private int pageNum;
+    private Integer pageNum;
 
     @NotNull(message = "{ProjectInforImageVO.pageSize.isnull}")
     @ApiModelProperty(value = "每页记录数", required = true)
-    private int pageSize;
+    private Integer pageSize;
 
     @ApiModelProperty(value = "", hidden = true)
     private Long createBy;

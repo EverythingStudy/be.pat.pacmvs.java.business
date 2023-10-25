@@ -10,31 +10,47 @@ import java.util.List;
 public class Column {
     int totalRow;
     int totalCol;
-    // excel第几行
+    /**
+     * excel第几行
+     */
     int row;
-    // excel第几列
+    /**
+     * excel第几列
+     */
     int col;
-    // excel 跨多少行
+    /**
+     * excel 跨多少行
+     */
     int rLen;
-    // excel跨多少列
+    /**
+     * excel跨多少列
+     */
     int cLen;
-    // 单元格内容
+    /**
+     * 单元格内容
+     */
     private String content;
-    // 字段名称，用户导出表格时反射调用
+    /**
+     * 字段名称，用户导出表格时反射调用
+     */
     private String fieldName;
-    // 这个单元格的集合
+    /**
+     * 这个单元格的集合
+     */
     private List<Column> listTpamscolumn = new ArrayList<Column>();
-    // 是否有子节点
+    /**
+     * 是否有子节点
+     */
     private boolean HasChilren;
-    // 树的级别 从0开始
+    /**
+     * 树的级别 从0开始
+     */
     private int tree_step;
     private String id;
     private String pid;
 
     public Column() {
     }
-
-    ;
 
     public Column(String content, String fieldName) {
         this.content = content;

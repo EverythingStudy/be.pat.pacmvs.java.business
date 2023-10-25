@@ -914,8 +914,9 @@ public class ExcelTool<T> {
                 continue;
             }
             List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-            for (int j = 0; j < colCount; j++) {//第j列://+1是因为最后一列是空 也算进去
-                Map<String, String> map = new HashMap<>();
+            //第j列: +1是因为最后一列是空 也算进去
+            for (int j = 0; j < colCount; j++) {
+                Map<String, String> map = new HashMap<>(16);
                 Cell cell = row.getCell(j);
                 Cell cellTitle = rowTitle.getCell(j);
                 String cellValue;

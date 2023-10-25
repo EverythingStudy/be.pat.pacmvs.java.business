@@ -2,7 +2,7 @@ package cn.staitech.anno.utils;
 
 import cn.staitech.anno.domain.special.Special;
 import cn.staitech.anno.domain.vo.diagnosis.StatisticsHeadVo;
-import cn.staitech.anno.domain.vo.reportRecord.ReportRecordAddVO;
+import cn.staitech.anno.domain.vo.reportrecord.ReportRecordAddVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;

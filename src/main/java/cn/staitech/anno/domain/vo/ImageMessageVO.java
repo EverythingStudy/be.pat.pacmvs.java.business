@@ -146,7 +146,7 @@ public class ImageMessageVO extends BaseEntity {
      * 人工标注数
      */
     @ApiModelProperty(value = "", hidden = true)
-    private int humanAnnotationTotal;
+    private Integer humanAnnotationTotal;
 
     /**
      * 图片更新状态(0文件上传未合并,1合并且生成缩略图（可显示）,2文件以经传输（不可见）)

@@ -124,7 +124,8 @@ public class DateUtils {
         try {
             Date begin = sdf.parse(startTime);
             Date end = sdf.parse(endTime);
-            long between = (end.getTime() - begin.getTime()) / 1000;//除以1000是为了转换成秒
+            // 除以1000是为了转换成秒
+            long between = (end.getTime() - begin.getTime()) / 1000;
             return between / 60;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -143,7 +144,8 @@ public class DateUtils {
         try {
             Date begin = sdf.parse(startTime);
             Date end = sdf.parse(endTime);
-            long between = (end.getTime() - begin.getTime()) / 1000;//除以1000是为了转换成秒
+            // 除以1000是为了转换成秒
+            long between = (end.getTime() - begin.getTime()) / 1000;
             return between;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -161,11 +163,13 @@ public class DateUtils {
      */
     public static long stringToLong(String strTime, String formatType)
             throws ParseException {
-        Date date = stringToDate(strTime, formatType); // String类型转成date类型
+        // String类型转成date类型
+        Date date = stringToDate(strTime, formatType);
         if (date == null) {
             return 0;
         } else {
-            long currentTime = date.getTime(); // date类型转成long类型
+            // date类型转成long类型
+            long currentTime = date.getTime();
             return currentTime;
         }
     }
@@ -289,10 +293,14 @@ public class DateUtils {
                 returnTime = "0时0分0秒";
                 return returnTime;
             }
-            longHour = longSec / 3600; // 取得小时数
-            longSec = longSec % 3600; // 取得余下的秒
-            longMinu = longSec / 60; // 取得分数
-            longSec = longSec % 60; // 取得余下的秒
+            // 取得小时数
+            longHour = longSec / 3600;
+            // 取得余下的秒
+            longSec = longSec % 3600;
+            // 取得分数
+            longMinu = longSec / 60;
+            // 取得余下的秒
+            longSec = longSec % 60;
             returnTime = longHour + "时" + longMinu + "分" + longSec + "秒";
             return returnTime;
         } catch (Exception e) {
@@ -318,12 +326,18 @@ public class DateUtils {
                 returnTime = "0时0分0秒0毫秒";
                 return returnTime;
             }
-            longHour = longMs / 3600000; // 取得小时数
-            longMs = longMs % 3600000; // 取得余下的毫秒
-            longMinu = longMs / 60000; // 取得分数
-            longMs = longMs % 60000; // 取得余下的毫秒
-            longSec = longMs / 1000; // 取得余下的秒
-            longMs = longMs % 1000; // 取得余下的毫秒
+            // 取得小时数
+            longHour = longMs / 3600000;
+            // 取得余下的毫秒
+            longMs = longMs % 3600000;
+            // 取得分数
+            longMinu = longMs / 60000;
+            // 取得余下的毫秒
+            longMs = longMs % 60000;
+            // 取得余下的秒
+            longSec = longMs / 1000;
+            // 取得余下的毫秒
+            longMs = longMs % 1000;
             returnTime = longHour + "时" + longMinu + "分" + longSec + "秒"
                     + longMs + "毫秒";
             return returnTime;

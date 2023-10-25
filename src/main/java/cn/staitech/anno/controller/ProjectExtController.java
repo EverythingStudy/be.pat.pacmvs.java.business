@@ -597,7 +597,7 @@ public class ProjectExtController extends BaseController {
         ProjectDelVO projectDelVO = ProjectUtils.paging(projectInforImage);
         int pageSize = projectDelVO.getPageSize();
         int pageNum = projectDelVO.getPageNum();
-        boolean flag1 = projectDelVO.isFlag();
+        Boolean flag1 = projectDelVO.getFlag();
         List<ProjectListOutVO> result = projectDelVO.getResult();
         for (int i = pageNum * pageSize; i < pageNum * pageSize + pageSize; i++) {
             if (i < projectListOutVOList.size()) {

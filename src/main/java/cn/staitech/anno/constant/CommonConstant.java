@@ -50,8 +50,7 @@ public class CommonConstant {
     public static final Integer INDICATOR_STATUS = 2;
     public static final Integer NOT_ATTRIBUTE_STATUS = 3;
     public static final Long NOT_AUDIT = 0L;
-    public static final Long AUTO_CREATE_PROJECT_SUC = 1L;
-    public static final Long AUTO_CREATE_PROJECT_FAL = 2L;
+
     /**
      * Annotation
      */

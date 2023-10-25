@@ -96,7 +96,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
     public boolean zipExport(String zipUrl, Long projectId, String fileUrl) throws Exception {
         StringBuilder sb;
         File file1 = new File(zipUrl);
-        Map<String, String> ddlList = new HashMap<>();
+        Map<String, String> ddlList = new HashMap<>(16);
         try {
             //zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
             //必须指明读取的各式，不然会存在问题
