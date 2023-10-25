@@ -37,7 +37,7 @@ public class ProjectInForImageVO {
     /**
      * 项目id
      */
-    @NotNull(message = "项目id不能为空")
+    @NotNull(message = "{ProjectRemoveIn.projectId.isnull}")
     @ApiModelProperty(value = "项目id", required = true)
     private Long projectId;
 
