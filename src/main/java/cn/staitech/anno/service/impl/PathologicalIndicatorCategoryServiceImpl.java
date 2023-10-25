@@ -1,6 +1,7 @@
 package cn.staitech.anno.service.impl;
 
 
+import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.structure.Structure;
 import cn.staitech.anno.domain.vo.LabelListVO;
@@ -8,6 +9,7 @@ import cn.staitech.anno.domain.vo.LabelVO;
 import cn.staitech.anno.domain.vo.indicator.IndicatorAndOrganizationIdVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListOutVO;
+import cn.staitech.anno.mapper.IndicatorMapper;
 import cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper;
 import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.mapper.ProjectMapperV1;
@@ -30,12 +32,12 @@ import java.util.List;
 public class PathologicalIndicatorCategoryServiceImpl implements PathologicalIndicatorCategoryService {
     @Resource
     private PathologicalIndicatorCategoryMapper pathologicalIndicatorCategoryMapper;
-
     @Resource
     private ProjectMapperV1 projectMapperv1;
-
     @Resource
     private StructureService structureService;
+    @Resource
+    private IndicatorMapper indicatorMapper;
 
     /**
      * 添加标签
@@ -205,7 +207,12 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
                         listVO.setStructureName("无关联");
                     }
                 } else {
-                    listVO.setStructureName(structure.getName());
+                    if (LanguageUtils.isEn()) {
+                        listVO.setStructureName(structure.getNameEn());
+                    } else {
+                        listVO.setStructureName(structure.getName());
+                    }
+
                 }
             } catch (Exception e) {
                 log.error("{};;;{};;;;{}", listVO.getSpeciesId(), listVO.getOrganId(), listVO.getStructureId());
@@ -221,7 +228,17 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
         if (project != null) {
             QueryWrapper<PathologicalIndicatorCategory> pathologicalIndicatorCategoryQueryWrapper = new QueryWrapper<>();
             pathologicalIndicatorCategoryQueryWrapper.eq("indicator_id", project.getIndicatorId()).orderByDesc("order_number");
-            return pathologicalIndicatorCategoryMapper.selectList(pathologicalIndicatorCategoryQueryWrapper);
+            List<PathologicalIndicatorCategory> list = pathologicalIndicatorCategoryMapper.selectList(pathologicalIndicatorCategoryQueryWrapper);
+            for (PathologicalIndicatorCategory category : list) {
+
+                Indicator indicator = indicatorMapper.selectIndicatorById(category.getIndicatorId());
+                if (indicator != null && LanguageUtils.isEn()) {
+                    category.setCategoryName(indicator.getIndicatorNameEn());
+                } else {
+                    category.setCategoryName(indicator.getIndicatorName());
+                }
+            }
+            return list;
         }
         return new ArrayList<>();
     }

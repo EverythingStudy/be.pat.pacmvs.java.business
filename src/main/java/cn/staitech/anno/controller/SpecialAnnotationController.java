@@ -5,8 +5,8 @@
 //import cn.staitech.anno.domain.SubImage;
 //import cn.staitech.anno.domain.document.GeometryDoc;
 //import cn.staitech.anno.domain.marking.PointCount;
-//import cn.staitech.anno.domain.specialAnnotation.SpecialAnnotation;
-//import cn.staitech.anno.domain.specilaImage.SpecialImage;
+//import cn.staitech.anno.domain.special.SpecialAnnotation;
+//import cn.staitech.anno.domain.special.SpecialImage;
 //import cn.staitech.anno.domain.vo.specialImage.SpecialImageInfoVO;
 //import cn.staitech.anno.domain.vo.specialImage.SpecialImageSelectVO;
 //import cn.staitech.anno.domain.vo.specialImage.SpecialImageVO;

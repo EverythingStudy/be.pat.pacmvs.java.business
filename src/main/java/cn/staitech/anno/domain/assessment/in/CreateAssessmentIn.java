@@ -13,7 +13,6 @@ import java.util.List;
  */
 @Data
 public class CreateAssessmentIn {
-    //    @NotEmpty(message = "切片信息不能为空!")
     @ApiModelProperty(value = "且片编号")
     @NotEmpty(message = "{CreateAssessmentIn.slideList.notEmpty}")
     private List<CreateAssessmentDataIn> slideList;

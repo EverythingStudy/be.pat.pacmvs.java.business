@@ -15,7 +15,6 @@ import javax.validation.constraints.Size;
 public class OperateProjectIn {
 
     @ApiModelProperty(value = "专题id")
-//    @NotNull(message = "专题不能为空")
     @NotNull(message = "{OperateProjectIn.specialId.isnull}")
     private Long specialId;
 
@@ -31,7 +30,6 @@ public class OperateProjectIn {
     private Long systemCode;
 
     @ApiModelProperty(value = "脏器类型id")
-//    @NotNull(message = "脏器类型id不能为空")
     @NotNull(message = "{OperateProjectIn.viscusCode.isnull}")
     private Long viscusCode;
 }

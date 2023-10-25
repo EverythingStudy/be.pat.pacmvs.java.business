@@ -1,6 +1,6 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.AlgorithmAssessment;
+import cn.staitech.anno.domain.algorithm.AlgorithmAssessment;
 import cn.staitech.anno.domain.assessment.in.*;
 import cn.staitech.anno.domain.assessment.out.GetAssessmentListOut;
 import cn.staitech.common.core.domain.PageResponse;
@@ -23,7 +23,7 @@ public interface AlgorithmAssessmentService extends IService<AlgorithmAssessment
 
     R removeAssessment(RemoveAssessmentIn req);
 
-    void export(AssessmentExportIN assessmentExportIn) throws Exception;
+    void export(AssessmentExportIn assessmentExportIn) throws Exception;
 
     boolean zipExport(String zipUrl, Long projectId, String fileUrl) throws Exception;
 

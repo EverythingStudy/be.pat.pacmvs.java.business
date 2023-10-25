@@ -3,18 +3,18 @@ package cn.staitech.anno.service.impl;
 import cn.hutool.core.date.DateUtil;
 import cn.staitech.anno.domain.SubImage;
 import cn.staitech.anno.domain.marking.PointCount;
-import cn.staitech.anno.domain.specialAnnotation.SpecialAnnotation;
-import cn.staitech.anno.domain.specilaImage.SpecialImage;
+import cn.staitech.anno.domain.special.SpecialAnnotation;
+import cn.staitech.anno.domain.special.SpecialImage;
 import cn.staitech.anno.domain.vo.image.SubImageVo;
-import cn.staitech.anno.domain.vo.specialImage.SpecialImageSelectVO;
-import cn.staitech.anno.domain.vo.specialImage.WaitSpecialImageVO;
-import cn.staitech.anno.domain.vo.specialImageAnno.AnnoFeatures;
-import cn.staitech.anno.domain.vo.specialImageAnno.AnnoMarkGeojson;
-import cn.staitech.anno.domain.vo.specialImageAnno.AnnoProperties;
-import cn.staitech.anno.domain.vo.specialImageAnno.SpecialAnnoAddVO;
-import cn.staitech.anno.domain.vo.specialImageAnno.in.*;
-import cn.staitech.anno.domain.vo.specialSliceImage.AuditSpecialImageVO;
-import cn.staitech.anno.domain.vo.specialSliceImage.OrganDict;
+import cn.staitech.anno.domain.vo.specialimage.SpecialImageSelectVO;
+import cn.staitech.anno.domain.vo.specialimage.WaitSpecialImageVO;
+import cn.staitech.anno.domain.vo.specialimageanno.AnnoFeatures;
+import cn.staitech.anno.domain.vo.specialimageanno.AnnoMarkGeojson;
+import cn.staitech.anno.domain.vo.specialimageanno.AnnoProperties;
+import cn.staitech.anno.domain.vo.specialimageanno.SpecialAnnoAddVO;
+import cn.staitech.anno.domain.vo.specialimageanno.in.*;
+import cn.staitech.anno.domain.vo.specialsliceimage.AuditSpecialImageVO;
+import cn.staitech.anno.domain.vo.specialsliceimage.OrganDict;
 import cn.staitech.anno.enums.SysDictTypeEnum;
 import cn.staitech.anno.exception.AnnoException;
 import cn.staitech.anno.mapper.SpecialAnnotationMapper;
@@ -354,7 +354,7 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
         for (SpecialAnnoAddVO annotation : annoList) {
             SpecialAnnoAddVO saav = new SpecialAnnoAddVO();
             //操作类型 1:save  2:update 3:delte
-            int operateType = annotation.getOperateType();
+            Long operateType = annotation.getOperateType();
             if (operateType == 2 || operateType == 3) {
                 if (annotation.getAnnotationId() == null) {
                     flag = -1;

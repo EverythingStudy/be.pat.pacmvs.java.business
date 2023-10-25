@@ -42,7 +42,7 @@ public class ProjectUtils {
      * @param projectInforImageVO
      * @return
      */
-    public static ProjectDelVO paging(ProjectInforImageVO projectInforImageVO) {
+    public static ProjectDelVO paging(ProjectInForImageVO projectInforImageVO) {
         int pageNum = projectInforImageVO.getPageNum();
         int pageSize = projectInforImageVO.getPageSize();
         boolean flag = false;

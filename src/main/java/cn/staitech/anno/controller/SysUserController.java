@@ -1,6 +1,6 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.domain.user.in.SelectUserIdListIN;
+import cn.staitech.anno.domain.user.in.SelectUserIdListIn;
 import cn.staitech.anno.project.mapper.SysUserMapperV1;
 import cn.staitech.common.core.domain.R;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -25,7 +25,7 @@ public class SysUserController {
 
     @ApiOperation(value = "根据用户id查询用户列表")
     @PostMapping("/selectUserIdList")
-    public R<List<cn.staitech.anno.project.domain.SysUser>> selectUserIdList(@RequestBody SelectUserIdListIN req) {
+    public R<List<cn.staitech.anno.project.domain.SysUser>> selectUserIdList(@RequestBody SelectUserIdListIn req) {
         QueryWrapper<cn.staitech.anno.project.domain.SysUser> sysUserQueryWrapper = new QueryWrapper<>();
         sysUserQueryWrapper.in("user_id", req.getUserIdList()).eq("del_flag", "0");
         return R.ok(userMapper.selectList(sysUserQueryWrapper));

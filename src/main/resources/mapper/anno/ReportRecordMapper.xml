@@ -14,7 +14,7 @@
         <result column="special_id" jdbcType="BIGINT" property="specialId"/>
     </resultMap>
 
-    <resultMap id="BaseResult" type="cn.staitech.anno.domain.vo.reportRecord.ReportRecordAllVO">
+    <resultMap id="BaseResult" type="cn.staitech.anno.domain.vo.reportrecord.ReportRecordAllVO">
         <id column="report_id" jdbcType="BIGINT" property="reportId"/>
         <result column="file_name" jdbcType="VARCHAR" property="fileName"/>
         <result column="format" jdbcType="VARCHAR" property="format"/>
@@ -38,7 +38,7 @@
         <result column="project_name" jdbcType="VARCHAR" property="projectName"/>
     </resultMap>
 
-    <resultMap id="slideNumberResult" type="cn.staitech.anno.domain.vo.reportRecord.ReportRecordExportVO">
+    <resultMap id="slideNumberResult" type="cn.staitech.anno.domain.vo.reportrecord.ReportRecordExportVO">
         <id column="slide_id" jdbcType="BIGINT" property="slideId"/>
         <result column="image_code" jdbcType="VARCHAR" property="imageCode"/>
     </resultMap>
@@ -51,7 +51,7 @@
         , r.file_name, r.format, r.file_size, r.user_id, r.apply_time, r.del_flag, r.report_type,
     r.report_file,r.special_id, u.user_name,r.pace,r.status,r.reasons
     </sql>
-    <select id="selectByPrimaryKey" parameterType="cn.staitech.anno.domain.vo.reportRecord.ReportRecordViewVO"
+    <select id="selectByPrimaryKey" parameterType="cn.staitech.anno.domain.vo.reportrecord.ReportRecordViewVO"
             resultMap="BaseResult">
         select
         <include refid="Base_Column_List"/>
@@ -193,7 +193,7 @@
         </where>
     </select>
 
-    <select id="selectSlideNumber" parameterType="cn.staitech.anno.domain.vo.reportRecord.ReportRecordSingleVO"
+    <select id="selectSlideNumber" parameterType="cn.staitech.anno.domain.vo.reportrecord.ReportRecordSingleVO"
             resultMap="slideNumberResult">
         select i.image_code,s.slide_id from tb_project as p left join tb_slide as s on p.project_id=s.project_id
         left join tb_sub_image as i on s.image_id=i.image_id

@@ -12,7 +12,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 @EnableScheduling
 public class SpecialDelFlagTask {
 
-    // 每分钟执行一次
+    /**
+     * 每分钟执行一次
+     *
+     */
     @Scheduled(cron = "0 0/1 * * * ?")
     public void handlerCouponsUserStatusTimeOutToExpired() {
 

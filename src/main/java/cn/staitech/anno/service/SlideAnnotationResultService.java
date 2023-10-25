@@ -2,7 +2,7 @@ package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.SlideAnnotationResult;
 import cn.staitech.anno.domain.vo.ProjectAnnotationVO;
-import cn.staitech.anno.domain.vo.ProjectInforImageVO;
+import cn.staitech.anno.domain.vo.ProjectInForImageVO;
 
 import java.util.List;
 
@@ -68,5 +68,5 @@ public interface SlideAnnotationResultService {
      * @param projectInforImageVO
      * @return
      */
-    List<SlideAnnotationResult> selectUpdateBy(ProjectInforImageVO projectInforImageVO);
+    List<SlideAnnotationResult> selectUpdateBy(ProjectInForImageVO projectInforImageVO);
 }

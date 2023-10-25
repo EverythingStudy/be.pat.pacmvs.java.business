@@ -60,7 +60,7 @@
         group by image_id
     </select>
 
-    <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.specilaImage.SpecialImage">
+    <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.special.SpecialImage">
         update tb_sub_image
         <set>
             <if test="auditStatus != null">

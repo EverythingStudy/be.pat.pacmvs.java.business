@@ -6,6 +6,7 @@ import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.SlideAnnotationResult;
 import cn.staitech.anno.domain.image.in.ImageAllVO;
 import cn.staitech.anno.domain.vo.*;
+import cn.staitech.anno.domain.vo.slide.SlideCategoryProcessFlagVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticProjectListOutVO;
 import cn.staitech.anno.mapper.ProjectMapper;
 import cn.staitech.anno.service.ProjectService;
@@ -265,7 +266,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      * 根据projectId，状态，imageName 查询
      */
     @Override
-    public List<ProjectListVO> selectProjectDetails(ProjectInforImageVO projectInforImageVO) {
+    public List<ProjectListVO> selectProjectDetails(ProjectInForImageVO projectInforImageVO) {
         return projectMapper.selectProjectDetails(projectInforImageVO);
     }
 
@@ -315,7 +316,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      * 根据projectId 和 createBy查询slideId
      */
     @Override
-    public List<AnnotationsAddVO> selectSlideId(ProjectInforImageVO projectInforImageVO) {
+    public List<AnnotationsAddVO> selectSlideId(ProjectInForImageVO projectInforImageVO) {
         return projectMapper.selectSlideId(projectInforImageVO);
     }
 

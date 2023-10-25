@@ -7,9 +7,5 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class ChatGroup {
-
     public static final ConcurrentMap<Integer, Channel> CHANNEL_MAP = new ConcurrentHashMap<>();
-    public static ConcurrentMap<String, ChannelGroup> chatGroupMap = new ConcurrentHashMap<>();
-
-
 }

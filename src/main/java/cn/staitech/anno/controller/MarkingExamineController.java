@@ -1,8 +1,8 @@
 package cn.staitech.anno.controller;
 
 import cn.staitech.anno.domain.geojson.Features;
-import cn.staitech.anno.domain.markingExamine.MarkingExamineInsertVO;
-import cn.staitech.anno.domain.markingExamine.MarkingExamineUpdateVO;
+import cn.staitech.anno.domain.marking.MarkingExamineInsertVO;
+import cn.staitech.anno.domain.marking.MarkingExamineUpdateVO;
 import cn.staitech.anno.service.MarkingExamineService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.R;

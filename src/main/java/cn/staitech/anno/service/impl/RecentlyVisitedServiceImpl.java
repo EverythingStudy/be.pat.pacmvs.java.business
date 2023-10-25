@@ -3,7 +3,7 @@ package cn.staitech.anno.service.impl;
 import cn.staitech.anno.domain.ImageVisited;
 import cn.staitech.anno.domain.ProjectMember;
 import cn.staitech.anno.domain.RecentlyVisited;
-import cn.staitech.anno.domain.vo.RecentlyVisitedVO.RecentlyVisitedSelectVO;
+import cn.staitech.anno.domain.vo.recentlyvisited.RecentlyVisitedSelectVO;
 import cn.staitech.anno.mapper.ProjectMemberMapper;
 import cn.staitech.anno.mapper.RecentlyVisitedMapper;
 import cn.staitech.anno.service.RecentlyVisitedService;

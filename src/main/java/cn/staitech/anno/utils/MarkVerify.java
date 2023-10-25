@@ -14,7 +14,9 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class MarkVerify {
 
-    // 初始化熟知文本WKT阅读器，可以将WKT文本转换为Geometry对象
+    /**
+     * 初始化熟知文本WKT阅读器，可以将WKT文本转换为Geometry对象
+     */
     public static WKTReader wktReader = GeometryUtil.initWktReader();
 
     /**
@@ -85,13 +87,9 @@ public class MarkVerify {
 
                 // 校验旧图形在新图形中(新图形不能将旧图形完全覆盖)
                 if (geometry1.within(geometry2)) {
-                    // throw new AnnoException(AnnotationResponseConstant.UPDATE_ANNO_ERROR);
-                    return "1";// 修改失败,请检查后输入
+                    // 修改失败,请检查后输入
+                    return "1";
                 }
-                // 校验标注不能过小，不能小于1000.0
-                //                if (geometry2.within(geometry1) && geometry2.getArea() < insideMaxArea) {
-                //                    throw new AnnoException(AnnotationResponseConstant.UPDATE_ANNO_ERROR + geometry2.getArea());
-                //                }
             }
             Geometry g;
 
@@ -103,8 +101,8 @@ public class MarkVerify {
                 String geometryType = g.getGeometryType();
                 // 判断新图形是否为复杂多边型(比如大标注嵌套小标注
                 if (CommonConstant.MULTIPOLYGON.equals(geometryType)) {
-                    // throw new AnnoException(AnnotationResponseConstant.NEW_GRAPHICS_MARK_NOT_RULES);
-                    return "0";// 新图形不符合规则
+                    // 新图形不符合规则
+                    return "0";
                 }
             } catch (Exception e) {
                 throw new AnnoException(MessageSource.M("NEW_GRAPHICS_MARK_NOT_RULES"));

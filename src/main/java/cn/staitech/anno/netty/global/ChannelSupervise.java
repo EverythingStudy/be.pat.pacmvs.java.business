@@ -37,7 +37,6 @@ public class ChannelSupervise {
 
     public static void addChannelTest(Channel channel, Long slideId) {
         CHANNEL_MAP.put(channel, slideId);
-        // System.out.println(CHANNEL_MAP);
     }
 
     public static void addQuestionChannel(Channel channel, String questionProjectId) {

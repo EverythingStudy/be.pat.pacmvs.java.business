@@ -1,8 +1,8 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.constant.CommonConstant;
-import cn.staitech.anno.domain.AlgorithmAssessment;
-import cn.staitech.anno.domain.AlgorithmJson;
+import cn.staitech.anno.domain.algorithm.AlgorithmAssessment;
+import cn.staitech.anno.domain.algorithm.AlgorithmJson;
 import cn.staitech.anno.domain.ParseJson;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.assessment.in.*;
@@ -80,11 +80,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
     @Resource
     private AssessmentResultsMapper assessmentResultsMapper;
-
-    @Resource
-    private SlideMapper slideMapper;
-
-    @Resource
+        @Resource
     private ProjectMapperV1 projectMapperV1;
 
     @Autowired
@@ -100,7 +96,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
     public boolean zipExport(String zipUrl, Long projectId, String fileUrl) throws Exception {
         StringBuilder sb;
         File file1 = new File(zipUrl);
-        Map<String, String> ddlList = new HashMap<>();
+        Map<String, String> ddlList = new HashMap<>(16);
         try {
             //zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
             //必须指明读取的各式，不然会存在问题
@@ -291,7 +287,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
     }
 
     @Override
-    public void export(AssessmentExportIN assessmentExportIn) throws Exception {
+    public void export(AssessmentExportIn assessmentExportIn) throws Exception {
         if (assessmentExportIn.getAlgorithmentList().size() < 1) {
             throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }

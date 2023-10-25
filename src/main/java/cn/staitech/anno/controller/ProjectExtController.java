@@ -12,6 +12,9 @@ import cn.staitech.anno.domain.image.in.ImageListVO;
 import cn.staitech.anno.domain.vo.*;
 import cn.staitech.anno.domain.vo.indicator.IndicatorReviseVO;
 import cn.staitech.anno.domain.vo.project.InsertProjectVO;
+import cn.staitech.anno.domain.vo.slide.SlideCategoryProcessFlagVO;
+import cn.staitech.anno.domain.vo.slide.SlideSelectVO;
+import cn.staitech.anno.domain.vo.slide.SlideVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListOutVO;
 import cn.staitech.anno.enums.ProjectImageEnum;
 import cn.staitech.anno.service.*;
@@ -479,7 +482,7 @@ public class ProjectExtController extends BaseController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageNum", value = "当前记录起始索引", dataTypeClass = Integer.class, paramType = "query", example = "1"),
             @ApiImplicitParam(name = "pageSize", value = "每页显示记录数", dataTypeClass = Integer.class, paramType = "query", example = "10")})
-    public R<PageMaster<ProjectListOutVO>> listByProjectId(@Valid ProjectInforImageVO projectInforImage) {
+    public R<PageMaster<ProjectListOutVO>> listByProjectId(@Valid ProjectInForImageVO projectInforImage) {
         SlideSelectVO slideSelectVO = new SlideSelectVO();
         BeanUtils.copyProperties(projectInforImage, slideSelectVO);
         //根据条件查询对应的切片信息
@@ -567,7 +570,7 @@ public class ProjectExtController extends BaseController {
         if (taggerId != null || categoryId != null) {
             for (ProjectListOutVO i : new ArrayList<>(projectListOutVOList)) {
 
-                ProjectInforImageVO projectInforImageVO = new ProjectInforImageVO();
+                ProjectInForImageVO projectInforImageVO = new ProjectInForImageVO();
                 projectInforImageVO.setProjectId(projectInforImage.getProjectId());
                 if (taggerId != null) {
                     projectInforImageVO.setCreateBy(projectInforImage.getTaggerId().longValue());
@@ -594,7 +597,7 @@ public class ProjectExtController extends BaseController {
         ProjectDelVO projectDelVO = ProjectUtils.paging(projectInforImage);
         int pageSize = projectDelVO.getPageSize();
         int pageNum = projectDelVO.getPageNum();
-        boolean flag1 = projectDelVO.isFlag();
+        Boolean flag1 = projectDelVO.getFlag();
         List<ProjectListOutVO> result = projectDelVO.getResult();
         for (int i = pageNum * pageSize; i < pageNum * pageSize + pageSize; i++) {
             if (i < projectListOutVOList.size()) {
@@ -906,7 +909,7 @@ public class ProjectExtController extends BaseController {
     @RequiresPermissions("anno:project:export")
     @ApiOperation(value = "项目切片excel导出")
     @PostMapping("/export")
-    public void export(@Validated ProjectInforImageVO projectInforImageVO, HttpServletResponse response)
+    public void export(@Validated ProjectInForImageVO projectInforImageVO, HttpServletResponse response)
             throws Exception {
         Map<String, String> map = new HashMap<String, String>();
         map.put(MessageSource.M("IMAGE_ID"), "slideId");
@@ -926,12 +929,12 @@ public class ProjectExtController extends BaseController {
         titleList.add(map4);
         //项目id
         Long projectId = projectInforImageVO.getProjectId();
-        ProjectInforImageVO projectInforImageVO1 = new ProjectInforImageVO();
-        projectInforImageVO1.setProjectId(projectId);
-        projectInforImageVO1.setImageName(projectInforImageVO.getImageName());
-        projectInforImageVO1.setProcessFlag(projectInforImageVO.getProcessFlag());
+        ProjectInForImageVO projectInForImageVO1 = new ProjectInForImageVO();
+        projectInForImageVO1.setProjectId(projectId);
+        projectInForImageVO1.setImageName(projectInforImageVO.getImageName());
+        projectInForImageVO1.setProcessFlag(projectInforImageVO.getProcessFlag());
         //查询项目信息
-        List<ProjectListVO> projectListVOList = projectService.selectProjectDetails(projectInforImageVO1);
+        List<ProjectListVO> projectListVOList = projectService.selectProjectDetails(projectInForImageVO1);
         //存储类别id
         List<Integer> categoryIdList = new ArrayList<>();
         //存储用户id
@@ -956,12 +959,12 @@ public class ProjectExtController extends BaseController {
             //存储标注类别id
             categoryIdList.add(category.getCategoryId());
         }
-        ProjectInforImageVO projectInforImageVO2 = new ProjectInforImageVO();
+        ProjectInForImageVO projectInForImageVO2 = new ProjectInForImageVO();
         if (projectListVOList.size() == 1) {
-            projectInforImageVO2.setSlideId(projectListVOList.get(0).getSlideId());
+            projectInForImageVO2.setSlideId(projectListVOList.get(0).getSlideId());
         }
-        projectInforImageVO2.setProjectId(projectId);
-        List<SlideAnnotationResult> selectUpdateBy = slideAnnotationResultService.selectUpdateBy(projectInforImageVO2);
+        projectInForImageVO2.setProjectId(projectId);
+        List<SlideAnnotationResult> selectUpdateBy = slideAnnotationResultService.selectUpdateBy(projectInForImageVO2);
         //成员标注数量表头
         for (SlideAnnotationResult user : selectUpdateBy) {
             Map<String, String> mapUser = new HashMap<String, String>();

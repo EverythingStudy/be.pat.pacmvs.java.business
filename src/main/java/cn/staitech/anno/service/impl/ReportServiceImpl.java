@@ -1,9 +1,9 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.SysDictData;
-import cn.staitech.anno.domain.po.ProjectPo;
+import cn.staitech.anno.domain.project.ProjectPo;
 import cn.staitech.anno.domain.special.Special;
-import cn.staitech.anno.domain.vo.reportRecord.ReportRecordAddVO;
+import cn.staitech.anno.domain.vo.reportrecord.ReportRecordAddVO;
 import cn.staitech.anno.exception.ReportException;
 import cn.staitech.anno.mapper.ProjectExtMapper;
 import cn.staitech.anno.mapper.SlideMapper;
@@ -79,7 +79,7 @@ public class ReportServiceImpl implements ReportService {
         long start = System.currentTimeMillis();
         String path = "";
         log.info("开始生成word报告，报告参数{}：", recordAddVO);
-        Map params = new HashMap();
+        Map params = new HashMap(16);
         Long userId = SecurityUtils.getUserId();
         params.put("currentUserId", userId);
         params.put("specialId", recordAddVO.getSpecialId());
@@ -226,7 +226,7 @@ public class ReportServiceImpl implements ReportService {
             headerTable.addRow(row);
             //构建合并单元格参数
             if (flag) {
-                Map<String, Integer> mergeCellsParam = new HashMap<>();
+                Map<String, Integer> mergeCellsParam = new HashMap<>(16);
                 mergeCellsParam.put("startRow", j - (groupRow - 1) + 3);
                 mergeCellsParam.put("endRow", j + 3);
                 mergeCellsParams.add(mergeCellsParam);
@@ -285,7 +285,7 @@ public class ReportServiceImpl implements ReportService {
         //执行单元格合并
         List<Map<String, Integer>> imageCellsParams = PoiUtils.computeMergeCell(list, "imageName");
         List<Map<String, Integer>> subImageCellsParams = PoiUtils.computeMergeCell(list, "subImageName");
-        Map<Integer, List<Map<String, Integer>>> mergeCellMap = new HashMap<>();
+        Map<Integer, List<Map<String, Integer>>> mergeCellMap = new HashMap<>(16);
         mergeCellMap.put(0, mergeCellsParams);
         mergeCellMap.put(1, mergeCellsParams);
         mergeCellMap.put(2, imageCellsParams);

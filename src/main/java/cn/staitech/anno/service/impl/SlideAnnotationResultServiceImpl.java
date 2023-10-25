@@ -2,7 +2,7 @@ package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.SlideAnnotationResult;
 import cn.staitech.anno.domain.vo.ProjectAnnotationVO;
-import cn.staitech.anno.domain.vo.ProjectInforImageVO;
+import cn.staitech.anno.domain.vo.ProjectInForImageVO;
 import cn.staitech.anno.mapper.SlideAnnotationResultMapper;
 import cn.staitech.anno.service.SlideAnnotationResultService;
 import org.springframework.stereotype.Service;
@@ -94,7 +94,7 @@ public class SlideAnnotationResultServiceImpl implements SlideAnnotationResultSe
      * @return
      */
     @Override
-    public List<SlideAnnotationResult> selectUpdateBy(ProjectInforImageVO projectInforImageVO) {
+    public List<SlideAnnotationResult> selectUpdateBy(ProjectInForImageVO projectInforImageVO) {
         return slideAnnotationResultMapper.selectUpdateBy(projectInforImageVO);
     }
 }

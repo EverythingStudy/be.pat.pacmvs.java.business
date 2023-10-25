@@ -6,7 +6,9 @@ package cn.staitech.anno.enums;
  * @author YL
  */
 public enum ProcessFlagEnum {
-    // 标注状态(0未开始 1标注中 2标注完成 3已提交复核)
+    /**
+     * 标注状态(0未开始 1标注中 2标注完成 3已提交复核)
+     */
     STATUS_INFO_0(0, "0未开始"),
     STATUS_INFO_1(1, "1标注中"),
     STATUS_INFO_2(2, "2标注完成"),

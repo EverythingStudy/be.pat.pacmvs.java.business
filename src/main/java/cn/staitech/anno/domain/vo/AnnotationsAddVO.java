@@ -32,7 +32,7 @@ public class AnnotationsAddVO {
      * 标注类别id .
      */
     @ApiModelProperty(value = "标注类别id")
-    private Long categoryId = 0L;
+    private Long categoryId;
 
     /**
      * 项目id .
@@ -44,7 +44,7 @@ public class AnnotationsAddVO {
      * 数量 .
      */
     @ApiModelProperty(hidden = true, value = "数量")
-    private int sum;
+    private Integer sum;
 
     /**
      * 创建者id .

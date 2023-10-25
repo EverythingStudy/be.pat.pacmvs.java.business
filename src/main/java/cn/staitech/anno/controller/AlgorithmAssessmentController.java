@@ -64,7 +64,7 @@ public class AlgorithmAssessmentController {
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "导出考核结果")
     @PostMapping("/export")
-    public void export(@RequestBody AssessmentExportIN assessmentExportIn
+    public void export(@RequestBody AssessmentExportIn assessmentExportIn
     ) throws Exception {
         algorithmAssessmentService.export(assessmentExportIn);
     }
