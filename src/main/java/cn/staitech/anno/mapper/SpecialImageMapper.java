@@ -2,7 +2,7 @@ package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.image.in.ImageBatchIdsVO;
-import cn.staitech.anno.domain.specilaImage.SpecialImage;
+import cn.staitech.anno.domain.special.SpecialImage;
 import cn.staitech.anno.domain.vo.specialImage.SpecialImageSelectVO;
 import cn.staitech.anno.domain.vo.specialImage.SpecialImageVO;
 import cn.staitech.anno.domain.vo.specialImage.WaitSpecialImageVO;

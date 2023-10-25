@@ -1,7 +1,7 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.marking.PointCount;
-import cn.staitech.anno.domain.specialAnnotation.SpecialAnnotation;
+import cn.staitech.anno.domain.special.SpecialAnnotation;
 import cn.staitech.anno.domain.vo.specialImageAnno.in.SpecialAnnoProperties;
 import cn.staitech.anno.domain.vo.specialSliceImage.OrganDict;
 

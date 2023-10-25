@@ -1,8 +1,8 @@
 package cn.staitech.anno.domain.vo.specialImageAnno;
 
 
-import cn.staitech.anno.domain.specialAnnotation.SpecialAnnotation;
-import cn.staitech.anno.domain.specilaImage.SpecialImage;
+import cn.staitech.anno.domain.special.SpecialAnnotation;
+import cn.staitech.anno.domain.special.SpecialImage;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

@@ -47,14 +47,14 @@
     </sql>
 
     <select id="selectExaminationBy" parameterType="cn.staitech.anno.domain.ExamineScore"
-            resultType="cn.staitech.anno.domain.examineScore.SelectExaminationListVO">
+            resultType="cn.staitech.anno.domain.examine.SelectExaminationListVO">
         <include refid="selectQuestionProject"/>
         where qp.question_project_id = #{questionProjectId}
         and e.create_by = #{createBy}
     </select>
 
     <select id="selectQuestionProject" parameterType="long"
-            resultType="cn.staitech.anno.domain.examineScore.SelectExaminationListVO">
+            resultType="cn.staitech.anno.domain.examine.SelectExaminationListVO">
         SELECT q.image_name,
                q.question_id,
                0 as operate_status,
@@ -66,7 +66,7 @@
     </select>
 
 
-    <select id="selectByIds" parameterType="long" resultType="cn.staitech.anno.domain.examineScore.ExamineScoreBy">
+    <select id="selectByIds" parameterType="long" resultType="cn.staitech.anno.domain.examine.ExamineScoreBy">
         SELECT ex.*,
                q.question_id
         FROM tb_examine_score AS ex
@@ -75,7 +75,7 @@
     </select>
 
     <select id="selectQuestionProjectList" parameterType="long"
-            resultType="cn.staitech.anno.domain.examineScore.SelectExaminationListVO">
+            resultType="cn.staitech.anno.domain.examine.SelectExaminationListVO">
         SELECT q.image_name,
                q.question_id,
                0 as operate_status,
@@ -87,7 +87,7 @@
     </select>
 
 
-    <select id="selectExamineList" parameterType="cn.staitech.anno.domain.examineScore.ExamineSelectVo"
+    <select id="selectExamineList" parameterType="cn.staitech.anno.domain.examine.ExamineSelectVo"
             resultType="cn.staitech.anno.domain.ExamineScore">
         SELECT
         es.examine_score_id,
@@ -130,7 +130,7 @@
 
 
     <select id="selectExaminationList" parameterType="cn.staitech.anno.domain.QuestionBank"
-            resultType="cn.staitech.anno.domain.examineScore.SelectExaminationListVO">
+            resultType="cn.staitech.anno.domain.examine.SelectExaminationListVO">
         <include refid="selectQuestionProject"/>
         where #{createBy} in (select user_id from tb_project_member where project_id = #{projectId})
         and qp.project_id = #{projectId}
@@ -142,7 +142,7 @@
     </select>
 
     <select id="selectLists" parameterType="list"
-            resultType="cn.staitech.anno.domain.examineScore.ExamineScoreExportVO">
+            resultType="cn.staitech.anno.domain.examine.ExamineScoreExportVO">
         SELECT
         p.project_name,
         e.image_name,

@@ -3,7 +3,7 @@ package cn.staitech.anno.service.impl;
 import cn.hutool.core.date.DateUtil;
 import cn.staitech.anno.domain.AssessmentResults;
 import cn.staitech.anno.domain.SysOrganization;
-import cn.staitech.anno.domain.assessmentResults.AssessmentResultsQueryIn;
+import cn.staitech.anno.domain.assessment.AssessmentResultsQueryIn;
 import cn.staitech.anno.mapper.AssessmentResultsMapper;
 import cn.staitech.anno.service.AssessmentResultsService;
 import cn.staitech.anno.utils.ExcludeEmptyQueryWrapper;

@@ -1,4 +1,4 @@
-package cn.staitech.anno.domain;
+package cn.staitech.anno.domain.algorithm;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;

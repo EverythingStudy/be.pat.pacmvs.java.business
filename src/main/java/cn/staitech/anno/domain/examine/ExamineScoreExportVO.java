@@ -1,4 +1,4 @@
-package cn.staitech.anno.domain.examineScore;
+package cn.staitech.anno.domain.examine;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package cn.staitech.anno.domain.algorithmJson.out;
+package cn.staitech.anno.domain.algorithm.out;
 
 import com.alibaba.fastjson.JSONArray;
 import io.swagger.annotations.ApiModelProperty;

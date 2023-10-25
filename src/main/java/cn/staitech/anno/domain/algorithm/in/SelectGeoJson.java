@@ -1,4 +1,4 @@
-package cn.staitech.anno.domain.algorithmJson.in;
+package cn.staitech.anno.domain.algorithm.in;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

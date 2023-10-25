@@ -1,4 +1,4 @@
-package cn.staitech.anno.domain.markingExamine;
+package cn.staitech.anno.domain.marking;
 
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModelProperty;
@@ -7,10 +7,10 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class MarkingExamineInsertVO {
+public class MarkingExamineUpdateVO {
     @NotNull(message = "{MarkingExamineInsertVO.questionProjectId.isnull}")
     @ApiModelProperty(value = "项目题库id")
-    private Long question_project_id;
+    private Long marking_id;
 
     @ApiModelProperty(value = "面积")
     private String area;
@@ -26,8 +26,4 @@ public class MarkingExamineInsertVO {
 
     @ApiModelProperty(value = "标注颜色id")
     private Long category_id;
-
-    @ApiModelProperty(value = "标注类型")
-    private String location_type;
-
 }

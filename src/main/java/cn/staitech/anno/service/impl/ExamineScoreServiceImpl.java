@@ -2,7 +2,7 @@ package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import cn.staitech.anno.domain.*;
-import cn.staitech.anno.domain.examineScore.*;
+import cn.staitech.anno.domain.examine.*;
 import cn.staitech.anno.domain.geojson.*;
 import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.project.domain.Project;

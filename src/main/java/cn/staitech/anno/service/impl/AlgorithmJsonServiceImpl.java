@@ -1,9 +1,9 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.domain.AlgorithmAssessment;
-import cn.staitech.anno.domain.AlgorithmJson;
-import cn.staitech.anno.domain.algorithmJson.in.SelectGeoJson;
-import cn.staitech.anno.domain.algorithmJson.out.SelectGeoJsonList;
+import cn.staitech.anno.domain.algorithm.AlgorithmAssessment;
+import cn.staitech.anno.domain.algorithm.AlgorithmJson;
+import cn.staitech.anno.domain.algorithm.in.SelectGeoJson;
+import cn.staitech.anno.domain.algorithm.out.SelectGeoJsonList;
 import cn.staitech.anno.mapper.AlgorithmAssessmentMapper;
 import cn.staitech.anno.mapper.AlgorithmJsonMapper;
 import cn.staitech.anno.service.AlgorithmJsonService;

@@ -1,8 +1,8 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.marking.PointCount;
-import cn.staitech.anno.domain.specialAnnotation.SpecialAnnotation;
-import cn.staitech.anno.domain.specilaImage.SpecialImage;
+import cn.staitech.anno.domain.special.SpecialAnnotation;
+import cn.staitech.anno.domain.special.SpecialImage;
 import cn.staitech.anno.domain.vo.specialImage.SpecialImageSelectVO;
 import cn.staitech.anno.domain.vo.specialImage.WaitSpecialImageVO;
 import cn.staitech.anno.domain.vo.specialImageAnno.AnnoMarkGeojson;

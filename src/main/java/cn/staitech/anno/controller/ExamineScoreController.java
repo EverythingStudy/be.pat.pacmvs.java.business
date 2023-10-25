@@ -3,7 +3,7 @@ package cn.staitech.anno.controller;
 
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.ExamineScore;
-import cn.staitech.anno.domain.examineScore.*;
+import cn.staitech.anno.domain.examine.*;
 import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.service.ProjectService;
 import cn.staitech.anno.service.ExamineScoreService;

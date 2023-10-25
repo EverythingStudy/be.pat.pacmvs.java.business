@@ -1,4 +1,4 @@
-package cn.staitech.anno.domain.specialAnnotation;
+package cn.staitech.anno.domain.special;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.Api;

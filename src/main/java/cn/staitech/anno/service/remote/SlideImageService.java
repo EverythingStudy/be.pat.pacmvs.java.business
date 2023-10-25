@@ -1,6 +1,6 @@
 package cn.staitech.anno.service.remote;
 
-import cn.staitech.anno.domain.specilaImage.SpecialImage;
+import cn.staitech.anno.domain.special.SpecialImage;
 import cn.staitech.anno.domain.vo.specialImageAnno.AlgorithmCutImageVO;
 import cn.staitech.common.core.constant.SecurityConstants;
 import cn.staitech.common.core.domain.R;

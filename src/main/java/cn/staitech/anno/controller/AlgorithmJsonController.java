@@ -1,9 +1,9 @@
 package cn.staitech.anno.controller;
 
 
-import cn.staitech.anno.domain.AlgorithmJson;
-import cn.staitech.anno.domain.algorithmJson.in.SelectGeoJson;
-import cn.staitech.anno.domain.algorithmJson.out.SelectGeoJsonList;
+import cn.staitech.anno.domain.algorithm.AlgorithmJson;
+import cn.staitech.anno.domain.algorithm.in.SelectGeoJson;
+import cn.staitech.anno.domain.algorithm.out.SelectGeoJsonList;
 import cn.staitech.anno.service.AlgorithmJsonService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.R;

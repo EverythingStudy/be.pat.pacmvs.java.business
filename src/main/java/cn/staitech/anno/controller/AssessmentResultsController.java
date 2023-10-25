@@ -2,7 +2,7 @@ package cn.staitech.anno.controller;
 
 
 import cn.staitech.anno.domain.AssessmentResults;
-import cn.staitech.anno.domain.assessmentResults.AssessmentResultsQueryIn;
+import cn.staitech.anno.domain.assessment.AssessmentResultsQueryIn;
 import cn.staitech.anno.service.AssessmentResultsService;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;

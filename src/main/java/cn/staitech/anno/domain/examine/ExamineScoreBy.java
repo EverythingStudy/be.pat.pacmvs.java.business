@@ -1,4 +1,4 @@
-package cn.staitech.anno.domain.examineScore;
+package cn.staitech.anno.domain.examine;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;

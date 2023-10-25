@@ -1,8 +1,8 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.constant.CommonConstant;
-import cn.staitech.anno.domain.AlgorithmAssessment;
-import cn.staitech.anno.domain.AlgorithmJson;
+import cn.staitech.anno.domain.algorithm.AlgorithmAssessment;
+import cn.staitech.anno.domain.algorithm.AlgorithmJson;
 import cn.staitech.anno.domain.ParseJson;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.assessment.in.*;

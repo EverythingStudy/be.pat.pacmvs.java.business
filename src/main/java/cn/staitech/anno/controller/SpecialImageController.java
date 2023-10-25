@@ -2,7 +2,7 @@
 //
 //import cn.hutool.json.JSONUtil;
 //import cn.staitech.anno.domain.Image;
-//import cn.staitech.anno.domain.specilaImage.SpecialImage;
+//import cn.staitech.anno.domain.special.SpecialImage;
 //import cn.staitech.anno.domain.vo.special.SpecialResVo;
 //import cn.staitech.anno.domain.vo.specialImage.InsertSpecialImageVO;
 //import cn.staitech.anno.domain.vo.specialImage.SpecialImageSelectVO;

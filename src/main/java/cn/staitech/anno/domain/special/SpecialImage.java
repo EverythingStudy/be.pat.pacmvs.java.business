@@ -1,4 +1,4 @@
-package cn.staitech.anno.domain.specilaImage;
+package cn.staitech.anno.domain.special;
 
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
