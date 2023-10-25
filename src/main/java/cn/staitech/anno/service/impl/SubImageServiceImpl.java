@@ -177,8 +177,9 @@ public class SubImageServiceImpl extends ServiceImpl<SubImageMapper, SubImage> i
                     }
                 }
                 ssv.setSubImageList(subList);
-                //增加是否可以被编辑的状态标识 是否可编辑 1:不可以编辑 2：可以编辑
-                if (sliceImageStatus == 0 || sliceImageStatus == 3 && null != ssv.getEditBy() && ssv.getEditBy().equals(SecurityUtils.getUserId())) {
+                // 增加是否可以被编辑的状态标识 是否可编辑 1:不可以编辑 2：可以编辑
+                boolean isSetEditStatus = sliceImageStatus == 0 || sliceImageStatus == 3 && null != ssv.getEditBy() && ssv.getEditBy().equals(SecurityUtils.getUserId());
+                if (isSetEditStatus) {
                     ssv.setEditStatus(2);
                 }
             });
@@ -201,7 +202,9 @@ public class SubImageServiceImpl extends ServiceImpl<SubImageMapper, SubImage> i
             Map<Long, Integer> loginMap = new HashMap<>();
             siList.forEach(ssv -> {
                 String updateToken = ssv.getUpdateByToken();
-                if (loginMap.isEmpty() || null != loginMap && !loginMap.containsKey(ssv.getEditBy())) {
+
+                boolean flag = loginMap.isEmpty() || null != loginMap && !loginMap.containsKey(ssv.getEditBy());
+                if (flag) {
                     SysUser loginUser = getUserInformationService.selectById(ssv.getEditBy());
                     //根据用户id获取token，校验是否过期
                     String userNameKey = CacheConstants.LOGIN_TOKEN_KEY + loginUser.getUserName();
