@@ -76,7 +76,7 @@ public class FilesController extends BaseController {
         fileUploadVO.setMultipartFile(file);
         Files files = fileUploadService.uploadAndProcessBusiness(fileUploadVO);
         if(files.getFileNameList().size() > 0){
-            R.fail(MessageSource.M(files.getFileNameList() + "JSON_MULTIPLE_LABElS"));
+            R.fail(files.getFileNameList() + MessageSource.M("JSON_MULTIPLE_LABElS"));
         }
         return R.ok();
     }
@@ -99,7 +99,7 @@ public class FilesController extends BaseController {
         } else if (Objects.equals(res, "0")){
             return R.fail(MessageSource.M("FILE_SLIDE_UPLOAD_FAILURE"));
         }else {
-            R.fail(MessageSource.M(res + "JSON_MULTIPLE_LABElS"));
+            R.fail(res + MessageSource.M("JSON_MULTIPLE_LABElS"));
         }
         return R.ok();
     }
