@@ -66,8 +66,8 @@ public class ReviewRoundController {
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "查询评审轮次列表")
     @GetMapping("/list")
-    public R<PageMaster<ReviewRoundOutVO>> list(@NotNull(message = "分页参数为空！") @RequestParam("pageNum") @ApiParam(name = "pageNum", value = "分页参数", required = true) Integer pageNum,
-                                                @NotNull(message = "分页参数为空！") @RequestParam("pageSize") @ApiParam(name = "pageSize", value = "分页参数", required = true) Integer pageSize,
+    public R<PageMaster<ReviewRoundOutVO>> list(@NotNull(message = "{ReviewRoundController.list.isnull}") @RequestParam("pageNum") @ApiParam(name = "pageNum", value = "分页参数", required = true) Integer pageNum,
+                                                @NotNull(message = "{ReviewRoundController.list.isnull}") @RequestParam("pageSize") @ApiParam(name = "pageSize", value = "分页参数", required = true) Integer pageSize,
                                                 @RequestParam("projectId") Long projectId) {
         return R.ok(reviewRoundService.pageReviewRound(pageNum, pageSize, projectId));
     }

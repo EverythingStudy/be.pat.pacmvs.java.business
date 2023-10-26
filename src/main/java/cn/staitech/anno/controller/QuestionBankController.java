@@ -75,7 +75,7 @@ public class QuestionBankController {
     @ApiOperation(value = "考核设置-项目下考题列表")
     @GetMapping("/getQuestionByProject")
     public R<GetQuestionsOut> getQuestionByProject(@RequestParam(value = "projectId", required = false)
-                                                   @NotNull(message = "项目id不能为空！") @ApiParam(name = "projectId", value = "项目id") Long projectId) {
+                                                   @NotNull(message = "{ProjectRemoveIn.projectId.isnull}") @ApiParam(name = "projectId", value = "项目id") Long projectId) {
 
         GetQuestionsOut resp = iQuestionBankService.getQuestionByProject(projectId);
         return R.ok(resp);
