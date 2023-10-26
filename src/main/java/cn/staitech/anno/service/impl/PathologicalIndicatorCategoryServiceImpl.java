@@ -229,13 +229,15 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
             QueryWrapper<PathologicalIndicatorCategory> pathologicalIndicatorCategoryQueryWrapper = new QueryWrapper<>();
             pathologicalIndicatorCategoryQueryWrapper.eq("indicator_id", project.getIndicatorId()).orderByDesc("order_number");
             List<PathologicalIndicatorCategory> list = pathologicalIndicatorCategoryMapper.selectList(pathologicalIndicatorCategoryQueryWrapper);
-            for (PathologicalIndicatorCategory category : list) {
 
-                Indicator indicator = indicatorMapper.selectIndicatorById(category.getIndicatorId());
-                if (indicator != null && LanguageUtils.isEn()) {
-                    category.setCategoryName(indicator.getIndicatorNameEn());
-                } else {
-                    category.setCategoryName(indicator.getIndicatorName());
+            for (PathologicalIndicatorCategory category : list) {
+                if (LanguageUtils.isEn()) {
+                    Indicator indicator = indicatorMapper.selectIndicatorById(category.getIndicatorId());
+                    if (indicator != null) {
+//                        MapConstant.getStructure(category.getStructureId())
+                        String categoryName = indicator.getIndicatorNameEn().concat("");
+                        category.setCategoryName(categoryName);
+                    }
                 }
             }
             return list;
