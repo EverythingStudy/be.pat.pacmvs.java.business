@@ -66,7 +66,6 @@ public class StatisticController extends BaseController {
      * @return
      * @throws ParseException
      */
-    //@RequiresPermissions("anno:statistic")
     @ApiOperation(value = "综合统计列表/细分筛选查询")
     @PostMapping("/statisticList")
     public R<StatisticListOutVO> statisticList(@Valid @RequestBody StatisticListInVO statisticList) throws ParseException {
@@ -79,9 +78,7 @@ public class StatisticController extends BaseController {
      *
      * @param statisticList
      */
-    //@RequiresPermissions("anno:statistic")
     @ApiOperation(value = "综合统计列表/导出细分筛选查询excel")
-    //@Log(title = "综合统计列表Excel导出", businessType = BusinessType.EXPORT)
     @PostMapping("/exportExcel")
     public void exportExcel(@Validated StatisticListInVO statisticList) throws IOException {
 
@@ -273,7 +270,6 @@ public class StatisticController extends BaseController {
      * @param statisticList
      * @return
      */
-    //@RequiresPermissions("anno:statistic")
     @ApiOperation(value = "标注统计列表/细分筛选查询/获取统计维度ID")
     @PostMapping("/annotationStatisticIdList")
     public R<List<AnnotationStatisticIdListOutVO>> annotationStatisticIdList(@Valid @RequestBody StatisticListInVO statisticList) {
@@ -331,7 +327,6 @@ public class StatisticController extends BaseController {
      * @param statisticList
      * @return
      */
-    //@RequiresPermissions("anno:statistic")
     @ApiOperation(value = "标注统计列表/细分筛选查询/获取统计维度分页数据")
     @PostMapping("/annotationStatisticPageList")
     @ApiImplicitParams({
@@ -380,7 +375,6 @@ public class StatisticController extends BaseController {
      * @param annotationId
      * @return
      */
-    //@RequiresPermissions("anno:statistic")
     @ApiOperation(value = "标注统计列表/细分筛选查询/获取标注详细信息")
     @GetMapping("/annotationDetail")
     public R<AnnotationBroadcastVO> annotationDetail(@RequestParam("annotationId") Long annotationId) {

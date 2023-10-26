@@ -84,7 +84,6 @@ public class ReviewController {
         return R.ok(reviewService.csvExportReview(in.getProjectId(), in.getSlideIds()));
     }
 
-    //@RequiresPermissions("smartReview:project:export")
     @ApiOperation(value = "评审数据导出")
     @GetMapping("/downReview")
     public void csvExportReviewCurrent(@RequestParam(value = "slideId", required = false) @ApiParam(name = "slideId", value = "切片id") Long slideId,
