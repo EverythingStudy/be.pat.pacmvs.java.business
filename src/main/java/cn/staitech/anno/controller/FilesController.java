@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -73,7 +74,10 @@ public class FilesController extends BaseController {
             @RequestParam("file") MultipartFile file,
             FileUploadVO fileUploadVO) throws Exception {
         fileUploadVO.setMultipartFile(file);
-        fileUploadService.uploadAndProcessBusiness(fileUploadVO);
+        Files files = fileUploadService.uploadAndProcessBusiness(fileUploadVO);
+        if(files.getFileNameList().size() > 0){
+            R.fail(MessageSource.M(files.getFileNameList() + "JSON_MULTIPLE_LABElS"));
+        }
         return R.ok();
     }
 
@@ -89,11 +93,15 @@ public class FilesController extends BaseController {
     public R<String> uploadBigFileBusiness(
             @RequestParam("file") MultipartFile file, FileUploadVO fileUploadVO) throws Exception {
         fileUploadVO.setMultipartFile(file);
-        if (fileUploadService.mergeChunk(fileUploadVO)) {
+        String res = fileUploadService.mergeChunk(fileUploadVO);
+        if (Objects.equals(res, "1")) {
             return R.ok(MessageSource.M("FILE_SLIDE_UPLOAD_SUCCESS"));
-        } else {
+        } else if (Objects.equals(res, "0")){
             return R.fail(MessageSource.M("FILE_SLIDE_UPLOAD_FAILURE"));
+        }else {
+            R.fail(MessageSource.M(res + "JSON_MULTIPLE_LABElS"));
         }
+        return R.ok();
     }
 
 
