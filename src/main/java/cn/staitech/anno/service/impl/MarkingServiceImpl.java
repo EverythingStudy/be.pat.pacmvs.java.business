@@ -97,7 +97,7 @@ public class MarkingServiceImpl implements MarkingService {
     public List<MarkingSelectListVo> selectList(Long slideId) throws Exception {
         Slide slideBy = slideMapperV1.selectById(slideId);
         if (!Optional.ofNullable(slideBy).isPresent()) {
-            throw new Exception("切片信息异常,未查询到切片信息");
+            throw new Exception(MessageSource.M("SLIDE_ABNORMAL_NO_INFORMATION"));
         }
         List<MarkingSelectListVo> markingSelectListVoList = markingMapper.selectList(slideId);
         List<MarkingSelectListVo> pointCountList = markingMapper.selectPointCountList(slideId);
@@ -109,7 +109,7 @@ public class MarkingServiceImpl implements MarkingService {
     public List<Features> selectListBy(Long slideId) throws Exception {
         Slide slideBy = slideMapperV1.selectById(slideId);
         if (!Optional.ofNullable(slideBy).isPresent()) {
-            throw new Exception("切片信息异常,未查询到切片信息");
+            throw new Exception(MessageSource.M("SLIDE_ABNORMAL_NO_INFORMATION"));
         }
         return markingMapper.selectListBy(slideId);
     }
