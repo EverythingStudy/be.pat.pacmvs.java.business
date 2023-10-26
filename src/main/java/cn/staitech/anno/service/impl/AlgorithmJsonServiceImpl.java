@@ -176,7 +176,7 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
             }
         }
         // 对结果进行去重
-        List<Long> userLists = userListBy.stream().distinct().collect(Collectors.toList());
+        List<Long> userLists = userListBy.stream().filter(s -> s != 0).distinct().collect(Collectors.toList());
         JSONArray labelInfoList = labelInfo.stream().distinct().collect(Collectors.toCollection(JSONArray::new));
         // 封装数据
         SelectGeoJsonList selectGeoJsonList = new SelectGeoJsonList();
