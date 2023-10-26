@@ -9,6 +9,7 @@ import cn.staitech.anno.domain.marking.SlideRes;
 import cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo;
 import cn.staitech.anno.project.domain.DownTask;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public interface MarkingService {
@@ -114,7 +115,7 @@ public interface MarkingService {
 
     DownTask projectJsonExport(Long projectId, List<Long> slideIds) throws Exception;
 
-    void downTaskByCode(String code) throws Exception;
+    void downTaskByCode(String code, HttpServletResponse response) throws Exception;
 
     /**
      * 删除页面所有标注

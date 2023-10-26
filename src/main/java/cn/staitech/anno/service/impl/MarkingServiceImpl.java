@@ -42,6 +42,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -607,7 +608,7 @@ public class MarkingServiceImpl implements MarkingService {
     }
 
     @Override
-    public void downTaskByCode(String code) throws Exception {
+    public void downTaskByCode(String code, HttpServletResponse response) throws Exception {
         DownTask downTask = downTaskService.getOne(Wrappers.query(DownTask.builder().code(code).build()));
         // 构造表头的每个列头 定义表头
         List<Map<String, String>> titleList = getTitleList(CommonConstant.EXPORT_COLHEAD_KEY, CommonConstant.EXPORT_COLHEAD_VALUE);
