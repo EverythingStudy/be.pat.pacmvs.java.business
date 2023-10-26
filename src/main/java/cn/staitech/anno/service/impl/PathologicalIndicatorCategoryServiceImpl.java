@@ -1,6 +1,7 @@
 package cn.staitech.anno.service.impl;
 
 
+import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.structure.Structure;
@@ -230,13 +231,15 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
             pathologicalIndicatorCategoryQueryWrapper.eq("indicator_id", project.getIndicatorId()).orderByDesc("order_number");
             List<PathologicalIndicatorCategory> list = pathologicalIndicatorCategoryMapper.selectList(pathologicalIndicatorCategoryQueryWrapper);
             for (PathologicalIndicatorCategory category : list) {
-
-                Indicator indicator = indicatorMapper.selectIndicatorById(category.getIndicatorId());
-                if (indicator != null && LanguageUtils.isEn()) {
-                    category.setCategoryName(indicator.getIndicatorNameEn());
-                } else {
-                    category.setCategoryName(indicator.getIndicatorName());
+                // 处理标签集中英文
+                if (LanguageUtils.isEn()) {
+                    Indicator indicator = indicatorMapper.selectIndicatorById(category.getIndicatorId());
+                    if (indicator != null) {
+                        String categoryName = indicator.getIndicatorNameEn().concat(" ").concat(MapConstant.getStructureNameEn(category.getStructureId()));
+                        category.setCategoryName(categoryName);
+                    }
                 }
+
             }
             return list;
         }

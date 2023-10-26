@@ -15,6 +15,7 @@ import java.util.Map;
 public interface StructureService extends IService<Structure> {
 
     Map<String, String> selectMap();
+    Map<String, String> selectMapEn();
 
     List<Structure> getStructureList(String speciesId, String organId);
 
