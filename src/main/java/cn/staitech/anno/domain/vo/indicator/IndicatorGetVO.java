@@ -14,11 +14,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 public class IndicatorGetVO {
-
-    private String indicatorName;
-
+    @ApiModelProperty(required = true, value = "病理指标ID")
     private Integer indicatorId;
-
+    @ApiModelProperty(required = true, value = "病理指标名称")
+    private String indicatorName;
     @ApiModelProperty(value = "种属编号")
     private Long speciesId;
 }

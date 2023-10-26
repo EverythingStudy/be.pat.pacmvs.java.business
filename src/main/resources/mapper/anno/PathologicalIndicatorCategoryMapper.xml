@@ -12,7 +12,6 @@
         <result column="color" property="color"/>
         <result column="number" property="number"/>
         <result column="order_number" property="orderNumber"/>
-        <result column="organization_id" property="organizationId"/>
         <result column="anno_type" property="annoType"/>
         <result column="del_flag" property="delFlag"/>
         <result column="create_by" property="createBy"/>
@@ -53,7 +52,7 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         category_id
-        , indicator_id, category_name, structure_id, rgb, hex, color, number, order_number, organization_id, anno_type, del_flag, create_by, update_by, create_time, update_time
+        , indicator_id, category_name, structure_id, rgb, hex, color, number, order_number, anno_type, del_flag, create_by, update_by, create_time, update_time
     </sql>
 
     <!--  根据主键查询单条标注信息-->
@@ -87,9 +86,6 @@
                 </foreach>
                 )
             </if>
-            <if test="organizationId !=null and organizationId !=0">
-                and pic.organization_id = #{organizationId}
-            </if>
         </where>
         order by pic.indicator_id desc, pic.category_id desc
     </select>
@@ -119,9 +115,6 @@
             </if>
             <if test="hex != null">
                 hex,
-            </if>
-            <if test="organizationId != null">
-                organization_id,
             </if>
             <if test="createBy != null">
                 create_by,
@@ -155,9 +148,6 @@
             </if>
             <if test="hex != null">
                 #{hex,jdbcType=VARCHAR},
-            </if>
-            <if test="organizationId != null">
-                #{organizationId,jdbcType=BIGINT},
             </if>
             <if test="createBy != null">
                 #{createBy,jdbcType=BIGINT},
@@ -213,9 +203,6 @@
             </if>
             <if test="indicatorId != null and indicatorId != '' ">
                 AND indicator_id = #{indicatorId}
-            </if>
-            <if test="organizationId != null and organizationId != '' ">
-                AND organization_id = #{organizationId}
             </if>
         </where>
     </update>
@@ -276,34 +263,6 @@
             </if>
         </where>
     </select>
-
-
-    <!--
-        <select id="selectIndicatorMessage" parameterType="cn.staitech.anno.domain.PathologicalIndicatorCategory"
-                resultMap="BaseResultMap">
-            select *
-            from tb_pathological_indicator_category where del_flag = 0
-            <if test="indicatorId != null">
-                AND indicator_id = #{indicatorId}
-            </if>
-            <if test="categoryId != null">
-                AND category_id != #{categoryId}
-            </if>
-            <if test="orderNumber !=null">
-                AND order_number = #{orderNumber}
-            </if>
-            <if test="rgb != null">
-                AND rgb = '#{rgb}'
-            </if>
-            <if test="hex != null">
-                AND hex = #{hex}
-            </if>
-            <if test="structureId != null">
-                AND structure_id = #{structureId,jdbcType=VARCHAR}
-            </if>
-        </select>
-        -->
-
 
     <!-- 查询标签：不区分组织机构 结构编码在当前列表内不可重复；C：结构名称在当前列表内不可重复。D：图层顺序在当前列表内不可重复；E：颜色值在当前列表不可重复 -->
     <select id="selectIndicatorMessage" parameterType="cn.staitech.anno.domain.PathologicalIndicatorCategory"
@@ -369,13 +328,12 @@
         WHERE p.project_id = #{projectId}
     </select>
 
-    <select id="selectCategoryNumber" parameterType="cn.staitech.anno.domain.vo.indicator.IndicatorAndOrganizationIdVO"
-            resultType="java.lang.Long">
+    <!-- 查总数 -->
+    <select id="selectCategoryNumber" parameterType="java.lang.Long" resultType="java.lang.Long">
         select count(*)
         from tb_pathological_indicator_category
-        where indicator_id = #{indicatorId}
-          and organization_id = #{organizationId}
-          and del_flag = 0
+        where del_flag = 0
+          and indicator_id = #{indicatorId}
     </select>
 
     <select id="selectProjectCategory" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -398,7 +356,7 @@
 
     <select id="selectByIndicator" parameterType="cn.staitech.anno.domain.vo.LabelVO" resultMap="BaseResult">
         select
-        p.indicator_id,p.category_name,p.category_id,p.structure_id,p.rgb,p.hex,p.create_by,p.create_time,p.order_number,s.user_name,p.number,p.organization_id,idc.species_id,idc.organ_id
+        p.indicator_id,p.category_name,p.category_id,p.structure_id,p.rgb,p.hex,p.create_by,p.create_time,p.order_number,s.user_name,p.number,idc.species_id,idc.organ_id
         from tb_pathological_indicator_category as p
         left join tb_pathological_indicator as idc on p.indicator_id=idc.indicator_id
         left join sys_user as s on p.create_by=s.user_id
@@ -406,17 +364,11 @@
             <if test="categoryName != null and categoryName != ''">
                 AND p.category_name like concat('%', #{categoryName}, '%')
             </if>
-            <if test="organizationId != null">
-                AND p.organization_id =#{organizationId}
-            </if>
             <if test="structureId != null">
                 AND p.structure_id =#{structureId}
             </if>
             <if test="indicatorId != null">
                 AND p.indicator_id =#{indicatorId}
-            </if>
-            <if test="organizationId != null">
-                AND p.organization_id =#{organizationId}
             </if>
             <if test="structureName != null and structureName != ''">
                 AND p.structure_name like concat('%', #{structureName}, '%')

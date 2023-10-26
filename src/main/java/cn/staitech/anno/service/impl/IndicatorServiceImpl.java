@@ -2,7 +2,6 @@ package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.domain.Indicator;
-import cn.staitech.anno.domain.vo.indicator.IndicatorAndOrganizationIdVO;
 import cn.staitech.anno.domain.vo.indicator.IndicatorGetVO;
 import cn.staitech.anno.domain.vo.indicator.IndicatorReviseVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticIndicatorListInVO;
@@ -62,11 +61,8 @@ public class IndicatorServiceImpl implements IndicatorService {
                 // 脏器
                 obj.setOrganName(MapConstant.getOrgan(obj.getSpeciesId().toString().concat(obj.getOrganId().toString())));
             }
-
-            IndicatorAndOrganizationIdVO indicatorAndOrganizationIdVO = new IndicatorAndOrganizationIdVO();
-            indicatorAndOrganizationIdVO.setIndicatorId(obj.getIndicatorId());
             // 查询总数
-            obj.setAnnotationCategoryTotal(pathologicalIndicatorCategoryService.selectCategoryNumber(indicatorAndOrganizationIdVO));
+            obj.setAnnotationCategoryTotal(pathologicalIndicatorCategoryService.selectCategoryNumber(obj.getIndicatorId()));
         }
         return list;
     }

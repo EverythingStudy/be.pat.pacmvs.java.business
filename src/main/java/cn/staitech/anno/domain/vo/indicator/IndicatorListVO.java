@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.util.Map;
 
+/**
+ * @author wangf
+ */
 @Data
 public class IndicatorListVO {
 
@@ -18,9 +21,6 @@ public class IndicatorListVO {
     private Integer speciesId;
     @ApiModelProperty(value = "脏器编码")
     private String organId;
-    @ApiModelProperty(value = "机构ID", hidden = true)
-    private Long organizationId;
     @ApiModelProperty("请求参数（开始和结束时间）")
     private Map<String, Object> createTimeParams;
-
 }
