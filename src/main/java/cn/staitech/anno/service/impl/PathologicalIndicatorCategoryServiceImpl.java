@@ -1,12 +1,12 @@
 package cn.staitech.anno.service.impl;
 
 
+import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.structure.Structure;
 import cn.staitech.anno.domain.vo.LabelListVO;
 import cn.staitech.anno.domain.vo.LabelVO;
-import cn.staitech.anno.domain.vo.indicator.IndicatorAndOrganizationIdVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListOutVO;
 import cn.staitech.anno.mapper.IndicatorMapper;
@@ -178,8 +178,8 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
      * 查询病例指标下的标注类别数量
      */
     @Override
-    public Long selectCategoryNumber(IndicatorAndOrganizationIdVO indicatorAndOrganizationIdVO) {
-        return pathologicalIndicatorCategoryMapper.selectCategoryNumber(indicatorAndOrganizationIdVO);
+    public Long selectCategoryNumber(Long indicatorId) {
+        return pathologicalIndicatorCategoryMapper.selectCategoryNumber(indicatorId);
     }
 
     /**
@@ -229,16 +229,16 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
             QueryWrapper<PathologicalIndicatorCategory> pathologicalIndicatorCategoryQueryWrapper = new QueryWrapper<>();
             pathologicalIndicatorCategoryQueryWrapper.eq("indicator_id", project.getIndicatorId()).orderByDesc("order_number");
             List<PathologicalIndicatorCategory> list = pathologicalIndicatorCategoryMapper.selectList(pathologicalIndicatorCategoryQueryWrapper);
-
             for (PathologicalIndicatorCategory category : list) {
+                // 处理标签集中英文
                 if (LanguageUtils.isEn()) {
                     Indicator indicator = indicatorMapper.selectIndicatorById(category.getIndicatorId());
                     if (indicator != null) {
-//                        MapConstant.getStructure(category.getStructureId())
-                        String categoryName = indicator.getIndicatorNameEn().concat("");
+                        String categoryName = indicator.getIndicatorNameEn().concat(" ").concat(MapConstant.getStructureNameEn(category.getStructureId()));
                         category.setCategoryName(categoryName);
                     }
                 }
+
             }
             return list;
         }

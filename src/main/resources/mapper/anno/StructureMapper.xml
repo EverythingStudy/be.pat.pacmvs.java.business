@@ -11,22 +11,18 @@
         <result property="speciesId" column="species_id"/>
     </resultMap>
 
-    <select id="getStructureList" parameterType="cn.staitech.anno.domain.structure.Structure"
+    <select id="selectList" parameterType="cn.staitech.anno.domain.structure.Structure"
             resultType="cn.staitech.anno.domain.structure.Structure">
-        SELECT
-        t1.organ_id,
-        t1.`name`,
-        t1.`name_en`,
-        t1.species_id,
-        t1.structure_id
-        FROM
-        tb_structure t1
+        SELECT organ_id,`name`, `name_en`, species_id, structure_id FROM tb_structure
         <where>
+            <if test="structureId != null">
+                AND structure_id = #{structureId}
+            </if>
             <if test="speciesId != null">
-                AND t1.species_id = #{speciesId}
+                AND species_id = #{speciesId}
             </if>
             <if test="organId != null">
-                AND t1.organ_id = #{organId}
+                AND organ_id = #{organId}
             </if>
         </where>
     </select>

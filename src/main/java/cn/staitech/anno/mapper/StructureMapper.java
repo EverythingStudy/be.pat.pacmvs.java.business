@@ -12,8 +12,5 @@ import java.util.List;
  */
 
 public interface StructureMapper extends BaseMapper<Structure> {
-
-    List<Structure> selectList();
-
-    List<Structure> getStructureList(Structure structure);
+    List<Structure> selectList(Structure structure);
 }
