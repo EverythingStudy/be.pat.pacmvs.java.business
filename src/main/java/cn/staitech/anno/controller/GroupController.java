@@ -32,7 +32,6 @@ public class GroupController extends BaseController {
      * 获取分组列表
      */
     @ApiOperation(value = "获取分组列表", notes = "ZMJ")
-    // @RequiresPermissions("special:group:list")
     @Log(title = "分组列表", menu = "专题管理", subMenu = "分组配置", businessType = BusinessType.QUERY)
     @GetMapping("/list")
     public R<List<Group>> list() throws ExecutionException, InterruptedException {

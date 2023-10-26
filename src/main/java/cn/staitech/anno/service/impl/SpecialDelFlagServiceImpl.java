@@ -44,7 +44,7 @@ public class SpecialDelFlagServiceImpl implements SpecialDelFlagService {
             Date expireTime = TimeUtils.conversionDates(specialReclaim.getExpireTime());
             // 判断是否达到到期时间
             if (date.compareTo(expireTime) == 0) {
-                special.setDelFlag(SpecialEnum.del_flag_2.value());
+                special.setDelFlag(SpecialEnum.DEL_FLAG_2.value());
                 // 更新专题表中状态
                 specialMapper.updateDelFlag(special);
                 // 发送至消息中

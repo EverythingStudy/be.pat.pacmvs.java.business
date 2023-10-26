@@ -16,8 +16,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SysDictDataVo {
-
-
     @ApiModelProperty(name = "dictCode", value = "字典编码")
     private Long dictCode;
 

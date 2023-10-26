@@ -93,9 +93,10 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
     private PathologicalIndicatorCategoryMapper pathologicalIndicatorCategoryMapper;
 
     @Override
-    public boolean zipExport(String zipUrl, Long projectId, String fileUrl) throws Exception {
+    public List<String> zipExport(String zipUrl, Long projectId, String fileUrl) throws Exception {
         StringBuilder sb;
         File file1 = new File(zipUrl);
+        List<String> fileNameList = new ArrayList<>();
         Map<String, String> ddlList = new HashMap<>(16);
         try {
             //zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
@@ -135,6 +136,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
                         // 标签列表长度超出一个，抛出异常
                         if (labelInfo.length() > 1) {
 //                            throw new Exception(MessageSource.M("JSON_MULTIPLE_LABElS"));
+                            fileNameList.add(ze.getName());
                             continue;
                         }
                         if (image != null) {
@@ -156,7 +158,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         } catch (Exception e) {
             throw new Exception(MessageSource.M("JSON_FILE_PARSE_FAILURE"));
         }
-        return true;
+        return fileNameList;
     }
 
 

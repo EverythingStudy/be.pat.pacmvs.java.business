@@ -205,7 +205,7 @@ public class PoiUtils {
             }
             //构建合并单元格参数
             if (flag) {
-                Map<String, Integer> mergeCellsParam = new HashMap<>();
+                Map<String, Integer> mergeCellsParam = new HashMap<>(16);
                 //表头3行
                 mergeCellsParam.put("startRow", j - (groupRow - 1) + 3);
                 mergeCellsParam.put("endRow", j + 3);

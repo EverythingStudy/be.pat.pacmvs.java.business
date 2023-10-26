@@ -205,14 +205,15 @@ public class FileUploadServiceImpl implements FileUploadService {
                     }
                 }
                 // 解析zip压缩包
-                algorithmAssessmentService.zipExport(files.getFilesPath(), fileUploadVO.getProjectId(), fileUrl);
+                List<String> fileNameList = algorithmAssessmentService.zipExport(files.getFilesPath(), fileUploadVO.getProjectId(), fileUrl);
+                files.setFileNameList(fileNameList);
                 break;
         }
         return files;
     }
 
     @Override
-    public Boolean mergeChunk(FileUploadVO chunk) throws Exception {
+    public String mergeChunk(FileUploadVO chunk) throws Exception {
         // 查询文件是否存在
         QueryWrapper<Files> filesQueryWrapper = new QueryWrapper<>();
         filesQueryWrapper.eq("files_code", chunk.getUuid());
@@ -248,7 +249,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 raf.write(buffer, 0, len);
             }
         } catch (IOException e) {
-            return false;
+            return "0";
         }
         // 删除map中当前元素
         Container.FILE_MAP.get(chunk.getUuid()).remove(chunk.getChunk());
@@ -283,11 +284,11 @@ public class FileUploadServiceImpl implements FileUploadService {
                         // 获取文件路径
                         fileUrl = uploadPath + File.separator + getFileUrl(chunk);
                     }
-                    algorithmAssessmentService.zipExport(filesBy.getFilesPath(), chunk.getProjectId(), fileUrl);
-                    break;
+                    List<String> fileNameList = algorithmAssessmentService.zipExport(filesBy.getFilesPath(), chunk.getProjectId(), fileUrl);
+                    return fileNameList.toString();
             }
         }
-        return true;
+        return "1";
     }
 
     public Long saveFiles(FileUploadVO fileUploadVO) {

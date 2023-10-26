@@ -63,7 +63,7 @@ public class SpecialRoleQueryVO implements Serializable {
 
     public Map<String, Object> getCreateTimeparams() {
         if (createTimeparams == null) {
-            createTimeparams = new HashMap<>();
+            createTimeparams = new HashMap<>(16);
         }
         return createTimeparams;
     }

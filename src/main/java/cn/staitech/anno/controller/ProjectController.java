@@ -304,7 +304,6 @@ public class ProjectController extends BaseController {
 
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "查询项目列表")
-    //@RequiresPermissions("special:project:list")
     @PostMapping("/list")
     public R<PageMaster<List<ProjectListVO>>> getProjectList(@RequestBody @Validated ProjectListQueryIn req) {
         PageHelper.startPage(req.getPageNum(), req.getPageSize()).setReasonable(true);
@@ -385,7 +384,6 @@ public class ProjectController extends BaseController {
 
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "编辑项目")
-    //@RequiresPermissions("anno:project:addproject")
     @Log(title = "编辑项目", menu = "编辑项目", subMenu = "编辑项目", businessType = BusinessType.UPDATE)
     @PostMapping("/editStatus")
     @Transactional(rollbackFor = Exception.class)

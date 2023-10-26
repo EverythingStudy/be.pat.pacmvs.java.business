@@ -1,4 +1,4 @@
-package cn.staitech.anno.domain.vo.topic;
+package cn.staitech.anno.domain.topic;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.AllArgsConstructor;

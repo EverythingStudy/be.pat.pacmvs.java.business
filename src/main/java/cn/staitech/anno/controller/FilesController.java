@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -45,7 +46,6 @@ public class FilesController extends BaseController {
     /**
      * 上传文件-仅用于上传
      */
-    // @RequiresPermissions("anno:files:upload")
     @ApiOperationSupport(author = "wangfeng")
     @RequiresPermissions(value = {"smartAnno:project:upload"}, logical = Logical.OR)
     @ApiOperation(value = "文件上传", notes = "文件列表 - 王峰")
@@ -59,7 +59,6 @@ public class FilesController extends BaseController {
     /**
      * 上传文件-仅用于上传
      */
-    // @RequiresPermissions("anno:files:upload")
     @ApiOperationSupport(author = "wangfeng")
     @RequiresPermissions(value = {"smartAnno:project:upload"}, logical = Logical.OR)
     @ApiOperation(value = "文件上传并处理下游业务逻辑", notes = "文件上传并处理下游业务逻辑 - 王峰")
@@ -73,7 +72,10 @@ public class FilesController extends BaseController {
             @RequestParam("file") MultipartFile file,
             FileUploadVO fileUploadVO) throws Exception {
         fileUploadVO.setMultipartFile(file);
-        fileUploadService.uploadAndProcessBusiness(fileUploadVO);
+        Files files = fileUploadService.uploadAndProcessBusiness(fileUploadVO);
+        if (files.getFileNameList().size() > 0) {
+            return R.fail(files.getFileNameList() + MessageSource.M("JSON_MULTIPLE_LABElS"));
+        }
         return R.ok();
     }
 
@@ -89,10 +91,13 @@ public class FilesController extends BaseController {
     public R<String> uploadBigFileBusiness(
             @RequestParam("file") MultipartFile file, FileUploadVO fileUploadVO) throws Exception {
         fileUploadVO.setMultipartFile(file);
-        if (fileUploadService.mergeChunk(fileUploadVO)) {
+        String res = fileUploadService.mergeChunk(fileUploadVO);
+        if (Objects.equals(res, "1")) {
             return R.ok(MessageSource.M("FILE_SLIDE_UPLOAD_SUCCESS"));
-        } else {
+        } else if (Objects.equals(res, "0")) {
             return R.fail(MessageSource.M("FILE_SLIDE_UPLOAD_FAILURE"));
+        } else {
+            return R.fail(res + MessageSource.M("JSON_MULTIPLE_LABElS"));
         }
     }
 
@@ -116,7 +121,6 @@ public class FilesController extends BaseController {
      * 单个文件详细信息 .
      */
     @SneakyThrows
-    // @RequiresPermissions("anno:files:selectbyid")
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "单个文件详情", notes = "单个文件详情 - 王峰")
     @Log(title = "查询单个文件详情", menu = "单个文件详情", subMenu = "文件信息", businessType = BusinessType.QUERY)
@@ -130,7 +134,6 @@ public class FilesController extends BaseController {
      * 物理删除单个文件 .
      */
     @SneakyThrows
-    // @RequiresPermissions("anno:files:delete")
     @ApiOperationSupport(author = "wangfeng")
     @Log(title = "物理删除单个文件记录", menu = "物理删除单个文件记录", subMenu = "物理删除单个文件记录", businessType = BusinessType.DELETE)
     @ApiOperation(value = "删除单个文件记录")

@@ -7,6 +7,8 @@ import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 服务类
@@ -25,7 +27,7 @@ public interface AlgorithmAssessmentService extends IService<AlgorithmAssessment
 
     void export(AssessmentExportIn assessmentExportIn) throws Exception;
 
-    boolean zipExport(String zipUrl, Long projectId, String fileUrl) throws Exception;
+    List<String> zipExport(String zipUrl, Long projectId, String fileUrl) throws Exception;
 
     R getJsonInfo(GetJsonInfoIn req);
 }

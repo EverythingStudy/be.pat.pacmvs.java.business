@@ -25,14 +25,13 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/filemanager")
 public class FileManagerController {
-
-    private String baseDir = "/home/pat_saas";
-
     /**
+     * 根目录
      * /home/pat_saas/Data
      * /home/pat_saas/Slides
      * /home/pat_saas/Upload
      */
+    private String baseDir = "/home/pat_saas";
 
     /**
      * 查询目录下的文件夹和文件列表
@@ -74,7 +73,6 @@ public class FileManagerController {
         List<FileNode> nodes = fileNodeList.stream().
                 sorted(Comparator.comparing(FileNode::getType).
                         thenComparing(FileNode::getType, Comparator.reverseOrder())).collect(Collectors.toList());
-
         return R.ok(nodes, MessageSource.M("OPERATE_SUCCEED"));
     }
 }

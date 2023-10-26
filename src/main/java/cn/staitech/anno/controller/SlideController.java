@@ -11,7 +11,7 @@ import cn.staitech.anno.domain.vo.imagecsv.ImageCsvGetPagerVO;
 import cn.staitech.anno.domain.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.domain.vo.imagecsv.ImageCsvListVO;
 import cn.staitech.anno.domain.vo.slide.*;
-import cn.staitech.anno.domain.vo.topic.TopicListVO;
+import cn.staitech.anno.domain.topic.TopicListVO;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
@@ -275,7 +275,7 @@ public class SlideController extends BaseController {
      */
     @ApiOperation(value = "批量添加标注切片")
     @PostMapping("/addSlidesBatch")
-    public R addASlidesBatch(@RequestBody AddSlideIdsVO req) {
+    public R addSlidesBatch(@RequestBody AddSlideIdsVO req) {
         return R.ok(slideService.addSlidesBatch(req));
     }
 

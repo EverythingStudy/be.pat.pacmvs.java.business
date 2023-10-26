@@ -11,6 +11,7 @@ import cn.staitech.anno.mapper.SpecialMapper;
 import cn.staitech.anno.mapper.SysDictDataMapper;
 import cn.staitech.anno.service.DiagnosticStatisticsService;
 import cn.staitech.anno.service.ReportService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PoiUtils;
 import cn.staitech.anno.utils.date.DateUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
@@ -111,7 +112,7 @@ public class ReportServiceImpl implements ReportService {
         ZipSecureFile.setMinInflateRatio(0.001);
         Long specialId = MapUtils.getLong(params, "specialId");
         if (specialId == null) {
-            throw new ReportException("专题id为空！");
+            throw new ReportException(MessageSource.M("TOPIC_ID_IS_EMPTY"));
         }
         //查询专题
         Special special = specialMapper.selectById(specialId);

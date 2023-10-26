@@ -461,10 +461,10 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         StringBuilder res = new StringBuilder();
         ProjectExt projectExt = projectExtMapper.selectById(projectId);
         if (projectExt == null) {
-            throw new Exception("未发现项目信息");
+            throw new Exception(MessageSource.M("NOT_FOND_PROJECT"));
         }
         if (slideList.size() == 0) {
-            throw new Exception("请选择切片");
+            throw new Exception(MessageSource.M("PLEASE_SELECT_A_SLICE"));
         }
         for (Long slide : slideList) {
             QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();

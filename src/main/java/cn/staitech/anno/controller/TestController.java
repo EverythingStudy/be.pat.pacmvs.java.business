@@ -64,10 +64,14 @@ public class TestController {
         return true;
     }
 
-    //Object转Map
+    /**
+     * Object转Map
+     * @param obj
+     * @return
+     * @throws IllegalAccessException
+     */
     public static Map<String, Object> getObjectToMap(Object obj) throws IllegalAccessException {
-
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>(16);
         Class<?> cla = obj.getClass();
         Field[] fields = cla.getDeclaredFields();
         for (Field field : fields) {
@@ -95,7 +99,7 @@ public class TestController {
         //通过反射获取所有的字段，getFileds()获取public的修饰的字段
         //getDeclaredFields获取private protected public修饰的字段
 
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
         Field[] fields = obj.getClass().getDeclaredFields();
         String typeName = obj.getClass().getTypeName();
         for (String t : typeLists) {
@@ -124,7 +128,7 @@ public class TestController {
     }
 
     public static void main(String[] args) throws Exception {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
         map.put("userId", 1);
         map.put("userName", "admin");
         Object o = map;
@@ -243,11 +247,10 @@ public class TestController {
 
         RBucket<String> rBucket = redissonClient.getBucket("slideId" + ":" + res);
         // 设置value和key的有效期
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
         map.put("userId", userId);
         map.put("userName", userName);
         // System.out.println(String.valueOf(map) + ">>>>>>>>>>>>>>>>>>>>>>>>>>>");
-
         rBucket.set(String.valueOf(map), 300, TimeUnit.MINUTES);
 
         Object o = rBucket.get();
@@ -283,9 +286,8 @@ public class TestController {
     @GetMapping("/delStr")
     public boolean delStr(String res) {
         redissonClient.getKeys().delete(res);
-//        Object o = rBucket.get();
-//        System.out.println(o);
-
+        // Object o = rBucket.get();
+        // System.out.println(o);
         return true;
     }
 
@@ -294,7 +296,7 @@ public class TestController {
         RLock rLock = redissonClient.getLock(req);
         rLock.lock();
         try {
-            //尝试5秒内获取锁，如果获取到了，最长60秒自动释放
+            // 尝试5秒内获取锁，如果获取到了，最长60秒自动释放
             boolean res = rLock.tryLock(5, TimeUnit.MINUTES);
             if (res) {
                 return true;
@@ -309,12 +311,11 @@ public class TestController {
     public boolean acquire1(String req) {
         RLock lock = redissonClient.getLock(req);
         try {
-            //尝试加锁，最多等待10秒，上锁以后10秒自动解锁
+            // 尝试加锁，最多等待10秒，上锁以后10秒自动解锁
             if (lock.tryLock(10, 10, TimeUnit.SECONDS)) {
                 try {
                     //处理
-
-//                    logger.info("tryLock thread---{}, lock:{}", Thread.currentThread().getId(), lock);
+                    // logger.info("tryLock thread---{}, lock:{}", Thread.currentThread().getId(), lock);
                 } catch (Exception e) {
                 } finally {
                     //解锁

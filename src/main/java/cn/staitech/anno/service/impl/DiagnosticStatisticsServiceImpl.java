@@ -219,7 +219,7 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
         Map<String, Integer> visceraMap = new HashMap<>(16);
         Map<String, Integer> visceraNoMap = new HashMap<>(16);
         Map<String, Integer> lesionAndPositionaMap = new HashMap<>(16);
-        Map<String, Integer> lpgMap = new HashMap<>();
+        Map<String, Integer> lpgMap = new HashMap<>(16);
         for (StatisticsBodyVo vo : dataAllList) {
             String genderName = vo.getGenderName();
             String groupName = vo.getGroupName();

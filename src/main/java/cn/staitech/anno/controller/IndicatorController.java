@@ -51,7 +51,6 @@ public class IndicatorController extends BaseController {
      */
     @SneakyThrows
     @ApiOperation(value = "添加结构指标", notes = "wangfeng")
-    // @RequiresPermissions("special:pathology:add")
     @Log(title = "添加结构指标", menu = "结构指标", subMenu = "结构指标", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     public R<String> add(@Validated @RequestBody IndicatorAddVO req) {
@@ -103,11 +102,11 @@ public class IndicatorController extends BaseController {
     @GetMapping(value = "/details")
     public R<IndicatorVO> getInfo(
             @RequestParam @ApiParam(name = "indicatorId", value = "病理指标id", required = true) Long indicatorId) {
-        //获取病理信息
+        // 获取病理信息
         Indicator indicator = indicatorService.selectIndicatorsById(indicatorId);
         IndicatorVO indicatorVo = new IndicatorVO();
         if (indicator != null) {
-            //浅拷贝
+            // 浅拷贝
             BeanUtils.copyProperties(indicator, indicatorVo);
         }
         //添加关联项目

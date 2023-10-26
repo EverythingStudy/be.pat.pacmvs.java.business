@@ -78,7 +78,7 @@ public class PdfExportController {
         document.open();
 
         //设置表格几列
-        PdfPTable dataTable = PdfFontUtil.getPdfPTable01(8, 500);
+        PdfPTable dataTable = PdfFontUtil.getPdfTable(8, 500);
         //字段名称
         List<String> tableHeadList = new ArrayList<>();
         tableHeadList.add("Serial number");
@@ -149,7 +149,7 @@ public class PdfExportController {
         document.open();
 
         //设置表格几列
-        PdfPTable dataTable = PdfFontUtil.getPdfPTable01(7, 500);
+        PdfPTable dataTable = PdfFontUtil.getPdfTable(7, 500);
         //字段名称
         List<String> tableHeadList = new ArrayList<>();
         tableHeadList.add("Serial number");

@@ -30,7 +30,9 @@ import java.util.Map;
 @Slf4j
 public class WordTool {
 
-    //报告模板缓存
+    /**
+     * 报告模板缓存
+     */
     public static Map<String, byte[]> TPL_CACHE = new HashMap<>();
 
     public static String generateWord(Special special, ReportRecordAddVO reportRecordAddVO, List<List<String>> list, List<Map<String, Object>> tableMapList, String rptPath) {
@@ -63,8 +65,10 @@ public class WordTool {
             run.addCarriageReturn();
             // 粗体
             run.setBold(true);
-            run.setFontFamily("等线");//设置字体（如：微软雅黑,华文楷体,宋体）
-            run.setFontSize(9);//字体大小
+            // 设置字体（如：微软雅黑,华文楷体,宋体）
+            run.setFontFamily("等线");
+            // 字体大小
+            run.setFontSize(9);
             //设置水平居中
             paragraph.setAlignment(ParagraphAlignment.CENTER);
 

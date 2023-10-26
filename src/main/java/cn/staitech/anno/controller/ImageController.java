@@ -44,13 +44,8 @@ public class ImageController extends BaseController {
     private SlideService slideService;
 
     /**
-     * 切片列表 .
-     * 原始切片
-     * 57
-     * 1
-     * section:slices:query
+     * 切片列表 - 原始切片 .
      */
-    //@RequiresPermissions("section:slices:query")
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "切片列表", notes = "切片列表 - 王峰")
     @ApiImplicitParams({
@@ -68,7 +63,6 @@ public class ImageController extends BaseController {
      * 单个切片详细信息 .
      */
     @SneakyThrows
-    // @RequiresPermissions("anno:image:selectbyid")
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "单个切片", notes = "单个切片 - 王峰")
     @Log(title = "查询单个切片", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.QUERY)

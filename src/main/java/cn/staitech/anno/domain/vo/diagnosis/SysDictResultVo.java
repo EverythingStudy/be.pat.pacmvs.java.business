@@ -19,16 +19,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SysDictResultVo {
-
-
     @ApiModelProperty(name = "ddefinitionList", value = "ddefinitionList")
     List<SysDictDataVo> ddefinitionList = new ArrayList<>();
 
-
     @ApiModelProperty(name = "gradeList", value = "gradeList")
     List<SysDictDataVo> gradeList = new ArrayList<>();
-
-
-    @ApiModelProperty(name = "visceraList", value = "visceraList")
-    List<VisceraVo> visceraList = new ArrayList<>();
 }
