@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Select;
  * @Entity cn.staitech.anno.project.domain.SlideAttr
  */
 public interface SlideAttrMapper extends BaseMapper<SlideAttr> {
-    @Select("select group_concat(attr_id) from tb_slide_attr where del_flag='0' and  attr_type ='2' and slide_id =#{slideId}")
+    @Select("select group_concat(a.category_id) from  (select category_id category_id from tb_marking where  slide_id = #{slideId} group by category_id) a")
     String selectCategoryIds(Long slideId);
 }
 
