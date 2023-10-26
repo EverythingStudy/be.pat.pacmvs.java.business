@@ -122,12 +122,12 @@ public class MapConstant {
     /**
      * 获取轮次名称
      *
-     * @param RoundId
+     * @param roundId
      * @return
      */
-    public static String getRoundName(Long RoundId) {
-        if (ROUND_MAP.containsKey(RoundId)) {
-            return ROUND_MAP.get(RoundId);
+    public static String getRoundName(Long roundId) {
+        if (ROUND_MAP.containsKey(roundId)) {
+            return ROUND_MAP.get(roundId);
         }
         return "";
     }
@@ -135,12 +135,12 @@ public class MapConstant {
     /**
      * 获取轮次名称 - en
      *
-     * @param RoundId
+     * @param roundId
      * @return
      */
-    public static String getRoundNameEn(Long RoundId) {
-        if (ROUND_MAP_EN.containsKey(RoundId)) {
-            return ROUND_MAP_EN.get(RoundId);
+    public static String getRoundNameEn(Long roundId) {
+        if (ROUND_MAP_EN.containsKey(roundId)) {
+            return ROUND_MAP_EN.get(roundId);
         }
         return "";
     }

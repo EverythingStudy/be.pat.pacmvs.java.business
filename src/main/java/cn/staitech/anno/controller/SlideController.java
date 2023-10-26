@@ -275,7 +275,7 @@ public class SlideController extends BaseController {
      */
     @ApiOperation(value = "批量添加标注切片")
     @PostMapping("/addSlidesBatch")
-    public R addASlidesBatch(@RequestBody AddSlideIdsVO req) {
+    public R addSlidesBatch(@RequestBody AddSlideIdsVO req) {
         return R.ok(slideService.addSlidesBatch(req));
     }
 

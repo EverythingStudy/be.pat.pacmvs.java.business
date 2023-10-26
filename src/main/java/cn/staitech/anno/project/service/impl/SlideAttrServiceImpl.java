@@ -108,7 +108,7 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
     private Boolean save(Long slideId, String attrType, List<Long> attrIds, List<SlideAttr> slideAttrs) {
         List<SlideAttr> resp = new ArrayList<>();
         Long userId = SecurityUtils.getUserId();
-        Map<Long, SlideAttr> map = new HashMap<>();
+        Map<Long, SlideAttr> map = new HashMap<>(16);
         if (slideAttrs != null && !slideAttrs.isEmpty()) {
             slideAttrs.forEach(slideAttr -> {
                 map.put(slideAttr.getAttrId(), slideAttr);

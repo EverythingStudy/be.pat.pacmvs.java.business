@@ -8,7 +8,13 @@ import org.apache.commons.lang3.StringUtils;
 
 public enum ReasonsEnum {
 
+    /**
+     * 给药结束安乐死
+     */
     reasons_1(1, "给药结束安乐死"),
+    /**
+     * 恢复期结束安乐死
+     */
     reasons_2(2, "恢复期结束安乐死");
 
     private int value;

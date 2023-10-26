@@ -110,14 +110,14 @@ public class SlideController {
         List<Map<String, String>> mapList = new ArrayList<>();
         if (LanguageUtils.isEn()) {
             Constants.STATUS_EN.keySet().forEach(k -> {
-                Map<String, String> map = new HashMap<>();
+                Map<String, String> map = new HashMap<>(16);
                 map.put("key", k);
                 map.put("label", Constants.STATUS_EN.get(k));
                 mapList.add(map);
             });
         } else {
             Constants.STATUS.keySet().forEach(k -> {
-                Map<String, String> map = new HashMap<>();
+                Map<String, String> map = new HashMap<>(16);
                 map.put("key", k);
                 map.put("label", Constants.STATUS.get(k));
                 mapList.add(map);

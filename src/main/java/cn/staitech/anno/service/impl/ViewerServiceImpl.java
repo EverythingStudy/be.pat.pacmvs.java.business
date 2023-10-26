@@ -155,21 +155,24 @@ public class ViewerServiceImpl implements ViewerService {
     public boolean zipExport(String zipUrl, Long specialId) throws Exception {
         StringBuilder sb;
         File file1 = new File(zipUrl);
-        Map<String, String> ddlList = new HashMap<>();
+        Map<String, String> ddlList = new HashMap<>(16);
         try {
             List<SlideRes> slideList = markingMapper.selectSlideList(specialId);
-            //zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
-//            ZipInputStream in = new ZipInputStream(Files.newInputStream(file.toPath()));
-            ZipFile zipFile = new ZipFile(file1, Charset.forName("gbk"));//必须指明读取的各式，不是会存在问题***
-            InputStream in = new BufferedInputStream(Files.newInputStream(file1.toPath()));//按流的方式读取文件，输入到管道中
-            ZipInputStream zp = new ZipInputStream(in);//字节流转换为压缩文件输入流，通常用来读取压缩文件
-            ZipEntry ze;//定义文件条目
+            // zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
+            // ZipInputStream in = new ZipInputStream(Files.newInputStream(file.toPath()));
+            // 必须指明读取的各式，不是会存在问题***
+            ZipFile zipFile = new ZipFile(file1, Charset.forName("gbk"));
+            // 按流的方式读取文件，输入到管道中
+            InputStream in = new BufferedInputStream(Files.newInputStream(file1.toPath()));
+            // 字节流转换为压缩文件输入流，通常用来读取压缩文件
+            ZipInputStream zp = new ZipInputStream(in);
+            // 定义文件条目
+            ZipEntry ze;
             Enumeration<? extends ZipEntry> zipEnum = zipFile.entries();
-            while (zipEnum.hasMoreElements()) {//判断是否还有元素
-
-
-                ze = (ZipEntry) zipEnum.nextElement();//返回下一对象
-
+            // 判断是否还有元素
+            while (zipEnum.hasMoreElements()) {
+                // 返回下一对象
+                ze = (ZipEntry) zipEnum.nextElement();
                 String fileNames = ze.getName();
                 if (!fileNames.contains(".")) {
                     throw new Exception(MessageSource.M("JSON_FILE_NOT_HAS"));
@@ -221,7 +224,7 @@ public class ViewerServiceImpl implements ViewerService {
 
                                             Properties properties1 = JSONObject.toJavaObject(JSONObject.parseObject(JSONObject.toJSONString(properties)), Properties.class);
                                             // 获取描述
-//                                            String description = properties.getString("description");
+                                            // String description = properties.getString("description");
                                             // 写入数据库
                                             Marking marking = new Marking();
                                             marking.setAnnotation_id(annotationId);
@@ -270,7 +273,7 @@ public class ViewerServiceImpl implements ViewerService {
             if (!file1.delete()) {
                 log.error("删除文件" + file1 + "失败！");
             }
-//            DeleteFolder(zipUrl);
+            // DeleteFolder(zipUrl);
             // 查询
         } catch (Exception e) {
             throw new Exception(MessageSource.M("JSON_FILE_PARSE_FAILURE"));

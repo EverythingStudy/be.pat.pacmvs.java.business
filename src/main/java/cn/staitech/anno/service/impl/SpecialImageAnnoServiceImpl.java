@@ -157,7 +157,7 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
         //参数校验
         //审核状态 0：待审核 1：审核通过 2：审核不通过
         int auditStatus = vo.getAuditStatus();
-        Map paramMap = new HashMap<>();
+        Map paramMap = new HashMap<>(16);
 		/*if(auditStatus == 1){
 			//确保所选切片全部是待审核或者审核通过的数据
 			paramMap.put("auditSucess", auditStatus);
@@ -197,7 +197,7 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
             for (SpecialImage sImage : list) {
                 //根据主图imageid、专题id、批次id查询对应的tb_sub_image所有小的切图，修改审核状态为通过更新小图审核状态
                 //查询小图列表
-                Map<String, Object> columnMap = new HashMap<>();
+                Map<String, Object> columnMap = new HashMap<>(16);
                 columnMap.put("parent_image_id", sImage.getImageId());
                 columnMap.put("special_id", sImage.getSpecialId());
                 columnMap.put("slice_batch_number", sImage.getSliceBatchNumber());
@@ -224,7 +224,7 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
     @Override
     public R<String> updateDeliveryBySpecialId(AuditSpecialImageVO vo) {
         //参数校验
-        Map paramMap = new HashMap<>();
+        Map paramMap = new HashMap<>(16);
         paramMap.put("auditFail", 1);
         paramMap.put("specialId", vo.getSpecialId());
         List<SpecialImage> list = specialImageMapper.selectSpecialImageListByParm(paramMap);

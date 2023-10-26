@@ -33,7 +33,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static cn.staitech.anno.constant.CommonConstant.*;
-import static cn.staitech.anno.enums.SpecialEnum.del_flag_1;
+import static cn.staitech.anno.enums.SpecialEnum.DEL_FLAG_1;
 import static cn.staitech.common.core.constant.SysRoleConstant.SPECIAL;
 import static cn.staitech.common.core.utils.SysRoleUtil.getSort;
 
@@ -80,7 +80,7 @@ public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> impl
         Special special = new Special();
         org.springframework.beans.BeanUtils.copyProperties(req, special);
         special.setUserName(req.getCreateBy());
-        special.setDelFlag(SpecialEnum.del_flag_0.value());
+        special.setDelFlag(SpecialEnum.DEL_FLAG_0.value());
         // 判断当前用户是否为admin
         if (!SecurityUtils.isAdmin(SecurityUtils.getUserId())) {
             special.setCreateBy(SecurityUtils.getUserId());
@@ -364,7 +364,7 @@ public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> impl
         special.setUpdateBy(SecurityUtils.getUserId());
         int result = specialMapper.updateDelFlag(special);
         // 如果更新状态成功且状态为1
-        if (result > 0 && special.getDelFlag().equals(del_flag_1.value())) {
+        if (result > 0 && special.getDelFlag().equals(DEL_FLAG_1.value())) {
             // 添加专题回收表中
             SpecialReclaim specialReclaim = new SpecialReclaim();
             specialReclaim.setReclaimBy(SecurityUtils.getUserId());

@@ -161,12 +161,13 @@ public class JsonUtils {
 
 
     /**
+     * 保存json 文件
+     *
      * @param jsonString 要保存的JSON串
      * @param filePath   保存到的文件路径
      * @param fileName   文件名称
      * @return
      */
-    //保存json 文件
     public static boolean createJsonFile(String jsonString, String filePath, String fileName) {
         // 标记文件生成是否成功
         boolean flag = true;
@@ -177,10 +178,12 @@ public class JsonUtils {
         try {
             // 保证创建一个新文件
             File file = new File(fullPath);
-            if (!file.getParentFile().exists()) { // 如果父目录不存在，创建父目录
+            // 如果父目录不存在，创建父目录
+            if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
-            if (file.exists()) { // 如果已存在,删除旧文件
+            // 如果已存在,删除旧文件
+            if (file.exists()) {
                 file.delete();
             }
             file.createNewFile();
@@ -215,12 +218,11 @@ public class JsonUtils {
         Date date = new Date();
 
         String str = simpleDateFormat.format(date);
-
         Random random = new Random();
-
-        int rannum = (int) (random.nextDouble() * (99999 - 10000 + 1)) + 10000;// 获取5位随机数
-
-        return rannum + str;// 当前时间
+        // 获取5位随机数
+        int rannum = (int) (random.nextDouble() * (99999 - 10000 + 1)) + 10000;
+        // 当前时间
+        return rannum + str;
     }
 
     /**
@@ -250,9 +252,6 @@ public class JsonUtils {
                 e.printStackTrace();
             }
         }
-
         return sb.toString();
     }
-
 }
-

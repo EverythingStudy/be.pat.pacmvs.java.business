@@ -71,8 +71,8 @@ public class SysDictDataServiceImpl implements SysDictDataService {
     }
 
     private synchronized String insertSysDictData(SysDictData sysDictData, String dictType) {
-        //获取最大dictSort
-        Map<String, Object> map = new HashMap<>();
+        // 获取最大dictSort
+        Map<String, Object> map = new HashMap<>(16);
         map.put("dictType", dictType);
         SysDictData maxSysDictData = sysDictDataMapper.getMaxDictSortByParm(map);
         int currentDictSort = 1;

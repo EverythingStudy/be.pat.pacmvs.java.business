@@ -93,29 +93,28 @@ public class SubImageServiceImpl extends ServiceImpl<SubImageMapper, SubImage> i
         if (deliveryStatus == null || deliveryStatus == 0) {
             return R.fail(MessageSource.M("TOPIC_ID_IS_NOT_COMMIT"));
         }
-        //根据传入groupId查询分组信息
+        // 根据传入groupId查询分组信息
         Group group = groupMapper.selectById(MapUtils.getLong(params, "groupId", 0L));
         Page<SubImageVo> page = new Page<>(MapUtils.getInteger(params, "pageNum", 1), MapUtils.getInteger(params, "pageSize", 10));
         getBaseMapper().pageSubImage(page, params);
         List<SubImageVo> subImageVos = page.getRecords();
-        Map<Long, SubImageVo> temp = new HashMap<>();
-        //以imageIds作为参数查询图像关联属性
+        Map<Long, SubImageVo> temp = new HashMap<>(16);
+        // 以imageIds作为参数查询图像关联属性
         List<Long> imageIds = new ArrayList<>();
         try {
             if (subImageVos != null && !subImageVos.isEmpty()) {
                 for (SubImageVo vo : subImageVos) {
                     if (group != null) {
                         vo.setGroup(group);
-                        // vo.setGender(group.getGender());
                     }
                     imageIds.add(vo.getImageId());
                     temp.put(vo.getImageId(), vo);
                 }
-                //查询出图像关联属下
+                // 查询出图像关联属下
                 List<ImageRelVo> imageRelVos = getBaseMapper().selectImageRelByIds(imageIds);
                 if (imageRelVos != null && !imageRelVos.isEmpty()) {
                     for (ImageRelVo vo : imageRelVos) {
-                        //将关联属性设置到图像对象中
+                        // 将关联属性设置到图像对象中
                         SubImageVo subImageVo = temp.get(vo.getImageId());
                         BeanUtils.copyProperties(vo, subImageVo);
                     }
@@ -125,7 +124,7 @@ public class SubImageServiceImpl extends ServiceImpl<SubImageMapper, SubImage> i
             log.error("切片图像分页查询异常：{}", e.getMessage());
             throw e;
         }
-        //构建分页对象
+        // 构建分页对象
         PageMaster<SubImageVo> pageMaster = PageMaster.of(subImageVos);
         pageMaster.setTotal(page.getTotal());
         return R.ok(pageMaster);
@@ -158,7 +157,7 @@ public class SubImageServiceImpl extends ServiceImpl<SubImageMapper, SubImage> i
                 List<SubImage> subList = new ArrayList<>();
                 if (sliceImageStatus == 1 || sliceImageStatus == 2) {
                     //查询小图列表
-                    Map<String, Object> columnMap = new HashMap<>();
+                    Map<String, Object> columnMap = new HashMap<>(16);
                     columnMap.put("parent_image_id", imageId);
                     columnMap.put("slice_batch_number", sliceBatchNumber);
                     columnMap.put("special_id", specialId);
@@ -190,16 +189,16 @@ public class SubImageServiceImpl extends ServiceImpl<SubImageMapper, SubImage> i
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public void selectExpireSpecialSlice(SpecialSliceSelectVO sisv) {
-        //根据专题id去查询所有的编辑中的人，查询token是否过期，过期的需要将切图状态修改为未切图、编辑人改为空，结果清空
-        Map paramMap = new HashMap<>();
-        //		切图状态 0:未切图 1：生成中 2：切图完成 3：绘制中
+        // 根据专题id去查询所有的编辑中的人，查询token是否过期，过期的需要将切图状态修改为未切图、编辑人改为空，结果清空
+        Map paramMap = new HashMap<>(16);
+        // 切图状态 0:未切图 1：生成中 2：切图完成 3：绘制中
         paramMap.put("sliceImageStatus", 3);
         paramMap.put("specialId", sisv.getBelongSpecialId());
         List<SpecialImage> siList = specialImageMapper.selectSpecialImageListByParm(paramMap);
         if (CollectionUtils.isEmpty(siList)) {
             //查询编辑人是否token过期
             List<Long> idsList = new ArrayList<>();
-            Map<Long, Integer> loginMap = new HashMap<>();
+            Map<Long, Integer> loginMap = new HashMap<>(16);
             siList.forEach(ssv -> {
                 String updateToken = ssv.getUpdateByToken();
 
@@ -267,9 +266,9 @@ public class SubImageServiceImpl extends ServiceImpl<SubImageMapper, SubImage> i
 
     @Override
     public void logOutSpecial(String userName) {
-        //根据用户查询用户名称查询正在绘制中的所有数据
-        Map paramMap = new HashMap<>();
-        //		切图状态 0:未切图 1：生成中 2：切图完成 3：绘制中
+        // 根据用户查询用户名称查询正在绘制中的所有数据
+        Map paramMap = new HashMap<>(16);
+        // 切图状态 0:未切图 1：生成中 2：切图完成 3：绘制中
         paramMap.put("sliceImageStatus", 3);
         paramMap.put("userName", userName);
         List<SpecialImage> siList = specialImageMapper.selectSpecialImageListByParm(paramMap);
@@ -306,7 +305,7 @@ public class SubImageServiceImpl extends ServiceImpl<SubImageMapper, SubImage> i
 
     @Override
     public List<SubImage> selectSubImageList(SubImage subImage) {
-        Map paramMap = new HashMap<>();
+        Map paramMap = new HashMap<>(16);
         paramMap.put("special_id", subImage.getSpecialId());
         paramMap.put("parent_image_id", subImage.getParentImageId());
         paramMap.put("slice_batch_number", subImage.getSliceBatchNumber());
@@ -317,7 +316,7 @@ public class SubImageServiceImpl extends ServiceImpl<SubImageMapper, SubImage> i
     @Override
     public Map<String, String> getDictInfo(String dictType) {
         Map<String, String> organizationMap = new HashMap<String, String>();
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
         map.put("dictType", dictType);
         map.put("status", 0);
         List<SysDictData> dictDatas = sysDictDataService.getSysDictDataListByParm(map);
