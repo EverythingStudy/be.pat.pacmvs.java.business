@@ -393,10 +393,10 @@
             </activation>
             <properties>
                 <activatedProperties>patsaasdev</activatedProperties>
-                <nacosNamespace>e3b5b4e0-b5b4-4604-9bed-d9f42fe23eee</nacosNamespace>
-                <nacosAddress>http://127.0.0.1:8848</nacosAddress>
+                <nacosNamespace>9db07238-8e80-49f9-b665-5afa03e8d569</nacosNamespace>
+                <nacosAddress>http://192.168.52.108:8848</nacosAddress>
                 <nacosGroup>DEFAULT_GROUP</nacosGroup>
-                <serverAddr>127.0.0.1:8848</serverAddr>
+                <serverAddr>192.168.52.108:8848</serverAddr>
             </properties>
         </profile>
         <profile>
