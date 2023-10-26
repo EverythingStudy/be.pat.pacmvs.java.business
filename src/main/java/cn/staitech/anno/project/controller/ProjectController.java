@@ -22,6 +22,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -86,8 +87,8 @@ public class ProjectController {
 
     @ApiOperation(value = "下载目录文件")
     @GetMapping("/downTaskByCode")
-    public void downTaskByCode(@RequestParam("code") @ApiParam(name = "code", value = "下载任务编码", required = true) String code) throws Exception {
-        markingService.downTaskByCode(code);
+    public void downTaskByCode(@RequestParam("code") @ApiParam(name = "code", value = "下载任务编码", required = true) String code, HttpServletResponse response) throws Exception {
+        markingService.downTaskByCode(code, response);
     }
 
     @ApiOperation(value = "项目导出json")
