@@ -16,8 +16,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SysDictTagVo {
-
-
     @ApiModelProperty(name = "dictType", value = "字典类型")
     private String dictType;
 
@@ -26,6 +24,4 @@ public class SysDictTagVo {
 
     @ApiModelProperty(name = "filter", value = "filter")
     private String filter;
-
-
 }

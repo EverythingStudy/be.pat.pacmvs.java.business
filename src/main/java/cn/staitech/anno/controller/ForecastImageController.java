@@ -43,7 +43,6 @@ public class ForecastImageController extends BaseController {
     /**
      * 切片列表 .
      */
-    // @RequiresPermissions("anno:forecastimage:list")
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "切片列表", notes = "切片列表 - 王峰")
     @ApiImplicitParams({
@@ -61,7 +60,6 @@ public class ForecastImageController extends BaseController {
      * 单个切片详细信息 .
      */
     @SneakyThrows
-    // @RequiresPermissions("anno:forecastimage:selectbyid")
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "单个切片", notes = "单个切片 - 王峰")
     @Log(title = "查询单个切片", menu = "切片管理", subMenu = "预测图片", businessType = BusinessType.QUERY)
@@ -75,7 +73,6 @@ public class ForecastImageController extends BaseController {
      * 删除单个切片 .
      */
     @SneakyThrows
-    // @RequiresPermissions("anno:forecastimage:delete")
     @ApiOperationSupport(author = "wangfeng")
     @Log(title = "删除", menu = "切片管理", subMenu = "预测图片", businessType = BusinessType.DELETE)
     @ApiOperation(value = "逻辑删除单个切片")

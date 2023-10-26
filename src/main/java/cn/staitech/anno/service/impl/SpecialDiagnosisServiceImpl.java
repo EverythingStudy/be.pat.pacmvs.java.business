@@ -4,18 +4,17 @@ import cn.hutool.core.date.DateUtil;
 import cn.staitech.anno.domain.SysDictData;
 import cn.staitech.anno.domain.diagnosis.SpecialDiagnosis;
 import cn.staitech.anno.domain.diagnosis.SpecialDiagnosisDetail;
-import cn.staitech.anno.domain.vo.diagnosis.*;
+import cn.staitech.anno.domain.vo.diagnosis.SpecialDiagnosisAddVo;
+import cn.staitech.anno.domain.vo.diagnosis.SysDictDataVo;
+import cn.staitech.anno.domain.vo.diagnosis.SysDictTagVo;
 import cn.staitech.anno.enums.SysDictTypeEnum;
 import cn.staitech.anno.mapper.SlideMapper;
 import cn.staitech.anno.mapper.SpecialDiagnosisDetailMapper;
 import cn.staitech.anno.mapper.SpecialDiagnosisMapper;
 import cn.staitech.anno.mapper.SysDictDataMapper;
-import cn.staitech.anno.service.GetUserInformationService;
 import cn.staitech.anno.service.SpecialDiagnosisService;
 import cn.staitech.anno.service.SysDictDataService;
-import cn.staitech.anno.utils.DictUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
-import cn.staitech.system.api.domain.SysUser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -39,20 +38,14 @@ import java.util.stream.Collectors;
 public class SpecialDiagnosisServiceImpl implements SpecialDiagnosisService {
     @Resource
     private SpecialDiagnosisMapper specialDiagnosisMapper;
-
     @Resource
     private SpecialDiagnosisDetailMapper specialDiagnosisDetailMapper;
-
     @Resource
     private SysDictDataService sysDictDataService;
     @Resource
     private SysDictDataMapper sysDictDataMapper;
-
     @Resource
     private SlideMapper slideMapper;
-
-    @Resource
-    private GetUserInformationService getUserInformationService;
 
     @Override
     public SpecialDiagnosis getSpecialDiagnosis(Long specialDiagnosisId) {
@@ -60,106 +53,6 @@ public class SpecialDiagnosisServiceImpl implements SpecialDiagnosisService {
         return diagnosis;
     }
 
-    @Override
-    public List<SpecialDiagnosisVo> getSpecialDiagnosisVo(String subImageId, String projctId, String specialId, String groupId) {
-        List<SpecialDiagnosisVo> voList = new ArrayList<SpecialDiagnosisVo>();
-
-        Map<String, Object> map = new HashMap<>(16);
-        map.put("projectId", Long.valueOf(projctId));
-        map.put("subImageId", Long.valueOf(subImageId));
-        map.put("specialId", Long.valueOf(specialId));
-        map.put("groupId", Long.valueOf(groupId));
-        map.put("status", 1);
-        map.put("deleteFlag", 1);
-        int index = 0;
-        List<SpecialDiagnosis> list = specialDiagnosisMapper.getSpecialDiagnosisListByParm(map);
-        if (CollectionUtils.isNotEmpty(list)) {
-            for (SpecialDiagnosis diagn : list) {
-                SpecialDiagnosisVo vo = new SpecialDiagnosisVo();
-                BeanUtils.copyProperties(diagn, vo);
-                Long diagnosisId = diagn.getSpecialDiagnosisId();
-                Long createBy = diagn.getCreateBy();
-                // 根据创建人查询名称
-                SysUser loginUser = getUserInformationService.selectById(createBy);
-                vo.setCreateUser(loginUser.getNickName());
-                vo.setIndex(index);
-                map.put("specialDiagnosisId", diagnosisId);
-                // 查询所有的明细
-                List<SpecialDiagnosisDetail> detailList = specialDiagnosisDetailMapper.getSpecialDiagnosisDetailListByParm(map);
-
-                String visceraTag = "";
-                for (SpecialDiagnosisDetail detail : detailList) {
-                    String dictType = detail.getDictType();
-                    String tags = detail.getTags();
-                    String tagName = detail.getTagName();
-                    String customizeTagName = detail.getCustomizeTagName();
-                    //根据不同的标签去查询value值
-                    if (StringUtils.isNotEmpty(tags)) {
-                        if (dictType.equals(SysDictTypeEnum.organization.label())) {
-                            vo.setViscera(Long.valueOf(tags));
-                            visceraTag = tags;
-                        } else if (dictType.equals(SysDictTypeEnum.lesion.label())) {
-                            vo.setLesion(Long.valueOf(tags));
-                            vo.setLesionName(tagName);
-                            if (StringUtils.isNotEmpty(customizeTagName)) {
-                                vo.setLesionWord(customizeTagName);
-                            }
-                        } else if (dictType.equals(SysDictTypeEnum.grade.label())) {
-                            vo.setGrade(Long.valueOf(tags));
-                        }
-                        if (dictType.equals(SysDictTypeEnum.position.label())) {
-                            List<Object> labelList = transArray(tags);
-                            vo.setPositionList(labelList);
-                            List<Object> positionNameList = transArray2(tagName);
-                            vo.setPositionNameList(positionNameList);
-                            if (StringUtils.isNotEmpty(customizeTagName)) {
-                                vo.setPositionWord(customizeTagName);
-                            }
-                        } else if (dictType.equals(SysDictTypeEnum.ddefinition.label())) {
-                            List<Object> labelList = transArray(tags);
-                            vo.setDdefinitionList(labelList);
-                        }
-                    }
-                }
-
-                // 根据脏器标签查询他对应的部位和dde的列表
-                List<VisceraVo> relationshipList = new ArrayList<>();
-                relationshipList = getSelectRelationship(SysDictTypeEnum.organization.label(), visceraTag);
-                vo.setVisceraList(relationshipList);
-
-                if (createBy.equals(SecurityUtils.getUserId())) {
-                    vo.setEditStatus(1);
-                    vo.setDisable(true);
-                } else {
-                    vo.setDisable(false);
-                }
-
-                voList.add(vo);
-                index++;
-            }
-
-        }
-        return voList;
-    }
-
-    public List<Object> transArray(String tags) {
-        String[] tagArray = tags.split(",");
-        List<Object> cdids = new ArrayList<>();
-        for (String value : tagArray) {
-            cdids.add(Long.valueOf(value));
-        }
-        return cdids;
-    }
-
-    public List<Object> transArray2(String tagName) {
-        String[] tagArray = tagName.split(";");
-
-        List<Object> cdids = new ArrayList<>();
-        for (String value : tagArray) {
-            cdids.add(value);
-        }
-        return cdids;
-    }
 
     /**
      * 诊断保存或修改
@@ -442,172 +335,4 @@ public class SpecialDiagnosisServiceImpl implements SpecialDiagnosisService {
     }
 
 
-    @Override
-    public List<VisceraVo> getRelationshipTag(String dictType) {
-        List<VisceraVo> list = new ArrayList<>();
-        Map<String, Object> dictMap = new HashMap<>();
-        dictMap.put("dictType", dictType);
-        List<SysDictDataVo> orgainlist = sysDictDataService.getSysDictDataVoListByParm(dictMap);
-        if (CollectionUtils.isNotEmpty(orgainlist)) {
-            for (SysDictDataVo vo : orgainlist) {
-                VisceraVo visVo = new VisceraVo();
-                BeanUtils.copyProperties(vo, visVo);
-                String dictValue = vo.getDictValue();
-                visVo.setDictValueInt(Integer.valueOf(dictValue));
-                //根据sortvalue 查询部位
-                Map<String, Object> positionMap = new HashMap<>();
-                positionMap.put("dictType", SysDictTypeEnum.position.label());
-                if (StringUtils.isNoneEmpty(dictValue)) {
-                    positionMap.put("filter", dictValue);
-                }
-                List<SysDictDataVo> positionlist = new ArrayList<>();
-                positionlist = sysDictDataService.getSysDictDataVoListByParm(positionMap);
-                if (CollectionUtils.isNotEmpty(positionlist)) {
-                    for (SysDictDataVo pvo : positionlist) {
-                        pvo.setDictValueInt(Integer.valueOf(pvo.getDictValue()));
-                    }
-                }
-                visVo.setPositionList(positionlist);
-                //根据sortvalue  病理改变
-                Map<String, Object> lesionMap = new HashMap<>();
-                lesionMap.put("dictType", SysDictTypeEnum.lesion.label());
-                if (StringUtils.isNoneEmpty(dictValue)) {
-                    lesionMap.put("filter", dictValue);
-                }
-                List<SysDictDataVo> lesionList = new ArrayList<>();
-                lesionList = sysDictDataService.getSysDictDataVoListByParm(lesionMap);
-                if (CollectionUtils.isNotEmpty(lesionList)) {
-                    for (SysDictDataVo lvo : lesionList) {
-                        lvo.setDictValueInt(Integer.valueOf(lvo.getDictValue()));
-                    }
-                }
-                visVo.setLesionList(lesionList);
-                list.add(visVo);
-            }
-        }
-        return list;
-    }
-
-    /**
-     * 获取下拉数据
-     * @param dictType
-     * @param filter
-     * @return
-     */
-    public List<VisceraVo> getSelectRelationship(String dictType, String filter) {
-        //先从缓存读取，如果没有在从库里查询
-        String cacheKey = "special_getSelectRelationship_" + dictType + "_" + filter;
-        List<VisceraVo> list = DictUtils.getVisceraVoCache(cacheKey);
-        if (CollectionUtils.isEmpty(list)) {
-            list = new ArrayList<>();
-            Map<String, Object> dictMap = new HashMap<>();
-            dictMap.put("dictType", dictType);
-            dictMap.put("dictValue", filter);
-
-            List<SysDictDataVo> orgainlist = sysDictDataService.getSysDictDataVoListByParm(dictMap);
-            if (CollectionUtils.isNotEmpty(orgainlist)) {
-                for (SysDictDataVo vo : orgainlist) {
-                    VisceraVo visVo = new VisceraVo();
-                    BeanUtils.copyProperties(vo, visVo);
-                    String dictValue = vo.getDictValue();
-                    visVo.setDictValueInt(Integer.valueOf(dictValue));
-                    //根据sortvalue 查询部位
-                    Map<String, Object> positionMap = new HashMap<>();
-                    positionMap.put("dictType", SysDictTypeEnum.position.label());
-                    if (StringUtils.isNoneEmpty(dictValue)) {
-                        positionMap.put("filter", dictValue);
-                    }
-                    List<SysDictDataVo> positionlist = new ArrayList<>();
-                    positionlist = sysDictDataService.getSysDictDataVoListByParm(positionMap);
-                    if (CollectionUtils.isNotEmpty(positionlist)) {
-                        for (SysDictDataVo pvo : positionlist) {
-                            pvo.setDictValueInt(Integer.valueOf(pvo.getDictValue()));
-                        }
-                    }
-                    visVo.setPositionList(positionlist);
-                    //根据sortvalue  病理改变
-                    Map<String, Object> lesionMap = new HashMap<>();
-                    lesionMap.put("dictType", SysDictTypeEnum.lesion.label());
-                    if (StringUtils.isNoneEmpty(dictValue)) {
-                        lesionMap.put("filter", dictValue);
-                    }
-                    List<SysDictDataVo> lesionList = new ArrayList<>();
-                    lesionList = sysDictDataService.getSysDictDataVoListByParm(lesionMap);
-                    if (CollectionUtils.isNotEmpty(lesionList)) {
-                        for (SysDictDataVo lvo : lesionList) {
-                            lvo.setDictValueInt(Integer.valueOf(lvo.getDictValue()));
-                        }
-                    }
-                    visVo.setLesionList(lesionList);
-                    list.add(visVo);
-                }
-            }
-            // add 缓存
-            DictUtils.setVisceraVoCache(cacheKey, list);
-        }
-        return list;
-    }
-
-
-    @Override
-    public void deleteSpecialDiagnosisVo(Long specialDiagnosisId) {
-        SpecialDiagnosis diagnosis = specialDiagnosisMapper.selectByPrimaryKey(specialDiagnosisId);
-        SpecialDiagnosis record = new SpecialDiagnosis();
-        record.setSpecialDiagnosisId(specialDiagnosisId);
-        record.setDeleteFlag(0);
-        record.setStatus(0);
-        specialDiagnosisMapper.updateByPrimaryKeySelective(record);
-        //查询下当前数据下是否还有数据，如果没有数据了，修改为未诊断
-        Map<String, Object> map = new HashMap<>();
-        map.put("projectId", diagnosis.getProjectId());
-        map.put("subImageId", diagnosis.getSubImageId());
-        map.put("specialId", diagnosis.getSpecialId());
-        map.put("groupId", diagnosis.getGroupId());
-        map.put("status", 1);
-        map.put("deleteFlag", 1);
-        List<SpecialDiagnosis> list = specialDiagnosisMapper.getSpecialDiagnosisListByParm(map);
-        if (CollectionUtils.isEmpty(list)) {
-            SpecialDiagnosisAddVo sav = new SpecialDiagnosisAddVo();
-            BeanUtils.copyProperties(diagnosis, sav);
-            sav.setDiagnosisStatus(0);
-            List<SpecialDiagnosisAddVo> diagnosisList = new ArrayList<>();
-            diagnosisList.add(sav);
-            slideMapper.updateBatchBySpecialDiagnosis(diagnosisList);
-        }
-
-    }
-
-    @Override
-    public SysDictResultVo getSysDictResultVo() {
-        //先从缓存获取
-        String cacheKeyi = "special_viscera_organization_1";
-        SysDictResultVo vo = DictUtils.getSysDictResultVoCache(cacheKeyi);
-        if (null == vo) {
-            vo = new SysDictResultVo();
-            Map<Integer, String> labelMap = new HashMap<>();
-            labelMap.put(SysDictTypeEnum.ddefinition.value(), SysDictTypeEnum.ddefinition.label());
-            labelMap.put(SysDictTypeEnum.grade.value(), SysDictTypeEnum.grade.label());
-
-            for (Map.Entry<Integer, String> entry : labelMap.entrySet()) {
-                Integer dictTypeKey = entry.getKey();
-                String dictTypeStr = entry.getValue();
-                List<SysDictDataVo> tagList = new ArrayList<>();
-                tagList = getCommonTag(dictTypeStr);
-                if (dictTypeKey == SysDictTypeEnum.ddefinition.value()) {
-                    //2:病理改变 sys_lesion
-                    vo.setDdefinitionList(tagList);
-                } else if (dictTypeKey == SysDictTypeEnum.grade.value()) {
-                    //4:病变级别 sys_grade
-                    vo.setGradeList(tagList);
-                }
-
-            }
-
-            List<VisceraVo> relationshipList = new ArrayList<>();
-            relationshipList = getRelationshipTag(SysDictTypeEnum.organization.label());
-            vo.setVisceraList(relationshipList);
-            DictUtils.setSysDictResultVoCache(cacheKeyi, vo);
-        }
-        return vo;
-    }
 }

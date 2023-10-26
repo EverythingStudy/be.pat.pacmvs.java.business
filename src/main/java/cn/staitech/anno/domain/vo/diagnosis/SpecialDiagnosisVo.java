@@ -23,10 +23,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SpecialDiagnosisVo {
-
-
-    @ApiModelProperty(name = "visceraList", value = "visceraList")
-    List<VisceraVo> visceraList = new ArrayList<>();
     @ApiModelProperty(name = "specialDiagnosisId", value = "诊断ID")
     private Long specialDiagnosisId;
     @ApiModelProperty(name = "specialId", value = "专题id")
@@ -54,9 +50,6 @@ public class SpecialDiagnosisVo {
     private Date createTime;
     @ApiModelProperty(name = "updateBy", value = "更新人id")
     private Long updateBy;
-
-//	@ApiModelProperty(name = "tags" , value = "tag列表")ssssssssss
-//	private List<SpecialDiagnosisDetailVo> detailList =  new ArrayList<SpecialDiagnosisDetailVo>();
     @ApiModelProperty(name = "updateTime", value = "更新时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
@@ -84,9 +77,6 @@ public class SpecialDiagnosisVo {
     private String diagnosticResults;
     @ApiModelProperty(name = "disable", value = "是否展示")
     private boolean disable;
-
     @ApiModelProperty(name = "index", value = "索引值")
     private Integer index;
-
-
 }

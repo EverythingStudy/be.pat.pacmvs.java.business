@@ -1,7 +1,8 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.diagnosis.SpecialDiagnosis;
-import cn.staitech.anno.domain.vo.diagnosis.*;
+import cn.staitech.anno.domain.vo.diagnosis.SpecialDiagnosisAddVo;
+import cn.staitech.anno.domain.vo.diagnosis.SysDictDataVo;
 
 import java.util.List;
 
@@ -14,22 +15,15 @@ import java.util.List;
  */
 public interface SpecialDiagnosisService {
 
-    //查询诊断数据列表
-    public List<SpecialDiagnosisVo> getSpecialDiagnosisVo(String specialImageId, String projctId, String specialId, String groupId);
-
-    //保存/修改诊断数据
+    /**
+     * 保存/修改诊断数据
+     *
+     * @param addVoList
+     * @return
+     */
     public int saveOrUpdateSpecialDiagnosisVo(List<SpecialDiagnosisAddVo> addVoList);
-
-//	public List<SysDictDataVo> getTagSearch(String dictType,long viscusCode);
 
     public List<SysDictDataVo> getCommonTag(String dictType);
 
-    public List<VisceraVo> getRelationshipTag(String dictType);
-
-
-    public void deleteSpecialDiagnosisVo(Long specialDiagnosisId);
-
     public SpecialDiagnosis getSpecialDiagnosis(Long specialDiagnosisId);
-
-    public SysDictResultVo getSysDictResultVo();
 }

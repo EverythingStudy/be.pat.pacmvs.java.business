@@ -14,14 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.List;
 
+/**
+ * @author .
+ */
 @Api(value = "用户配置", tags = "用户配置")
 @RestController
 @RequestMapping("/user")
 public class SysUserController {
-
     @Resource
     private SysUserMapperV1 userMapper;
-
 
     @ApiOperation(value = "根据用户id查询用户列表")
     @PostMapping("/selectUserIdList")

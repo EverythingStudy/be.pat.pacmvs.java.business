@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 
@@ -32,7 +33,7 @@ import java.util.List;
 @Slf4j
 public class TopicController {
 
-    @Autowired
+    @Resource
     private TopicService topicService;
 
     @ApiOperationSupport(author = "wangfeng")
