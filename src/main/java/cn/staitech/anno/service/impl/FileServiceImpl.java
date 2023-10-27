@@ -172,7 +172,7 @@ public class FileServiceImpl implements FileService {
         createFile(fileUrl);
         return fileUrl;
     }
-
+    @Override
     public String createExamineScoreFiles(Long slideId, String suffix, Long questionProjectId, Long createBy) throws Exception {
         // 查询项目表中信息，判断项目是什么类型
         cn.staitech.anno.domain.Slide slide = slideMapper.selectById(slideId);
