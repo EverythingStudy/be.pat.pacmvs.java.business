@@ -80,7 +80,7 @@ public class RedisClientUtil implements ICache {
         RLock rLock = client.getLock(req);
         rLock.lock();
         try {
-            //尝试5秒内获取锁，如果获取到了，最长60秒自动释放
+            // 尝试5秒内获取锁，如果获取到了，最长60秒自动释放
             boolean res = rLock.tryLock(5, TimeUnit.MINUTES);
             if (res) {
                 return true;

@@ -79,7 +79,6 @@ public class ForecastImageController extends BaseController {
     @GetMapping("/deleteById/{imageId}")
     @Transactional(rollbackFor = Exception.class)
     public R deleteById(@PathVariable("imageId") @ApiParam(value = "图像ID") Long imageId) {
-
         int deleteImageById = imageService.updateDeleteFlagById(imageId);
         if (deleteImageById > 0) {
             return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
@@ -98,8 +97,7 @@ public class ForecastImageController extends BaseController {
     @ApiOperation(value = "逻辑批量删除切片")
     @PostMapping("/deleteBatchIds")
     public R<List<Long>> updateDeleteFlagBatchIds(@Validated @RequestBody ImageBatchIdsVO request) {
-        Long uid = SecurityUtils.getUserId();
-        request.setUpdateBy(uid);
+        request.setUpdateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
         List<Long> data = imageService.updateDeleteFlagBatchIds(request);
         return R.ok(data, MessageSource.M("OPERATE_SUCCEED"));
     }
@@ -114,8 +112,7 @@ public class ForecastImageController extends BaseController {
     @ApiOperation(value = "批量添加专题")
     @PostMapping("/updateBatchIds")
     public R updateBatchIds(@Validated @RequestBody ImageTopicBatchIdsVO request) {
-        Long uid = SecurityUtils.getUserId();
-        request.setUpdateBy(uid);
+        request.setUpdateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
         int result = imageService.updateBatchIds(request);
         if (result > 0) {
             return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
@@ -133,7 +130,6 @@ public class ForecastImageController extends BaseController {
     @ApiOperation(value = "编辑")
     @PostMapping("/update")
     public R update(@Validated @RequestBody ImageUpdateVO request) throws Exception {
-
         int result = imageService.updateById(request);
         if (result > 0) {
             return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));

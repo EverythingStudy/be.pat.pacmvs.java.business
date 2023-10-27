@@ -141,7 +141,6 @@ public class ReviewRoundController {
     @PostMapping("/edit")
     public R edit(@RequestBody ReviewRoundInVO reviewRoundInVO) {
         QueryWrapper<Slide> queryWrapper = Wrappers.query();
-        //queryWrapper.select("slide_id","review_round_id");
         queryWrapper.select("review_round_id");
         queryWrapper.eq("review_round_id", reviewRoundInVO.getReviewRoundId());
         int slides = 0;
@@ -201,7 +200,11 @@ public class ReviewRoundController {
         }
     }
 
-    //处理轮次信息
+    /**
+     * 处理轮次信息
+     * @param reviewRoundList
+     * @param node
+     */
     private void processRound(List<ReviewRound> reviewRoundList, Map<String, Object> node) {
         Map<String, List<ReviewRound>> map = new HashMap<>(16);
         for (ReviewRound reviewRound : reviewRoundList) {
@@ -228,7 +231,12 @@ public class ReviewRoundController {
         node.put("children", list);
     }
 
-    //处理专题信息
+    /**
+     * 处理专题信息
+     *
+     * @param reviewTopicList
+     * @param node
+     */
     private void processTopic(List<ReviewRound> reviewTopicList, Map<String, Object> node) {
         Map<String, List<ReviewRound>> map = new HashMap<>(16);
         for (ReviewRound reviewRound : reviewTopicList) {
@@ -255,7 +263,12 @@ public class ReviewRoundController {
         node.put("children", list);
     }
 
-    //处理组信息
+    /**
+     * 处理组信息
+     *
+     * @param reviewGroupList
+     * @param node
+     */
     private void processGroup(List<ReviewRound> reviewGroupList, Map<String, Object> node) {
         List<Map<String, Object>> list = new ArrayList<>();
         for (ReviewRound reviewRound : reviewGroupList) {

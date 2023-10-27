@@ -1,14 +1,17 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.constant.CommonConstant;
-import cn.staitech.anno.domain.algorithm.AlgorithmAssessment;
-import cn.staitech.anno.domain.algorithm.AlgorithmJson;
 import cn.staitech.anno.domain.ParseJson;
 import cn.staitech.anno.domain.Slide;
+import cn.staitech.anno.domain.algorithm.AlgorithmAssessment;
+import cn.staitech.anno.domain.algorithm.AlgorithmJson;
 import cn.staitech.anno.domain.assessment.in.*;
 import cn.staitech.anno.domain.assessment.out.AssessmentExportOut;
 import cn.staitech.anno.domain.assessment.out.GetAssessmentListOut;
-import cn.staitech.anno.mapper.*;
+import cn.staitech.anno.mapper.AlgorithmAssessmentMapper;
+import cn.staitech.anno.mapper.AlgorithmJsonMapper;
+import cn.staitech.anno.mapper.AssessmentResultsMapper;
+import cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper;
 import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.project.mapper.SlideAttrMapper;
@@ -64,8 +67,6 @@ import static cn.staitech.anno.aspect.LogFileAspect.response;
 @Service
 @Slf4j
 public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessmentMapper, AlgorithmAssessment> implements AlgorithmAssessmentService {
-
-
     @Resource
     private AlgorithmAssessmentMapper algorithmAssessmentMapper;
 
@@ -80,7 +81,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
     @Resource
     private AssessmentResultsMapper assessmentResultsMapper;
-        @Resource
+    @Resource
     private ProjectMapperV1 projectMapperV1;
 
     @Autowired
@@ -135,7 +136,6 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
                         org.json.JSONArray labelInfo = jsonObject.getJSONArray("label_info");
                         // 标签列表长度超出一个，抛出异常
                         if (labelInfo.length() > 1) {
-//                            throw new Exception(MessageSource.M("JSON_MULTIPLE_LABElS"));
                             fileNameList.add(ze.getName());
                             continue;
                         }
@@ -173,7 +173,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
             if (!"json".equals(s)) {
                 return R.fail(MessageSource.M("FILE_TYPE_ERROR"));
             }
-            //读取文件解析数据校验
+            // 读取文件解析数据校验
             ParseJson parseJson = new ParseJson();
             try {
                 parseJson = ParseJsonUtil.parseJson(getJsonInfoDataIn.getAlgorithmJsonUrl(), 0);
@@ -186,7 +186,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
             if (labels != 1) {
                 return R.fail(MessageSource.M("JSON_NOT_ONLY"));
             }
-            //查询算法考核数据是否存在此切片
+            // 查询算法考核数据是否存在此切片
             LambdaQueryWrapper<AlgorithmAssessment> qw = new LambdaQueryWrapper<>();
             qw.eq(AlgorithmAssessment::getFileName, parseJson.getImageName());
             qw.eq(AlgorithmAssessment::getProjectId, req.getProjectId());
@@ -391,7 +391,6 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         qw.eq(AlgorithmAssessment::getProjectId, req.getProjectId());
         qw.eq(AlgorithmAssessment::getDelFlag, "0");
         qw.apply((!ObjectUtils.isEmpty(req.getAnnoCategory()) && req.getAnnoCategory() != 0), "(find_in_set(" + req.getAnnoCategory() + ",category_ids))");
-        //qw.eq(!ObjectUtils.isEmpty(req.getCategoryId()), AlgorithmAssessment::getCategoryId, req.getCategoryId());
         if (!CollectionUtils.isEmpty(req.getCreateTimeParams())) {
             Date date = DateUtils.addAndSubtractDaysByCalendar(req.getCreateTimeParams().get("endTime"), 1);
             qw.lt(AlgorithmAssessment::getCreateTime, date);
@@ -400,7 +399,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
         Page<AlgorithmAssessment> page = PageHelper.startPage(req.getPageNum(), req.getPageSize());
         List<AlgorithmAssessment> algorithmAssessments = this.baseMapper.selectList(qw);
-        //算法json数据查询
+        // 算法json数据查询
         List<GetAssessmentListOut> collect = new ArrayList<>();
 
         if (!CollectionUtils.isEmpty(algorithmAssessments)) {
@@ -426,12 +425,9 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
             }).collect(Collectors.toList());
         }
 
-
         resp.setTotal(page.getTotal());
         resp.setList(collect);
         resp.setPages(page.getPages());
-
-
         return resp;
     }
 

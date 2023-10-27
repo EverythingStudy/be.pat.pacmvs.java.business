@@ -3,7 +3,7 @@ package cn.staitech.anno.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.vo.slide.SlideDescriptionVo;
+import cn.staitech.anno.domain.topic.TopicIdName;
 import cn.staitech.anno.domain.vo.image.ProjectStatisticsVo;
 import cn.staitech.anno.domain.vo.image.SlideReportSummaryVo;
 import cn.staitech.anno.domain.vo.image.SlideReportVo;
@@ -11,7 +11,6 @@ import cn.staitech.anno.domain.vo.imagecsv.ImageCsvGetPagerVO;
 import cn.staitech.anno.domain.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.domain.vo.imagecsv.ImageCsvListVO;
 import cn.staitech.anno.domain.vo.slide.*;
-import cn.staitech.anno.domain.topic.TopicListVO;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
@@ -114,10 +113,8 @@ public class SlideController extends BaseController {
     public R saveBatch(@RequestBody List<Slide> slideList) {
         List<Slide> list = new ArrayList<>();
         for (Slide slide : slideList) {
-            //已被分组的图片不能再次添加分组
+            // 已被分组的图片不能再次添加分组
             QueryWrapper queryWrapper = Wrappers.query()
-                    //.eq("project_id",slide.getProjectId())
-                    //.eq("group_id",slide.getGroupId())
                     .eq("is_delete", 0)
                     .eq("image_id", slide.getImageId());
             Slide s = slideService.getOne(queryWrapper);
@@ -204,7 +201,7 @@ public class SlideController extends BaseController {
      */
     @ApiOperation(value = "查询某个项目或者review_round_id对应的已经绑定的topic列表")
     @PostMapping("/topicList")
-    public R<List<TopicListVO>> topicList(@RequestBody GetTopicListVO getTopicListVO) {
+    public R<List<TopicIdName>> topicList(@RequestBody GetTopicListVO getTopicListVO) {
         Slide slide = new Slide();
         QueryWrapper<Slide> queryWrapper = new QueryWrapper<>(slide);
         queryWrapper.select("distinct topic_id", "topic_name");
@@ -216,10 +213,9 @@ public class SlideController extends BaseController {
         queryWrapper.orderByDesc("topic_id");
 
         List<Slide> list = slideService.list(queryWrapper);
-
-        List<TopicListVO> topicList = new ArrayList<>(list.size());
+        List<TopicIdName> topicList = new ArrayList<>(list.size());
         for (Slide slideObj : list) {
-            TopicListVO topic = new TopicListVO();
+            TopicIdName topic = new TopicIdName();
             BeanUtil.copyProperties(slideObj, topic);
             topicList.add(topic);
         }
@@ -259,7 +255,7 @@ public class SlideController extends BaseController {
 
 
     /**
-     * 批量添加标注切片（旧）
+     * 批量添加标注切片（旧-弃用）
      */
     @ApiOperation(value = "批量添加标注切片")
     @PostMapping("/addAnnoSlidesBatch")
@@ -314,7 +310,6 @@ public class SlideController extends BaseController {
         return R.fail(MessageSource.M("OPERATE_ERROR"));
     }
 
-
     /**
      * 清空
      *
@@ -333,6 +328,5 @@ public class SlideController extends BaseController {
         }
         return false;
     }
-
-
 }
+

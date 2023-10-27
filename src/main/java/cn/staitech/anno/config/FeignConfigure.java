@@ -29,12 +29,10 @@ public class FeignConfigure {
      * @return Retryer
      * @throws
      * @Title: feignRetryer
-     * @Description: 重试3次
+     * @Description: 重试3次-超时时间设置,开启重试机制，默认为5次（包含首次请求）
      */
     @Bean
     public Retryer feignRetryer() {
-        // 超时时间设置,开启重试机制，默认为5次（包含首次请求）
-        // return new Retryer.Default();
         Retryer retryer = new Retryer.Default(2000, 3000, 4);
         return retryer;
     }

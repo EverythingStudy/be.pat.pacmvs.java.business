@@ -50,7 +50,6 @@ public class CommonConstant {
     public static final Integer INDICATOR_STATUS = 2;
     public static final Integer NOT_ATTRIBUTE_STATUS = 3;
     public static final Long NOT_AUDIT = 0L;
-
     /**
      * Annotation
      */
@@ -116,4 +115,5 @@ public class CommonConstant {
     private CommonConstant() {
         throw new IllegalStateException("CommonConstant class");
     }
+
 }

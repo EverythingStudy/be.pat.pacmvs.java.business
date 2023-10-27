@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,10 +43,9 @@ import java.util.List;
 @RequestMapping("/pdf")
 public class PdfExportController {
 
-    @Autowired
+    @Resource
     private ProjectService projectService;
-
-    @Autowired
+    @Resource
     private ExaminationService reviewService;
 
     public File pdfAddress() {
@@ -61,15 +61,14 @@ public class PdfExportController {
         return f1;
     }
 
-
     @ApiOperation(value = "项目列表导出pdf")
     @RequiresPermissions("system:project:export")
     @PostMapping(value = "/project")
     public R getinfo(HttpServletResponse response, Project project) throws Exception {
-        //字体
+        // 字体
         BaseFont bfChinese = BaseFont.createFont("STSong-Light", "UniGB-UCS2-H", BaseFont.NOT_EMBEDDED);
         Font CONTENT_FONT = new Font(bfChinese, 20, Font.BOLD, BaseColor.BLACK);
-        //临时存储地址
+        // 临时存储地址
         File f1 = pdfAddress();
         String PDF_SITE = String.valueOf(f1);
 
@@ -77,9 +76,9 @@ public class PdfExportController {
         PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(PDF_SITE));
         document.open();
 
-        //设置表格几列
+        // 设置表格几列
         PdfPTable dataTable = PdfFontUtil.getPdfTable(8, 500);
-        //字段名称
+        // 字段名称
         List<String> tableHeadList = new ArrayList<>();
         tableHeadList.add("Serial number");
         tableHeadList.add("ProjectName");
@@ -92,7 +91,7 @@ public class PdfExportController {
 
         PdfFontUtil.addTableCell(dataTable, CONTENT_FONT, tableHeadList);
 
-        //获取数据库数据
+        // 获取数据库数据
         int num = 1;
         List<ProjectListVO> list = projectService.selectProjectList(project);
         for (ProjectListVO pro : list) {

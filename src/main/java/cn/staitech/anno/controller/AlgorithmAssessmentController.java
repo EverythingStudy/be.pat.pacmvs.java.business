@@ -35,15 +35,12 @@ public class AlgorithmAssessmentController {
     @ApiOperation(value = "生成算法考核数据-根据项目")
     @PostMapping("/createQuestion")
     public R createAssessment(@Validated @RequestBody CreateAssessmentIn req) {
-
         return algorithmAssessmentService.createAssessment(req);
-
     }
 
     @ApiOperation(value = "算法考核列表分页查询")
     @PostMapping("/getQuestionList")
     public R<PageResponse<GetAssessmentListOut>> getAssessmentList(@Validated @RequestBody GetAssessmentListIn req) {
-
         PageResponse<GetAssessmentListOut> resp = algorithmAssessmentService.getAssessmentList(req);
         return R.ok(resp);
     }
@@ -52,8 +49,6 @@ public class AlgorithmAssessmentController {
     @PostMapping("/removeAssessment")
     public R removeAssessment(@Validated @RequestBody RemoveAssessmentIn req) {
         return algorithmAssessmentService.removeAssessment(req);
-
-
     }
 
     @ApiOperation(value = "算法考核-获取json;路径：/home/pat_saas/Upload")
@@ -69,6 +64,4 @@ public class AlgorithmAssessmentController {
     ) throws Exception {
         algorithmAssessmentService.export(assessmentExportIn);
     }
-
 }
-

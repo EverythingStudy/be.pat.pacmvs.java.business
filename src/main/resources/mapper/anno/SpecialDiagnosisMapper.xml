@@ -619,7 +619,8 @@
                 AND a.`status` = #{status}
                 AND a.group_id IN (SELECT t4.group_id
                                    FROM tb_group t4
-                                   WHERE t4.special_id = #{specialId} AND t4.reasons = #{reasons})) p1
+                                   WHERE t4.special_id = #{specialId}
+                                     AND t4.reasons = #{reasons})) p1
                  LEFT JOIN tb_group p2 ON p1.group_id = p2.group_id
         WHERE p2.special_id = #{specialId}
           AND p2.reasons = #{reasons}

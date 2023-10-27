@@ -34,7 +34,7 @@ public class SpeciesController extends BaseController {
     private SpeciesService speciesService;
 
     /**
-     * 轮次列表 . /anno/species/list
+     * 轮次列表 .
      */
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "种属列表", notes = "种属列表 - 王峰")

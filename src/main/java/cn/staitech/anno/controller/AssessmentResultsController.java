@@ -28,7 +28,6 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("/assessmentResults")
 public class AssessmentResultsController {
-
     @Resource
     private AssessmentResultsService assessmentResultsService;
 
@@ -37,6 +36,5 @@ public class AssessmentResultsController {
     public R<PageResponse<AssessmentResults>> page(@Validated @RequestBody AssessmentResultsQueryIn in) {
         return R.ok(assessmentResultsService.selectPageList(in));
     }
-
 }
 

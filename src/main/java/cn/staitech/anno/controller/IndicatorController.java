@@ -36,13 +36,10 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/indicator")
 public class IndicatorController extends BaseController {
-
     @Resource
     private IndicatorService indicatorService;
-
     @Resource
     private ProjectService projectService;
-
     @Resource
     private PathologicalIndicatorCategoryService pathologicalService;
 
@@ -76,7 +73,6 @@ public class IndicatorController extends BaseController {
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
-
     /**
      * 获取结构指标列表 .
      */
@@ -93,7 +89,6 @@ public class IndicatorController extends BaseController {
         PageMaster<Indicator> pageMaster = indicatorService.selectIndicatorList(indicator, indicatorListVO.getPageNum(), indicatorListVO.getPageSize());
         return R.ok(pageMaster);
     }
-
 
     /**
      * 根据指标id获取详细信息 .
@@ -119,7 +114,6 @@ public class IndicatorController extends BaseController {
      * 病理指标删除接口 .
      */
     @ApiOperation(value = "病理指标删除接口", notes = "ZMJ")
-    // @RequiresPermissions("special:pathology:remove")
     @Log(title = "病理指标删除接口", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.UPDATE)
     @PostMapping("/del")
     public R<String> delIndicator(@RequestBody IndicatorGetVO indicatorGetVO) {
@@ -144,7 +138,6 @@ public class IndicatorController extends BaseController {
      * 病理指标修改接口 .
      */
     @ApiOperation(value = "病理指标修改接口", notes = "ZMJ")
-    // @RequiresPermissions("special:pathology:edit")
     @Log(title = "病理指标修改接口", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.UPDATE)
     @PutMapping("/edit")
     public R<Integer> edit(@Validated @RequestBody IndicatorReviseVO req) {
@@ -155,7 +148,6 @@ public class IndicatorController extends BaseController {
         }
 
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-
         Indicator indicator = new Indicator();
         indicator.setSpeciesId(req.getSpeciesId());
         indicator.setOrganId(req.getOrganId());
@@ -171,7 +163,7 @@ public class IndicatorController extends BaseController {
         indicator.setNumber(indicator.getSpeciesId().toString().concat(indicator.getOrganId().toString()));
         indicator.setCreateBy(sysUser.getUserId());
 
-        //修改病理指标
+        // 修改病理指标
         indicatorService.updateIndicator(req);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }

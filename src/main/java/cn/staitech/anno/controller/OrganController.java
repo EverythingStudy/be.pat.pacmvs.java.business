@@ -43,5 +43,4 @@ public class OrganController extends BaseController {
         List<Organ> list = organService.list();
         return R.ok(list);
     }
-
 }

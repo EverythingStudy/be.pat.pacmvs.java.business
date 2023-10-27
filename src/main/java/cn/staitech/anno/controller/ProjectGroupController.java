@@ -17,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
+
 /**
  * @Author wudi
  * @Date 2023/5/30 16:42
@@ -28,7 +30,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/projectGroup")
 public class ProjectGroupController extends BaseController {
 
-    @Autowired
+    @Resource
     private ProjectGroupService projectGroupService;
 
     /**

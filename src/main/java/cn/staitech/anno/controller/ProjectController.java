@@ -66,9 +66,11 @@ public class ProjectController extends BaseController {
 
     @Resource
     private ExamineScoreMapper examineScoreMapper;
+
     @Resource
     private ProjectMemberService projectMemberService;
-    @Autowired
+
+    @Resource
     private ProjectExtService projectExtService;
 
     @Resource
@@ -181,7 +183,7 @@ public class ProjectController extends BaseController {
                                          @RequestParam(required = false, name = "groupName") String groupName) {
         try {
             if (reasons == null) {
-                //添加移走原因,'1给药结束安乐死、2恢复期结束安乐死'
+                // 添加移走原因,'1给药结束安乐死、2恢复期结束安乐死'
                 ProjectGroup pg1 = new ProjectGroup();
                 pg1.setProjectId(projectId);
                 pg1.setGroupName(MessageSource.M("REMOVE_REASON_1"));
@@ -243,7 +245,8 @@ public class ProjectController extends BaseController {
         return projectExtService.getSpecialGroup(specialId);
 
     }
-        @ApiOperation(value = "是否已经点击自动创建")
+
+    @ApiOperation(value = "是否已经点击自动创建")
     @GetMapping("/getCreateInfo")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "specialId", value = "专题id:必填", dataTypeClass = Long.class, paramType = "query", example = "1")})
@@ -371,7 +374,6 @@ public class ProjectController extends BaseController {
 
 
     @ApiOperation(value = "查询项目详情接口")
-    // @RequiresPermissions("special:project:details")
     @GetMapping(value = "/detail")
     @Log(title = "项目配置-详情", menu = "专题管理", subMenu = "专题创建", businessType = BusinessType.QUERY)
     @ApiImplicitParams({
