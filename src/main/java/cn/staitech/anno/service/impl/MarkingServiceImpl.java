@@ -737,6 +737,7 @@ public class MarkingServiceImpl implements MarkingService {
                             String fileUrl = null;
                             try {
                                 fileUrl = slideJsonExport(slideId);
+                                fileUrl = fileUrl.replace(" ", "\\ ");
                             } catch (Exception e) {
                                 throw new RuntimeException(e);
                             }
