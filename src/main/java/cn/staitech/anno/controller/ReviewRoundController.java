@@ -1,16 +1,15 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.domain.Group;
+import cn.staitech.anno.config.MapConstant;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.ReviewRound;
 import cn.staitech.anno.domain.Topic;
 import cn.staitech.anno.domain.reviewround.*;
-import cn.staitech.anno.domain.round.Round;
 import cn.staitech.anno.project.domain.Slide;
 import cn.staitech.anno.project.service.SlideService;
-import cn.staitech.anno.service.GroupService;
 import cn.staitech.anno.service.ReviewRoundService;
-import cn.staitech.anno.service.RoundService;
 import cn.staitech.anno.service.TopicService;
+import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
@@ -41,20 +40,14 @@ import java.util.stream.Collectors;
 @RequestMapping("/reviewRound")
 @Slf4j
 public class ReviewRoundController {
-
-    public static Map<Long, String> roundMap = new HashMap<>();
-    public static Map<Long, String> topicMap = new HashMap<>();
-    public static Map<Long, String> groupMap = new HashMap<>();
     @Resource
     private ReviewRoundService reviewRoundService;
     @Resource
     private TopicService topicService;
     @Resource
-    private GroupService groupService;
-    @Resource
-    private RoundService roundService;
-    @Resource
     private SlideService slideService;
+
+    public static Map<Long, String> topicMap = new HashMap<>();
 
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "查询评审轮次列表")
@@ -186,14 +179,6 @@ public class ReviewRoundController {
     }
 
     private void init() {
-        List<Round> roundList = roundService.list();
-        for (Round round : roundList) {
-            roundMap.put(round.getRoundId(), round.getRoundName());
-        }
-        List<Group> groupList = groupService.list();
-        for (Group group : groupList) {
-            groupMap.put(group.getGroupId(), group.getGroupName());
-        }
         List<Topic> topicList = topicService.list();
         for (Topic topic : topicList) {
             topicMap.put(topic.getTopicId(), topic.getTopicName());
@@ -202,6 +187,7 @@ public class ReviewRoundController {
 
     /**
      * 处理轮次信息
+     *
      * @param reviewRoundList
      * @param node
      */
@@ -210,7 +196,7 @@ public class ReviewRoundController {
         for (ReviewRound reviewRound : reviewRoundList) {
             String contentId = reviewRound.getContentId();
             Long roundId = reviewRound.getRoundId();
-            String k = contentId + "_" + roundId + "_";
+            String k = contentId + CommonConstant.GLIDE_LINE + roundId + CommonConstant.GLIDE_LINE;
             List<ReviewRound> rounds = map.get(k);
             if (rounds == null) {
                 rounds = new ArrayList<>();
@@ -221,9 +207,13 @@ public class ReviewRoundController {
         List<Map<String, Object>> list = new ArrayList<>();
         for (String key : map.keySet()) {
             Map<String, Object> roundNode = new HashMap<>(16);
-            String[] strings = key.split("_");
+            String[] strings = key.split(CommonConstant.GLIDE_LINE);
             roundNode.put("key", key);
-            roundNode.put("label", roundMap.get(Long.parseLong(strings[1])));
+            if (LanguageUtils.isEn()) {
+                roundNode.put("label", MapConstant.getRoundNameEn(Long.parseLong(strings[1])));
+            } else {
+                roundNode.put("label", MapConstant.getRoundName(Long.parseLong(strings[1])));
+            }
             //处理下级专题
             processTopic(map.get(key), roundNode);
             list.add(roundNode);
@@ -243,7 +233,7 @@ public class ReviewRoundController {
             String contentId = reviewRound.getContentId();
             Long roundId = reviewRound.getRoundId();
             Long topicId = reviewRound.getTopicId();
-            String k = contentId + "_" + roundId + "_" + topicId;
+            String k = contentId + CommonConstant.GLIDE_LINE + roundId + CommonConstant.GLIDE_LINE + topicId;
             List<ReviewRound> rounds = map.get(k);
             if (rounds == null) {
                 rounds = new ArrayList<>();
@@ -254,7 +244,7 @@ public class ReviewRoundController {
         List<Map<String, Object>> list = new ArrayList<>();
         for (String key : map.keySet()) {
             Map<String, Object> topicNode = new HashMap<>(16);
-            String[] strings = key.split("_");
+            String[] strings = key.split(CommonConstant.GLIDE_LINE);
             topicNode.put("key", key);
             topicNode.put("label", topicMap.get(Long.parseLong(strings[2])));
             processGroup(map.get(key), topicNode);
@@ -274,7 +264,7 @@ public class ReviewRoundController {
         for (ReviewRound reviewRound : reviewGroupList) {
             Map<String, Object> groupNode = new HashMap<>(16);
             groupNode.put("key", String.valueOf(reviewRound.getReviewRoundId()));
-            groupNode.put("label", groupMap.get(reviewRound.getGroupId()));
+            groupNode.put("label", MapConstant.getGroupName(reviewRound.getGroupId()));
             list.add(groupNode);
         }
         node.put("children", list);

@@ -6,6 +6,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * @author wangf
+ */
 @Data
 public class AssessmentExportOut {
 

@@ -1,5 +1,6 @@
 package cn.staitech.anno.service.impl;
 
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.Topic;
 import cn.staitech.anno.domain.file.FileNode;
@@ -74,8 +75,8 @@ public class FileUploadServiceImpl implements FileUploadService {
         for (FileNode fileNode : fileNodeList) {
             String name = fileNode.getName();
             System.out.println(name);
-            if (name.contains("_")) {
-                String res = name.substring(0, name.lastIndexOf("_"));
+            if (name.contains(GLIDE_LINE)) {
+                String res = name.substring(0, name.lastIndexOf(GLIDE_LINE));
                 if (res.equals(filename)) {
                     return name;
                 }

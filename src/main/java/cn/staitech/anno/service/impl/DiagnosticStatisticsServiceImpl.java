@@ -1,6 +1,7 @@
 package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.collection.ListUtil;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.special.Special;
 import cn.staitech.anno.domain.vo.diagnosis.StatisticsBodyVo;
 import cn.staitech.anno.domain.vo.diagnosis.StatisticsHeadVo;
@@ -11,7 +12,7 @@ import cn.staitech.anno.mapper.SpecialMapper;
 import cn.staitech.anno.service.DiagnosticStatisticsService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.WordTool;
-import cn.staitech.anno.utils.date.DateUtils;
+import cn.staitech.anno.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -224,16 +225,16 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
             String genderName = vo.getGenderName();
             String groupName = vo.getGroupName();
             String dosage = vo.getDosage();
-            String headerKey = genderName + "_" + groupName + "_" + dosage;
+            String headerKey = genderName + CommonConstant.GLIDE_LINE + groupName + CommonConstant.GLIDE_LINE + dosage;
             String sysVisceraName = vo.getSysVisceraName();
             String sysGradeName = vo.getSysGradeName();
             String sysLesionName = vo.getSysLesionName();
             String sysPositionName = vo.getSysPositionName();
 
-            String visceraKey = headerKey + "_" + sysVisceraName;
-            String lesionAndPositionKey = visceraKey + "_" + sysLesionName + "_" + sysPositionName;
-            String lesionAndPositionGradeKey = lesionAndPositionKey + "_" + sysGradeName;
-            String gradeKey = visceraKey + "_未见明显异常";
+            String visceraKey = headerKey + CommonConstant.GLIDE_LINE + sysVisceraName;
+            String lesionAndPositionKey = visceraKey + CommonConstant.GLIDE_LINE + sysLesionName + CommonConstant.GLIDE_LINE + sysPositionName;
+            String lesionAndPositionGradeKey = lesionAndPositionKey + CommonConstant.GLIDE_LINE + sysGradeName;
+            String gradeKey = visceraKey + CommonConstant.GLIDE_LINE +"未见明显异常";
             // 器官诊断数量
             visceraMap = countData(visceraMap, visceraKey);
             // 未见明显异常
@@ -387,8 +388,8 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
             // map3.put("sysVisceraName", sysVisceraName);
             // List<StatisticsBodyVo> diagnosedList =
             // specialDiagnosisMapper.getDiagnosedListByParm(map3);
-            String headerKey = genderName + "_" + groupName + "_" + dosage;
-            String visceraKey = headerKey + "_" + sysVisceraName;
+            String headerKey = genderName + CommonConstant.GLIDE_LINE + groupName + CommonConstant.GLIDE_LINE + dosage;
+            String visceraKey = headerKey + CommonConstant.GLIDE_LINE + sysVisceraName;
 
             Map<String, Integer> doneMap = staticsData.get(0);
 

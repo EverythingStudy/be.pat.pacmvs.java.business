@@ -17,7 +17,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StatisticsBodyVo {
 
-
     @ApiModelProperty(name = "gender", value = "gender编码")
     private Integer gender;
 

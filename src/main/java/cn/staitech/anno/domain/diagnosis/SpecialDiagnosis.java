@@ -19,8 +19,6 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SpecialDiagnosis {
-
-
     @ApiModelProperty(name = "specialDiagnosisId", value = "诊断ID")
     private Long specialDiagnosisId;
 
