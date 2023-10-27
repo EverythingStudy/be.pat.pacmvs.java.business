@@ -74,7 +74,7 @@ public class MapConstant {
     }
 
     /**
-     * 获取分组名称
+     * 获取分组名称 - 不区分中英文
      *
      * @param groupId
      * @return

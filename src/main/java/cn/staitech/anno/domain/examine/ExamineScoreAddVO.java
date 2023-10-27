@@ -8,6 +8,4 @@ public class ExamineScoreAddVO {
 
     @ApiModelProperty(value = "项目题库id")
     private Long questionProjectId;
-
-
 }

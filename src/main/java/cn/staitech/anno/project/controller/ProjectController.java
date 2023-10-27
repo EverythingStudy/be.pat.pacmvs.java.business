@@ -40,7 +40,6 @@ import java.util.List;
 public class ProjectController {
     @Resource
     private ProjectService projectService;
-
     @Resource
     private MarkingService markingService;
 
@@ -77,13 +76,6 @@ public class ProjectController {
         return R.ok(projectService.queryProject(in));
     }
 
-    private void handleAuth(ProjectIN in) {
-        Long userId = SecurityUtils.getUserId();
-        //管理员id为1
-        if (userId > 1) {
-            in.setUserId(userId);
-        }
-    }
 
     @ApiOperation(value = "下载目录文件")
     @GetMapping("/downTaskByCode")
@@ -98,4 +90,14 @@ public class ProjectController {
         return R.ok(markingService.projectJsonExport(downTaskIN.getProjectId(), downTaskIN.getSlideIds()));
     }
 
+    /**
+     * 管理员id为1
+     * @param in
+     */
+    private void handleAuth(ProjectIN in) {
+        Long userId = SecurityUtils.getUserId();
+        if (userId > 1) {
+            in.setUserId(userId);
+        }
+    }
 }
