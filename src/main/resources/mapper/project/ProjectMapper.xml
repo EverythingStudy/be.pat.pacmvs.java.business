@@ -59,7 +59,7 @@
 
     <select id="pageProject" parameterType="cn.staitech.anno.project.vo.ProjectIN"
             resultType="cn.staitech.anno.project.vo.ProjectVO">
-        select p.*,s.name as species_val,s.name_en as
+        select distinct p.*,s.name as species_val,s.name_en as
         species_val_en,o.organization_name,u.user_name,i.indicator_name,i.indicator_name_en,ps.name as
         ps_name,ps.name_en as ps_name_en
         from tb_project p
