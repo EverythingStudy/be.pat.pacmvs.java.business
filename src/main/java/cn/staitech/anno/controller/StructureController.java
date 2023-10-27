@@ -34,7 +34,6 @@ import java.util.concurrent.ExecutionException;
 public class StructureController extends BaseController {
     @Resource
     private StructureService structureService;
-
     @Resource
     private OrganService organService;
 

@@ -53,15 +53,6 @@ public class Container {
             .put(1, "Available")
             .build();
 
-
-    /**
-     * Image - 图片删除状态：0逻辑删除，1未逻辑删除
-     */
-    public static final Map<Integer, String> IMAGE_DELETE_FLAG_MAP = new ImmutableMap.Builder<Integer, String>()
-            .put(0, "已删除")
-            .put(1, "未删除")
-            .build();
-
     /**
      * 项目状态
      */
@@ -148,5 +139,12 @@ public class Container {
             .put(20, "Other")
             .build();
 
+    /**
+     * Image - 图片删除状态：0逻辑删除，1未逻辑删除
+     */
+    public static final Map<Integer, String> IMAGE_DELETE_FLAG_MAP = new ImmutableMap.Builder<Integer, String>()
+            .put(0, "已删除")
+            .put(1, "未删除")
+            .build();
 
 }

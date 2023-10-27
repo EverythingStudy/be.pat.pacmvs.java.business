@@ -36,7 +36,9 @@
                g.description,
                (select count(0)
                 from tb_slide sl
-                where sl.group_id = pg.group_id and sl.project_id = pg.project_id and sl.is_delete = 0) slide_total
+                where sl.group_id = pg.group_id
+                  and sl.project_id = pg.project_id
+                  and sl.is_delete = 0) slide_total
         from tb_project_group pg
                  left join
              tb_group g

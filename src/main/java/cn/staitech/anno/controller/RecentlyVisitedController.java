@@ -33,10 +33,8 @@ import java.util.Optional;
 @RequestMapping("/recentlyVisited")
 
 public class RecentlyVisitedController {
-
     @Resource
     private RecentlyVisitedService recentlyVisitedService;
-
 
     @ApiOperation(value = "查询用户最近访问信息")
     @GetMapping("/selectList")

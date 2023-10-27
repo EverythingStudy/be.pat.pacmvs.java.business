@@ -25,8 +25,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/projectMenu")
 public class ProjectMenuController extends BaseController {
-
-
     @Resource
     private ProjectMemberService projectMemberService;
 
@@ -36,6 +34,5 @@ public class ProjectMenuController extends BaseController {
         List<ProjectMember> projectMemberList = projectMemberService.selectByUserId(userId);
         return projectMemberList;
     }
-
 
 }

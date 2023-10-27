@@ -21,5 +21,4 @@ public class TopicInsert implements Serializable {
     @Size(min = 1, max = 100, message = "{ImageTopicBatchIdsVO.topicName.length}")
     @ApiModelProperty(value = "专题名称")
     private String topicName;
-
 }

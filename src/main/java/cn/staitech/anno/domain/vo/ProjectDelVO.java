@@ -10,7 +10,7 @@ public class ProjectDelVO {
 
     @ApiModelProperty(required = true, value = "项目id")
     private Long projectId;
-    
+
     /**
      * 通过项目id查询对应的图像列表
      */

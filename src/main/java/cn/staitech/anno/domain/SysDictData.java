@@ -16,12 +16,11 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 /**
- *
+ * @author wanglibei
+ * @version V1.0
  * @ClassName: SysDictData
  * @Description:
- * @author wanglibei
  * @date 2023年6月27日
- * @version V1.0
  */
 @Api(value = "系统字典", tags = "系统字典")
 @Data

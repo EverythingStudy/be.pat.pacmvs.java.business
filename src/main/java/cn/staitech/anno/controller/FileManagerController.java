@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author admin
+ * @author wangfeng
  */
 @Slf4j
 @Api(value = "文件管理器", tags = "文件管理器")
@@ -26,10 +26,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/filemanager")
 public class FileManagerController {
     /**
-     * 根目录
-     * /home/pat_saas/Data
-     * /home/pat_saas/Slides
-     * /home/pat_saas/Upload
+     * 根目录 /home/pat_saas/Data、Slides、Upload
      */
     private String baseDir = "/home/pat_saas";
 

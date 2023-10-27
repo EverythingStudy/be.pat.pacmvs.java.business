@@ -35,7 +35,6 @@ public class RoundController extends BaseController {
     /**
      * 轮次列表 .
      */
-    // @RequiresPermissions("anno:round:list")
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "轮次列表", notes = "轮次列表 - 王峰")
     @Log(title = "查询轮次列表", menu = "图片管理", subMenu = "轮次列表", businessType = BusinessType.QUERY)

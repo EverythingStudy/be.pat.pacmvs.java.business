@@ -84,8 +84,7 @@ public class ImageController extends BaseController {
     @Transactional(rollbackFor = Exception.class)
     public R deleteById(@PathVariable("imageId") @ApiParam(value = "图像ID") Long imageId) {
         if (imageId > 0) {
-            Slide slide = new Slide();
-            slide.setImageId(imageId);
+            Slide slide = Slide.builder().imageId(imageId).build();
             // 查切片表中有没有绑定此图片
             if (slideService.selectImageExist(slide).size() > 0) {
                 int deleteImageById = imageService.updateDeleteFlagById(imageId);
@@ -124,8 +123,7 @@ public class ImageController extends BaseController {
     @ApiOperation(value = "批量添加专题")
     @PostMapping("/updateBatchIds")
     public R updateBatchIds(@Validated @RequestBody ImageTopicBatchIdsVO request) {
-        Long uid = SecurityUtils.getUserId();
-        request.setUpdateBy(uid);
+        request.setUpdateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
         int result = imageService.updateBatchIds(request);
         if (result > 0) {
             return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
@@ -143,7 +141,6 @@ public class ImageController extends BaseController {
     @ApiOperation(value = "单个图像添加专题")
     @PostMapping("/update")
     public R update(@Validated @RequestBody ImageUpdateVO request) throws Exception {
-
         int result = imageService.updateById(request);
         if (result > 0) {
             return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));

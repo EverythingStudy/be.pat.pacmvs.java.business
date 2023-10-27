@@ -14,20 +14,6 @@ import java.util.Map;
  */
 @Component
 public class MapConstant {
-    @Resource
-    private SpeciesService speciesService;
-    @Resource
-    private GroupService groupService;
-    @Resource
-    private RoundService roundService;
-    @Resource
-    private ProjectTypeService projectTypeService;
-    @Resource
-    private ProductSeriesService productSeriesService;
-    @Resource
-    private OrganService organService;
-    @Resource
-    private StructureService structureService;
     /**
      * 种属
      */
@@ -44,38 +30,20 @@ public class MapConstant {
     public static Map<String, String> ORGAN_MAP_EN;
     public static Map<String, String> STRUCTURE_MAP;
     public static Map<String, String> STRUCTURE_MAP_EN;
-
-
-    @PostConstruct
-    public void init() {
-        // 分组
-        GROUP_MAP = groupService.selectMap();
-
-        // 种属
-        SPECIES_MAP = speciesService.selectMap();
-        SPECIES_MAP_EN = speciesService.selectMapEn();
-
-        // 轮次
-        ROUND_MAP = roundService.selectMap();
-        ROUND_MAP_EN = roundService.selectMapEn();
-
-        // 项目类型
-        PROJECT_TYPE_MAP = projectTypeService.selectMap();
-        PROJECT_TYPE_MAP_EN = projectTypeService.selectMapEn();
-
-        // 品系
-        PRODUCT_SERIES_MAP = productSeriesService.selectMap();
-        PRODUCT_SERIES_MAP_EN = productSeriesService.selectMapEn();
-
-        // 脏器
-        ORGAN_MAP = organService.selectMap();
-        ORGAN_MAP_EN = organService.selectMapEn();
-
-        // 结构
-        STRUCTURE_MAP = structureService.selectMap();
-        STRUCTURE_MAP_EN = structureService.selectMapEn();
-    }
-
+    @Resource
+    private SpeciesService speciesService;
+    @Resource
+    private GroupService groupService;
+    @Resource
+    private RoundService roundService;
+    @Resource
+    private ProjectTypeService projectTypeService;
+    @Resource
+    private ProductSeriesService productSeriesService;
+    @Resource
+    private OrganService organService;
+    @Resource
+    private StructureService structureService;
 
     /**
      * 获取种属名称
@@ -247,5 +215,35 @@ public class MapConstant {
             return STRUCTURE_MAP_EN.get(structureId);
         }
         return "";
+    }
+
+    @PostConstruct
+    public void init() {
+        // 分组
+        GROUP_MAP = groupService.selectMap();
+
+        // 种属
+        SPECIES_MAP = speciesService.selectMap();
+        SPECIES_MAP_EN = speciesService.selectMapEn();
+
+        // 轮次
+        ROUND_MAP = roundService.selectMap();
+        ROUND_MAP_EN = roundService.selectMapEn();
+
+        // 项目类型
+        PROJECT_TYPE_MAP = projectTypeService.selectMap();
+        PROJECT_TYPE_MAP_EN = projectTypeService.selectMapEn();
+
+        // 品系
+        PRODUCT_SERIES_MAP = productSeriesService.selectMap();
+        PRODUCT_SERIES_MAP_EN = productSeriesService.selectMapEn();
+
+        // 脏器
+        ORGAN_MAP = organService.selectMap();
+        ORGAN_MAP_EN = organService.selectMapEn();
+
+        // 结构
+        STRUCTURE_MAP = structureService.selectMap();
+        STRUCTURE_MAP_EN = structureService.selectMapEn();
     }
 }

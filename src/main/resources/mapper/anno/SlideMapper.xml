@@ -318,7 +318,8 @@
           and project_id = #{projectId}
     </select>
 
-    <select id="selectByStatus" parameterType="cn.staitech.anno.domain.vo.slide.SlideSelectVO" resultMap="projectSlideResult">
+    <select id="selectByStatus" parameterType="cn.staitech.anno.domain.vo.slide.SlideSelectVO"
+            resultMap="projectSlideResult">
         SELECT s.slide_id,
         s.human_annotation_total,
         i.image_name,

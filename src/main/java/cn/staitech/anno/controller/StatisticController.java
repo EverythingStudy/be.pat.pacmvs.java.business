@@ -43,19 +43,14 @@ import static cn.staitech.anno.utils.StatisticListUtils.exportExcelUtil;
 public class StatisticController extends BaseController {
     @Resource
     private StatisticService statisticService;
-
     @Resource
     private ProjectService projectService;
-
     @Resource
     private IndicatorService indicatorService;
-
     @Resource
     private SlideService slideService;
-
     @Resource
     private PathologicalIndicatorCategoryService pathologicalIndicatorCategoryService;
-
     @Resource
     private AnnotationService annotationService;
 

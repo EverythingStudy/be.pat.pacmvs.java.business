@@ -36,14 +36,10 @@ import static cn.staitech.anno.aspect.LogFileAspect.response;
 @RestController
 @RequestMapping("/examineScore")
 public class ExamineScoreController {
-
     @Resource
     private ExamineScoreService examineScoreService;
-
     @Resource
     private ProjectService projectService;
-
-
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "考题列表查询")
     @GetMapping("/selectExaminationList")

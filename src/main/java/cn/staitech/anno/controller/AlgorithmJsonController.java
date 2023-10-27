@@ -26,10 +26,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/algorithmJson")
 public class AlgorithmJsonController {
-
     @Resource
     private AlgorithmJsonService algorithmJsonService;
-
 
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "获取标注数据")
@@ -74,7 +72,6 @@ public class AlgorithmJsonController {
     public R<SelectGeoJsonList> selectUserAndLabelList(@RequestBody SelectGeoJson selectGeoJson) throws Exception {
         return R.ok(algorithmJsonService.selectUserAndLabelList(selectGeoJson));
     }
-
 
 }
 
