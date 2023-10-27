@@ -6,8 +6,8 @@ import lombok.Data;
 
 @Data
 public class TableDateOutVO {
-    
+
     @ApiModelProperty(value = "表记录最早时间")
     private String earliestDate;
-    
+
 }

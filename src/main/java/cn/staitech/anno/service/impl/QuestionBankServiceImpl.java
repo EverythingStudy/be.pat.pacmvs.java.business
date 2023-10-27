@@ -124,11 +124,11 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         QuestionBankServiceImpl bean = SpringUtils.getBean(QuestionBankServiceImpl.class);
         bean.saveBatch(resp);
         List<Long> questionBankList = new ArrayList<>();
-        for(QuestionBank questionBank:resp){
+        for (QuestionBank questionBank : resp) {
             questionBankList.add(questionBank.getQuestionId());
         }
         JSONObject markingJsonObject = new JSONObject();
-        markingJsonObject.put("question_id",questionBankList);
+        markingJsonObject.put("question_id", questionBankList);
         remoteLabelService.Standard(markingJsonObject);
         cn.staitech.anno.domain.Project project = new cn.staitech.anno.domain.Project();
         project.setProjectId(req.getProjectId());
@@ -167,7 +167,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                 throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
             }
             String s = StringUtils.substringAfterLast(urlPath, File.separator);
-//            String s1 = StringUtils.substringBeforeLast(urlPath, File.separator);
+            // String s1 = StringUtils.substringBeforeLast(urlPath, File.separator);
             String s1 = urlPath;
             ret.setJsonName(s);
             ret.setGeojsonUrl(s1);
@@ -178,11 +178,11 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         QuestionBankServiceImpl bean = SpringUtils.getBean(QuestionBankServiceImpl.class);
         bean.saveBatch(questionBanks);
         List<Long> questionBankList = new ArrayList<>();
-        for(QuestionBank questionBank:questionBanks){
+        for (QuestionBank questionBank : questionBanks) {
             questionBankList.add(questionBank.getQuestionId());
         }
         JSONObject markingJsonObject = new JSONObject();
-        markingJsonObject.put("question_id",questionBankList);
+        markingJsonObject.put("question_id", questionBankList);
         remoteLabelService.Standard(markingJsonObject);
         return R.ok();
     }

@@ -56,14 +56,14 @@ public class SpecialRoleQueryVO implements Serializable {
     private Map<String, Object> createTimeparams;
 
     @ApiModelProperty(value = "当前页数")
-    private int pageNum;
+    private Integer pageNum;
 
     @ApiModelProperty(value = "每页数据条数")
-    private int pageSize;
+    private Integer pageSize;
 
     public Map<String, Object> getCreateTimeparams() {
         if (createTimeparams == null) {
-            createTimeparams = new HashMap<>();
+            createTimeparams = new HashMap<>(16);
         }
         return createTimeparams;
     }

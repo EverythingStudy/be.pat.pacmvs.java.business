@@ -25,7 +25,7 @@ public class ImageVisitedServiceImpl implements ImageVisitedService {
      * @return list
      */
     @Override
-    public List<ImageVisited> selectList(Long recentlyVisitedId){
+    public List<ImageVisited> selectList(Long recentlyVisitedId) {
         return imageVisitedMapper.selectList(recentlyVisitedId);
     }
 

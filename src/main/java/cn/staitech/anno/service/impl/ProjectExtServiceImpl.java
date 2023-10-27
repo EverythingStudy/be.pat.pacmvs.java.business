@@ -1,12 +1,10 @@
 package cn.staitech.anno.service.impl;
 
-import cn.hutool.core.thread.ExecutorBuilder;
-import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Group;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.RecentlyVisited;
-import cn.staitech.anno.domain.po.ProjectPo;
 import cn.staitech.anno.domain.project.ProjectExt;
+import cn.staitech.anno.domain.project.ProjectPo;
 import cn.staitech.anno.domain.project.in.OperateProjectIn;
 import cn.staitech.anno.domain.project.in.ProjectListQueryIn;
 import cn.staitech.anno.domain.project.in.ProjectRemoveIn;
@@ -37,11 +35,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StopWatch;
 
 import javax.annotation.Resource;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 /**
@@ -56,19 +52,14 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
     private static final String CHECK_FLAG = "1";
     @Resource
     private SpecialMapper specialMapper;
-
     @Resource
     private SystemDictMapper systemDictMapper;
-
     @Resource
     private ProjectExtMapper projectExtMapper;
-
     @Resource
     private ProjectGroupMapper projectGroupMapper;
-
     @Resource
     private GroupMapper groupMapper;
-
     @Resource
     private RecentlyVisitedMapper recentlyVisitedMapper;
 
@@ -111,7 +102,6 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
 
         }
     }
-
 
     /**
      * 项目列表查询
@@ -364,76 +354,6 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
     }
 
     /**
-     * 一键创建项目
-     *
-     * @param specialId
-     * @return 测试数据：30个分组*44个脏器=1320个项目分组数据+44条项目数据===总效率389ms
-     */
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public R autoCreateProject(Long specialId) {
-
-        log.info("一键创建项目接口开始：");
-        //交付
-        LambdaQueryWrapper<Special> specialWrapper = new LambdaQueryWrapper<>();
-        specialWrapper.eq(Special::getSpecialId, specialId);
-        specialWrapper.eq(Special::getDeliveryStatus, 0);
-        specialWrapper.eq(Special::getDelFlag, 0);
-        Integer integer = specialMapper.selectCount(specialWrapper);
-        if (integer > 0) {
-            return R.fail(MessageSource.M("SPECIAL_NON_DELIVERY"));
-        }
-        //是否已存在项目
-        LambdaQueryWrapper<ProjectPo> projectWrapper = new LambdaQueryWrapper<>();
-        projectWrapper.eq(ProjectPo::getSpecialId, specialId);
-        projectWrapper.eq(ProjectPo::getDelFlag, 0);
-        Integer integer2 = projectExtMapper.selectCount(projectWrapper);
-        if (integer2 > 0) {
-            return R.fail(MessageSource.M("SPECIAL_EXIST_PROJECT"));
-        }
-        //获得登陆人
-        Long userId = SecurityUtils.getUserId();
-        //查询专题下所有脏器名称
-        StopWatch stopWatch = new StopWatch("一键创建");
-        stopWatch.start("总效率");
-        List<ViscusQueryOut> viscusQueryOuts = projectExtMapper.selectViscusBySpecial(specialId);
-        if (!CollectionUtils.isEmpty(viscusQueryOuts)) {
-            viscusQueryOuts.forEach(e -> {
-                ProjectExt projectExt = new ProjectExt();
-                projectExt.setProjectName(e.getViscusName());
-                projectExt.setViscusCode(e.getViscusCode());
-                projectExt.setDelFlag("0");
-                projectExt.setCreateBy(userId);
-                projectExt.setSpecialId(specialId);
-                projectExt.setCreateTime(new Date());
-                //插入项目表
-                projectExtMapper.insert(projectExt);
-                //插入项目分组表--临时表复制优化
-                projectGroupMapper.insertProjectGroupByGroup(projectExt);
-
-            });
-        } else {
-            R.fail(MessageSource.M("AUTO_CREATE_REASON"));
-        }
-        stopWatch.stop();
-        log.info(stopWatch.prettyPrint());
-        //修改一键创建状态
-        projectExtMapper.updateSpecial(specialId, CommonConstant.AUTO_CREATE_PROJECT_SUC);
-        return R.ok();
-    }
-
-    /**
-     * 修改专题
-     *
-     * @param specialId
-     */
-    @Override
-    public void changeSpecial(Long specialId) {
-        projectExtMapper.updateSpecial(specialId, CommonConstant.AUTO_CREATE_PROJECT_FAL);
-
-    }
-
-    /**
      * 根据用户id查询项目列表（包含下级分组）
      *
      * @param userId
@@ -441,7 +361,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
      */
     @Override
     public R queryProjectWithGroupByUserId(Long userId) {
-        Map<Long, ProjectWithGroupsVo> resultProjectMap = new HashMap<>();
+        Map<Long, ProjectWithGroupsVo> resultProjectMap = new HashMap<>(16);
         //查询专题
         Map<String, Object> querySpecialParams = ImmutableMap.of("delFlag", "0", "userId", userId);
         Object o = querySpecialParams.get("delFlag");
@@ -591,14 +511,6 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
         }
 
     }
-
-
-    private static ExecutorService executor = ExecutorBuilder.create()//
-            .setCorePoolSize(1)//
-            .setMaxPoolSize(1)//
-            .setKeepAliveTime(0)//
-            .build();
-
 
     @Override
     public boolean saveBatch(Collection<Project> entityList) {

@@ -24,33 +24,17 @@ import static cn.staitech.anno.utils.MarkVerify.wktReader;
 @Component
 public class ProjectUtils {
 
+    public static ProjectUtils projectUtils;
     @Resource
     private IndicatorService indicatorService;
-
     @Resource
     private ProjectService projectService;
-
     @Resource
     private SlideService slideService;
-
     @Resource
     private SlideAnnotationResultService slideAnnotationResultService;
-
     @Resource
     private PathologicalIndicatorCategoryService pathologicalIndicatorCategoryService;
-
-    public static ProjectUtils projectUtils;
-
-    @PostConstruct
-    public void init() {
-        projectUtils = this;
-        projectUtils.indicatorService = this.indicatorService;
-        projectUtils.projectService = this.projectService;
-        projectUtils.slideService = this.slideService;
-        projectUtils.slideAnnotationResultService = this.slideAnnotationResultService;
-        projectUtils.pathologicalIndicatorCategoryService = this.pathologicalIndicatorCategoryService;
-
-    }
 
     /**
      * 分页
@@ -58,7 +42,7 @@ public class ProjectUtils {
      * @param projectInforImageVO
      * @return
      */
-    public static ProjectDelVO paging(ProjectInforImageVO projectInforImageVO) {
+    public static ProjectDelVO paging(ProjectInForImageVO projectInforImageVO) {
         int pageNum = projectInforImageVO.getPageNum();
         int pageSize = projectInforImageVO.getPageSize();
         boolean flag = false;
@@ -330,5 +314,16 @@ public class ProjectUtils {
             }
         }
         return jsonObject;
+    }
+
+    @PostConstruct
+    public void init() {
+        projectUtils = this;
+        projectUtils.indicatorService = this.indicatorService;
+        projectUtils.projectService = this.projectService;
+        projectUtils.slideService = this.slideService;
+        projectUtils.slideAnnotationResultService = this.slideAnnotationResultService;
+        projectUtils.pathologicalIndicatorCategoryService = this.pathologicalIndicatorCategoryService;
+
     }
 }

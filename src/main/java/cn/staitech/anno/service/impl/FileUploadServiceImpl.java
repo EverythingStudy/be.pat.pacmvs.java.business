@@ -1,10 +1,13 @@
 package cn.staitech.anno.service.impl;
 
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.Topic;
+import cn.staitech.anno.domain.file.FileNode;
 import cn.staitech.anno.domain.files.Files;
 import cn.staitech.anno.domain.files.in.FileUploadVO;
 import cn.staitech.anno.service.*;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +23,8 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.file.Paths;
 import java.util.*;
+
+import static cn.staitech.anno.constant.CommonConstant.GLIDE_LINE;
 
 /**
  * @author: wangfeng
@@ -41,12 +46,44 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     @Resource
     private FilesProcessService filesProcessService;
+
+    @Resource
+    private AlgorithmAssessmentService algorithmAssessmentService;
     private String basePath = "/home/pat_saas";
-
-//    private String basePath = "D:\\home\\pat_saas";
-
-
     private String zipPath = "/home/pat_saas/Upload/json/zip";
+
+    private String uploadPath = File.separator + "home" + File.separator + "pat_saas" + File.separator + "Upload";
+
+    /**
+     * @param fileUrl  上传文件路径
+     * @param filename 文件名称
+     * @return
+     */
+    public static String getFolderName(String fileUrl, String filename) {
+        File file = new File(fileUrl);
+        List<FileNode> fileNodeList = new ArrayList<>();
+        if (file.isDirectory()) {
+            File[] fileArray = file.listFiles();
+            for (File f : fileArray) {
+                String type = f.isDirectory() ? "dir" : "file";
+                FileNode node = new FileNode(f.getName(), f.getAbsolutePath(), type, f.length());
+                System.out.println();
+                fileNodeList.add(node);
+            }
+        }
+
+        for (FileNode fileNode : fileNodeList) {
+            String name = fileNode.getName();
+            System.out.println(name);
+            if (name.contains(GLIDE_LINE)) {
+                String res = name.substring(0, name.lastIndexOf(GLIDE_LINE));
+                if (res.equals(filename)) {
+                    return name;
+                }
+            }
+        }
+        return filename;
+    }
 
     /**
      * @param file 上传的文件MultipartFile
@@ -88,12 +125,12 @@ public class FileUploadServiceImpl implements FileUploadService {
 
         switch (businessType) {
             case 3:
-                if(Objects.equals(fileUploadVO.getTopicName(), "")){
-                    throw new Exception("参数异常，未发现专题名称");
+                if (Objects.equals(fileUploadVO.getTopicName(), "")) {
+                    throw new Exception(MessageSource.M("ARGUMENT_INVALID_NOT_FIND_TOPIC"));
                 }
-                Topic topic = topicService.selectOne(fileUploadVO.getTopicName(),1);
+                Topic topic = topicService.selectOne(fileUploadVO.getTopicName(), 1);
                 // 定义文件夹名称
-                dirPath = dirPath + File.separator +  "Slides" + File.separator + topic.getTopicName();
+                dirPath = dirPath + File.separator + "Slides" + File.separator + topic.getTopicName();
                 //创建文件夹
                 File dir = new File(dirPath);
                 if (!dir.exists()) {
@@ -105,15 +142,19 @@ public class FileUploadServiceImpl implements FileUploadService {
             case 4:
                 dirPath = zipPath;
                 break;
+            case 5:
+                dirPath = zipPath;
+                break;
+
         }
         String fileName = fileUploadVO.getFileName();
         // 文件名称
         String filePath = dirPath + File.separator + fileName;
         // (真实存入)拷贝+
         File file = new File(filePath);
-        if(!file.exists()){
+        if (!file.exists()) {
             fileUploadVO.getMultipartFile().transferTo(Paths.get(filePath));
-        }else{
+        } else {
             // 删除文件
             file.delete();
             fileUploadVO.getMultipartFile().transferTo(Paths.get(filePath));
@@ -143,22 +184,43 @@ public class FileUploadServiceImpl implements FileUploadService {
                 break;
             case 4:
                 if (!Optional.ofNullable(fileUploadVO.getProjectId()).isPresent()) {
-                    throw new Exception("项目不可为空");
+                    throw new Exception(MessageSource.M("DISALLOW_NOT_PROJECT"));
                 }
                 markingService.zipExport(files.getFilesPath(), fileUploadVO.getProjectId());
+                break;
+
+            case 5:
+                if (!Optional.ofNullable(fileUploadVO.getProjectId()).isPresent()) {
+                    throw new Exception(MessageSource.M("DISALLOW_NOT_PROJECT"));
+                }
+                String fileUrl;
+                // 获取json文件最终存储路径
+                if (fileUploadVO.getFileUrl() != null) {
+                    fileUrl = fileUploadVO.getFileUrl();
+                } else {
+                    // 获取文件路径
+                    fileUrl = uploadPath + File.separator + getFileUrl(fileUploadVO);
+                    File dir = new File(fileUrl);
+                    if (!dir.exists()) {
+                        dir.mkdirs();
+                    }
+                }
+                // 解析zip压缩包
+                List<String> fileNameList = algorithmAssessmentService.zipExport(files.getFilesPath(), fileUploadVO.getProjectId(), fileUrl);
+                files.setFileNameList(fileNameList);
                 break;
         }
         return files;
     }
 
     @Override
-    public Boolean mergeChunk(FileUploadVO chunk) throws Exception {
+    public String mergeChunk(FileUploadVO chunk) throws Exception {
         // 查询文件是否存在
         QueryWrapper<Files> filesQueryWrapper = new QueryWrapper<>();
-        filesQueryWrapper.eq("files_code",chunk.getUuid());
+        filesQueryWrapper.eq("files_code", chunk.getUuid());
         Files filesBy = filesService.getOne(filesQueryWrapper);
         // 文件为空,第一片文件上传时添加到文件表中
-        if(filesBy == null){
+        if (filesBy == null) {
             Long filesId = saveFiles(chunk);
             filesBy = filesService.getById(filesId);
         }
@@ -171,7 +233,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             Container.FILE_MAP.put(chunk.getUuid(), chunkList);
         }
         File file = new File(filesBy.getFilesPath());
-        if(file.exists()){
+        if (file.exists()) {
             // 删除文件
             file.delete();
         }
@@ -188,7 +250,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 raf.write(buffer, 0, len);
             }
         } catch (IOException e) {
-            return false;
+            return "0";
         }
         // 删除map中当前元素
         Container.FILE_MAP.get(chunk.getUuid()).remove(chunk.getChunk());
@@ -207,13 +269,27 @@ public class FileUploadServiceImpl implements FileUploadService {
             switch (chunk.getBusinessType()) {
                 case 4:
                     if (!Optional.ofNullable(chunk.getProjectId()).isPresent()) {
-                        throw new Exception("项目不可为空");
+                        throw new Exception(MessageSource.M("DISALLOW_NOT_PROJECT"));
                     }
                     markingService.zipExport(filesBy.getFilesPath(), chunk.getProjectId());
                     break;
+                case 5:
+                    if (!Optional.ofNullable(chunk.getProjectId()).isPresent()) {
+                        throw new Exception(MessageSource.M("DISALLOW_NOT_PROJECT"));
+                    }
+                    String fileUrl;
+                    // 获取json文件最终存储路径
+                    if (chunk.getFileUrl() != null) {
+                        fileUrl = uploadPath + File.separator + chunk.getFileUrl();
+                    } else {
+                        // 获取文件路径
+                        fileUrl = uploadPath + File.separator + getFileUrl(chunk);
+                    }
+                    List<String> fileNameList = algorithmAssessmentService.zipExport(filesBy.getFilesPath(), chunk.getProjectId(), fileUrl);
+                    return fileNameList.toString();
             }
         }
-        return true;
+        return "1";
     }
 
     public Long saveFiles(FileUploadVO fileUploadVO) {
@@ -224,12 +300,16 @@ public class FileUploadServiceImpl implements FileUploadService {
                 // 若有二级目录,生成在获取文件名称上方即可
                 path = zipPath + File.separator + fileUploadVO.getFileName();
                 break;
+            case 5:
+                // 若有二级目录,生成在获取文件名称上方即可
+                path = zipPath + File.separator + fileUploadVO.getFileName();
+                break;
         }
         // 创建文件
-        if(path != null){
+        if (path != null) {
             File dir = new File(path);
             if (!dir.exists()) {
-                if(!dir.mkdirs()){
+                if (!dir.mkdirs()) {
                     log.error("创建文件异常");
                 }
             }
@@ -256,6 +336,33 @@ public class FileUploadServiceImpl implements FileUploadService {
         return files.getFilesId();
     }
 
+    public String getFileUrl(FileUploadVO fileUploadVO) throws Exception {
+        if (!Optional.ofNullable(fileUploadVO.getTopicName()).isPresent()) {
+            throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
+        }
+        if (fileUploadVO.getTopicName().length() > 50) {
+            throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
+        }
+        if (!Optional.ofNullable(fileUploadVO.getProjectTypeId()).isPresent()) {
+            throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
+        }
+        if (!Optional.ofNullable(fileUploadVO.getRoundId()).isPresent()) {
+            throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
+        }
+        if (!Optional.ofNullable(fileUploadVO.getNumber()).isPresent()) {
+            throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
+        }
+        String fileName = fileUploadVO.getTopicName() + GLIDE_LINE + fileUploadVO.getProjectTypeId() + fileUploadVO.getRoundId() + GLIDE_LINE + fileUploadVO.getNumber();
+        String filesName = getFolderName(uploadPath, fileName);
+        String filePath;
+        if (Objects.equals(filesName, filesName)) {
+            filePath = filesName + GLIDE_LINE + System.currentTimeMillis();
+        } else {
+            filePath = filesName;
+        }
+        // 创建二级目录
+        return filePath;
+    }
 
 
 }

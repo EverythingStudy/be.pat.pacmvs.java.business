@@ -1,20 +1,20 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.vo.reportRecord.ReportRecordAddVO;
+import cn.staitech.anno.domain.vo.reportrecord.ReportRecordAddVO;
 
 /**
- * 
-* @ClassName: DiagnosticStatisticsService
-* @Description:诊断统计
-* @author wanglibei
-* @date 2023年7月18日
-* @version V1.0
+ * @author wanglibei
+ * @version V1.0
+ * @ClassName: DiagnosticStatisticsService
+ * @Description:诊断统计
+ * @date 2023年7月18日
  */
 public interface DiagnosticStatisticsService {
-	/**
+    /**
      * 创建报告
+     *
      * @return
      * @throws Exception
      */
-	public String createRpt(ReportRecordAddVO recordAddVO)throws Exception;
+    public String createRpt(ReportRecordAddVO recordAddVO) throws Exception;
 }

@@ -1,6 +1,6 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.domain.vo.RecentlyVisitedVO.RecentlyVisitedSelectVO;
+import cn.staitech.anno.domain.vo.recentlyvisited.RecentlyVisitedSelectVO;
 import cn.staitech.anno.service.RecentlyVisitedService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.R;
@@ -33,10 +33,8 @@ import java.util.Optional;
 @RequestMapping("/recentlyVisited")
 
 public class RecentlyVisitedController {
-
     @Resource
     private RecentlyVisitedService recentlyVisitedService;
-
 
     @ApiOperation(value = "查询用户最近访问信息")
     @GetMapping("/selectList")
@@ -50,7 +48,7 @@ public class RecentlyVisitedController {
     @GetMapping("/visited")
     public R<String> add(Long slideId) {
         if (!Optional.ofNullable(slideId).isPresent()) {
-            return R.fail("参数异常");
+            return R.fail(MessageSource.M("ARGUMENT_INVALID"));
         }
         // 判断当前角色是否为admin或者超级管理员
         if (!SysUser.isAdmin(SecurityUtils.getUserId())) {
@@ -58,6 +56,4 @@ public class RecentlyVisitedController {
         }
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
-
-
 }

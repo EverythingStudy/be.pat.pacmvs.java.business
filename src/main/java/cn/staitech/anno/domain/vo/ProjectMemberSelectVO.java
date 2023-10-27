@@ -16,7 +16,7 @@ import java.io.Serializable;
  */
 @Data
 public class ProjectMemberSelectVO extends Pager implements Serializable {
-    @NotNull(message = "项目id不可为空 !")
+    @NotNull(message = "{PorjectVO.projectId.isnull}")
     @ApiModelProperty(value = "项目ID", required = true)
     private Long projectId;
     @ApiModelProperty(value = "用户名", required = false)

@@ -31,7 +31,7 @@ public class StatisticCategoryListOutVO {
     @ApiModelProperty(hidden = true, value = "机构ID")
     private Long organizationId;
     @ApiModelProperty(value = "图层顺序")
-    @NotBlank(message = "图层顺序不可为空!")
+    @NotBlank(message = "{StatisticCategoryListOutVO.orderNumber.isnull}")
     private Integer orderNumber;
 
     @ApiModelProperty(value = "病例指标id")

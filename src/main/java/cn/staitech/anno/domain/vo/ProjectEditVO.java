@@ -11,13 +11,13 @@ public class ProjectEditVO {
     /**
      * 项目ID
      */
-    @NotNull(message = "项目id不可为空 ！")
-    @ApiModelProperty(value = "项目id",required = true)
+    @NotNull(message = "{PorjectVO.projectId.isnull}")
+    @ApiModelProperty(value = "项目id", required = true)
     private Long projectId;
 
     /**
      * 病理id
      */
-    @ApiModelProperty(value = "病理id",required = true)
+    @ApiModelProperty(value = "病理id", required = true)
     private Long indicatorId;
 }

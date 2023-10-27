@@ -14,19 +14,18 @@ import java.util.List;
  */
 public interface NoticeService {
     /**
-     *
      * @return 消息列表1.0
      */
     List<NoticeQueryOut> getNotice();
 
     /**
-     *
      * @return 消息列表2.0
      */
     NoticeListQueryOut getNoticeList();
 
     /**
      * 消息状态置为已读
+     *
      * @return
      */
     R changeStatus(NoticeChangeStatusIn req);

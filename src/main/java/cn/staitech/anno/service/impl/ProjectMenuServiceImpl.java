@@ -10,11 +10,11 @@ import java.util.List;
 
 @Service
 public class ProjectMenuServiceImpl implements ProjectMenuService {
-    
+
     @Resource
     private ProjectMenuMapper projectMenuMapper;
-    
-    
+
+
     @Override
     public List<ProjectMenu> selectList() {
         return projectMenuMapper.selectList();

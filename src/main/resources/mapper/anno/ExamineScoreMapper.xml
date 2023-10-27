@@ -1,127 +1,124 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.ExamineScoreMapper">
-
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.ExamineScore">
-        <id column="examine_score_id" property="examineScoreId" />
-        <result column="project_id" property="projectId" />
-        <result column="nick_name" property="nickName" />
-        <result column="start_time" property="startTime" />
-        <result column="end_time" property="endTime" />
-        <result column="should_number" property="shouldNumber" />
-        <result column="reality_number" property="realityNumber" />
-        <result column="personal_fit" property="personalFit" />
-        <result column="exam_results" property="examResults" />
-        <result column="operate_status" property="operateStatus" />
-        <result column="create_time" property="createTime" />
-        <result column="create_by" property="createBy" />
-        <result column="update_time" property="updateTime" />
-        <result column="update_by" property="updateBy" />
+        <id column="examine_score_id" property="examineScoreId"/>
+        <result column="project_id" property="projectId"/>
+        <result column="nick_name" property="nickName"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="should_number" property="shouldNumber"/>
+        <result column="reality_number" property="realityNumber"/>
+        <result column="personal_fit" property="personalFit"/>
+        <result column="exam_results" property="examResults"/>
+        <result column="operate_status" property="operateStatus"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by" property="updateBy"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        examine_score_id, project_id, slide_id, slide_number, nick_name, start_time, end_time, should_number, reality_number, algorithm_interval, personal_fit, exam_results, operate_status, create_time, create_by, update_time, update_by
+        examine_score_id
+        , project_id, slide_id, slide_number, nick_name, start_time, end_time, should_number, reality_number, algorithm_interval, personal_fit, exam_results, operate_status, create_time, create_by, update_time, update_by
     </sql>
 
     <sql id="selectQuestionProject">
-        SELECT
-            e.nick_name,
-            q.image_name,
-            q.question_id,
-            q.slide_id,
-            qp.question_project_id,
-            e.start_time,
-            e.end_time,
-            e.complete_time,
-            e.create_by,
-            e.exam_results,
-            CASE
-                WHEN e.operate_status IS NULL THEN
-                    0 ELSE e.operate_status
-                END AS operate_status
-        FROM
-            tb_question_project_rel AS qp
-                LEFT JOIN tb_question_bank AS q ON qp.question_id = q.question_id
-                LEFT JOIN tb_examine_score AS e ON e.question_project_id = qp.question_project_id
+        SELECT e.nick_name,
+               q.image_name,
+               q.question_id,
+               q.slide_id,
+               qp.question_project_id,
+               e.start_time,
+               e.end_time,
+               e.complete_time,
+               e.create_by,
+               e.exam_results,
+               CASE
+                   WHEN e.operate_status IS NULL THEN
+                       0
+                   ELSE e.operate_status
+                   END AS operate_status
+        FROM tb_question_project_rel AS qp
+                 LEFT JOIN tb_question_bank AS q ON qp.question_id = q.question_id
+                 LEFT JOIN tb_examine_score AS e ON e.question_project_id = qp.question_project_id
     </sql>
 
-    <select id="selectExaminationBy" parameterType="cn.staitech.anno.domain.ExamineScore" resultType="cn.staitech.anno.domain.examineScore.SelectExaminationListVO">
+    <select id="selectExaminationBy" parameterType="cn.staitech.anno.domain.ExamineScore"
+            resultType="cn.staitech.anno.domain.examine.SelectExaminationListVO">
         <include refid="selectQuestionProject"/>
         where qp.question_project_id = #{questionProjectId}
         and e.create_by = #{createBy}
     </select>
 
-    <select id="selectQuestionProject" parameterType="long" resultType="cn.staitech.anno.domain.examineScore.SelectExaminationListVO">
-        SELECT
-            q.image_name,
-            q.question_id,
-            0 as operate_status,
-            q.slide_id,
-            qp.question_project_id
-        FROM
-            tb_question_project_rel AS qp
-                LEFT JOIN tb_question_bank AS q ON qp.question_id = q.question_id
+    <select id="selectQuestionProject" parameterType="long"
+            resultType="cn.staitech.anno.domain.examine.SelectExaminationListVO">
+        SELECT q.image_name,
+               q.question_id,
+               0 as operate_status,
+               q.slide_id,
+               qp.question_project_id
+        FROM tb_question_project_rel AS qp
+                 LEFT JOIN tb_question_bank AS q ON qp.question_id = q.question_id
         where qp.question_project_id = #{questionProjectId}
     </select>
 
 
-    <select id="selectByIds" parameterType="long" resultType="cn.staitech.anno.domain.examineScore.ExamineScoreBy">
-        SELECT
-            ex.* ,q.question_id
-        FROM
-            tb_examine_score AS ex
-                LEFT JOIN tb_question_project_rel AS q ON q.question_project_id = ex.question_project_id
-        WHERE
-            ex.examine_score_id = #{examineScoreId}
+    <select id="selectByIds" parameterType="long" resultType="cn.staitech.anno.domain.examine.ExamineScoreBy">
+        SELECT ex.*,
+               q.question_id
+        FROM tb_examine_score AS ex
+                 LEFT JOIN tb_question_project_rel AS q ON q.question_project_id = ex.question_project_id
+        WHERE ex.examine_score_id = #{examineScoreId}
     </select>
 
-    <select id="selectQuestionProjectList" parameterType="long" resultType="cn.staitech.anno.domain.examineScore.SelectExaminationListVO">
-        SELECT
-            q.image_name,
-            q.question_id,
-            0 as operate_status,
-            q.slide_id,
-            qp.question_project_id
-        FROM
-            tb_question_project_rel AS qp
-                LEFT JOIN tb_question_bank AS q ON qp.question_id = q.question_id
+    <select id="selectQuestionProjectList" parameterType="long"
+            resultType="cn.staitech.anno.domain.examine.SelectExaminationListVO">
+        SELECT q.image_name,
+               q.question_id,
+               0 as operate_status,
+               q.slide_id,
+               qp.question_project_id
+        FROM tb_question_project_rel AS qp
+                 LEFT JOIN tb_question_bank AS q ON qp.question_id = q.question_id
         where qp.question_project_id = #{questionProjectId}
     </select>
 
 
-    <select id="selectExamineList" parameterType="cn.staitech.anno.domain.examineScore.ExamineSelectVo" resultType="cn.staitech.anno.domain.ExamineScore">
+    <select id="selectExamineList" parameterType="cn.staitech.anno.domain.examine.ExamineSelectVo"
+            resultType="cn.staitech.anno.domain.ExamineScore">
         SELECT
-            es.examine_score_id,
-            es.project_id,
-            es.question_project_id,
-            es.image_name,
-            es.nick_name,
-            es.start_time,
-            es.end_time,
-            es.reality_number,
-            es.personal_fit,
-            es.exam_results,
-            es.operate_status,
-            es.create_time,
-            es.create_by,
-            es.update_time,
-            es.update_by,
-            es.slide_id,
-            es.complete_time,
-            pm.should_marks AS should_number,
-            qb.miou,
-            qb.fiou,
-            qb.tiou,
-            qb.biou
+        es.examine_score_id,
+        es.project_id,
+        es.question_project_id,
+        es.image_name,
+        es.nick_name,
+        es.start_time,
+        es.end_time,
+        es.reality_number,
+        es.personal_fit,
+        es.exam_results,
+        es.operate_status,
+        es.create_time,
+        es.create_by,
+        es.update_time,
+        es.update_by,
+        es.slide_id,
+        es.complete_time,
+        pm.should_marks AS should_number,
+        qb.miou,
+        qb.fiou,
+        qb.tiou,
+        qb.biou
         FROM
-            tb_examine_score AS es
-                LEFT JOIN tb_question_project_rel AS qp ON qp.question_project_id = es.question_project_id
-                LEFT JOIN tb_question_bank AS qb ON qp.question_id = qb.question_id
-                LEFT JOIN tb_project_marks_rel AS pm ON pm.project_id = qb.project_id
+        tb_examine_score AS es
+        LEFT JOIN tb_question_project_rel AS qp ON qp.question_project_id = es.question_project_id
+        LEFT JOIN tb_question_bank AS qb ON qp.question_id = qb.question_id
+        LEFT JOIN tb_project_marks_rel AS pm ON pm.project_id = qb.project_id
         WHERE
-            es.project_id = #{projectId}
+        es.project_id = #{projectId}
         <if test="nickName != null and nickName != ''">
             and es.nick_name like concat('%', #{nickName}, '%')
         </if>
@@ -132,18 +129,20 @@
     </select>
 
 
-    <select id="selectExaminationList" parameterType="cn.staitech.anno.domain.QuestionBank" resultType="cn.staitech.anno.domain.examineScore.SelectExaminationListVO">
+    <select id="selectExaminationList" parameterType="cn.staitech.anno.domain.QuestionBank"
+            resultType="cn.staitech.anno.domain.examine.SelectExaminationListVO">
         <include refid="selectQuestionProject"/>
         where #{createBy} in (select user_id from tb_project_member where project_id = #{projectId})
-          and qp.project_id = #{projectId}
-          and  qp.del_flag = '0'
-          and e.create_by = #{createBy}
+        and qp.project_id = #{projectId}
+        and qp.del_flag = '0'
+        and e.create_by = #{createBy}
         <if test="imageName != null and imageName != ''">
             and qp.image_name like concat('%', #{imageName}, '%')
         </if>
     </select>
 
-    <select id="selectLists" parameterType="list" resultType="cn.staitech.anno.domain.examineScore.ExamineScoreExportVO">
+    <select id="selectLists" parameterType="list"
+            resultType="cn.staitech.anno.domain.examine.ExamineScoreExportVO">
         SELECT
         p.project_name,
         e.image_name,
@@ -176,6 +175,4 @@
             #{examineScoreId, jdbcType=NUMERIC}
         </foreach>
     </select>
-
-
 </mapper>

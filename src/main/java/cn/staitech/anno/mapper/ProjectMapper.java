@@ -5,6 +5,7 @@ import cn.staitech.anno.domain.SlideAnnotationResult;
 import cn.staitech.anno.domain.image.in.ImageAllVO;
 import cn.staitech.anno.domain.vo.*;
 import cn.staitech.anno.domain.vo.project.InsertProjectVO;
+import cn.staitech.anno.domain.vo.slide.SlideCategoryProcessFlagVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticProjectListOutVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -89,7 +90,6 @@ public interface ProjectMapper extends BaseMapper<Project> {
     public List<StatisticProjectListOutVO> selectProjectStatisticList(Project project);
 
     /**
-     *
      * @param userId
      * @return 统计项目下拉框
      */
@@ -183,7 +183,7 @@ public interface ProjectMapper extends BaseMapper<Project> {
     /**
      * 根据projectId，状态，imageName 查询
      */
-    public List<ProjectListVO> selectProjectDetails(ProjectInforImageVO projectInforImageVO);
+    public List<ProjectListVO> selectProjectDetails(ProjectInForImageVO projectInforImageVO);
 
     /**
      * 查询切片中的除了unLabel，的标注总数
@@ -215,7 +215,7 @@ public interface ProjectMapper extends BaseMapper<Project> {
     /**
      * 根据projectId 和 createBy查询slideId
      */
-    public List<AnnotationsAddVO> selectSlideId(ProjectInforImageVO projectInforImageVO);
+    public List<AnnotationsAddVO> selectSlideId(ProjectInForImageVO projectInforImageVO);
 
     /**
      * 根据projectId查询 用户

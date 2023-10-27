@@ -3,7 +3,6 @@ package cn.staitech.anno.service;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.vo.LabelListVO;
 import cn.staitech.anno.domain.vo.LabelVO;
-import cn.staitech.anno.domain.vo.indicator.IndicatorAndOrganizationIdVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListOutVO;
 
@@ -104,7 +103,7 @@ public interface PathologicalIndicatorCategoryService {
     /**
      * 查询病例指标下的标注类别数量
      */
-    Long selectCategoryNumber(IndicatorAndOrganizationIdVO indicatorAndOrganizationIdVO);
+    Long selectCategoryNumber(Long indicatorId);
 
     /**
      * 根据projectId查询标注类别
@@ -113,11 +112,12 @@ public interface PathologicalIndicatorCategoryService {
 
     /**
      * 根据indicatorId查询标注类别（不包含unLabel）
-     * */
+     */
     List<LabelListVO> selectByIndicator(LabelVO labelVO);
 
     /**
      * 根据项目id查询标签列表
+     *
      * @param projectId 项目id
      */
     List<PathologicalIndicatorCategory> selectprojectList(Long projectId);
@@ -126,6 +126,6 @@ public interface PathologicalIndicatorCategoryService {
 
     /**
      * 查询标签在标注中的使用数量
-     * */
+     */
     Integer selectLabelNum(Long categoryId);
 }

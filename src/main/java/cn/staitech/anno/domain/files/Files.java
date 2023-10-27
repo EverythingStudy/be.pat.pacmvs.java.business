@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -178,12 +179,17 @@ public class Files implements Serializable {
     /**
      * 更新时间
      */
-    @TableField(value = "update_time")
     @ApiModelProperty(value = "更新时间", hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @TableField(value = "update_time")
     private Date updateTime;
 
     @ApiModelProperty(value = "", hidden = true)
     @TableField(exist = false)
     private Map<String, Object> params;
+
+    @ApiModelProperty(value = "文件名称列表", hidden = true)
+    @TableField(exist = false)
+    private List<String> fileNameList;
+
 }

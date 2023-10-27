@@ -12,7 +12,7 @@ import java.util.List;
  * @author staitech
  */
 public interface MeasureMapper {
-    
+
     /**
      * 新增测量
      *
@@ -20,7 +20,7 @@ public interface MeasureMapper {
      * @return 结果
      */
     Long insertMeasure(Measure measure);
-    
+
     /**
      * 查询Measure中point(点)以外的具体数据
      *
@@ -32,7 +32,6 @@ public interface MeasureMapper {
     List<MeasureJsonVO> selectMeasureJson(Measure measure);
 
 
-    
     /**
      * 查询Measure中point(点)数量
      *
@@ -40,7 +39,7 @@ public interface MeasureMapper {
      * @return 结果
      */
     int selectMeasureCount(Measure measure);
-    
+
     /**
      * 删除测量
      *
@@ -48,7 +47,7 @@ public interface MeasureMapper {
      * @return 结果
      */
     int deleteMeasureById(Long measureId);
-    
+
     /**
      * 更新测量
      *
@@ -56,7 +55,7 @@ public interface MeasureMapper {
      * @return 结果
      */
     int updateMeasure(Measure measure);
-    
+
     /**
      * 主键查询详情信息
      *
@@ -64,7 +63,7 @@ public interface MeasureMapper {
      * @return 结果
      */
     Measure selectMeasureById(Long measureId);
-    
+
     /**
      * 删除用户在当前页面的测量信息
      *
@@ -72,6 +71,6 @@ public interface MeasureMapper {
      * @return boolean
      */
     int deleteMeasureBatch(Measure measure);
-    
-    
+
+
 }

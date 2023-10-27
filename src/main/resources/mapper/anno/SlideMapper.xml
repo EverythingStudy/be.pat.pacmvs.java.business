@@ -49,9 +49,11 @@
         <result column="delete_flag" jdbcType="TINYINT" property="deleteFlag"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="host_id" jdbcType="TINYINT" property="hostId"/>
+        <result column="if_create_questions" jdbcType="VARCHAR" property="ifCreateQuestions"/>
     </resultMap>
     <sql id="Base_Column_List">
-        slide_id,
+        slide_id
+        ,
         project_id,
         image_id,
         human_annotation_total,
@@ -150,8 +152,8 @@
             resultMap="statisticSlideResult">
         select s.slide_id, i.image_name, p.project_id, p.project_name
         from tb_slide as s
-                 inner join tb_project as p on s.project_id = p.project_id
-                 inner join tb_image as i on s.image_id = i.image_id
+        inner join tb_project as p on s.project_id = p.project_id
+        inner join tb_image as i on s.image_id = i.image_id
         <where>
             <if test="projectIdList.size() != 0 and projectIdList != null">
                 AND s.project_id in
@@ -223,7 +225,6 @@
         <id column="topic_name" jdbcType="BIGINT" property="topicName"/>
         <result column="image_name" jdbcType="BIGINT" property="imageName"/>
         <result column="slide_type" jdbcType="VARCHAR" property="slideType"/>
-        <result column="category_number" jdbcType="INTEGER" property="categoryNumber"/>
     </resultMap>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -243,16 +244,13 @@
 
     <select id="slideReviewFileName" parameterType="java.lang.Long" resultMap="SlideFileNameResultMap">
         SELECT t.topic_name,
-               i.image_name,
-               CONCAT(p.project_type, r.round_id)      AS slide_type,
-               group_concat(cate.number SEPARATOR "-") AS category_number
+               i.file_name                        as image_name,
+               CONCAT(p.project_type, r.round_id) AS slide_type
         FROM tb_slide AS s
                  LEFT JOIN tb_project AS p ON p.project_id = s.project_id
                  LEFT JOIN tb_review_round AS re on re.review_round_id = s.review_round_id
                  LEFT JOIN tb_topic AS t ON t.topic_id = re.topic_id
                  LEFT JOIN tb_image AS i ON i.image_id = s.image_id
-                 LEFT JOIN tb_pathological_indicator AS path ON path.indicator_id = p.indicator_id
-                 LEFT JOIN tb_pathological_indicator_category AS cate ON cate.indicator_id = path.indicator_id
                  LEFT JOIN tb_round AS r ON r.round_id = s.round_id
         WHERE s.slide_id = #{slideId,jdbcType=BIGINT}
         GROUP BY t.topic_name
@@ -260,15 +258,12 @@
 
     <select id="slideFileName" parameterType="java.lang.Long" resultMap="SlideFileNameResultMap">
         SELECT t.topic_name,
-               i.image_name,
-               p.project_type AS slide_type,
-               group_concat(cate.number SEPARATOR "-") AS category_number
+               i.file_name    as image_name,
+               p.project_type AS slide_type
         FROM tb_slide AS s
                  LEFT JOIN tb_project AS p ON p.project_id = s.project_id
                  LEFT JOIN tb_topic AS t ON t.topic_id = s.topic_id
                  LEFT JOIN tb_image AS i ON i.image_id = s.image_id
-                 LEFT JOIN tb_pathological_indicator AS path ON path.indicator_id = p.indicator_id
-                 LEFT JOIN tb_pathological_indicator_category AS cate ON cate.indicator_id = path.indicator_id
         WHERE s.slide_id = #{slideId,jdbcType=BIGINT}
         GROUP BY t.topic_name
     </select>
@@ -323,19 +318,20 @@
           and project_id = #{projectId}
     </select>
 
-    <select id="selectByStatus" parameterType="cn.staitech.anno.domain.vo.SlideSelectVO" resultMap="projectSlideResult">
+    <select id="selectByStatus" parameterType="cn.staitech.anno.domain.vo.slide.SlideSelectVO"
+            resultMap="projectSlideResult">
         SELECT s.slide_id,
-               s.human_annotation_total,
-               i.image_name,
-               i.size,
-               i.thumb_url,
-               s.process_flag,
-               s.description,
-               s.image_id,
-               s.update_time,
-               s.create_time
+        s.human_annotation_total,
+        i.image_name,
+        i.size,
+        i.thumb_url,
+        s.process_flag,
+        s.description,
+        s.image_id,
+        s.update_time,
+        s.create_time
         FROM tb_slide AS s
-                 LEFT JOIN tb_image AS i ON s.image_id = i.image_id
+        LEFT JOIN tb_image AS i ON s.image_id = i.image_id
         <where>
             <if test="projectId != null and projectId != ''">
                 AND s.project_id = #{projectId}
@@ -373,18 +369,18 @@
     <insert id="insertSlide" useGeneratedKeys="true"
             keyProperty="slideId">
         insert into tb_slide (project_id,
-                              image_id,
-                              create_by,
-                              update_by,
-                              create_time,
-                              update_time)values
+        image_id,
+        create_by,
+        update_by,
+        create_time,
+        update_time)values
         <foreach collection="slideList" item="slide" separator=",">
             (#{slide.projectId},
-             #{slide.imageId},
-             #{slide.createBy},
-             #{slide.createBy},
-             sysdate(),
-             sysdate())
+            #{slide.imageId},
+            #{slide.createBy},
+            #{slide.createBy},
+            sysdate(),
+            sysdate())
         </foreach>
     </insert>
 
@@ -428,8 +424,8 @@
                 update_time=now()
             </set>
             where project_id = ${item.projectId}
-              and image_id = ${item.imageId}
-              and group_id = ${item.groupId}
+            and image_id = ${item.imageId}
+            and group_id = ${item.groupId}
         </foreach>
     </update>
 
@@ -443,8 +439,8 @@
                 process_flag=2
             </set>
             where project_id = ${item.projectId}
-              and image_id = ${item.subImageId}
-              and group_id = ${item.groupId}
+            and image_id = ${item.subImageId}
+            and group_id = ${item.groupId}
         </foreach>
     </update>
 
@@ -452,16 +448,16 @@
     <select id="selectSlideByProjectAndGroup" parameterType="java.util.Map"
             resultType="cn.staitech.anno.domain.vo.image.SlideReportSummaryVo">
         select p.project_name,
-               g.group_name,
-               case when g.gender = 0 then '雌' else '雄' end as gender,
-               count(s.slide_id)                              as total,
-               sum(case when s.ai_analyzed = 2 then 1 end)       finish_total,
-               g.description,
-               g.reasons,
-               g.dosage
+        g.group_name,
+        case when g.gender = 0 then '雌' else '雄' end as gender,
+        count(s.slide_id) as total,
+        sum(case when s.ai_analyzed = 2 then 1 end) finish_total,
+        g.description,
+        g.reasons,
+        g.dosage
         from tb_slide s
-                 left join tb_group g on s.group_id = g.group_id
-                 left join tb_project p on s.project_id = p.project_id
+        left join tb_group g on s.group_id = g.group_id
+        left join tb_project p on s.project_id = p.project_id
         <where>
             s.is_delete = 0
             <if test="params.groupId != null and params.groupId != ''">
@@ -478,14 +474,14 @@
     <select id="pageSlideWithSubImage" parameterType="java.util.Map"
             resultType="cn.staitech.anno.domain.vo.image.SlideReportVo">
         select m.*,
-               s.slide_id,
-               s.diagnosis,
-               s.ai_analyzed,
-               s.ai_check,
-               case when g.gender = 0 then '雌' else '雄' end as gender
+        s.slide_id,
+        s.diagnosis,
+        s.ai_analyzed,
+        s.ai_check,
+        case when g.gender = 0 then '雌' else '雄' end as gender
         from tb_slide s
-                 left join tb_sub_image m on m.image_id = s.image_id
-                 left join tb_group g on s.group_id = g.group_id
+        left join tb_sub_image m on m.image_id = s.image_id
+        left join tb_group g on s.group_id = g.group_id
         <where>
             s.is_delete = 0
             <if test="params.aiAnalyzed != null and params.aiAnalyzed != ''">
@@ -528,19 +524,19 @@
     <select id="pageSlideStatisticsByProject" parameterType="java.util.Map"
             resultType="cn.staitech.anno.domain.vo.image.ProjectStatisticsVo">
         select p.project_id,
-               p.project_name,
-               count(s.slide_id)                                                as slide_total,
-               p.viscus_code,
-               p.system_code,
-               sum(case when s.ai_check = 1 then 1 end)                         as negative_total,
-               sum(case when s.ai_check = 2 then 1 end)                         as positive_total,
-               sum(case when s.ai_analyzed = 2 then 1 end)                      as finish_total,
-               sum(case when s.diagnosis = 1 then 1 end)                        as diagnosis_total,
-               sum(case when s.ai_analyzed = 1 or s.ai_analyzed = 3 then 1 end) as analysis_total
+        p.project_name,
+        count(s.slide_id) as slide_total,
+        p.viscus_code,
+        p.system_code,
+        sum(case when s.ai_check = 1 then 1 end) as negative_total,
+        sum(case when s.ai_check = 2 then 1 end) as positive_total,
+        sum(case when s.ai_analyzed = 2 then 1 end) as finish_total,
+        sum(case when s.diagnosis = 1 then 1 end) as diagnosis_total,
+        sum(case when s.ai_analyzed = 1 or s.ai_analyzed = 3 then 1 end) as analysis_total
         from tb_project p
-                 left join (select * from tb_slide where is_delete = 0) s on p.project_id = s.project_id
+        left join (select * from tb_slide where is_delete = 0) s on p.project_id = s.project_id
         where p.del_flag = 0
-          and p.special_id in
+        and p.special_id in
         <foreach item="specialId" collection="params.specialIds" separator="," open="(" close=")" index="">
             #{specialId, jdbcType=NUMERIC}
         </foreach>
@@ -549,7 +545,7 @@
         </if>
         <if test="params.creator != null and params.creator != ''">
             AND p.create_by in
-                (select u.user_id from sys_user u where u.user_name LIKE CONCAT('%', #{params.creator}, '%'))
+            (select u.user_id from sys_user u where u.user_name LIKE CONCAT('%', #{params.creator}, '%'))
         </if>
         <if test="params.viscusCode != null and params.viscusCode != ''">
             AND p.viscus_code = #{params.viscusCode}
@@ -564,18 +560,18 @@
     <select id="pageSlideStatistics" parameterType="java.util.Map"
             resultType="cn.staitech.anno.domain.vo.image.SlideReportVo">
         select m.*,
-               s.slide_id,
-               s.diagnosis,
-               s.ai_analyzed,
-               s.ai_check,
-               p.project_name,
-               p.system_code,
-               case when g.gender = 0 then '雌' else '雄' end as gender,
-               p.viscus_code
+        s.slide_id,
+        s.diagnosis,
+        s.ai_analyzed,
+        s.ai_check,
+        p.project_name,
+        p.system_code,
+        case when g.gender = 0 then '雌' else '雄' end as gender,
+        p.viscus_code
         from tb_slide s
-                 left join tb_sub_image m on m.image_id = s.image_id
-                 left join tb_group g on s.group_id = g.group_id
-                 left join tb_project p on s.project_id = p.project_id
+        left join tb_sub_image m on m.image_id = s.image_id
+        left join tb_group g on s.group_id = g.group_id
+        left join tb_project p on s.project_id = p.project_id
         <where>
             s.is_delete = 0
             <if test="params.aiAnalyzed != null and params.aiAnalyzed != ''">
@@ -628,31 +624,31 @@
     <!--查询项目内切片诊断信息-->
     <select id="queryVisceraLesionRpt" parameterType="java.util.Map" resultType="java.util.Map">
         select g.group_name as 'group', g.description as groupDesc,
-               g.group_id,
-               g.gender,
-               g.dosage,
-               i.image_name        as subImageName,
-               i.parent_image_name as imageName,
-               i.image_id,
-               t1.special_diagnosis_id,
-               t1.diagnosis,
-               CASE
-                   WHEN (ISNULL(t1.remark) = 1) || (LENGTH(trim(t1.remark)) = 0) THEN '-'
-                   ELSE t1.remark
-                   END             as remark
+        g.group_id,
+        g.gender,
+        g.dosage,
+        i.image_name as subImageName,
+        i.parent_image_name as imageName,
+        i.image_id,
+        t1.special_diagnosis_id,
+        t1.diagnosis,
+        CASE
+        WHEN (ISNULL(t1.remark) = 1) || (LENGTH(trim(t1.remark)) = 0) THEN '-'
+        ELSE t1.remark
+        END as remark
 
         from tb_slide s
-            left join tb_group g on s.group_id = g.group_id
-            left join tb_sub_image i on s.image_id = i.image_id
-            left join (select d.special_diagnosis_id,
-                              d.project_id,
-                              d.special_id,
-                              d.sub_image_id,
-                              d.group_id,
-                              d.remark,
-                              GROUP_CONCAT(t.tag_name SEPARATOR "; ") as diagnosis
-                       from tb_special_diagnosis_detail t
-                                left join tb_special_diagnosis d on t.special_diagnosis_id = d.special_diagnosis_id
+        left join tb_group g on s.group_id = g.group_id
+        left join tb_sub_image i on s.image_id = i.image_id
+        left join (select d.special_diagnosis_id,
+        d.project_id,
+        d.special_id,
+        d.sub_image_id,
+        d.group_id,
+        d.remark,
+        GROUP_CONCAT(t.tag_name SEPARATOR "; ") as diagnosis
+        from tb_special_diagnosis_detail t
+        left join tb_special_diagnosis d on t.special_diagnosis_id = d.special_diagnosis_id
         <where>
             <!--是否可用 0:不可用1:可用-->
             d.status = 1
@@ -689,49 +685,49 @@
     </select>
 
     <!--分页查询切片列表信息-->
-    <select id="pageImageCsvListVOList" parameterType="cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO"
-            resultType="cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO">
+    <select id="pageImageCsvListVOList" parameterType="cn.staitech.anno.domain.vo.imagecsv.ImageCsvGetVO"
+            resultType="cn.staitech.anno.domain.vo.imagecsv.ImageCsvListVO">
         select s.slide_id,
-               s.review_round_id,
-               s.diagnosis,
-               s.status,
-               s.description,
-               s.ai_analyzed,
-               s.ai_check,
-               s.group_name,
-               s.gender,
-               s.species,
-               s.product_series,
-               s.dosage,
-               s.animal_source,
-               s.receiving_week,
-               s.dosing_cycle,
-               s.recovery_cycle,
-               s.date_of_death,
-               s.remove_reason,
-               s.organ,
-               s.lesion_type1,
-               s.lesion_degree1,
-               s.lesion_type2,
-               s.lesion_degree2,
-               s.topic_name,
-               s.delete_flag,
-               s.organization_id,
-               s.host_id,
-               s.create_time,
-               m.image_id,
-               m.thumb_url,
-               m.format,
-               m.width,
-               m.height,
-               m.resolution_x,
-               m.resolution_y,
-               m.source_lens,
-               m.image_path,
-               m.thumb_url,
-               m.image_name
+        s.review_round_id,
+        s.diagnosis,
+        s.status,
+        s.description,
+        s.ai_analyzed,
+        s.ai_check,
+        s.group_name,
+        s.gender,
+        s.species,
+        s.product_series,
+        s.dosage,
+        s.animal_source,
+        s.receiving_week,
+        s.dosing_cycle,
+        s.recovery_cycle,
+        s.date_of_death,
+        s.remove_reason,
+        s.organ,
+        s.lesion_type1,
+        s.lesion_degree1,
+        s.lesion_type2,
+        s.lesion_degree2,
+        s.topic_name,
+        s.delete_flag,
+        s.organization_id,
+        s.host_id,
+        s.create_time,
+        m.image_id,
+        m.thumb_url,
+        m.format,
+        m.width,
+        m.height,
+        m.resolution_x,
+        m.resolution_y,
+        m.source_lens,
+        m.image_path,
+        m.thumb_url,
+        m.image_name
         from tb_slide s
-                 left join tb_image m on m.image_id = s.image_id
+        left join tb_image m on m.image_id = s.image_id
         <where>
             <!--            切片编号        imageName
                         组别        groupName
@@ -779,50 +775,50 @@
     </select>
 
 
-    <select id="pageImageCsvListVOList1" parameterType="cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO"
-            resultType="cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO">
+    <select id="pageImageCsvListVOList1" parameterType="cn.staitech.anno.domain.vo.imagecsv.ImageCsvGetVO"
+            resultType="cn.staitech.anno.domain.vo.imagecsv.ImageCsvListVO">
         select s.slide_id,
-               s.review_round_id,
-               s.diagnosis,
-               s.status,
-               s.remark,
-               s.ai_analyzed,
-               s.ai_check,
-               s.group_name,
-               s.gender,
-               s.species,
-               s.product_series,
-               s.dosage,
-               s.animal_source,
-               s.receiving_week,
-               s.dosing_cycle,
-               s.recovery_cycle,
-               s.date_of_death,
-               s.remove_reason,
-               s.organ,
-               s.lesion_type1,
-               s.lesion_degree1,
-               s.lesion_type2,
-               s.lesion_degree2,
-               s.topic_name,
-               s.delete_flag,
-               s.organization_id,
-               s.host_id,
-               s.create_time,
-               m.image_id,
-               m.image_path,
-               m.thumb_url,
-               m.format,
-               m.width,
-               m.height,
-               m.resolution_x,
-               m.resolution_y,
-               m.source_lens,
-               m.image_path,
-               m.thumb_url,
-               m.image_name
+        s.review_round_id,
+        s.diagnosis,
+        s.status,
+        s.remark,
+        s.ai_analyzed,
+        s.ai_check,
+        s.group_name,
+        s.gender,
+        s.species,
+        s.product_series,
+        s.dosage,
+        s.animal_source,
+        s.receiving_week,
+        s.dosing_cycle,
+        s.recovery_cycle,
+        s.date_of_death,
+        s.remove_reason,
+        s.organ,
+        s.lesion_type1,
+        s.lesion_degree1,
+        s.lesion_type2,
+        s.lesion_degree2,
+        s.topic_name,
+        s.delete_flag,
+        s.organization_id,
+        s.host_id,
+        s.create_time,
+        m.image_id,
+        m.image_path,
+        m.thumb_url,
+        m.format,
+        m.width,
+        m.height,
+        m.resolution_x,
+        m.resolution_y,
+        m.source_lens,
+        m.image_path,
+        m.thumb_url,
+        m.image_name
         from tb_slide s
-                 left join tb_image m on m.image_id = s.image_id
+        left join tb_image m on m.image_id = s.image_id
         <where>
             <if test="projectId != null">
                 AND s.project_id = #{projectId, jdbcType=NUMERIC}
@@ -868,48 +864,48 @@
     <select id="pageImageCsvListVOBy" parameterType="long"
             resultType="cn.staitech.anno.domain.vo.marking.out.SlideSelectBy">
         select s.slide_id,
-               s.review_round_id,
-               s.description,
-               s.ai_analyzed,
-               s.remark,
-               s.diagnosis,
-               s.status,
-               s.ai_check,
-               s.group_name,
-               s.gender,
-               s.species,
-               s.product_series,
-               s.dosage,
-               s.animal_source,
-               s.receiving_week,
-               s.dosing_cycle,
-               s.recovery_cycle,
-               s.date_of_death,
-               s.remove_reason,
-               s.organ,
-               s.lesion_type1,
-               s.lesion_degree1,
-               s.lesion_type2,
-               s.lesion_degree2,
-               s.topic_name,
-               s.delete_flag,
-               s.organization_id,
-               s.host_id,
-               s.create_time,
-               m.image_id,
-               m.thumb_url,
-               m.image_path,
-               m.format,
-               m.width,
-               m.height,
-               m.resolution_x,
-               m.resolution_y,
-               m.source_lens,
-               m.image_path,
-               m.thumb_url,
-               m.image_name
+        s.review_round_id,
+        s.description,
+        s.ai_analyzed,
+        s.remark,
+        s.diagnosis,
+        s.status,
+        s.ai_check,
+        s.group_name,
+        s.gender,
+        s.species,
+        s.product_series,
+        s.dosage,
+        s.animal_source,
+        s.receiving_week,
+        s.dosing_cycle,
+        s.recovery_cycle,
+        s.date_of_death,
+        s.remove_reason,
+        s.organ,
+        s.lesion_type1,
+        s.lesion_degree1,
+        s.lesion_type2,
+        s.lesion_degree2,
+        s.topic_name,
+        s.delete_flag,
+        s.organization_id,
+        s.host_id,
+        s.create_time,
+        m.image_id,
+        m.thumb_url,
+        m.image_path,
+        m.format,
+        m.width,
+        m.height,
+        m.resolution_x,
+        m.resolution_y,
+        m.source_lens,
+        m.image_path,
+        m.thumb_url,
+        m.image_name
         from tb_slide s
-                 left join tb_image m on m.image_id = s.image_id
+        left join tb_image m on m.image_id = s.image_id
         <where>
             <if test="slideId != null">
                 s.slide_id = #{slideId, jdbcType=NUMERIC}

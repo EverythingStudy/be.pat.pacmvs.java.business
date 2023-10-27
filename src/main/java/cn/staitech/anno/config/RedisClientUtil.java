@@ -1,11 +1,16 @@
 package cn.staitech.anno.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.*;
+import org.redisson.api.RBucket;
+import org.redisson.api.RLock;
+import org.redisson.api.RMap;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -50,18 +55,18 @@ public class RedisClientUtil implements ICache {
 
 
     @Override
-    public boolean setHash(String slideId, Long userId,String userName) {
+    public boolean setHash(String slideId, Long userId, String userName) {
         RMap<Object, Object> rMap = client.getMap(slideId);
-        rMap.put("userId",userId);
-        rMap.put("userName",userName);
-        rMap.expire(30,TimeUnit.MINUTES);
+        rMap.put("userId", userId);
+        rMap.put("userName", userName);
+        rMap.expire(30, TimeUnit.MINUTES);
         return true;
     }
 
     @Override
     public boolean updateHashTime(String res) {
         RMap<Object, Object> rMap = client.getMap(res);
-        rMap.expire(30,TimeUnit.MINUTES);
+        rMap.expire(30, TimeUnit.MINUTES);
         return true;
     }
 
@@ -75,8 +80,8 @@ public class RedisClientUtil implements ICache {
         RLock rLock = client.getLock(req);
         rLock.lock();
         try {
-            //尝试5秒内获取锁，如果获取到了，最长60秒自动释放
-            boolean res = rLock.tryLock(5,  TimeUnit.MINUTES);
+            // 尝试5秒内获取锁，如果获取到了，最长60秒自动释放
+            boolean res = rLock.tryLock(5, TimeUnit.MINUTES);
             if (res) {
                 return true;
             }
@@ -87,11 +92,11 @@ public class RedisClientUtil implements ICache {
     }
 
     @Override
-    public  boolean release(String lockKey) {
+    public boolean release(String lockKey) {
         RLock rLock = client.getLock(lockKey);
         try {
             //尝试5秒内获取锁，如果获取到了，最长60秒自动释放
-            boolean res = rLock.tryLock(5,  TimeUnit.MINUTES);
+            boolean res = rLock.tryLock(5, TimeUnit.MINUTES);
             if (res) {
                 // 进行锁释放
                 rLock.unlock();

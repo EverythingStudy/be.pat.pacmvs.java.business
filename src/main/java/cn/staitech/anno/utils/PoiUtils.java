@@ -152,7 +152,7 @@ public class PoiUtils {
         pageMar.setBottom(BigInteger.valueOf(500));
         CTPageSz pageSize = section.isSetPgSz() ? section.getPgSz() : section.addNewPgSz();
         //设置横向布局
-        if (orientation.equals("landscape")) {
+        if ("landscape".equals(orientation)) {
             pageSize.setOrient(STPageOrientation.LANDSCAPE);
             pageSize.setH(BigInteger.valueOf(595 * 20));
             pageSize.setW(BigInteger.valueOf(842 * 20));
@@ -188,7 +188,7 @@ public class PoiUtils {
                 groupRow++;
                 //数据最后一行
             } else if ((j + 1) == dataList.size()) {
-                Map<String, Object> temp = dataList.get(j-1);
+                Map<String, Object> temp = dataList.get(j - 1);
                 //判断上一行是否相同
                 if (MapUtils.getString(data, fieldName).equals(MapUtils.getString(temp, fieldName))) {
                     flag = true;
@@ -205,7 +205,7 @@ public class PoiUtils {
             }
             //构建合并单元格参数
             if (flag) {
-                Map<String, Integer> mergeCellsParam = new HashMap<>();
+                Map<String, Integer> mergeCellsParam = new HashMap<>(16);
                 //表头3行
                 mergeCellsParam.put("startRow", j - (groupRow - 1) + 3);
                 mergeCellsParam.put("endRow", j + 3);

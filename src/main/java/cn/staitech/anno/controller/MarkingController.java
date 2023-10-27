@@ -3,10 +3,9 @@ package cn.staitech.anno.controller;
 
 import cn.staitech.anno.domain.geojson.Features;
 import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
-import cn.staitech.anno.domain.geojson.in.viewAddIn;
+import cn.staitech.anno.domain.geojson.in.ViewAddIn;
 import cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo;
 import cn.staitech.anno.domain.vo.marking.out.SlideSelectBy;
-import cn.staitech.anno.project.service.DownTaskService;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
@@ -41,15 +40,12 @@ public class MarkingController {
     @Resource
     private SlideService slideService;
 
-    @Resource
-    private DownTaskService downTaskService;
-
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "获取标注列表")
     @GetMapping("/intelligentEvaluation/selectListBy")
     public R<List<MarkingSelectListVo>> selectListBy(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) throws Exception {
         if (!Optional.ofNullable(slideId).isPresent()) {
-            return R.fail("参数异常");
+            return R.fail(MessageSource.M("ARGUMENT_INVALID"));
         }
         return R.ok(markingService.selectList(slideId));
     }
@@ -60,7 +56,7 @@ public class MarkingController {
     @GetMapping("/intelligentEvaluation/selectLists")
     public R<List<Features>> selectLists(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) throws Exception {
         if (!Optional.ofNullable(slideId).isPresent()) {
-            return R.fail("参数异常");
+            return R.fail(MessageSource.M("ARGUMENT_INVALID"));
         }
         return R.ok(markingService.selectListBy(slideId));
     }
@@ -69,7 +65,7 @@ public class MarkingController {
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "添加标注")
     @PostMapping("/intelligentAnno/insert")
-    public R<Long> add(@Validated @RequestBody viewAddIn req) throws Exception {
+    public R<Long> add(@Validated @RequestBody ViewAddIn req) throws Exception {
         Long markingId = markingService.insert(req);
         return R.ok(markingId, MessageSource.M("OPERATE_SUCCEED"));
     }
@@ -80,7 +76,7 @@ public class MarkingController {
     @DeleteMapping("/intelligentAnno/delete")
     public R<String> del(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) Long marking_id) throws Exception {
         markingService.delete(marking_id);
-        return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     @ApiOperationSupport(author = "gjt")
@@ -130,7 +126,7 @@ public class MarkingController {
     @ApiImplicitParams({@ApiImplicitParam(name = "slideId", value = "切片id", required = true, dataType = "Long", paramType = "query")})
     public R<String> batchDeleteRoi(@RequestParam @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId) {
         markingService.batchDelete(slideId);
-        return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
 }

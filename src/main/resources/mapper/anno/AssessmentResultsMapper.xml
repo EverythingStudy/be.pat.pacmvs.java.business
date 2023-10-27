@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.AssessmentResultsMapper">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.AssessmentResults">
+        <id column="assessment_results_id" property="assessmentResultsId"/>
+        <result column="algorithm_assessment_id" property="algorithmAssessmentId"/>
+        <result column="slide_id" property="slideId"/>
+        <result column="examine_people" property="examinePeople"/>
+        <result column="examine_category_name" property="examineCategoryName"/>
+        <result column="outline_number" property="outlineNumber"/>
+        <result column="missed_detection_rate" property="missedDetectionRate"/>
+        <result column="false_detection_rate" property="falseDetectionRate"/>
+        <result column="miou" property="miou"/>
+        <result column="fiou" property="fiou"/>
+        <result column="biou" property="biou"/>
+        <result column="tiou" property="tiou"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="json_name" property="jsonName"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        assessment_results_id
+        , algorithm_assessment_id, slide_id, examine_people, examine_category_name, outline_number, missed_detection_rate, false_detection_rate, miou, fiou, biou, tiou, create_by, create_time, update_by, update_time, json_name
+    </sql>
+
+
+    <!--    List<AssessmentExportOut>  selectExportList(AssessmentExportIN assessmentExportIN);-->
+
+
+    <select id="selectExportList" parameterType="cn.staitech.anno.domain.assessment.in.AssessmentExportIn"
+            resultType="cn.staitech.anno.domain.assessment.out.AssessmentExportOut">
+        SELECT
+        p.project_name,
+        aa.image_name,
+        aa.annotation_json_name,
+        ar.json_name,
+        ar.examine_people,
+        ar.examine_category_name,
+        ar.outline_number,
+        ar.missed_detection_rate,
+        ar.false_detection_rate,
+        ar.miou,
+        ar.fiou,
+        ar.biou,
+        ar.tiou,
+        ar.create_time
+        FROM
+        tb_assessment_results AS ar
+        LEFT JOIN tb_algorithm_assessment AS aa ON aa.algorithm_assessment_id = ar.algorithm_assessment_id
+        LEFT JOIN tb_project AS p ON p.project_id = aa.project_id
+        WHERE
+        aa.del_flag = "0"
+        AND ar.algorithm_assessment_id IN
+        <foreach item="algorithmAssessmentId" collection="algorithmentList" separator="," open="(" close=")" index="">
+            #{algorithmAssessmentId, jdbcType=NUMERIC}
+        </foreach>
+    </select>
+</mapper>

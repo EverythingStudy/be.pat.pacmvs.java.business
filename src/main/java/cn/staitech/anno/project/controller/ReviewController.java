@@ -47,7 +47,6 @@ import java.util.Map;
 @RestControllerAdvice
 @RequestMapping("/intelligentEvaluation/review")
 public class ReviewController {
-
     @Resource
     private ReviewService reviewService;
     @Resource
@@ -85,7 +84,6 @@ public class ReviewController {
         return R.ok(reviewService.csvExportReview(in.getProjectId(), in.getSlideIds()));
     }
 
-    //@RequiresPermissions("smartReview:project:export")
     @ApiOperation(value = "评审数据导出")
     @GetMapping("/downReview")
     public void csvExportReviewCurrent(@RequestParam(value = "slideId", required = false) @ApiParam(name = "slideId", value = "切片id") Long slideId,
@@ -107,9 +105,8 @@ public class ReviewController {
     @GetMapping("/downTaskByCode")
     public void downTaskByCode(@RequestParam("code") @ApiParam(name = "code", value = "下载任务编码", required = true) String code, HttpServletResponse httpServletResponse) throws Exception {
         DownTask downTask = downTaskService.getOne(Wrappers.query(DownTask.builder().code(code).build()));
-        //httpServletResponse.setContentType("application/vnd.ms-excel;charset=utf-8");
         httpServletResponse.setContentType("text/plain;charset=utf-8");
-        //name是下载对话框的名称，不支持中文，想用中文名称需要进行utf8编码
+        // name是下载对话框的名称，不支持中文，想用中文名称需要进行utf8编码
         httpServletResponse.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(downTask.getProjectName(), "utf-8") + ".txt");
         ServletOutputStream out = null;
         out = httpServletResponse.getOutputStream();

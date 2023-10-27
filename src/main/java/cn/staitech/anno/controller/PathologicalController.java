@@ -77,8 +77,6 @@ public class PathologicalController {
         BeanUtils.copyProperties(vo, category);
 
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-        // 机构ID
-        category.setOrganizationId(sysUser.getOrganizationId());
 
         // 验证是否存在该条件的记录    A：必填项校验。B：结构编码在当前列表内不可重复；C：结构名称在当前列表内不可重复。D：图层顺序在当前列表内不可重复；E：颜色值在当前列表不可重复
         List<PathologicalIndicatorCategory> list = pathologicalIndicatorCategoryService.selectIndicatorMessage(category);
@@ -98,8 +96,9 @@ public class PathologicalController {
         String categoryName = indicator.getIndicatorName() + structureName;
         category.setCategoryName(categoryName);
         // 生成完整编码
-        //category.setNumber(indicator.getNumber() + "" + vo.getStructureId());
         category.setNumber(vo.getStructureId());
+        category.setCreateBy(sysUser.getCreateBy());
+        category.setCreateTime(new Date());
 
         // 添加标注类别
         pathologicalIndicatorCategoryService.insertSelective(category);
@@ -132,11 +131,10 @@ public class PathologicalController {
     @Log(title = "配置标签-标签列表", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.QUERY)
     @GetMapping("/selectList")
     public R<List<PathologicalIndicatorCategory>> selectList(@RequestParam(value = "projectId") @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId) {
-        //获取病理指标下的标注类别
+        // 获取病理指标下的标注类别
         List<PathologicalIndicatorCategory> categoryList = pathologicalIndicatorCategoryService.selectprojectList(projectId);
         return R.ok(categoryList);
     }
-
 
 
     @ApiOperation(value = "根据项目查询结构指标列表(不包含标注区域)", notes = "gjt")
@@ -199,17 +197,13 @@ public class PathologicalController {
         }
 
         // 生成完整编码
-        // category.setNumber(indicator.getNumber() + "" + category.getStructureId());
-        // category.setNumber(indicator.getNumber());
-
+        category.setNumber(indicator.getNumber() + "" + category.getStructureId());
         category.setUpdateBy(sysUser.getUserId());
         category.setCreateTime(new Date());
 
         //修改标注类别信息
         pathologicalIndicatorCategoryService.updateByPrimaryKeySelective(category);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
-
-
     }
 
     /**
@@ -251,17 +245,17 @@ public class PathologicalController {
 
         PathologicalIndicatorCategory category = PathologicalIndicatorCategory.builder().categoryId(annotationCategory.getCategoryId())
                 .categoryName(annotationCategory.getCategoryName()).indicatorId(annotationCategory.getIndicatorId()).build();
-        //获取病理下的标注类别名称是否存在
+        // 获取病理下的标注类别名称是否存在
         List<PathologicalIndicatorCategory> categoryList = pathologicalIndicatorCategoryService.selectIndicatorMessage(
                 category);
         category.setCategoryName(null);
         category.setHex(annotationCategory.getHex());
-        //查询病理下的标注类别颜色是否存在
+        // 查询病理下的标注类别颜色是否存在
         List<PathologicalIndicatorCategory> categories = pathologicalIndicatorCategoryService.selectIndicatorMessage(
                 category);
         category.setHex(null);
         category.setOrderNumber(annotationCategory.getOrderNumber());
-        //查询图层顺序是否已存在
+        // 查询图层顺序是否已存在
         List<PathologicalIndicatorCategory> orderNumber = pathologicalIndicatorCategoryService.selectIndicatorMessage(
                 category);
         if (!categoryList.isEmpty()) {

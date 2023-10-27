@@ -1,22 +1,23 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.config.RedisClientUtil;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.document.GeometryDoc;
 import cn.staitech.anno.domain.geojson.Features;
 import cn.staitech.anno.domain.geojson.Properties;
 import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
-import cn.staitech.anno.domain.geojson.in.viewAddIn;
+import cn.staitech.anno.domain.geojson.in.ViewAddIn;
 import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.marking.SlideRes;
-import cn.staitech.anno.elasticsearchRepositories.GeometryDocMapper;
 import cn.staitech.anno.mapper.MarkingMapper;
 import cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.service.ViewerService;
 import cn.staitech.anno.utils.CustomizationIdUtils;
 import cn.staitech.anno.utils.FileUtils;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -24,7 +25,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -38,9 +38,11 @@ import static cn.staitech.anno.utils.FileUtils.getFileNameNoEx;
 import static cn.staitech.anno.utils.TimeUtils.CurrentTime;
 import static org.reflections.Reflections.log;
 
+/**
+ * @author wangf
+ */
 @Service
 public class ViewerServiceImpl implements ViewerService {
-
     @Resource
     private PathologicalIndicatorCategoryMapper pathologicalIndicatorCategoryMapper;
 
@@ -49,9 +51,6 @@ public class ViewerServiceImpl implements ViewerService {
 
     @Resource
     private MarkingMapper markingMapper;
-
-    /*@Resource
-    private GeometryDocMapper geometryDocMapper;*/
 
     @Resource
     private SlideService slideService;
@@ -82,7 +81,7 @@ public class ViewerServiceImpl implements ViewerService {
      * @return geojsonUrl
      */
     @Override
-    public Features constructAddMarking(viewAddIn req) {
+    public Features constructAddMarking(ViewAddIn req) {
         Features marking = new Features();
         Properties properties = new Properties();
         String id = CustomizationIdUtils.getSdId();
@@ -104,7 +103,7 @@ public class ViewerServiceImpl implements ViewerService {
             }
         }
         String date = CurrentTime();
-//        properties.setAnnotation_owner(SecurityUtils.getUserId());
+        // properties.setAnnotation_owner(SecurityUtils.getUserId());
         properties.setAnnotation_type("Draw");
         properties.setCreate_time(date);
         properties.setCategory_id(req.getCategory_id());
@@ -126,7 +125,7 @@ public class ViewerServiceImpl implements ViewerService {
         // 更新标注信息
         Features marking = new Features();
         Properties properties = new Properties();
-//        marking.setId(req.getAnnotation_id());
+        // marking.setId(req.getAnnotation_id());
         marking.setGeometry(req.getGeometry());
         properties.setArea(req.getArea());
         properties.setPerimeter(req.getPerimeter());
@@ -140,7 +139,7 @@ public class ViewerServiceImpl implements ViewerService {
                 properties.setLabel_color(categoryBy.getHex());
                 properties.setLabel_name(categoryBy.getCategoryName());
                 String res1 = String.valueOf(measureFullName.charAt(measureFullName.length() - 1));
-                if (res1.equals("_")) {
+                if (CommonConstant.GLIDE_LINE.equals(res1)) {
                     measureFullName = measureFullName + categoryBy.getCategoryName();
                 } else {
                     measureFullName = measureFullName.replaceAll(measureFullName.split("_")[measureFullName.split("_").length - 1], categoryBy.getCategoryName());
@@ -156,37 +155,40 @@ public class ViewerServiceImpl implements ViewerService {
     public boolean zipExport(String zipUrl, Long specialId) throws Exception {
         StringBuilder sb;
         File file1 = new File(zipUrl);
-        Map<String, String> ddlList = new HashMap<>();
+        Map<String, String> ddlList = new HashMap<>(16);
         try {
             List<SlideRes> slideList = markingMapper.selectSlideList(specialId);
-            //zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
-//            ZipInputStream in = new ZipInputStream(Files.newInputStream(file.toPath()));
-            ZipFile zipFile = new ZipFile(file1, Charset.forName("gbk"));//必须指明读取的各式，不是会存在问题***
-            InputStream in = new BufferedInputStream(Files.newInputStream(file1.toPath()));//按流的方式读取文件，输入到管道中
-            ZipInputStream zp = new ZipInputStream(in);//字节流转换为压缩文件输入流，通常用来读取压缩文件
-            ZipEntry ze;//定义文件条目
+            // zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
+            // ZipInputStream in = new ZipInputStream(Files.newInputStream(file.toPath()));
+            // 必须指明读取的各式，不是会存在问题***
+            ZipFile zipFile = new ZipFile(file1, Charset.forName("gbk"));
+            // 按流的方式读取文件，输入到管道中
+            InputStream in = new BufferedInputStream(Files.newInputStream(file1.toPath()));
+            // 字节流转换为压缩文件输入流，通常用来读取压缩文件
+            ZipInputStream zp = new ZipInputStream(in);
+            // 定义文件条目
+            ZipEntry ze;
             Enumeration<? extends ZipEntry> zipEnum = zipFile.entries();
-            while (zipEnum.hasMoreElements()) {//判断是否还有元素
-
-
-
-                ze = (ZipEntry) zipEnum.nextElement();//返回下一对象
-
+            // 判断是否还有元素
+            while (zipEnum.hasMoreElements()) {
+                // 返回下一对象
+                ze = (ZipEntry) zipEnum.nextElement();
                 String fileNames = ze.getName();
                 if (!fileNames.contains(".")) {
-                    throw new Exception("未检测到json文件");
+                    throw new Exception(MessageSource.M("JSON_FILE_NOT_HAS"));
                 }
                 String suffix = (fileNames.split("\\.")[fileNames.split("\\.").length - 1]);
                 if (!Objects.equals(suffix, "json")) {
-                    throw new Exception("未检测到json文件");
+                    throw new Exception(MessageSource.M("JSON_FILE_NOT_HAS"));
                 }
                 sb = new StringBuilder();
                 if (ze.isDirectory()) {
                 } else {
-                    System.out.println("file - " + ze.getName() + " : " + ze.getSize() + " bytes");
+                    // System.out.println("file - " + ze.getName() + " : " + ze.getSize() + " bytes");
                     long size = ze.getSize();
                     if (size > 0) {
-                        BufferedReader bf = new BufferedReader(new InputStreamReader(zipFile.getInputStream(ze), StandardCharsets.UTF_8));//读取文件内容
+                        // 读取文件内容
+                        BufferedReader bf = new BufferedReader(new InputStreamReader(zipFile.getInputStream(ze), StandardCharsets.UTF_8));
                         String line;
                         while ((line = bf.readLine()) != null) {
                             sb.append(line);
@@ -223,7 +225,7 @@ public class ViewerServiceImpl implements ViewerService {
 
                                             Properties properties1 = JSONObject.toJavaObject(JSONObject.parseObject(JSONObject.toJSONString(properties)), Properties.class);
                                             // 获取描述
-//                                            String description = properties.getString("description");
+                                            // String description = properties.getString("description");
                                             // 写入数据库
                                             Marking marking = new Marking();
                                             marking.setAnnotation_id(annotationId);
@@ -272,10 +274,10 @@ public class ViewerServiceImpl implements ViewerService {
             if (!file1.delete()) {
                 log.error("删除文件" + file1 + "失败！");
             }
-//            DeleteFolder(zipUrl);
+            // DeleteFolder(zipUrl);
             // 查询
         } catch (Exception e) {
-            throw new Exception("json文件解析失败");
+            throw new Exception(MessageSource.M("JSON_FILE_PARSE_FAILURE"));
         }
         return true;
     }

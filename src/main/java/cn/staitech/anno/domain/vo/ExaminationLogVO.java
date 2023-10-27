@@ -11,7 +11,7 @@ public class ExaminationLogVO {
 
     /**
      * 切片id
-     * */
+     */
     @ApiModelProperty(value = "切片ID")
     private Long slideId;
 
@@ -42,7 +42,7 @@ public class ExaminationLogVO {
 
     /**
      * 状态名称
-     * */
+     */
     @ApiModelProperty(value = "操作名称")
     private String statusName;
 }

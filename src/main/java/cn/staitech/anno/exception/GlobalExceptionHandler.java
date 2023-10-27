@@ -3,7 +3,6 @@ package cn.staitech.anno.exception;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.exception.ServiceException;
 import cn.staitech.common.core.exception.auth.NotPermissionException;
-import cn.staitech.common.core.exception.auth.NotRoleException;
 import cn.staitech.common.core.utils.StringUtils;
 import cn.staitech.common.core.web.domain.AjaxResult;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;

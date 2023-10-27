@@ -32,11 +32,16 @@ public class Structure {
     private String name;
 
     /**
+     * 结构名称 - En
+     */
+    @ApiModelProperty(value = "结构名称英文", required = true)
+    private String nameEn;
+
+    /**
      * 种属ID
      */
     @ApiModelProperty(value = "种属ID", required = true)
     private String speciesId;
-
 
     /**
      * 脏器ID

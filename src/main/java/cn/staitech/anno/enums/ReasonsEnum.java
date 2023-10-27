@@ -2,9 +2,19 @@ package cn.staitech.anno.enums;
 
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * @author wangf
+ */
+
 public enum ReasonsEnum {
 
+    /**
+     * 给药结束安乐死
+     */
     reasons_1(1, "给药结束安乐死"),
+    /**
+     * 恢复期结束安乐死
+     */
     reasons_2(2, "恢复期结束安乐死");
 
     private int value;
@@ -14,6 +24,7 @@ public enum ReasonsEnum {
         this.label = label;
         this.value = value;
     }
+
     public static String getEnumLabelByValue(Integer value) {
 
         if (value == null) {

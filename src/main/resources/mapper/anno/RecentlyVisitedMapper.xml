@@ -3,7 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.RecentlyVisitedMapper">
-
     <resultMap type="cn.staitech.anno.domain.RecentlyVisited" id="RecentlyVisitedResult">
         <result property="recentlyVisitedId" column="recently_visited_id"/>
         <result property="userId" column="user_id"/>
@@ -61,7 +60,8 @@
         order by create_time desc
     </select>
 
-    <select id="selectUpdateIsTrue" parameterType="cn.staitech.anno.domain.RecentlyVisited" resultMap="RecentlyVisitedResult">
+    <select id="selectUpdateIsTrue" parameterType="cn.staitech.anno.domain.RecentlyVisited"
+            resultMap="RecentlyVisitedResult">
         <include refid="selectRecentlyVisited"/>
         where update_time is true
         <if test="userId != null">
@@ -70,7 +70,8 @@
         ORDER BY update_time desc
     </select>
 
-    <select id="selectQueryBy" parameterType="cn.staitech.anno.domain.RecentlyVisited" resultMap="RecentlyVisitedResult">
+    <select id="selectQueryBy" parameterType="cn.staitech.anno.domain.RecentlyVisited"
+            resultMap="RecentlyVisitedResult">
         <include refid="selectRecentlyVisited"/>
         where
         <if test="slideId != null">
@@ -96,7 +97,9 @@
 
     <select id="selectMinUpdateTime" parameterType="cn.staitech.anno.domain.RecentlyVisited"
             resultMap="RecentlyVisitedResult">
-        SELECT * FROM tb_recently_visited ORDER BY update_time ASC LIMIT 1;
+        SELECT *
+        FROM tb_recently_visited
+        ORDER BY update_time ASC LIMIT 1;
     </select>
 
     <select id="selectBy" parameterType="Long" resultMap="RecentlyVisitedResult">
@@ -142,25 +145,57 @@
 
     <insert id="insert" parameterType="cn.staitech.anno.domain.RecentlyVisited">
         insert into tb_recently_visited (
-        <if test="userId != null and userId != 0 ">user_id,</if>
-        <if test="slideId != null and slideId != 0 ">slide_id,</if>
-        <if test="projectId != null and projectId != 0 ">project_id,</if>
-        <if test="projectName != null">project_name,</if>
-        <if test="projectType != null">project_type,</if>
-        <if test="imageName != null and imageName != ''">image_name,</if>
-        <if test="thumbUrl != null and thumbUrl != ''">thumb_url,</if>
-        <if test="reviewRoundId != null">review_round_id,</if>
+        <if test="userId != null and userId != 0 ">
+            user_id,
+        </if>
+        <if test="slideId != null and slideId != 0 ">
+            slide_id,
+        </if>
+        <if test="projectId != null and projectId != 0 ">
+            project_id,
+        </if>
+        <if test="projectName != null">
+            project_name,
+        </if>
+        <if test="projectType != null">
+            project_type,
+        </if>
+        <if test="imageName != null and imageName != ''">
+            image_name,
+        </if>
+        <if test="thumbUrl != null and thumbUrl != ''">
+            thumb_url,
+        </if>
+        <if test="reviewRoundId != null">
+            review_round_id,
+        </if>
         create_time,
         update_time
         )values(
-        <if test="userId != null and userId != 0">#{userId},</if>
-        <if test="slideId != null and slideId != ''">#{slideId},</if>
-        <if test="projectId != null and projectId != ''">#{projectId},</if>
-        <if test="projectName != null">#{projectName},</if>
-        <if test="projectType != null">#{projectType},</if>
-        <if test="imageName != null and imageName != ''">#{imageName},</if>
-        <if test="thumbUrl != null and thumbUrl != ''">#{thumbUrl},</if>
-        <if test="reviewRoundId != null">#{reviewRoundId},</if>
+        <if test="userId != null and userId != 0">
+            #{userId},
+        </if>
+        <if test="slideId != null and slideId != ''">
+            #{slideId},
+        </if>
+        <if test="projectId != null and projectId != ''">
+            #{projectId},
+        </if>
+        <if test="projectName != null">
+            #{projectName},
+        </if>
+        <if test="projectType != null">
+            #{projectType},
+        </if>
+        <if test="imageName != null and imageName != ''">
+            #{imageName},
+        </if>
+        <if test="thumbUrl != null and thumbUrl != ''">
+            #{thumbUrl},
+        </if>
+        <if test="reviewRoundId != null">
+            #{reviewRoundId},
+        </if>
         sysdate(),
         sysdate()
         )
@@ -174,6 +209,4 @@
         </set>
         where recently_visited_id = #{recentlyVisitedId}
     </update>
-
-
 </mapper>

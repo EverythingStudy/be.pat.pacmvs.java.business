@@ -41,8 +41,6 @@ public interface ImageMapper extends BaseMapper<Image> {
     List<Image> selectChoicedList(Image image);
 
 
-
-
     /**
      * 查询单个切片信息
      *

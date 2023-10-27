@@ -2,7 +2,7 @@ package cn.staitech.anno.controller;
 
 
 import cn.staitech.anno.domain.ImageCsv;
-import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO;
+import cn.staitech.anno.domain.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.service.ImageCsvService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.api.ApiController;
@@ -59,7 +59,6 @@ public class ImageCsvController extends ApiController {
         queryWrapper.like("lesion_degree1", imageCsvGetVO.getLesionDegree());
         queryWrapper.like("lesion_degree2", imageCsvGetVO.getLesionDegree());
         queryWrapper.orderByDesc("id");
-
 
         return R.ok(this.imageCsvService.page(page, queryWrapper));
     }

@@ -2,8 +2,8 @@ package cn.staitech.anno.controller;
 
 import cn.staitech.anno.domain.file.FileNode;
 import cn.staitech.anno.domain.file.PathVO;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.R;
-import cn.staitech.common.security.annotation.RequiresPermissions;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,21 +18,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author admin
+ * @author wangfeng
  */
 @Slf4j
 @Api(value = "文件管理器", tags = "文件管理器")
 @RestController
 @RequestMapping("/filemanager")
 public class FileManagerController {
-
-    private String baseDir = "/home/pat_saas";
-
     /**
-     * /home/pat_saas/Data
-     * /home/pat_saas/Slides
-     * /home/pat_saas/Upload
+     * 根目录 /home/pat_saas/Data、Slides、Upload
      */
+    private String baseDir = "/home/pat_saas";
 
     /**
      * 查询目录下的文件夹和文件列表
@@ -52,11 +48,11 @@ public class FileManagerController {
 
         // 如果传入的参数不存在或是文件返回提示
         if (!file.exists()) {
-            return R.fail("路径不存在");
+            return R.fail(MessageSource.M("PAT_NOT_EXISTS"));
         }
 
         if (file.isFile()) {
-            return R.fail("是文件，不是文件夹");
+            return R.fail(MessageSource.M("FILE_NOT_DIR"));
         }
 
         List<FileNode> fileNodeList = new ArrayList<>();
@@ -74,7 +70,6 @@ public class FileManagerController {
         List<FileNode> nodes = fileNodeList.stream().
                 sorted(Comparator.comparing(FileNode::getType).
                         thenComparing(FileNode::getType, Comparator.reverseOrder())).collect(Collectors.toList());
-
-        return R.ok(nodes, "成功");
+        return R.ok(nodes, MessageSource.M("OPERATE_SUCCEED"));
     }
 }

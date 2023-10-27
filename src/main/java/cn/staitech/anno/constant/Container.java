@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Map
+ *
  * @author wangf
  */
 public class Container {
@@ -28,6 +29,15 @@ public class Container {
             .build();
 
     /**
+     * Image - 图片处理过程状态 不可用原因共三种：0上传失败，1解析中,2解析失败
+     */
+    public static final Map<Integer, String> IMAGE_PROCESS_MAP_EN = new ImmutableMap.Builder<Integer, String>()
+            .put(0, "UPLOAD FAILED")
+            .put(1, "IN ANALYSIS")
+            .put(2, "ANALYSIS FAILED")
+            .build();
+
+    /**
      * Image - 可用状态：0不可用1可用
      */
     public static final Map<Integer, String> IMAGE_STATUS_MAP = new ImmutableMap.Builder<Integer, String>()
@@ -36,11 +46,11 @@ public class Container {
             .build();
 
     /**
-     * Image - 图片删除状态：0逻辑删除，1未逻辑删除
+     * Image - EN - 可用状态：0不可用1可用
      */
-    public static final Map<Integer, String> IMAGE_DELETE_FLAG_MAP = new ImmutableMap.Builder<Integer, String>()
-            .put(0, "已删除")
-            .put(1, "未删除")
+    public static final Map<Integer, String> IMAGE_STATUS_MAP_EN = new ImmutableMap.Builder<Integer, String>()
+            .put(0, "Unavailable")
+            .put(1, "Available")
             .build();
 
     /**
@@ -53,6 +63,15 @@ public class Container {
             .put(4, "已完成")
             .build();
 
+    /**
+     * 项目状态 - EN
+     */
+    public static final Map<Integer, String> PROJECT_STATUS_EN = new ImmutableMap.Builder<Integer, String>()
+            .put(1, "Pending Started")
+            .put(2, "In process")
+            .put(3, "Pause")
+            .put(4, "Done")
+            .build();
 
     /**
      * 专题用户状态：0开启，1禁用 SpecialRoleUser
@@ -62,13 +81,18 @@ public class Container {
             .put(1L, "禁用")
             .build();
 
+    /**
+     * 专题用户状态 - EN：0开启，1禁用 SpecialRoleUser
+     */
+    public static final Map<Long, String> SPECIAL_ROLE_STATUS_MAP_EN = new ImmutableMap.Builder<Long, String>()
+            .put(0L, "ON")
+            .put(1L, "FORBIDDEN")
+            .build();
 
     /**
      * 颜色类型
      */
     public static final Map<Integer, String> COLOR_TYPE = new ImmutableMap.Builder<Integer, String>()
-            /*.put(1, "RGB")
-            .put(2, "HEX")*/
             .put(1, "荧光标记染色")
             .put(2, "免疫组织化学染色")
             .put(3, "HE染色")
@@ -90,4 +114,37 @@ public class Container {
             .put(19, "荧光标记染色")*/
             .put(20, "其他")
             .build();
+
+    /**
+     * 颜色类型 - EN
+     */
+    public static final Map<Integer, String> COLOR_TYPE_EN = new ImmutableMap.Builder<Integer, String>()
+            .put(1, "Immunofluorescence")
+            .put(2, "Immunohistochemical")
+            .put(3, "HE staining")
+            .put(4, "Masson staining")
+            .put(5, "Van Gieson staining")
+            .put(6, "Victoria Blue staining")
+            .put(7, "Sudan III/IV")
+            .put(8, "Oil Red O")
+            .put(9, "PAS")
+            .put(10, "AB-PAS")
+            .put(11, "Congo red")
+            .put(12, "toluidine blue")
+            .put(13, "Prussian blue")
+            .put(14, "Nissl")
+            .put(15, "Luxol Fast Blue myelin")
+            .put(16, "Tunel")
+            .put(17, "Ki67")
+            .put(20, "Other")
+            .build();
+
+    /**
+     * Image - 图片删除状态：0逻辑删除，1未逻辑删除
+     */
+    public static final Map<Integer, String> IMAGE_DELETE_FLAG_MAP = new ImmutableMap.Builder<Integer, String>()
+            .put(0, "已删除")
+            .put(1, "未删除")
+            .build();
+
 }

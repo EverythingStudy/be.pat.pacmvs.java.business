@@ -4,65 +4,58 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
 
 /**
  * 项目分组表
+ *
  * @TableName tb_project_group
  */
-@TableName(value ="tb_project_group")
+@TableName(value = "tb_project_group")
 @Data
 public class ProjectGroup implements Serializable {
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
     /**
      * ID
      */
     @TableId(type = IdType.AUTO)
     private Long projectGroupId;
-
     /**
      * 项目ID
      */
     private Long projectId;
-
     /**
      * 分组id
      */
     private Long groupId;
-
     /**
      * 切片数
      */
     private Integer slideTotal;
-
     /**
      * 删除标志（0代表存在 1代表删除）
      */
     private String delFlag;
-
     /**
      * 创建者
      */
     private Long createBy;
-
     /**
      * 创建时间
      */
     private Date createTime;
-
     /**
      * 更新者
      */
     private Long updateBy;
-
     /**
      * 更新时间
      */
     private Date updateTime;
-
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
 
     @Override
     public boolean equals(Object that) {
@@ -77,14 +70,14 @@ public class ProjectGroup implements Serializable {
         }
         ProjectGroup other = (ProjectGroup) that;
         return (this.getProjectGroupId() == null ? other.getProjectGroupId() == null : this.getProjectGroupId().equals(other.getProjectGroupId()))
-            && (this.getProjectId() == null ? other.getProjectId() == null : this.getProjectId().equals(other.getProjectId()))
-            && (this.getGroupId() == null ? other.getGroupId() == null : this.getGroupId().equals(other.getGroupId()))
-            && (this.getSlideTotal() == null ? other.getSlideTotal() == null : this.getSlideTotal().equals(other.getSlideTotal()))
-            && (this.getDelFlag() == null ? other.getDelFlag() == null : this.getDelFlag().equals(other.getDelFlag()))
-            && (this.getCreateBy() == null ? other.getCreateBy() == null : this.getCreateBy().equals(other.getCreateBy()))
-            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
-            && (this.getUpdateBy() == null ? other.getUpdateBy() == null : this.getUpdateBy().equals(other.getUpdateBy()))
-            && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()));
+                && (this.getProjectId() == null ? other.getProjectId() == null : this.getProjectId().equals(other.getProjectId()))
+                && (this.getGroupId() == null ? other.getGroupId() == null : this.getGroupId().equals(other.getGroupId()))
+                && (this.getSlideTotal() == null ? other.getSlideTotal() == null : this.getSlideTotal().equals(other.getSlideTotal()))
+                && (this.getDelFlag() == null ? other.getDelFlag() == null : this.getDelFlag().equals(other.getDelFlag()))
+                && (this.getCreateBy() == null ? other.getCreateBy() == null : this.getCreateBy().equals(other.getCreateBy()))
+                && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
+                && (this.getUpdateBy() == null ? other.getUpdateBy() == null : this.getUpdateBy().equals(other.getUpdateBy()))
+                && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()));
     }
 
     @Override

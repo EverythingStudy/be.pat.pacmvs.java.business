@@ -68,24 +68,24 @@ public class ExcludeEmptyQueryWrapper<T> extends QueryWrapper<T> {
 
     @Override
     public QueryWrapper<T> between(boolean condition, String column, Object val1, Object val2) {
-        if(Objects.isNull(val1) && Objects.isNull(val2)){
+        if (Objects.isNull(val1) && Objects.isNull(val2)) {
             condition = false;
-        }else if(Objects.isNull(val1)){
-            return super.lt(true,column,val2);
-        }else if(Objects.isNull(val2)){
-            return super.ge(true,column,val1);
+        } else if (Objects.isNull(val1)) {
+            return super.lt(true, column, val2);
+        } else if (Objects.isNull(val2)) {
+            return super.ge(true, column, val1);
         }
         return super.between(condition, column, val1, val2);
     }
 
     @Override
     public QueryWrapper<T> notBetween(boolean condition, String column, Object val1, Object val2) {
-        if(Objects.isNull(val1) && Objects.isNull(val2)){
+        if (Objects.isNull(val1) && Objects.isNull(val2)) {
             condition = false;
-        }else if(Objects.isNull(val1)){
-            return super.lt(true,column,val2);
-        }else if(Objects.isNull(val2)){
-            return super.ge(true,column,val1);
+        } else if (Objects.isNull(val1)) {
+            return super.lt(true, column, val2);
+        } else if (Objects.isNull(val2)) {
+            return super.ge(true, column, val1);
         }
         return super.notBetween(condition, column, val1, val2);
     }

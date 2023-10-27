@@ -7,6 +7,7 @@ import cn.staitech.anno.domain.question.out.GetQuestionsOut;
 import cn.staitech.anno.service.IQuestionBankService;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
+import cn.staitech.common.security.annotation.RequiresPermissions;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -28,10 +30,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/questionBank")
 public class QuestionBankController {
-    @Autowired
+    @Resource
     private IQuestionBankService iQuestionBankService;
 
     @ApiOperation(value = "生成考题-根据项目")
+    @RequiresPermissions("smartAnno:project:createExamination")
     @PostMapping("/createQuestion")
     public R createQuestion(@Validated @RequestBody CreateQuestionIn req) {
 
@@ -40,6 +43,7 @@ public class QuestionBankController {
     }
 
     @ApiOperation(value = "生成考题-根据切片")
+    @RequiresPermissions("smartAnno:project:slice:batchCreateExamination")
     @PostMapping("/createBySlide")
     public R createBySlide(@Validated @RequestBody CreateBySlideIn req) {
 
@@ -72,7 +76,7 @@ public class QuestionBankController {
     @ApiOperation(value = "考核设置-项目下考题列表")
     @GetMapping("/getQuestionByProject")
     public R<GetQuestionsOut> getQuestionByProject(@RequestParam(value = "projectId", required = false)
-                                                   @NotNull(message = "项目id不能为空！") @ApiParam(name = "projectId", value = "项目id") Long projectId) {
+                                                   @NotNull(message = "{ProjectRemoveIn.projectId.isnull}") @ApiParam(name = "projectId", value = "项目id") Long projectId) {
 
         GetQuestionsOut resp = iQuestionBankService.getQuestionByProject(projectId);
         return R.ok(resp);

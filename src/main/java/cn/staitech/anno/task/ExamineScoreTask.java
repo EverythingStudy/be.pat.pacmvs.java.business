@@ -15,7 +15,11 @@ public class ExamineScoreTask {
     @Resource
     private OtherService otherService;
 
-    // 每两小时执行一次
+    /**
+     * 两小时执行一次
+     *
+     * @throws ParseException
+     */
     @Scheduled(cron = "0 0 0/2 * * ?")
     public void handlerCouponsUserStatusTimeOutToExpired() throws ParseException {
         otherService.atRegularTimeUpdateExamStatus();

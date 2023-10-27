@@ -3,9 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.ProjectGroupMapper">
-
     <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.projectgroup.ProjectGroup">
-
         <id column="project_group_id" property="projectGroupId"/>
         <result column="project_id" property="projectId"/>
         <result column="group_id" property="groupId"/>
@@ -36,32 +34,36 @@
                g.group_name,
                g.gender,
                g.description,
-               (select count(0) from tb_slide sl where sl.group_id=pg.group_id and sl.project_id=pg.project_id and sl.is_delete=0  ) slide_total
+               (select count(0)
+                from tb_slide sl
+                where sl.group_id = pg.group_id
+                  and sl.project_id = pg.project_id
+                  and sl.is_delete = 0) slide_total
         from tb_project_group pg
                  left join
              tb_group g
              on pg.group_id = g.group_id
         where pg.del_flag = '0'
           and pg.project_id = #{projectId}
-          and g.reasons=#{reasons}
-        order by CAST(SUBSTRING(g.group_name,6)as decimal), g.gender desc
+          and g.reasons = #{reasons}
+        order by CAST(SUBSTRING(g.group_name, 6) as decimal), g.gender desc
     </select>
 
     <select id="selectProjectGroupByProjectId" parameterType="java.util.List" resultMap="BaseResultMap">
         select pg.project_group_id,
-               pg.project_id,
-               pg.group_id,
-               g.group_name,
-               g.gender,
-               g.description,
-               g.reasons,
-               g.dosage
+        pg.project_id,
+        pg.group_id,
+        g.group_name,
+        g.gender,
+        g.description,
+        g.reasons,
+        g.dosage
         from tb_project_group pg
-                 left join
-             tb_group g
-             on pg.group_id = g.group_id
+        left join
+        tb_group g
+        on pg.group_id = g.group_id
         where pg.del_flag = '0'
-        AND  pg.project_id in
+        AND pg.project_id in
         <foreach collection="projectIds" item="projectId" index="index" open="(" close=")" separator=",">
             #{projectId}
         </foreach>
@@ -106,7 +108,7 @@
         select #{projectId,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, g.group_id
         from tb_group g
         where g.del_flag = 0
-        and g.special_id= #{specialId,jdbcType=BIGINT}
+          and g.special_id = #{specialId,jdbcType=BIGINT}
     </insert>
 
     <select id="selectCountSlide" resultType="java.lang.Integer">
@@ -126,11 +128,12 @@
           and group_id = #{groupId}
     </select>
 
-    <update id="updateStateSlide" >
-        update tb_slide set is_delete = 1
+    <update id="updateStateSlide">
+        update tb_slide
+        set is_delete = 1
         where group_id = #{groupId}
-        and project_id = #{projectId}
-        and   is_delete = 0
+          and project_id = #{projectId}
+          and is_delete = 0
     </update>
 
     <update id="updateDelFlag">
@@ -145,10 +148,9 @@
         select g.reasons
         from tb_group g
                  left join tb_project_group pg
-                     on g.group_id = pg.group_id
-        where pg.project_id=#{projectId}
-        and pg.del_flag=0
+                           on g.group_id = pg.group_id
+        where pg.project_id = #{projectId}
+          and pg.del_flag = 0
         group by g.reasons
     </select>
-
 </mapper>

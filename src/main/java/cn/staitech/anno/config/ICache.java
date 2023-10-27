@@ -34,6 +34,7 @@ public interface ICache {
 
     /**
      * 根据键获取指定的值
+     *
      * @param key 键
      * @return Object 值
      */
@@ -55,10 +56,11 @@ public interface ICache {
      * @param delta
      * @return
      */
-    boolean setHash(String slideId, Long userId,String userName);
+    boolean setHash(String slideId, Long userId, String userName);
 
     /**
      * 更新key过期时间
+     *
      * @param res
      * @return
      */
@@ -66,6 +68,7 @@ public interface ICache {
 
     /**
      * 获取hash
+     *
      * @param res
      * @return
      */
@@ -73,6 +76,7 @@ public interface ICache {
 
     /**
      * 加锁
+     *
      * @param req
      * @return
      */
@@ -80,6 +84,7 @@ public interface ICache {
 
     /**
      * 释放锁
+     *
      * @param req
      * @return
      */

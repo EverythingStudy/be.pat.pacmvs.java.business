@@ -1,7 +1,7 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.Project;
-import cn.staitech.anno.domain.po.ProjectPo;
+import cn.staitech.anno.domain.project.ProjectPo;
 import cn.staitech.anno.domain.project.in.OperateProjectIn;
 import cn.staitech.anno.domain.project.in.ProjectListQueryIn;
 import cn.staitech.anno.domain.project.in.ProjectRemoveIn;
@@ -115,20 +115,4 @@ public interface ProjectExtService extends IService<Project> {
      * @return 是否存在一键创建权限
      */
     R<CreateStatusOut> getCreateSt(Long specialId);
-
-    /**
-     * @param specialId
-     * @return 一键创建项目
-     */
-    R autoCreateProject(Long specialId);
-
-    /**
-     * 修改专题
-     *
-     * @param specialId
-     */
-    void changeSpecial(Long specialId);
-
-
-
 }

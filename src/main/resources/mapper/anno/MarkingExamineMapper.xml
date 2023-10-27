@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.MarkingExamineMapper">
-
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.MarkingExamine">
-        <id column="marking_examine_id" property="markingExamineId" />
-        <result column="area" property="area" />
-        <result column="perimeter" property="perimeter" />
-        <result column="description" property="description" />
-        <result column="category_id" property="categoryId" />
-        <result column="create_by" property="createBy" />
-        <result column="create_time" property="createTime" />
-        <result column="geometry" property="geometry" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler" />
-        <result column="update_by" property="updateBy" />
-        <result column="update_time" property="updateTime" />
-        <result column="annotation_owner" property="annotationOwner" />
+        <id column="marking_examine_id" property="markingExamineId"/>
+        <result column="area" property="area"/>
+        <result column="perimeter" property="perimeter"/>
+        <result column="description" property="description"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="geometry" property="geometry"
+                typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="annotation_owner" property="annotationOwner"/>
     </resultMap>
 
     <resultMap type="cn.staitech.anno.domain.geojson.Properties" id="propertiesResult">
@@ -52,72 +52,69 @@
 
     <resultMap type="cn.staitech.anno.domain.geojson.Features" id="featuresResult">
         <result property="id" column="annotation_id"/>
-        <result property="geometry" column="geometry" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
-        <result property="properties" column="properties" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="geometry" column="geometry"
+                typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="properties" column="properties"
+                typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        marking_id, annotation_id, area, perimeter, description, category_id, number, measure_type, measure_relation, measure_name, measure_number, radius, mean_distance, max_distance, min_distance, inner_angle, exterior_angle, create_by, create_time, annotation_type, location_type, slide_id, center_point, point_count, geometry, update_by, update_time, annotation_owner, annotation_update_owner, project_id, image_id, image_url, organization_id
+        marking_id
+        , annotation_id, area, perimeter, description, category_id, number, measure_type, measure_relation, measure_name, measure_number, radius, mean_distance, max_distance, min_distance, inner_angle, exterior_angle, create_by, create_time, annotation_type, location_type, slide_id, center_point, point_count, geometry, update_by, update_time, annotation_owner, annotation_update_owner, project_id, image_id, image_url, organization_id
     </sql>
-
-
-
 
 
     <sql id="selectBy">
-        SELECT
-            t.marking_examine_id as marking_id,
-            t.area,
-            t.perimeter,
-            t.description,
-            t.category_id,
-            t.create_by,
-            t.create_time,
-            t.location_type,
-            c.rgb as label_color,
-            c.category_name as label_name,
-            t.update_time,
-            t.update_by
-        FROM
-            tb_marking_examine AS t
-                LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
+        SELECT t.marking_examine_id as marking_id,
+               t.area,
+               t.perimeter,
+               t.description,
+               t.category_id,
+               t.create_by,
+               t.create_time,
+               t.location_type,
+               c.rgb                as label_color,
+               c.category_name      as label_name,
+               c.category_name      as measure_full_name,
+               t.update_time,
+               t.update_by
+        FROM tb_marking_examine AS t
+                 LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
     </sql>
 
     <sql id="selectList">
-        SELECT
-            geometry,
-            JSON_OBJECT(
-                    "marking_id",
-                    t.marking_examine_id,
-                    "area",
-                    t.area,
-                    "perimeter",
-                    t.perimeter,
-                    "description",
-                    t.description,
-                    "category_id",
-                    t.category_id,
-                    "create_by",
-                    t.create_by,
-                    "create_time",
-                    DATE_FORMAT( t.create_time, '%Y-%m-%d %H:%i:%s' ),
-                    "location_type",
-                    t.location_type,
-                    "annotation_owner",
-                    t.annotation_owner,
-                    "label_color" ,
-                    c.rgb,
-                    "label_code" ,
-                    c.number,
-                    "measure_full_name",
-                    c.category_name,
-                    "label_name",
-                    c.category_name
-                ) AS properties
-        FROM
-            tb_marking_examine AS t
-                LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
+        SELECT geometry,
+               JSON_OBJECT(
+                       "marking_id",
+                       t.marking_examine_id,
+                       "area",
+                       t.area,
+                       "perimeter",
+                       t.perimeter,
+                       "description",
+                       t.description,
+                       "category_id",
+                       t.category_id,
+                       "create_by",
+                       t.create_by,
+                       "create_time",
+                       DATE_FORMAT(t.create_time, '%Y-%m-%d %H:%i:%s'),
+                       "location_type",
+                       t.location_type,
+                       "annotation_owner",
+                       t.annotation_owner,
+                       "label_color",
+                       c.rgb,
+                       "label_code",
+                       c.number,
+                       "measure_full_name",
+                       c.category_name,
+                       "label_name",
+                       c.category_name
+                   ) AS properties
+        FROM tb_marking_examine AS t
+                 LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
     </sql>
 
     <select id="selectBy" parameterType="long" resultMap="propertiesResult">
@@ -132,41 +129,38 @@
     </select>
 
     <select id="selectListBy" parameterType="cn.staitech.anno.domain.MarkingExamine" resultMap="featuresResult">
-        SELECT
-            geometry,
-            JSON_OBJECT(
-                    "marking_id",
-                    t.marking_examine_id,
-                    "area",
-                    t.area,
-                    "perimeter",
-                    t.perimeter,
-                    "description",
-                    t.description,
-                    "category_id",
-                    t.category_id,
-                    "create_by",
-                    t.create_by,
-                    "create_time",
-                    DATE_FORMAT( t.create_time, '%Y-%m-%d %H:%i:%s' ),
-                    "location_type",
-                    t.location_type,
-                    "annotation_owner",
-                    cast(t.create_by as char(200)),
-                    "label_color" ,
-                    c.rgb,
-                    "label_code" ,
-                    c.number,
-                    "measure_full_name",
-                    c.category_name,
-                    "label_name",
-                    c.category_name
-                ) AS properties
-        FROM
-            tb_marking_examine AS t
-                LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
+        SELECT geometry,
+               JSON_OBJECT(
+                       "marking_id",
+                       t.marking_examine_id,
+                       "area",
+                       t.area,
+                       "perimeter",
+                       t.perimeter,
+                       "description",
+                       t.description,
+                       "category_id",
+                       t.category_id,
+                       "create_by",
+                       t.create_by,
+                       "create_time",
+                       DATE_FORMAT(t.create_time, '%Y-%m-%d %H:%i:%s'),
+                       "location_type",
+                       t.location_type,
+                       "annotation_owner",
+                       cast(t.create_by as char(200)),
+                       "label_color",
+                       c.rgb,
+                       "label_code",
+                       c.number,
+                       "measure_full_name",
+                       c.category_name,
+                       "label_name",
+                       c.category_name
+                   ) AS properties
+        FROM tb_marking_examine AS t
+                 LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
         where t.question_project_id = #{questionProjectId}
-        and t.create_by = #{createBy}
+          and t.create_by = #{createBy}
     </select>
-
 </mapper>

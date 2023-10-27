@@ -85,25 +85,19 @@ public interface IndicatorService {
      */
     public List<Indicator> selectIndicatorName(IndicatorGetVO indicator);
 
-//    /**
-//     * 更新病理表数据
-//     *
-//     * @param project, project1
-//     * @return 结果
-//     */
-//    public int updateIndicatorMessage(PorjectVO project,ProjectListVO project1);
 
     /**
      * 查询所有的病理数量
      */
     public Integer selectIndicatorNum();
 
-    /**
-     * 查询专题数量
-     */
-    public Integer selectSpecial(Long indicatorId);
 
     // 2.0 新修改====================================
+
+    /**
+     * 查询专题在项目表中的数量
+     */
+    public Integer selectIndicatorCountInProject(Long indicatorId);
 
     /**
      * 查询指标列表

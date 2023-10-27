@@ -43,28 +43,28 @@ public class PathologicalIndicatorCategory implements Serializable {
      * 标注类别名称
      */
     @ApiModelProperty(value = "标签名称")
-    @Size(min = 0, max = 50, message = "名称不能超过50个字符")
+    @Size(min = 0, max = 50, message = "{InsertProjectVO.projectName.length}")
     private String categoryName;
 
     /**
      * 结构ID
      */
     @ApiModelProperty(required = true, value = "结构ID")
-    @NotBlank(message = "结构ID不能为空!")
+    @NotBlank(message = "{PathologicalIndicatorCategoryVO.structureId.isnull}")
     private String structureId;
 
     /**
      * 颜色的RGB值
      */
     @ApiModelProperty(value = "颜色值RGB")
-    @NotBlank(message = "RGB颜色值不可为空")
+    @NotBlank(message = "{PathologicalIndicatorCategory.rgb.isnull}")
     private String rgb;
 
     /**
      * 颜色的HEX值
      */
     @ApiModelProperty(value = "颜色值HEX")
-    @NotBlank(message = "HEX颜色值不可为空")
+    @NotBlank(message = "{PathologicalIndicatorCategory.hex.isnull}")
     private String hex;
 
     /**
@@ -82,7 +82,7 @@ public class PathologicalIndicatorCategory implements Serializable {
      * 图层顺序
      */
     @ApiModelProperty(required = true, value = "图层顺序")
-    @NotNull(message = "图层顺序不可为空!")
+    @NotNull(message = "{StatisticCategoryListOutVO.orderNumber.isnull}")
     private Integer orderNumber;
 
     /**

@@ -15,14 +15,14 @@ public class SpecialDeleteVo {
     /**
      * 主键id .
      */
-    @NotNull(message = "专题信息不可为空")
+    @NotNull(message = "{SpecialDeleteVo.specialId.isnull}")
     @ApiModelProperty(value = "专题id", required = true)
     private Long specialId;
 
     /**
      * 主键id .
      */
-    @NotNull(message = "状态不可为空")
+    @NotNull(message = "{MarkingJsonIn.status.notNull}")
     @ApiModelProperty(value = "状态", required = true)
     private Long delFlag;
 

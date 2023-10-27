@@ -6,13 +6,13 @@ package cn.staitech.anno.exception;
  * @author admin
  */
 public class AnnoException extends Exception {
-    
+
     public AnnoException() {
         super();
     }
-    
+
     public AnnoException(String message) {
         super(message);
     }
-    
+
 }

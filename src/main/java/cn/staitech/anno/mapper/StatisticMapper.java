@@ -1,13 +1,6 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.vo.statistic.AnnotationStatisticIdListOutVO;
-import cn.staitech.anno.domain.vo.statistic.AnnotationStatisticListPageInVO;
-import cn.staitech.anno.domain.vo.statistic.AnnotationStatisticListPageOutVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticListInVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticObjectOutVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticSysDictDataOutVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticUserListOutVO;
-import cn.staitech.anno.domain.vo.statistic.TableDateOutVO;
+import cn.staitech.anno.domain.vo.statistic.*;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
@@ -65,6 +58,7 @@ public interface StatisticMapper {
      * @return
      */
     List<StatisticObjectOutVO> statisticSelectAnnoDateDaysList(StatisticListInVO statisticList);
+
     /**
      * 综合统计列表: 标注数量-日期-按天统计
      *
@@ -80,6 +74,7 @@ public interface StatisticMapper {
      * @return
      */
     List<StatisticObjectOutVO> statisticSelectAnnoDateMonthsList(StatisticListInVO statisticList);
+
     /**
      * 综合统计列表: 标注数量-日期-按月统计
      *
@@ -231,7 +226,6 @@ public interface StatisticMapper {
      * @return
      */
     List<AnnotationStatisticListPageOutVO> statisticSelectAnnoImagePageList(AnnotationStatisticListPageInVO statisticList);
-
 
 
     /**

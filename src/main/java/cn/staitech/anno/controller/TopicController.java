@@ -5,7 +5,7 @@ import cn.staitech.anno.domain.topic.in.TopicInsert;
 import cn.staitech.anno.domain.topic.in.TopicQueryIn;
 import cn.staitech.anno.service.TopicService;
 import cn.staitech.anno.utils.PageMaster;
-import cn.staitech.anno.utils.date.DateUtils;
+import cn.staitech.anno.utils.DateUtils;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -13,10 +13,10 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 
@@ -32,7 +32,7 @@ import java.util.List;
 @Slf4j
 public class TopicController {
 
-    @Autowired
+    @Resource
     private TopicService topicService;
 
     @ApiOperationSupport(author = "wangfeng")
@@ -77,7 +77,6 @@ public class TopicController {
                 .createTime(time)
                 .updateTime(time)
                 .build();
-
         topicService.save(topic);
         return R.ok();
     }

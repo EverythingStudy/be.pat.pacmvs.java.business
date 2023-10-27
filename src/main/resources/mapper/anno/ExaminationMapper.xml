@@ -53,9 +53,15 @@
     <update id="updateExaminationSubmit" parameterType="cn.staitech.anno.domain.vo.ExaminationSubmitVO">
         update tb_slide
         <set>
-            <if test="processFlag != null and processFlag != ''">process_flag = #{processFlag},</if>
-            <if test="examinationFlag != null">examination_flag = #{examinationFlag},</if>
-            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="processFlag != null and processFlag != ''">
+                process_flag = #{processFlag},
+            </if>
+            <if test="examinationFlag != null">
+                examination_flag = #{examinationFlag},
+            </if>
+            <if test="updateBy != null and updateBy != ''">
+                update_by = #{updateBy},
+            </if>
             update_time = sysdate()
         </set>
         where slide_id = #{slideId}
@@ -81,10 +87,12 @@
             <if test="examinationFlag != null ">
                 AND s.examination_flag = #{examinationFlag}
             </if>
-            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+            <if test="params.beginTime != null and params.beginTime != ''">
+                <!-- 开始时间检索 -->
                 AND date_format(s.update_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
             </if>
-            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+            <if test="params.endTime != null and params.endTime != ''">
+                <!-- 结束时间检索 -->
                 AND date_format(s.update_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
             </if>
         </where>
@@ -95,8 +103,12 @@
     <update id="updateExaminationState" parameterType="cn.staitech.anno.domain.vo.ExaminationStateVO">
         update tb_slide
         <set>
-            <if test="examinationFlag != ''">examination_flag = #{examinationFlag},</if>
-            <if test="processFlag != null and processFlag != ''">process_flag = #{processFlag}</if>
+            <if test="examinationFlag != ''">
+                examination_flag = #{examinationFlag},
+            </if>
+            <if test="processFlag != null and processFlag != ''">
+                process_flag = #{processFlag}
+            </if>
         </set>
         where slide_id = #{slideId}
     </update>

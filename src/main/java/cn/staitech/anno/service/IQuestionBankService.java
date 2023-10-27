@@ -1,12 +1,7 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.QuestionBank;
-import cn.staitech.anno.domain.question.in.ConfirmSelectionIn;
-import cn.staitech.anno.domain.question.in.CreateBySlideIn;
-import cn.staitech.anno.domain.question.in.CreateQuestionIn;
-import cn.staitech.anno.domain.question.in.GetQuestionListIn;
-import cn.staitech.anno.domain.question.in.GetQuestionsIn;
-import cn.staitech.anno.domain.question.in.SettingCompletedIn;
+import cn.staitech.anno.domain.question.in.*;
 import cn.staitech.anno.domain.question.out.GetProjectBoxOut;
 import cn.staitech.anno.domain.question.out.GetQuestionListOut;
 import cn.staitech.anno.domain.question.out.GetQuestionsOut;

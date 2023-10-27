@@ -51,7 +51,7 @@ public class SpecialResVo {
 
     @ApiModelProperty(value = "删除标志(0:正常,1:回收站,2:删除)")
     private Long delFlag;
-    
+
     @ApiModelProperty(value = "交付状态 0：未交付 1：已交付")
     private Long deliveryStatus;
 
@@ -69,8 +69,8 @@ public class SpecialResVo {
 
     @ApiModelProperty(value = "试验类型")
     private String trialType;
-    
+
     @ApiModelProperty(required = true, value = "topicId专题")
-	private Integer topicId;
+    private Integer topicId;
 
 }

@@ -3,18 +3,18 @@ package cn.staitech.anno.service.impl;
 import cn.hutool.core.date.DateUtil;
 import cn.staitech.anno.domain.SubImage;
 import cn.staitech.anno.domain.marking.PointCount;
-import cn.staitech.anno.domain.specialAnnotation.SpecialAnnotation;
-import cn.staitech.anno.domain.specilaImage.SpecialImage;
+import cn.staitech.anno.domain.special.SpecialAnnotation;
+import cn.staitech.anno.domain.special.SpecialImage;
 import cn.staitech.anno.domain.vo.image.SubImageVo;
-import cn.staitech.anno.domain.vo.specialImage.SpecialImageSelectVO;
-import cn.staitech.anno.domain.vo.specialImage.WaitSpecialImageVO;
-import cn.staitech.anno.domain.vo.specialImageAnno.AnnoFeatures;
-import cn.staitech.anno.domain.vo.specialImageAnno.AnnoMarkGeojson;
-import cn.staitech.anno.domain.vo.specialImageAnno.AnnoProperties;
-import cn.staitech.anno.domain.vo.specialImageAnno.SpecialAnnoAddVO;
-import cn.staitech.anno.domain.vo.specialImageAnno.in.*;
-import cn.staitech.anno.domain.vo.specialSliceImage.AuditSpecialImageVO;
-import cn.staitech.anno.domain.vo.specialSliceImage.OrganDict;
+import cn.staitech.anno.domain.vo.specialimage.SpecialImageSelectVO;
+import cn.staitech.anno.domain.vo.specialimage.WaitSpecialImageVO;
+import cn.staitech.anno.domain.vo.specialimageanno.AnnoFeatures;
+import cn.staitech.anno.domain.vo.specialimageanno.AnnoMarkGeojson;
+import cn.staitech.anno.domain.vo.specialimageanno.AnnoProperties;
+import cn.staitech.anno.domain.vo.specialimageanno.SpecialAnnoAddVO;
+import cn.staitech.anno.domain.vo.specialimageanno.in.*;
+import cn.staitech.anno.domain.vo.specialsliceimage.AuditSpecialImageVO;
+import cn.staitech.anno.domain.vo.specialsliceimage.OrganDict;
 import cn.staitech.anno.enums.SysDictTypeEnum;
 import cn.staitech.anno.exception.AnnoException;
 import cn.staitech.anno.mapper.SpecialAnnotationMapper;
@@ -55,41 +55,72 @@ import java.util.stream.Collectors;
 public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
 
 
+    DecimalFormat decimalFormat = new DecimalFormat("0.00000");
     @Resource
     private SpecialImageMapper specialImageMapper;
-
-
     @Resource
     private SubImageMapper subImageMapper;
-
     @Resource
     private SpecialAnnotationMapper specialAnnotationMapper;
     @Resource
     private SpecialImageService specialImageService;
-
     @Resource
     private GetUserInformationService getUserInformationService;
 
-    DecimalFormat decimalFormat = new DecimalFormat("0.00000");
+    /**
+     * 求交集
+     *
+     * @param m 传入的集合
+     * @param n 查询到的集合
+     * @return
+     */
+    private static Long[] getJ(Long[] m, List<Long> n) {
+        List<Long> a1 = Arrays.asList(m);
+        List<Long> accountIdList = a1.stream().filter(n::contains).collect(Collectors.toList());
+        Long[] arr = {};
+        arr = accountIdList.toArray(arr);
+        return arr;
+    }
 
+    /**
+     * 求差集
+     *
+     * @param m 传入的集合
+     * @param n 交集集合
+     * @return
+     */
+    private static Long[] getC(Long[] m, Long[] n) {
+        // 将较长的数组转换为set
+        Set<Long> set = new HashSet<Long>(Arrays.asList(m.length > n.length ? m : n));
+
+        // 遍历较短的数组，实现最少循环
+        for (Long i : m.length > n.length ? n : m) {
+            // 若是集合里有相同的就删掉，若是没有就将值添加到集合
+            if (set.contains(i)) {
+                set.remove(i);
+            } else {
+                set.add(i);
+            }
+        }
+
+        Long[] arr = {};
+        return set.toArray(arr);
+    }
 
     @Override
     public int insertSpecialAnnotation(SpecialAnnotation anno) {
         return specialAnnotationMapper.insertSelective(anno);
     }
 
-
     @Override
     public int updatePointCount(SpecialAnnotation specialAnnotation) {
         return specialAnnotationMapper.updatePointCount(specialAnnotation);
     }
 
-
     @Override
     public PointCount selectCategoryCount(SpecialAnnotation anno) {
         return specialAnnotationMapper.selectCategoryCount(anno);
     }
-
 
     /**
      * 获取geojsonUrl
@@ -126,7 +157,7 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
         //参数校验
         //审核状态 0：待审核 1：审核通过 2：审核不通过
         int auditStatus = vo.getAuditStatus();
-        Map paramMap = new HashMap<>();
+        Map paramMap = new HashMap<>(16);
 		/*if(auditStatus == 1){
 			//确保所选切片全部是待审核或者审核通过的数据
 			paramMap.put("auditSucess", auditStatus);
@@ -166,7 +197,7 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
             for (SpecialImage sImage : list) {
                 //根据主图imageid、专题id、批次id查询对应的tb_sub_image所有小的切图，修改审核状态为通过更新小图审核状态
                 //查询小图列表
-                Map<String, Object> columnMap = new HashMap<>();
+                Map<String, Object> columnMap = new HashMap<>(16);
                 columnMap.put("parent_image_id", sImage.getImageId());
                 columnMap.put("special_id", sImage.getSpecialId());
                 columnMap.put("slice_batch_number", sImage.getSliceBatchNumber());
@@ -189,12 +220,11 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
-
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public R<String> updateDeliveryBySpecialId(AuditSpecialImageVO vo) {
         //参数校验
-        Map paramMap = new HashMap<>();
+        Map paramMap = new HashMap<>(16);
         paramMap.put("auditFail", 1);
         paramMap.put("specialId", vo.getSpecialId());
         List<SpecialImage> list = specialImageMapper.selectSpecialImageListByParm(paramMap);
@@ -226,7 +256,6 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
         return specialImageMapper.selectWaitSpecialImage(specialImageSelectVO);
     }
 
-
     @Override
     public List<SpecialAnnotation> selectSpecialAnnotationList(SpecialAnnotation annotation) {
         return specialAnnotationMapper.selectSpecialAnnotationList(annotation);
@@ -236,7 +265,6 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
     public List<SpecialAnnoProperties> selectSpecialPropertiesList(SpecialAnnotation annotation) {
         return specialAnnotationMapper.selectSpecialPropertiesList(annotation);
     }
-
 
     @Override
     public AnnoMarkGeojson getMarkGeojsonByList(List<SpecialAnnotation> list) {
@@ -294,47 +322,6 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
         return markGeojson;
     }
 
-
-    /**
-     * 求交集
-     *
-     * @param m 传入的集合
-     * @param n 查询到的集合
-     * @return
-     */
-    private static Long[] getJ(Long[] m, List<Long> n) {
-        List<Long> a1 = Arrays.asList(m);
-        List<Long> accountIdList = a1.stream().filter(n::contains).collect(Collectors.toList());
-        Long[] arr = {};
-        arr = accountIdList.toArray(arr);
-        return arr;
-    }
-
-    /**
-     * 求差集
-     *
-     * @param m 传入的集合
-     * @param n 交集集合
-     * @return
-     */
-    private static Long[] getC(Long[] m, Long[] n) {
-        // 将较长的数组转换为set
-        Set<Long> set = new HashSet<Long>(Arrays.asList(m.length > n.length ? m : n));
-
-        // 遍历较短的数组，实现最少循环
-        for (Long i : m.length > n.length ? n : m) {
-            // 若是集合里有相同的就删掉，若是没有就将值添加到集合
-            if (set.contains(i)) {
-                set.remove(i);
-            } else {
-                set.add(i);
-            }
-        }
-
-        Long[] arr = {};
-        return set.toArray(arr);
-    }
-
     @Override
     public SpecialAnnotation selectByPrimaryKey(Long specialAnnotationId) {
         return specialAnnotationMapper.selectByPrimaryKey(specialAnnotationId);
@@ -367,7 +354,7 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
         for (SpecialAnnoAddVO annotation : annoList) {
             SpecialAnnoAddVO saav = new SpecialAnnoAddVO();
             //操作类型 1:save  2:update 3:delte
-            int operateType = annotation.getOperateType();
+            Long operateType = annotation.getOperateType();
             if (operateType == 2 || operateType == 3) {
                 if (annotation.getAnnotationId() == null) {
                     flag = -1;
@@ -732,7 +719,7 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
                 // 查询切片表中切片信息
                 SpecialImage specialImage = specialImageService.selectByPrimaryKey(vo.getSpecialImageId());
                 if (specialImage == null) {
-                    return R.fail("未查询到切片信息");
+                    return R.fail(MessageSource.M("NO_SLIDE_DATA"));
                 }
                 SpecialAnnotation specialAnnotation = new SpecialAnnotation();
                 BeanUtils.copyProperties(vo, specialAnnotation);

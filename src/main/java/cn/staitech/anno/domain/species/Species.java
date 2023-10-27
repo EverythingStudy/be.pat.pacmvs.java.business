@@ -27,8 +27,14 @@ public class Species {
     private Long speciesId;
 
     /**
-     * 种属value
+     * 种属名称
      */
     @ApiModelProperty(value = "种属名称", required = true)
     private String name;
+
+    /**
+     * 种属名称EN
+     */
+    @ApiModelProperty(value = "种属名称En", required = true)
+    private String nameEn;
 }

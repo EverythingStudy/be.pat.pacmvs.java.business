@@ -6,9 +6,7 @@ import cn.staitech.anno.domain.vo.ProjectMemberAddVO;
 import cn.staitech.anno.domain.vo.ProjectMemberDeleteVO;
 import cn.staitech.anno.domain.vo.ProjectMemberSelectVO;
 import cn.staitech.anno.domain.vo.ProjectMemberUpdateVO;
-import cn.staitech.anno.service.AnnotationService;
 import cn.staitech.anno.service.ProjectMemberService;
-import cn.staitech.anno.service.ProjectRoleService;
 import cn.staitech.anno.service.RecentlyVisitedService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
@@ -18,7 +16,6 @@ import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.utils.SecurityUtils;
-import cn.staitech.system.api.domain.SysProjectRole;
 import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
@@ -52,11 +49,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ProjectMemberController extends BaseController {
     @Resource
     private ProjectMemberService projectMemberService;
-    @Resource
-    private ProjectRoleService projectRoleService;
-    @Resource
-    private AnnotationService annotationService;
-
     @Resource
     private RecentlyVisitedService recentlyVisitedService;
 
@@ -147,20 +139,6 @@ public class ProjectMemberController extends BaseController {
 
         // 获取角色ID
         Long roleId = projectMemberUpdateVO.getRoleId();
-        SysProjectRole sysProjectRole = projectRoleService.selectProjectRole(roleId);
-
-        // 查询当前项目项目代表总数，项目代表至少保留1名  http://jira.shengtong.com/browse/ANNO-709
-        if (projectMemberService.representationCount(projectId) == 1) {
-            return R.fail(MessageSource.M("REPRESENTATION_MUST_HAS_ONE"));
-        }
-
-        // 构造查询对象(修改前数据)
-        ProjectMember getProjectMember = ProjectMember.builder()
-                .userId(projectMemberUpdateVO.getUserId())
-                .projectId(projectId)
-                .build();
-        // 查询修改前的成员信息内容
-        List<ProjectMember> projectMembers = projectMemberService.select(getProjectMember);
 
         // 构造修改对象
         ProjectMember projectMember = ProjectMember.builder()
@@ -184,19 +162,12 @@ public class ProjectMemberController extends BaseController {
         // 获取项目ID
         Long projectId = projectMemberSelectVO.getProjectId();
 
-        ProjectMember projectMemberBy = projectMemberService.getLoginUserProjectRoleType(projectId);
-
-        // 查询项目中是否添加当前用户
-        if (projectMemberBy == null) {
-            return R.fail(MessageSource.M("DISALLOW_PROJECT_NOT_EXIST") + SecurityUtils.getUsername());
-        }
         // 构造查询条件 ProjectMember
         ProjectMember projectMember = ProjectMember.builder()
                 .projectId(projectId)
                 .roleId(projectMemberSelectVO.getRoleId())
                 .userName(projectMemberSelectVO.getUserName())
                 .build();
-
         // 查询
         List<ProjectMember> projectMemberList = projectMemberService.select(projectMember);
         return R.ok(projectMemberList);

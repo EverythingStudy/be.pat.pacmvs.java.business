@@ -4,28 +4,29 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import java.util.Date;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * tb_pathological_indicator_category
+ *
  * @TableName tb_pathological_indicator_category
  */
-@TableName(value ="tb_pathological_indicator_category")
+@TableName(value = "tb_pathological_indicator_category")
 @Data
 public class PathologicalIndicatorCategory implements Serializable {
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
     /**
      * 标注类别ID
      */
     @TableId(type = IdType.AUTO)
     private Long categoryId;
-
     /**
      * 结构指标ID
      */
@@ -34,42 +35,42 @@ public class PathologicalIndicatorCategory implements Serializable {
     /**
      * 标注类别名称
      */
-    @Size(max= 200,message="编码长度不能超过200")
+    @Size(max = 200, message = "{PathologicalIndicatorCategory.categoryName.length}")
     @ApiModelProperty("标注类别名称")
-    @Length(max= 200,message="编码长度不能超过200")
+    @Length(max = 200, message = "{PathologicalIndicatorCategory.categoryName.length}")
     private String categoryName;
     /**
      * 结构ID
      */
-    @Size(max= 100,message="编码长度不能超过100")
+    @Size(max = 100, message = "{PathologicalIndicatorCategory.structureId.length}")
     @ApiModelProperty("结构ID")
-    @Length(max= 100,message="编码长度不能超过100")
+    @Length(max = 100, message = "{{PathologicalIndicatorCategory.structureId.length}}")
     private String structureId;
     /**
      * 颜色的RGB值
      */
-    @Size(max= 255,message="编码长度不能超过255")
+    @Size(max = 255, message = "{projectType.length}")
     @ApiModelProperty("颜色的RGB值")
-    @Length(max= 255,message="编码长度不能超过255")
+    @Length(max = 255, message = "{projectType.length}")
     private String rgb;
     /**
      * 颜色的HEX值
      */
-    @Size(max= 200,message="编码长度不能超过200")
+    @Size(max = 200, message = "{PathologicalIndicatorCategory.categoryName.length}")
     @ApiModelProperty("颜色的HEX值")
-    @Length(max= 200,message="编码长度不能超过200")
+    @Length(max = 200, message = "{PathologicalIndicatorCategory.categoryName.length}")
     private String hex;
     /**
      * 完整编码
      */
-    @Size(max= 50,message="编码长度不能超过50")
+    @Size(max = 50, message = "{PathologicalIndicatorCategory.number.length}")
     @ApiModelProperty("完整编码")
-    @Length(max= 50,message="编码长度不能超过50")
+    @Length(max = 50, message = "{PathologicalIndicatorCategory.number.length}")
     private String number;
     /**
      * 图层顺序
      */
-    @Size(max= 50,message="编码长度不能超过50")
+    @Size(max = 50, message = "{PathologicalIndicatorCategory.number.length}")
     @ApiModelProperty("图层顺序")
     private Integer orderNumber;
     /**
@@ -108,9 +109,6 @@ public class PathologicalIndicatorCategory implements Serializable {
     @ApiModelProperty("更新时间")
     private Date updateTime;
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
-
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -124,16 +122,16 @@ public class PathologicalIndicatorCategory implements Serializable {
         }
         PathologicalIndicatorCategory other = (PathologicalIndicatorCategory) that;
         return (this.getCategoryId() == null ? other.getCategoryId() == null : this.getCategoryId().equals(other.getCategoryId()))
-            && (this.getIndicatorId() == null ? other.getIndicatorId() == null : this.getIndicatorId().equals(other.getIndicatorId()))
-            && (this.getCategoryName() == null ? other.getCategoryName() == null : this.getCategoryName().equals(other.getCategoryName()))
-            && (this.getCreateBy() == null ? other.getCreateBy() == null : this.getCreateBy().equals(other.getCreateBy()))
-            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
-            && (this.getUpdateBy() == null ? other.getUpdateBy() == null : this.getUpdateBy().equals(other.getUpdateBy()))
-            && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
-            && (this.getAnnoType() == null ? other.getAnnoType() == null : this.getAnnoType().equals(other.getAnnoType()))
-            && (this.getOrderNumber() == null ? other.getOrderNumber() == null : this.getOrderNumber().equals(other.getOrderNumber()))
-            && (this.getDelFlag() == null ? other.getDelFlag() == null : this.getDelFlag().equals(other.getDelFlag()))
-            && (this.getNumber() == null ? other.getNumber() == null : this.getNumber().equals(other.getNumber()));
+                && (this.getIndicatorId() == null ? other.getIndicatorId() == null : this.getIndicatorId().equals(other.getIndicatorId()))
+                && (this.getCategoryName() == null ? other.getCategoryName() == null : this.getCategoryName().equals(other.getCategoryName()))
+                && (this.getCreateBy() == null ? other.getCreateBy() == null : this.getCreateBy().equals(other.getCreateBy()))
+                && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
+                && (this.getUpdateBy() == null ? other.getUpdateBy() == null : this.getUpdateBy().equals(other.getUpdateBy()))
+                && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
+                && (this.getAnnoType() == null ? other.getAnnoType() == null : this.getAnnoType().equals(other.getAnnoType()))
+                && (this.getOrderNumber() == null ? other.getOrderNumber() == null : this.getOrderNumber().equals(other.getOrderNumber()))
+                && (this.getDelFlag() == null ? other.getDelFlag() == null : this.getDelFlag().equals(other.getDelFlag()))
+                && (this.getNumber() == null ? other.getNumber() == null : this.getNumber().equals(other.getNumber()));
     }
 
     @Override

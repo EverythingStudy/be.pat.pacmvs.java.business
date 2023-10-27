@@ -5,8 +5,8 @@ import cn.staitech.anno.domain.QuestionBank;
 import cn.staitech.anno.domain.QuestionProjectRel;
 import cn.staitech.anno.domain.geojson.Features;
 import cn.staitech.anno.domain.geojson.Properties;
-import cn.staitech.anno.domain.markingExamine.MarkingExamineInsertVO;
-import cn.staitech.anno.domain.markingExamine.MarkingExamineUpdateVO;
+import cn.staitech.anno.domain.marking.MarkingExamineInsertVO;
+import cn.staitech.anno.domain.marking.MarkingExamineUpdateVO;
 import cn.staitech.anno.domain.structure.Structure;
 import cn.staitech.anno.domain.vo.BroadcastVO;
 import cn.staitech.anno.mapper.MarkingExamineMapper;
@@ -15,6 +15,8 @@ import cn.staitech.anno.mapper.QuestionProjectRelMapper;
 import cn.staitech.anno.mapper.StructureMapper;
 import cn.staitech.anno.netty.websocket.NioWebSocketHandler;
 import cn.staitech.anno.service.MarkingExamineService;
+import cn.staitech.anno.utils.GeometryUtil;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.SendMessage;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
@@ -29,14 +31,11 @@ import javax.annotation.Resource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import static cn.staitech.anno.constant.CommonConstant.*;
-import static cn.staitech.anno.constant.CommonConstant.GLIDE_LINE;
-import static cn.staitech.anno.constant.CommonConstant.MICRON;
 
 /**
  * <p>
@@ -64,6 +63,26 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
     @Resource
     private QuestionBankMapper questionBankMapper;
 
+    public static String getStr(File jsonFile) {
+        String jsonStr;
+        try {
+            FileReader fileReader = new FileReader(jsonFile);
+            Reader reader = new InputStreamReader(Files.newInputStream(jsonFile.toPath()), StandardCharsets.UTF_8);
+            int ch;
+            StringBuilder sb = new StringBuilder();
+            while ((ch = reader.read()) != -1) {
+                sb.append((char) ch);
+            }
+            fileReader.close();
+            reader.close();
+            jsonStr = sb.toString();
+            return jsonStr;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     @Override
     public JSONArray selectQuestionMarkingList(Long questionId) {
         try {
@@ -84,7 +103,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
                 if (structure != null) {
                     // 获取geometry数据
                     JSONObject geometry = featureObject.getJSONObject("geometry");
-                    ((JSONObject) feature).put("geometry",updateY(geometry));
+                    ((JSONObject) feature).put("geometry", GeometryUtil.updateYAxle(geometry));
                     newJsonArray.add(feature);
                 }
             }
@@ -92,32 +111,6 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         } catch (Exception e) {
             return new JSONArray();
         }
-    }
-
-
-    public static JSONObject updateY(JSONObject geometry) {
-        List<Object> lists = new ArrayList<>();
-        JSONArray coordinatesJsonArray1 = geometry.getJSONArray("coordinates");
-        String type = geometry.getString("type");
-        List<Object> list1 = new ArrayList<>();
-        for(Object i1: coordinatesJsonArray1){
-            JSONArray jsonArray1 = JSONArray.parseArray(i1.toString());
-            for(Object i2:jsonArray1){
-                JSONArray jsonArray2 = (JSONArray) i2;
-                List<Double> list = JSONObject.parseArray(jsonArray2.toJSONString(),Double.class);
-                List<Double> newList = new ArrayList<>();
-                newList.add(list.get(0));
-                String res = "-" + list.get(1);
-                double y = Double.parseDouble(res);
-                newList.add(y);
-                list1.add(newList);
-            }
-        }
-        lists.add(list1);
-        JSONObject geometryJson = new JSONObject();
-        geometryJson.put("type",type);
-        geometryJson.put("coordinates",lists);
-        return geometryJson;
     }
 
     @Override
@@ -128,13 +121,12 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         return markingExamineMapper.selectLists(markingExamine);
     }
 
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long insert(MarkingExamineInsertVO req) throws Exception {
         QuestionProjectRel questionProjectRel = questionProjectRelMapper.selectById(req.getQuestion_project_id());
         if (questionProjectRel == null) {
-            throw new Exception("未查询到切片信息");
+            throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
         }
         MarkingExamine markingExamine = new MarkingExamine();
         BeanUtils.copyProperties(req, markingExamine);
@@ -167,11 +159,11 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
     @Transactional(rollbackFor = Exception.class)
     public int delete(Long markingExamineId) throws Exception {
         if (!Optional.ofNullable(markingExamineId).isPresent()) {
-            throw new Exception("参数异常");
+            throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }
         MarkingExamine markingExamineBy = markingExamineMapper.selectById(markingExamineId);
         if (!Optional.ofNullable(markingExamineBy).isPresent()) {
-            throw new Exception("未查询到标注信息");
+            throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
         Properties properties = markingExamineMapper.selectBy(markingExamineId);
         Features features = markingServiceImpl.socketData("", markingExamineBy.getGeometry(), properties);
@@ -188,7 +180,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         // 查询标注表中信息
         MarkingExamine markingExamineBy = markingExamineMapper.selectById((req.getMarking_id()));
         if (!Optional.ofNullable(markingExamineBy).isPresent()) {
-            throw new Exception("未查询到标注信息");
+            throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
         // 查询标注表中信息
         // 更新前数据
@@ -219,7 +211,6 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         return markingExamine.getMarkingExamineId();
     }
 
-
     public JSONObject getAnnotation(String fileUrl) {
         JSONObject parse = new JSONObject();
         File jsonFile = new File(fileUrl);
@@ -231,27 +222,6 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
             return parse;
         }
         return parse;
-    }
-
-
-    public static String getStr(File jsonFile) {
-        String jsonStr;
-        try {
-            FileReader fileReader = new FileReader(jsonFile);
-            Reader reader = new InputStreamReader(Files.newInputStream(jsonFile.toPath()), StandardCharsets.UTF_8);
-            int ch;
-            StringBuilder sb = new StringBuilder();
-            while ((ch = reader.read()) != -1) {
-                sb.append((char) ch);
-            }
-            fileReader.close();
-            reader.close();
-            jsonStr = sb.toString();
-            return jsonStr;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
 }

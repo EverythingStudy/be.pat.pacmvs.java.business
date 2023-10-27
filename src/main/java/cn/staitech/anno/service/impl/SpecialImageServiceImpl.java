@@ -5,17 +5,17 @@ import cn.hutool.json.JSONUtil;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.SubImage;
 import cn.staitech.anno.domain.special.Special;
-import cn.staitech.anno.domain.specialAnnotation.SpecialAnnotation;
-import cn.staitech.anno.domain.specilaImage.SpecialImage;
+import cn.staitech.anno.domain.special.SpecialAnnotation;
+import cn.staitech.anno.domain.special.SpecialImage;
 import cn.staitech.anno.domain.vo.image.SubImageVo;
-import cn.staitech.anno.domain.vo.specialImage.InsertSpecialImageVO;
-import cn.staitech.anno.domain.vo.specialImage.SpecialImageSelectVO;
-import cn.staitech.anno.domain.vo.specialImage.SpecialImageVO;
-import cn.staitech.anno.domain.vo.specialImage.WaitSpecialImageVO;
-import cn.staitech.anno.domain.vo.specialImageAnno.AlgorithmCutImageVO;
-import cn.staitech.anno.domain.vo.specialImageAnno.SpecialAnnDataVO;
-import cn.staitech.anno.domain.vo.specialImageAnno.SpecialCutImageVO;
-import cn.staitech.anno.domain.vo.specialSliceImage.AuditSpecialImageVO;
+import cn.staitech.anno.domain.vo.specialimage.InsertSpecialImageVO;
+import cn.staitech.anno.domain.vo.specialimage.SpecialImageSelectVO;
+import cn.staitech.anno.domain.vo.specialimage.SpecialImageVO;
+import cn.staitech.anno.domain.vo.specialimage.WaitSpecialImageVO;
+import cn.staitech.anno.domain.vo.specialimageanno.AlgorithmCutImageVO;
+import cn.staitech.anno.domain.vo.specialimageanno.SpecialAnnDataVO;
+import cn.staitech.anno.domain.vo.specialimageanno.SpecialCutImageVO;
+import cn.staitech.anno.domain.vo.specialsliceimage.AuditSpecialImageVO;
 import cn.staitech.anno.enums.SysDictTypeEnum;
 import cn.staitech.anno.mapper.ImageMapper;
 import cn.staitech.anno.mapper.SpecialImageMapper;
@@ -81,6 +81,104 @@ public class SpecialImageServiceImpl implements SpecialImageService {
      * @return int
      * @throws
      */
+
+    /**
+     * @param @param  o
+     * @param @return
+     * @return Object
+     * @throws
+     * @Title: getCoordinates
+     * @Description: 坐标处理
+     */
+    public static List getCoordinates(List o) {
+        for (int i = 0; i < o.size(); i++) {
+            Object s = o.get(i);
+            if (s instanceof Collection<?>) {
+                List pList = (List) s;
+                getCoordinates(pList);
+            } else {
+                int index = o.indexOf(s);
+//				BigDecimal s4 = (BigDecimal) s;
+//				int a4_1 = Math.round(s4.floatValue());
+//				a4_1 = Math.abs(a4_1);
+                int a4_1 = getIntByPoint(s);
+                o.set(index, a4_1);
+            }
+        }
+        return o;
+    }
+
+    public static Integer getIntByPoint(Object param) {
+        Integer outPut = 0;
+        if (param instanceof String) {
+            outPut = (Integer) param;
+        } else if (param instanceof Integer) {
+            outPut = (Integer) param;
+        } else if (param instanceof Double) {
+            double d = ((Double) param).doubleValue();
+            double d_1 = Math.round(d);
+            outPut = (int) d_1;
+        } else if (param instanceof Float) {
+            float f = ((Float) param).floatValue();
+            double f_1 = Math.round(f);
+            outPut = (int) f_1;
+        } else if (param instanceof Long) {
+            outPut = (Integer) param;
+        } else if (param instanceof BigDecimal) {
+//			outPut =  ((BigDecimal) param).intValue();
+            BigDecimal decimal = (BigDecimal) param;
+            outPut = Math.round(decimal.floatValue());
+        }
+        outPut = Math.abs(outPut);
+        return outPut;
+    }
+
+    /**
+     * 求交集
+     *
+     * @param m 传入的集合
+     * @param n 查询到的集合
+     * @return
+     */
+    private static Long[] getJ(Long[] m, List<Long> n) {
+        List<Long> a1 = Arrays.asList(m);
+        List<Long> accountIdList = a1.stream().filter(n::contains).collect(Collectors.toList());
+        Long[] arr = {};
+        arr = accountIdList.toArray(arr);
+        return arr;
+    }
+
+    /**
+     * 求差集
+     *
+     * @param m 传入的集合
+     * @param n 交集集合
+     * @return
+     */
+    private static Long[] getC(Long[] m, Long[] n) {
+        // 将较长的数组转换为set
+        Set<Long> set = new HashSet<Long>(Arrays.asList(m.length > n.length ? m : n));
+
+        // 遍历较短的数组，实现最少循环
+        for (Long i : m.length > n.length ? n : m) {
+            // 若是集合里有相同的就删掉，若是没有就将值添加到集合
+            if (set.contains(i)) {
+                set.remove(i);
+            } else {
+                set.add(i);
+            }
+        }
+
+        Long[] arr = {};
+        return set.toArray(arr);
+    }
+/*
+    DirectExchange annoDirectExchange() {
+        Map<String, Object> args = new HashMap<>();
+        // 绑定备份交换机
+        args.put("alternate-exchange", "websocket.backup.exchange");
+        return new DirectExchange("anno.direct.exchange", true, false, args);
+    }*/
 
     /**
      * 根据专题查看所有的图片
@@ -179,7 +277,7 @@ public class SpecialImageServiceImpl implements SpecialImageService {
         log.info("切脏器列表数据是：" + cutStr);
 
         // rabbitTemplate.convertAndSend("anno.direct.exchange", "slide.annotation.slideViscer.routing", dataList);
-		
+
 		/*String ips = "172.31.2.213";
 		createMQIfNotExist("slide.annotation.slideViscer.queue"+ips,"anno.direct.exchange","slide.annotation.slideViscer.routing"+ips);
 		rabbitTemplate.convertAndSend("slide.annotation.slideViscer.queue"+ips,dataList);*/
@@ -210,13 +308,6 @@ public class SpecialImageServiceImpl implements SpecialImageService {
             rabbitAdmin.declareBinding(BindingBuilder.bind(queue).to(directExchange).with(routingKey));
         }*/
     }
-/*
-    DirectExchange annoDirectExchange() {
-        Map<String, Object> args = new HashMap<>();
-        // 绑定备份交换机
-        args.put("alternate-exchange", "websocket.backup.exchange");
-        return new DirectExchange("anno.direct.exchange", true, false, args);
-    }*/
 
     @Override
     public void cutImageNotice(SpecialCutImageVO resData) {
@@ -361,58 +452,6 @@ public class SpecialImageServiceImpl implements SpecialImageService {
 
     }
 
-    /**
-     * @param @param  o
-     * @param @return
-     * @return Object
-     * @throws
-     * @Title: getCoordinates
-     * @Description: 坐标处理
-     */
-    public static List getCoordinates(List o) {
-        for (int i = 0; i < o.size(); i++) {
-            Object s = o.get(i);
-            if (s instanceof Collection<?>) {
-                List pList = (List) s;
-                getCoordinates(pList);
-            } else {
-                int index = o.indexOf(s);
-//				BigDecimal s4 = (BigDecimal) s;
-//				int a4_1 = Math.round(s4.floatValue());
-//				a4_1 = Math.abs(a4_1);
-                int a4_1 = getIntByPoint(s);
-                o.set(index, a4_1);
-            }
-        }
-        return o;
-    }
-
-
-    public static Integer getIntByPoint(Object param) {
-        Integer outPut = 0;
-        if (param instanceof String) {
-            outPut = (Integer) param;
-        } else if (param instanceof Integer) {
-            outPut = (Integer) param;
-        } else if (param instanceof Double) {
-            double d = ((Double) param).doubleValue();
-            double d_1 = Math.round(d);
-            outPut = (int) d_1;
-        } else if (param instanceof Float) {
-            float f = ((Float) param).floatValue();
-            double f_1 = Math.round(f);
-            outPut = (int) f_1;
-        } else if (param instanceof Long) {
-            outPut = (Integer) param;
-        } else if (param instanceof BigDecimal) {
-//			outPut =  ((BigDecimal) param).intValue();
-            BigDecimal decimal = (BigDecimal) param;
-            outPut = Math.round(decimal.floatValue());
-        }
-        outPut = Math.abs(outPut);
-        return outPut;
-    }
-
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -509,7 +548,6 @@ public class SpecialImageServiceImpl implements SpecialImageService {
         return R.ok(null, MessageSource.M("OPERATE_ERROR"));
     }
 
-
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public R<String> updateDeliveryBySpecialId(AuditSpecialImageVO vo) {
@@ -564,47 +602,6 @@ public class SpecialImageServiceImpl implements SpecialImageService {
     @Override
     public List<SpecialImageVO> selectSpecialImageList(SpecialImageSelectVO specialImageSelectVO) {
         return specialImageMapper.selectSpecialImageList(specialImageSelectVO);
-    }
-
-
-    /**
-     * 求交集
-     *
-     * @param m 传入的集合
-     * @param n 查询到的集合
-     * @return
-     */
-    private static Long[] getJ(Long[] m, List<Long> n) {
-        List<Long> a1 = Arrays.asList(m);
-        List<Long> accountIdList = a1.stream().filter(n::contains).collect(Collectors.toList());
-        Long[] arr = {};
-        arr = accountIdList.toArray(arr);
-        return arr;
-    }
-
-    /**
-     * 求差集
-     *
-     * @param m 传入的集合
-     * @param n 交集集合
-     * @return
-     */
-    private static Long[] getC(Long[] m, Long[] n) {
-        // 将较长的数组转换为set
-        Set<Long> set = new HashSet<Long>(Arrays.asList(m.length > n.length ? m : n));
-
-        // 遍历较短的数组，实现最少循环
-        for (Long i : m.length > n.length ? n : m) {
-            // 若是集合里有相同的就删掉，若是没有就将值添加到集合
-            if (set.contains(i)) {
-                set.remove(i);
-            } else {
-                set.add(i);
-            }
-        }
-
-        Long[] arr = {};
-        return set.toArray(arr);
     }
 
     //切图测试

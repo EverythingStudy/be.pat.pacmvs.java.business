@@ -403,6 +403,25 @@ public class StatisticListUtils {
     }
 
     /**
+     * 获取两个日期之间的时间差（分钟）
+     *
+     * @param imageCreatedTime 图像上传创建时间
+     * @return
+     */
+    public static long getDateDiff(Date imageCreatedTime) throws ParseException {
+        // 获取系统当前时间
+        Date cte = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String cteSdf = sdf.format(cte);
+        String imageCreatedTimeFormat = sdf.format(imageCreatedTime);
+        // 计算日期差，单位：天
+        Date startTime = sdf.parse(imageCreatedTimeFormat);
+        Date endTime = sdf.parse(cteSdf);
+        long daysBetween = (endTime.getTime() - startTime.getTime()) / (60 * 1000);
+        return daysBetween;
+    }
+
+    /**
      * 判断startTime、endTime值，并返回日期差
      *
      * @param statisticList 细分筛选查询入参
@@ -559,24 +578,5 @@ public class StatisticListUtils {
         StatisticListUtils.statisticListDateOut(statisticList, statisticListRep, resp,
                 statisticCategoryDictLabel, statisticDimensionDictLabel, daysBetween);
         return statisticListRep;
-    }
-
-    /**
-     * 获取两个日期之间的时间差（分钟）
-     *
-     * @param imageCreatedTime 图像上传创建时间
-     * @return
-     */
-    public static long getDateDiff(Date imageCreatedTime) throws ParseException {
-        // 获取系统当前时间
-        Date cte = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String cteSdf = sdf.format(cte);
-        String imageCreatedTimeFormat = sdf.format(imageCreatedTime);
-        // 计算日期差，单位：天
-        Date startTime = sdf.parse(imageCreatedTimeFormat);
-        Date endTime = sdf.parse(cteSdf);
-        long daysBetween = (endTime.getTime() - startTime.getTime()) / (60 * 1000);
-        return daysBetween;
     }
 }

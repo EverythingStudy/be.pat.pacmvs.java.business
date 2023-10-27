@@ -4,7 +4,6 @@ import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.geojson.GeoLabel;
 import cn.staitech.anno.domain.vo.LabelListVO;
 import cn.staitech.anno.domain.vo.LabelVO;
-import cn.staitech.anno.domain.vo.indicator.IndicatorAndOrganizationIdVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListOutVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -120,20 +119,21 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
     /**
      * 查询病例指标下的标注类别数量
      */
-    Long selectCategoryNumber(IndicatorAndOrganizationIdVO indicatorAndOrganizationIdVO);
+    Long selectCategoryNumber(Long indicatorId);
 
     /**
      * 根据projectId查询标注类别
      */
     List<PathologicalIndicatorCategory> selectProjectCategory(Long projectId);
 
-   /**
-    * 根据indicatorId查询标注类别（不包含unLabel）
-    * */
+    /**
+     * 根据indicatorId查询标注类别（不包含unLabel）
+     */
     List<LabelListVO> selectByIndicator(LabelVO labelVO);
 
     /**
      * 查询所有指标（除标注区域外）
+     *
      * @param projectId
      * @return
      */
@@ -141,11 +141,13 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
 
     /**
      * 查询标签在标注中的使用数量
-     * */
+     */
     Integer selectLabelNum(Long categoryId);
 
     /**
      * 根据项目和结构编码查询详情数据
      */
     PathologicalIndicatorCategory selectProjectAndNumber(@Param("projectId") Long projectId, @Param("number") String number);
+
+    String selectCategoryById(@Param("split") String[] split);
 }

@@ -3,7 +3,7 @@ package cn.staitech.anno.service.impl;
 import cn.staitech.anno.domain.ImageVisited;
 import cn.staitech.anno.domain.ProjectMember;
 import cn.staitech.anno.domain.RecentlyVisited;
-import cn.staitech.anno.domain.vo.RecentlyVisitedVO.RecentlyVisitedSelectVO;
+import cn.staitech.anno.domain.vo.recentlyvisited.RecentlyVisitedSelectVO;
 import cn.staitech.anno.mapper.ProjectMemberMapper;
 import cn.staitech.anno.mapper.RecentlyVisitedMapper;
 import cn.staitech.anno.service.RecentlyVisitedService;
@@ -42,7 +42,7 @@ public class RecentlyVisitedServiceImpl extends ServiceImpl<RecentlyVisitedMappe
 
         List<RecentlyVisitedSelectVO> recentlyVisitedSelectVOS = new ArrayList<>();
         // 判断用户为admin或者超级管理员
-        if(SysUser.isAdmin(SecurityUtils.getUserId())){
+        if (SysUser.isAdmin(SecurityUtils.getUserId())) {
             return recentlyVisitedSelectVOS;
         }
         for (RecentlyVisited recentlyVisited1 : recentlyVisitedList) {

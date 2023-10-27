@@ -48,7 +48,6 @@ public class NoticeServiceImpl implements NoticeService {
     public List<NoticeQueryOut> getNotice() {
         log.info("消息查询接口开始：");
         Long userId = SecurityUtils.getUserId();
-        //Long userId = 1L;
         //创建响应
         List<NoticeQueryOut> resp = new ArrayList<>();
 
@@ -58,7 +57,6 @@ public class NoticeServiceImpl implements NoticeService {
             resp = new ArrayList<>(collect.values());
         }
         return resp;
-
     }
 
     @Override

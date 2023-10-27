@@ -26,16 +26,16 @@ public class SpecialStatisticsQueryVO implements Serializable {
     private String specialName;
 
     @ApiModelProperty(value = "当前页数")
-    private int pageNum;
+    private Integer pageNum;
 
     @ApiModelProperty(value = "每页数据条数")
-    private int pageSize;
-
-    public boolean isAdmin() {
-        return isAdmin(this.userId);
-    }
+    private Integer pageSize;
 
     public static boolean isAdmin(Long userId) {
         return userId != null && 1L == userId;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin(this.userId);
     }
 }

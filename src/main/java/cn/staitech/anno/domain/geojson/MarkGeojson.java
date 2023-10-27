@@ -1,4 +1,5 @@
 package cn.staitech.anno.domain.geojson;
+
 import lombok.Data;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public class MarkGeojson {
 
     private List<Features> features;
 
-    private  GeoImage image;
+    private GeoImage image;
 
     private GeoProject project;
 

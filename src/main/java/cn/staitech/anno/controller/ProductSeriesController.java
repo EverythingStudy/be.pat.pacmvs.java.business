@@ -35,7 +35,6 @@ public class ProductSeriesController extends BaseController {
     /**
      * 品系列表 .
      */
-    // @RequiresPermissions("anno:round:list")
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "品系列表", notes = "品系列表 - 王峰")
     @Log(title = "品系列表", menu = "品系", subMenu = "品系列表", businessType = BusinessType.QUERY)

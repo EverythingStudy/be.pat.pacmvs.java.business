@@ -2,7 +2,6 @@ package cn.staitech.anno.mapper;
 
 
 import cn.staitech.anno.domain.ImageVisited;
-import cn.staitech.anno.domain.RecentlyVisited;
 
 import java.util.List;
 
@@ -20,8 +19,6 @@ public interface ImageVisitedMapper {
      * @return list
      */
     List<ImageVisited> selectList(Long recentlyVisitedId);
-
-
 
 
 }

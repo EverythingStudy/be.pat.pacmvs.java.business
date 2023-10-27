@@ -1,6 +1,5 @@
 package cn.staitech.anno.utils;
 
-import cn.hutool.core.util.ObjectUtil;
 import cn.staitech.anno.domain.geojson.Features;
 import cn.staitech.anno.domain.geojson.MarkGeojson;
 import com.alibaba.fastjson.JSON;
@@ -22,21 +21,9 @@ import java.util.zip.ZipOutputStream;
 
 @Slf4j
 public class FileUtils {
-
-
-    private static final String fileUrl = "/home/pat_saas/Data/geojson";
-
-//    E:\geojson
-
-//    private static final String fileUrl = "D:\\geojson";
-
+    private static final String FILE_URL = "/home/pat_saas/Data/geojson";
     private static final byte[] ZIP_HEADER_1 = new byte[]{80, 75, 3, 4};
-
     private static final byte[] ZIP_HEADER_2 = new byte[]{80, 75, 5, 6};
-
-
-//    @Value("${geojsonFilePath}")
-//    private String fileUrl;
 
     public static boolean isArchiveFile(File file) {
 
@@ -69,7 +56,7 @@ public class FileUtils {
     }
 
 
-    /*
+    /**
      * Java文件操作 获取文件扩展名(后缀)
      */
     public static String getExtensionName(String filename) {
@@ -82,7 +69,7 @@ public class FileUtils {
         return filename;
     }
 
-    /*
+    /**
      * Java文件操作 获取不带扩展名的文件名
      */
     public static String getFileNameNoEx(String filename) {
@@ -96,11 +83,10 @@ public class FileUtils {
     }
 
     public static String createFile(Long imageId) {
-        if (!FileUtils.createFolder(fileUrl)) {
+        if (!FileUtils.createFolder(FILE_URL)) {
             log.error("创建文件夹失败");
         }
-        String geojsonUrl = fileUrl + "/" + imageId + ".geojson";
-//        String geojsonUrl = fileUrl + "\\" + imageId + ".geojson";
+        String geojsonUrl = FILE_URL + File.separator + imageId + ".geojson";
         File file = new File(geojsonUrl);
         if (!file.exists()) {
             try {
@@ -125,8 +111,6 @@ public class FileUtils {
         return false;
     }
 
-    //
-
     /**
      * 创建空zip
      *
@@ -137,8 +121,9 @@ public class FileUtils {
         ZipOutputStream zoutput = null;
         try {
             File file = new File(zipath);
-            if (!file.exists())
+            if (!file.exists()) {
                 file.createNewFile();
+            }
             FileOutputStream fOutputStream = new FileOutputStream(file);
             zoutput = new ZipOutputStream(fOutputStream);
 
@@ -151,8 +136,13 @@ public class FileUtils {
     }
 
 
-    // 输入图片id,将初始化数据输入
-
+    /**
+     * 输入图片id,将初始化数据输入
+     *
+     * @param geojsonUrl
+     * @param slideId
+     * @return
+     */
     public static boolean writeFile(String geojsonUrl, Long slideId) {
         // 打开文件,写入固定内容
         MarkGeojson markGeojson = new MarkGeojson();
@@ -193,7 +183,12 @@ public class FileUtils {
     }
 
 
-    //把一个文件中的内容读取成一个String字符串
+    /**
+     * 把一个文件中的内容读取成一个String字符串
+     *
+     * @param jsonFile
+     * @return
+     */
     public static String getStr(File jsonFile) {
         String jsonStr;
         try {
@@ -308,9 +303,6 @@ public class FileUtils {
     }
 
 
-
-
-
     public static JSONObject exportJson(String geojsonUrl, Long status) {
         // 读取原始json文件并进行操作和输出
         JSONArray featuresList = new JSONArray();
@@ -332,7 +324,7 @@ public class FileUtils {
                         // 判断状态导出测量数据或标注数据
                         // 用户手工绘制的json
                         if (status == 0) {
-                            if (properties.get("annotation_type").equals("Draw")) {
+                            if ("Draw".equals(properties.get("annotation_type"))) {
                                 featuresList.add(featureObject);
                             }
                         } else if (status == 1) {

@@ -6,10 +6,6 @@
     <resultMap type="cn.staitech.anno.domain.round.Round" id="RundResult">
         <result property="roundId" column="round_id"/>
         <result property="roundName" column="round_name"/>
+        <result property="roundNameEn" column="round_name_en"/>
     </resultMap>
-
-<!--    <select id="selectList">
-        select round_id, round_name
-        from tb_round
-    </select>-->
 </mapper>

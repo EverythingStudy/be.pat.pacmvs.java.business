@@ -4,29 +4,29 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.*;
 import cn.staitech.anno.domain.marking.Marking;
-import cn.staitech.anno.domain.po.ProjectPo;
 import cn.staitech.anno.domain.project.ProjectExt;
+import cn.staitech.anno.domain.project.ProjectPo;
 import cn.staitech.anno.domain.special.Special;
 import cn.staitech.anno.domain.vo.ExaminationListVO;
 import cn.staitech.anno.domain.vo.ProjectListOutVO;
-import cn.staitech.anno.domain.vo.SlideSelectVO;
 import cn.staitech.anno.domain.vo.image.ProjectStatisticsVo;
 import cn.staitech.anno.domain.vo.image.SlideReportSummaryVo;
 import cn.staitech.anno.domain.vo.image.SlideReportVo;
-import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetPagerVO;
-import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO;
-import cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO;
+import cn.staitech.anno.domain.vo.imagecsv.ImageCsvGetPagerVO;
+import cn.staitech.anno.domain.vo.imagecsv.ImageCsvGetVO;
+import cn.staitech.anno.domain.vo.imagecsv.ImageCsvListVO;
 import cn.staitech.anno.domain.vo.marking.out.SlideSelectBy;
-import cn.staitech.anno.domain.vo.slideVo.AddSlideIdsVO;
-import cn.staitech.anno.domain.vo.slideVo.AddSlideVO;
+import cn.staitech.anno.domain.vo.slide.AddSlideIdsVO;
+import cn.staitech.anno.domain.vo.slide.AddSlideVO;
+import cn.staitech.anno.domain.vo.slide.SlideSelectVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListOutVO;
 import cn.staitech.anno.mapper.*;
-import cn.staitech.anno.response.R;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
@@ -132,8 +132,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         }
         return slideMapper.selectSlideListByProjectIdList(projectIdList);
     }
-
-//    @SuppressWarnings("checkstyle:WhitespaceAfter")
 
     /**
      * 通过切片ID查询切片信息
@@ -463,10 +461,10 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         StringBuilder res = new StringBuilder();
         ProjectExt projectExt = projectExtMapper.selectById(projectId);
         if (projectExt == null) {
-            throw new Exception("未发现项目信息");
+            throw new Exception(MessageSource.M("NOT_FOND_PROJECT"));
         }
         if (slideList.size() == 0) {
-            throw new Exception("请选择切片");
+            throw new Exception(MessageSource.M("PLEASE_SELECT_A_SLICE"));
         }
         for (Long slide : slideList) {
             QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();

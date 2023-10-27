@@ -3,9 +3,11 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.project.mapper.ProjectMapperV1">
-
-    <select id="queryProject" parameterType="cn.staitech.anno.project.vo.ProjectIN" resultType="cn.staitech.anno.project.vo.ProjectVO">
-        select p.*,s.name as species_val,o.organization_name,u.user_name,i.indicator_name,ps.name as ps_name
+    <select id="queryProject" parameterType="cn.staitech.anno.project.vo.ProjectIN"
+            resultType="cn.staitech.anno.project.vo.ProjectVO">
+        select p.*,s.name as species_val,s.name_en as
+        species_val_en,o.organization_name,u.user_name,i.indicator_name,i.indicator_name_en,ps.name as
+        ps_name,ps.name_en as ps_name_en
         from tb_project p
         left join tb_project_member m on p.project_id = m.project_id
         left join tb_species s on p.species_id = s.species_id
@@ -55,8 +57,11 @@
         order by p.create_time desc
     </select>
 
-    <select id="pageProject" parameterType="cn.staitech.anno.project.vo.ProjectIN" resultType="cn.staitech.anno.project.vo.ProjectVO">
-        select p.*,s.name as species_val,o.organization_name,u.user_name,i.indicator_name,ps.name as ps_name
+    <select id="pageProject" parameterType="cn.staitech.anno.project.vo.ProjectIN"
+            resultType="cn.staitech.anno.project.vo.ProjectVO">
+        select distinct p.*,s.name as species_val,s.name_en as
+        species_val_en,o.organization_name,u.user_name,i.indicator_name,i.indicator_name_en,ps.name as
+        ps_name,ps.name_en as ps_name_en
         from tb_project p
         left join tb_project_member m on p.project_id = m.project_id
         left join tb_species s on p.species_id = s.species_id

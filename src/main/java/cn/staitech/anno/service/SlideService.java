@@ -3,20 +3,20 @@ package cn.staitech.anno.service;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.vo.ExaminationListVO;
 import cn.staitech.anno.domain.vo.ProjectListOutVO;
-import cn.staitech.anno.domain.vo.SlideSelectVO;
 import cn.staitech.anno.domain.vo.image.ProjectStatisticsVo;
 import cn.staitech.anno.domain.vo.image.SlideReportSummaryVo;
 import cn.staitech.anno.domain.vo.image.SlideReportVo;
-import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetPagerVO;
-import cn.staitech.anno.domain.vo.imageCsv.ImageCsvGetVO;
-import cn.staitech.anno.domain.vo.imageCsv.ImageCsvListVO;
+import cn.staitech.anno.domain.vo.imagecsv.ImageCsvGetPagerVO;
+import cn.staitech.anno.domain.vo.imagecsv.ImageCsvGetVO;
+import cn.staitech.anno.domain.vo.imagecsv.ImageCsvListVO;
 import cn.staitech.anno.domain.vo.marking.out.SlideSelectBy;
-import cn.staitech.anno.domain.vo.slideVo.AddSlideIdsVO;
-import cn.staitech.anno.domain.vo.slideVo.AddSlideVO;
+import cn.staitech.anno.domain.vo.slide.AddSlideIdsVO;
+import cn.staitech.anno.domain.vo.slide.AddSlideVO;
+import cn.staitech.anno.domain.vo.slide.SlideSelectVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListInVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticSlideListOutVO;
 import cn.staitech.anno.utils.PageMaster;
-import cn.staitech.anno.response.R;
+import cn.staitech.common.core.domain.R;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Param;
 
@@ -188,7 +188,6 @@ public interface SlideService extends IService<Slide> {
     boolean addAnnoSlidesBatch(AddSlideVO addSlideVO);
 
 
-
     /**
      * 选片 - 添加切片（新） .
      *
@@ -220,6 +219,7 @@ public interface SlideService extends IService<Slide> {
 
     /**
      * 查询切片、图片信息接口
+     *
      * @param slideId 切片id
      * @return
      */

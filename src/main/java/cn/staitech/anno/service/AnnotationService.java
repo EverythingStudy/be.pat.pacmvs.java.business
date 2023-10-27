@@ -2,7 +2,10 @@ package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.Annotation;
 import cn.staitech.anno.domain.SlideViewer;
-import cn.staitech.anno.domain.vo.*;
+import cn.staitech.anno.domain.vo.AnnotationBroadcastVO;
+import cn.staitech.anno.domain.vo.AnnotationJsonVO;
+import cn.staitech.anno.domain.vo.AnnotationPageVO;
+import cn.staitech.anno.domain.vo.AnnotationStateVO;
 
 import java.util.List;
 
@@ -13,7 +16,7 @@ import java.util.List;
  */
 
 public interface AnnotationService {
-    
+
     /**
      * 查询标注Roi .
      *
@@ -21,7 +24,7 @@ public interface AnnotationService {
      * @return True || false
      */
     List<Annotation> selectAnnotationRoi(Long slideId);
-    
+
     /**
      * 批量删除RoI标注 .
      *
@@ -29,8 +32,8 @@ public interface AnnotationService {
      * @return True || false
      */
     int batchDeleteRoi(Long slideId);
-    
-    
+
+
     /**
      * 批量插入标注信息 .
      *
@@ -38,7 +41,7 @@ public interface AnnotationService {
      * @return True || false
      */
     int insertAnnotationList(List<Annotation> annotationList);
-    
+
     /**
      * 分页查询 .
      *
@@ -46,7 +49,7 @@ public interface AnnotationService {
      * @return 分页后的数据
      */
     List<AnnotationBroadcastVO> annotationUserCategory(AnnotationPageVO annotationPageVo);
-    
+
     /**
      * 标注详情查询 .
      *
@@ -54,7 +57,7 @@ public interface AnnotationService {
      * @return 标注详情数据
      */
     AnnotationBroadcastVO annoUserCategory(Long annotationId);
-    
+
     /**
      * 查询标注的数量 .
      *
@@ -62,7 +65,7 @@ public interface AnnotationService {
      * @return 数量
      */
     int annotationCount(Long slideId);
-    
+
     /**
      * .
      *
@@ -70,7 +73,7 @@ public interface AnnotationService {
      * @return
      */
     Annotation selectAnnotationById(Long annotationId);
-    
+
     /**
      * 新增标注 .
      *
@@ -78,7 +81,7 @@ public interface AnnotationService {
      * @return 结果
      */
     int insertAnnotation(Annotation annotation);
-    
+
     /**
      * 修改标注 .
      *
@@ -87,7 +90,7 @@ public interface AnnotationService {
      * @throws Exception 添加事务
      */
     int updateAnnotation(Annotation annotation);
-    
+
     /**
      * 修改标注描述 .
      *
@@ -95,7 +98,7 @@ public interface AnnotationService {
      * @return 结果
      */
     int updateAnnotationDescription(Annotation annotation);
-    
+
     /**
      * 删除标注 .
      *
@@ -103,25 +106,25 @@ public interface AnnotationService {
      * @return 结果
      */
     int deleteAnnotationById(Long annotationId);
-    
-    
+
+
     /**
      * 查询图像信息 .
      *
      * @param slideId 切片id
      */
     SlideViewer selectImageBySlideId(Long slideId);
-    
+
     /**
      * 修改标注状态 .
      *
      * @param viewerAnnotationVo 标注状态
      */
     int updateViewerAnnotation(AnnotationStateVO viewerAnnotationVo);
-    
-    
+
+
     List<AnnotationJsonVO> selectAnnotationJson(Long slideId);
-    
+
     /**
      * 根据projectId 查询用户 .
      *
@@ -129,7 +132,7 @@ public interface AnnotationService {
      * @return
      */
     List<Annotation> selectByProjectId(Long projectId);
-    
+
     /**
      * 根据annotation 查询标注信息 .
      *
@@ -137,8 +140,8 @@ public interface AnnotationService {
      * @return
      */
     public List<Annotation> selectByCondition(Annotation annotation);
-    
-    
+
+
     /**
      * 通过项目ID，用户ID，删除标注 .
      *
@@ -146,7 +149,7 @@ public interface AnnotationService {
      * @return 结果
      */
     public int deleteAnnotationByProjectIdAndUserId(Annotation annotation);
-    
+
     /**
      * 切片id查询unable以外标注 .
      *
@@ -154,7 +157,7 @@ public interface AnnotationService {
      * @return 结果
      */
     public Integer selectAnnotationCount(Long slideId);
-    
+
     /**
      * 通过项目ID，用户ID，查询标注 .
      *
@@ -162,7 +165,7 @@ public interface AnnotationService {
      * @return 结果
      */
     public List<Annotation> selectAnnotationByProjectIdAndUserId(Annotation annotation);
-    
+
     /**
      * 通过切片id查询所有标注 .
      *
@@ -170,7 +173,7 @@ public interface AnnotationService {
      * @return 结果
      */
     public List<Annotation> selectSlideBy(Long slideId);
-    
+
     /**
      * 查询当前用户在项目中的权限 .
      *
@@ -178,7 +181,7 @@ public interface AnnotationService {
      * @return 结果
      */
     boolean getPermission(Long projectId, String permission) throws Exception;
-    
+
     /**
      * 查询已导入的标注
      *

@@ -3,7 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.MarkingMapper">
-
     <resultMap type="cn.staitech.anno.domain.marking.Marking" id="markingResult">
         <result property="marking_id" column="marking_id"/>
         <result property="annotation_id" column="annotation_id"/>
@@ -29,7 +28,6 @@
         <result property="slide_id" column="slide_id"/>
         <result property="point_count" column="point_count"/>
     </resultMap>
-
 
 
     <resultMap type="cn.staitech.anno.domain.geojson.JsonExport" id="jsonExportResult">
@@ -62,8 +60,10 @@
 
     <resultMap type="cn.staitech.anno.domain.geojson.Features" id="featuresResult">
         <result property="id" column="annotation_id"/>
-        <result property="geometry" column="geometry" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
-        <result property="properties" column="properties" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="geometry" column="geometry"
+                typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="properties" column="properties"
+                typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
     </resultMap>
 
     <resultMap type="cn.staitech.anno.domain.geojson.Properties" id="propertiesResult">
@@ -138,178 +138,170 @@
     </sql>
 
     <sql id="selectBy">
-        SELECT
-            t.annotation_type,
-            t.marking_id,
-            t.area,
-            t.perimeter,
-            t.description,
-            t.category_id,
-            t.measure_type,
-            t.measure_relation,
-            t.measure_name,
-            t.measure_number,
-            t.radius,
-            t.mean_distance,
-            t.max_distance,
-            t.min_distance,
-            t.inner_angle,
-            t.exterior_angle,
-            t.create_by,
-            t.create_time,
-            t.location_type,
-            t.slide_id,
-            t.center_point,
-            t.point_count,
-            t.annotation_owner,
-            c.rgb as label_color,
-            c.category_name as label_name,
-            CONCAT_WS( "_", CONCAT( t.measure_name, t.number ), c.category_name) as measure_full_name,
-            t.annotation_owner,
-            t.annotation_update_owner,
-            t.update_time,
-            t.update_by,
-            t.image_id,
-            t.project_id,
-            t.image_url
-        FROM
-            tb_marking AS t
-                LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
+        SELECT t.annotation_type,
+               t.marking_id,
+               t.area,
+               t.perimeter,
+               t.description,
+               t.category_id,
+               t.measure_type,
+               t.measure_relation,
+               t.measure_name,
+               t.measure_number,
+               t.radius,
+               t.mean_distance,
+               t.max_distance,
+               t.min_distance,
+               t.inner_angle,
+               t.exterior_angle,
+               t.create_by,
+               t.create_time,
+               t.location_type,
+               t.slide_id,
+               t.center_point,
+               t.point_count,
+               t.annotation_owner,
+               c.rgb                                                             as label_color,
+               c.category_name                                                   as label_name,
+               CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) as measure_full_name,
+               t.annotation_owner,
+               t.annotation_update_owner,
+               t.update_time,
+               t.update_by,
+               t.image_id,
+               t.project_id,
+               t.image_url
+        FROM tb_marking AS t
+                 LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
     </sql>
 
     <sql id="selectPoint">
-        SELECT DISTINCT
-            CONCAT_WS( "_", t.measure_name, t1.category_name ) as measure_full_name,
-            t.point_count
-        FROM
-            tb_marking AS t
-                LEFT JOIN tb_pathological_indicator_category AS t1 ON t.category_id = t1.category_id
+        SELECT DISTINCT CONCAT_WS("_", t.measure_name, t1.category_name) as measure_full_name,
+                        t.point_count
+        FROM tb_marking AS t
+                 LEFT JOIN tb_pathological_indicator_category AS t1 ON t.category_id = t1.category_id
     </sql>
 
     <sql id="selectList">
-        SELECT
-            annotation_id,
-            geometry,
-            JSON_OBJECT(
-                    "annotation_type",
-                    t.annotation_type,
-                    "area",
-                    t.area,
-                    "perimeter",
-                    t.perimeter,
-                    "measure_type",
-                    t.measure_type,
-                    "measure_relation",
-                    t.measure_relation,
-                    "measure_name",
-                    t.measure_name,
-                    "measure_number",
-                    t.measure_number,
-                    "radius",
-                    t.radius,
-                    "mean_distance",
-                    t.mean_distance,
-                    "max_distance",
-                    t.max_distance,
-                    "min_distance",
-                    t.min_distance,
-                    "inner_angle",
-                    t.inner_angle,
-                    "exterior_angle",
-                    t.exterior_angle,
-                    "create_time",
-                    DATE_FORMAT( t.create_time, '%Y-%m-%d %H:%i:%s' ),
-                    "center_point",
-                    t.center_point,
-                    "annotation_owner",
-                    cast(t.create_by as char(200)),
-                    "label_color" ,
-                    c.rgb,
-                    "label_code" ,
-                    c.number,
-                    "number" ,
-                    t.number,
-                    "label_name",
-                    c.category_name,
-                    "measure_full_name",
-                    CONCAT_WS( "_", CONCAT( t.measure_name, t.number ), c.category_name)
-                ) AS properties
-        FROM
-            tb_marking AS t
-                LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
+        SELECT annotation_id,
+               geometry,
+               JSON_OBJECT(
+                       "annotation_type",
+                       t.annotation_type,
+                       "area",
+                       t.area,
+                       "perimeter",
+                       t.perimeter,
+                       "measure_type",
+                       t.measure_type,
+                       "measure_relation",
+                       t.measure_relation,
+                       "measure_name",
+                       t.measure_name,
+                       "measure_number",
+                       t.measure_number,
+                       "radius",
+                       t.radius,
+                       "mean_distance",
+                       t.mean_distance,
+                       "max_distance",
+                       t.max_distance,
+                       "min_distance",
+                       t.min_distance,
+                       "inner_angle",
+                       t.inner_angle,
+                       "exterior_angle",
+                       t.exterior_angle,
+                       "create_time",
+                       DATE_FORMAT(t.create_time, '%Y-%m-%d %H:%i:%s'),
+                       "center_point",
+                       t.center_point,
+                       "annotation_owner",
+                       cast(t.create_by as char(200)),
+                       "label_color",
+                       c.rgb,
+                       "label_code",
+                       c.number,
+                       "number",
+                       t.number,
+                       "label_name",
+                       c.category_name,
+                       "measure_full_name",
+                       CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name)
+                   ) AS properties
+        FROM tb_marking AS t
+                 LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
     </sql>
 
     <sql id="selectListBy">
-        SELECT
-            annotation_id,
-            geometry,
-            JSON_OBJECT(
-                    "annotation_type",
-                    t.annotation_type,
-                    "marking_id",
-                    t.marking_id,
-                    "area",
-                    t.area,
-                    "perimeter",
-                    t.perimeter,
-                    "description",
-                    t.description,
-                    "category_id",
-                    t.category_id,
-                    "measure_type",
-                    t.measure_type,
-                    "measure_relation",
-                    t.measure_relation,
-                    "measure_name",
-                    t.measure_name,
-                    "measure_number",
-                    t.measure_number,
-                    "radius",
-                    t.radius,
-                    "mean_distance",
-                    t.mean_distance,
-                    "max_distance",
-                    t.max_distance,
-                    "min_distance",
-                    t.min_distance,
-                    "inner_angle",
-                    t.inner_angle,
-                    "exterior_angle",
-                    t.exterior_angle,
-                    "create_by",
-                    t.create_by,
-                    "create_time",
-                    DATE_FORMAT( t.create_time, '%Y-%m-%d %H:%i:%s' ),
-                    "location_type",
-                    t.location_type,
-                    "slide_id",
-                    t.slide_id,
-                    "center_point",
-                    t.center_point,
-                    "point_count",
-                    t.point_count,
-                    "annotation_owner",
-                    t.annotation_owner,
-                    "label_color" ,
-                    c.rgb,
-                    "label_code" ,
-                    c.number,
-                    "number" ,
-                    t.number,
-                    "label_name",
-                    c.category_name,
-                    "measure_full_name",
-                    CONCAT_WS( "_", CONCAT( t.measure_name, t.number ), c.category_name),
-                    "image_id",
-                    t.image_id,
-                    "project_id",
-                    t.project_id,
-                    "image_url",
-                    t.image_url
-                ) AS properties
-        FROM
-            tb_marking AS t
-                LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
+        SELECT annotation_id,
+               geometry,
+               JSON_OBJECT(
+                       "annotation_type",
+                       t.annotation_type,
+                       "marking_id",
+                       t.marking_id,
+                       "area",
+                       t.area,
+                       "perimeter",
+                       t.perimeter,
+                       "description",
+                       t.description,
+                       "category_id",
+                       t.category_id,
+                       "measure_type",
+                       t.measure_type,
+                       "measure_relation",
+                       t.measure_relation,
+                       "measure_name",
+                       t.measure_name,
+                       "measure_number",
+                       t.measure_number,
+                       "radius",
+                       t.radius,
+                       "mean_distance",
+                       t.mean_distance,
+                       "max_distance",
+                       t.max_distance,
+                       "min_distance",
+                       t.min_distance,
+                       "inner_angle",
+                       t.inner_angle,
+                       "exterior_angle",
+                       t.exterior_angle,
+                       "create_by",
+                       t.create_by,
+                       "create_time",
+                       DATE_FORMAT(t.create_time, '%Y-%m-%d %H:%i:%s'),
+                       "location_type",
+                       t.location_type,
+                       "slide_id",
+                       t.slide_id,
+                       "center_point",
+                       t.center_point,
+                       "point_count",
+                       t.point_count,
+                       "annotation_owner",
+                       t.annotation_owner,
+                       "label_color",
+                       c.rgb,
+                       "label_code",
+                       c.number,
+                       "number",
+                       t.number,
+                       "label_name",
+                       c.category_name,
+                       "measure_full_name",
+                       CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name),
+                       "image_id",
+                       t.image_id,
+                       "project_id",
+                       t.project_id,
+                       "image_url",
+                       t.image_url
+                   ) AS properties
+        FROM tb_marking AS t
+                 LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
     </sql>
 
     <select id="selectListBy" parameterType="long" resultMap="featuresResult">
@@ -326,59 +318,51 @@
     <select id="selectMeasureList" parameterType="long" resultMap="propertiesResult">
         <include refid="selectBy"/>
         where
-            t.slide_id = #{slideId}
-            AND t.location_type != "Point"
+        t.slide_id = #{slideId}
+        AND t.location_type != "Point"
     </select>
-
 
 
     <select id="jsonExportSelect" parameterType="long" resultMap="jsonExportResult">
-        SELECT
-            t.topic_name,
-            p.project_id,
-            p.project_name,
-            pi.species_id,
-            pi.organ_id,
-            i.file_name as image_name,
-            i.format,
-            i.image_url,
-            p.indicator_id,
-            s.create_time,
-            CONCAT_WS(',', i.width, i.height ) AS image_shape
-        FROM
-            tb_slide AS s
-                LEFT JOIN tb_project AS p ON p.project_id = s.project_id
-                LEFT JOIN tb_review_round AS re on re.review_round_id = s.review_round_id
-                LEFT JOIN tb_topic AS t ON t.topic_id = re.topic_id
-                LEFT JOIN tb_image AS i ON i.image_id = s.image_id
-                LEFT JOIN tb_pathological_indicator as pi on pi.indicator_id = p.indicator_id
-        WHERE
-            s.slide_id = #{slideId}
+        SELECT t.topic_name,
+               p.project_id,
+               p.project_name,
+               pi.species_id,
+               pi.organ_id,
+               i.file_name                       as image_name,
+               i.format,
+               i.image_url,
+               p.indicator_id,
+               s.create_time,
+               CONCAT_WS(',', i.width, i.height) AS image_shape
+        FROM tb_slide AS s
+                 LEFT JOIN tb_project AS p ON p.project_id = s.project_id
+                 LEFT JOIN tb_review_round AS re on re.review_round_id = s.review_round_id
+                 LEFT JOIN tb_topic AS t ON t.topic_id = re.topic_id
+                 LEFT JOIN tb_image AS i ON i.image_id = s.image_id
+                 LEFT JOIN tb_pathological_indicator as pi on pi.indicator_id = p.indicator_id
+        WHERE s.slide_id = #{slideId}
     </select>
 
     <select id="reviewJsonExportSelect" parameterType="long" resultMap="jsonExportResult">
-        SELECT
-            t.topic_name,
-            p.project_id,
-            p.project_name,
-            pi.species_id,
-            pi.organ_id,
-            i.file_name as image_name,
-            i.format,
-            i.image_url,
-            p.indicator_id,
-            s.create_time,
-            CONCAT_WS(',', i.width, i.height ) AS image_shape
-        FROM
-            tb_slide AS s
-                LEFT JOIN tb_project AS p ON p.project_id = s.project_id
-                LEFT JOIN tb_topic AS t ON t.topic_id = s.topic_id
-                LEFT JOIN tb_image AS i ON i.image_id = s.image_id
-                LEFT JOIN tb_pathological_indicator as pi on pi.indicator_id = p.indicator_id
-        WHERE
-            s.slide_id = #{slideId}
+        SELECT t.topic_name,
+               p.project_id,
+               p.project_name,
+               pi.species_id,
+               pi.organ_id,
+               i.file_name                       as image_name,
+               i.format,
+               i.image_url,
+               p.indicator_id,
+               s.create_time,
+               CONCAT_WS(',', i.width, i.height) AS image_shape
+        FROM tb_slide AS s
+                 LEFT JOIN tb_project AS p ON p.project_id = s.project_id
+                 LEFT JOIN tb_topic AS t ON t.topic_id = s.topic_id
+                 LEFT JOIN tb_image AS i ON i.image_id = s.image_id
+                 LEFT JOIN tb_pathological_indicator as pi on pi.indicator_id = p.indicator_id
+        WHERE s.slide_id = #{slideId}
     </select>
-
 
 
     <select id="selectLists" parameterType="long" resultMap="featuresResult">
@@ -438,61 +422,61 @@
         </if>
     </select>
 
-<!--    <select id="selectById" parameterType="Long" resultMap="markingResult">-->
-<!--        <include refid="selectMarking"/>-->
-<!--        where marking_id = #{markingId}-->
-<!--    </select>-->
+    <!--    <select id="selectById" parameterType="Long" resultMap="markingResult">-->
+    <!--        <include refid="selectMarking"/>-->
+    <!--        where marking_id = #{markingId}-->
+    <!--    </select>-->
 
-<!--    <insert id="insert" parameterType="cn.staitech.anno.domain.marking.Marking" useGeneratedKeys="true"-->
-<!--            keyProperty="marking_id">-->
-<!--        insert into tb_marking (-->
-<!--        <if test="annotation_id != null and annotation_id != '' ">annotation_id,</if>-->
-<!--        <if test="area != null and area != '' ">area,</if>-->
-<!--        <if test="perimeter != null and perimeter != '' ">perimeter,</if>-->
-<!--        <if test="description != null and description != ''">description ,</if>-->
-<!--        <if test="category_id != null and category_id != ''">category_id,</if>-->
-<!--        <if test="measure_full_name != null and measure_full_name != '' ">measure_full_name,</if>-->
-<!--        <if test="measure_type != null and measure_type   != '' ">measure_type,</if>-->
-<!--        <if test="measure_relation != null and measure_relation != '' ">measure_relation,</if>-->
-<!--        <if test="measure_name != null and measure_name != ''">measure_name,</if>-->
-<!--        <if test="measure_number != null and measure_number != ''">measure_number,</if>-->
-<!--        <if test="radius != null and radius != ''">radius,</if>-->
-<!--        <if test="mean_distance != null and mean_distance != ''">mean_distance,</if>-->
-<!--        <if test="max_distance != null and max_distance != ''">max_distance,</if>-->
-<!--        <if test="min_distance != null and min_distance != ''">min_distance,</if>-->
-<!--        <if test="inner_angle != null and inner_angle != ''">inner_angle,</if>-->
-<!--        <if test="exterior_angle != null and exterior_angle != ''">exterior_angle,</if>-->
-<!--        <if test="annotation_type != null and annotation_type != ''">annotation_type,</if>-->
-<!--        <if test="center_point != null and center_point != ''">center_point,</if>-->
-<!--        <if test="location_type != null and location_type != ''">location_type,</if>-->
-<!--        <if test="create_by != null and create_by != ''">create_by,</if>-->
-<!--        <if test="slide_id != null and slide_id != ''">slide_id,</if>-->
-<!--        create_time-->
-<!--        )values(-->
-<!--        <if test="annotation_id != null and annotation_id != ''">#{annotation_id},</if>-->
-<!--        <if test="area != null and area != ''">#{area},</if>-->
-<!--        <if test="perimeter != null and perimeter != ''">#{perimeter},</if>-->
-<!--        <if test="description != null and description != ''">#{description},</if>-->
-<!--        <if test="category_id != null and category_id != ''">#{category_id},</if>-->
-<!--        <if test="measure_full_name != null and measure_full_name != ''">#{measure_full_name},</if>-->
-<!--        <if test="measure_type != null and measure_type != ''">#{measure_type},</if>-->
-<!--        <if test="measure_relation != null and measure_relation != ''">#{measure_relation},</if>-->
-<!--        <if test="measure_name != null and measure_name != ''">#{measure_name},</if>-->
-<!--        <if test="measure_number != null and measure_number != ''">#{measure_number},</if>-->
-<!--        <if test="radius != null and radius != ''">#{radius},</if>-->
-<!--        <if test="mean_distance != null and mean_distance != ''">#{mean_distance},</if>-->
-<!--        <if test="max_distance != null and max_distance != ''">#{max_distance},</if>-->
-<!--        <if test="min_distance != null and min_distance != ''">#{min_distance},</if>-->
-<!--        <if test="inner_angle != null and inner_angle != ''">#{inner_angle},</if>-->
-<!--        <if test="exterior_angle != null and exterior_angle != ''">#{exterior_angle},</if>-->
-<!--        <if test="annotation_type != null and annotation_type != ''">#{annotation_type},</if>-->
-<!--        <if test="center_point != null and center_point != ''">#{center_point},</if>-->
-<!--        <if test="location_type != null and location_type != ''">#{location_type},</if>-->
-<!--        <if test="create_by != null and create_by != ''">#{create_by},</if>-->
-<!--        <if test="slide_id != null and slide_id != ''">#{slide_id},</if>-->
-<!--        sysdate()-->
-<!--        )-->
-<!--    </insert>-->
+    <!--    <insert id="insert" parameterType="cn.staitech.anno.domain.marking.Marking" useGeneratedKeys="true"-->
+    <!--            keyProperty="marking_id">-->
+    <!--        insert into tb_marking (-->
+    <!--        <if test="annotation_id != null and annotation_id != '' ">annotation_id,</if>-->
+    <!--        <if test="area != null and area != '' ">area,</if>-->
+    <!--        <if test="perimeter != null and perimeter != '' ">perimeter,</if>-->
+    <!--        <if test="description != null and description != ''">description ,</if>-->
+    <!--        <if test="category_id != null and category_id != ''">category_id,</if>-->
+    <!--        <if test="measure_full_name != null and measure_full_name != '' ">measure_full_name,</if>-->
+    <!--        <if test="measure_type != null and measure_type   != '' ">measure_type,</if>-->
+    <!--        <if test="measure_relation != null and measure_relation != '' ">measure_relation,</if>-->
+    <!--        <if test="measure_name != null and measure_name != ''">measure_name,</if>-->
+    <!--        <if test="measure_number != null and measure_number != ''">measure_number,</if>-->
+    <!--        <if test="radius != null and radius != ''">radius,</if>-->
+    <!--        <if test="mean_distance != null and mean_distance != ''">mean_distance,</if>-->
+    <!--        <if test="max_distance != null and max_distance != ''">max_distance,</if>-->
+    <!--        <if test="min_distance != null and min_distance != ''">min_distance,</if>-->
+    <!--        <if test="inner_angle != null and inner_angle != ''">inner_angle,</if>-->
+    <!--        <if test="exterior_angle != null and exterior_angle != ''">exterior_angle,</if>-->
+    <!--        <if test="annotation_type != null and annotation_type != ''">annotation_type,</if>-->
+    <!--        <if test="center_point != null and center_point != ''">center_point,</if>-->
+    <!--        <if test="location_type != null and location_type != ''">location_type,</if>-->
+    <!--        <if test="create_by != null and create_by != ''">create_by,</if>-->
+    <!--        <if test="slide_id != null and slide_id != ''">slide_id,</if>-->
+    <!--        create_time-->
+    <!--        )values(-->
+    <!--        <if test="annotation_id != null and annotation_id != ''">#{annotation_id},</if>-->
+    <!--        <if test="area != null and area != ''">#{area},</if>-->
+    <!--        <if test="perimeter != null and perimeter != ''">#{perimeter},</if>-->
+    <!--        <if test="description != null and description != ''">#{description},</if>-->
+    <!--        <if test="category_id != null and category_id != ''">#{category_id},</if>-->
+    <!--        <if test="measure_full_name != null and measure_full_name != ''">#{measure_full_name},</if>-->
+    <!--        <if test="measure_type != null and measure_type != ''">#{measure_type},</if>-->
+    <!--        <if test="measure_relation != null and measure_relation != ''">#{measure_relation},</if>-->
+    <!--        <if test="measure_name != null and measure_name != ''">#{measure_name},</if>-->
+    <!--        <if test="measure_number != null and measure_number != ''">#{measure_number},</if>-->
+    <!--        <if test="radius != null and radius != ''">#{radius},</if>-->
+    <!--        <if test="mean_distance != null and mean_distance != ''">#{mean_distance},</if>-->
+    <!--        <if test="max_distance != null and max_distance != ''">#{max_distance},</if>-->
+    <!--        <if test="min_distance != null and min_distance != ''">#{min_distance},</if>-->
+    <!--        <if test="inner_angle != null and inner_angle != ''">#{inner_angle},</if>-->
+    <!--        <if test="exterior_angle != null and exterior_angle != ''">#{exterior_angle},</if>-->
+    <!--        <if test="annotation_type != null and annotation_type != ''">#{annotation_type},</if>-->
+    <!--        <if test="center_point != null and center_point != ''">#{center_point},</if>-->
+    <!--        <if test="location_type != null and location_type != ''">#{location_type},</if>-->
+    <!--        <if test="create_by != null and create_by != ''">#{create_by},</if>-->
+    <!--        <if test="slide_id != null and slide_id != ''">#{slide_id},</if>-->
+    <!--        sysdate()-->
+    <!--        )-->
+    <!--    </insert>-->
 
     <insert id="delete" parameterType="java.lang.Long">
         delete
@@ -500,32 +484,32 @@
         where marking_id = #{markingId}
     </insert>
 
-<!--    <update id="update" parameterType="cn.staitech.anno.domain.marking.Marking" useGeneratedKeys="true"-->
-<!--            keyProperty="marking_id">-->
-<!--        update tb_marking-->
-<!--        <set>-->
-<!--            <if test="area != null and area != ''">area = #{area},</if>-->
-<!--            <if test="perimeter != null and perimeter != ''">perimeter = #{perimeter},</if>-->
-<!--            <if test="description != null">description = #{description},</if>-->
-<!--            <if test="category_id != null">category_id = #{category_id},</if>-->
-<!--            <if test="measure_type != null and measure_type != ''">measure_type = #{measure_type},</if>-->
-<!--            <if test="measure_full_name != null and measure_full_name != ''">measure_full_name = #{measure_full_name},-->
-<!--            </if>-->
-<!--            <if test="measure_relation != null and measure_relation != ''">measure_relation = #{measure_relation},</if>-->
-<!--            <if test="measure_name != null and measure_name != ''">measure_name = #{measure_name},</if>-->
-<!--            <if test="measure_number != null and measure_number != ''">measure_number = #{measure_number},</if>-->
-<!--            <if test="radius != null and radius != ''">radius = #{radius},</if>-->
-<!--            <if test="mean_distance != null and mean_distance != ''">mean_distance = #{mean_distance},</if>-->
-<!--            <if test="max_distance != null and max_distance != ''">max_distance = #{max_distance},</if>-->
-<!--            <if test="min_distance != null and min_distance != ''">min_distance = #{min_distance},</if>-->
-<!--            <if test="inner_angle != null and inner_angle != ''">inner_angle = #{inner_angle},</if>-->
-<!--            <if test="exterior_angle != null and exterior_angle != ''">exterior_angle = #{exterior_angle},</if>-->
-<!--            <if test="annotation_type != null and annotation_type != ''">annotation_type = #{annotation_type},</if>-->
-<!--            <if test="center_point != null and center_point != ''">center_point = #{center_point},</if>-->
-<!--            <if test="location_type != null and location_type != ''">location_type = #{location_type}</if>-->
-<!--        </set>-->
-<!--        where marking_id = #{marking_id}-->
-<!--    </update>-->
+    <!--    <update id="update" parameterType="cn.staitech.anno.domain.marking.Marking" useGeneratedKeys="true"-->
+    <!--            keyProperty="marking_id">-->
+    <!--        update tb_marking-->
+    <!--        <set>-->
+    <!--            <if test="area != null and area != ''">area = #{area},</if>-->
+    <!--            <if test="perimeter != null and perimeter != ''">perimeter = #{perimeter},</if>-->
+    <!--            <if test="description != null">description = #{description},</if>-->
+    <!--            <if test="category_id != null">category_id = #{category_id},</if>-->
+    <!--            <if test="measure_type != null and measure_type != ''">measure_type = #{measure_type},</if>-->
+    <!--            <if test="measure_full_name != null and measure_full_name != ''">measure_full_name = #{measure_full_name},-->
+    <!--            </if>-->
+    <!--            <if test="measure_relation != null and measure_relation != ''">measure_relation = #{measure_relation},</if>-->
+    <!--            <if test="measure_name != null and measure_name != ''">measure_name = #{measure_name},</if>-->
+    <!--            <if test="measure_number != null and measure_number != ''">measure_number = #{measure_number},</if>-->
+    <!--            <if test="radius != null and radius != ''">radius = #{radius},</if>-->
+    <!--            <if test="mean_distance != null and mean_distance != ''">mean_distance = #{mean_distance},</if>-->
+    <!--            <if test="max_distance != null and max_distance != ''">max_distance = #{max_distance},</if>-->
+    <!--            <if test="min_distance != null and min_distance != ''">min_distance = #{min_distance},</if>-->
+    <!--            <if test="inner_angle != null and inner_angle != ''">inner_angle = #{inner_angle},</if>-->
+    <!--            <if test="exterior_angle != null and exterior_angle != ''">exterior_angle = #{exterior_angle},</if>-->
+    <!--            <if test="annotation_type != null and annotation_type != ''">annotation_type = #{annotation_type},</if>-->
+    <!--            <if test="center_point != null and center_point != ''">center_point = #{center_point},</if>-->
+    <!--            <if test="location_type != null and location_type != ''">location_type = #{location_type}</if>-->
+    <!--        </set>-->
+    <!--        where marking_id = #{marking_id}-->
+    <!--    </update>-->
 
     <update id="updatePointCount" parameterType="cn.staitech.anno.domain.marking.Marking" useGeneratedKeys="true"
             keyProperty="marking_id">
@@ -537,5 +521,4 @@
         AND slide_id = #{slide_id}
         AND location_type = 'Point'
     </update>
-
 </mapper>

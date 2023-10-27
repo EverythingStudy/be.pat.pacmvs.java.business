@@ -3,7 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.AnnotationMapper">
-
     <resultMap type="cn.staitech.anno.domain.Annotation" id="AnnotationResult">
         <result property="annotationId" column="annotation_id"/>
         <result property="measure" column="measure"/>
@@ -27,7 +26,6 @@
         <result property="y" column="y"/>
         <result property="annoType" column="anno_type"/>
         <result property="createCategoryId" column="create_category_id"/>
-
     </resultMap>
 
     <resultMap type="cn.staitech.anno.domain.vo.AnnotationBroadcastVO" id="sendMessage">
@@ -208,39 +206,99 @@
     <insert id="insertAnnotation" parameterType="cn.staitech.anno.domain.Annotation" useGeneratedKeys="true"
             keyProperty="annotationId">
         insert into tb_annotation (
-        <if test="measure != null and measure != '' ">measure,</if>
-        <if test="perimeter != null and perimeter != '' ">perimeter,</if>
-        <if test="annotationType != null and annotationType != '' ">annotation_type,</if>
-        <if test="examinationFlag != null and examinationFlag != ''">examination_flag ,</if>
-        <if test="description != null and description != '' ">description,</if>
-        <if test="attribute != null and attribute != '' ">attribute,</if>
-        <if test="locationType != null and locationType != '' ">location_type,</if>
-        <if test="location != null and location != ''">location,</if>
-        <if test="imageId != null and imageId != ''">image_id,</if>
-        <if test="createBy != null and createBy != ''">create_by,</if>
-        <if test="updateBy != null and updateBy != ''">update_by,</if>
-        <if test="slideId != null and slideId != ''">slide_id,</if>
-        <if test="projectId != null and projectId != ''">project_id,</if>
-        <if test="categoryId != null and categoryId != ''">category_id,</if>
-        <if test="createCategoryId != null and createCategoryId != ''">create_category_id,</if>
+        <if test="measure != null and measure != '' ">
+            measure,
+        </if>
+        <if test="perimeter != null and perimeter != '' ">
+            perimeter,
+        </if>
+        <if test="annotationType != null and annotationType != '' ">
+            annotation_type,
+        </if>
+        <if test="examinationFlag != null and examinationFlag != ''">
+            examination_flag ,
+        </if>
+        <if test="description != null and description != '' ">
+            description,
+        </if>
+        <if test="attribute != null and attribute != '' ">
+            attribute,
+        </if>
+        <if test="locationType != null and locationType != '' ">
+            location_type,
+        </if>
+        <if test="location != null and location != ''">
+            location,
+        </if>
+        <if test="imageId != null and imageId != ''">
+            image_id,
+        </if>
+        <if test="createBy != null and createBy != ''">
+            create_by,
+        </if>
+        <if test="updateBy != null and updateBy != ''">
+            update_by,
+        </if>
+        <if test="slideId != null and slideId != ''">
+            slide_id,
+        </if>
+        <if test="projectId != null and projectId != ''">
+            project_id,
+        </if>
+        <if test="categoryId != null and categoryId != ''">
+            category_id,
+        </if>
+        <if test="createCategoryId != null and createCategoryId != ''">
+            create_category_id,
+        </if>
         create_time,
         update_time
         )values(
-        <if test="measure != null and measure != ''">#{measure},</if>
-        <if test="perimeter != null and perimeter != ''">#{perimeter},</if>
-        <if test="annotationType != null and annotationType != ''">#{annotationType},</if>
-        <if test="examinationFlag != null and examinationFlag != ''">#{examinationFlag},</if>
-        <if test="description != null and description != ''">#{description},</if>
-        <if test="attribute != null and attribute != ''">#{attribute},</if>
-        <if test="locationType != null and locationType != ''">#{locationType},</if>
-        <if test="location != null and location != ''">ST_GEOMFROMTEXT(#{location}),</if>
-        <if test="imageId != null and imageId != ''">#{imageId},</if>
-        <if test="createBy != null and createBy != ''">#{createBy},</if>
-        <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
-        <if test="slideId != null and slideId != ''">#{slideId},</if>
-        <if test="projectId != null and projectId != ''">#{projectId},</if>
-        <if test="categoryId != null and categoryId != ''">#{categoryId},</if>
-        <if test="createCategoryId != null and createCategoryId != ''">#{createCategoryId},</if>
+        <if test="measure != null and measure != ''">
+            #{measure},
+        </if>
+        <if test="perimeter != null and perimeter != ''">
+            #{perimeter},
+        </if>
+        <if test="annotationType != null and annotationType != ''">
+            #{annotationType},
+        </if>
+        <if test="examinationFlag != null and examinationFlag != ''">
+            #{examinationFlag},
+        </if>
+        <if test="description != null and description != ''">
+            #{description},
+        </if>
+        <if test="attribute != null and attribute != ''">
+            #{attribute},
+        </if>
+        <if test="locationType != null and locationType != ''">
+            #{locationType},
+        </if>
+        <if test="location != null and location != ''">
+            ST_GEOMFROMTEXT(#{location}),
+        </if>
+        <if test="imageId != null and imageId != ''">
+            #{imageId},
+        </if>
+        <if test="createBy != null and createBy != ''">
+            #{createBy},
+        </if>
+        <if test="updateBy != null and updateBy != ''">
+            #{updateBy},
+        </if>
+        <if test="slideId != null and slideId != ''">
+            #{slideId},
+        </if>
+        <if test="projectId != null and projectId != ''">
+            #{projectId},
+        </if>
+        <if test="categoryId != null and categoryId != ''">
+            #{categoryId},
+        </if>
+        <if test="createCategoryId != null and createCategoryId != ''">
+            #{createCategoryId},
+        </if>
         sysdate(),
         sysdate()
         )
@@ -250,17 +308,38 @@
             keyProperty="annotationId">
         update tb_annotation
         <set>
-            <if test="measure != null and measure != ''">measure = #{measure},</if>
-            <if test="perimeter != null and perimeter != ''">perimeter = #{perimeter},</if>
-            <if test="annotationType != null and annotationType != ''">annotation_type = #{annotationType},</if>
-            <if test="examinationFlag  != null and examinationFlag != ''">examination_flag = #{examinationFlag},</if>
-            <if test="description != null and description != ''">description = #{description},</if>
-            <if test="attribute != null and attribute != ''">attribute = #{attribute},</if>
-            <if test="locationType != null and locationType != ''">location_type = #{locationType},</if>
-            <if test="location != null and location != ''">location = ST_GEOMFROMTEXT(#{location}),</if>
-            <if test="imageId != null and imageId != ''">image_id = #{imageId},</if>
-            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
-            <if test="createCategoryId != null and createCategoryId != ''">create_category_id = #{createCategoryId},
+            <if test="measure != null and measure != ''">
+                measure = #{measure},
+            </if>
+            <if test="perimeter != null and perimeter != ''">
+                perimeter = #{perimeter},
+            </if>
+            <if test="annotationType != null and annotationType != ''">
+                annotation_type = #{annotationType},
+            </if>
+            <if test="examinationFlag  != null and examinationFlag != ''">
+                examination_flag = #{examinationFlag},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="attribute != null and attribute != ''">
+                attribute = #{attribute},
+            </if>
+            <if test="locationType != null and locationType != ''">
+                location_type = #{locationType},
+            </if>
+            <if test="location != null and location != ''">
+                location = ST_GEOMFROMTEXT(#{location}),
+            </if>
+            <if test="imageId != null and imageId != ''">
+                image_id = #{imageId},
+            </if>
+            <if test="updateBy != null and updateBy != ''">
+                update_by = #{updateBy},
+            </if>
+            <if test="createCategoryId != null and createCategoryId != ''">
+                create_category_id = #{createCategoryId},
             </if>
             category_id = #{categoryId},
             update_time = sysdate()
@@ -273,7 +352,9 @@
         update tb_annotation
         <set>
             description = #{description},
-            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateBy != null and updateBy != ''">
+                update_by = #{updateBy},
+            </if>
             update_time = sysdate()
         </set>
         where annotation_id = #{annotationId}
@@ -312,7 +393,8 @@
             resultMap="AnnotationJsonResult">
         <include refid="selectAnnotationJsonVo"/>
         <where>
-            <if test="slideId !=null and slideId != ''"></if>
+            <if test="slideId !=null and slideId != ''">
+            </if>
             a.slide_id = #{slideId}
         </where>
     </select>

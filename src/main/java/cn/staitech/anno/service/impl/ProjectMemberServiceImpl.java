@@ -4,7 +4,6 @@ import cn.staitech.anno.domain.ProjectMember;
 import cn.staitech.anno.mapper.ProjectMemberMapper;
 import cn.staitech.anno.service.ProjectMemberService;
 import cn.staitech.common.security.utils.SecurityUtils;
-import cn.staitech.system.api.domain.SysUser;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

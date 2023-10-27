@@ -5,7 +5,9 @@ import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import cn.staitech.anno.project.domain.*;
 import cn.staitech.anno.project.mapper.*;
+import cn.staitech.anno.project.service.SlideService;
 import cn.staitech.anno.project.vo.*;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -13,7 +15,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import cn.staitech.anno.project.service.SlideService;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
@@ -34,7 +35,6 @@ import java.util.stream.Collectors;
 @Service("SlideServiceImplV1")
 public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         implements SlideService {
-
     @Resource
     private PathologicalIndicatorCategoryMapperV1 pathologicalIndicatorCategoryMapperV1;
     @Resource
@@ -48,13 +48,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
 
     @Resource
     private ReviewMapper reviewMapper;
-
-    private static final String col1 = "图像id";
-    private static final String col2 = "图像名称";
-    private static final String col3 = "项目名称";
-    private static final String col4 = "图像描述";
-    private static final String col5 = "图像标注总数";
-    private static final String col6 = "无属性数量";
 
     public void reviewHandle(List<Long> slideIds) {
         QueryWrapper<Review> queryWrapper = Wrappers.query();
@@ -95,7 +88,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         return pageMaster;
     }
 
-    private Integer getAnnoCount(Integer projectId)throws Exception{
+    private Integer getAnnoCount(Integer projectId) throws Exception {
         List<Slide> list = getBaseMapper().selectList(Wrappers.query(Slide.builder().status("6").projectId(projectId).build()).select("slide_id"));
         Integer count = 0;
         List<Long> slideIds = new ArrayList<>();
@@ -104,7 +97,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
                 slideIds.add(slideVO.getSlideId());
             });
             QueryWrapper<Marking> queryWrapper = Wrappers.query();
-            queryWrapper.in("slide_id",slideIds);
+            queryWrapper.in("slide_id", slideIds);
             queryWrapper.eq("annotation_type", "Draw");
             count = markingMapperV1.selectCount(queryWrapper);
         }
@@ -128,8 +121,8 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         queryWrapper.select("slide_id", "category_id", "create_by");
         List<Marking> annotationList = markingMapperV1.selectList(queryWrapper);
         if (annotationList != null && !annotationList.isEmpty()) {
-            voList.add(SlideAnnoStatisticsVO.builder().statisticsType("人工标注").result(annotationList.size()).build());
-            voList.add(SlideAnnoStatisticsVO.builder().statisticsType("已审核标注").result(getAnnoCount(params.getProjectId())).build());
+            voList.add(SlideAnnoStatisticsVO.builder().statisticsType(MessageSource.M("MAN_ANNOTATION")).result(annotationList.size()).build());
+            voList.add(SlideAnnoStatisticsVO.builder().statisticsType(MessageSource.M("RECHECK_ANNOTATION")).result(getAnnoCount(params.getProjectId())).build());
             List<PathologicalIndicatorCategory> pathologicalIndicatorCategoryList = pathologicalIndicatorCategoryMapperV1.selectList(Wrappers.query());
             Map<Long, String> categoryMap = new HashMap<>();
             for (PathologicalIndicatorCategory c : pathologicalIndicatorCategoryList) {
@@ -143,7 +136,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
                     if (subs != null && !subs.isEmpty()) {
                         SlideAnnoStatisticsVO vo = null;
                         if (key == 0) {
-                            vo = SlideAnnoStatisticsVO.builder().statisticsType("无属性").result(subs.size()).build();
+                            vo = SlideAnnoStatisticsVO.builder().statisticsType(MessageSource.M("NO_ATTRIBUTE")).result(subs.size()).build();
                         } else {
                             vo = SlideAnnoStatisticsVO.builder().statisticsType(categoryMap.get(key)).result(subs.size()).build();
                         }
@@ -151,7 +144,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
                     }
                 }
             }
-
         }
         return voList;
     }
@@ -175,14 +167,15 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
             });
             List<Marking> annotationList = queryAnnotation(slideIds, params);
             List<PathologicalIndicatorCategory> columns = handleAnnoStatisticsExport(annotationList, map, catesMapList);
-            //通过hutool工具创建的excel的writer，默认为xls格式
+            // 通过hutool工具创建的excel的writer，默认为xls格式
             ExcelWriter writer = ExcelUtil.getWriter();
-            writer.addHeaderAlias(col1, col1);
-            writer.addHeaderAlias(col2, col2);
-            writer.addHeaderAlias(col3, col3);
-            writer.addHeaderAlias(col4, col4);
-            writer.addHeaderAlias(col5, col5);
-            //自定义excel标题和列名
+            writer.addHeaderAlias(MessageSource.M("IMAGE_ID"), MessageSource.M("IMAGE_ID"));
+            writer.addHeaderAlias(MessageSource.M("IMAGE_NAME"), MessageSource.M("IMAGE_NAME"));
+            writer.addHeaderAlias(MessageSource.M("ENTRY_NAME"), MessageSource.M("ENTRY_NAME"));
+            writer.addHeaderAlias(MessageSource.M("IMAGE_DESCRIPTION"), MessageSource.M("IMAGE_DESCRIPTION"));
+            writer.addHeaderAlias(MessageSource.M("TOTAL_NUMBER_OF_IMAGE_ANNOTATIONS"), MessageSource.M("TOTAL_NUMBER_OF_IMAGE_ANNOTATIONS"));
+
+            // 自定义excel标题和列名
             columns.forEach(c -> {
                 writer.addHeaderAlias(String.valueOf(c.getCategoryId()), c.getCategoryName());
             });
@@ -190,7 +183,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
             httpServletResponse.setContentType("application/vnd.ms-excel;charset=utf-8");
             httpServletResponse.setHeader("responseType", "blob");
             //name是下载对话框的名称，不支持中文，想用中文名称需要进行utf8编码
-            String excelName = "切片数据";
+            String excelName = MessageSource.M("SLIDE_DATA");
             excelName = URLEncoder.encode(excelName, "utf-8");
             httpServletResponse.setHeader("Content-Disposition", "attachment;filename=" + excelName + ".xls");
             ServletOutputStream excelOut = null;
@@ -239,16 +232,16 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
                     }
                 }
             }
-            catesMap.put(col1, String.valueOf(vo.getSlideId()));
-            catesMap.put(col2, vo.getImageCode());
-            catesMap.put(col3, vo.getProjectName());
-            catesMap.put(col4, vo.getRemark());
-            catesMap.put(col5, String.valueOf(subs==null?0:subs.size()));
+            catesMap.put(MessageSource.M("IMAGE_ID"), String.valueOf(vo.getSlideId()));
+            catesMap.put(MessageSource.M("IMAGE_NAME"), vo.getImageCode());
+            catesMap.put(MessageSource.M("ENTRY_NAME"), vo.getProjectName());
+            catesMap.put(MessageSource.M("IMAGE_DESCRIPTION"), vo.getRemark());
+            catesMap.put(MessageSource.M("TOTAL_NUMBER_OF_IMAGE_ANNOTATIONS"), String.valueOf(subs == null ? 0 : subs.size()));
             vo.setCates(catesMap);
-            vo.setManualAnnoCount(subs==null?0:subs.size());
+            vo.setManualAnnoCount(subs == null ? 0 : subs.size());
             catesMapList.add(catesMap);
         }
-        //补全数据行缺失字段
+        // 补全数据行缺失字段
         for (Map<String, String> catesMap : catesMapList) {
             for (PathologicalIndicatorCategory column : columns) {
                 String count = catesMap.get(String.valueOf(column.getCategoryId()));
@@ -326,7 +319,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         return resp;
     }
 
-    private String handleUsers(Map<Long, List<Marking>> users, Map<Long, String> userMap) throws Exception {
+    private String handleUsers(Map<Long, List<Marking>> users, Map<Long, String> userMap) {
         String resp = "";
         if (users != null && !users.isEmpty()) {
             int i = 0;
@@ -344,9 +337,5 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         }
         return resp;
     }
-
 }
-
-
-
 

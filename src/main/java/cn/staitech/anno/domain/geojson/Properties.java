@@ -1,9 +1,11 @@
 package cn.staitech.anno.domain.geojson;
 
-import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * @author wangf
+ */
 @Data
 public class Properties {
 
@@ -90,7 +92,7 @@ public class Properties {
 
     @ApiModelProperty(value = "标签总点数")
     private Integer point_count;
-    
+
     @ApiModelProperty(value = "修改作者")
     private String annotation_update_owner;
 

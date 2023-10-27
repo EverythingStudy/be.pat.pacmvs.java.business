@@ -2,10 +2,9 @@ package cn.staitech.anno.controller;
 
 import cn.staitech.anno.domain.ReportRecord;
 import cn.staitech.anno.domain.vo.ProjectAllVO;
-import cn.staitech.anno.domain.vo.reportRecord.*;
+import cn.staitech.anno.domain.vo.reportrecord.*;
 import cn.staitech.anno.domain.vo.special.SpecialResVo;
 import cn.staitech.anno.enums.ReportRecordEnum;
-import cn.staitech.anno.service.GroupService;
 import cn.staitech.anno.service.ReportRecordService;
 import cn.staitech.anno.service.ReportService;
 import cn.staitech.anno.service.SpecialService;
@@ -33,7 +32,6 @@ import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 
 import static cn.staitech.anno.aspect.LogFileAspect.response;
 
@@ -48,25 +46,17 @@ import static cn.staitech.anno.aspect.LogFileAspect.response;
 @RestController
 @RequestMapping("/report")
 public class ReportRecordController {
-
     @Resource
     private SpecialService specialService;
-
     @Resource
     private ReportRecordService reportRecordService;
-
-    @Resource
-    private GroupService groupService;
-
     @Resource
     private ReportService reportService;
-
 
     /**
      * 报告管理查询专题详情
      */
     @ApiOperation(value = "专题详情")
-//    @RequiresPermissions("read-special:exportReport:download")
     @ApiOperationSupport(author = "zmj")
     @ApiImplicitParams({@ApiImplicitParam(name = "specialId", value = "专题id", required = true, dataType = "Long", paramType = "query")})
     @GetMapping("/selectById")
@@ -83,17 +73,6 @@ public class ReportRecordController {
         return R.ok(projectList);
     }
 
-    /*
-        @ApiOperation(value = "查询专题下的分组")
-        @ApiOperationSupport(author = "zmj")
-        @ApiImplicitParams({@ApiImplicitParam(name = "specialId", value = "专题id", required = true, dataType = "Long", paramType = "query")})
-        @GetMapping("/selectGroup")
-        public R<List<GroupListVO>> selectGroup(Long specialId) {
-            Group group = Group.builder().delFlag(0).specialId(specialId).build();
-            List<GroupListVO> groups = groupService.selectAllGroup(group);
-            return R.ok(groups);
-        }
-    */
     @ApiOperation(value = "查询切片编号")
     @ApiOperationSupport(author = "zmj")
     @PostMapping("/selectSlide")
@@ -120,15 +99,10 @@ public class ReportRecordController {
             return R.fail("单切片报告不能使用");
         }
         path = reportService.createRpt(recordAddVO);
-        System.out.println(path + "：：：路径理解");
         //文件大小
         Long fileLength = new File(path).length();
-        System.out.println("文件大小：" + fileLength);
         fileSize = (float) fileLength / 1024;
-//        Random random = new Random();
-//        int randomNumber = random.nextInt(100) + 1;
-//        //随机两位数
-//        String formattedNumber = String.format("%02d", randomNumber);
+
         ReportRecord reportRecord = ReportRecord.builder()
                 .reportType(recordAddVO.getReportType())
                 .format("word")
@@ -151,35 +125,6 @@ public class ReportRecordController {
         }
         //添加数据
         reportRecordService.insertSelective(reportRecord);
-        //异步更新进度调
-        CompletableFuture<Integer> cf2 = CompletableFuture.supplyAsync(() -> {
-            try {
-/*                Group group = Group.builder().specialId(recordAddVO.getSpecialId()).reasons(recordAddVO.getReasons()).build();
-                List<GroupListVO> groupListVOS = groupService.selectAllGroup(group);
-                int groupLong = groupListVOS.size();
-                int num = 0;
-                for (GroupListVO groupListVO : groupListVOS) {
-                    num++;
-                    float pace = ((float) num / groupLong) * 100;
-                    if (0 <= pace && pace < 50) {
-                        ReportRecord record = ReportRecord.builder().reportId(reportRecord.getReportId()).pace(30).build();
-                        reportRecordService.updateByPrimaryKeySelective(record);
-                    } else if (50 <= pace && pace < 100) {
-                        ReportRecord record = ReportRecord.builder().reportId(reportRecord.getReportId()).pace(70).build();
-                        reportRecordService.updateByPrimaryKeySelective(record);
-                    } else {
-                        ReportRecord record = ReportRecord.builder().reportId(reportRecord.getReportId()).pace(100).status(1).build();
-                        reportRecordService.updateByPrimaryKeySelective(record);
-                    }
-                }*/
-            } catch (Exception e) {
-                ReportRecord record = ReportRecord.builder().reportId(reportRecord.getReportId()).status(2).build();
-                reportRecordService.updateByPrimaryKeySelective(record);
-                throw new RuntimeException(e);
-            }
-            return 1;
-        });
-
 
         return R.ok(null, "添加成功");
     }
@@ -233,7 +178,7 @@ public class ReportRecordController {
     @PostMapping(value = "downLoadWord", name = "word下载")
     public void downLoadWord(ReportRecordDelVO recordDelVO) throws Exception {
         ReportRecordAllVO recordAllVO = reportRecordService.selectReport(recordDelVO.getReportId());
-//            // path是指欲下载的文件的路径。
+        // path是指欲下载的文件的路径。
         File file = new File(recordAllVO.getReportUrl());
         //获取文件名
         String filename = file.getName();
@@ -251,9 +196,6 @@ public class ReportRecordController {
         response.setContentType("application/octet-stream;charset=UTF-8");
         try {
             // 将文件写入输入流
-//            byte[] bytes = FileUtils.readFileToByteArray(file);
-            //InputStream in = new FileInputStream(file);
-            // 将文件写入输入流
             OutputStream out = response.getOutputStream();
             if (file.length() == 0) {
                 IOUtils.write("", out);
@@ -263,25 +205,8 @@ public class ReportRecordController {
                 IOUtils.write(bytes, out);
             }
 
-            /*if("docx".equals(extension) || "doc".equals(extension)) {
-                //docx文件就以XWPFDocument创建
-                XWPFDocument docx = new XWPFDocument(in);
-                docx.write(out);
-                docx.close();
-            } else {
-                //其他类型的文件，按照普通文件传输 如（zip、rar等压缩包）
-                int len;
-                //一次传输1M大小字节
-                byte[] bytes = new byte[1024];
-                while ((len = in.read(bytes)) != -1) {
-                    out.write(bytes  , 0 , len);
-                }
-            }*/
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
-
-
 }

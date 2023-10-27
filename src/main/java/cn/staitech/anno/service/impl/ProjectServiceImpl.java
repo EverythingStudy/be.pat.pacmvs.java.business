@@ -6,18 +6,18 @@ import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.SlideAnnotationResult;
 import cn.staitech.anno.domain.image.in.ImageAllVO;
 import cn.staitech.anno.domain.vo.*;
+import cn.staitech.anno.domain.vo.slide.SlideCategoryProcessFlagVO;
 import cn.staitech.anno.domain.vo.statistic.StatisticProjectListOutVO;
 import cn.staitech.anno.mapper.ProjectMapper;
 import cn.staitech.anno.service.ProjectService;
-import cn.staitech.anno.service.ProjectTypeService;
-import cn.staitech.anno.service.SpeciesService;
+import cn.staitech.anno.utils.LanguageUtils;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 
 import static cn.staitech.common.security.utils.SecurityUtils.isAdmin;
 
@@ -28,16 +28,8 @@ import static cn.staitech.common.security.utils.SecurityUtils.isAdmin;
  */
 @Service
 public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> implements ProjectService {
-
     @Resource
     private ProjectMapper projectMapper;
-    @Resource
-    private ProjectTypeService projectTypeService;
-    @Resource
-    private SpeciesService speciesService;
-
-/*    @Resource
-    private ProductSeriesService productSeriesService;*/
 
     /**
      * 根据主键查询项目详情
@@ -64,24 +56,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     @Override
     public ProjectListVO selectProjectById(Long projectId) {
         ProjectListVO project = projectMapper.selectProjectById(projectId);
-        // 项目类型
-        Map<String, String> projectTypeMap = projectTypeService.selectMap();
-        // 种属
-        Map<Long, String> sepeciesMap = speciesService.selectMap();
-
-        // 项目类型
-        if (projectTypeMap.containsKey(project.getProjectType())) {
-            project.setProjectTypeName(projectTypeMap.get(project.getProjectType()));
-        }
-        // 种属
-        if (sepeciesMap.containsKey(project.getSpeciesId())) {
-            project.setSpeciesName(sepeciesMap.get(project.getSpeciesId()));
-        }
-
-        project.setColorTypeName(Container.COLOR_TYPE.get(project.getColorType()));
-        project.setStatusName(Container.PROJECT_STATUS.get(project.getStatus()));
-        return project;
+        return projectLanguage(project);
     }
+
 
     /**
      * 查询项目列表
@@ -94,30 +71,10 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         // 项目列表
         List<ProjectListVO> projectList = projectMapper.selectProjectList(project);
 
-        // 项目类型
-        Map<String, String> projectTypeMap = projectTypeService.selectMap();
-
-        // 品系
-        // Map<Integer, String> productSeriesMap = productSeriesService.selectMap();
-
         for (ProjectListVO obj : projectList) {
-            // 项目类型
-            if (projectTypeMap.containsKey(obj.getProjectType())) {
-                obj.setProjectTypeName(projectTypeMap.get(obj.getProjectType()));
-            }
-            // 种属
-            obj.setSpeciesName(MapConstant.getSpeciesName(obj.getSpeciesId()));
-
-            // 品系
-/*            if (productSeriesMap.containsKey(obj.getProductSeriesId())) {
-                obj.setProductSeries(productSeriesMap.get(obj.getProductSeriesId()));
-            }*/
-
-            obj.setColorTypeName(Container.COLOR_TYPE.get(obj.getColorType()));
-            obj.setStatusName(Container.PROJECT_STATUS.get(obj.getStatus()));
-
+            obj = projectLanguage(obj);
             if (obj.getIndicatorId() == null || obj.getIndicatorId() == 0L) {
-                obj.setIndicatorName("无关联");
+                obj.setIndicatorName(MessageSource.M("UNRELATED"));
             }
         }
         return projectList;
@@ -186,17 +143,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         }
         return projectMapper.selectProjectStatisticList(project);
     }
-
-    /*public List<StatisticProjectListOutVO> selectProjectStatisticList(Project project) {
-        if (isAdmin(SecurityUtils.getUserId())) {
-            return projectMapper.selectProjectStatisticList(project);
-        } else if (SecurityUtils.getLoginUser().getRoles().contains("system")) {
-            project.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-            return projectMapper.selectProjectStatisticList(project);
-        } else {
-            return projectMapper.selectProjectStatisticListExt(SecurityUtils.getUserId());
-        }
-    }*/
 
     /**
      * 根据id和项目名称查询信息
@@ -320,7 +266,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      * 根据projectId，状态，imageName 查询
      */
     @Override
-    public List<ProjectListVO> selectProjectDetails(ProjectInforImageVO projectInforImageVO) {
+    public List<ProjectListVO> selectProjectDetails(ProjectInForImageVO projectInforImageVO) {
         return projectMapper.selectProjectDetails(projectInforImageVO);
     }
 
@@ -370,7 +316,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      * 根据projectId 和 createBy查询slideId
      */
     @Override
-    public List<AnnotationsAddVO> selectSlideId(ProjectInforImageVO projectInforImageVO) {
+    public List<AnnotationsAddVO> selectSlideId(ProjectInForImageVO projectInforImageVO) {
         return projectMapper.selectSlideId(projectInforImageVO);
     }
 
@@ -380,5 +326,39 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     @Override
     public List<ProjectListVO> selectProjectTagger(Long projectId) {
         return projectMapper.selectProjectTagger(projectId);
+    }
+
+
+    /**
+     * 根据本地化语言类型匹配对应属性
+     *
+     * @param project
+     */
+    private ProjectListVO projectLanguage(ProjectListVO project) {
+        String projectType = project.getProjectType();
+        if (LanguageUtils.isEn()) {
+            // 项目类型
+            project.setProjectTypeName(MapConstant.getProjectTypeEn(projectType));
+            // 种属
+            project.setSpeciesName(MapConstant.getSpeciesNameEn(project.getSpeciesId()));
+            // 颜色类型
+            project.setColorTypeName(Container.COLOR_TYPE_EN.get(project.getColorType()));
+            // 品系
+            project.setProductSeries(MapConstant.getProductSeriesEn(project.getProductSeriesId()));
+            project.setStatusName(Container.PROJECT_STATUS_EN.get(project.getStatus()));
+            // 标签类型
+            project.setIndicatorName(project.getIndicatorNameEn());
+        } else {
+            // 项目类型
+            project.setProjectTypeName(MapConstant.getProjectType(projectType));
+            // 种属
+            project.setSpeciesName(MapConstant.getSpeciesName(project.getSpeciesId()));
+            // 颜色类型
+            project.setColorTypeName(Container.COLOR_TYPE.get(project.getColorType()));
+            // 品系
+            project.setProductSeries(MapConstant.getProductSeries(project.getProductSeriesId()));
+            project.setStatusName(Container.PROJECT_STATUS.get(project.getStatus()));
+        }
+        return project;
     }
 }

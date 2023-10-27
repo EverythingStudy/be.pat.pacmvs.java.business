@@ -43,19 +43,25 @@ public class MessageSource {
 
 
     /**
-     * 自定义Local
+     * 自定义Local Language
+     * zh-cn 中文  en-us 英文
      *
      * @param code
      * @return
      */
     public static String M(String code) {
         String language = "";
+
         if (SecurityUtils.getLoginUser().getLanguage() != null) {
             language = SecurityUtils.getLoginUser().getLanguage();
         }
-        // language = "en_US";
-        // language = "en";
-        // language = "zh";
+
+        if ("en-us".equals(language)) {
+            language = "en";
+        } else {
+            language = "zh";
+        }
+
         Locale locale = new Locale(language);
         return messageSource.getMessage(code, null, locale);
     }

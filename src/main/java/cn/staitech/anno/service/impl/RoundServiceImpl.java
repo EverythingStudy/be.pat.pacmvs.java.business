@@ -25,10 +25,17 @@ class RoundServiceImpl extends ServiceImpl<RoundMapper, Round> implements RoundS
 
     @Override
     public Map<Long, String> selectMap() {
-
         List<Round> list = roundMapper.selectList();
         Map<Long, String> map = list.stream()
                 .collect(Collectors.toMap(Round::getRoundId, Round::getRoundName));
+        return map;
+    }
+
+    @Override
+    public Map<Long, String> selectMapEn() {
+        List<Round> list = roundMapper.selectList();
+        Map<Long, String> map = list.stream()
+                .collect(Collectors.toMap(Round::getRoundId, Round::getRoundNameEn));
         return map;
     }
 }

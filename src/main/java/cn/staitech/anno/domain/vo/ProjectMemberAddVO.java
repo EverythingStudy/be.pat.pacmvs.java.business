@@ -18,10 +18,10 @@ import javax.validation.constraints.NotNull;
 @Builder
 @Data
 public class ProjectMemberAddVO {
-    @NotNull(message = "项目id不能为空")
+    @NotNull(message = "{ProjectRemoveIn.projectId.isnull}")
     @ApiModelProperty(value = "项目id", required = true)
     private Long projectId;
-    @NotNull(message = "用户id列表不能为空")
+    @NotNull(message = "{AnnotationDeleteVO.createBy.isnull}")
     @ApiModelProperty(value = "用户id列表", required = true)
     private Long[] userId;
 }

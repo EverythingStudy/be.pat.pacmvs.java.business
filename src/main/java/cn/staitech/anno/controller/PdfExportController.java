@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,19 +40,15 @@ import java.util.List;
  */
 @Api(value = "pdf导出接口", tags = "pdf导出")
 @RestController
-@RequestMapping("pdf")
+@RequestMapping("/pdf")
 public class PdfExportController {
-    
-    @Autowired
+
+    @Resource
     private ProjectService projectService;
-    
-    @Autowired
+    @Resource
     private ExaminationService reviewService;
-    
-    //    @Value("${pdfFilePath}")
-    //    private String path;
-    
-    public File pdfAddress() throws Exception {
+
+    public File pdfAddress() {
         Date date = new Date();
         DateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmss");
         //创建pdf存储路径
@@ -63,29 +60,25 @@ public class PdfExportController {
         File f1 = new File("/home/pat_saas/Data/pdfFile/" + fmt.format(date) + ".pdf");
         return f1;
     }
-    
-    
+
     @ApiOperation(value = "项目列表导出pdf")
     @RequiresPermissions("system:project:export")
     @PostMapping(value = "/project")
     public R getinfo(HttpServletResponse response, Project project) throws Exception {
-        //字体
+        // 字体
         BaseFont bfChinese = BaseFont.createFont("STSong-Light", "UniGB-UCS2-H", BaseFont.NOT_EMBEDDED);
         Font CONTENT_FONT = new Font(bfChinese, 20, Font.BOLD, BaseColor.BLACK);
-        //临时存储地址
+        // 临时存储地址
         File f1 = pdfAddress();
-        //        Date date = new Date();
-        //        DateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmss");
-        //        File f1 = new File(path + fmt.format(date) + ".pdf");
         String PDF_SITE = String.valueOf(f1);
-        
+
         Document document = new Document();
         PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(PDF_SITE));
         document.open();
-        
-        //设置表格几列
-        PdfPTable dataTable = PdfFontUtil.getPdfPTable01(8, 500);
-        //字段名称
+
+        // 设置表格几列
+        PdfPTable dataTable = PdfFontUtil.getPdfTable(8, 500);
+        // 字段名称
         List<String> tableHeadList = new ArrayList<>();
         tableHeadList.add("Serial number");
         tableHeadList.add("ProjectName");
@@ -95,10 +88,10 @@ public class PdfExportController {
         tableHeadList.add("IndicatorsId");
         tableHeadList.add("ManagerId");
         tableHeadList.add("CreateTime");
-        
+
         PdfFontUtil.addTableCell(dataTable, CONTENT_FONT, tableHeadList);
-        
-        //获取数据库数据
+
+        // 获取数据库数据
         int num = 1;
         List<ProjectListVO> list = projectService.selectProjectList(project);
         for (ProjectListVO pro : list) {
@@ -109,35 +102,34 @@ public class PdfExportController {
             tableData.add(String.valueOf(pro.getImageTotal()));
             tableData.add(String.valueOf(pro.getIndicatorId()));
             tableData.add(String.valueOf(pro.getCreateTime()));
-            
+
             PdfFontUtil.addTableCell(dataTable, CONTENT_FONT, tableData);
             num = num + 1;
         }
-        
+
         document.add(dataTable);
         document.newPage();
         document.close();
         writer.close();
-        
-        //        File file = new File(String.valueOf(pdfAddress()));
+
         File file = new File(String.valueOf(f1));
-        
+
         response.reset();
         // 设置响应类型
         response.setContentType("application/octet-stream");
         response.setCharacterEncoding("utf-8");
         response.setContentLength((int) file.length());
         response.setHeader("Content-Disposition", "attachment;filename=" + "test.pdf");
-        
+
         byte[] readBytes = FileUtil.readBytes(file);
         OutputStream os = response.getOutputStream();
         os.write(readBytes);
-        
+
         f1.delete();
-        
+
         return null;
     }
-    
+
     @ApiOperation(value = "复核图像列表导出pdf")
     @RequiresPermissions("system:ImageReview:list")
     @PostMapping("/list")
@@ -145,20 +137,18 @@ public class PdfExportController {
         //字体
         BaseFont bfChinese = BaseFont.createFont("STSong-Light", "UniGB-UCS2-H", BaseFont.NOT_EMBEDDED);
         Font CONTENT_FONT = new Font(bfChinese, 20, Font.BOLD, BaseColor.BLACK);
-        
+
         //临时存储地址
         File f1 = pdfAddress();
-        //        Date date = new Date();
-        //        DateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmss");
-        //        File f1 = new File(path + fmt.format(date) + ".pdf");
+
         String PDF_SITE = String.valueOf(f1);
-        
+
         Document document = new Document();
         PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(PDF_SITE));
         document.open();
-        
+
         //设置表格几列
-        PdfPTable dataTable = PdfFontUtil.getPdfPTable01(7, 500);
+        PdfPTable dataTable = PdfFontUtil.getPdfTable(7, 500);
         //字段名称
         List<String> tableHeadList = new ArrayList<>();
         tableHeadList.add("Serial number");
@@ -168,9 +158,9 @@ public class PdfExportController {
         tableHeadList.add("ProjectName");
         tableHeadList.add("ManualMarking");
         tableHeadList.add("ApprovedStatus");
-        
+
         PdfFontUtil.addTableCell(dataTable, CONTENT_FONT, tableHeadList);
-        
+
         List<ExaminationListVO> list = reviewService.selectExaminationList(imageReview);
         int num2 = 1;
         for (ExaminationListVO pro : list) {
@@ -182,34 +172,32 @@ public class PdfExportController {
             tableData.add(pro.getProjectName());
             tableData.add(String.valueOf(pro.getHumanAnnotationTotal()));
             tableData.add(String.valueOf(pro.getExaminationFlag()));
-            
+
             PdfFontUtil.addTableCell(dataTable, CONTENT_FONT, tableData);
             num2 = num2 + 1;
         }
-        
+
         document.add(dataTable);
         document.newPage();
         document.close();
         writer.close();
-        
+
         File file = new File(String.valueOf(f1));
-        
+
         response.reset();
         // 设置响应类型
         response.setContentType("application/octet-stream");
         response.setCharacterEncoding("utf-8");
         response.setContentLength((int) file.length());
         response.setHeader("Content-Disposition", "attachment;filename=" + "test.pdf");
-        
+
         byte[] readBytes = FileUtil.readBytes(file);
         OutputStream os = response.getOutputStream();
         os.write(readBytes);
-        
+
         f1.delete();
-        
+
         return null;
-        
-        
     }
-    
+
 }

@@ -6,10 +6,10 @@ import java.util.List;
 
 
 public interface ProjectRoleMenuService {
-    
+
     int insertProjectRM(ProjectRoleMenu sysProjectRoleMenuKey);
-    
+
     List<ProjectRoleMenu> selectRoleId(Long roleId);
 
-    
+
 }

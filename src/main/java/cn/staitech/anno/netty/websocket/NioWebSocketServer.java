@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class NioWebSocketServer {
-    
+
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
     public void start() {
         log.info("正在启动websocket服务器");

@@ -24,12 +24,12 @@ import java.io.Serializable;
  */
 @Data
 public class UpdateProjectVO implements Serializable {
+    private static final long serialVersionUID = 1L;
     @ApiModelProperty(required = true, value = "项目ID")
     private Long projectId;
-    private static final long serialVersionUID = 1L;
-    @NotBlank(message = "项目名称不能为空字符串")
+    @NotBlank(message = "{InsertProjectVO.projectName.isnull}")
     @ApiModelProperty(required = true, value = "项目名称")
-    @Size(min = 0, max = 200, message = "名称不能超过100个字符")
+    @Size(min = 0, max = 200, message = "{UpdateProjectVO.projectName.length}")
     private String projectName;
 
     /**
@@ -53,14 +53,14 @@ public class UpdateProjectVO implements Serializable {
     /**
      * 项目类型:1标注2评审3标准训练集
      */
-    @Size(max = 255, message = "编码长度不能超过255")
+    @Size(max = 255, message = "{projectType.length}")
     @ApiModelProperty("项目类型:1标注2评审3标准训练集")
-    @Length(max = 255, message = "编码长度不能超过255")
+    @Length(max = 255, message = "{projectType.length}")
     private String projectType;
     @ApiModelProperty(value = "机构编号")
     private Long organizationId;
     @ApiModelProperty(value = "项目描述")
-    @Size(min = 0, max = 200, message = "名称不能超过100个字符")
+    @Size(min = 0, max = 200, message = "{UpdateProjectVO.projectName.length}")
     private String description;
     @ApiModelProperty("专题ID")
     private Integer topicId;

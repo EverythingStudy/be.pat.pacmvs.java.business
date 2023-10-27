@@ -3,7 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.SystemDictMapper">
-
     <resultMap type="cn.staitech.anno.domain.project.out.SystemDictOut" id="SystemDictResult">
         <result property="dictId" column="dict_id"/>
         <result property="dictName" column="dict_name"/>
@@ -34,9 +33,7 @@
                  left join tb_special ts
                            on tsr.special_id = ts.special_id
         where reclaim_by = #{reclaimBy}
-        and datediff(tsr.expire_time,now())&lt;=7
+          and datediff(tsr.expire_time, now()) &lt;= 7
         order by tsr.reclaim_time
     </select>
-
-
 </mapper>

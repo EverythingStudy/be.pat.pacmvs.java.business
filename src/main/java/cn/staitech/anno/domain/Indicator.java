@@ -30,6 +30,8 @@ public class Indicator extends BaseEntity {
     @ApiModelProperty(value = "病例指标名称")
     private String indicatorName;
 
+    @ApiModelProperty(value = "病例指标名称")
+    private String indicatorNameEn;
     @ApiModelProperty(hidden = true, value = "关联项目数量")
     private Integer projectTotal;
 

@@ -2,6 +2,7 @@ package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.geojson.Features;
 import cn.staitech.anno.domain.geojson.JsonExport;
+import cn.staitech.anno.domain.geojson.Properties;
 import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.marking.PointCount;
 import cn.staitech.anno.domain.marking.SlideRes;
@@ -9,17 +10,17 @@ import cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;
-import cn.staitech.anno.domain.geojson.Properties;
 
 /**
  * viewer 标注页面 .
  *
  * @author gjt
  */
-public interface MarkingMapper  extends BaseMapper<Marking> {
+public interface MarkingMapper extends BaseMapper<Marking> {
 
     /**
      * 查看当前切片下所有的切片
+     *
      * @param slideId 标注信息
      * @return List<Slide>
      */
@@ -27,6 +28,7 @@ public interface MarkingMapper  extends BaseMapper<Marking> {
 
     /**
      * json文件导出的列表
+     *
      * @param slideId
      * @return
      */
@@ -35,11 +37,11 @@ public interface MarkingMapper  extends BaseMapper<Marking> {
 
     /**
      * 与前端交互使用的列表
+     *
      * @param slideId
      * @return
      */
     List<Features> selectListBy(Long slideId);
-
 
 
     List<MarkingSelectListVo> selectPointCountList(Long slideId);
@@ -54,6 +56,7 @@ public interface MarkingMapper  extends BaseMapper<Marking> {
 
     /**
      * 根据专题查看当前专题下所有的切片
+     *
      * @param specialId 标注信息
      * @return List<Slide>
      */
@@ -61,6 +64,7 @@ public interface MarkingMapper  extends BaseMapper<Marking> {
 
     /**
      * 根据切片id查询当前切片下当前标签的总数
+     *
      * @param marking 标注信息
      * @return PointCount
      */
@@ -68,6 +72,7 @@ public interface MarkingMapper  extends BaseMapper<Marking> {
 
     /**
      * 根据切片id查询当前切片下的标签总数
+     *
      * @param slideId 切片id
      * @return List<PointCount>
      */
@@ -97,6 +102,7 @@ public interface MarkingMapper  extends BaseMapper<Marking> {
 
     /**
      * 更新标注点数
+     *
      * @param marking 标注数据
      * @return true || false
      */
@@ -104,6 +110,7 @@ public interface MarkingMapper  extends BaseMapper<Marking> {
 
     /**
      * 删除标注
+     *
      * @param markingId 标注id
      * @return true || false
      */

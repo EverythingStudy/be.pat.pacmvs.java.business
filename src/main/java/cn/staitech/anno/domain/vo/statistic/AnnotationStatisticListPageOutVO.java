@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class AnnotationStatisticListPageOutVO {
-    
+
     @ApiModelProperty(value = "标注ID")
     private Long markingId;
-    
+
 }

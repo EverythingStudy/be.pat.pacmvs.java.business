@@ -1,6 +1,5 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.domain.organ.Organ;
 import cn.staitech.anno.domain.structure.Structure;
 import cn.staitech.anno.mapper.StructureMapper;
 import cn.staitech.anno.service.StructureService;
@@ -9,9 +8,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author: wangfeng
@@ -20,17 +19,28 @@ import java.util.stream.Collectors;
  */
 @Service
 class StructureServiceImpl extends ServiceImpl<StructureMapper, Structure> implements StructureService {
-
-
     @Resource
     StructureMapper structureMapper;
 
     @Override
     public Map<String, String> selectMap() {
+        List<Structure> list = structureMapper.selectList(new Structure());
+        Map<String, String> map = list.stream().collect(
+                HashMap::new,
+                (m, node) -> m.put(node.getStructureId(), node.getName()),
+                HashMap::putAll
+        );
+        return map;
+    }
 
-        List<Structure> list = structureMapper.selectList();
-        Map<String, String> map = list.stream()
-                .collect(Collectors.toMap(Structure::getStructureId, Structure::getName));
+    @Override
+    public Map<String, String> selectMapEn() {
+        List<Structure> list = structureMapper.selectList(new Structure());
+        Map<String, String> map = list.stream().collect(
+                HashMap::new,
+                (m, node) -> m.put(node.getStructureId(), node.getNameEn()),
+                HashMap::putAll
+        );
         return map;
     }
 
@@ -39,15 +49,15 @@ class StructureServiceImpl extends ServiceImpl<StructureMapper, Structure> imple
         Structure structure = new Structure();
         structure.setSpeciesId(speciesId);
         structure.setOrganId(organId);
-        List<Structure> list = structureMapper.getStructureList(structure);
-        return list;
-    }
-
-    @Override
-    public List<Organ> getOrganBySpeciesId(String speciesId) {
-        Structure structure = new Structure();
-        structure.setSpeciesId(speciesId);
-        List<Organ> list = structureMapper.getOrganBySpeciesId(structure);
+        List<Structure> list = structureMapper.selectList(structure);
+        if (list.size() == 0) {
+            Structure obj = new Structure();
+            obj.setName("无关联");
+            obj.setNameEn("Unrelated");
+            obj.setSpeciesId(speciesId.toString());
+            obj.setStructureId(organId.toString());
+            list.add(obj);
+        }
         return list;
     }
 

@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class SpecialRoleUserStatusVo extends SpecialRoleUserVo {
 
-    @NotNull(message = "=状态不可为空")
+    @NotNull(message = "{MarkingJsonIn.status.notNull}")
     @ApiModelProperty(value = "状态")
     private Long status;
 

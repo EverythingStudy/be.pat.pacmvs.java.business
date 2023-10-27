@@ -35,43 +35,43 @@ public class SlideExportVO {
     @ApiModelProperty("项目名称")
     private String projectName;
 
-    @Size(max= 200,message="编码长度不能超过200")
+    @Size(max = 200, message = "{PathologicalIndicatorCategory.categoryName.length}")
     @ApiModelProperty("缩略图URL地址")
-    @Length(max= 200,message="编码长度不能超过200")
+    @Length(max = 200, message = "{PathologicalIndicatorCategory.categoryName.length}")
     private String thumbUrl;
 
-    @Size(max= 255,message="编码长度不能超过255")
+    @Size(max = 255, message = "{projectType.length}")
     @ApiModelProperty("图片（切片）编号")
-    @Length(max= 255,message="编码长度不能超过255")
+    @Length(max = 255, message = "{projectType.length}")
     private String imageCode;
 
     /**
      * 组别
      */
-    @Size(max= 255,message="编码长度不能超过255")
+    @Size(max = 255, message = "{projectType.length}")
     @ApiModelProperty("组别")
-    @Length(max= 255,message="编码长度不能超过255")
+    @Length(max = 255, message = "{projectType.length}")
     private String groupName;
     /**
      * 性别
      */
-    @Size(max= 255,message="编码长度不能超过255")
+    @Size(max = 255, message = "{projectType.length}")
     @ApiModelProperty("性别")
-    @Length(max= 255,message="编码长度不能超过255")
+    @Length(max = 255, message = "{projectType.length}")
     private String gender;
     /**
      * 种属
      */
-    @Size(max= 255,message="编码长度不能超过255")
+    @Size(max = 255, message = "{projectType.length}")
     @ApiModelProperty("种属")
-    @Length(max= 255,message="编码长度不能超过255")
+    @Length(max = 255, message = "{projectType.length}")
     private String species;
     /**
      * 品系
      */
-    @Size(max= 255,message="编码长度不能超过255")
+    @Size(max = 255, message = "{projectType.length}")
     @ApiModelProperty("品系")
-    @Length(max= 255,message="编码长度不能超过255")
+    @Length(max = 255, message = "{projectType.length}")
     private String productSeries;
 
     @ApiModelProperty("人工标注数")

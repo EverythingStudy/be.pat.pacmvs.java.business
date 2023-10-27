@@ -1,6 +1,5 @@
 package cn.staitech.anno.domain.question.in;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -23,6 +22,6 @@ public class CreateBySlideData {
 
 
     @ApiModelProperty(value = "图像ID")
-    @NotNull(message = "图像id入参不能为空！")
+    @NotNull(message = "{CreateBySlideData.imageId.isnull}")
     private Long imageId;
 }

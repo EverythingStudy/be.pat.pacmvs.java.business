@@ -2,10 +2,23 @@ package cn.staitech.anno.enums;
 
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * @author wangf
+ */
+
 public enum ReportRecordEnum {
 
+    /**
+     * 单切片报告
+     */
     TYPE_1(1, "单切片报告"),
+    /**
+     * 组间报告
+     */
     TYPE_2(2, "组间报告"),
+    /**
+     * 脏器病变报告
+     */
     TYPE_3(3, "脏器病变报告");
 
     private int value;

@@ -10,8 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -25,7 +23,7 @@ import java.util.Date;
 @Data
 @TableName("tb_sub_image")
 public class SubImage implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * 图像id
@@ -228,18 +226,17 @@ public class SubImage implements Serializable {
      */
     @ApiModelProperty(value = "是否删除(0未删除 1已删除)")
     private Integer isDelete;
-    
-    
+
+
     @ApiModelProperty(value = "标注对应annId")
     private Long specialAnnotationId;
-    
+
     @ApiModelProperty(value = "specialImage")
-	private Long specialImageId;
-    
+    private Long specialImageId;
+
     @ApiModelProperty(value = "脏器名称")
     @TableField(exist = false)
     private String visceraName;
-
 
 
 }

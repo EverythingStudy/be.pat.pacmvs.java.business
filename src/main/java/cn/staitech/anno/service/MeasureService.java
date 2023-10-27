@@ -14,7 +14,7 @@ import java.util.List;
  */
 
 public interface MeasureService {
-    
+
     /**
      * 新增测量
      *
@@ -22,7 +22,7 @@ public interface MeasureService {
      * @return 结果
      */
     Long insertMeasure(Measure measure);
-    
+
     /**
      * 查询测量数据
      *
@@ -34,9 +34,8 @@ public interface MeasureService {
     List<MeasureJsonVO> selectMeasureJson(Measure measure);
 
 
-    
     int selectMeasureCount(Measure measure);
-    
+
     /**
      * 删除测量
      *
@@ -44,7 +43,7 @@ public interface MeasureService {
      * @return 结果
      */
     int deleteMeasureById(Long measureId);
-    
+
     /**
      * 更新测量
      *
@@ -52,7 +51,7 @@ public interface MeasureService {
      * @return 结果
      */
     int updateMeasure(Measure measure);
-    
+
     /**
      * 主键查询详情信息
      *
@@ -60,7 +59,7 @@ public interface MeasureService {
      * @return 结果
      */
     Measure selectMeasureById(Long measureId);
-    
+
     /**
      * 删除用户在当前页面的测量信息
      *
@@ -68,6 +67,6 @@ public interface MeasureService {
      * @return boolean
      */
     int deleteMeasureBatch(Measure measure);
-    
-    
+
+
 }

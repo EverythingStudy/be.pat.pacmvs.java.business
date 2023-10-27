@@ -2,9 +2,7 @@ package cn.staitech.anno.domain.vo.special;
 
 import cn.staitech.common.core.utils.StringUtils;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * @Description ：路由显示信息

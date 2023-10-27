@@ -23,7 +23,7 @@ class GroupServiceImpl extends ServiceImpl<GroupMapper, Group> implements GroupS
     private GroupMapper groupMapper;
 
     @Override
-    public Map<Long,String> selectMap() {
+    public Map<Long, String> selectMap() {
 
         List<Group> list = groupMapper.selectList();
         Map<Long, String> map = list.stream()

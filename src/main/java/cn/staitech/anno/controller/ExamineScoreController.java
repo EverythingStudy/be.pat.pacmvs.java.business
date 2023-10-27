@@ -3,7 +3,7 @@ package cn.staitech.anno.controller;
 
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.ExamineScore;
-import cn.staitech.anno.domain.examineScore.*;
+import cn.staitech.anno.domain.examine.*;
 import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.service.ProjectService;
 import cn.staitech.anno.service.ExamineScoreService;
@@ -36,14 +36,10 @@ import static cn.staitech.anno.aspect.LogFileAspect.response;
 @RestController
 @RequestMapping("/examineScore")
 public class ExamineScoreController {
-
     @Resource
     private ExamineScoreService examineScoreService;
-
     @Resource
     private ProjectService projectService;
-
-
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "考题列表查询")
     @GetMapping("/selectExaminationList")
@@ -65,11 +61,11 @@ public class ExamineScoreController {
     @ApiOperation(value = "评分列表查询")
     @GetMapping("/selectListBy")
     public R<PageResponse<ExamineScore>> selectListBy(
-            @NotNull(message = "参数异常,未传入项目id") @RequestParam(value = "projectId") @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId,
-            @NotNull(message = "参数异常,未发现分页信息") @RequestParam(value = "pageSize") @ApiParam(name = "pageSize", value = "当前页数", required = true) Integer pageSize,
-            @NotNull(message = "参数异常,未发现分页信息") @RequestParam(value = "pageNum") @ApiParam(name = "pageNum", value = "每页数量", required = true) Integer pageNum,
+            @NotNull(message = "{ExamineScoreController.selectListBy.projectId}") @RequestParam(value = "projectId") @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId,
+            @NotNull(message = "{ExamineScoreController.selectListBy.pageSize}") @RequestParam(value = "pageSize") @ApiParam(name = "pageSize", value = "当前页数", required = true) Integer pageSize,
+            @NotNull(message = "{ExamineScoreController.selectListBy.pageSize}") @RequestParam(value = "pageNum") @ApiParam(name = "pageNum", value = "每页数量", required = true) Integer pageNum,
             @RequestParam(value = "nickName", required = false) @ApiParam(name = "nickName", value = "答题者") String nickName,
-            @RequestParam(value = "examResults", required = false) @ApiParam(name = "examResults", value = "考试结果") Long examResults) throws Exception {
+            @RequestParam(value = "examResults", required = false) @ApiParam(name = "examResults", value = "考试结果") Long examResults) {
         return R.ok(examineScoreService.selectList(pageSize, pageNum, projectId, nickName, examResults));
     }
 
@@ -77,7 +73,7 @@ public class ExamineScoreController {
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "刷新拟合区间")
     @PostMapping("/refreshInterval")
-    public R<String> refreshInterval(@RequestBody ExamineScoreExportInsertVo examineScoreExportInsertVo) throws Exception {
+    public R<String> refreshInterval(@RequestBody ExamineScoreExportInsertVo examineScoreExportInsertVo) {
         // 调用python
         examineScoreService.refreshInterval(examineScoreExportInsertVo);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
@@ -95,7 +91,7 @@ public class ExamineScoreController {
     @ApiOperation(value = "查询考核详情接口")
     @GetMapping("/selectBy")
     public R<ExamineScoreBy> selectBy(
-            @NotNull(message = "参数异常,未传入考核id") @RequestParam(value = "examineScoreId") @ApiParam(name = "examineScoreId", value = "考核id", required = true) Long examineScoreId
+            @NotNull(message = "{ExamineScoreController.selectBy.isnull}") @RequestParam(value = "examineScoreId") @ApiParam(name = "examineScoreId", value = "考核id", required = true) Long examineScoreId
     ) throws Exception {
         return R.ok(examineScoreService.selectByIds(examineScoreId));
     }
@@ -112,7 +108,7 @@ public class ExamineScoreController {
     @ApiOperation(value = "刷新个人拟合度")
     @GetMapping("/updatePersonalFit")
     public R<String> updatePersonalFit(
-            @NotNull(message = "参数异常,未传入考核id") @RequestParam(value = "examineScoreId") @ApiParam(name = "examineScoreId", value = "考核id", required = true) Long examineScoreId
+            @NotNull(message = "{ExamineScoreController.selectBy.isnull}") @RequestParam(value = "examineScoreId") @ApiParam(name = "examineScoreId", value = "考核id", required = true) Long examineScoreId
     ) throws Exception {
         examineScoreService.updatePersonalFit(examineScoreId);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));

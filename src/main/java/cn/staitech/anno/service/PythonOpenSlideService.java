@@ -15,13 +15,14 @@ public interface PythonOpenSlideService {
     /**
      * 获取用户信息
      * http://dev-python-staitech-openslide/index/index
-     * */
+     */
     @GetMapping("/index/index")
     String test(@RequestParam("userId") Long userId);
 
     /**
      * 获取图片详情
      * http://dev-python-staitech-openslide/api/v1/image/19/getDetail
+     *
      * @param imageId
      * @return
      */

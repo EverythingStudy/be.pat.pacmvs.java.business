@@ -1,12 +1,10 @@
 package cn.staitech.anno.service;
 
-import java.util.List;
-import java.util.Map;
-
+import cn.staitech.anno.domain.structure.Structure;
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import cn.staitech.anno.domain.organ.Organ;
-import cn.staitech.anno.domain.structure.Structure;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -17,10 +15,10 @@ import cn.staitech.anno.domain.structure.Structure;
 public interface StructureService extends IService<Structure> {
 
     Map<String, String> selectMap();
-    
-    List<Structure> getStructureList(String speciesId,String organId);
-    
-    List<Organ> getOrganBySpeciesId(String speciesId);
 
-    Structure getOneStructure(String speciesId,String organId,String structureId);
+    Map<String, String> selectMapEn();
+
+    List<Structure> getStructureList(String speciesId, String organId);
+
+    Structure getOneStructure(String speciesId, String organId, String structureId);
 }

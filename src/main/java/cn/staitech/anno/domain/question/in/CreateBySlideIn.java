@@ -15,7 +15,7 @@ import java.util.List;
 @Data
 public class CreateBySlideIn {
     @ApiModelProperty(value = "所选的切片列表")
-    @NotEmpty(message = "切片信息不能为空！")
+    @NotEmpty(message = "{CreateAssessmentIn.slideList.notEmpty}")
     private List<CreateBySlideData> slideDataList;
 
 }

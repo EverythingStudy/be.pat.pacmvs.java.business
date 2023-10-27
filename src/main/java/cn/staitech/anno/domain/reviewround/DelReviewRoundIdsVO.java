@@ -16,7 +16,7 @@ public class DelReviewRoundIdsVO {
     /**
      * reviewRoundIds
      */
-    @NotNull(message = "reviewRoundIdsid不可为空 !")
+    @NotNull(message = "{DelReviewRoundIdsVO.reviewRoundIds.isnull}")
     @ApiModelProperty(value = "reviewRoundIds", required = true)
     private List<Long> reviewRoundIds;
 }

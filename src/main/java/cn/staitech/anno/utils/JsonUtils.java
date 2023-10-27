@@ -14,13 +14,10 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
+
+import static cn.staitech.anno.constant.CommonConstant.FILE_SUFFIX_JSON;
 
 /**
  * JSON生成工具类
@@ -164,27 +161,29 @@ public class JsonUtils {
 
 
     /**
+     * 保存json 文件
      *
      * @param jsonString 要保存的JSON串
-     * @param filePath 保存到的文件路径
-     * @param fileName  文件名称
+     * @param filePath   保存到的文件路径
+     * @param fileName   文件名称
      * @return
      */
-    //保存json 文件
     public static boolean createJsonFile(String jsonString, String filePath, String fileName) {
         // 标记文件生成是否成功
         boolean flag = true;
         // 拼接文件完整路径
-        String fullPath = filePath + File.separator + fileName + ".json";
+        String fullPath = filePath + File.separator + fileName + FILE_SUFFIX_JSON;
 
         // 生成json格式文件
         try {
             // 保证创建一个新文件
             File file = new File(fullPath);
-            if (!file.getParentFile().exists()) { // 如果父目录不存在，创建父目录
+            // 如果父目录不存在，创建父目录
+            if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
-            if (file.exists()) { // 如果已存在,删除旧文件
+            // 如果已存在,删除旧文件
+            if (file.exists()) {
                 file.delete();
             }
             file.createNewFile();
@@ -219,24 +218,23 @@ public class JsonUtils {
         Date date = new Date();
 
         String str = simpleDateFormat.format(date);
-
         Random random = new Random();
-
-        int rannum = (int) (random.nextDouble() * (99999 - 10000 + 1)) + 10000;// 获取5位随机数
-
-        return rannum + str;// 当前时间
+        // 获取5位随机数
+        int rannum = (int) (random.nextDouble() * (99999 - 10000 + 1)) + 10000;
+        // 当前时间
+        return rannum + str;
     }
 
     /**
-     *
      * JSON文件反序列化 参考：https://blog.csdn.net/weixin_44077403/article/details/127430738
      * String json = JsonUtils.convertStreamToString(file.getInputStream());
-     *
+     * <p>
      * 读取文件转换json
+     *
      * @param inputStream
      * @return
      */
-    public static String convertStreamToString(InputStream inputStream){
+    public static String convertStreamToString(InputStream inputStream) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder sb = new StringBuilder();
 
@@ -254,9 +252,6 @@ public class JsonUtils {
                 e.printStackTrace();
             }
         }
-
         return sb.toString();
     }
-
 }
-

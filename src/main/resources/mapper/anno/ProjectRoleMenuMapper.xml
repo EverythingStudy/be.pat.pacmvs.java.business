@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.ProjectRoleMenuMapper">
     <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.ProjectRoleMenu">
         <id column="role_id" jdbcType="BIGINT" property="roleId"/>
@@ -11,7 +11,7 @@
         <id column="update_by" property="updateBy"/>
         <id column="update_time" property="updateTime"/>
     </resultMap>
-    
+
     <sql id="Base_Column_List">
         role_id
         , menu_id
@@ -24,12 +24,12 @@
           and menu_id = #{menuId,jdbcType=BIGINT}
     </delete>
     <insert id="insert" keyColumn="role_id" keyProperty="roleId"
-        parameterType="cn.staitech.anno.domain.ProjectRoleMenu" useGeneratedKeys="true">
+            parameterType="cn.staitech.anno.domain.ProjectRoleMenu" useGeneratedKeys="true">
         insert into sys_project_role_menu (menu_id)
         values (#{menuId,jdbcType=BIGINT})
     </insert>
     <insert id="insertSelective" keyColumn="role_id" keyProperty="roleId"
-        parameterType="cn.staitech.anno.domain.ProjectRoleMenu" useGeneratedKeys="true">
+            parameterType="cn.staitech.anno.domain.ProjectRoleMenu" useGeneratedKeys="true">
         insert into sys_project_role_menu
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="menuId != null">
@@ -63,17 +63,33 @@
     </select>
     <insert id="insertProjectRM" parameterType="cn.staitech.anno.domain.ProjectRoleMenu">
         insert into sys_project_role_menu (
-        <if test="roleId != null and roleId != '' ">role_id,</if>
-        <if test="menuId != null and menuId != '' ">menu_id,</if>
-        <if test="createBy != null and createBy != ''">create_by,</if>
-        <if test="updateBy != null and updateBy != ''">update_by,</if>
+        <if test="roleId != null and roleId != '' ">
+            role_id,
+        </if>
+        <if test="menuId != null and menuId != '' ">
+            menu_id,
+        </if>
+        <if test="createBy != null and createBy != ''">
+            create_by,
+        </if>
+        <if test="updateBy != null and updateBy != ''">
+            update_by,
+        </if>
         create_time,
         update_time
         )values(
-        <if test="roleId != null and roleId != ''">#{roleId,jdbcType=BIGINT},</if>
-        <if test="menuId != null and menuId != ''">#{menuId,jdbcType=BIGINT},</if>
-        <if test="createBy != null and createBy != ''">#{createBy},</if>
-        <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+        <if test="roleId != null and roleId != ''">
+            #{roleId,jdbcType=BIGINT},
+        </if>
+        <if test="menuId != null and menuId != ''">
+            #{menuId,jdbcType=BIGINT},
+        </if>
+        <if test="createBy != null and createBy != ''">
+            #{createBy},
+        </if>
+        <if test="updateBy != null and updateBy != ''">
+            #{updateBy},
+        </if>
         sysdate(),
         sysdate()
         )
@@ -82,8 +98,12 @@
         insert into sys_project_role_menu(
         role_id,
         menu_id,
-        <if test="createBy != null and createBy != ''">create_by,</if>
-        <if test="updateBy != null and updateBy != ''">update_by,</if>
+        <if test="createBy != null and createBy != ''">
+            create_by,
+        </if>
+        <if test="updateBy != null and updateBy != ''">
+            update_by,
+        </if>
         create_time,
         update_time
         )
@@ -92,12 +112,15 @@
             (
             #{project.roleId},
             #{project.menuId},
-            <if test="createBy != null and createBy != ''">#{createBy},</if>
-            <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+            <if test="createBy != null and createBy != ''">
+                #{createBy},
+            </if>
+            <if test="updateBy != null and updateBy != ''">
+                #{updateBy},
+            </if>
             sysdate(),
             sysdate()
             )
-        
         </foreach>
     </insert>
     <delete id="deletePorRMList">

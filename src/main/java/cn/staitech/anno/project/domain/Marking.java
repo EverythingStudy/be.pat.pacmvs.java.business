@@ -5,188 +5,154 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import java.util.Date;
-
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.Data;
 
+import java.io.Serializable;
+import java.util.Date;
+
 /**
- * 
  * @TableName tb_marking
  */
-@TableName(value ="tb_marking", autoResultMap = true)
+@TableName(value = "tb_marking", autoResultMap = true)
 @Data
 public class Marking implements Serializable {
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
     /**
      * 主键自增id
      */
     @TableId(type = IdType.AUTO)
     private Long markingId;
-
     /**
      * 标注id
      */
     private String annotationId;
-
     /**
      * 面积
      */
     private String area;
-
     /**
      * 周长
      */
     private String perimeter;
-
     /**
      * 描述
      */
     private String description;
-
     /**
      * 标签id
      */
     private Long categoryId;
-
     /**
      * 标注名称
      */
     private Long number;
-
     /**
      * 测量轮廓类型(0:正常,表示有关系,默认为0")
      */
     private Integer measureType;
-
     /**
      * 测量关系
      */
     private String measureRelation;
-
     /**
      * 测量轮廓表示名称:L
      */
     private String measureName;
-
     /**
      * 测量轮廓标识：1
      */
     private Integer measureNumber;
-
     /**
      * 周长（圆）
      */
     private String radius;
-
     /**
      * 平均间距
      */
     private Double meanDistance;
-
     /**
      * 最大间距
      */
     private Double maxDistance;
-
     /**
      * 最小间距
      */
     private Double minDistance;
-
     /**
      * 内角
      */
     private String innerAngle;
-
     /**
      * 外角
      */
     private String exteriorAngle;
-
     /**
      * 创建者
      */
     private Long createBy;
-
     /**
      * 创建时间
      */
     private Date createTime;
-
     /**
      * 标注类型(AI表示AI算出的标注，Draw表示前端绘制的标注，Measure表示测量工具数据)
      */
     private String annotationType;
-
     /**
      * 标注数据类型(LineString,Polygon,point,pc,p,L)
      */
     private String locationType;
-
     /**
      * 切片id
      */
     private Long slideId;
-
     /**
      * 中心
      */
     private String centerPoint;
-
     /**
      * 不同标签点的总数
      */
     private Integer pointCount;
-
     /**
      * 标注数据
      */
     @TableField(typeHandler = JacksonTypeHandler.class)
     private JSONObject geometry;
-
     /**
      * 更新者
      */
     private Long updateBy;
-
     /**
      * 更新时间
      */
     private Date updateTime;
-
     /**
      * 标注绘制者
      */
     private String annotationOwner;
-
     /**
      * 标注更新者
      */
     private String annotationUpdateOwner;
-
     /**
      * 项目id
      */
     private Long projectId;
-
     /**
      * 图像id
      */
     private Long imageId;
-
     /**
      * 图像url
      */
     private String imageUrl;
-
     /**
      * 机构id
      */
     private Long organizationId;
-
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
 
     @Override
     public boolean equals(Object that) {
@@ -201,38 +167,38 @@ public class Marking implements Serializable {
         }
         Marking other = (Marking) that;
         return (this.getMarkingId() == null ? other.getMarkingId() == null : this.getMarkingId().equals(other.getMarkingId()))
-            && (this.getAnnotationId() == null ? other.getAnnotationId() == null : this.getAnnotationId().equals(other.getAnnotationId()))
-            && (this.getArea() == null ? other.getArea() == null : this.getArea().equals(other.getArea()))
-            && (this.getPerimeter() == null ? other.getPerimeter() == null : this.getPerimeter().equals(other.getPerimeter()))
-            && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()))
-            && (this.getCategoryId() == null ? other.getCategoryId() == null : this.getCategoryId().equals(other.getCategoryId()))
-            && (this.getNumber() == null ? other.getNumber() == null : this.getNumber().equals(other.getNumber()))
-            && (this.getMeasureType() == null ? other.getMeasureType() == null : this.getMeasureType().equals(other.getMeasureType()))
-            && (this.getMeasureRelation() == null ? other.getMeasureRelation() == null : this.getMeasureRelation().equals(other.getMeasureRelation()))
-            && (this.getMeasureName() == null ? other.getMeasureName() == null : this.getMeasureName().equals(other.getMeasureName()))
-            && (this.getMeasureNumber() == null ? other.getMeasureNumber() == null : this.getMeasureNumber().equals(other.getMeasureNumber()))
-            && (this.getRadius() == null ? other.getRadius() == null : this.getRadius().equals(other.getRadius()))
-            && (this.getMeanDistance() == null ? other.getMeanDistance() == null : this.getMeanDistance().equals(other.getMeanDistance()))
-            && (this.getMaxDistance() == null ? other.getMaxDistance() == null : this.getMaxDistance().equals(other.getMaxDistance()))
-            && (this.getMinDistance() == null ? other.getMinDistance() == null : this.getMinDistance().equals(other.getMinDistance()))
-            && (this.getInnerAngle() == null ? other.getInnerAngle() == null : this.getInnerAngle().equals(other.getInnerAngle()))
-            && (this.getExteriorAngle() == null ? other.getExteriorAngle() == null : this.getExteriorAngle().equals(other.getExteriorAngle()))
-            && (this.getCreateBy() == null ? other.getCreateBy() == null : this.getCreateBy().equals(other.getCreateBy()))
-            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
-            && (this.getAnnotationType() == null ? other.getAnnotationType() == null : this.getAnnotationType().equals(other.getAnnotationType()))
-            && (this.getLocationType() == null ? other.getLocationType() == null : this.getLocationType().equals(other.getLocationType()))
-            && (this.getSlideId() == null ? other.getSlideId() == null : this.getSlideId().equals(other.getSlideId()))
-            && (this.getCenterPoint() == null ? other.getCenterPoint() == null : this.getCenterPoint().equals(other.getCenterPoint()))
-            && (this.getPointCount() == null ? other.getPointCount() == null : this.getPointCount().equals(other.getPointCount()))
-            && (this.getGeometry() == null ? other.getGeometry() == null : this.getGeometry().equals(other.getGeometry()))
-            && (this.getUpdateBy() == null ? other.getUpdateBy() == null : this.getUpdateBy().equals(other.getUpdateBy()))
-            && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
-            && (this.getAnnotationOwner() == null ? other.getAnnotationOwner() == null : this.getAnnotationOwner().equals(other.getAnnotationOwner()))
-            && (this.getAnnotationUpdateOwner() == null ? other.getAnnotationUpdateOwner() == null : this.getAnnotationUpdateOwner().equals(other.getAnnotationUpdateOwner()))
-            && (this.getProjectId() == null ? other.getProjectId() == null : this.getProjectId().equals(other.getProjectId()))
-            && (this.getImageId() == null ? other.getImageId() == null : this.getImageId().equals(other.getImageId()))
-            && (this.getImageUrl() == null ? other.getImageUrl() == null : this.getImageUrl().equals(other.getImageUrl()))
-            && (this.getOrganizationId() == null ? other.getOrganizationId() == null : this.getOrganizationId().equals(other.getOrganizationId()));
+                && (this.getAnnotationId() == null ? other.getAnnotationId() == null : this.getAnnotationId().equals(other.getAnnotationId()))
+                && (this.getArea() == null ? other.getArea() == null : this.getArea().equals(other.getArea()))
+                && (this.getPerimeter() == null ? other.getPerimeter() == null : this.getPerimeter().equals(other.getPerimeter()))
+                && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()))
+                && (this.getCategoryId() == null ? other.getCategoryId() == null : this.getCategoryId().equals(other.getCategoryId()))
+                && (this.getNumber() == null ? other.getNumber() == null : this.getNumber().equals(other.getNumber()))
+                && (this.getMeasureType() == null ? other.getMeasureType() == null : this.getMeasureType().equals(other.getMeasureType()))
+                && (this.getMeasureRelation() == null ? other.getMeasureRelation() == null : this.getMeasureRelation().equals(other.getMeasureRelation()))
+                && (this.getMeasureName() == null ? other.getMeasureName() == null : this.getMeasureName().equals(other.getMeasureName()))
+                && (this.getMeasureNumber() == null ? other.getMeasureNumber() == null : this.getMeasureNumber().equals(other.getMeasureNumber()))
+                && (this.getRadius() == null ? other.getRadius() == null : this.getRadius().equals(other.getRadius()))
+                && (this.getMeanDistance() == null ? other.getMeanDistance() == null : this.getMeanDistance().equals(other.getMeanDistance()))
+                && (this.getMaxDistance() == null ? other.getMaxDistance() == null : this.getMaxDistance().equals(other.getMaxDistance()))
+                && (this.getMinDistance() == null ? other.getMinDistance() == null : this.getMinDistance().equals(other.getMinDistance()))
+                && (this.getInnerAngle() == null ? other.getInnerAngle() == null : this.getInnerAngle().equals(other.getInnerAngle()))
+                && (this.getExteriorAngle() == null ? other.getExteriorAngle() == null : this.getExteriorAngle().equals(other.getExteriorAngle()))
+                && (this.getCreateBy() == null ? other.getCreateBy() == null : this.getCreateBy().equals(other.getCreateBy()))
+                && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
+                && (this.getAnnotationType() == null ? other.getAnnotationType() == null : this.getAnnotationType().equals(other.getAnnotationType()))
+                && (this.getLocationType() == null ? other.getLocationType() == null : this.getLocationType().equals(other.getLocationType()))
+                && (this.getSlideId() == null ? other.getSlideId() == null : this.getSlideId().equals(other.getSlideId()))
+                && (this.getCenterPoint() == null ? other.getCenterPoint() == null : this.getCenterPoint().equals(other.getCenterPoint()))
+                && (this.getPointCount() == null ? other.getPointCount() == null : this.getPointCount().equals(other.getPointCount()))
+                && (this.getGeometry() == null ? other.getGeometry() == null : this.getGeometry().equals(other.getGeometry()))
+                && (this.getUpdateBy() == null ? other.getUpdateBy() == null : this.getUpdateBy().equals(other.getUpdateBy()))
+                && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
+                && (this.getAnnotationOwner() == null ? other.getAnnotationOwner() == null : this.getAnnotationOwner().equals(other.getAnnotationOwner()))
+                && (this.getAnnotationUpdateOwner() == null ? other.getAnnotationUpdateOwner() == null : this.getAnnotationUpdateOwner().equals(other.getAnnotationUpdateOwner()))
+                && (this.getProjectId() == null ? other.getProjectId() == null : this.getProjectId().equals(other.getProjectId()))
+                && (this.getImageId() == null ? other.getImageId() == null : this.getImageId().equals(other.getImageId()))
+                && (this.getImageUrl() == null ? other.getImageUrl() == null : this.getImageUrl().equals(other.getImageUrl()))
+                && (this.getOrganizationId() == null ? other.getOrganizationId() == null : this.getOrganizationId().equals(other.getOrganizationId()));
     }
 
     @Override

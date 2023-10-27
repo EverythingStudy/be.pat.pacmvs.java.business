@@ -1,6 +1,5 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.organ.Organ;
 import cn.staitech.anno.domain.structure.Structure;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -13,10 +12,5 @@ import java.util.List;
  */
 
 public interface StructureMapper extends BaseMapper<Structure> {
-
-    List<Structure> selectList();
-    
-    List<Organ> getOrganBySpeciesId(Structure structure);
-    
-    List<Structure> getStructureList(Structure structure);
+    List<Structure> selectList(Structure structure);
 }

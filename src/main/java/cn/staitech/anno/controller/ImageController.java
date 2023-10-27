@@ -44,13 +44,8 @@ public class ImageController extends BaseController {
     private SlideService slideService;
 
     /**
-     * 切片列表 .
-     * 原始切片
-     * 57
-     * 1
-     * section:slices:query
+     * 切片列表 - 原始切片 .
      */
-    //@RequiresPermissions("section:slices:query")
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "切片列表", notes = "切片列表 - 王峰")
     @ApiImplicitParams({
@@ -68,7 +63,6 @@ public class ImageController extends BaseController {
      * 单个切片详细信息 .
      */
     @SneakyThrows
-    // @RequiresPermissions("anno:image:selectbyid")
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "单个切片", notes = "单个切片 - 王峰")
     @Log(title = "查询单个切片", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.QUERY)
@@ -87,11 +81,10 @@ public class ImageController extends BaseController {
     @Log(title = "删除", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.DELETE)
     @ApiOperation(value = "逻辑删除单个切片")
     @GetMapping("/deleteById/{imageId}")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public R deleteById(@PathVariable("imageId") @ApiParam(value = "图像ID") Long imageId) {
         if (imageId > 0) {
-            Slide slide = new Slide();
-            slide.setImageId(imageId);
+            Slide slide = Slide.builder().imageId(imageId).build();
             // 查切片表中有没有绑定此图片
             if (slideService.selectImageExist(slide).size() > 0) {
                 int deleteImageById = imageService.updateDeleteFlagById(imageId);
@@ -130,8 +123,7 @@ public class ImageController extends BaseController {
     @ApiOperation(value = "批量添加专题")
     @PostMapping("/updateBatchIds")
     public R updateBatchIds(@Validated @RequestBody ImageTopicBatchIdsVO request) {
-        Long uid = SecurityUtils.getUserId();
-        request.setUpdateBy(uid);
+        request.setUpdateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
         int result = imageService.updateBatchIds(request);
         if (result > 0) {
             return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
@@ -149,7 +141,6 @@ public class ImageController extends BaseController {
     @ApiOperation(value = "单个图像添加专题")
     @PostMapping("/update")
     public R update(@Validated @RequestBody ImageUpdateVO request) throws Exception {
-
         int result = imageService.updateById(request);
         if (result > 0) {
             return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));

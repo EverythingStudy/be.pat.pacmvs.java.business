@@ -24,32 +24,15 @@ import java.util.stream.Collectors;
 //@Component
 public class CacheUtils {
 
+    public static CacheUtils cacheUtils;
     @Resource
     private ICache iCache;
-
     @Resource
     private ImageService imageService;
-
     @Resource
     private IndicatorService indicatorService;
-
     @Resource
     private ProjectService projectService;
-
-    public static CacheUtils cacheUtils;
-
-    //    @PostConstruct
-    public void init() {
-        cacheUtils = this;
-        cacheUtils.iCache = this.iCache;
-        cacheUtils.imageService = this.imageService;
-        cacheUtils.indicatorService = this.indicatorService;
-        cacheUtils.projectService = this.projectService;
-
-        /*ProjectCache(new Project());*/
-        imagesCache(new Image());
-        indicatorCache(new Indicator());
-    }
 
     /**
      * 标注图片缓存
@@ -99,5 +82,18 @@ public class CacheUtils {
      */
     public static Long getAndAddLong(String key, Long delta) {
         return cacheUtils.iCache.getAndAddLong(key, delta);
+    }
+
+    // @PostConstruct
+    public void init() {
+        cacheUtils = this;
+        cacheUtils.iCache = this.iCache;
+        cacheUtils.imageService = this.imageService;
+        cacheUtils.indicatorService = this.indicatorService;
+        cacheUtils.projectService = this.projectService;
+
+        /*ProjectCache(new Project());*/
+        imagesCache(new Image());
+        indicatorCache(new Indicator());
     }
 }

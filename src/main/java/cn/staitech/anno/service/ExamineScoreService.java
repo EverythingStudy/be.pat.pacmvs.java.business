@@ -1,7 +1,7 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.ExamineScore;
-import cn.staitech.anno.domain.examineScore.*;
+import cn.staitech.anno.domain.examine.*;
 import cn.staitech.common.core.domain.PageResponse;
 import com.baomidou.mybatisplus.extension.service.IService;
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.AlgorithmProjectTypeMapper">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.AlgorithmProjectType">
+        <id column="algorithm_project_type_id" property="algorithmProjectTypeId"/>
+        <result column="algorithm_project_type_name" property="algorithmProjectTypeName"/>
+        <result column="algorithm_project_type_name_en" property="algorithmProjectTypeNameEn"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        algorithm_project_type_id
+        , algorithm_project_type_name, algorithm_project_type_name_en
+    </sql>
+</mapper>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.QuestionBankMapper">
-
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.QuestionBank">
         <id column="question_id" property="questionId"/>
@@ -51,44 +50,32 @@
         on qb.topic_id = tt.topic_id
         left join sys_organization o
         on qb.organization_id = o.organization_id
-            left join tb_image ti
-            on s.image_id=ti.image_id
+        left join tb_image ti
+        on s.image_id=ti.image_id
         <where>
             <if test="projectName !=null and projectName !=''">
-
                 and p.project_name like CONCAT('%',#{projectName},'%')
-
             </if>
 
             <if test="imageCode !=null and imageCode !=''">
-
                 and qb.image_code like CONCAT('%',#{imageCode},'%')
-
             </if>
 
             <if test="imageName !=null and imageName !=''">
-
                 and qb.image_name like CONCAT('%',#{imageName},'%')
-
             </if>
 
 
             <if test="topicName !=null and topicName !=''">
-
                 and tt.topic_name like CONCAT('%',#{topicName},'%')
-
             </if>
 
             <if test="organizationName !=null and organizationName !=''">
-
                 and o.organization_name like CONCAT('%',#{organizationName},'%')
-
             </if>
 
             <if test="organizationId !=null ">
-
                 and qb.organization_id =#{organizationId}
-
             </if>
         </where>
         order by qb.create_time desc
@@ -117,21 +104,15 @@
         left join tb_image ti
         on s.image_id=ti.image_id
         <where>
-
             p.project_id = #{projectId}
 
             <if test="imageCode !=null and imageCode !=''">
-
                 and qb.image_name like CONCAT('%',#{imageCode},'%')
-
             </if>
 
             <if test="topicName !=null and topicName !=''">
-
                 and tt.topic_name like CONCAT('%',#{topicName},'%')
-
             </if>
-
         </where>
         order by qb.create_time desc
     </select>
