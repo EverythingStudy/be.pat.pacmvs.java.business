@@ -258,7 +258,6 @@ public class ExaminationController extends BaseController {
      * @param slideId
      * @return
      */
-//    @RequiresPermissions(value = {"anno:examination:record"})
     @Log(title = "复核操作记录", businessType = BusinessType.UPDATE)
     @ApiOperation(value = "获取操作记录接口")
     @GetMapping("/record")

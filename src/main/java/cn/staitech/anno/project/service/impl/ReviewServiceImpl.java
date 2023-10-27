@@ -81,7 +81,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
 
     @Override
     public void exportReview(Long projectId, Long slideId) throws Exception {
-        Map params = new HashMap();
+        Map params = new HashMap(16);
         if (projectId != null) {
             params.put("projectId", projectId);
         }
@@ -131,7 +131,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
         String path = File.separator + "temp";
         File file = new File(path);
         try {
-            Map params = new HashMap();
+            Map params = new HashMap(16);
             params.put("projectId", projectId);
             params.put("slideIds", slideIds);
             List<ReviewVO> reviewVOS = getBaseMapper().exportReview(params);
@@ -256,8 +256,8 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
             try {
                 String projectName = "";
                 JSONObject jsonObject = new JSONObject();
-                Map<String, String> map = new HashMap<>();
-                Map params = new HashMap();
+                Map<String, String> map = new HashMap<>(16);
+                Map params = new HashMap(16);
                 if (projectId != null) {
                     params.put("projectId", projectId);
                 }
