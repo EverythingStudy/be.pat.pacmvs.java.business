@@ -400,6 +400,102 @@ public class MarkingServiceImpl implements MarkingService {
     }
 
     @Override
+    public String slideJsonExportExt(Long slideId,SysUser sysUser) throws Exception {
+        if (!Optional.ofNullable(slideId).isPresent()) {
+            try {
+                throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        Slide slideBy = slideMapperV1.selectById(slideId);
+        if (!Optional.ofNullable(slideBy).isPresent()) {
+            try {
+                throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        String fileUrl = null;
+        try {
+            fileUrl = fileService.createFiles(slideId, FILE_SUFFIX_JSON);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        // 标注数据
+        List<Features> features = markingMapper.selectLists(slideId);
+        features.forEach(i -> i.setGeometry(GeometryUtil.updateYAxle(i.getGeometry())));
+
+        // 查询项目详情
+        JsonExport jsonExport = null;
+        Project projectBy = projectMapperV1.selectById(slideBy.getProjectId());
+        if (Objects.equals(projectBy.getProjectType(), "2")) {
+            jsonExport = markingMapper.jsonExportSelect(slideId);
+        } else {
+            jsonExport = markingMapper.reviewJsonExportSelect(slideId);
+        }
+
+        // 项目信息
+        GeoProject project = new GeoProject();
+        // 种属编码 + 结构编码 + 数据库项目id
+        String projectId = jsonExport.getSpeciesId() + GLIDE_LINE + jsonExport.getOrganId() + GLIDE_LINE + jsonExport.getProjectId();
+        project.setProject_id(projectId);
+        project.setProject_name(jsonExport.getProjectName());
+
+        // 图像信息
+        GeoImage image = new GeoImage();
+        image.setImage_shape(jsonExport.getImageShape());
+        image.setImage_type(jsonExport.getFormat());
+        image.setImage_name(jsonExport.getImageName());
+        image.setCreate_time(jsonExport.getCreateTime());
+        // 获取切片中的geo_image_id,为空则使用以下规则进行生成（项目id + 十三位时间戳 + 两位随机数）
+        String imageId = "";
+        if (Objects.equals(slideBy.getGeoImageId(), "") || slideBy.getGeoImageId() == null) {
+            imageId = jsonExport.getProjectId() + GLIDE_LINE + System.currentTimeMillis() + GLIDE_LINE + RandomUtils.RandomNumbers();
+            Slide slides = new Slide();
+            slides.setSlideId(slideId);
+            slides.setGeoImageId(imageId);
+            slideMapperV1.updateById(slides);
+        } else {
+            imageId = slideBy.getGeoImageId();
+        }
+        image.setImage_id(imageId);
+        image.setImage_url(jsonExport.getImageUrl());
+
+        // 作者信息
+        GeoAttribute attribute = new GeoAttribute();
+        attribute.setAuthor(sysUser.getUserName());
+        attribute.setDepartment(sysUser.getDept());
+
+        // 标签信息
+        QueryWrapper<cn.staitech.anno.project.domain.Marking> markingQueryWrapper = new QueryWrapper<>();
+        markingQueryWrapper.select("category_id").eq("slide_id", slideId).ne("category_id", 0).groupBy("category_id");
+        List<cn.staitech.anno.project.domain.Marking> markingList = markingMapperV1.selectList(markingQueryWrapper);
+        List<GeoLabel> categoryList = new ArrayList<>();
+        if (markingList.size() > 0) {
+            for (cn.staitech.anno.project.domain.Marking marking : markingList) {
+                GeoLabel geoLabel = pathologicalIndicatorCategoryMapper.selectGeoLabel(marking.getCategoryId());
+                categoryList.add(geoLabel);
+            }
+        }
+
+        // 构建geoJson数据
+        GeoJson geoJson = new GeoJson();
+        geoJson.setFeatures(features);
+        geoJson.setImage(image);
+        geoJson.setProject(project);
+        geoJson.setAttribute(attribute);
+        geoJson.setLabel_info(categoryList);
+        String jsonString = JSON.toJSONString(geoJson, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue);
+        // 写入文件
+        exportJson(fileUrl, jsonString);
+//            return R.ok(fileUrl);
+//        });
+        return fileUrl;
+    }
+
+    @Override
     public boolean zipExport(String zipUrl, Long projectId) throws Exception {
         StringBuilder sb;
         File file1 = new File(zipUrl);
@@ -591,9 +687,11 @@ public class MarkingServiceImpl implements MarkingService {
         Long userId = SecurityUtils.getUserId();
         DownTask task = DownTask.builder().code(snowflake.nextIdStr()).status(Constants.DOWN_STATE_RUNNING).createTime(new Date()).updateTime(new Date()).updateBy(userId).createBy(userId).build();
         downTaskMapper.insert(task);
+
         // 执行任务
         // 查询所有的切片
-        executor.submit(new TaskThread(task, projectId, projectBy.getProjectName(), slideIds));
+        executor.submit(new TaskThread(task, projectId, projectBy.getProjectName(), slideIds,SecurityUtils.getLoginUser().getSysUser()));
+
         return task;
 
     }
@@ -705,12 +803,14 @@ public class MarkingServiceImpl implements MarkingService {
         private final Long projectId;
         private final String projectName;
         private List<Long> slideIds;
+        private SysUser sysUser;
 
-        public TaskThread(DownTask downTask, Long projectId, String projectName, List<Long> slideIds) {
+        public TaskThread(DownTask downTask, Long projectId, String projectName, List<Long> slideIds,SysUser sysUser) {
             this.downTask = downTask;
             this.projectId = projectId;
             this.projectName = projectName;
             this.slideIds = slideIds;
+            this.sysUser = sysUser;
         }
 
         @Override
@@ -736,7 +836,7 @@ public class MarkingServiceImpl implements MarkingService {
                             // 将文件生成在本地
                             String fileUrl = null;
                             try {
-                                fileUrl = slideJsonExport(slideId);
+                                fileUrl = slideJsonExportExt(slideId,sysUser);
                                 fileUrl = fileUrl.replace(" ", "\\ ");
                             } catch (Exception e) {
                                 throw new RuntimeException(e);
@@ -757,6 +857,8 @@ public class MarkingServiceImpl implements MarkingService {
                 downTaskMapper.updateById(downTask);
             } catch (Exception e) {
                 e.printStackTrace();
+            }finally {
+
             }
         }
     }

@@ -8,6 +8,7 @@ import cn.staitech.anno.domain.marking.PointCount;
 import cn.staitech.anno.domain.marking.SlideRes;
 import cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo;
 import cn.staitech.anno.project.domain.DownTask;
+import cn.staitech.system.api.domain.SysUser;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -97,6 +98,15 @@ public interface MarkingService {
      * @return
      */
     String slideJsonExport(Long slideId) throws Exception;
+
+
+    /**
+     * 导出json数据
+     *
+     * @param slideId
+     * @return
+     */
+    String slideJsonExportExt(Long slideId, SysUser sysUser) throws Exception;
 
     /**
      * 导入zip压缩包
