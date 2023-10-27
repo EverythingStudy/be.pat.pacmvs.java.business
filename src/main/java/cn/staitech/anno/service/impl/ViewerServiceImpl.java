@@ -184,10 +184,11 @@ public class ViewerServiceImpl implements ViewerService {
                 sb = new StringBuilder();
                 if (ze.isDirectory()) {
                 } else {
-                    System.out.println("file - " + ze.getName() + " : " + ze.getSize() + " bytes");
+                    // System.out.println("file - " + ze.getName() + " : " + ze.getSize() + " bytes");
                     long size = ze.getSize();
                     if (size > 0) {
-                        BufferedReader bf = new BufferedReader(new InputStreamReader(zipFile.getInputStream(ze), StandardCharsets.UTF_8));//读取文件内容
+                        // 读取文件内容
+                        BufferedReader bf = new BufferedReader(new InputStreamReader(zipFile.getInputStream(ze), StandardCharsets.UTF_8));
                         String line;
                         while ((line = bf.readLine()) != null) {
                             sb.append(line);

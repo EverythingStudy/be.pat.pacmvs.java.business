@@ -291,7 +291,6 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
 
         for (int i = 0; i < tableMapList.size(); i++) {
             Map<String, Object> mapD = tableMapList.get(i);
-            // String tableName = (String) mapD.get("tableName");
             List<StatisticsHeadVo> manPlsList = (List<StatisticsHeadVo>) mapD.get("manPlsList");
             List<StatisticsHeadVo> womanPlsList = (List<StatisticsHeadVo>) mapD.get("womanPlsList");
 
@@ -323,12 +322,7 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
                     for (Map.Entry<String, List<String>> lapEntry : lessAndPositionMap.entrySet()) {
                         // 病情key
                         String lessionKey = lapEntry.getKey();
-
-                        // 根据lessionKey 去查询 lessionKey =
-                        // sysLesionName+"|"+sysPositionName;
-                        // String[] lessionPosition = lessionKey.split("^");
                         String sysLesionName = lessionKey.split("\\^")[0];
-
                         String sysPositionName = lessionKey.split("\\^")[1];
 
                         // 病情行信息和统计数据是lessionKey
@@ -379,15 +373,6 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
             String genderName = vo.getSex();
             String groupName = vo.getGroupName();
             String dosage = vo.getDosage();
-            // Map<String, Object> map3 = new HashMap<>();
-            // map3.put("specialId", specialId);
-            // map3.put("status", 1);
-            // map3.put("gender", gender);
-            // map3.put("groupName", groupName);
-            // map3.put("dosage", dosage);
-            // map3.put("sysVisceraName", sysVisceraName);
-            // List<StatisticsBodyVo> diagnosedList =
-            // specialDiagnosisMapper.getDiagnosedListByParm(map3);
             String headerKey = genderName + CommonConstant.GLIDE_LINE + groupName + CommonConstant.GLIDE_LINE + dosage;
             String visceraKey = headerKey + CommonConstant.GLIDE_LINE + sysVisceraName;
 
@@ -421,19 +406,7 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
             String headerKey = genderName + "_" + groupName + "_" + dosage;
             String visceraKey = headerKey + "_" + sysVisceraName;
             String gradeKey = visceraKey + "_未见明显异常";
-
-            // Map<String, Object> map3 = new HashMap<>();
-            // map3.put("specialId", specialId);
-            // map3.put("status", 1);
-            // map3.put("gender", gender);
-            // map3.put("groupName", groupName);
-            // map3.put("dosage", dosage);
-            // map3.put("sysGrade", "0");
-            // map3.put("sysVisceraName", sysVisceraName);
-            // List<StatisticsBodyVo> diagnosedList =
-            // specialDiagnosisMapper.getDiagnosedListByParm(map3);
             Map<String, Integer> noChangeMap = staticsData.get(1);
-
             String diagnosedTotal = "-";
             if (noChangeMap.containsKey(gradeKey)) {
                 int total = noChangeMap.get(gradeKey);
@@ -460,17 +433,6 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
             String headerKey = genderName + "_" + groupName + "_" + dosage;
             String visceraKey = headerKey + "_" + sysVisceraName;
             String lesionAndPositionKey = visceraKey + "_" + sysLesionName + "_" + sysPositionName;
-            // Map<String, Object> map3 = new HashMap<>();
-            // map3.put("specialId", specialId);
-            // map3.put("status", 1);
-            // map3.put("gender", gender);
-            // map3.put("groupName", groupName);
-            // map3.put("dosage", dosage);
-            // map3.put("sysVisceraName", sysVisceraName);
-            // map3.put("sysLesionName", sysLesionName);
-            // map3.put("sysPositionName", sysPositionName);
-            // List<StatisticsBodyVo> diagnosedList =
-            // specialDiagnosisMapper.getLessionStaticsListByParm(map3);
             Map<String, Integer> lesionPositionMap = staticsData.get(2);
             String diagnosedTotal = "-";
             if (lesionPositionMap.containsKey(lesionAndPositionKey)) {
@@ -498,21 +460,6 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
             String visceraKey = headerKey + "_" + sysVisceraName;
             String lesionAndPositionKey = visceraKey + "_" + sysLesionName + "_" + sysPositionName;
             String lesionAndPositionGradeKey = lesionAndPositionKey + "_" + perGrade;
-            //			System.out.println("异常程度信息:" + lesionAndPositionGradeKey);
-
-            // Map<String, Object> map3 = new HashMap<>();
-            // map3.put("specialId", specialId);
-            // map3.put("status", 1);
-            // map3.put("gender", gender);
-            // map3.put("groupName", groupName);
-            // map3.put("dosage", dosage);
-            // map3.put("sysVisceraName", sysVisceraName);
-            // map3.put("sysLesionName", sysLesionName);
-            // map3.put("sysPositionName", sysPositionName);
-            // map3.put("sysGradeName", perGrade);
-            // List<StatisticsBodyVo> diagnosedList =
-            // specialDiagnosisMapper.getLessionGradeStaticsListByParm(map3);
-
             Map<String, Integer> lesionPositioGradenMap = staticsData.get(3);
 
             String diagnosedTotal = "-";
@@ -539,7 +486,6 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
                 // index not exists
                 // manPlsList.addAll(new ArrayList<>());
             } else {
-                // index exists
                 totalList.addAll(mList.get(i));
                 remberMap.put("1", mList.get(i).size());
             }
@@ -555,7 +501,6 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
             r2List.add(remberMap);
         }
 
-        // List<List<String>> totalDataList = new ArrayList<>();
         for (Map<String, Object> pmap : r2List) {
             List<StatisticsHeadVo> totalList = (List<StatisticsHeadVo>) pmap.get("totalList");
 
@@ -589,15 +534,6 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
 
             }
             headerList.add(rowDataList);
-            // String json = JSONUtil.toJsonStr(rowDataList);
-            // System.out.println("====开始===");
-
-            // System.out.println(rowDataList);
-            //			String arb = rowDataList.get(0);
-            // System.out.println("行数是："+rowDataList.size()+" arb:"+arb+"
-            // 列数是："+arb.split("\\|").length);
-            // System.out.println("====结束===");
-            // System.out.println("");
         }
         return headerList;
     }

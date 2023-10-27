@@ -23,7 +23,6 @@ import java.util.List;
 public class SysUserController {
     @Resource
     private SysUserMapperV1 userMapper;
-
     @ApiOperation(value = "根据用户id查询用户列表")
     @PostMapping("/selectUserIdList")
     public R<List<cn.staitech.anno.project.domain.SysUser>> selectUserIdList(@RequestBody SelectUserIdListIn req) {

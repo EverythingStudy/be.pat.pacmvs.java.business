@@ -130,7 +130,6 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
         // 循环json
         JSONObject resJsonObject = new JSONObject();
 
-//        JSONArray labelInfo = new JSONArray();
         for (AlgorithmJson algorithmJson : algorithmJsons) {
             JSONArray features = new JSONArray();
             // 获取json文件路径
@@ -142,8 +141,6 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
                         featuresJson = featuresJson.stream().filter(s -> selectGeoJson.getLabelList().contains(((JSONObject) s).getJSONObject("properties").getString("label_code"))).collect(Collectors.toCollection(JSONArray::new));
                     }
                     features.addAll(updateYs(featuresJson));
-//                    JSONArray labelNameJson = jsonObject.getJSONArray("label_info");
-//                    labelInfo.addAll(labelNameJson);
                 }
             }
             resJsonObject.put(String.valueOf(algorithmJson.getAlgorithmJsonId()), features);
@@ -195,6 +192,4 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
         }
         return jsonArray;
     }
-
-
 }

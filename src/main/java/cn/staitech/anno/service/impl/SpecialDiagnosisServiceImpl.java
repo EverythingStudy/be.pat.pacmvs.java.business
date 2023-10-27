@@ -283,7 +283,7 @@ public class SpecialDiagnosisServiceImpl implements SpecialDiagnosisService {
         }
         detail.setCreateTime(DateUtil.date());
         // 先查询当前切片之前的数据，有就修改、没有就添加
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
         map.put("dictType", dictType);
         map.put("specialDiagnosisId", specialDiagnosisId);
         List<SpecialDiagnosisDetail> detailList = specialDiagnosisDetailMapper.getSpecialDiagnosisDetailListByParm(map);
@@ -323,7 +323,7 @@ public class SpecialDiagnosisServiceImpl implements SpecialDiagnosisService {
 
     @Override
     public List<SysDictDataVo> getCommonTag(String dictType) {
-        Map<String, Object> dictMap = new HashMap<>();
+        Map<String, Object> dictMap = new HashMap<>(16);
         dictMap.put("dictType", dictType);
         List<SysDictDataVo> list = sysDictDataService.getSysDictDataVoListByParm(dictMap);
         if (CollectionUtils.isNotEmpty(list)) {
