@@ -315,7 +315,7 @@ public class SubImageServiceImpl extends ServiceImpl<SubImageMapper, SubImage> i
 
     @Override
     public Map<String, String> getDictInfo(String dictType) {
-        Map<String, String> organizationMap = new HashMap<String, String>();
+        Map<String, String> organizationMap = new HashMap<String, String>(16);
         Map<String, Object> map = new HashMap<>(16);
         map.put("dictType", dictType);
         map.put("status", 0);

@@ -85,7 +85,7 @@ public class ReportServiceImpl implements ReportService {
         params.put("currentUserId", userId);
         params.put("specialId", recordAddVO.getSpecialId());
         params.put("reasons", recordAddVO.getReasons());
-        //报告类型（1单切片报告，2组间报告,3脏器病变报告
+        // 报告类型（1单切片报告，2组间报告,3脏器病变报告
         Integer rptType = recordAddVO.getReportType();
         switch (rptType) {
             case 2:

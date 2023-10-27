@@ -122,12 +122,12 @@ public class ExcelTool<T> {
      * @param treeList 转成tree结构的list
      */
     public static void setColNum(List<Column> list, List<Column> treeList, List<Column> flist) {
-//        int col = pcIndex;//excel第几列
-//        int cLen ;//xcel跨多少列
-        List<Column> new_list = new ArrayList<>();//新的遍历list
+        // int col = pcIndex;//excel第几列
+        // int cLen ;//xcel跨多少列
+        // 新的遍历list
+        List<Column> new_list = new ArrayList<>();
         for (int i = 0; i < treeList.size(); i++) {
             Column poit = treeList.get(i);
-//            String temp_id = TreeTool.getStepFid(list,poit.getId() ,1);
             int col = TreeTool.getFCol(list, poit.getPid()).getCol();
             int brotherCol = TreeTool.getBrotherChilNum(list, poit);
             poit.setCol(col + brotherCol);
@@ -135,8 +135,9 @@ public class ExcelTool<T> {
             if (cLen <= 1) {
                 cLen = 0;
             }
-//            else  cLen--;
-            poit.setcLen(cLen);//设置跨多少列
+            // else  cLen--;
+            // 设置跨多少列
+            poit.setcLen(cLen);
             if (poit.getListTpamscolumn().size() > 0) {
                 new_list.addAll(poit.getListTpamscolumn());
             }
@@ -155,21 +156,24 @@ public class ExcelTool<T> {
     public static String getCellFormatValue(Cell cell) {
         String cellvalue = "";
         if (cell != null) {
-            switch (cell.getCellType()) { // 判断当前Cell的Type
-
-                case NUMERIC:  // 如果当前Cell的Type为NUMERIC
+            // 判断当前Cell的Type
+            switch (cell.getCellType()) {
+                // 如果当前Cell的Type为NUMERIC
+                case NUMERIC:
                 case FORMULA: {
                     // 判断当前的cell是否为Date
                     if (HSSFDateUtil.isCellDateFormatted(cell)) {
                         Date date = cell.getDateCellValue();
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                         cellvalue = sdf.format(date);
-                    } else { // 如果是纯数字
+                    } else {
+                        // 如果是纯数字
                         cellvalue = String.valueOf(cell.getNumericCellValue());
                     }
                     break;
                 }
-                case STRING:  // 如果当前Cell的Type为STRIN
+                // 如果当前Cell的Type为STRIN
+                case STRING:
                     // 取得当前的Cell字符串
                     cellvalue = cell.getRichStringCellValue().getString();
                     break;
@@ -193,9 +197,11 @@ public class ExcelTool<T> {
         Workbook wb = null;
         String fileType = fileName.substring(fileName.lastIndexOf("."));
         if (".xls".equals(fileType)) {
-            wb = new HSSFWorkbook(inStr);  //2003-
+            // 2003-
+            wb = new HSSFWorkbook(inStr);
         } else if (".xlsx".equals(fileType)) {
-            wb = new XSSFWorkbook(inStr);  //2007+
+            // 2007+
+            wb = new XSSFWorkbook(inStr);
         } else {
             throw new Exception("导入格式错误");
         }
@@ -305,33 +311,43 @@ public class ExcelTool<T> {
     }
 
     /**
+     * 内部统一调用的样式初始化
      * ExcelTool 属性 get、set 方法 结束
      */
-    //内部统一调用的样式初始化
     private void init(int styleFlag) {
         this.styleHead = this.workbook.createCellStyle();
-        this.styleHead.setAlignment(HorizontalAlignment.CENTER);// 左右居中
-        this.styleHead.setVerticalAlignment(VerticalAlignment.CENTER);// 上下居中
+        // 左右居中
+        this.styleHead.setAlignment(HorizontalAlignment.CENTER);
+        // 上下居中
+        this.styleHead.setVerticalAlignment(VerticalAlignment.CENTER);
         this.styleHead.setRightBorderColor(IndexedColors.BLACK.getIndex());
         this.styleHead.setBottomBorderColor(IndexedColors.BLACK.getIndex());
         switch (styleFlag) {
             case 1:
                 this.styleBody = this.workbook.createCellStyle();
-                this.styleBody.setAlignment(HorizontalAlignment.LEFT);// 左右居中ALIGN_CENTER
-                this.styleBody.setVerticalAlignment(VerticalAlignment.CENTER);// 上下居中
+                // 左右居中ALIGN_CENTER
+                this.styleBody.setAlignment(HorizontalAlignment.LEFT);
+                // 上下居中
+                this.styleBody.setVerticalAlignment(VerticalAlignment.CENTER);
                 this.styleBody.setRightBorderColor(IndexedColors.BLACK.getIndex());
                 this.styleBody.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-                this.styleBody.setBorderRight(BorderStyle.THIN);// 边框的大小
-                this.styleBody.setBorderBottom(BorderStyle.THIN);// 边框的大小
+                // 边框的大小
+                this.styleBody.setBorderRight(BorderStyle.THIN);
+                // 边框的大小
+                this.styleBody.setBorderBottom(BorderStyle.THIN);
                 break;
             default:
                 this.styleBody = this.workbook.createCellStyle();
-                this.styleBody.setAlignment(HorizontalAlignment.CENTER);// 左右居中ALIGN_CENTER
-                this.styleBody.setVerticalAlignment(VerticalAlignment.CENTER);// 上下居中
+                // 左右居中ALIGN_CENTER
+                this.styleBody.setAlignment(HorizontalAlignment.CENTER);
+                // 上下居中
+                this.styleBody.setVerticalAlignment(VerticalAlignment.CENTER);
                 this.styleBody.setRightBorderColor(IndexedColors.BLACK.getIndex());
                 this.styleBody.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-                this.styleBody.setBorderRight(BorderStyle.THIN);// 边框的大小
-                this.styleBody.setBorderBottom(BorderStyle.THIN);// 边框的大小
+                // 边框的大小
+                this.styleBody.setBorderRight(BorderStyle.THIN);
+                // 边框的大小
+                this.styleBody.setBorderBottom(BorderStyle.THIN);
                 break;
         }
     }

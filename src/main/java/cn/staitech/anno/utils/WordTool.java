@@ -102,39 +102,30 @@ public class WordTool {
                     womanBlackPoint = womanPlsList.size();
                 }
                 int maxCell = manBlackPoint + womanBlackPoint + 1;
-				/*if(maxCell != 9){
-					System.out.println("2222");
-				}*/
-                //				for (int row = 0; row < maxRow; row++) { // 循环遍历表格的行
+
                 for (int row = 0; row < row_hang; row++) {
                     String rowStr = tableData.get(row);
                     String[] coleArray = rowStr.split("\\|\\|");
-                    //					System.out.println("当前的数据是："+rowStr);
-
                     // 设置单元格内容
                     int currentRow = row + 1;
-
-                    //					if(currentRow == 1 ||currentRow == 2||currentRow == 3||currentRow == 4){
                     if (currentRow < 5) {
-                        //						XWPFTableRow tempRow = table.getRow(0);
                         XWPFTableRow tempRow = table.getRow(currentRow - 1);
                         for (int col = 8; col > maxCell - 1; col--) {
                             tempRow.removeCell(col);
                             tempRow.getCtRow().removeTc(col);
                         }
-                        for (int col = 0; col < coleArray.length; col++) { // 循环遍历表格的列
+                        // 循环遍历表格的列
+                        for (int col = 0; col < coleArray.length; col++) {
                             // 获取当前单元格
                             XWPFTableCell cell = tempRow.getCell(col);
                             // 设置单元格内容垂直居中
                             cell.setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
                             // 设置单元格内容水平居中(获取单元格中的第一个段落对象)
                             cell.getParagraphArray(0).setAlignment(ParagraphAlignment.CENTER);
-
                             //获取 XWPFTableCell 的CTTc
                             CTTc ctTc = cell.getCTTc();
                             CTTcPr tcPr = ctTc.getTcPr();
                             CTTcBorders borders = tcPr.getTcBorders();
-
 
                             XWPFTableCell cell_1 = tempRow.getCell(1);
                             CTTc ctTc_1 = cell_1.getCTTc();
@@ -145,7 +136,6 @@ public class WordTool {
 
                             //右侧
                             if (col == coleArray.length - 1) {
-                                //								setBorder(borders.getRight(),"000000");
                                 setBorder(borders.getRight(), colour1);
                             }
                             //左侧
@@ -155,13 +145,14 @@ public class WordTool {
 
                             //获取 CTP
                             CTP ctP = (ctTc.sizeOfPArray() == 0) ? ctTc.addNewP() : ctTc.getPArray(0);
-
-                            //getParagraph(ctP) 获取 XWPFParagraph
+                            // getParagraph(ctP) 获取 XWPFParagraph
                             XWPFParagraph par = cell.getParagraph(ctP);
-                            //XWPFRun   设置格式
+                            // XWPFRun   设置格式
                             XWPFRun run2 = par.createRun();
-                            run2.setFontFamily("等线");//设置字体（如：微软雅黑,华文楷体,宋体）
-                            run2.setFontSize(9);//字体大小
+                            // 设置字体（如：微软雅黑,华文楷体,宋体）
+                            run2.setFontFamily("等线");
+                            // 字体大小
+                            run2.setFontSize(9);
 
                             int currentCol = col + 1;
                             if (currentCol == 1) {
@@ -181,14 +172,18 @@ public class WordTool {
 
                             } else {
                                 run2.setText(coleArray[col]);
-                                //								run2.setBold(true);
-                                run2.setFontFamily("等线");//设置字体（如：微软雅黑,华文楷体,宋体）
-                                run2.setFontSize(9);//字体大小
+                                // 设置字体（如：微软雅黑,华文楷体,宋体）
+                                run2.setFontFamily("等线");
+                                // 字体大小
+                                run2.setFontSize(9);
                                 if (currentRow == 3) {
-                                    run2.addBreak();//设置换行
+                                    // 设置换行
+                                    run2.addBreak();
                                     XWPFRun run3 = par.createRun();
-                                    run3.setFontFamily("等线");//设置字体（如：微软雅黑,华文楷体,宋体）
-                                    run3.setFontSize(9);//字体大小
+                                    // 设置字体（如：微软雅黑,华文楷体,宋体）
+                                    run3.setFontFamily("等线");
+                                    // 字体大小
+                                    run3.setFontSize(9);
                                     run3.setText("mg");
                                 }
                             }
@@ -203,10 +198,9 @@ public class WordTool {
                             tempRow.removeCell(col);
                             tempRow.getCtRow().removeTc(col);
                         }
-                        //						if(coleArray.length == 1){
-                        for (int col = 0; col < manBlackPoint + womanBlackPoint + 1; col++) { // 循环遍历表格的列
+                        // 循环遍历表格的列
+                        for (int col = 0; col < manBlackPoint + womanBlackPoint + 1; col++) {
                             // 获取当前单元格
-                            //							cell = table.getRow(row).getCell(col);
                             XWPFTableCell cell = tempRow.getCell(col);
                             // 设置单元格内容垂直居中
                             cell.setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
@@ -216,11 +210,8 @@ public class WordTool {
                             CTTc ctTc = cell.getCTTc();
                             //获取 CTP
                             CTP ctP = (ctTc.sizeOfPArray() == 0) ? ctTc.addNewP() : ctTc.getPArray(0);
-
-
                             CTTcPr tcPr = ctTc.getTcPr();
                             CTTcBorders borders = tcPr.getTcBorders();
-
 
                             XWPFTableCell cell_1 = tempRow.getCell(1);
                             CTTc ctTc_1 = cell_1.getCTTc();
@@ -231,7 +222,6 @@ public class WordTool {
 
                             //右侧
                             if (col == coleArray.length - 1) {
-                                //									setBorder(borders.getRight(),"000000");
                                 setBorder(borders.getRight(), colour1);
                             }
                             //左侧
@@ -243,11 +233,13 @@ public class WordTool {
                             XWPFParagraph par = cell.getParagraph(ctP);
                             //XWPFRun   设置格式
                             XWPFRun run2 = par.createRun();
-                            run2.setFontFamily("等线");//设置字体（如：微软雅黑,华文楷体,宋体）
-                            run2.setFontSize(9);//字体大小
+                            //设置字体（如：微软雅黑,华文楷体,宋体）
+                            run2.setFontFamily("等线");
+                            //字体大小
+                            run2.setFontSize(9);
 
 
-                            //								viscera_
+                            //viscera_
                             String value = "";
                             if (col < coleArray.length) {
                                 value = coleArray[col];

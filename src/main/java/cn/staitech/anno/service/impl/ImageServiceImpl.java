@@ -163,7 +163,8 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         // 机构ID
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
         image.setOrganizationId(sysUser.getOrganizationId());
-
+        // 只查可用状态的
+        image.setStatus(1);
         // 业务类型 1 原始切片 2 预测切片
         Integer bizType = image.getBizType();
 
