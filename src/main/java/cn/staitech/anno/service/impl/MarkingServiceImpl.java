@@ -857,8 +857,6 @@ public class MarkingServiceImpl implements MarkingService {
                 downTaskMapper.updateById(downTask);
             } catch (Exception e) {
                 e.printStackTrace();
-            }finally {
-
             }
         }
     }
