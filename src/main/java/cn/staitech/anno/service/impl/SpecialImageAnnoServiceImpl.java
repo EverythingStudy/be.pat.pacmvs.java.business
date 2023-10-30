@@ -488,7 +488,9 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
     }
 
 
-    //组装数据
+    /**
+     * 组装数据
+     */
     @Override
     public AnnoProperties getPropertiesBy(SpecialAnnotation req) {
         AnnoProperties properties = new AnnoProperties();

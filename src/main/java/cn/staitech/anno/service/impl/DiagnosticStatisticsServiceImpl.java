@@ -471,7 +471,16 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
         return gradeInfo;
     }
 
-    // 表头处理
+    /**
+     * 表头处理
+     *
+     * @param fList
+     * @param mList
+     * @param maxFCount
+     * @param maxMCount
+     * @param tableCount
+     * @return
+     */
     public List<List<String>> autoHeader(List<List<StatisticsHeadVo>> fList, List<List<StatisticsHeadVo>> mList,
                                          int maxFCount, int maxMCount, int tableCount) {
         List<List<String>> headerList = new ArrayList<>();

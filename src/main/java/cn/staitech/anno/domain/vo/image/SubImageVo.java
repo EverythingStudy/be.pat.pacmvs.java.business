@@ -37,7 +37,9 @@ public class SubImageVo extends SubImage {
 
     private String groupIds;
 
-    //当前分组信息
+    /**
+     * 当前分组信息
+     */
     private Group group;
 
     private List<Long> imageIds;

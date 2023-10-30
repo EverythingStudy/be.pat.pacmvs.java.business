@@ -40,7 +40,12 @@ public interface SpecialAnnotationMapper {
     List<SpecialAnnoProperties> selectSpecialPropertiesList(SpecialAnnotation specialAnnotation);
 
 
-    //匹配新增字段之前的表
+    /**
+     * 匹配新增字段之前的表
+     *
+     * @param specialAnnotation
+     * @return
+     */
     List<SpecialAnnotation> selectAnnotationList(SpecialAnnotation specialAnnotation);
 
     List<OrganDict> getSystemDict(OrganDict dict);

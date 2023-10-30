@@ -15,7 +15,6 @@ public class SpecialAnnoAddVO {
     @ApiModelProperty(value = "切片id", required = true)
     private Long specialImageId;
 
-    // @NotNull(message = "用户不可为空")
     @ApiModelProperty(value = "用户id", required = true)
     private Long markingCreateBy;
 

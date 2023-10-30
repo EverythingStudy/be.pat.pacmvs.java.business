@@ -17,7 +17,9 @@ import java.util.Map;
 public class SlideReportVo extends SubImageVo {
 
     List<Map> tasks = new ArrayList<>();
-    //切片id
+    /**
+     * 切片id
+     */
     private Long slideId;
     /**
      * 人工诊断状态：0未诊断，1已诊断

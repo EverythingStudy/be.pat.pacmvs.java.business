@@ -476,7 +476,10 @@ public class SpecialImageServiceImpl implements SpecialImageService {
         return specialImageMapper.selectSpecialImageList(specialImageSelectVO);
     }
 
-    //切图测试
+    /**
+     * 切图测试
+     * @return
+     */
     private String cutDemoData() {
         List<List<List<Integer>>> all_1 = new ArrayList<>();
         List<List<Integer>> p_1 = new ArrayList<>();

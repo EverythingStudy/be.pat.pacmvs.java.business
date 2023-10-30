@@ -759,8 +759,6 @@ public class MarkingServiceImpl implements MarkingService {
         return pointCountList;
     }
 
-    //    @SneakyThrows
-//    @Async
     public void exportJson(String fileUrl, String jsonString) {
         try {
             OutputStream outputStream = Files.newOutputStream(Paths.get(fileUrl));

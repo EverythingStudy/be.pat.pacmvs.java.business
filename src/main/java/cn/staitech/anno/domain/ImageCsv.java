@@ -13,6 +13,7 @@ import java.util.Date;
 
 /**
  * @TableName tb_image_csv
+ * @author wangf
  */
 @TableName(value = "tb_image_csv")
 @Data

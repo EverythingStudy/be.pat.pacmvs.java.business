@@ -32,6 +32,7 @@ import javax.annotation.Resource;
 import java.io.*;
 import java.util.*;
 
+import static cn.staitech.anno.constant.CommonConstant.FILE_SUFFIX_DOCX;
 import static cn.staitech.anno.constant.CommonConstant.GLIDE_LINE;
 
 /**
@@ -44,8 +45,9 @@ import static cn.staitech.anno.constant.CommonConstant.GLIDE_LINE;
 @Service
 public class ReportServiceImpl implements ReportService {
 
-    private final static String SUFFIX = ".docx";
-    //报告模板缓存
+    /**
+     * 报告模板缓存
+     */
     public static Map<String, byte[]> TPL_CACHE = new HashMap<>();
     @Value("${rpt.dir:../REPORT}")
     private String RPT_DIR;
@@ -57,7 +59,6 @@ public class ReportServiceImpl implements ReportService {
     private SpecialMapper specialMapper;
     @Resource
     private SysDictDataMapper sysDictDataMapper;
-
     @Resource
     private DiagnosticStatisticsService diagnosticStatisticsService;
 
@@ -79,7 +80,6 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public String createRpt(ReportRecordAddVO recordAddVO) throws Exception {
-        long start = System.currentTimeMillis();
         String path = "";
         log.info("开始生成word报告，报告参数{}：", recordAddVO);
         Map params = new HashMap(16);
@@ -97,7 +97,6 @@ public class ReportServiceImpl implements ReportService {
                 path = createVisceraLesionRpt(params);
                 break;
         }
-        log.info("word报告创建完成，耗时{}：", System.currentTimeMillis() - start);
         return path;
     }
 
@@ -130,7 +129,7 @@ public class ReportServiceImpl implements ReportService {
             rptDir.mkdirs();
         }
         //按专题下项目生成word报告
-        String rptPath = basePath + File.separator + special.getSpecialNumber() + GLIDE_LINE + DateUtils.getDateToString(new Date(), "yyyy-MM-dd_hh_mm_ss") + SUFFIX;
+        String rptPath = basePath + File.separator + special.getSpecialNumber() + GLIDE_LINE + DateUtils.getDateToString(new Date(), "yyyy-MM-dd_hh_mm_ss") + FILE_SUFFIX_DOCX;
         if (projectPos != null && !projectPos.isEmpty()) {
             for (int i = 0; i < projectPos.size(); i++) {
                 ProjectPo p = projectPos.get(i);
@@ -166,7 +165,7 @@ public class ReportServiceImpl implements ReportService {
      * @param dataList
      */
     public void loadData(XWPFTable headerTable, List<Map<String, Object>> dataList, List<Map<String, Integer>> mergeCellsParams) throws Exception {
-        //分组合并标识
+        // 分组合并标识
         boolean flag = false;
         String group = "";
         int groupRow = 0;
@@ -259,7 +258,7 @@ public class ReportServiceImpl implements ReportService {
         if (list == null || list.isEmpty()) {
             return;
         }
-        String filePath = basePath + File.separator + prj.getProjectId() + gender + index + SUFFIX;
+        String filePath = basePath + File.separator + prj.getProjectId() + gender + index + FILE_SUFFIX_DOCX;
         File tempFile = new File(filePath);
         if (tempFile.exists()) {
             tempFile.delete();
@@ -294,7 +293,7 @@ public class ReportServiceImpl implements ReportService {
         mergeCellMap.put(2, imageCellsParams);
         mergeCellMap.put(3, subImageCellsParams);
         mergeCells(table, mergeCellMap);
-        String docKey = basePath + File.separator + prj.getProjectId() + gender + SUFFIX;
+        String docKey = basePath + File.separator + prj.getProjectId() + gender + FILE_SUFFIX_DOCX;
         params.put(docKey, table);
     }
 
@@ -318,7 +317,7 @@ public class ReportServiceImpl implements ReportService {
         for (int i = 0; i < prjCount; i++) {
             ProjectPo p = projectPos.get(i);
             params.put("projectId", p.getProjectId());
-            String docKey = basePath + File.separator + p.getProjectId() + gender + SUFFIX;
+            String docKey = basePath + File.separator + p.getProjectId() + gender + FILE_SUFFIX_DOCX;
             XWPFTable table = (XWPFTable) params.get(docKey);
             if (table == null) {
                 continue;

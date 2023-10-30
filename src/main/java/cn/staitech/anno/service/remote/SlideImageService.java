@@ -18,7 +18,6 @@ import java.util.List;
  * @Description:切图处理
  * @date 2023年8月7日
  */
-//@FeignClient(contextId = "SlideImageService", value = "staitech-openslide",configuration = FeignConfigure.class)
 @FeignClient(contextId = "SlideImageService", value = "staitech-openslide")
 public interface SlideImageService {
 

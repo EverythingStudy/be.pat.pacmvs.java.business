@@ -160,7 +160,6 @@ public class SpecialMenu implements Serializable {
     /**
      * 请求参数
      */
-    // 用法 params.beginTime | params.endTime
     @ApiModelProperty(value = "请求参数", hidden = true)
     private Map<String, Object> params;
 }

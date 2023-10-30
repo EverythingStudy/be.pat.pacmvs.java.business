@@ -23,8 +23,8 @@ import static cn.staitech.common.core.constant.HttpStatus.FORBIDDEN;
  * @Author wangfeng
  * @Date: 2022-05-06
  * @Description：全局异常处理，参考：https://blog.csdn.net/Li_Ya_Fei/article/details/105609630
+ * @RestControllerAdvice
  */
-//@RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
     /**
