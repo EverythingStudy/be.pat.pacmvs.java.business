@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewRoundIN {
+public class ReviewRoundIn {
 
     @ApiModelProperty("项目id")
     private Long projectId;

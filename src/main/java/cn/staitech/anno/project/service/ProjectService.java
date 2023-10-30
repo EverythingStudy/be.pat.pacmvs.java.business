@@ -1,7 +1,7 @@
 package cn.staitech.anno.project.service;
 
 import cn.staitech.anno.project.domain.Project;
-import cn.staitech.anno.project.vo.ProjectIN;
+import cn.staitech.anno.project.vo.ProjectIn;
 import cn.staitech.anno.project.vo.ProjectVO;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -16,8 +16,8 @@ import java.util.List;
  */
 public interface ProjectService extends IService<Project> {
 
-    List<ProjectVO> queryProject(ProjectIN params) throws Exception;
+    List<ProjectVO> queryProject(ProjectIn params) throws Exception;
 
-    IPage<ProjectVO> pageProject(Page page, ProjectIN params) throws Exception;
+    IPage<ProjectVO> pageProject(Page page, ProjectIn params) throws Exception;
 
 }

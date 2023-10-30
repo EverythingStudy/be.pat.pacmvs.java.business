@@ -2,7 +2,7 @@ package cn.staitech.anno.project.controller;
 
 import cn.staitech.anno.project.domain.Opt;
 import cn.staitech.anno.project.service.OptService;
-import cn.staitech.anno.project.vo.ProjectIN;
+import cn.staitech.anno.project.vo.ProjectIn;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.annotation.RequiresPermissions;
@@ -42,7 +42,7 @@ public class OptController {
     @GetMapping("/page")
     public R<PageMaster<Opt>> page(@NotNull(message = "分页参数为空！") @RequestParam("pageNum") @ApiParam(name = "pageNum", value = "分页参数", required = true) Integer pageNum,
                                    @NotNull(message = "分页参数为空！") @RequestParam("pageSize") @ApiParam(name = "pageSize", value = "分页参数", required = true) Integer pageSize,
-                                   ProjectIN in) throws Exception {
+                                   ProjectIn in) throws Exception {
         Page page = new Page(pageNum, pageSize);
         optService.page(page);
         PageMaster<Opt> pageMaster = PageMaster.of(page.getRecords());

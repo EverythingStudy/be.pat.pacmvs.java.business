@@ -3,9 +3,9 @@ package cn.staitech.anno.project.service;
 import cn.staitech.anno.domain.reviewround.ReviewRoundOutVO;
 import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.anno.project.domain.Review;
-import cn.staitech.anno.project.vo.ReviewIN;
-import cn.staitech.anno.project.vo.ReviewRoundIN;
-import cn.staitech.anno.project.vo.ReviewUP;
+import cn.staitech.anno.project.vo.ReviewIn;
+import cn.staitech.anno.project.vo.ReviewRoundIn;
+import cn.staitech.anno.project.vo.ReviewUp;
 import cn.staitech.anno.utils.PageMaster;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -25,11 +25,11 @@ public interface ReviewService extends IService<Review> {
 
     DownTask csvExportReview(Long projectId, List<Long> slideIds) throws Exception;
 
-    int insert(ReviewIN req) throws Exception;
+    int insert(ReviewIn req) throws Exception;
 
-    int update(ReviewUP req) throws Exception;
+    int update(ReviewUp req) throws Exception;
 
-    PageMaster<ReviewRoundOutVO> pageReviewRound(Page page, ReviewRoundIN params);
+    PageMaster<ReviewRoundOutVO> pageReviewRound(Page page, ReviewRoundIn params);
 
 
 }

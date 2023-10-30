@@ -12,7 +12,7 @@ import static cn.staitech.common.security.utils.SecurityUtils.getLoginUser;
 /**
  * @author gjt.
  */
-public class hasPerms {
+public class HasPerms {
 
 
     /**
@@ -28,7 +28,7 @@ public class hasPerms {
      * @return true || false
      */
     public static boolean permsVerify(String permission) {
-        Set<String> authorities = hasPerms.getPermsList();
+        Set<String> authorities = HasPerms.getPermsList();
         return authorities.stream().filter(StringUtils::hasText)
                 .anyMatch(x -> ALL_PERMISSION.contains(x) || PatternMatchUtils.simpleMatch(x, permission));
     }

@@ -345,7 +345,7 @@ public class StatisticListUtils {
      * @throws IOException
      */
     public static void exportExcelDateUtil(HttpServletResponse response, String displayQuantity, String statisticalDimension, List<StatisticObjectOutVO> result) throws IOException {
-        String fileName = displayQuantity + "_" + statisticalDimension;
+        String fileName = displayQuantity + GLIDE_LINE + statisticalDimension;
 
         List<List<String>> title = ListUtils.newArrayList();
         List<String> head0 = ListUtils.newArrayList();
@@ -378,7 +378,7 @@ public class StatisticListUtils {
      * @throws IOException
      */
     public static void exportExcelUtil(HttpServletResponse response, String displayQuantity, String statisticalDimension, List<StatisticObjectOutVO> result) throws IOException {
-        String fileName = displayQuantity + "_" + statisticalDimension;
+        String fileName = displayQuantity + GLIDE_LINE + statisticalDimension;
 
         // 标题
         List<List<String>> title = ListUtils.newArrayList();

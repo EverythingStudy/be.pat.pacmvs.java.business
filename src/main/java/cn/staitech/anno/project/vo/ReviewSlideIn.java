@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewSlideIN {
+public class ReviewSlideIn {
     @ApiModelProperty("项目id")
     private Long projectId;
     @ApiModelProperty("评审轮次ID")

@@ -11,9 +11,9 @@ import cn.staitech.anno.mapper.SpecialMapper;
 import cn.staitech.anno.mapper.SysDictDataMapper;
 import cn.staitech.anno.service.DiagnosticStatisticsService;
 import cn.staitech.anno.service.ReportService;
+import cn.staitech.anno.utils.DateUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PoiUtils;
-import cn.staitech.anno.utils.DateUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -31,6 +31,8 @@ import org.springframework.util.ResourceUtils;
 import javax.annotation.Resource;
 import java.io.*;
 import java.util.*;
+
+import static cn.staitech.anno.constant.CommonConstant.GLIDE_LINE;
 
 /**
  * @author mugw
@@ -128,7 +130,7 @@ public class ReportServiceImpl implements ReportService {
             rptDir.mkdirs();
         }
         //按专题下项目生成word报告
-        String rptPath = basePath + File.separator + special.getSpecialNumber() + "_" + DateUtils.getDateToString(new Date(), "yyyy-MM-dd_hh_mm_ss") + SUFFIX;
+        String rptPath = basePath + File.separator + special.getSpecialNumber() + GLIDE_LINE + DateUtils.getDateToString(new Date(), "yyyy-MM-dd_hh_mm_ss") + SUFFIX;
         if (projectPos != null && !projectPos.isEmpty()) {
             for (int i = 0; i < projectPos.size(); i++) {
                 ProjectPo p = projectPos.get(i);

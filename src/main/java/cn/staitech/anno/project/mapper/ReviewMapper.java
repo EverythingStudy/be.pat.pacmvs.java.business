@@ -2,7 +2,7 @@ package cn.staitech.anno.project.mapper;
 
 import cn.staitech.anno.domain.reviewround.ReviewRoundOutVO;
 import cn.staitech.anno.project.domain.Review;
-import cn.staitech.anno.project.vo.ReviewRoundIN;
+import cn.staitech.anno.project.vo.ReviewRoundIn;
 import cn.staitech.anno.project.vo.ReviewVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -21,7 +21,7 @@ import java.util.Map;
 public interface ReviewMapper extends BaseMapper<Review> {
     List<ReviewVO> exportReview(@Param("params") Map params);
 
-    IPage<ReviewRoundOutVO> pageReviewRound(@Param("page") Page page, @Param("params") ReviewRoundIN params);
+    IPage<ReviewRoundOutVO> pageReviewRound(@Param("page") Page page, @Param("params") ReviewRoundIn params);
 
     Review selectSlide(Long slideId);
 }

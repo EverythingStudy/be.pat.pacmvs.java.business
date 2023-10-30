@@ -18,9 +18,9 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SlideStatusIN {
+public class SlideRemarkIn {
     @ApiModelProperty("切片id集合")
     private List<Long> slideIds;
-    @ApiModelProperty("图像状态(0未开始 1标注中 2标注完成 3提交复核(未复核) 4开始复核(复核中) 5复核通过(已复核) 6交付)")
-    private String status;
+    @ApiModelProperty("备注")
+    private String remark;
 }

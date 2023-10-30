@@ -42,6 +42,8 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static cn.staitech.anno.constant.CommonConstant.GLIDE_LINE;
+
 
 /**
  * @author wanglibei
@@ -53,8 +55,6 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
-
-
     DecimalFormat decimalFormat = new DecimalFormat("0.00000");
     @Resource
     private SpecialImageMapper specialImageMapper;
@@ -488,37 +488,6 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
     }
 
 
-    @Override
-    public String generateThumbnails(Long specialId, Long specialImageId) {
-        return null;
-		/*
-		SpecialImage sImage = specialImageService.selectByPrimaryKey(specialImageId);
-		Image hisImage = imageService.selectById(sImage.getImageId());
-		//TODO 填充数据
-		SubImage image = new SubImage();
-		image.setSpecialId(specialId);
-		image.setSpecialAnnotationId(Long.valueOf(i+""));
-        Long userId = SecurityUtils.getUserId();
-        // 确定文件名称提取所属专题名称、文件编号的规则有确定好的吗？
-        String imageName = image.getImageName()+"_"+System.currentTimeMillis();
-        image.setParentImageCode(hisImage.getImageCode());
-        image.setParentImageId(hisImage.getImageId());
-        image.setParentImageName(hisImage.getImageName());
-
-        image.setImageCode(IdUtils.randomUUID());
-        image.setImageName(imageName);
-
-        image.setImagePath("这个有");
-        image.setImageUrl("这个有");
-        image.setThumbUrl(hisImage.getThumbUrl());
-
-        image.setUpdateBy(userId);
-        image.setUpdateBy(userId);
-		subImageMapper.insert(image);
-		return null;
-		 */
-    }
-
     //组装数据
     @Override
     public AnnoProperties getPropertiesBy(SpecialAnnotation req) {
@@ -568,47 +537,7 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
         if (null != req.getCategoryId()) {
             properties.setCategory_id(req.getCategoryId().longValue());
         }
-		/*if(null != req.getMeasureType()){
-			properties.setMeasure_type(req.getMeasureType().longValue());
-		}
 
-		if(StringUtils.isNotEmpty(req.getMeasureRelation())){
-			properties.setMeasure_relation(req.getMeasureRelation());
-		}
-
-		if(StringUtils.isNotEmpty(req.getMeasureName())){
-			properties.setMeasure_name(req.getMeasureName());
-		}
-
-
-		if(null != req.getMeanDistance()){
-			properties.setMean_distance(String.valueOf(req.getMeanDistance()));
-		}
-		if(null != req.getMaxDistance()){
-			properties.setMax_distance(String.valueOf(req.getMaxDistance()));
-
-		}
-		if(null != req.getMinDistance()){
-			properties.setMin_distance(String.valueOf(req.getMinDistance()));
-
-		}
-		if(StringUtils.isNotEmpty(req.getInnerAngle())){
-			properties.setInner_angle(req.getInnerAngle());
-		}
-		if(StringUtils.isNotEmpty(req.getExteriorAngle())){
-			properties.setExterior_angle(req.getExteriorAngle());
-		}
-		if(StringUtils.isNotEmpty(req.getCenterPoint())){
-			properties.setCenter_point(req.getCenterPoint());
-		}
-
-		if(null != req.getMeasureNumber()){
-			properties.setMeasure_number(req.getMeasureNumber().longValue());
-		}
-
-		if(null != req.getPointCount()){
-			properties.setPoint_count(req.getPointCount().longValue());
-		}*/
 
         return properties;
     }
@@ -619,14 +548,6 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
         SpecialImage specialImage = specialImageService.selectByPrimaryKey(algorithmAnnIn.getSpecialImageId());
         if (null != specialImage) {
             saveAnn(algorithmAnnIn);
-            //算法处理表更新处理
-			/*AlgorithmSpecialImage algorithmSpecialImage = new AlgorithmSpecialImage();
-			algorithmSpecialImage.setAlgorithmUuid(MessageSource.M("")SPECIAL_SLIDE_Algorithm);
-			algorithmSpecialImage.setSpecialImageId(algorithmAnnIn.getSpecialImageId());
-			List<AlgorithmSpecialImage>	 asiList = algorithmSpecialImageMapper.getListByCondition(algorithmSpecialImage);
-			if(CollectionUtils.isNotEmpty(asiList)){
-				algorithmSpecialImageMapper.deleteByPrimaryKey(asiList.get(0).getAlgorithmSpecialImageId());
-			}*/
         } else {
             log.info("专题图片信息不存在，" + algorithmAnnIn.getSpecialImageId());
         }
@@ -642,10 +563,9 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
                 specialAnnotation.setSpecialImageId(req.getSpecialImageId());
                 specialAnnotation.setImageId(req.getImageId());
                 AlgorithmGeometry aGeomety = geometryList.get(i);
-                String numKey = req.getSpecialImageId() + "_" + "";
-                //		Long numId = redisClientUtil.getAndAddLong("labelNameNum:" + numKey, 1L);
+                String numKey = req.getSpecialImageId() + GLIDE_LINE + "";
                 // 获取标注名称 null278_null_大脑切面1
-                String measure_full_name = "" + numKey + "_";
+                String measure_full_name = "" + numKey + GLIDE_LINE;
                 //				String label_color = null;
                 String label_name = null;
                 int categoryId = -1;
@@ -772,7 +692,6 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
         return R.ok();
 
     }
-
     public SpecialAnnotation getTransByCallBackAnnAddIn(CallBackAnnAddIn req) {
         SpecialAnnotation specialAnnotation = new SpecialAnnotation();
         if (null != req.getSpecialImageId()) {
@@ -785,7 +704,6 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
         if (null != req.getImageId()) {
             specialAnnotation.setImageId(req.getImageId());
         }
-
         return specialAnnotation;
     }
 

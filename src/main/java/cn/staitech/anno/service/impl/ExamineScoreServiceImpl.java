@@ -36,11 +36,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static cn.staitech.anno.constant.CommonConstant.FILE_SUFFIX_JSON;
+import static cn.staitech.anno.constant.CommonConstant.GLIDE_LINE;
 
 /**
- * <p>
  * 服务实现类
- * </p>
  *
  * @author gjt
  * @since 2023-09-25
@@ -289,7 +288,7 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         // 项目信息
         GeoProject project = new GeoProject();
         // 种属编码 + 结构编码 + 数据库项目id
-        String projectId = jsonExport.getSpeciesId() + "_" + jsonExport.getOrganId() + "_" + jsonExport.getProjectId();
+        String projectId = jsonExport.getSpeciesId() + GLIDE_LINE + jsonExport.getOrganId() + GLIDE_LINE + jsonExport.getProjectId();
         project.setProject_id(projectId);
         project.setProject_name(jsonExport.getProjectName());
 
@@ -300,7 +299,7 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         image.setImage_name(jsonExport.getImageName());
         image.setCreate_time(jsonExport.getCreateTime());
         // 项目id + 十三位时间戳 + 两位随机数
-        String imageId = jsonExport.getProjectId() + "_" + System.currentTimeMillis() + "_" + RandomUtils.RandomNumbers();
+        String imageId = jsonExport.getProjectId() + GLIDE_LINE + System.currentTimeMillis() + GLIDE_LINE + RandomUtils.RandomNumbers();
         image.setImage_id(imageId);
         image.setImage_url(jsonExport.getImageUrl());
 

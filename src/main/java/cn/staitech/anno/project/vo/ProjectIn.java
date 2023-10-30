@@ -19,7 +19,7 @@ import javax.validation.constraints.Size;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProjectIN {
+public class ProjectIn {
     @Size(max = 50, message = "{PathologicalIndicatorCategory.number.length}")
     @ApiModelProperty("项目名称")
     @Length(max = 50, message = "{PathologicalIndicatorCategory.number.length}")
@@ -52,7 +52,7 @@ public class ProjectIN {
     private Long userId;
 
     @ApiModelProperty(value = "创建时间-查询入参")
-    private TimeRangeIN createTimeParams;
+    private TimeRangeIn createTimeParams;
 
     private Integer pageNum;
 

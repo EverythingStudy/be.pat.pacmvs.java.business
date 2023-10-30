@@ -28,7 +28,6 @@ import cn.staitech.anno.utils.WktUtil;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.uuid.IdUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.nacos.common.utils.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -98,9 +97,6 @@ public class SpecialImageServiceImpl implements SpecialImageService {
                 getCoordinates(pList);
             } else {
                 int index = o.indexOf(s);
-//				BigDecimal s4 = (BigDecimal) s;
-//				int a4_1 = Math.round(s4.floatValue());
-//				a4_1 = Math.abs(a4_1);
                 int a4_1 = getIntByPoint(s);
                 o.set(index, a4_1);
             }
@@ -172,13 +168,6 @@ public class SpecialImageServiceImpl implements SpecialImageService {
         Long[] arr = {};
         return set.toArray(arr);
     }
-/*
-    DirectExchange annoDirectExchange() {
-        Map<String, Object> args = new HashMap<>();
-        // 绑定备份交换机
-        args.put("alternate-exchange", "websocket.backup.exchange");
-        return new DirectExchange("anno.direct.exchange", true, false, args);
-    }*/
 
     /**
      * 根据专题查看所有的图片
@@ -194,18 +183,12 @@ public class SpecialImageServiceImpl implements SpecialImageService {
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public R<String> insertSpecialImageList(InsertSpecialImageVO vo) throws Exception {
-        // 校验图像数量
-//		SysUser user = userMapper.selectUserById(SecurityUtils.getUserId());
-//		List<SubImage> subImageList = subImageService.selectImageCount(user.getOrganizationId());
-//		SysOrganizationAuthorization organization = subImageService.selectOrganization(SecurityUtils.getUserId());
-//		if(organization.getAuthorizationImageLimit() < subImageList.size()){
-//			throw new Exception("图像不可大于授权图像数量");
-//		}
+
         Long[] imageIds = vo.getImageIdList();
         List<Long> newList = new ArrayList<Long>();
         for (Long imageId : imageIds) {
             if (!newList.contains(imageId)) {
-                Map paramAgainMap = new HashMap<>();
+                Map paramAgainMap = new HashMap<>(16);
                 paramAgainMap.put("imageId", imageId);
                 paramAgainMap.put("specialId", vo.getSpecialId());
                 List<SpecialImage> checkList = specialImageMapper.selectSpecialImageListByParm(paramAgainMap);
@@ -222,7 +205,6 @@ public class SpecialImageServiceImpl implements SpecialImageService {
                 SpecialImage image = new SpecialImage();
                 image.setImageId(newList.get(i));
                 image.setSpecialId(vo.getSpecialId());
-//				image.setCreateBy(SecurityUtils.getUserId());
                 image.setCreateTime(DateUtil.date());
                 image.setTopicId(vo.getTopicId());
                 //切图状态 0:未切图 1：生成中 2：切图完成 3：绘制中,确保在绘制中可以进行修改，且提交人是绘制
@@ -231,83 +213,11 @@ public class SpecialImageServiceImpl implements SpecialImageService {
                 //TODO 直接修改状态为绘制中+绘制人为AI
                 list.add(image);
             }
-            int status = specialImageMapper.insertSpecialImageList(list);
-//			noticeSlicing(list);
-//			log.info("批量选片通知数据1=====================================================================:{}", JSON.toJSONString(list));
 
-
-//			if(SecurityUtils.getUsername().equalsIgnoreCase("wanglb")){
-            log.info("批量选片通知数据1=====================================================================:{}", JSON.toJSONString(list));
-            try {
-//					R fr = slideImageService.batchAddSpecialImage(list, SecurityConstants.INNER);
-//					log.info("批量选片通知数据2=====================================================================:{}", JSON.toJSONString(fr));
-                //    rabbitTemplate.convertAndSend("anno.direct.exchange", MessageSource.M("")SPECIAL_ANNO_IMAGE, list);
-//					rabbitTemplate.convertAndSend("", MessageSource.M("")SPECIAL_IMAGE_CUTTING_ROUTINGKEY, cutVo);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                log.info("请求算法出现异常~~~~~");
-            } finally {
-            }
-//			}
-            //TODO 保证成功以后调用算法，走切图逻辑
-			/*if(status > 0){
-				for(int i=0;i<list.size();i++){
-					SpecialCutImageVO  resData = new SpecialCutImageVO();
-					SpecialImage image =  list.get(i);
-					resData.setImage(image);
-					//切片通知
-					cutImageNotice(resData);
-				}
-			}*/
         }
         return R.ok(null, MessageSource.M("OPERATE_ERROR"));
     }
 
-    //切全脏器服务调用
-    public void noticeSlicing(List<SpecialImage> list) {
-        List<Long> specialImageIdList = new ArrayList<>();
-        for (SpecialImage specialImage : list) {
-            specialImageIdList.add(specialImage.getSpecialImageId());
-        }
-        SpecialImageSelectVO vo = new SpecialImageSelectVO();
-        vo.setSpecialImageIdList(specialImageIdList);
-        List<SpecialImageVO> dataList = selectSpecialImageList(vo);
-        String cutStr = JSONUtil.toJsonStr(dataList);
-        log.info("切脏器列表数据是：" + cutStr);
-
-        // rabbitTemplate.convertAndSend("anno.direct.exchange", "slide.annotation.slideViscer.routing", dataList);
-
-		/*String ips = "172.31.2.213";
-		createMQIfNotExist("slide.annotation.slideViscer.queue"+ips,"anno.direct.exchange","slide.annotation.slideViscer.routing"+ips);
-		rabbitTemplate.convertAndSend("slide.annotation.slideViscer.queue"+ips,dataList);*/
-
-
-        //给消息设置过期时间
-       /* MessagePostProcessor messagePostProcessor = new MessagePostProcessor() {
-            @Override
-            public Message postProcessMessage(Message message) throws AmqpException {
-                // 单位毫秒,如果有更早的过期时间，自己处理成0就行
-//                message.getMessageProperties().setExpiration(String.valuef(expDate.getTime()-new Date().getTime()));
-            	message.getMessageProperties().setExpiration("2222");
-                return message;
-            }
-        };*/
-
-//		rabbitTemplate.convertAndSend("anno.direct.exchange","slide.annotation.slideViscer.routing", dataList,messagePostProcessor);
-    }
-
-    private void createMQIfNotExist(String queueName, String exchangeName, String routingKey) {
-        //判断队列是否存在
-/*        Properties properties = rabbitAdmin.getQueueProperties(queueName);
-        if (properties == null) {
-            Queue queue = new Queue(queueName, true, false, false, null);
-            DirectExchange directExchange = annoDirectExchange();
-            rabbitAdmin.declareQueue(queue);
-            rabbitAdmin.declareExchange(directExchange);
-            rabbitAdmin.declareBinding(BindingBuilder.bind(queue).to(directExchange).with(routingKey));
-        }*/
-    }
 
     @Override
     public void cutImageNotice(SpecialCutImageVO resData) {
@@ -316,13 +226,10 @@ public class SpecialImageServiceImpl implements SpecialImageService {
         Image imageInfo = imageMapper.selectById(imageId);
         String imageName = imageInfo.getImageName();
         List<SpecialAnnotation> annoList = resData.getAnnoList();
-        //String ceshiData = cutDemoData();
         AlgorithmCutImageVO cutVo = new AlgorithmCutImageVO();
         cutVo.setSpecialImageId(specialImage.getSpecialImageId());
         cutVo.setImageId(imageId);
-//		cutVo.setHostId(hostId);
         cutVo.setFilePath(imageInfo.getImagePath());
-//		cutVo.setOutPath("/home/uploadPath/special/big/");
         String currentDate = DateUtil.format(new Date(), "yyyyMMdd");
         String folderPath = "/home/pat_saas/Upload/big/" + currentDate + "/";
         checkDirectory(folderPath);
@@ -330,7 +237,6 @@ public class SpecialImageServiceImpl implements SpecialImageService {
 
         List<SpecialAnnDataVO> annoData = new ArrayList<>();
         for (SpecialAnnotation anno : annoList) {
-//			String location = WktUtil.wktToJson(anno.getLocation());
             String location = anno.getGeometry();
             if (StringUtils.isEmpty(location)) {
                 location = WktUtil.wktToJson(anno.getLocation());
@@ -371,28 +277,6 @@ public class SpecialImageServiceImpl implements SpecialImageService {
         cutVo.setImageName(imageName);
         String cutStr = JSONUtil.toJsonStr(cutVo);
         log.info("切片测试数据是：" + cutStr);
-        // rabbitTemplate.convertAndSend("anno.direct.exchange", MessageSource.M("")SPECIAL_SLICE_IMAGE, cutVo);
-//		rabbitTemplate.convertAndSend("", MessageSource.M("")SPECIAL_IMAGE_CUTTING_ROUTINGKEY, cutVo);
-
-        //TODO 填充假数据
-        //添加点假数据，直接往subImage里添加数据
-//		fillData(specialImage,annoList);
-
-        //切图状态 0:未切图 1：生成中 2：切图完成 3：绘制中,确保在绘制中可以进行修改，且提交人是绘制
-        //修改为生成中
-		/*SpecialImage record = new SpecialImage();
-		record.setSpecialImageId(specialImage.getSpecialImageId());
-//		record.setEditBy(SecurityUtils.getUserId());
-		record.setEditBy(-1l);
-		record.setUpdateTime(DateUtil.date());
-//		record.setSliceImageStatus(2);
-		record.setSliceImageStatus(1);
-		//如果是不合格的数据切图，判断为修改，需要将不合格数据修改为初审状态
-		if(specialImage.getAuditStatus() == 2){
-			record.setAuditStatus(0);
-		}
-		//查询当前-以及切片表是否有数据
-		updateByPrimaryKeySelective(record);*/
     }
 
     /**
@@ -426,7 +310,6 @@ public class SpecialImageServiceImpl implements SpecialImageService {
             SubImage image = new SubImage();
             image.setSpecialId(record.getSpecialId());
             image.setSpecialAnnotationId(anno.getSliceAnnotationId());
-            //			Long userId = SecurityUtils.getUserId();
             String imageName = hisImage.getImageName();
             String format = imageName;
             imageName = imageName.substring(0, imageName.lastIndexOf('.')) + "-" + index;
@@ -442,8 +325,6 @@ public class SpecialImageServiceImpl implements SpecialImageService {
             image.setThumbUrl("");
             image.setVisceraType(anno.getCategoryId());
             image.setCreateTime(new Date());
-            //			image.getCreateBy(userId);
-            //			image.setUpdateBy(userId);
             image.setSpecialImageId(record.getSpecialImageId());
             subImageService.save(image);
             index++;
@@ -463,19 +344,11 @@ public class SpecialImageServiceImpl implements SpecialImageService {
         //参数校验
         //审核状态 0：待审核 1：审核通过 2：审核不通过
         int auditStatus = vo.getAuditStatus();
-        Map paramMap = new HashMap<>();
-		/*if(auditStatus == 1){
-			//确保所选切片全部是待审核或者审核通过的数据
-			paramMap.put("auditSucess", auditStatus);
-		}else if(auditStatus == 2){
-			//确保所选切片全部是待审核或者审核通过的数据
-			paramMap.put("auditFail", auditStatus);
-		}*/
-//		paramMap.put("auditStatus", 0);
+        Map paramMap = new HashMap<>(16);
+
         if (auditStatus == 2) {
             paramMap.put("auditSucess", auditStatus);
         } else if (auditStatus == 1) {
-//			paramMap.put("auditStatus", 0);
             paramMap.put("auditSucess", auditStatus);
         }
         paramMap.put("specialImageIds", imageIds);
@@ -496,7 +369,6 @@ public class SpecialImageServiceImpl implements SpecialImageService {
 
 
         //针对审核通过的数据，需要根据主图imageid、专题id、批次id查询对应的tb_sub_image所有小的切图，修改审核状态为通过
-
         List<Long> allSubIds = new ArrayList<>();
         for (SpecialImage sImage : list) {
             //修改specialImage审核状态
@@ -522,7 +394,7 @@ public class SpecialImageServiceImpl implements SpecialImageService {
 
             //根据主图imageid、专题id、批次id查询对应的tb_sub_image所有小的切图，修改审核状态为通过更新小图审核状态
             //查询小图列表
-            Map<String, Object> columnMap = new HashMap<>();
+            Map<String, Object> columnMap = new HashMap<>(16);
             columnMap.put("parent_image_id", sImage.getImageId());
             columnMap.put("special_id", sImage.getSpecialId());
             columnMap.put("slice_batch_number", sImage.getSliceBatchNumber());
@@ -552,7 +424,7 @@ public class SpecialImageServiceImpl implements SpecialImageService {
     @Override
     public R<String> updateDeliveryBySpecialId(AuditSpecialImageVO vo) {
         //参数校验
-        Map paramMap = new HashMap<>();
+        Map paramMap = new HashMap<>(16);
         paramMap.put("auditFail", 1);
         paramMap.put("specialId", vo.getSpecialId());
         List<SpecialImage> list = specialImageMapper.selectSpecialImageListByParm(paramMap);
@@ -642,7 +514,7 @@ public class SpecialImageServiceImpl implements SpecialImageService {
         }
         all_1.add(p_2);
 
-        Map<String, Object> o1 = new HashMap<>();
+        Map<String, Object> o1 = new HashMap<>(16);
         o1.put("_roi_polygon", all_1);
         o1.put("file_path", "");
         o1.put("out_path", "/home/pat_saas/Upload/special/big/");
@@ -665,6 +537,4 @@ public class SpecialImageServiceImpl implements SpecialImageService {
         List<Image> list = specialImageMapper.getImageBySpecialId(specialImageSelectVO);
         return list;
     }
-
-
 }

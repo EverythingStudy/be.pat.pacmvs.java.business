@@ -6,22 +6,21 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.util.List;
 
 /**
  * @author mugw
  * @version 1.0
  * @description
- * @date 2023/9/19 11:21:47
+ * @date 2023/9/19 11:11:44
  */
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class TimeRangeIN {
-    @ApiModelProperty("开始时间")
-    private Date beginTime;
-
-    @ApiModelProperty("结束时间")
-    private Date endTime;
+@AllArgsConstructor
+public class DownTaskIn {
+    @ApiModelProperty("切片id集合")
+    private List<Long> slideIds;
+    @ApiModelProperty("项目ID")
+    private Long projectId;
 }

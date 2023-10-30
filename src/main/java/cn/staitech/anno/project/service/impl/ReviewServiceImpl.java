@@ -19,9 +19,9 @@ import cn.staitech.anno.project.mapper.DownTaskMapper;
 import cn.staitech.anno.project.mapper.ReviewMapper;
 import cn.staitech.anno.project.mapper.SlideMapperV1;
 import cn.staitech.anno.project.service.ReviewService;
-import cn.staitech.anno.project.vo.ReviewIN;
-import cn.staitech.anno.project.vo.ReviewRoundIN;
-import cn.staitech.anno.project.vo.ReviewUP;
+import cn.staitech.anno.project.vo.ReviewIn;
+import cn.staitech.anno.project.vo.ReviewRoundIn;
+import cn.staitech.anno.project.vo.ReviewUp;
 import cn.staitech.anno.project.vo.ReviewVO;
 import cn.staitech.anno.service.FileService;
 import cn.staitech.anno.utils.MessageSource;
@@ -186,7 +186,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
     }
 
     @Override
-    public int insert(ReviewIN req) throws Exception {
+    public int insert(ReviewIn req) throws Exception {
         Slide slideBy = slideMapperV1.selectById(req.getSlideId());
         if (slideBy == null) {
             throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
@@ -212,7 +212,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
     }
 
     @Override
-    public int update(ReviewUP req) throws Exception {
+    public int update(ReviewUp req) throws Exception {
         Review reviewBy = reviewMapper.selectById(req.getReviewId());
         if (reviewBy == null) {
             throw new Exception(MessageSource.M("NO_REVIEW_DATA"));
@@ -232,7 +232,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
     }
 
     @Override
-    public PageMaster<ReviewRoundOutVO> pageReviewRound(Page page, ReviewRoundIN params) {
+    public PageMaster<ReviewRoundOutVO> pageReviewRound(Page page, ReviewRoundIn params) {
         getBaseMapper().pageReviewRound(page, params);
         PageMaster<ReviewRoundOutVO> pageMaster = PageMaster.of(page.getRecords());
         pageMaster.setTotal(page.getTotal());

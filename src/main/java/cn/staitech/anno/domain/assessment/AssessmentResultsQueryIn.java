@@ -1,6 +1,6 @@
 package cn.staitech.anno.domain.assessment;
 
-import cn.staitech.anno.project.vo.TimeRangeIN;
+import cn.staitech.anno.project.vo.TimeRangeIn;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -23,7 +23,7 @@ public class AssessmentResultsQueryIn {
     private Long algorithmAssessmentId;
 
     @ApiModelProperty(value = "创建时间-查询入参")
-    private TimeRangeIN createTimeParams;
+    private TimeRangeIn createTimeParams;
 
     private Integer pageNum;
 

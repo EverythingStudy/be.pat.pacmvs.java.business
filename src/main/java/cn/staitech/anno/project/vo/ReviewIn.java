@@ -21,7 +21,7 @@ import javax.validation.constraints.Size;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewIN {
+public class ReviewIn {
     /**
      * 详情
      */

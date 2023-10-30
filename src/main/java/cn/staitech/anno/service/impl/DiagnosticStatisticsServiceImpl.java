@@ -214,7 +214,6 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
         return retMap;
     }
 
-    //
     public List<Map<String, Integer>> getTotalnMap(List<StatisticsBodyVo> dataAllList) {
         List<Map<String, Integer>> list = new ArrayList<>();
         Map<String, Integer> visceraMap = new HashMap<>(16);
@@ -403,8 +402,8 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
             String groupName = vo.getGroupName();
             String dosage = vo.getDosage();
 
-            String headerKey = genderName + "_" + groupName + "_" + dosage;
-            String visceraKey = headerKey + "_" + sysVisceraName;
+            String headerKey = genderName + GLIDE_LINE + groupName + GLIDE_LINE + dosage;
+            String visceraKey = headerKey + GLIDE_LINE + sysVisceraName;
             String gradeKey = visceraKey + "_未见明显异常";
             Map<String, Integer> noChangeMap = staticsData.get(1);
             String diagnosedTotal = "-";
@@ -430,9 +429,9 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
             String groupName = vo.getGroupName();
             String dosage = vo.getDosage();
 
-            String headerKey = genderName + "_" + groupName + "_" + dosage;
-            String visceraKey = headerKey + "_" + sysVisceraName;
-            String lesionAndPositionKey = visceraKey + "_" + sysLesionName + "_" + sysPositionName;
+            String headerKey = genderName + GLIDE_LINE + groupName + GLIDE_LINE + dosage;
+            String visceraKey = headerKey + GLIDE_LINE + sysVisceraName;
+            String lesionAndPositionKey = visceraKey + GLIDE_LINE + sysLesionName + GLIDE_LINE + sysPositionName;
             Map<String, Integer> lesionPositionMap = staticsData.get(2);
             String diagnosedTotal = "-";
             if (lesionPositionMap.containsKey(lesionAndPositionKey)) {
@@ -456,10 +455,10 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
             String genderName = vo.getSex();
             String groupName = vo.getGroupName();
             String dosage = vo.getDosage();
-            String headerKey = genderName + "_" + groupName + "_" + dosage;
-            String visceraKey = headerKey + "_" + sysVisceraName;
-            String lesionAndPositionKey = visceraKey + "_" + sysLesionName + "_" + sysPositionName;
-            String lesionAndPositionGradeKey = lesionAndPositionKey + "_" + perGrade;
+            String headerKey = genderName + GLIDE_LINE + groupName + GLIDE_LINE + dosage;
+            String visceraKey = headerKey + GLIDE_LINE + sysVisceraName;
+            String lesionAndPositionKey = visceraKey + GLIDE_LINE + sysLesionName + GLIDE_LINE + sysPositionName;
+            String lesionAndPositionGradeKey = lesionAndPositionKey + GLIDE_LINE + perGrade;
             Map<String, Integer> lesionPositioGradenMap = staticsData.get(3);
 
             String diagnosedTotal = "-";

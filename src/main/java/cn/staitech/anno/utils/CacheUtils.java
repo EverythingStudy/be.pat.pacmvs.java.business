@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
  * @author: YL
  * @email: yangl@staitech.cn
  * @date: 2022/10/28 星期五 11:18
+ * @Component
  */
-//@Component
 public class CacheUtils {
 
     public static CacheUtils cacheUtils;
@@ -84,7 +84,9 @@ public class CacheUtils {
         return cacheUtils.iCache.getAndAddLong(key, delta);
     }
 
-    // @PostConstruct
+    /**
+     * @PostConstruct
+     */
     public void init() {
         cacheUtils = this;
         cacheUtils.iCache = this.iCache;

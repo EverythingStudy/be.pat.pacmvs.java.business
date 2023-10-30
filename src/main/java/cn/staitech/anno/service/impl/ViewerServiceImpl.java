@@ -1,7 +1,6 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.config.RedisClientUtil;
-import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.document.GeometryDoc;
@@ -34,6 +33,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+import static cn.staitech.anno.constant.CommonConstant.GLIDE_LINE;
 import static cn.staitech.anno.utils.FileUtils.getFileNameNoEx;
 import static cn.staitech.anno.utils.TimeUtils.CurrentTime;
 import static org.reflections.Reflections.log;
@@ -89,10 +89,10 @@ public class ViewerServiceImpl implements ViewerService {
         marking.setType("Feature");
         marking.setGeometry(req.getGeometry());
 
-        String numKey = req.getSlide_id() + "_" + req.getMeasure_name();
+        String numKey = req.getSlide_id() + GLIDE_LINE + req.getMeasure_name();
         Long numId = redisClientUtil.getAndAddLong("labelNameNum:" + numKey, 1L);
         // 获取标注名称
-        String measure_full_name = req.getMeasure_name() + numId + "_";
+        String measure_full_name = req.getMeasure_name() + numId + GLIDE_LINE;
         if (req.getCategory_id() != null) {
             //根据标注id获取标注类别详情
             PathologicalIndicatorCategory categoryBy = pathologicalIndicatorCategoryMapper.selectByPrimaryKey(req.getCategory_id());
@@ -139,10 +139,10 @@ public class ViewerServiceImpl implements ViewerService {
                 properties.setLabel_color(categoryBy.getHex());
                 properties.setLabel_name(categoryBy.getCategoryName());
                 String res1 = String.valueOf(measureFullName.charAt(measureFullName.length() - 1));
-                if (CommonConstant.GLIDE_LINE.equals(res1)) {
+                if (GLIDE_LINE.equals(res1)) {
                     measureFullName = measureFullName + categoryBy.getCategoryName();
                 } else {
-                    measureFullName = measureFullName.replaceAll(measureFullName.split("_")[measureFullName.split("_").length - 1], categoryBy.getCategoryName());
+                    measureFullName = measureFullName.replaceAll(measureFullName.split(GLIDE_LINE)[measureFullName.split(GLIDE_LINE).length - 1], categoryBy.getCategoryName());
                 }
             }
         }

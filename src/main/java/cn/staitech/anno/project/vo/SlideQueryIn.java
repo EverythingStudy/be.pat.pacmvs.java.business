@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SlideQueryIN {
+public class SlideQueryIn {
 
     @ApiModelProperty("项目ID")
     private Integer projectId;
@@ -47,10 +47,10 @@ public class SlideQueryIN {
     private Date updateEnd;*/
 
     @ApiModelProperty(value = "创建时间-查询入参")
-    private TimeRangeIN createTimeParams;
+    private TimeRangeIn createTimeParams;
 
     @ApiModelProperty(value = "修改时间-查询入参")
-    private TimeRangeIN updateTimeParams;
+    private TimeRangeIn updateTimeParams;
 
     private Integer pageNum;
 

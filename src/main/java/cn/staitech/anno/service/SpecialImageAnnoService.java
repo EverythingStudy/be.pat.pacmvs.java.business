@@ -26,18 +26,6 @@ import java.util.List;
  */
 public interface SpecialImageAnnoService {
 
-
-    /**
-     * @param @param  specialImageList
-     * @param @return
-     * @return int
-     * @throws
-     * @Title: insertSpecialImageList
-     * @Description: 批量插入专题选片列表
-     */
-//	R<List<Long>>  insertSpecialAnnotationList(List<SpecialAnnotation> list);
-
-
     R<List<SpecialAnnoAddVO>> annotationSave(List<SpecialAnnoAddVO> list, SpecialImage sImage) throws Exception;
 
     /**
@@ -147,16 +135,6 @@ public interface SpecialImageAnnoService {
 
     List<OrganDict> getSystemDict(OrganDict dict);
 
-
-    /**
-     * 根据原图生成需要的缩略图，保存到tb_sub_image表中
-     *
-     * @param inFile
-     * @param id
-     * @return
-     */
-    String generateThumbnails(Long specialId, Long specialImageId);
-
     AnnoMarkGeojson getMarkGeojsonByList(List<SpecialAnnotation> list);
 
     AnnoProperties getPropertiesBy(SpecialAnnotation req);
@@ -164,6 +142,5 @@ public interface SpecialImageAnnoService {
     R callBackSlideViscer(List<CallBackAnnAddIn> list);
 
     void callBackAnnoResult(AlgorithmAnnIn algorithmAnnIn);
-
 
 }

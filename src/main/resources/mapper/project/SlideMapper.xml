@@ -26,7 +26,7 @@
     </resultMap>
 
     <select id="pageSlides" resultType="cn.staitech.anno.project.vo.SlideVO"
-            parameterType="cn.staitech.anno.project.vo.SlideQueryIN">
+            parameterType="cn.staitech.anno.project.vo.SlideQueryIn">
         select s.*, i.thumb_url, i.image_name as image_code
         from tb_slide s
         left join tb_image i on s.image_id = i.image_id
@@ -70,7 +70,7 @@
         order by s.update_time desc
     </select>
     <select id="querySlides" resultType="cn.staitech.anno.project.vo.SlideExportVO"
-            parameterType="cn.staitech.anno.project.vo.SlideQueryIN">
+            parameterType="cn.staitech.anno.project.vo.SlideQueryIn">
         select s.*, i.thumb_url, i.image_name as image_code,p.project_name
         from tb_slide s
         left join tb_image i on s.image_id = i.image_id
@@ -118,7 +118,7 @@
         order by s.update_time desc
     </select>
 
-    <select id="pageReviewSlide" parameterType="cn.staitech.anno.project.vo.ReviewSlideIN"
+    <select id="pageReviewSlide" parameterType="cn.staitech.anno.project.vo.ReviewSlideIn"
             resultType="cn.staitech.anno.project.vo.ReviewSlideVO">
         select m.image_name,
         m.thumb_url,
