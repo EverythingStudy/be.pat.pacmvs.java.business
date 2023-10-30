@@ -6,6 +6,11 @@ package cn.staitech.anno.constant;
  * @author admin
  */
 public class CommonConstant {
+
+    private CommonConstant() {
+        throw new IllegalStateException("CommonConstant class");
+    }
+
     /**
      * cache key
      */
@@ -39,17 +44,11 @@ public class CommonConstant {
     public static final String ALL_POINTS_X = "all_points_x";
     public static final String ALL_POINTS_Y = "all_points_y";
     public static final String NAME = "name";
-    public static final String POLYGON = "POLYGON";
-    public static final String POINT = "POINT";
-    public static final String LINESTRING = "LINESTRING";
     public static final String POLYGON_WITH_HOLES = "polygon_with_holes";
     public static final String CHILDREN_CNTS = "children_cnts";
     public static final String VIA_IMG_METADATA = "_via_img_metadata";
     public static final String LOGIN_TOKEN_KEY = "login_tokens:";
-    public static final Integer NOT_INDICATOR_STATUS = 1;
-    public static final Integer INDICATOR_STATUS = 2;
-    public static final Integer NOT_ATTRIBUTE_STATUS = 3;
-    public static final Long NOT_AUDIT = 0L;
+
     /**
      * Annotation
      */
@@ -112,8 +111,5 @@ public class CommonConstant {
     public static final String ANNOTATION_CATEGORY = "标注类别";
     public static final String USER = "成员";
     public static final String SLIDE = "图像";
-    private CommonConstant() {
-        throw new IllegalStateException("CommonConstant class");
-    }
 
 }
