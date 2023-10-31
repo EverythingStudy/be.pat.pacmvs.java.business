@@ -247,8 +247,8 @@ public class MarkingServiceImpl implements MarkingService {
                 marking.setAnnotation_update_owner(user.getUserName());
             }
         } else {
-            marking.setUpdate_by(SecurityUtils.getUserId());
-            marking.setAnnotation_update_owner(SecurityUtils.getUsername());
+            marking.setUpdate_by(SecurityUtils.getLoginUser().getSysUser().getUserId());
+            marking.setAnnotation_update_owner(SecurityUtils.getLoginUser().getSysUser().getUserName());
         }
         marking.setUpdate_time(new Date());
         if (req.getArea() != null) {
