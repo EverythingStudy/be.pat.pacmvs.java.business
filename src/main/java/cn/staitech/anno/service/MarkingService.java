@@ -6,7 +6,7 @@ import cn.staitech.anno.domain.geojson.in.ViewAddIn;
 import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.marking.PointCount;
 import cn.staitech.anno.domain.marking.SlideRes;
-import cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo;
+import cn.staitech.anno.domain.marking.MarkingSelectListVO;
 import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.system.api.domain.SysUser;
 
@@ -21,7 +21,7 @@ public interface MarkingService {
      * @param slideId 标注信息
      * @return List<Slide>
      */
-    List<MarkingSelectListVo> selectList(Long slideId) throws Exception;
+    List<MarkingSelectListVO> selectList(Long slideId) throws Exception;
 
 
     List<Features> selectListBy(Long slideId) throws Exception;

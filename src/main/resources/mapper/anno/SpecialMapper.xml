@@ -19,7 +19,7 @@
         <result property="trialType" column="trial_type"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.vo.special.SpecialResVo" id="selectResult">
+    <resultMap type="cn.staitech.anno.domain.special.SpecialResVo" id="selectResult">
         <result property="specialId" column="special_id"/>
         <result property="specialNumber" column="special_number"/>
         <result property="specialName" column="special_name"/>
@@ -39,7 +39,7 @@
         <result property="trialType" column="trial_type"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.vo.special.SpecialStatisticsListVO" id="specialStatisticsResult">
+    <resultMap type="cn.staitech.anno.domain.special.SpecialStatisticsListVO" id="specialStatisticsResult">
         <result property="specialId" column="special_id"/>
         <result property="specialNumber" column="special_number"/>
         <result property="specialName" column="special_name"/>
@@ -216,7 +216,7 @@
     </select>
 
     <!--专题统计-->
-    <select id="specialStatistics" parameterType="cn.staitech.anno.domain.vo.special.SpecialStatisticsQueryVO"
+    <select id="specialStatistics" parameterType="cn.staitech.anno.domain.special.SpecialStatisticsQueryVO"
             resultMap="specialStatisticsResult">
         SELECT
         s.special_id,
@@ -250,7 +250,7 @@
     </select>
 
     <!--专题统计-->
-    <select id="specialStatisticsAdmin" parameterType="cn.staitech.anno.domain.vo.special.SpecialStatisticsQueryVO"
+    <select id="specialStatisticsAdmin" parameterType="cn.staitech.anno.domain.special.SpecialStatisticsQueryVO"
             resultMap="specialStatisticsResult">
         SELECT
         s.special_id,
@@ -278,7 +278,7 @@
     </select>
 
     <!--查询专题下的项目ID-->
-    <select id="queryProjectIdBySpecialId" parameterType="cn.staitech.anno.domain.vo.special.SpecialStatisticsListVO"
+    <select id="queryProjectIdBySpecialId" parameterType="cn.staitech.anno.domain.special.SpecialStatisticsListVO"
             resultType="long">
         SELECT
         p.project_id
@@ -319,7 +319,7 @@
 
     <!--查询项目下的人工诊断状态-->
     <select id="queryDiagnosisByProjectId" parameterType="java.lang.Long"
-            resultType="cn.staitech.anno.domain.vo.special.SpecialSlideStatisticsVO">
+            resultType="cn.staitech.anno.domain.special.SpecialSlideStatisticsVO">
         <!-- SELECT
         diagnosis
         FROM

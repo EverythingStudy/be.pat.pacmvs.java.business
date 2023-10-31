@@ -30,7 +30,7 @@
         <result property="measureType" column="measure_type"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.vo.measurevo.MeasureSelectVO" id="MeasureSelectVoResult">
+    <resultMap type="cn.staitech.anno.domain.measurevo.MeasureSelectVO" id="MeasureSelectVoResult">
         <result property="measureId" column="measure_id"/>
         <result property="projectId" column="project_id"/>
         <result property="imageId" column="image_id"/>
@@ -59,7 +59,7 @@
     </resultMap>
 
 
-    <resultMap type="cn.staitech.anno.domain.vo.measurevo.MeasureJsonVO" id="MeasureJsonVOResult">
+    <resultMap type="cn.staitech.anno.domain.measurevo.MeasureJsonVO" id="MeasureJsonVOResult">
         <result property="measureId" column="measure_id"/>
         <result property="projectId" column="project_id"/>
         <result property="imageId" column="image_id"/>
@@ -271,7 +271,7 @@
     </select>
 
 
-    <select id="selectMeasureJson" resultType="cn.staitech.anno.domain.vo.measurevo.MeasureJsonVO"
+    <select id="selectMeasureJson" resultType="cn.staitech.anno.domain.measurevo.MeasureJsonVO"
             resultMap="MeasureJsonVOResult">
         select measure_id
         , ma_id_a

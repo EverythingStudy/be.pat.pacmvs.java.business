@@ -1,7 +1,6 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.special.Special;
-import cn.staitech.anno.domain.vo.special.*;
+import cn.staitech.anno.domain.special.*;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;

@@ -1,6 +1,6 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.vo.statistic.*;
+import cn.staitech.anno.domain.statistic.*;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;

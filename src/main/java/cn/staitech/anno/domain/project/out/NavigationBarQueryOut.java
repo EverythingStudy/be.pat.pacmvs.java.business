@@ -1,6 +1,5 @@
 package cn.staitech.anno.domain.project.out;
 
-import cn.staitech.anno.domain.project.out.data.NavigationBarData;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

@@ -38,7 +38,7 @@
                  LEFT JOIN tb_special_role_user u ON u.role_id = r.role_id
     </sql>
 
-    <select id="selectRoleList" parameterType="cn.staitech.anno.domain.vo.special.SpecialRoleQueryVO"
+    <select id="selectRoleList" parameterType="cn.staitech.anno.domain.special.SpecialRoleQueryVO"
             resultMap="SpecialRoleResult">
         <include refid="selectRole"/>
         where r.del_flag = '0'

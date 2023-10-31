@@ -269,7 +269,7 @@
     </select>
 
     <select id="getStatisticsHeadVoListByParm" parameterType="map"
-            resultType="cn.staitech.anno.domain.vo.diagnosis.StatisticsHeadVo">
+            resultType="cn.staitech.anno.domain.diagnosis.StatisticsHeadVo">
         SELECT
         t3.gender,
         CASE
@@ -308,7 +308,7 @@
     </select>
 
     <select id="getSysVisceraNameListByParm" parameterType="map"
-            resultType="cn.staitech.anno.domain.vo.diagnosis.StatisticsHeadVo">
+            resultType="cn.staitech.anno.domain.diagnosis.StatisticsHeadVo">
         SELECT DISTINCT (aa.sys_viscera_name)
         FROM tb_special_diagnosis a
                  LEFT JOIN (SELECT special_diagnosis_id,
@@ -326,7 +326,7 @@
     </select>
 
     <select id="getDiagnosedListByParm" parameterType="map"
-            resultType="cn.staitech.anno.domain.vo.diagnosis.StatisticsBodyVo">
+            resultType="cn.staitech.anno.domain.diagnosis.StatisticsBodyVo">
         SELECT
         g2.total
         FROM
@@ -413,7 +413,7 @@
     </select>
 
     <select id="getLessionListByParm" parameterType="map"
-            resultType="cn.staitech.anno.domain.vo.diagnosis.StatisticsBodyVo">
+            resultType="cn.staitech.anno.domain.diagnosis.StatisticsBodyVo">
         SELECT sys_lesion_name,
                sys_position_name,
                sys_grade_name,
@@ -445,7 +445,7 @@
     </select>
 
     <select id="getLessionStaticsListByParm" parameterType="map"
-            resultType="cn.staitech.anno.domain.vo.diagnosis.StatisticsBodyVo">
+            resultType="cn.staitech.anno.domain.diagnosis.StatisticsBodyVo">
         SELECT *
         FROM (SELECT (SELECT g.gender FROM tb_group g WHERE g.group_id = p1.group_id)     gender,
                      (SELECT g.group_name FROM tb_group g WHERE g.group_id = p1.group_id) group_name,
@@ -511,7 +511,7 @@
 
 
     <select id="getLessionGradeStaticsListByParm" parameterType="map"
-            resultType="cn.staitech.anno.domain.vo.diagnosis.StatisticsBodyVo">
+            resultType="cn.staitech.anno.domain.diagnosis.StatisticsBodyVo">
         SELECT *
         FROM (SELECT (SELECT g.gender FROM tb_group g WHERE g.group_id = p1.group_id)     gender,
                      (SELECT g.group_name FROM tb_group g WHERE g.group_id = p1.group_id) group_name,
@@ -579,7 +579,7 @@
     </select>
 
     <select id="getNeedStaticsListByParm" parameterType="map"
-            resultType="cn.staitech.anno.domain.vo.diagnosis.StatisticsBodyVo">
+            resultType="cn.staitech.anno.domain.diagnosis.StatisticsBodyVo">
         SELECT CASE
 
                    WHEN
@@ -636,7 +636,7 @@
     </select>
 
     <select id="getStaticsVisceraListByParm" parameterType="map"
-            resultType="cn.staitech.anno.domain.vo.diagnosis.StatisticsBodyVo">
+            resultType="cn.staitech.anno.domain.diagnosis.StatisticsBodyVo">
         SELECT sys_viscera_name,
                sys_lesion_name,
                sys_position_name,

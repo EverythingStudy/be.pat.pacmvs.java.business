@@ -2,7 +2,7 @@ package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.SysDictData;
 import cn.staitech.anno.domain.project.ProjectExt;
-import cn.staitech.anno.domain.vo.diagnosis.SysDictDataVo;
+import cn.staitech.anno.domain.diagnosis.SysDictDataVo;
 
 import java.util.List;
 import java.util.Map;

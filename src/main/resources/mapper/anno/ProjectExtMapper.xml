@@ -245,7 +245,7 @@
         where project_id = #{projectId}
     </update>
 
-    <select id="selectProjectAll" resultType="cn.staitech.anno.domain.project.out.data.NavigationBarData">
+    <select id="selectProjectAll" resultType="cn.staitech.anno.domain.project.out.NavigationBarData">
         select project_id projectId, project_name projectName
         from tb_project
         where special_id = #{specialId}

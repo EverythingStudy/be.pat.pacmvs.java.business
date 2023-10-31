@@ -1,9 +1,9 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.special.SpecialRoleUser;
-import cn.staitech.anno.domain.vo.special.SpecialRoleUserSelectResVo;
-import cn.staitech.anno.domain.vo.special.SpecialRoleUserSelectVo;
-import cn.staitech.anno.domain.vo.special.SpecialSelectByIn;
+import cn.staitech.anno.domain.special.SpecialRoleUserSelectResVo;
+import cn.staitech.anno.domain.special.SpecialRoleUserSelectVo;
+import cn.staitech.anno.domain.special.SpecialSelectByIn;
 
 import java.util.List;
 

@@ -3,18 +3,18 @@ package cn.staitech.anno.service;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.vo.ExaminationListVO;
 import cn.staitech.anno.domain.vo.ProjectListOutVO;
-import cn.staitech.anno.domain.vo.image.ProjectStatisticsVo;
-import cn.staitech.anno.domain.vo.image.SlideReportSummaryVo;
-import cn.staitech.anno.domain.vo.image.SlideReportVo;
-import cn.staitech.anno.domain.vo.imagecsv.ImageCsvGetPagerVO;
-import cn.staitech.anno.domain.vo.imagecsv.ImageCsvGetVO;
-import cn.staitech.anno.domain.vo.imagecsv.ImageCsvListVO;
-import cn.staitech.anno.domain.vo.marking.out.SlideSelectBy;
-import cn.staitech.anno.domain.vo.slide.AddSlideIdsVO;
-import cn.staitech.anno.domain.vo.slide.AddSlideVO;
-import cn.staitech.anno.domain.vo.slide.SlideSelectVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticSlideListInVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticSlideListOutVO;
+import cn.staitech.anno.domain.project.ProjectStatisticsVO;
+import cn.staitech.anno.domain.slide.SlideReportSummaryVO;
+import cn.staitech.anno.domain.slide.SlideReportVO;
+import cn.staitech.anno.domain.imagecsv.ImageCsvGetPagerVO;
+import cn.staitech.anno.domain.imagecsv.ImageCsvGetVO;
+import cn.staitech.anno.domain.imagecsv.ImageCsvListVO;
+import cn.staitech.anno.domain.marking.SlideSelectBy;
+import cn.staitech.anno.domain.slide.AddSlideIdsVO;
+import cn.staitech.anno.domain.slide.AddSlideVO;
+import cn.staitech.anno.domain.slide.SlideSelectVO;
+import cn.staitech.anno.domain.statistic.StatisticSlideListInVO;
+import cn.staitech.anno.domain.statistic.StatisticSlideListOutVO;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -147,7 +147,7 @@ public interface SlideService extends IService<Slide> {
      * @param params
      * @return
      */
-    R<SlideReportSummaryVo> querySlideByProjectAndGroup(Map params);
+    R<SlideReportSummaryVO> querySlideByProjectAndGroup(Map params);
 
     /**
      * 组内切片报表分页查询
@@ -155,7 +155,7 @@ public interface SlideService extends IService<Slide> {
      * @param params
      * @return
      */
-    R<PageMaster<SlideReportVo>> pageSlideWithSubImage(Map params);
+    R<PageMaster<SlideReportVO>> pageSlideWithSubImage(Map params);
 
 
     /**
@@ -164,7 +164,7 @@ public interface SlideService extends IService<Slide> {
      * @param params
      * @return
      */
-    R<PageMaster<ProjectStatisticsVo>> pageSlideStatisticsByProject(Map params);
+    R<PageMaster<ProjectStatisticsVO>> pageSlideStatisticsByProject(Map params);
 
     /**
      * 切片统计
@@ -172,7 +172,7 @@ public interface SlideService extends IService<Slide> {
      * @param params
      * @return
      */
-    R<PageMaster<SlideReportVo>> pageSlideStatistics(Map params);
+    R<PageMaster<SlideReportVO>> pageSlideStatistics(Map params);
 
     void jsonExport(List<Long> slideList, Long projectId, Integer status) throws Exception;
 

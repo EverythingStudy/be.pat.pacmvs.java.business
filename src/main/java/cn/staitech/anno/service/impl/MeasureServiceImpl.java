@@ -1,8 +1,8 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.Measure;
-import cn.staitech.anno.domain.vo.measurevo.MeasureJsonVO;
-import cn.staitech.anno.domain.vo.measurevo.MeasureSelectVO;
+import cn.staitech.anno.domain.measurevo.MeasureJsonVO;
+import cn.staitech.anno.domain.measurevo.MeasureSelectVO;
 import cn.staitech.anno.mapper.MeasureMapper;
 import cn.staitech.anno.service.MeasureService;
 import org.springframework.stereotype.Service;

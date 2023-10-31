@@ -16,7 +16,7 @@
         <result property="updateTime" column="update_time"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.organization.OrganizationSelectResVo" id="OrganizationResult">
+    <resultMap type="cn.staitech.anno.domain.organization.OrganizationSelectResVO" id="OrganizationResult">
         <result property="organizationId" column="organization_id"/>
         <result property="organizationName" column="organization_name"/>
         <result property="contactName" column="contact_name"/>

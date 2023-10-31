@@ -4,7 +4,7 @@ import cn.staitech.anno.domain.MarkingExamine;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.file.Chunk;
 import cn.staitech.anno.domain.geojson.GeoLabel;
-import cn.staitech.anno.domain.vo.file.SlideFileName;
+import cn.staitech.anno.domain.slide.SlideFileName;
 import cn.staitech.anno.mapper.MarkingExamineMapper;
 import cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper;
 import cn.staitech.anno.mapper.SlideMapper;

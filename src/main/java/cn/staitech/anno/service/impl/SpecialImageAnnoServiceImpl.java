@@ -5,16 +5,16 @@ import cn.staitech.anno.domain.SubImage;
 import cn.staitech.anno.domain.marking.PointCount;
 import cn.staitech.anno.domain.special.SpecialAnnotation;
 import cn.staitech.anno.domain.special.SpecialImage;
-import cn.staitech.anno.domain.vo.image.SubImageVo;
-import cn.staitech.anno.domain.vo.specialimage.SpecialImageSelectVO;
-import cn.staitech.anno.domain.vo.specialimage.WaitSpecialImageVO;
-import cn.staitech.anno.domain.vo.specialimageanno.AnnoFeatures;
-import cn.staitech.anno.domain.vo.specialimageanno.AnnoMarkGeojson;
-import cn.staitech.anno.domain.vo.specialimageanno.AnnoProperties;
-import cn.staitech.anno.domain.vo.specialimageanno.SpecialAnnoAddVO;
-import cn.staitech.anno.domain.vo.specialimageanno.in.*;
-import cn.staitech.anno.domain.vo.specialsliceimage.AuditSpecialImageVO;
-import cn.staitech.anno.domain.vo.specialsliceimage.OrganDict;
+import cn.staitech.anno.domain.slide.SubImageVO;
+import cn.staitech.anno.domain.specialimage.SpecialImageSelectVO;
+import cn.staitech.anno.domain.specialimage.WaitSpecialImageVO;
+import cn.staitech.anno.domain.specialimageanno.AnnoFeatures;
+import cn.staitech.anno.domain.specialimageanno.AnnoMarkGeojson;
+import cn.staitech.anno.domain.specialimageanno.AnnoProperties;
+import cn.staitech.anno.domain.specialimageanno.SpecialAnnoAddVO;
+import cn.staitech.anno.domain.specialimageanno.in.*;
+import cn.staitech.anno.domain.specialsliceimage.AuditSpecialImageVO;
+import cn.staitech.anno.domain.specialsliceimage.OrganDict;
 import cn.staitech.anno.enums.SysDictTypeEnum;
 import cn.staitech.anno.exception.AnnoException;
 import cn.staitech.anno.mapper.SpecialAnnotationMapper;
@@ -210,7 +210,7 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
             }
 
             //批量修改小图状态
-            SubImageVo simage = new SubImageVo();
+            SubImageVO simage = new SubImageVO();
             simage.setImageIds(allSubIds);
             simage.setAuditStatus(auditStatus);
             simage.setUpdateTime(DateUtil.date());

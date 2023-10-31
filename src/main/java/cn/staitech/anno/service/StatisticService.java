@@ -1,6 +1,6 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.vo.statistic.*;
+import cn.staitech.anno.domain.statistic.*;
 import cn.staitech.common.core.domain.R;
 
 import java.text.ParseException;

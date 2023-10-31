@@ -1,7 +1,7 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.special.SpecialRole;
-import cn.staitech.anno.domain.vo.special.SpecialRoleQueryVO;
+import cn.staitech.anno.domain.special.SpecialRoleQueryVO;
 
 import java.util.List;
 

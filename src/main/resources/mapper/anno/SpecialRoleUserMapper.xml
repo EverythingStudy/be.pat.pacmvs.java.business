@@ -14,7 +14,7 @@
         <result property="updateTime" column="update_time"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.vo.special.SpecialRoleUserSelectResVo" id="SelectListResult">
+    <resultMap type="cn.staitech.anno.domain.special.SpecialRoleUserSelectResVo" id="SelectListResult">
         <result property="userCode" column="user_code"/>
         <result property="userName" column="user_name"/>
         <result property="userId" column="user_id"/>
@@ -63,7 +63,7 @@
         from tb_special_role_user
     </sql>
 
-    <select id="selectUserSpecialBy" parameterType="cn.staitech.anno.domain.vo.special.SpecialSelectByIn"
+    <select id="selectUserSpecialBy" parameterType="cn.staitech.anno.domain.special.SpecialSelectByIn"
             resultMap="SelectListResult">
         <include refid="selectList"/>
         <where>
@@ -105,7 +105,7 @@
     </select>
 
 
-    <select id="selectList" parameterType="cn.staitech.anno.domain.vo.special.SpecialRoleUserSelectVo"
+    <select id="selectList" parameterType="cn.staitech.anno.domain.special.SpecialRoleUserSelectVo"
             resultMap="SelectListResult">
         <include refid="selectList"/>
         <where>

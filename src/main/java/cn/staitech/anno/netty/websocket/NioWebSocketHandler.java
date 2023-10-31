@@ -2,7 +2,7 @@ package cn.staitech.anno.netty.websocket;
 
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.vo.BroadcastVO;
-import cn.staitech.anno.domain.vo.specialimageanno.AnnoBroadcastVO;
+import cn.staitech.anno.domain.specialimageanno.AnnoBroadcastVO;
 import cn.staitech.anno.netty.global.ChannelSupervise;
 import cn.staitech.anno.netty.global.ChatGroup;
 import cn.staitech.anno.service.SlideService;

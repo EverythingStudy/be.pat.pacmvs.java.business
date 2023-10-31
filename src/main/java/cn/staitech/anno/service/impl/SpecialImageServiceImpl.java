@@ -7,15 +7,15 @@ import cn.staitech.anno.domain.SubImage;
 import cn.staitech.anno.domain.special.Special;
 import cn.staitech.anno.domain.special.SpecialAnnotation;
 import cn.staitech.anno.domain.special.SpecialImage;
-import cn.staitech.anno.domain.vo.image.SubImageVo;
-import cn.staitech.anno.domain.vo.specialimage.InsertSpecialImageVO;
-import cn.staitech.anno.domain.vo.specialimage.SpecialImageSelectVO;
-import cn.staitech.anno.domain.vo.specialimage.SpecialImageVO;
-import cn.staitech.anno.domain.vo.specialimage.WaitSpecialImageVO;
-import cn.staitech.anno.domain.vo.specialimageanno.AlgorithmCutImageVO;
-import cn.staitech.anno.domain.vo.specialimageanno.SpecialAnnDataVO;
-import cn.staitech.anno.domain.vo.specialimageanno.SpecialCutImageVO;
-import cn.staitech.anno.domain.vo.specialsliceimage.AuditSpecialImageVO;
+import cn.staitech.anno.domain.slide.SubImageVO;
+import cn.staitech.anno.domain.specialimage.InsertSpecialImageVO;
+import cn.staitech.anno.domain.specialimage.SpecialImageSelectVO;
+import cn.staitech.anno.domain.specialimage.SpecialImageVO;
+import cn.staitech.anno.domain.specialimage.WaitSpecialImageVO;
+import cn.staitech.anno.domain.specialimageanno.AlgorithmCutImageVO;
+import cn.staitech.anno.domain.specialimageanno.SpecialAnnDataVO;
+import cn.staitech.anno.domain.specialimageanno.SpecialCutImageVO;
+import cn.staitech.anno.domain.specialsliceimage.AuditSpecialImageVO;
 import cn.staitech.anno.enums.SysDictTypeEnum;
 import cn.staitech.anno.mapper.ImageMapper;
 import cn.staitech.anno.mapper.SpecialImageMapper;
@@ -408,7 +408,7 @@ public class SpecialImageServiceImpl implements SpecialImageService {
             if (auditStatus == 1) {
                 if (CollectionUtils.isNotEmpty(allSubIds)) {
                     //批量修改小图状态
-                    SubImageVo simage = new SubImageVo();
+                    SubImageVO simage = new SubImageVO();
                     simage.setImageIds(allSubIds);
                     simage.setAuditStatus(auditStatus);
                     simage.setUpdateTime(DateUtil.date());

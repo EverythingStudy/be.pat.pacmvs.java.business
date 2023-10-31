@@ -7,10 +7,10 @@ import cn.staitech.anno.domain.organization.SysOrganizationAuthorization;
 import cn.staitech.anno.domain.special.Special;
 import cn.staitech.anno.domain.special.SpecialAnnotation;
 import cn.staitech.anno.domain.special.SpecialImage;
-import cn.staitech.anno.domain.vo.image.ImageRelVo;
-import cn.staitech.anno.domain.vo.image.SubImageVo;
-import cn.staitech.anno.domain.vo.specialsliceimage.SpecialSliceSelectVO;
-import cn.staitech.anno.domain.vo.specialsliceimage.SpecialSliceVo;
+import cn.staitech.anno.domain.image.ImageRelVO;
+import cn.staitech.anno.domain.slide.SubImageVO;
+import cn.staitech.anno.domain.specialsliceimage.SpecialSliceSelectVO;
+import cn.staitech.anno.domain.specialsliceimage.SpecialSliceVo;
 import cn.staitech.anno.enums.SysDictTypeEnum;
 import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.service.GetUserInformationService;
@@ -81,7 +81,7 @@ public class SubImageServiceImpl extends ServiceImpl<SubImageMapper, SubImage> i
      * @return
      */
     @Override
-    public R<PageMaster<SubImageVo>> pageSubImage(Map params) {
+    public R<PageMaster<SubImageVO>> pageSubImage(Map params) {
         //2023-08-30修改添加在选择切片列表，展示了切片配置列表里的部分切图完成的切片
         //期望   只有全部交付成功的切片才会在选择切片列表里展示，未进行全部交付，则选择切片列表不会有切片
         Long specialId = MapUtils.getLong(params, "specialId");
@@ -95,15 +95,15 @@ public class SubImageServiceImpl extends ServiceImpl<SubImageMapper, SubImage> i
         }
         // 根据传入groupId查询分组信息
         Group group = groupMapper.selectById(MapUtils.getLong(params, "groupId", 0L));
-        Page<SubImageVo> page = new Page<>(MapUtils.getInteger(params, "pageNum", 1), MapUtils.getInteger(params, "pageSize", 10));
+        Page<SubImageVO> page = new Page<>(MapUtils.getInteger(params, "pageNum", 1), MapUtils.getInteger(params, "pageSize", 10));
         getBaseMapper().pageSubImage(page, params);
-        List<SubImageVo> subImageVos = page.getRecords();
-        Map<Long, SubImageVo> temp = new HashMap<>(16);
+        List<SubImageVO> subImageVOS = page.getRecords();
+        Map<Long, SubImageVO> temp = new HashMap<>(16);
         // 以imageIds作为参数查询图像关联属性
         List<Long> imageIds = new ArrayList<>();
         try {
-            if (subImageVos != null && !subImageVos.isEmpty()) {
-                for (SubImageVo vo : subImageVos) {
+            if (subImageVOS != null && !subImageVOS.isEmpty()) {
+                for (SubImageVO vo : subImageVOS) {
                     if (group != null) {
                         vo.setGroup(group);
                     }
@@ -111,11 +111,11 @@ public class SubImageServiceImpl extends ServiceImpl<SubImageMapper, SubImage> i
                     temp.put(vo.getImageId(), vo);
                 }
                 // 查询出图像关联属下
-                List<ImageRelVo> imageRelVos = getBaseMapper().selectImageRelByIds(imageIds);
-                if (imageRelVos != null && !imageRelVos.isEmpty()) {
-                    for (ImageRelVo vo : imageRelVos) {
+                List<ImageRelVO> imageRelVOS = getBaseMapper().selectImageRelByIds(imageIds);
+                if (imageRelVOS != null && !imageRelVOS.isEmpty()) {
+                    for (ImageRelVO vo : imageRelVOS) {
                         // 将关联属性设置到图像对象中
-                        SubImageVo subImageVo = temp.get(vo.getImageId());
+                        SubImageVO subImageVo = temp.get(vo.getImageId());
                         BeanUtils.copyProperties(vo, subImageVo);
                     }
                 }
@@ -125,7 +125,7 @@ public class SubImageServiceImpl extends ServiceImpl<SubImageMapper, SubImage> i
             throw e;
         }
         // 构建分页对象
-        PageMaster<SubImageVo> pageMaster = PageMaster.of(subImageVos);
+        PageMaster<SubImageVO> pageMaster = PageMaster.of(subImageVOS);
         pageMaster.setTotal(page.getTotal());
         return R.ok(pageMaster);
     }
@@ -137,8 +137,8 @@ public class SubImageServiceImpl extends ServiceImpl<SubImageMapper, SubImage> i
      * @return
      */
     @Override
-    public R<List<SubImageVo>> querySubImageByGroup(Map params) {
-        Page<SubImageVo> page = new Page<>(1, Integer.MAX_VALUE);
+    public R<List<SubImageVO>> querySubImageByGroup(Map params) {
+        Page<SubImageVO> page = new Page<>(1, Integer.MAX_VALUE);
         getBaseMapper().pageSubImage(page, params);
         return R.ok(page.getRecords());
     }

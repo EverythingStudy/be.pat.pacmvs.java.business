@@ -43,7 +43,7 @@
         <result property="createTime" column="create_time"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo" id="markingSelectListVoResult">
+    <resultMap type="cn.staitech.anno.domain.marking.MarkingSelectListVO" id="markingSelectListVoResult">
         <result property="marking_id" column="marking_id"/>
         <result property="area" column="area"/>
         <result property="perimeter" column="perimeter"/>

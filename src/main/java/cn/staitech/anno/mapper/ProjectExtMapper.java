@@ -3,7 +3,7 @@ package cn.staitech.anno.mapper;
 import cn.staitech.anno.domain.project.ProjectExt;
 import cn.staitech.anno.domain.project.ProjectPo;
 import cn.staitech.anno.domain.project.out.CreateStatusOut;
-import cn.staitech.anno.domain.project.out.data.NavigationBarData;
+import cn.staitech.anno.domain.project.out.NavigationBarData;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 

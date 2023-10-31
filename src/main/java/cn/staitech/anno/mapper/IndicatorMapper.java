@@ -1,11 +1,11 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.Indicator;
-import cn.staitech.anno.domain.vo.indicator.IndicatorGetVO;
-import cn.staitech.anno.domain.vo.indicator.IndicatorReviseVO;
-import cn.staitech.anno.domain.vo.project.InsertProjectVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticIndicatorListInVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticIndicatorListOutVO;
+import cn.staitech.anno.domain.indicator.IndicatorGetVO;
+import cn.staitech.anno.domain.indicator.IndicatorReviseVO;
+import cn.staitech.anno.domain.project.InsertProjectVO;
+import cn.staitech.anno.domain.statistic.StatisticIndicatorListInVO;
+import cn.staitech.anno.domain.statistic.StatisticIndicatorListOutVO;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

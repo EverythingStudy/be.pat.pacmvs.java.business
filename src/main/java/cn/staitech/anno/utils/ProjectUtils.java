@@ -168,7 +168,7 @@ public class ProjectUtils {
 
         //更新项目人工标注数
         projectUtils.projectService.updateProjectHumanAnnotationQuantity(annotationVO);
-        CacheUtils.ProjectCache(new Project());
+        CacheUtils.projectCache(new Project());
     }
 
     /**

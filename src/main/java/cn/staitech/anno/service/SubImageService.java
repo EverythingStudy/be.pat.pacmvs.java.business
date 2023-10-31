@@ -2,9 +2,9 @@ package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.SubImage;
 import cn.staitech.anno.domain.organization.SysOrganizationAuthorization;
-import cn.staitech.anno.domain.vo.image.SubImageVo;
-import cn.staitech.anno.domain.vo.specialsliceimage.SpecialSliceSelectVO;
-import cn.staitech.anno.domain.vo.specialsliceimage.SpecialSliceVo;
+import cn.staitech.anno.domain.slide.SubImageVO;
+import cn.staitech.anno.domain.specialsliceimage.SpecialSliceSelectVO;
+import cn.staitech.anno.domain.specialsliceimage.SpecialSliceVo;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.core.domain.R;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -17,9 +17,9 @@ import java.util.Map;
  */
 public interface SubImageService extends IService<SubImage> {
 
-    R<PageMaster<SubImageVo>> pageSubImage(Map params);
+    R<PageMaster<SubImageVO>> pageSubImage(Map params);
 
-    R<List<SubImageVo>> querySubImageByGroup(Map params);
+    R<List<SubImageVO>> querySubImageByGroup(Map params);
 
     List<SpecialSliceVo> selectSpecialSliceVo(SpecialSliceSelectVO sisv);
 

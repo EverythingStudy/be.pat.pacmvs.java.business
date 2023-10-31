@@ -1,9 +1,7 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.constant.Container;
-import cn.staitech.anno.domain.special.SpecialRole;
-import cn.staitech.anno.domain.special.SpecialRoleUser;
-import cn.staitech.anno.domain.vo.special.*;
+import cn.staitech.anno.domain.special.*;
 import cn.staitech.anno.mapper.SpecialRoleMapper;
 import cn.staitech.anno.mapper.SpecialRoleUserMapper;
 import cn.staitech.anno.service.SpecialRoleUserService;

@@ -2,10 +2,10 @@ package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.domain.Indicator;
-import cn.staitech.anno.domain.vo.indicator.IndicatorGetVO;
-import cn.staitech.anno.domain.vo.indicator.IndicatorReviseVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticIndicatorListInVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticIndicatorListOutVO;
+import cn.staitech.anno.domain.indicator.IndicatorGetVO;
+import cn.staitech.anno.domain.indicator.IndicatorReviseVO;
+import cn.staitech.anno.domain.statistic.StatisticIndicatorListInVO;
+import cn.staitech.anno.domain.statistic.StatisticIndicatorListOutVO;
 import cn.staitech.anno.mapper.IndicatorMapper;
 import cn.staitech.anno.service.IndicatorService;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;

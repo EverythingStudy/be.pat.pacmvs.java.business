@@ -4,8 +4,8 @@ import cn.staitech.anno.domain.geojson.Features;
 import cn.staitech.anno.domain.marking.PointCount;
 import cn.staitech.anno.domain.vo.AnnotationBroadcastVO;
 import cn.staitech.anno.domain.vo.BroadcastVO;
-import cn.staitech.anno.domain.vo.specialimageanno.AnnoBroadcastVO;
-import cn.staitech.anno.domain.vo.specialimageanno.AnnoFeatures;
+import cn.staitech.anno.domain.specialimageanno.AnnoBroadcastVO;
+import cn.staitech.anno.domain.specialimageanno.AnnoFeatures;
 
 import java.util.ArrayList;
 import java.util.List;

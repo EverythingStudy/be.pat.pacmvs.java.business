@@ -8,7 +8,7 @@ import cn.staitech.anno.domain.vo.CategoryVO;
 import cn.staitech.anno.domain.vo.LabelListVO;
 import cn.staitech.anno.domain.vo.LabelVO;
 import cn.staitech.anno.domain.vo.PathologicalIndicatorCategoryVO;
-import cn.staitech.anno.domain.vo.indicator.IndicatorReviseVO;
+import cn.staitech.anno.domain.indicator.IndicatorReviseVO;
 import cn.staitech.anno.service.IndicatorService;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
 import cn.staitech.anno.service.StructureService;

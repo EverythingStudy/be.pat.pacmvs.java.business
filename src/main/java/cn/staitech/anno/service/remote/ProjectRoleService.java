@@ -1,6 +1,6 @@
 package cn.staitech.anno.service.remote;
 
-import cn.staitech.anno.domain.vo.projectrole.ProjectRoleInsertVO;
+import cn.staitech.anno.domain.project.ProjectRoleInsertVO;
 import cn.staitech.common.core.web.page.TableDataInfo;
 import cn.staitech.system.api.domain.SysProjectRole;
 import org.springframework.cloud.openfeign.FeignClient;

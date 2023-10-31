@@ -1,6 +1,6 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.domain.user.in.SelectUserIdListIn;
+import cn.staitech.anno.domain.user.SelectUserIdListIn;
 import cn.staitech.anno.project.mapper.SysUserMapperV1;
 import cn.staitech.common.core.domain.R;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;

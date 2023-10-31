@@ -2,8 +2,8 @@ package cn.staitech.anno.controller;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.staitech.anno.domain.Project;
+import cn.staitech.anno.domain.statistic.*;
 import cn.staitech.anno.domain.vo.AnnotationBroadcastVO;
-import cn.staitech.anno.domain.vo.statistic.*;
 import cn.staitech.anno.service.*;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;

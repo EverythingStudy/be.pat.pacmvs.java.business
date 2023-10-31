@@ -13,7 +13,7 @@ import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.marking.PointCount;
 import cn.staitech.anno.domain.marking.SlideRes;
 import cn.staitech.anno.domain.vo.BroadcastVO;
-import cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo;
+import cn.staitech.anno.domain.marking.MarkingSelectListVO;
 import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.netty.websocket.NioWebSocketHandler;
 import cn.staitech.anno.project.constants.Constants;
@@ -34,7 +34,6 @@ import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -52,7 +51,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
@@ -106,14 +104,14 @@ public class MarkingServiceImpl implements MarkingService {
     private DownTaskService downTaskService;
 
     @Override
-    public List<MarkingSelectListVo> selectList(Long slideId) throws Exception {
+    public List<MarkingSelectListVO> selectList(Long slideId) throws Exception {
         Slide slideBy = slideMapperV1.selectById(slideId);
         if (!Optional.ofNullable(slideBy).isPresent()) {
             throw new Exception(MessageSource.M("SLIDE_ABNORMAL_NO_INFORMATION"));
         }
-        List<MarkingSelectListVo> markingSelectListVoList = markingMapper.selectList(slideId);
-        List<MarkingSelectListVo> pointCountList = markingMapper.selectPointCountList(slideId);
-        markingSelectListVoList = Stream.of(markingSelectListVoList, pointCountList).flatMap(list -> list.stream().map(x -> (MarkingSelectListVo) x)).collect(Collectors.toList());
+        List<MarkingSelectListVO> markingSelectListVoList = markingMapper.selectList(slideId);
+        List<MarkingSelectListVO> pointCountList = markingMapper.selectPointCountList(slideId);
+        markingSelectListVoList = Stream.of(markingSelectListVoList, pointCountList).flatMap(list -> list.stream().map(x -> (MarkingSelectListVO) x)).collect(Collectors.toList());
         return markingSelectListVoList;
     }
 

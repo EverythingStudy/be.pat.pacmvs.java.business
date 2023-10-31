@@ -4,8 +4,8 @@ import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.SlideAnnotationResult;
 import cn.staitech.anno.domain.image.in.ImageAllVO;
 import cn.staitech.anno.domain.vo.*;
-import cn.staitech.anno.domain.vo.slide.SlideCategoryProcessFlagVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticProjectListOutVO;
+import cn.staitech.anno.domain.slide.SlideCategoryProcessFlagVO;
+import cn.staitech.anno.domain.statistic.StatisticProjectListOutVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;

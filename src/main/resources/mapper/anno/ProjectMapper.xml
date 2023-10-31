@@ -66,7 +66,7 @@
         <result property="sum" column="sum"/>
     </resultMap>
 
-    <resultMap id="projectStatistic" type="cn.staitech.anno.domain.vo.statistic.StatisticProjectListOutVO">
+    <resultMap id="projectStatistic" type="cn.staitech.anno.domain.statistic.StatisticProjectListOutVO">
         <result property="projectId" column="project_id"/>
         <result property="projectName" column="project_name"/>
         <result property="indicatorId" column="indicator_id"/>
@@ -171,7 +171,7 @@
 
     <!--统计时使用的项目列表-->
     <select id="selectProjectStatisticList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticProjectListOutVO" resultMap="projectStatistic">
+            parameterType="cn.staitech.anno.domain.statistic.StatisticProjectListOutVO" resultMap="projectStatistic">
         select project_id, project_name, indicator_id
         from tb_project
         <where>
@@ -355,7 +355,7 @@
     </select>
 
 
-    <select id="selectUserMessage" parameterType="cn.staitech.anno.domain.vo.slide.SlideCategoryProcessFlagVO"
+    <select id="selectUserMessage" parameterType="cn.staitech.anno.domain.slide.SlideCategoryProcessFlagVO"
             resultMap="SlideAnnotationResult">
         select sum(sum) as sum from tb_slide_annotation_result where category_id =0
         <if test="slideId != null and slideId != ''">
@@ -374,7 +374,7 @@
     </select>
 
     <!--根据标注类别查询标注数量1-->
-    <select id="selectByCategoryId" parameterType="cn.staitech.anno.domain.vo.slide.SlideCategoryProcessFlagVO"
+    <select id="selectByCategoryId" parameterType="cn.staitech.anno.domain.slide.SlideCategoryProcessFlagVO"
             resultMap="SlideAnnotationResult">
         select sum(sum) as sum from tb_slide_annotation_result where 1=1
         <if test="slideId != null and slideId != ''">
@@ -438,7 +438,7 @@
         </if>
     </select>
 
-    <select id="selectCategorySum" parameterType="cn.staitech.anno.domain.vo.slide.SlideCategoryProcessFlagVO"
+    <select id="selectCategorySum" parameterType="cn.staitech.anno.domain.slide.SlideCategoryProcessFlagVO"
             resultType="java.lang.Integer">
         select sum(sum)
         from tb_slide_annotation_result
@@ -503,7 +503,7 @@
         order by s.update_time desc
     </select>
 
-    <select id="selectCategoryTotal" parameterType="cn.staitech.anno.domain.vo.slide.SlideCategoryProcessFlagVO"
+    <select id="selectCategoryTotal" parameterType="cn.staitech.anno.domain.slide.SlideCategoryProcessFlagVO"
             resultType="java.lang.Integer">
         select sum(sum) from tb_slide_annotation_result
         <where>

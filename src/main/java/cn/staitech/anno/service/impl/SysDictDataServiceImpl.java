@@ -3,7 +3,7 @@ package cn.staitech.anno.service.impl;
 import cn.hutool.core.date.DateUtil;
 import cn.staitech.anno.domain.SysDictData;
 import cn.staitech.anno.domain.project.ProjectExt;
-import cn.staitech.anno.domain.vo.diagnosis.SysDictDataVo;
+import cn.staitech.anno.domain.diagnosis.SysDictDataVo;
 import cn.staitech.anno.mapper.ProjectExtMapper;
 import cn.staitech.anno.mapper.SysDictDataMapper;
 import cn.staitech.anno.service.SysDictDataService;

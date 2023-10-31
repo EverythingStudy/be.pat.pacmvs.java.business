@@ -8,7 +8,7 @@
         <result property="authorizationImageLimit" column="authorization_image_limit"/>
     </resultMap>
 
-    <select id="pageSubImage" parameterType="java.util.Map" resultType="cn.staitech.anno.domain.vo.image.SubImageVo">
+    <select id="pageSubImage" parameterType="java.util.Map" resultType="cn.staitech.anno.domain.slide.SubImageVO">
         select m.*
         from tb_sub_image m
         <where>
@@ -39,7 +39,7 @@
         </where>
     </select>
     <select id="selectImageRelByIds" parameterType="java.util.Map"
-            resultType="cn.staitech.anno.domain.vo.image.ImageRelVo">
+            resultType="cn.staitech.anno.domain.image.ImageRelVO">
         select s.image_id as imageId,
         group_concat(distinct(g.group_id)) as groupIds,
         group_concat(distinct(g.group_name)) as groupNames,
@@ -98,7 +98,7 @@
     </select>
 
     <select id="selectImageCount" parameterType="java.lang.Long"
-            resultType="cn.staitech.anno.domain.vo.image.SubImageVo">
+            resultType="cn.staitech.anno.domain.slide.SubImageVO">
         SELECT si.special_image_id
         FROM sys_organization AS o
                  LEFT JOIN sys_user AS u ON u.organization_id = o.organization_id

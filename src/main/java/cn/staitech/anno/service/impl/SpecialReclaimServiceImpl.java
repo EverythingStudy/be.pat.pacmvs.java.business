@@ -1,9 +1,9 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.special.SpecialReclaim;
-import cn.staitech.anno.domain.vo.special.SpecialReclaimResVo;
-import cn.staitech.anno.domain.vo.special.SpecialReclaimSelectVo;
-import cn.staitech.anno.domain.vo.special.SpecialResVo;
+import cn.staitech.anno.domain.special.SpecialReclaimResVo;
+import cn.staitech.anno.domain.special.SpecialReclaimSelectVo;
+import cn.staitech.anno.domain.special.SpecialResVo;
 import cn.staitech.anno.mapper.SpecialReclaimMapper;
 import cn.staitech.anno.mapper.SubImageMapper;
 import cn.staitech.anno.service.SpecialReclaimService;

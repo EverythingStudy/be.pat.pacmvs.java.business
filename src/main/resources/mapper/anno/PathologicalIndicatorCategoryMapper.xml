@@ -21,7 +21,7 @@
     </resultMap>
 
 
-    <resultMap type="cn.staitech.anno.domain.vo.statistic.StatisticCategoryListOutVO"
+    <resultMap type="cn.staitech.anno.domain.statistic.StatisticCategoryListOutVO"
                id="SysAnnotationCategoryStatisticResult">
         <result property="categoryId" column="category_id"/>
         <result property="categoryName" column="category_name"/>

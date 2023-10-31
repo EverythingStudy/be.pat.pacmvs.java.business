@@ -65,7 +65,7 @@ public class CacheUtils {
      *
      * @param project
      */
-    public static void ProjectCache(Project project) {
+    public static void projectCache(Project project) {
         cacheUtils.iCache.removeList(CommonConstant.PROJECT_CACHE_KEY);
         List<ProjectListVO> projectList = cacheUtils.projectService.selectProjectList(project);
         Map<String, Object> projectMap = projectList.stream()

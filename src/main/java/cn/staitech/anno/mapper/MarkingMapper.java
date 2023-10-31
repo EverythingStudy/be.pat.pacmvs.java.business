@@ -6,7 +6,7 @@ import cn.staitech.anno.domain.geojson.Properties;
 import cn.staitech.anno.domain.marking.Marking;
 import cn.staitech.anno.domain.marking.PointCount;
 import cn.staitech.anno.domain.marking.SlideRes;
-import cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo;
+import cn.staitech.anno.domain.marking.MarkingSelectListVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public interface MarkingMapper extends BaseMapper<Marking> {
      * @param slideId 标注信息
      * @return List<Slide>
      */
-    List<MarkingSelectListVo> selectList(Long slideId);
+    List<MarkingSelectListVO> selectList(Long slideId);
 
     /**
      * json文件导出的列表
@@ -44,7 +44,7 @@ public interface MarkingMapper extends BaseMapper<Marking> {
     List<Features> selectListBy(Long slideId);
 
 
-    List<MarkingSelectListVo> selectPointCountList(Long slideId);
+    List<MarkingSelectListVO> selectPointCountList(Long slideId);
 
     Properties selectBy(String markingId);
 

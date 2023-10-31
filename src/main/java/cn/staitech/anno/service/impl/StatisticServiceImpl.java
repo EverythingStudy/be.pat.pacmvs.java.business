@@ -1,6 +1,6 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.domain.vo.statistic.*;
+import cn.staitech.anno.domain.statistic.*;
 import cn.staitech.anno.mapper.StatisticMapper;
 import cn.staitech.anno.service.StatisticService;
 import cn.staitech.anno.utils.MessageSource;

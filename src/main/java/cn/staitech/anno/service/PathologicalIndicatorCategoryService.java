@@ -3,8 +3,8 @@ package cn.staitech.anno.service;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.vo.LabelListVO;
 import cn.staitech.anno.domain.vo.LabelVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListInVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListOutVO;
+import cn.staitech.anno.domain.statistic.StatisticCategoryListInVO;
+import cn.staitech.anno.domain.statistic.StatisticCategoryListOutVO;
 
 import java.util.List;
 

@@ -9,18 +9,18 @@ import cn.staitech.anno.domain.project.ProjectPo;
 import cn.staitech.anno.domain.special.Special;
 import cn.staitech.anno.domain.vo.ExaminationListVO;
 import cn.staitech.anno.domain.vo.ProjectListOutVO;
-import cn.staitech.anno.domain.vo.image.ProjectStatisticsVo;
-import cn.staitech.anno.domain.vo.image.SlideReportSummaryVo;
-import cn.staitech.anno.domain.vo.image.SlideReportVo;
-import cn.staitech.anno.domain.vo.imagecsv.ImageCsvGetPagerVO;
-import cn.staitech.anno.domain.vo.imagecsv.ImageCsvGetVO;
-import cn.staitech.anno.domain.vo.imagecsv.ImageCsvListVO;
-import cn.staitech.anno.domain.vo.marking.out.SlideSelectBy;
-import cn.staitech.anno.domain.vo.slide.AddSlideIdsVO;
-import cn.staitech.anno.domain.vo.slide.AddSlideVO;
-import cn.staitech.anno.domain.vo.slide.SlideSelectVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticSlideListInVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticSlideListOutVO;
+import cn.staitech.anno.domain.project.ProjectStatisticsVO;
+import cn.staitech.anno.domain.slide.SlideReportSummaryVO;
+import cn.staitech.anno.domain.slide.SlideReportVO;
+import cn.staitech.anno.domain.imagecsv.ImageCsvGetPagerVO;
+import cn.staitech.anno.domain.imagecsv.ImageCsvGetVO;
+import cn.staitech.anno.domain.imagecsv.ImageCsvListVO;
+import cn.staitech.anno.domain.marking.SlideSelectBy;
+import cn.staitech.anno.domain.slide.AddSlideIdsVO;
+import cn.staitech.anno.domain.slide.AddSlideVO;
+import cn.staitech.anno.domain.slide.SlideSelectVO;
+import cn.staitech.anno.domain.statistic.StatisticSlideListInVO;
+import cn.staitech.anno.domain.statistic.StatisticSlideListOutVO;
 import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.SlideService;
@@ -297,12 +297,12 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
      * @return
      */
     @Override
-    public R<SlideReportSummaryVo> querySlideByProjectAndGroup(Map params) {
-        SlideReportSummaryVo vo = getBaseMapper().selectSlideByProjectAndGroup(params);
+    public R<SlideReportSummaryVO> querySlideByProjectAndGroup(Map params) {
+        SlideReportSummaryVO vo = getBaseMapper().selectSlideByProjectAndGroup(params);
         if (vo != null && vo.getFinishTotal() == null) {
             vo.setFinishTotal(0);
         } else {
-            vo = new SlideReportSummaryVo();
+            vo = new SlideReportSummaryVO();
             ProjectExt projectExt = projectExtMapper.selectById(MapUtils.getLong(params, "projectId"));
             Group group = groupMapper.selectById(MapUtils.getLong(params, "groupId"));
             vo.setProjectName(projectExt.getProjectName());
@@ -322,10 +322,10 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
      * @return
      */
     @Override
-    public R<PageMaster<SlideReportVo>> pageSlideWithSubImage(Map params) {
-        Page<SlideReportVo> page = new Page<>(MapUtils.getInteger(params, "pageNum", 1), MapUtils.getInteger(params, "pageSize", 10));
+    public R<PageMaster<SlideReportVO>> pageSlideWithSubImage(Map params) {
+        Page<SlideReportVO> page = new Page<>(MapUtils.getInteger(params, "pageNum", 1), MapUtils.getInteger(params, "pageSize", 10));
         getBaseMapper().pageSlideWithSubImage(page, params);
-        List<SlideReportVo> list = page.getRecords();
+        List<SlideReportVO> list = page.getRecords();
         list.forEach(vo -> {
             //从redis查询编辑状态
             RMap<String, Map> slideLocks = client.getMap("SlideLocks");
@@ -340,7 +340,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
             }
         });
         //构建分页对象
-        PageMaster<SlideReportVo> pageMaster = PageMaster.of(list);
+        PageMaster<SlideReportVO> pageMaster = PageMaster.of(list);
         pageMaster.setTotal(page.getTotal());
         return R.ok(pageMaster);
     }
@@ -352,8 +352,8 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
      * @return
      */
     @Override
-    public R<PageMaster<ProjectStatisticsVo>> pageSlideStatisticsByProject(Map params) {
-        Page<ProjectStatisticsVo> page = new Page<>(MapUtils.getInteger(params, "pageNum", 1), MapUtils.getInteger(params, "pageSize", 10));
+    public R<PageMaster<ProjectStatisticsVO>> pageSlideStatisticsByProject(Map params) {
+        Page<ProjectStatisticsVO> page = new Page<>(MapUtils.getInteger(params, "pageNum", 1), MapUtils.getInteger(params, "pageSize", 10));
         //构建项目查询条件
         List<Long> specialIds = new ArrayList<>();
         Long specialId = MapUtils.getLong(params, "specialId");
@@ -372,7 +372,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         params.put("specialIds", specialIds);
         getBaseMapper().pageSlideStatisticsByProject(page, params);
         //构建分页对象
-        PageMaster<ProjectStatisticsVo> pageMaster = PageMaster.of(page.getRecords());
+        PageMaster<ProjectStatisticsVO> pageMaster = PageMaster.of(page.getRecords());
         pageMaster.setTotal(page.getTotal());
         return R.ok(pageMaster);
     }
@@ -384,7 +384,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
      * @return
      */
     @Override
-    public R<PageMaster<SlideReportVo>> pageSlideStatistics(Map params) {
+    public R<PageMaster<SlideReportVO>> pageSlideStatistics(Map params) {
 
         //构建项目查询条件
         List<Long> specialIds = new ArrayList<>();
@@ -416,10 +416,10 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         if (projectIds.isEmpty()) {
             return R.ok(PageMaster.EMPTY);
         }
-        Page<SlideReportVo> page = new Page<>(MapUtils.getInteger(params, "pageNum", 1), MapUtils.getInteger(params, "pageSize", 10));
+        Page<SlideReportVO> page = new Page<>(MapUtils.getInteger(params, "pageNum", 1), MapUtils.getInteger(params, "pageSize", 10));
         params.put("projectIds", projectIds);
         getBaseMapper().pageSlideStatistics(page, params);
-        List<SlideReportVo> list = page.getRecords();
+        List<SlideReportVO> list = page.getRecords();
         //分析预测进度：当前切片的分析进度+人工诊断进度展示
         //（1）待阅片：所有切片的初始进度都为待阅片，页面显示参考列表第一行
         //（2）AI分析中：依据各分组内的切片列表后的状态对应显示
@@ -450,7 +450,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
             }
         });
         //构建分页对象
-        PageMaster<SlideReportVo> pageMaster = PageMaster.of(list);
+        PageMaster<SlideReportVO> pageMaster = PageMaster.of(list);
         pageMaster.setTotal(page.getTotal());
         return R.ok(pageMaster);
     }

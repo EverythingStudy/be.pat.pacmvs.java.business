@@ -11,7 +11,7 @@
 //import cn.staitech.anno.domain.image.in.ImageListVO;
 //import cn.staitech.anno.domain.vo.*;
 //import cn.staitech.anno.domain.vo.indicator.IndicatorReviseVO;
-//import cn.staitech.anno.domain.vo.project.InsertProjectVO;
+//import cn.staitech.anno.domain.project.InsertProjectVO;
 //import cn.staitech.anno.domain.vo.slide.SlideCategoryProcessFlagVO;
 //import cn.staitech.anno.domain.vo.slide.SlideSelectVO;
 //import cn.staitech.anno.domain.vo.slide.SlideVO;
