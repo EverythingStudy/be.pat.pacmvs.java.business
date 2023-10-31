@@ -11,7 +11,7 @@ import java.util.Date;
 public class MarkingSelectListVo {
 
     @ApiModelProperty(value = "标注id")
-    private Long marking_id;
+    private String marking_id;
 
     @ApiModelProperty(value = "标注id")
     private String area;
