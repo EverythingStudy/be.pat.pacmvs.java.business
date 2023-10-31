@@ -122,11 +122,12 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         }).collect(Collectors.toList());
         //插入题库表
         QuestionBankServiceImpl bean = SpringUtils.getBean(QuestionBankServiceImpl.class);
-        bean.saveBatch(resp);
         List<Long> questionBankList = new ArrayList<>();
         for (QuestionBank questionBank : resp) {
+            baseMapper.insert(questionBank);
             questionBankList.add(questionBank.getQuestionId());
         }
+
         JSONObject markingJsonObject = new JSONObject();
         markingJsonObject.put("question_id", questionBankList);
         remoteLabelService.Standard(markingJsonObject);
@@ -167,7 +168,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                 throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
             }
             String s = StringUtils.substringAfterLast(urlPath, File.separator);
-            // String s1 = StringUtils.substringBeforeLast(urlPath, File.separator);
+
             String s1 = urlPath;
             ret.setJsonName(s);
             ret.setGeojsonUrl(s1);
@@ -175,10 +176,10 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
             ret.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
             return ret;
         }).collect(Collectors.toList());
-        QuestionBankServiceImpl bean = SpringUtils.getBean(QuestionBankServiceImpl.class);
-        bean.saveBatch(questionBanks);
+
         List<Long> questionBankList = new ArrayList<>();
         for (QuestionBank questionBank : questionBanks) {
+            baseMapper.insert(questionBank);
             questionBankList.add(questionBank.getQuestionId());
         }
         JSONObject markingJsonObject = new JSONObject();

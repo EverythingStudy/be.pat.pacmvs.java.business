@@ -356,8 +356,9 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
         }).collect(Collectors.toList());
         //批量插入考核算法
-        saveBatch(algorithmAssessments);
-        List<AlgorithmJson> collect = algorithmAssessments.stream().map(e -> {
+        List<AlgorithmJson> collect=new ArrayList<>();
+        for (AlgorithmAssessment e : algorithmAssessments) {
+            baseMapper.insert(e);
             AlgorithmJson resp = new AlgorithmJson();
             resp.setAlgorithmAssessmentId(e.getAlgorithmAssessmentId());
             resp.setSlideId(e.getSlideId());
@@ -366,8 +367,8 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
             resp.setCreateBy(SecurityUtils.getUserId());
             resp.setCreateTime(new Date());
             resp.setJsonType("0");
-            return resp;
-        }).collect(Collectors.toList());
+            collect.add(resp);
+        }
         //批量插入json表
         algorithmJsonService.saveBatch(collect);
         //修改切片是否生成状态
