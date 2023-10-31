@@ -177,7 +177,12 @@ public class MarkingServiceImpl implements MarkingService {
             Double perimeter = new Double(req.getPerimeter()) * MICRON;
             marking.setPerimeter(String.valueOf(perimeter));
         }
-        marking.setCreate_by(req.getCreate_by());
+        // 若未传入标注作者,使用当前登录用户为标注作者
+        if(req.getCreate_by() == null){
+            marking.setCreate_by(SecurityUtils.getLoginUser().getSysUser().getUserId());
+        }else{
+            marking.setCreate_by(req.getCreate_by());
+        }
         marking.setAnnotation_type("Draw");
         marking.setOrganization_id(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         marking.setCreate_time(new Date());
@@ -235,11 +240,11 @@ public class MarkingServiceImpl implements MarkingService {
         // 更新文件中的内容
         Marking marking = new Marking();
         BeanUtils.copyProperties(req, marking);
-        if (req.getCreate_by() != null) {
-            marking.setUpdate_by(req.getCreate_by());
-            SysUser user = userMapper.selectUserById(req.getCreate_by());
+        if (req.getUpdate_by() != null) {
+            marking.setUpdate_by(req.getUpdate_by());
+            SysUser user = userMapper.selectUserById(req.getUpdate_by());
             if (user != null) {
-                marking.setAnnotation_owner(user.getUserName());
+                marking.setAnnotation_update_owner(user.getUserName());
             }
         } else {
             marking.setUpdate_by(SecurityUtils.getUserId());
