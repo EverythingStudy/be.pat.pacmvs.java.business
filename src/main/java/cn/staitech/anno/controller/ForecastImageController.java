@@ -95,9 +95,15 @@ public class ForecastImageController extends BaseController {
     @Log(title = "删除切片", menu = "切片管理", subMenu = "预测图片", businessType = BusinessType.DELETE)
     @ApiOperation(value = "逻辑批量删除切片")
     @PostMapping("/deleteBatchIds")
-    public R<List<Long>> deleteBatchIds(@Validated @RequestBody ImageBatchIdsVO request) {
-        List<Long> data = imageService.deleteBatchIds(request);
-        return R.ok(data, MessageSource.M("OPERATE_SUCCEED"));
+    public R<List<Long>> deleteBatchIds(@Validated @RequestBody ImageBatchIdsVO request) throws InterruptedException {
+        List<Long> data = null;
+        try {
+            data = imageService.deleteBatchIds(request);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            return R.ok(data, MessageSource.M("OPERATE_SUCCEED"));
+        }
     }
 
     /**

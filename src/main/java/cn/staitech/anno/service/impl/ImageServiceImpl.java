@@ -350,14 +350,15 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     public Boolean deleteById(Long imageId) throws InterruptedException {
         // 先查询
         if (imageId > 0) {
-            Slide slide = Slide.builder().imageId(imageId).build();
             // 查切片表中有没有绑定此图片
-            if (slideService.selectImageExist(slide).size() > 0) {
+            if (imageMapper.selectSlideCountByImageId(imageId) > 0) {
+                return false;
+            } else {
                 Image image = imageMapper.selectById(imageId);
                 asyncTask.deleteFileTask(new File(image.getImagePath()));
-                if (imageMapper.deleteById(imageId) > 0) {
-                    return true;
-                }
+                asyncTask.deleteFileTask(new File(image.getImageUrl()));
+                imageMapper.deleteById(imageId);
+                return true;
             }
         }
         return false;
@@ -385,7 +386,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
      * @return
      */
     @Override
-    public List<Long> deleteBatchIds(ImageBatchIdsVO ids) {
+    public List<Long> deleteBatchIds(ImageBatchIdsVO ids) throws InterruptedException {
         // 不可删除的列表
         List<Long> forbidIds = new ArrayList<>();
         for (Long imageId : ids.getImageIdList()) {
@@ -393,6 +394,9 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
             if (imageMapper.selectSlideCountByImageId(imageId) > 0) {
                 forbidIds.add(imageId);
             } else {
+                Image image = imageMapper.selectById(imageId);
+                asyncTask.deleteFileTask(new File(image.getImagePath()));
+                asyncTask.deleteFileTask(new File(image.getImageUrl()));
                 imageMapper.deleteById(imageId);
             }
         }

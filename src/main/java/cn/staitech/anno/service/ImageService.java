@@ -102,7 +102,7 @@ public interface ImageService extends IService<Image> {
     int updateDeleteFlagById(Long imageId);
 
 
-    List<Long> deleteBatchIds(ImageBatchIdsVO ids);
+    List<Long> deleteBatchIds(ImageBatchIdsVO ids) throws InterruptedException;
 
     /**
      * 更改图像上传状态

@@ -28,13 +28,13 @@ public class AsyncTask {
         long startTime = System.currentTimeMillis();
         AtomicInteger count = new AtomicInteger(0);
         for (; ; ) {
-            Thread.sleep(2);
-            if (file.delete()) {
+            Thread.sleep(1000);
+            if (file.exists() && file.delete()) {
                 long endTime = System.currentTimeMillis();
                 log.info("[{}] async delete file success:{},cost {} ms,cas count:{}", Thread.currentThread().getName(), file.getAbsolutePath(), endTime - startTime, count.getAndIncrement());
                 break;
             }
-            if (count.getAndIncrement() > 30000) {
+            if (count.getAndIncrement() > 5000) {
                 break;
             }
         }
