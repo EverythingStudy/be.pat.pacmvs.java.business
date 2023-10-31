@@ -1,6 +1,6 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.files.Files;
+import cn.staitech.anno.vo.files.Files;
 
 public interface FilesProcessService {
 

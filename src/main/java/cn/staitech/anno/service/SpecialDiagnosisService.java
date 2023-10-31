@@ -1,8 +1,8 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.diagnosis.SpecialDiagnosis;
-import cn.staitech.anno.domain.diagnosis.SpecialDiagnosisAddVo;
-import cn.staitech.anno.domain.diagnosis.SysDictDataVo;
+import cn.staitech.anno.vo.diagnosis.SpecialDiagnosis;
+import cn.staitech.anno.vo.diagnosis.SpecialDiagnosisAddVo;
+import cn.staitech.anno.vo.diagnosis.SysDictDataVo;
 
 import java.util.List;
 

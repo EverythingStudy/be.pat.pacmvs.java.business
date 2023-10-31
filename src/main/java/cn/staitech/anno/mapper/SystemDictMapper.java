@@ -1,7 +1,7 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.notice.out.NoticeQueryOut;
-import cn.staitech.anno.domain.project.out.SystemDictOut;
+import cn.staitech.anno.vo.notice.out.NoticeQueryOut;
+import cn.staitech.anno.vo.project.out.SystemDictOut;
 
 import java.util.List;
 

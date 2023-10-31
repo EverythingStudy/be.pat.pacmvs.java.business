@@ -2,12 +2,12 @@ package cn.staitech.anno.controller;
 
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.image.in.*;
-import cn.staitech.anno.domain.image.out.ImageListOutVO;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.image.in.*;
+import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;

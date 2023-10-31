@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.SpecialDiagnosisMapper">
     <resultMap id="BaseResultMap"
-               type="cn.staitech.anno.domain.diagnosis.SpecialDiagnosis">
+               type="cn.staitech.anno.vo.diagnosis.SpecialDiagnosis">
         <id column="special_diagnosis_id" jdbcType="BIGINT" property="specialDiagnosisId"/>
         <result column="special_id" jdbcType="BIGINT" property="specialId"/>
         <result column="project_id" jdbcType="BIGINT" property="projectId"/>
@@ -38,7 +38,7 @@
         where special_diagnosis_id =
               #{specialDiagnosisId,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="cn.staitech.anno.domain.diagnosis.SpecialDiagnosis">
+    <insert id="insert" parameterType="cn.staitech.anno.vo.diagnosis.SpecialDiagnosis">
         insert into tb_special_diagnosis (special_diagnosis_id, special_id,
                                           project_id,
                                           sub_image_id, remark, diagnosis_status,
@@ -54,7 +54,7 @@
                 #{createTime,jdbcType=TIMESTAMP},
                 #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP})
     </insert>
-    <insert id="insertSelective" parameterType="cn.staitech.anno.domain.diagnosis.SpecialDiagnosis"
+    <insert id="insertSelective" parameterType="cn.staitech.anno.vo.diagnosis.SpecialDiagnosis"
             useGeneratedKeys="true" keyProperty="specialDiagnosisId">
         insert into tb_special_diagnosis
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -140,7 +140,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.diagnosis.SpecialDiagnosis">
+    <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.vo.diagnosis.SpecialDiagnosis">
         update tb_special_diagnosis
         <set>
             <if test="specialId != null">
@@ -198,7 +198,7 @@
             </if>
         </where>
     </update>
-    <update id="updateByPrimaryKey" parameterType="cn.staitech.anno.domain.diagnosis.SpecialDiagnosis">
+    <update id="updateByPrimaryKey" parameterType="cn.staitech.anno.vo.diagnosis.SpecialDiagnosis">
         update
             tb_special_diagnosis
         set special_id       = #{specialId,jdbcType=BIGINT},
@@ -269,7 +269,7 @@
     </select>
 
     <select id="getStatisticsHeadVoListByParm" parameterType="map"
-            resultType="cn.staitech.anno.domain.diagnosis.StatisticsHeadVo">
+            resultType="cn.staitech.anno.vo.diagnosis.StatisticsHeadVo">
         SELECT
         t3.gender,
         CASE
@@ -308,7 +308,7 @@
     </select>
 
     <select id="getSysVisceraNameListByParm" parameterType="map"
-            resultType="cn.staitech.anno.domain.diagnosis.StatisticsHeadVo">
+            resultType="cn.staitech.anno.vo.diagnosis.StatisticsHeadVo">
         SELECT DISTINCT (aa.sys_viscera_name)
         FROM tb_special_diagnosis a
                  LEFT JOIN (SELECT special_diagnosis_id,
@@ -326,7 +326,7 @@
     </select>
 
     <select id="getDiagnosedListByParm" parameterType="map"
-            resultType="cn.staitech.anno.domain.diagnosis.StatisticsBodyVo">
+            resultType="cn.staitech.anno.vo.diagnosis.StatisticsBodyVo">
         SELECT
         g2.total
         FROM
@@ -413,7 +413,7 @@
     </select>
 
     <select id="getLessionListByParm" parameterType="map"
-            resultType="cn.staitech.anno.domain.diagnosis.StatisticsBodyVo">
+            resultType="cn.staitech.anno.vo.diagnosis.StatisticsBodyVo">
         SELECT sys_lesion_name,
                sys_position_name,
                sys_grade_name,
@@ -445,7 +445,7 @@
     </select>
 
     <select id="getLessionStaticsListByParm" parameterType="map"
-            resultType="cn.staitech.anno.domain.diagnosis.StatisticsBodyVo">
+            resultType="cn.staitech.anno.vo.diagnosis.StatisticsBodyVo">
         SELECT *
         FROM (SELECT (SELECT g.gender FROM tb_group g WHERE g.group_id = p1.group_id)     gender,
                      (SELECT g.group_name FROM tb_group g WHERE g.group_id = p1.group_id) group_name,
@@ -511,7 +511,7 @@
 
 
     <select id="getLessionGradeStaticsListByParm" parameterType="map"
-            resultType="cn.staitech.anno.domain.diagnosis.StatisticsBodyVo">
+            resultType="cn.staitech.anno.vo.diagnosis.StatisticsBodyVo">
         SELECT *
         FROM (SELECT (SELECT g.gender FROM tb_group g WHERE g.group_id = p1.group_id)     gender,
                      (SELECT g.group_name FROM tb_group g WHERE g.group_id = p1.group_id) group_name,
@@ -579,7 +579,7 @@
     </select>
 
     <select id="getNeedStaticsListByParm" parameterType="map"
-            resultType="cn.staitech.anno.domain.diagnosis.StatisticsBodyVo">
+            resultType="cn.staitech.anno.vo.diagnosis.StatisticsBodyVo">
         SELECT CASE
 
                    WHEN
@@ -636,7 +636,7 @@
     </select>
 
     <select id="getStaticsVisceraListByParm" parameterType="map"
-            resultType="cn.staitech.anno.domain.diagnosis.StatisticsBodyVo">
+            resultType="cn.staitech.anno.vo.diagnosis.StatisticsBodyVo">
         SELECT sys_viscera_name,
                sys_lesion_name,
                sys_position_name,

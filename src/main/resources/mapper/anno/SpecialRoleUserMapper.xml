@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.SpecialRoleUserMapper">
-    <resultMap type="cn.staitech.anno.domain.special.SpecialRoleUser" id="SpecialRoleMenuResult">
+    <resultMap type="cn.staitech.anno.vo.special.SpecialRoleUser" id="SpecialRoleMenuResult">
         <result property="roleId" column="role_id"/>
         <result property="userId" column="user_id"/>
         <result property="specialId" column="special_id"/>
@@ -14,7 +14,7 @@
         <result property="updateTime" column="update_time"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.special.SpecialRoleUserSelectResVo" id="SelectListResult">
+    <resultMap type="cn.staitech.anno.vo.special.SpecialRoleUserSelectResVo" id="SelectListResult">
         <result property="userCode" column="user_code"/>
         <result property="userName" column="user_name"/>
         <result property="userId" column="user_id"/>
@@ -63,7 +63,7 @@
         from tb_special_role_user
     </sql>
 
-    <select id="selectUserSpecialBy" parameterType="cn.staitech.anno.domain.special.SpecialSelectByIn"
+    <select id="selectUserSpecialBy" parameterType="cn.staitech.anno.vo.special.SpecialSelectByIn"
             resultMap="SelectListResult">
         <include refid="selectList"/>
         <where>
@@ -105,7 +105,7 @@
     </select>
 
 
-    <select id="selectList" parameterType="cn.staitech.anno.domain.special.SpecialRoleUserSelectVo"
+    <select id="selectList" parameterType="cn.staitech.anno.vo.special.SpecialRoleUserSelectVo"
             resultMap="SelectListResult">
         <include refid="selectList"/>
         <where>
@@ -143,7 +143,7 @@
         order by s.create_time desc
     </select>
 
-    <select id="select" parameterType="cn.staitech.anno.domain.special.SpecialRoleUser"
+    <select id="select" parameterType="cn.staitech.anno.vo.special.SpecialRoleUser"
             resultMap="SpecialRoleMenuResult">
         <include refid="select"/>
         <where>
@@ -160,7 +160,7 @@
         LIMIT 1
     </select>
 
-    <insert id="insert" parameterType="cn.staitech.anno.domain.special.SpecialRoleUser">
+    <insert id="insert" parameterType="cn.staitech.anno.vo.special.SpecialRoleUser">
         insert into tb_special_role_user (
         <if test="roleId != null and roleId != 0 ">
             role_id,
@@ -200,7 +200,7 @@
         )
     </insert>
 
-    <update id="updateRole" parameterType="cn.staitech.anno.domain.special.SpecialRoleUser">
+    <update id="updateRole" parameterType="cn.staitech.anno.vo.special.SpecialRoleUser">
         update tb_special_role_user
         <set>
             <if test="roleId != null and roleId != ''">
@@ -215,7 +215,7 @@
         and special_id = #{specialId}
     </update>
 
-    <update id="updateStatus" parameterType="cn.staitech.anno.domain.special.SpecialRoleUser">
+    <update id="updateStatus" parameterType="cn.staitech.anno.vo.special.SpecialRoleUser">
         update tb_special_role_user
         <set>
             <if test="status != null">

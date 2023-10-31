@@ -1,9 +1,9 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.special.SpecialMenu;
-import cn.staitech.anno.domain.special.TreeSelect;
-import cn.staitech.anno.domain.special.RouterVo;
-import cn.staitech.anno.domain.special.SpecialMenuQuery;
+import cn.staitech.anno.vo.special.RouterVo;
+import cn.staitech.anno.vo.special.SpecialMenu;
+import cn.staitech.anno.vo.special.SpecialMenuQuery;
+import cn.staitech.anno.vo.special.TreeSelect;
 
 import java.util.List;
 

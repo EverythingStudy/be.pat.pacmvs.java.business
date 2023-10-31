@@ -2,8 +2,6 @@ package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import cn.staitech.anno.domain.*;
-import cn.staitech.anno.domain.examine.*;
-import cn.staitech.anno.domain.geojson.*;
 import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.domain.Slide;
@@ -15,6 +13,9 @@ import cn.staitech.anno.service.FileService;
 import cn.staitech.anno.utils.GeometryUtil;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.RandomUtils;
+import cn.staitech.anno.vo.examination.SelectExaminationListVO;
+import cn.staitech.anno.vo.examine.*;
+import cn.staitech.anno.vo.geojson.*;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.RemoteLabelService;

@@ -1,9 +1,9 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.domain.notice.in.NoticeChangeStatusIn;
-import cn.staitech.anno.domain.notice.out.NoticeListQueryOut;
-import cn.staitech.anno.domain.notice.out.NoticeQueryOut;
 import cn.staitech.anno.service.NoticeService;
+import cn.staitech.anno.vo.notice.in.NoticeChangeStatusIn;
+import cn.staitech.anno.vo.notice.out.NoticeListQueryOut;
+import cn.staitech.anno.vo.notice.out.NoticeQueryOut;
 import cn.staitech.common.core.domain.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.SpecialMapper">
-    <resultMap type="cn.staitech.anno.domain.special.Special" id="SpecialResult">
+    <resultMap type="cn.staitech.anno.vo.special.Special" id="SpecialResult">
         <result property="specialId" column="special_id"/>
         <result property="specialNumber" column="special_number"/>
         <result property="specialName" column="special_name"/>
@@ -19,7 +19,7 @@
         <result property="trialType" column="trial_type"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.special.SpecialResVo" id="selectResult">
+    <resultMap type="cn.staitech.anno.vo.special.SpecialResVo" id="selectResult">
         <result property="specialId" column="special_id"/>
         <result property="specialNumber" column="special_number"/>
         <result property="specialName" column="special_name"/>
@@ -39,7 +39,7 @@
         <result property="trialType" column="trial_type"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.special.SpecialStatisticsListVO" id="specialStatisticsResult">
+    <resultMap type="cn.staitech.anno.vo.special.SpecialStatisticsListVO" id="specialStatisticsResult">
         <result property="specialId" column="special_id"/>
         <result property="specialNumber" column="special_number"/>
         <result property="specialName" column="special_name"/>
@@ -103,7 +103,7 @@
         where del_flag = 1
     </select>
 
-    <select id="selectSpecialNumber" parameterType="cn.staitech.anno.domain.special.Special" resultMap="SpecialResult">
+    <select id="selectSpecialNumber" parameterType="cn.staitech.anno.vo.special.Special" resultMap="SpecialResult">
         <include refid="selectSpecialList"/>
         <where>
             del_flag != 2
@@ -161,7 +161,7 @@
     </select>
 
     <!--查询专题列表-->
-    <select id="selectList" parameterType="cn.staitech.anno.domain.special.Special" resultMap="selectResult">
+    <select id="selectList" parameterType="cn.staitech.anno.vo.special.Special" resultMap="selectResult">
         <include refid="selectLists"/>
         <where>
             s.del_flag != 2
@@ -216,7 +216,7 @@
     </select>
 
     <!--专题统计-->
-    <select id="specialStatistics" parameterType="cn.staitech.anno.domain.special.SpecialStatisticsQueryVO"
+    <select id="specialStatistics" parameterType="cn.staitech.anno.vo.special.SpecialStatisticsQueryVO"
             resultMap="specialStatisticsResult">
         SELECT
         s.special_id,
@@ -250,7 +250,7 @@
     </select>
 
     <!--专题统计-->
-    <select id="specialStatisticsAdmin" parameterType="cn.staitech.anno.domain.special.SpecialStatisticsQueryVO"
+    <select id="specialStatisticsAdmin" parameterType="cn.staitech.anno.vo.special.SpecialStatisticsQueryVO"
             resultMap="specialStatisticsResult">
         SELECT
         s.special_id,
@@ -278,7 +278,7 @@
     </select>
 
     <!--查询专题下的项目ID-->
-    <select id="queryProjectIdBySpecialId" parameterType="cn.staitech.anno.domain.special.SpecialStatisticsListVO"
+    <select id="queryProjectIdBySpecialId" parameterType="cn.staitech.anno.vo.special.SpecialStatisticsListVO"
             resultType="long">
         SELECT
         p.project_id
@@ -319,7 +319,7 @@
 
     <!--查询项目下的人工诊断状态-->
     <select id="queryDiagnosisByProjectId" parameterType="java.lang.Long"
-            resultType="cn.staitech.anno.domain.special.SpecialSlideStatisticsVO">
+            resultType="cn.staitech.anno.vo.special.SpecialSlideStatisticsVO">
         <!-- SELECT
         diagnosis
         FROM
@@ -342,7 +342,7 @@
     </select>
 
     <!--查询专题阅片-->
-    <select id="selectSpecialReadFilm" parameterType="cn.staitech.anno.domain.special.Special" resultMap="selectResult">
+    <select id="selectSpecialReadFilm" parameterType="cn.staitech.anno.vo.special.Special" resultMap="selectResult">
         <include refid="selectLists"/>
         <where>
             s.status != 0
@@ -394,7 +394,7 @@
         ORDER BY s.update_time DESC
     </select>
     <!--根据userid查询所属专题-->
-    <select id="selectByUserId" parameterType="java.util.Map" resultType="cn.staitech.anno.domain.special.Special">
+    <select id="selectByUserId" parameterType="java.util.Map" resultType="cn.staitech.anno.vo.special.Special">
         select t.*
         from tb_special t
         left join tb_special_role_user r on t.special_id = r.special_id
@@ -408,7 +408,7 @@
         </where>
     </select>
 
-    <insert id="insert" parameterType="cn.staitech.anno.domain.special.Special" useGeneratedKeys="true"
+    <insert id="insert" parameterType="cn.staitech.anno.vo.special.Special" useGeneratedKeys="true"
             keyProperty="specialId">
         insert into tb_special (
         <if test="specialNumber != null and specialNumber != '' ">
@@ -467,7 +467,7 @@
         )
     </insert>
 
-    <update id="update" parameterType="cn.staitech.anno.domain.special.Special" useGeneratedKeys="true"
+    <update id="update" parameterType="cn.staitech.anno.vo.special.Special" useGeneratedKeys="true"
             keyProperty="specialId">
         update tb_special
         <set>
@@ -500,7 +500,7 @@
         where special_id = #{specialId}
     </update>
 
-    <update id="updateDelFlag" parameterType="cn.staitech.anno.domain.special.Special" useGeneratedKeys="true"
+    <update id="updateDelFlag" parameterType="cn.staitech.anno.vo.special.Special" useGeneratedKeys="true"
             keyProperty="specialId">
         update tb_special
         <set>
@@ -515,7 +515,7 @@
         where special_id = #{specialId}
     </update>
 
-    <update id="updateStatus" parameterType="cn.staitech.anno.domain.special.Special" useGeneratedKeys="true"
+    <update id="updateStatus" parameterType="cn.staitech.anno.vo.special.Special" useGeneratedKeys="true"
             keyProperty="specialId">
         update tb_special
         <set>

@@ -1,7 +1,7 @@
 package cn.staitech.anno.mapper;
 
 
-import cn.staitech.anno.domain.organization.OrganizationIdName;
+import cn.staitech.anno.vo.organization.OrganizationIdName;
 
 import java.util.List;
 

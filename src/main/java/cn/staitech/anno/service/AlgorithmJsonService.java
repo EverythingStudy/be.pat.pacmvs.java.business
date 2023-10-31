@@ -1,8 +1,8 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.algorithm.AlgorithmJson;
-import cn.staitech.anno.domain.algorithm.in.SelectGeoJson;
-import cn.staitech.anno.domain.algorithm.out.SelectGeoJsonList;
+import cn.staitech.anno.vo.algorithm.AlgorithmJson;
+import cn.staitech.anno.vo.algorithm.in.SelectGeoJson;
+import cn.staitech.anno.vo.algorithm.out.SelectGeoJsonList;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 

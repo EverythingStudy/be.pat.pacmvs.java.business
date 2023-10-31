@@ -1,9 +1,9 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.ExaminationLog;
-import cn.staitech.anno.domain.vo.ExaminationLogVO;
 import cn.staitech.anno.mapper.ExaminationLogMapper;
 import cn.staitech.anno.service.ExaminationLogService;
+import cn.staitech.anno.vo.examination.ExaminationLogVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

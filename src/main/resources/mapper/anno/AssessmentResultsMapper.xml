@@ -32,8 +32,8 @@
     <!--    List<AssessmentExportOut>  selectExportList(AssessmentExportIN assessmentExportIN);-->
 
 
-    <select id="selectExportList" parameterType="cn.staitech.anno.domain.assessment.in.AssessmentExportIn"
-            resultType="cn.staitech.anno.domain.assessment.out.AssessmentExportOut">
+    <select id="selectExportList" parameterType="cn.staitech.anno.vo.assessment.in.AssessmentExportIn"
+            resultType="cn.staitech.anno.vo.assessment.out.AssessmentExportOut">
         SELECT
         p.project_name,
         aa.image_name,

@@ -1,8 +1,8 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.Topic;
-import cn.staitech.anno.domain.topic.in.TopicQueryIn;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.topic.TopicQueryIn;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.stereotype.Service;
 

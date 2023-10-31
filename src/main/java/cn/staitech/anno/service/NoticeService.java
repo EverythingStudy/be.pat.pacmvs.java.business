@@ -1,8 +1,8 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.notice.in.NoticeChangeStatusIn;
-import cn.staitech.anno.domain.notice.out.NoticeListQueryOut;
-import cn.staitech.anno.domain.notice.out.NoticeQueryOut;
+import cn.staitech.anno.vo.notice.in.NoticeChangeStatusIn;
+import cn.staitech.anno.vo.notice.out.NoticeListQueryOut;
+import cn.staitech.anno.vo.notice.out.NoticeQueryOut;
 import cn.staitech.common.core.domain.R;
 
 import java.util.List;

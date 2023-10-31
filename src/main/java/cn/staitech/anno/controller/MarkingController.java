@@ -1,14 +1,14 @@
 package cn.staitech.anno.controller;
 
 
-import cn.staitech.anno.domain.geojson.Features;
-import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
-import cn.staitech.anno.domain.geojson.in.ViewAddIn;
-import cn.staitech.anno.domain.marking.MarkingSelectListVO;
-import cn.staitech.anno.domain.marking.SlideSelectBy;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.vo.geojson.Features;
+import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
+import cn.staitech.anno.vo.geojson.in.ViewAddIn;
+import cn.staitech.anno.vo.marking.MarkingSelectListVO;
+import cn.staitech.anno.vo.slide.SlideSelectBy;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;

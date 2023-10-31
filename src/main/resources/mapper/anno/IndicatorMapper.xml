@@ -22,7 +22,7 @@
         <result property="updateTime" column="update_time"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.statistic.StatisticIndicatorListOutVO" id="SysIndicatorStatisticResult">
+    <resultMap type="cn.staitech.anno.vo.statistic.StatisticIndicatorListOutVO" id="SysIndicatorStatisticResult">
         <result property="indicatorId" column="indicator_id"/>
         <result property="indicatorName" column="indicator_name"/>
     </resultMap>
@@ -242,7 +242,7 @@
         </where>
     </select>
 
-    <select id="selectIndicatorName" parameterType="cn.staitech.anno.domain.indicator.IndicatorGetVO"
+    <select id="selectIndicatorName" parameterType="cn.staitech.anno.vo.indicator.IndicatorGetVO"
             resultMap="IndicatorResult">
         select *
         from tb_pathological_indicator

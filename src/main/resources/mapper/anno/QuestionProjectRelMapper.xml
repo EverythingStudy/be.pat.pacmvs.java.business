@@ -24,7 +24,7 @@
         , question_id, should_marks,image_code,image_name,json_name,del_flag, create_by, create_name,create_time, update_by, update_time
     </sql>
 
-    <select id="selectListByProject" resultType="cn.staitech.anno.domain.question.out.GetQuestionListOut"
+    <select id="selectListByProject" resultType="cn.staitech.anno.vo.question.out.GetQuestionListOut"
             parameterType="java.lang.Long">
         select qpr.question_project_id as questionProjectId,
         qpr.question_id as questionId,

@@ -1,7 +1,7 @@
 package cn.staitech.anno.service.remote;
 
-import cn.staitech.anno.domain.special.SpecialImage;
-import cn.staitech.anno.domain.specialimageanno.AlgorithmCutImageVO;
+import cn.staitech.anno.vo.special.SpecialImage;
+import cn.staitech.anno.vo.specialimageanno.AlgorithmCutImageVO;
 import cn.staitech.common.core.constant.SecurityConstants;
 import cn.staitech.common.core.domain.R;
 import org.springframework.cloud.openfeign.FeignClient;

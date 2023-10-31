@@ -1,8 +1,8 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.domain.projectgroup.in.RemoveProjectGroupIn;
-import cn.staitech.anno.domain.projectgroup.out.ProjectGroupListOut;
 import cn.staitech.anno.service.ProjectGroupService;
+import cn.staitech.anno.vo.projectgroup.in.RemoveProjectGroupIn;
+import cn.staitech.anno.vo.projectgroup.out.ProjectGroupListOut;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
@@ -14,7 +14,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

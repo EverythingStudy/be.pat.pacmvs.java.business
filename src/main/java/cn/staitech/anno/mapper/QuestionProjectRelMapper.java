@@ -1,7 +1,7 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.QuestionProjectRel;
-import cn.staitech.anno.domain.question.out.GetQuestionListOut;
+import cn.staitech.anno.vo.question.out.GetQuestionListOut;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 

@@ -1,7 +1,7 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.special.SpecialMenu;
-import cn.staitech.anno.domain.special.SpecialMenuQuery;
+import cn.staitech.anno.vo.special.SpecialMenu;
+import cn.staitech.anno.vo.special.SpecialMenuQuery;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

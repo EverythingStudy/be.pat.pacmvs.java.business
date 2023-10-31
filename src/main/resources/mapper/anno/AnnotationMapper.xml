@@ -28,7 +28,7 @@
         <result property="createCategoryId" column="create_category_id"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.vo.AnnotationBroadcastVO" id="sendMessage">
+    <resultMap type="cn.staitech.anno.vo.annotation.AnnotationBroadcastVO" id="sendMessage">
         <result property="annotationId" column="annotation_id"/>
         <result property="slideId" column="slide_id"/>
         <result property="createCategoryName" column="create_category_name"/>
@@ -46,7 +46,7 @@
         <result property="updateTime" column="update_time"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.vo.AnnotationJsonVO" id="AnnotationJsonResult">
+    <resultMap type="cn.staitech.anno.vo.annotation.AnnotationJsonVO" id="AnnotationJsonResult">
         <result property="annotationId" column="annotation_id"/>
         <result property="coordinates" column="coordinates"/>
         <result property="color" column="color"/>
@@ -174,7 +174,7 @@
                  left join tb_pathological_indicator_category as cate on cate.category_id = anno.category_id
     </sql>
 
-    <select id="annotationUserCategory" parameterType="cn.staitech.anno.domain.vo.AnnotationPageVO"
+    <select id="annotationUserCategory" parameterType="cn.staitech.anno.vo.annotation.AnnotationPageVO"
             resultMap="sendMessage">
         <include refid="annotationUserCategory"/>
         where slide_id = #{slideId}
@@ -383,7 +383,7 @@
     </select>
 
     <!--修改标注状态-->
-    <update id="updateViewerAnnotation" parameterType="cn.staitech.anno.domain.vo.AnnotationStateVO">
+    <update id="updateViewerAnnotation" parameterType="cn.staitech.anno.vo.annotation.AnnotationStateVO">
         update tb_slide
         set process_flag = #{processFlag}
         where slide_id = #{slideId}

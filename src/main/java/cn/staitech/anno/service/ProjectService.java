@@ -2,10 +2,12 @@ package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.SlideAnnotationResult;
-import cn.staitech.anno.domain.image.in.ImageAllVO;
-import cn.staitech.anno.domain.vo.*;
-import cn.staitech.anno.domain.slide.SlideCategoryProcessFlagVO;
-import cn.staitech.anno.domain.statistic.StatisticProjectListOutVO;
+import cn.staitech.anno.vo.annotation.AnnotationsAddVO;
+import cn.staitech.anno.vo.image.ImageMessageVO;
+import cn.staitech.anno.vo.image.in.ImageAllVO;
+import cn.staitech.anno.vo.project.*;
+import cn.staitech.anno.vo.slide.SlideCategoryProcessFlagVO;
+import cn.staitech.anno.vo.statistic.StatisticProjectListOutVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;

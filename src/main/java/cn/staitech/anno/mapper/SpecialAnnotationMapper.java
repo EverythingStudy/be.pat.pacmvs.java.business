@@ -1,9 +1,9 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.marking.PointCount;
-import cn.staitech.anno.domain.special.SpecialAnnotation;
-import cn.staitech.anno.domain.specialimageanno.in.SpecialAnnoProperties;
-import cn.staitech.anno.domain.specialsliceimage.OrganDict;
+import cn.staitech.anno.vo.marking.PointCount;
+import cn.staitech.anno.vo.special.SpecialAnnotation;
+import cn.staitech.anno.vo.specialimageanno.in.SpecialAnnoProperties;
+import cn.staitech.anno.vo.specialsliceimage.OrganDict;
 
 import java.util.List;
 

@@ -1,7 +1,11 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.ExamineScore;
-import cn.staitech.anno.domain.examine.*;
+import cn.staitech.anno.vo.examination.SelectExaminationListVO;
+import cn.staitech.anno.vo.examine.ExamineScoreAddVO;
+import cn.staitech.anno.vo.examine.ExamineScoreBy;
+import cn.staitech.anno.vo.examine.ExamineScoreExportInsertVo;
+import cn.staitech.anno.vo.examine.ExamineScoreExportVO;
 import cn.staitech.common.core.domain.PageResponse;
 import com.baomidou.mybatisplus.extension.service.IService;
 

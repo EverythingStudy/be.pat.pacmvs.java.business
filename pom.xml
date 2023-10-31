@@ -60,10 +60,10 @@
         </dependency>
 
         <!-- Staitech Common DataSource -->
-<!--        <dependency>-->
-<!--            <groupId>cn.staitech</groupId>-->
-<!--            <artifactId>staitech-common-datasource</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>cn.staitech</groupId>-->
+        <!--            <artifactId>staitech-common-datasource</artifactId>-->
+        <!--        </dependency>-->
 
         <dependency>
             <groupId>com.alibaba</groupId>

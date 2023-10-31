@@ -1,10 +1,10 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.SlideAnnotationResult;
-import cn.staitech.anno.domain.vo.ProjectAnnotationVO;
-import cn.staitech.anno.domain.vo.ProjectInForImageVO;
 import cn.staitech.anno.mapper.SlideAnnotationResultMapper;
 import cn.staitech.anno.service.SlideAnnotationResultService;
+import cn.staitech.anno.vo.project.ProjectAnnotationVO;
+import cn.staitech.anno.vo.project.ProjectInForImageVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

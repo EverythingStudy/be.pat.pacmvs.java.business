@@ -1,8 +1,8 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.special.SpecialRole;
-import cn.staitech.anno.domain.special.SpecialRoleUser;
-import cn.staitech.anno.domain.special.SpecialRoleQueryVO;
+import cn.staitech.anno.vo.special.SpecialRole;
+import cn.staitech.anno.vo.special.SpecialRoleQueryVO;
+import cn.staitech.anno.vo.special.SpecialRoleUser;
 
 import java.util.List;
 

@@ -10,8 +10,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @TableName tb_image_csv
  * @author wangf
+ * @TableName tb_image_csv
  */
 @TableName(value = "tb_image_csv")
 @Data

@@ -1,7 +1,7 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.domain.organ.Organ;
-import cn.staitech.anno.domain.structure.Structure;
+import cn.staitech.anno.domain.Organ;
+import cn.staitech.anno.domain.Structure;
 import cn.staitech.anno.service.OrganService;
 import cn.staitech.anno.service.StructureService;
 import cn.staitech.common.core.domain.R;

@@ -1,12 +1,12 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.ReportRecord;
-import cn.staitech.anno.domain.SubImage;
-import cn.staitech.anno.domain.vo.ProjectAllVO;
-import cn.staitech.anno.domain.reportrecord.ReportRecordAllVO;
-import cn.staitech.anno.domain.reportrecord.ReportRecordExportVO;
-import cn.staitech.anno.domain.reportrecord.ReportRecordSingleVO;
-import cn.staitech.anno.domain.reportrecord.ReportRecordViewVO;
+import cn.staitech.anno.vo.project.ProjectAllVO;
+import cn.staitech.anno.vo.reportrecord.ReportRecordAllVO;
+import cn.staitech.anno.vo.reportrecord.ReportRecordExportVO;
+import cn.staitech.anno.vo.reportrecord.ReportRecordSingleVO;
+import cn.staitech.anno.vo.reportrecord.ReportRecordViewVO;
+import cn.staitech.anno.vo.subimage.SubImage;
 
 import java.util.List;
 

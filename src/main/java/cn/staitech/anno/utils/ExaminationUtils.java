@@ -2,10 +2,10 @@ package cn.staitech.anno.utils;
 
 import cn.staitech.anno.domain.ExaminationLog;
 import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.vo.ExaminationStateVO;
 import cn.staitech.anno.service.ExaminationLogService;
 import cn.staitech.anno.service.ExaminationService;
 import cn.staitech.anno.service.SlideService;
+import cn.staitech.anno.vo.examination.ExaminationStateVO;
 import cn.staitech.common.security.utils.SecurityUtils;
 import org.springframework.stereotype.Component;
 

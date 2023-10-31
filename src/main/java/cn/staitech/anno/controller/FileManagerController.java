@@ -1,8 +1,8 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.domain.file.FileNode;
-import cn.staitech.anno.domain.file.PathVO;
 import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.vo.file.FileNode;
+import cn.staitech.anno.vo.file.PathVO;
 import cn.staitech.common.core.domain.R;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;

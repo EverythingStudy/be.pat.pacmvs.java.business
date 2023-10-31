@@ -1,13 +1,13 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.Image;
-import cn.staitech.anno.domain.special.SpecialImage;
-import cn.staitech.anno.domain.specialimage.InsertSpecialImageVO;
-import cn.staitech.anno.domain.specialimage.SpecialImageSelectVO;
-import cn.staitech.anno.domain.specialimage.SpecialImageVO;
-import cn.staitech.anno.domain.specialimage.WaitSpecialImageVO;
-import cn.staitech.anno.domain.specialimageanno.SpecialCutImageVO;
-import cn.staitech.anno.domain.specialsliceimage.AuditSpecialImageVO;
+import cn.staitech.anno.vo.special.SpecialImage;
+import cn.staitech.anno.vo.specialimage.InsertSpecialImageVO;
+import cn.staitech.anno.vo.specialimage.SpecialImageSelectVO;
+import cn.staitech.anno.vo.specialimage.SpecialImageVO;
+import cn.staitech.anno.vo.specialimage.WaitSpecialImageVO;
+import cn.staitech.anno.vo.specialimageanno.SpecialCutImageVO;
+import cn.staitech.anno.vo.specialsliceimage.AuditSpecialImageVO;
 import cn.staitech.common.core.domain.R;
 
 import java.util.List;

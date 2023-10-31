@@ -2,8 +2,8 @@ package cn.staitech.anno.controller;
 
 
 import cn.staitech.anno.domain.ImageCsv;
-import cn.staitech.anno.domain.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.service.ImageCsvService;
+import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.api.ApiController;
 import com.baomidou.mybatisplus.extension.api.R;

@@ -5,10 +5,10 @@ import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.Project;
-import cn.staitech.anno.domain.vo.ProjectListVO;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.IndicatorService;
 import cn.staitech.anno.service.ProjectService;
+import cn.staitech.anno.vo.project.ProjectListVO;
 
 import javax.annotation.Resource;
 import java.util.List;

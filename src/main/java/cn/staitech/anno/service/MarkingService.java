@@ -1,13 +1,13 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.geojson.Features;
-import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
-import cn.staitech.anno.domain.geojson.in.ViewAddIn;
-import cn.staitech.anno.domain.marking.Marking;
-import cn.staitech.anno.domain.marking.PointCount;
-import cn.staitech.anno.domain.marking.SlideRes;
-import cn.staitech.anno.domain.marking.MarkingSelectListVO;
 import cn.staitech.anno.project.domain.DownTask;
+import cn.staitech.anno.vo.geojson.Features;
+import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
+import cn.staitech.anno.vo.geojson.in.ViewAddIn;
+import cn.staitech.anno.vo.marking.Marking;
+import cn.staitech.anno.vo.marking.MarkingSelectListVO;
+import cn.staitech.anno.vo.marking.PointCount;
+import cn.staitech.anno.vo.slide.SlideRes;
 import cn.staitech.system.api.domain.SysUser;
 
 import javax.servlet.http.HttpServletResponse;

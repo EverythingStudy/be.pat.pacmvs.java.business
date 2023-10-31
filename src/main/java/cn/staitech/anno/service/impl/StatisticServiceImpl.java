@@ -1,10 +1,10 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.domain.statistic.*;
 import cn.staitech.anno.mapper.StatisticMapper;
 import cn.staitech.anno.service.StatisticService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.StatisticListUtils;
+import cn.staitech.anno.vo.statistic.*;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
 import org.springframework.stereotype.Service;

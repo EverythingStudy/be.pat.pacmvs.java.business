@@ -1,8 +1,8 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.SlideAnnotationResult;
-import cn.staitech.anno.domain.vo.ProjectAnnotationVO;
-import cn.staitech.anno.domain.vo.ProjectInForImageVO;
+import cn.staitech.anno.vo.project.ProjectAnnotationVO;
+import cn.staitech.anno.vo.project.ProjectInForImageVO;
 
 import java.util.List;
 

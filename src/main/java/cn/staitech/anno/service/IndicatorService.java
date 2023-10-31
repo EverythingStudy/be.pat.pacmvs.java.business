@@ -1,11 +1,11 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.Indicator;
-import cn.staitech.anno.domain.indicator.IndicatorGetVO;
-import cn.staitech.anno.domain.indicator.IndicatorReviseVO;
-import cn.staitech.anno.domain.statistic.StatisticIndicatorListInVO;
-import cn.staitech.anno.domain.statistic.StatisticIndicatorListOutVO;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.indicator.IndicatorGetVO;
+import cn.staitech.anno.vo.indicator.IndicatorReviseVO;
+import cn.staitech.anno.vo.statistic.StatisticIndicatorListInVO;
+import cn.staitech.anno.vo.statistic.StatisticIndicatorListOutVO;
 
 import java.util.List;
 

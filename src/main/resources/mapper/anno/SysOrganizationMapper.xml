@@ -16,7 +16,7 @@
         <result property="updateTime" column="update_time"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.organization.OrganizationSelectResVO" id="OrganizationResult">
+    <resultMap type="cn.staitech.anno.vo.organization.OrganizationSelectResVO" id="OrganizationResult">
         <result property="organizationId" column="organization_id"/>
         <result property="organizationName" column="organization_name"/>
         <result property="contactName" column="contact_name"/>
@@ -32,7 +32,7 @@
         <result property="expirationTime" column="expiration_time"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.organization.OrganizationIdName" id="organizationMap">
+    <resultMap type="cn.staitech.anno.vo.organization.OrganizationIdName" id="organizationMap">
         <result property="organizationId" column="organization_id"/>
         <result property="organizationName" column="organization_name"/>
     </resultMap>

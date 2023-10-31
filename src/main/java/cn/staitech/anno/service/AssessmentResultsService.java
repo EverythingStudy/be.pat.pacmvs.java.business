@@ -1,7 +1,7 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.AssessmentResults;
-import cn.staitech.anno.domain.assessment.AssessmentResultsQueryIn;
+import cn.staitech.anno.vo.assessment.AssessmentResultsQueryIn;
 import cn.staitech.common.core.domain.PageResponse;
 import com.baomidou.mybatisplus.extension.service.IService;
 

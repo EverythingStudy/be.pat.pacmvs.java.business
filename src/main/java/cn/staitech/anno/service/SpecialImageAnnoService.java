@@ -1,18 +1,18 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.marking.PointCount;
-import cn.staitech.anno.domain.special.SpecialAnnotation;
-import cn.staitech.anno.domain.special.SpecialImage;
-import cn.staitech.anno.domain.specialimage.SpecialImageSelectVO;
-import cn.staitech.anno.domain.specialimage.WaitSpecialImageVO;
-import cn.staitech.anno.domain.specialimageanno.AnnoMarkGeojson;
-import cn.staitech.anno.domain.specialimageanno.AnnoProperties;
-import cn.staitech.anno.domain.specialimageanno.SpecialAnnoAddVO;
-import cn.staitech.anno.domain.specialimageanno.in.AlgorithmAnnIn;
-import cn.staitech.anno.domain.specialimageanno.in.CallBackAnnAddIn;
-import cn.staitech.anno.domain.specialimageanno.in.SpecialAnnoProperties;
-import cn.staitech.anno.domain.specialsliceimage.AuditSpecialImageVO;
-import cn.staitech.anno.domain.specialsliceimage.OrganDict;
+import cn.staitech.anno.vo.marking.PointCount;
+import cn.staitech.anno.vo.special.SpecialAnnotation;
+import cn.staitech.anno.vo.special.SpecialImage;
+import cn.staitech.anno.vo.specialimage.SpecialImageSelectVO;
+import cn.staitech.anno.vo.specialimage.WaitSpecialImageVO;
+import cn.staitech.anno.vo.specialimageanno.AnnoMarkGeojson;
+import cn.staitech.anno.vo.specialimageanno.AnnoProperties;
+import cn.staitech.anno.vo.specialimageanno.SpecialAnnoAddVO;
+import cn.staitech.anno.vo.specialimageanno.in.AlgorithmAnnIn;
+import cn.staitech.anno.vo.specialimageanno.in.CallBackAnnAddIn;
+import cn.staitech.anno.vo.specialimageanno.in.SpecialAnnoProperties;
+import cn.staitech.anno.vo.specialsliceimage.AuditSpecialImageVO;
+import cn.staitech.anno.vo.specialsliceimage.OrganDict;
 import cn.staitech.common.core.domain.R;
 
 import java.util.List;

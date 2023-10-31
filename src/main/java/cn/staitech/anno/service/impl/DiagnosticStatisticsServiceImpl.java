@@ -2,17 +2,17 @@ package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.collection.ListUtil;
 import cn.staitech.anno.constant.CommonConstant;
-import cn.staitech.anno.domain.special.Special;
-import cn.staitech.anno.domain.diagnosis.StatisticsBodyVo;
-import cn.staitech.anno.domain.diagnosis.StatisticsHeadVo;
-import cn.staitech.anno.domain.reportrecord.ReportRecordAddVO;
 import cn.staitech.anno.exception.ReportException;
 import cn.staitech.anno.mapper.SpecialDiagnosisMapper;
 import cn.staitech.anno.mapper.SpecialMapper;
 import cn.staitech.anno.service.DiagnosticStatisticsService;
+import cn.staitech.anno.utils.DateUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.WordTool;
-import cn.staitech.anno.utils.DateUtils;
+import cn.staitech.anno.vo.diagnosis.StatisticsBodyVo;
+import cn.staitech.anno.vo.diagnosis.StatisticsHeadVo;
+import cn.staitech.anno.vo.reportrecord.ReportRecordAddVO;
+import cn.staitech.anno.vo.special.Special;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -233,7 +233,7 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
             String visceraKey = headerKey + CommonConstant.GLIDE_LINE + sysVisceraName;
             String lesionAndPositionKey = visceraKey + CommonConstant.GLIDE_LINE + sysLesionName + CommonConstant.GLIDE_LINE + sysPositionName;
             String lesionAndPositionGradeKey = lesionAndPositionKey + CommonConstant.GLIDE_LINE + sysGradeName;
-            String gradeKey = visceraKey + CommonConstant.GLIDE_LINE +"未见明显异常";
+            String gradeKey = visceraKey + CommonConstant.GLIDE_LINE + "未见明显异常";
             // 器官诊断数量
             visceraMap = countData(visceraMap, visceraKey);
             // 未见明显异常

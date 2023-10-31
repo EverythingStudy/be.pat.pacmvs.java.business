@@ -1,13 +1,13 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.Image;
-import cn.staitech.anno.domain.image.in.ImageBatchIdsVO;
-import cn.staitech.anno.domain.special.SpecialImage;
-import cn.staitech.anno.domain.specialimage.SpecialImageSelectVO;
-import cn.staitech.anno.domain.specialimage.SpecialImageVO;
-import cn.staitech.anno.domain.specialimage.WaitSpecialImageVO;
-import cn.staitech.anno.domain.specialsliceimage.SpecialSliceSelectVO;
-import cn.staitech.anno.domain.specialsliceimage.SpecialSliceVo;
+import cn.staitech.anno.vo.image.in.ImageBatchIdsVO;
+import cn.staitech.anno.vo.special.SpecialImage;
+import cn.staitech.anno.vo.specialimage.SpecialImageSelectVO;
+import cn.staitech.anno.vo.specialimage.SpecialImageVO;
+import cn.staitech.anno.vo.specialimage.WaitSpecialImageVO;
+import cn.staitech.anno.vo.specialsliceimage.SpecialSliceSelectVO;
+import cn.staitech.anno.vo.specialsliceimage.SpecialSliceVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

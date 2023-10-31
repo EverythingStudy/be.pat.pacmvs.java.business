@@ -7,10 +7,6 @@ package cn.staitech.anno.constant;
  */
 public class CommonConstant {
 
-    private CommonConstant() {
-        throw new IllegalStateException("CommonConstant class");
-    }
-
     /**
      * cache key
      */
@@ -48,7 +44,6 @@ public class CommonConstant {
     public static final String CHILDREN_CNTS = "children_cnts";
     public static final String VIA_IMG_METADATA = "_via_img_metadata";
     public static final String LOGIN_TOKEN_KEY = "login_tokens:";
-
     /**
      * Annotation
      */
@@ -111,5 +106,8 @@ public class CommonConstant {
     public static final String ANNOTATION_CATEGORY = "标注类别";
     public static final String USER = "成员";
     public static final String SLIDE = "图像";
+    private CommonConstant() {
+        throw new IllegalStateException("CommonConstant class");
+    }
 
 }

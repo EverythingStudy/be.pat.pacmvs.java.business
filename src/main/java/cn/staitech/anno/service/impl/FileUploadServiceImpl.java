@@ -1,13 +1,12 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.Topic;
-import cn.staitech.anno.domain.file.FileNode;
-import cn.staitech.anno.domain.files.Files;
-import cn.staitech.anno.domain.files.in.FileUploadVO;
 import cn.staitech.anno.service.*;
 import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.vo.file.FileNode;
+import cn.staitech.anno.vo.files.Files;
+import cn.staitech.anno.vo.files.in.FileUploadVO;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;

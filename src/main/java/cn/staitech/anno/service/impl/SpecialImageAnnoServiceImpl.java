@@ -1,20 +1,6 @@
 package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.date.DateUtil;
-import cn.staitech.anno.domain.SubImage;
-import cn.staitech.anno.domain.marking.PointCount;
-import cn.staitech.anno.domain.special.SpecialAnnotation;
-import cn.staitech.anno.domain.special.SpecialImage;
-import cn.staitech.anno.domain.slide.SubImageVO;
-import cn.staitech.anno.domain.specialimage.SpecialImageSelectVO;
-import cn.staitech.anno.domain.specialimage.WaitSpecialImageVO;
-import cn.staitech.anno.domain.specialimageanno.AnnoFeatures;
-import cn.staitech.anno.domain.specialimageanno.AnnoMarkGeojson;
-import cn.staitech.anno.domain.specialimageanno.AnnoProperties;
-import cn.staitech.anno.domain.specialimageanno.SpecialAnnoAddVO;
-import cn.staitech.anno.domain.specialimageanno.in.*;
-import cn.staitech.anno.domain.specialsliceimage.AuditSpecialImageVO;
-import cn.staitech.anno.domain.specialsliceimage.OrganDict;
 import cn.staitech.anno.enums.SysDictTypeEnum;
 import cn.staitech.anno.exception.AnnoException;
 import cn.staitech.anno.mapper.SpecialAnnotationMapper;
@@ -24,6 +10,20 @@ import cn.staitech.anno.service.GetUserInformationService;
 import cn.staitech.anno.service.SpecialImageAnnoService;
 import cn.staitech.anno.service.SpecialImageService;
 import cn.staitech.anno.utils.*;
+import cn.staitech.anno.vo.marking.PointCount;
+import cn.staitech.anno.vo.slide.SubImageVO;
+import cn.staitech.anno.vo.special.SpecialAnnotation;
+import cn.staitech.anno.vo.special.SpecialImage;
+import cn.staitech.anno.vo.specialimage.SpecialImageSelectVO;
+import cn.staitech.anno.vo.specialimage.WaitSpecialImageVO;
+import cn.staitech.anno.vo.specialimageanno.AnnoFeatures;
+import cn.staitech.anno.vo.specialimageanno.AnnoMarkGeojson;
+import cn.staitech.anno.vo.specialimageanno.AnnoProperties;
+import cn.staitech.anno.vo.specialimageanno.SpecialAnnoAddVO;
+import cn.staitech.anno.vo.specialimageanno.in.*;
+import cn.staitech.anno.vo.specialsliceimage.AuditSpecialImageVO;
+import cn.staitech.anno.vo.specialsliceimage.OrganDict;
+import cn.staitech.anno.vo.subimage.SubImage;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -694,6 +694,7 @@ public class SpecialImageAnnoServiceImpl implements SpecialImageAnnoService {
         return R.ok();
 
     }
+
     public SpecialAnnotation getTransByCallBackAnnAddIn(CallBackAnnAddIn req) {
         SpecialAnnotation specialAnnotation = new SpecialAnnotation();
         if (null != req.getSpecialImageId()) {

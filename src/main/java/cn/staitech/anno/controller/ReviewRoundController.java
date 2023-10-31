@@ -4,7 +4,6 @@ import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.ReviewRound;
 import cn.staitech.anno.domain.Topic;
-import cn.staitech.anno.domain.reviewround.*;
 import cn.staitech.anno.project.domain.Slide;
 import cn.staitech.anno.project.service.SlideService;
 import cn.staitech.anno.service.ReviewRoundService;
@@ -12,6 +11,7 @@ import cn.staitech.anno.service.TopicService;
 import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.reviewround.*;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -40,14 +40,13 @@ import java.util.stream.Collectors;
 @RequestMapping("/reviewRound")
 @Slf4j
 public class ReviewRoundController {
+    public static Map<Long, String> topicMap = new HashMap<>();
     @Resource
     private ReviewRoundService reviewRoundService;
     @Resource
     private TopicService topicService;
     @Resource
     private SlideService slideService;
-
-    public static Map<Long, String> topicMap = new HashMap<>();
 
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "查询评审轮次列表")

@@ -5,15 +5,6 @@ import cn.hutool.core.thread.ExecutorBuilder;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
-import cn.staitech.anno.domain.geojson.Properties;
-import cn.staitech.anno.domain.geojson.*;
-import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
-import cn.staitech.anno.domain.geojson.in.ViewAddIn;
-import cn.staitech.anno.domain.marking.Marking;
-import cn.staitech.anno.domain.marking.PointCount;
-import cn.staitech.anno.domain.marking.SlideRes;
-import cn.staitech.anno.domain.vo.BroadcastVO;
-import cn.staitech.anno.domain.marking.MarkingSelectListVO;
 import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.netty.websocket.NioWebSocketHandler;
 import cn.staitech.anno.project.constants.Constants;
@@ -30,6 +21,15 @@ import cn.staitech.anno.project.service.SlideAttrService;
 import cn.staitech.anno.service.FileService;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.utils.*;
+import cn.staitech.anno.vo.annotation.BroadcastVO;
+import cn.staitech.anno.vo.geojson.Properties;
+import cn.staitech.anno.vo.geojson.*;
+import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
+import cn.staitech.anno.vo.geojson.in.ViewAddIn;
+import cn.staitech.anno.vo.marking.Marking;
+import cn.staitech.anno.vo.marking.MarkingSelectListVO;
+import cn.staitech.anno.vo.marking.PointCount;
+import cn.staitech.anno.vo.slide.SlideRes;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -48,7 +48,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -410,7 +413,7 @@ public class MarkingServiceImpl implements MarkingService {
     }
 
     @Override
-    public String slideJsonExportExt(Long slideId,SysUser sysUser) throws Exception {
+    public String slideJsonExportExt(Long slideId, SysUser sysUser) throws Exception {
         if (!Optional.ofNullable(slideId).isPresent()) {
             try {
                 throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
@@ -665,7 +668,6 @@ public class MarkingServiceImpl implements MarkingService {
 //    }
 
 
-
     @Override
     public boolean zipExport(String zipUrl, Long projectId) throws Exception {
         File file1 = new File(zipUrl);
@@ -707,8 +709,8 @@ public class MarkingServiceImpl implements MarkingService {
     /**
      * 解析json文件流，获取图片名称和数据
      *
-     * @param fileInputStream      文件流
-     * @param slideResList 切片集合
+     * @param fileInputStream 文件流
+     * @param slideResList    切片集合
      * @throws Exception
      */
     public void parseJson(InputStream fileInputStream, List<SlideRes> slideResList) throws Exception {
@@ -819,7 +821,7 @@ public class MarkingServiceImpl implements MarkingService {
         JSONObject geometry = featureObject.getJSONObject("geometry");
         // 获取属性和自定义字段
         JSONObject properties = featureObject.getJSONObject("properties");
-        cn.staitech.anno.domain.geojson.Properties properties1 = JSONObject.toJavaObject(JSONObject.parseObject(JSONObject.toJSONString(properties)), Properties.class);
+        Properties properties1 = JSONObject.toJavaObject(JSONObject.parseObject(JSONObject.toJSONString(properties)), Properties.class);
         cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
         // 查询标签信息
         if (!Objects.equals(properties1.getLabel_code(), "") && properties1.getLabel_code() != null) {
@@ -904,7 +906,7 @@ public class MarkingServiceImpl implements MarkingService {
 
         // 执行任务
         // 查询所有的切片
-        executor.submit(new TaskThread(task, projectId, projectBy.getProjectName(), slideIds,SecurityUtils.getLoginUser().getSysUser()));
+        executor.submit(new TaskThread(task, projectId, projectBy.getProjectName(), slideIds, SecurityUtils.getLoginUser().getSysUser()));
 
         return task;
 
@@ -1017,7 +1019,7 @@ public class MarkingServiceImpl implements MarkingService {
         private List<Long> slideIds;
         private SysUser sysUser;
 
-        public TaskThread(DownTask downTask, Long projectId, String projectName, List<Long> slideIds,SysUser sysUser) {
+        public TaskThread(DownTask downTask, Long projectId, String projectName, List<Long> slideIds, SysUser sysUser) {
             this.downTask = downTask;
             this.projectId = projectId;
             this.projectName = projectName;
@@ -1048,7 +1050,7 @@ public class MarkingServiceImpl implements MarkingService {
                             // 将文件生成在本地
                             String fileUrl = null;
                             try {
-                                fileUrl = slideJsonExportExt(slideId,sysUser);
+                                fileUrl = slideJsonExportExt(slideId, sysUser);
                                 fileUrl = fileUrl.replace(" ", "\\ ");
                             } catch (Exception e) {
                                 throw new RuntimeException(e);

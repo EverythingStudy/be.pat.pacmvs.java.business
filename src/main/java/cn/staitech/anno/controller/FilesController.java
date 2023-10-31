@@ -1,12 +1,12 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.domain.files.Files;
-import cn.staitech.anno.domain.files.in.FileUploadVO;
-import cn.staitech.anno.domain.files.in.FilesListVO;
 import cn.staitech.anno.service.FileUploadService;
 import cn.staitech.anno.service.FilesService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.files.Files;
+import cn.staitech.anno.vo.files.in.FileUploadVO;
+import cn.staitech.anno.vo.files.in.FilesListVO;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
@@ -73,7 +73,7 @@ public class FilesController extends BaseController {
             FileUploadVO fileUploadVO) throws Exception {
         fileUploadVO.setMultipartFile(file);
         Files files = fileUploadService.uploadAndProcessBusiness(fileUploadVO);
-        if(files.getFileNameList() != null){
+        if (files.getFileNameList() != null) {
             if (files.getFileNameList().size() > 0) {
                 return R.fail(files.getFileNameList() + MessageSource.M("JSON_MULTIPLE_LABElS"));
             }

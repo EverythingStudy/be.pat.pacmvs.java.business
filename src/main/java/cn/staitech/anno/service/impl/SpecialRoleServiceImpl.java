@@ -1,14 +1,14 @@
 package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
-import cn.staitech.anno.domain.special.SpecialRole;
-import cn.staitech.anno.domain.special.SpecialRoleMenu;
-import cn.staitech.anno.domain.special.SpecialRoleUser;
-import cn.staitech.anno.domain.special.SpecialRoleQueryVO;
 import cn.staitech.anno.mapper.SpecialRoleMapper;
 import cn.staitech.anno.mapper.SpecialRoleMenuMapper;
 import cn.staitech.anno.mapper.SpecialRoleUserMapper;
 import cn.staitech.anno.service.SpecialRoleService;
+import cn.staitech.anno.vo.special.SpecialRole;
+import cn.staitech.anno.vo.special.SpecialRoleMenu;
+import cn.staitech.anno.vo.special.SpecialRoleQueryVO;
+import cn.staitech.anno.vo.special.SpecialRoleUser;
 import cn.staitech.common.core.exception.ServiceException;
 import cn.staitech.common.core.utils.StringUtils;
 import cn.staitech.common.security.utils.SecurityUtils;

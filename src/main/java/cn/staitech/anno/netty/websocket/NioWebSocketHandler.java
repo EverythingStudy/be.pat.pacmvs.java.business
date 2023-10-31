@@ -1,11 +1,11 @@
 package cn.staitech.anno.netty.websocket;
 
 import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.vo.BroadcastVO;
-import cn.staitech.anno.domain.specialimageanno.AnnoBroadcastVO;
 import cn.staitech.anno.netty.global.ChannelSupervise;
 import cn.staitech.anno.netty.global.ChatGroup;
 import cn.staitech.anno.service.SlideService;
+import cn.staitech.anno.vo.annotation.BroadcastVO;
+import cn.staitech.anno.vo.specialimageanno.AnnoBroadcastVO;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;

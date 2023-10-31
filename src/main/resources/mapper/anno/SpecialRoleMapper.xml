@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.SpecialRoleMapper">
-    <resultMap type="cn.staitech.anno.domain.special.SpecialRole" id="SpecialRoleResult">
+    <resultMap type="cn.staitech.anno.vo.special.SpecialRole" id="SpecialRoleResult">
         <id property="roleId" column="role_id"/>
         <result property="roleName" column="role_name"/>
         <result property="roleKey" column="role_key"/>
@@ -38,7 +38,7 @@
                  LEFT JOIN tb_special_role_user u ON u.role_id = r.role_id
     </sql>
 
-    <select id="selectRoleList" parameterType="cn.staitech.anno.domain.special.SpecialRoleQueryVO"
+    <select id="selectRoleList" parameterType="cn.staitech.anno.vo.special.SpecialRoleQueryVO"
             resultMap="SpecialRoleResult">
         <include refid="selectRole"/>
         where r.del_flag = '0'
@@ -73,7 +73,7 @@
         </if>
     </select>
 
-    <select id="checkRoleNameUnique" parameterType="cn.staitech.anno.domain.special.SpecialRole"
+    <select id="checkRoleNameUnique" parameterType="cn.staitech.anno.vo.special.SpecialRole"
             resultMap="SpecialRoleResult">
         <include refid="selectRole"/>
         <where>
@@ -87,7 +87,7 @@
         limit 1
     </select>
 
-    <select id="checkRoleKeyUnique" parameterType="cn.staitech.anno.domain.special.SpecialRole"
+    <select id="checkRoleKeyUnique" parameterType="cn.staitech.anno.vo.special.SpecialRole"
             resultMap="SpecialRoleResult">
         <include refid="selectRole"/>
         <where>

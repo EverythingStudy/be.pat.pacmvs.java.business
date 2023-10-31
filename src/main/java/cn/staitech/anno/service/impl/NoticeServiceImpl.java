@@ -1,13 +1,13 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.domain.notice.Notice;
-import cn.staitech.anno.domain.notice.in.NoticeChangeStatusIn;
-import cn.staitech.anno.domain.notice.out.NoticeListQueryOut;
-import cn.staitech.anno.domain.notice.out.NoticeQueryOut;
-import cn.staitech.anno.domain.notice.out.data.NoticeQueryOutData;
+import cn.staitech.anno.domain.Notice;
 import cn.staitech.anno.mapper.NoticeMapper;
 import cn.staitech.anno.mapper.SystemDictMapper;
 import cn.staitech.anno.service.NoticeService;
+import cn.staitech.anno.vo.notice.in.NoticeChangeStatusIn;
+import cn.staitech.anno.vo.notice.out.NoticeListQueryOut;
+import cn.staitech.anno.vo.notice.out.NoticeQueryOut;
+import cn.staitech.anno.vo.notice.out.data.NoticeQueryOutData;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;

@@ -1,9 +1,9 @@
 package cn.staitech.anno.controller;
 
 
-import cn.staitech.anno.domain.assessment.in.*;
-import cn.staitech.anno.domain.assessment.out.GetAssessmentListOut;
 import cn.staitech.anno.service.AlgorithmAssessmentService;
+import cn.staitech.anno.vo.assessment.in.*;
+import cn.staitech.anno.vo.assessment.out.GetAssessmentListOut;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;

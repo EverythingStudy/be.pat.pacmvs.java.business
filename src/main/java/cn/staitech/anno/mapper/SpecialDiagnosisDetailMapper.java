@@ -1,6 +1,6 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.diagnosis.SpecialDiagnosisDetail;
+import cn.staitech.anno.vo.diagnosis.SpecialDiagnosisDetail;
 
 import java.util.List;
 import java.util.Map;

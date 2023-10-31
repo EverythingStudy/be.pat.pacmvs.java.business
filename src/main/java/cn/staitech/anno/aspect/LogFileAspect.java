@@ -28,6 +28,23 @@ public class LogFileAspect {
     public static HttpServletResponse response = null;
 
     /**
+     * 过滤MultipartFile类型入参
+     *
+     * @param args joinPoint.getArgs()
+     * @return arguments 参数
+     */
+    public static Object[] filterParams(Object[] args) {
+        Object[] arguments = new Object[args.length];
+        for (int i = 0; i < args.length; i++) {
+            if (args[i] instanceof MultipartFile) {
+                continue;
+            }
+            arguments[i] = args[i];
+        }
+        return arguments;
+    }
+
+    /**
      * 以自定义切点
      */
     @Pointcut("execution(* cn.staitech.anno.controller..*.*(..))")
@@ -66,25 +83,6 @@ public class LogFileAspect {
 
 
     }
-
-
-    /**
-     * 过滤MultipartFile类型入参
-     *
-     * @param args joinPoint.getArgs()
-     * @return arguments 参数
-     */
-    public static Object[] filterParams(Object[] args) {
-        Object[] arguments = new Object[args.length];
-        for (int i = 0; i < args.length; i++) {
-            if (args[i] instanceof MultipartFile) {
-                continue;
-            }
-            arguments[i] = args[i];
-        }
-        return arguments;
-    }
-
 
     /**
      * 在切点之后织入

@@ -1,8 +1,8 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.diagnosis.SpecialDiagnosis;
-import cn.staitech.anno.domain.diagnosis.StatisticsBodyVo;
-import cn.staitech.anno.domain.diagnosis.StatisticsHeadVo;
+import cn.staitech.anno.vo.diagnosis.SpecialDiagnosis;
+import cn.staitech.anno.vo.diagnosis.StatisticsBodyVo;
+import cn.staitech.anno.vo.diagnosis.StatisticsHeadVo;
 
 import java.util.List;
 import java.util.Map;

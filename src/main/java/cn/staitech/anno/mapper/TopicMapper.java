@@ -1,7 +1,7 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.Topic;
-import cn.staitech.anno.domain.topic.TopicIdName;
+import cn.staitech.anno.vo.topic.TopicIdName;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;

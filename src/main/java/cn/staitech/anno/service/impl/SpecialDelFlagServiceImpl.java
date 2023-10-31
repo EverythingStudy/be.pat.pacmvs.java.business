@@ -1,12 +1,12 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.domain.special.Special;
-import cn.staitech.anno.domain.special.SpecialReclaim;
 import cn.staitech.anno.enums.SpecialEnum;
 import cn.staitech.anno.mapper.SpecialMapper;
 import cn.staitech.anno.mapper.SpecialReclaimMapper;
 import cn.staitech.anno.service.SpecialDelFlagService;
 import cn.staitech.anno.utils.TimeUtils;
+import cn.staitech.anno.vo.special.Special;
+import cn.staitech.anno.vo.special.SpecialReclaim;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
