@@ -233,15 +233,6 @@ public class ViewerServiceImpl implements ViewerService {
                                             marking.setSlide_id(slideRes.getSlideId());
                                             cn.staitech.common.core.utils.bean.BeanUtils.copyProperties(properties1, marking);
                                             markingMapper.insert(marking);
-                                            // 添加到es中
-                                            GeometryDoc geometryDoc = new GeometryDoc();
-                                            cn.staitech.common.core.utils.bean.BeanUtils.copyProperties(properties1, geometryDoc);
-                                            geometryDoc.setId(marking.getMarking_id());
-                                            geometryDoc.setMarking_id(marking.getMarking_id());
-                                            String jsonStr = geometry.toString();
-                                            geometryDoc.setGeometry(jsonStr);
-                                            geometryDoc.setSlideId(slideRes.getSlideId());
-                                            //geometryDocMapper.save(geometryDoc);
                                             // 存入文件中
                                             // 查询切片详情
                                             Slide slide = slideService.getById(slideRes.getSlideId());
@@ -255,7 +246,6 @@ public class ViewerServiceImpl implements ViewerService {
                                                 if (slide.getGeojsonUrl() != null) {
                                                     slideService.updateById(slide);
                                                 }
-                                                properties1.setMarking_id(marking.getMarking_id());
                                                 FileUtils.addGeojson(features1, geojsonUrl, slideRes.getSlideId());
                                             }
                                         }

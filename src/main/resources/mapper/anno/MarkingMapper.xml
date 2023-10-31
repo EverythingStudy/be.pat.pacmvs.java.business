@@ -310,7 +310,7 @@
     </select>
 
 
-    <select id="selectBy" parameterType="long" resultMap="propertiesResult">
+    <select id="selectBy" parameterType="string" resultMap="propertiesResult">
         <include refid="selectBy"/>
         where marking_id = #{markingId}
     </select>
@@ -478,7 +478,7 @@
     <!--        )-->
     <!--    </insert>-->
 
-    <insert id="delete" parameterType="java.lang.Long">
+    <insert id="delete" parameterType="java.lang.String">
         delete
         from tb_marking
         where marking_id = #{markingId}

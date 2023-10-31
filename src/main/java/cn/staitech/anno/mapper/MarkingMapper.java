@@ -46,7 +46,7 @@ public interface MarkingMapper extends BaseMapper<Marking> {
 
     List<MarkingSelectListVo> selectPointCountList(Long slideId);
 
-    Properties selectBy(Long markingId);
+    Properties selectBy(String markingId);
 
     List<Properties> selectMeasureList(Long slideId);
 
@@ -114,7 +114,7 @@ public interface MarkingMapper extends BaseMapper<Marking> {
      * @param markingId 标注id
      * @return true || false
      */
-    int delete(Long markingId);
+    int delete(String markingId);
 
 
 }

@@ -23,7 +23,7 @@ public class Marking implements Serializable {
      * 主键自增id
      */
     @TableId(type = IdType.AUTO)
-    private Long markingId;
+    private String markingId;
     /**
      * 标注id
      */
