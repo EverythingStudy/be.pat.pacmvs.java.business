@@ -74,7 +74,7 @@ public class MarkingServiceImpl implements MarkingService {
 
     private static final int BATCH_SIZE = 5000;
 
-    private static ExecutorService executor = ExecutorBuilder.create()
+    private static final ExecutorService executor = ExecutorBuilder.create()
             .setCorePoolSize(1)
             .setMaxPoolSize(1)
             .setKeepAliveTime(0)
@@ -114,7 +114,7 @@ public class MarkingServiceImpl implements MarkingService {
         }
         List<MarkingSelectListVO> markingSelectListVoList = markingMapper.selectList(slideId);
         List<MarkingSelectListVO> pointCountList = markingMapper.selectPointCountList(slideId);
-        markingSelectListVoList = Stream.of(markingSelectListVoList, pointCountList).flatMap(list -> list.stream().map(x -> (MarkingSelectListVO) x)).collect(Collectors.toList());
+        markingSelectListVoList = Stream.of(markingSelectListVoList, pointCountList).flatMap(Collection::stream).collect(Collectors.toList());
         return markingSelectListVoList;
     }
 
@@ -261,7 +261,7 @@ public class MarkingServiceImpl implements MarkingService {
             if (req.getCategory_id() != 0 && !req.getCategory_id().equals(markingBy.getCategory_id())) {
                 markingBy.setCategory_id(req.getCategory_id());
                 List<PointCount> newPointCountList = updatePoint(markingBy.getLocation_type(), markingBy);
-                pointCountList = Stream.of(pointCountList, newPointCountList).flatMap(list -> list.stream().map(x -> (PointCount) x)).collect(Collectors.toList());
+                pointCountList = Stream.of(pointCountList, newPointCountList).flatMap(Collection::stream).collect(Collectors.toList());
             }
         }
         Properties properties = markingMapper.selectBy(marking.getMarking_id());
@@ -672,33 +672,35 @@ public class MarkingServiceImpl implements MarkingService {
     public boolean zipExport(String zipUrl, Long projectId) throws Exception {
         File file1 = new File(zipUrl);
         try {
-            // 查询切片列表
-            List<SlideRes> slideResList = slideMapper.selectImageList(projectId);
-            //zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
-            //必须指明读取的各式，不然会存在问题
-            ZipFile zipFile = new ZipFile(file1, Charset.forName("gbk"));
-            //按流的方式读取文件，输入到管道中
-            InputStream in = new BufferedInputStream(Files.newInputStream(file1.toPath()));
-            //字节流转换为压缩文件输入流，通常用来读取压缩文件
-            ZipInputStream zp = new ZipInputStream(in);
-            //定义文件条目
-            ZipEntry ze;
-            Enumeration<? extends ZipEntry> zipEnum = zipFile.entries();
-            // 循环压缩包中解压内容
-            while (zipEnum.hasMoreElements()) {
-                // 获取下一个元素
-                ze = zipEnum.nextElement();
-                if (!ze.isDirectory()) {
-                    long size = ze.getSize();
-                    if (size > 0) {
-                        // 将json文件内容转化为InputStream
-                        InputStream bf = zipFile.getInputStream(ze);
-                        parseJson(bf, slideResList);
-                        bf.close();
-                    }
+        // 查询切片列表
+        List<SlideRes> slideResList = slideMapper.selectImageList(projectId);
+        //zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
+        //必须指明读取的各式，不然会存在问题
+        ZipFile zipFile = new ZipFile(file1, Charset.forName("gbk"));
+        //按流的方式读取文件，输入到管道中
+        InputStream in = new BufferedInputStream(Files.newInputStream(file1.toPath()));
+        //字节流转换为压缩文件输入流，通常用来读取压缩文件
+        ZipInputStream zp = new ZipInputStream(in);
+        //定义文件条目
+        ZipEntry ze;
+        Enumeration<? extends ZipEntry> zipEnum = zipFile.entries();
+        // 循环压缩包中解压内容
+        while (zipEnum.hasMoreElements()) {
+            // 获取下一个元素
+            ze = zipEnum.nextElement();
+            if (!ze.isDirectory()) {
+                long size = ze.getSize();
+                if (size > 0) {
+                    InputStream bf = zipFile.getInputStream(ze);
+
+                    InputStream newBf = zipFile.getInputStream(ze);
+
+                    parseJson(bf, newBf, slideResList);
+                    bf.close();
                 }
-                zp.closeEntry();
             }
+            zp.closeEntry();
+        }
         } catch (Exception e) {
             throw new Exception("json文件解析失败");
         }
@@ -707,53 +709,41 @@ public class MarkingServiceImpl implements MarkingService {
 
 
     /**
-     * 解析json文件流，获取图片名称和数据
+     * 解析json文件流
      *
-     * @param fileInputStream 文件流
-     * @param slideResList    切片集合
+     * @param fileUrl      文件流
+     * @param slideResList 切片集合
      * @throws Exception
      */
-    public void parseJson(InputStream fileInputStream, List<SlideRes> slideResList) throws Exception {
+    public void parseJson(InputStream fileUrl, InputStream newBf, List<SlideRes> slideResList) throws Exception {
         JsonFactory f = new MappingJsonFactory();
-        JsonParser jp = f.createParser(fileInputStream);
+        JsonParser jp = f.createParser(fileUrl);
+        JsonParser jParser = jp;
         JsonToken current;
         current = jp.nextToken();
         if (current != JsonToken.START_OBJECT) {
             throw new RemoteException("json type error！");
         }
         String imageName = null;
-        List<JSONObject> featureArray = new ArrayList<>();
 
         while (jp.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = jp.getCurrentName();
             // move from field name to field value
-            current = jp.nextToken();
             if ("image".equals(fieldName)) {
                 JsonNode treeNode = jp.readValueAsTree();
                 imageName = treeNode.get("image_name").asText();
             }
-            if ("features".equals(fieldName)) {
-                if (current == JsonToken.START_ARRAY) {
-                    while (jp.nextToken() != JsonToken.END_ARRAY) {
-                        String node = jp.readValueAsTree().toString();
-                        JSONObject featureObject = JSONObject.parseObject(node);
-                        if (featureObject != null) {
-                            featureArray.add(featureObject);
-                        }
-                    }
-                }
-            } else {
+            else {
                 jp.skipChildren();
             }
         }
         // 校验切片名称
-        fileNameContrast(imageName, featureArray, slideResList);
+        fileNameContrast(imageName, slideResList, newBf);
 
     }
 
 
-    public void fileNameContrast(String imageName, List<JSONObject> featureArray, List<SlideRes> slideResList) throws Exception {
-
+    public void fileNameContrast(String imageName, List<SlideRes> slideResList, InputStream newBf) throws Exception {
         List<cn.staitech.anno.project.domain.Marking> markingList = new ArrayList<>();
         if (imageName != null) {
             for (SlideRes slide : slideResList) {
@@ -773,24 +763,40 @@ public class MarkingServiceImpl implements MarkingService {
                     List<Long> userByList = new ArrayList<>();
                     Map<String, Object> objMap = null;
                     // 循环列表，对数据进行处理
-                    for (JSONObject jsonObject : featureArray) {
-                        objMap = writeMarking(slide.getSlideId(), jsonObject, slideBy, image, categoryMap);
-                        // 从map中获取标注对象
-                        cn.staitech.anno.project.domain.Marking marking = (cn.staitech.anno.project.domain.Marking) objMap.get("marking");
-                        // 添加至列表中
-                        markingList.add(marking);
-                        // 获取用户列表
-                        if (!userByList.contains(marking.getCreateBy())) {
-                            userByList.add(marking.getCreateBy());
-                        }
-                        // 将标签map进行赋值
-                        Object categoryNewMap = objMap.get("category");
-                        if (categoryNewMap != null) {
-                            categoryMap = (Map<String, Long>) categoryNewMap;
-                        }
-                        // 添加数据入库
-                        if (markingList.size() >= BATCH_SIZE) {
-                            markingServiceV1.saveBatch(markingList);
+                    JsonFactory f = new MappingJsonFactory();
+                    JsonParser jp = f.createParser(newBf);
+                    JsonToken current;
+                    while (jp.nextToken() != JsonToken.END_OBJECT) {
+                        String fieldName = jp.getCurrentName();
+                        // move from field name to field value
+                        current = jp.nextToken();
+
+                        if ("features".equals(fieldName)) {
+                            if (current == JsonToken.START_ARRAY) {
+                                while (jp.nextToken() != JsonToken.END_ARRAY) {
+                                    String node = jp.readValueAsTree().toString();
+                                    JSONObject featureObject = JSONObject.parseObject(node);
+                                    objMap = writeMarking(slide.getSlideId(), featureObject, slideBy, image, categoryMap);
+                                    cn.staitech.anno.project.domain.Marking marking = (cn.staitech.anno.project.domain.Marking) objMap.get("marking");
+                                    // 添加至列表中
+                                    markingList.add(marking);
+                                    // 获取用户列表
+                                    if (!userByList.contains(marking.getCreateBy())) {
+                                        userByList.add(marking.getCreateBy());
+                                    }
+                                    // 将标签map进行赋值
+                                    Object categoryNewMap = objMap.get("category");
+                                    if (categoryNewMap != null) {
+                                        categoryMap = (Map<String, Long>) categoryNewMap;
+                                    }
+                                    // 添加数据入库
+                                    if (markingList.size() >= BATCH_SIZE) {
+                                        markingServiceV1.saveBatch(markingList);
+                                    }
+                                }
+                            }
+                        } else {
+                            jp.skipChildren();
                         }
                     }
                     // 将剩余数据进行添加
@@ -1075,9 +1081,6 @@ public class MarkingServiceImpl implements MarkingService {
         }
     }
 
-//    public Boolean markIsNotFinish(String status) {
-//        return Objects.equals(status, "7");
-//    }
 
 
 }
