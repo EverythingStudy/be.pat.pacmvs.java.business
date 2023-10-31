@@ -79,8 +79,7 @@ public class ForecastImageController extends BaseController {
     @GetMapping("/deleteById/{imageId}")
     @Transactional(rollbackFor = Exception.class)
     public R deleteById(@PathVariable("imageId") @ApiParam(value = "图像ID") Long imageId) {
-        int deleteImageById = imageService.updateDeleteFlagById(imageId);
-        if (deleteImageById > 0) {
+        if (imageService.deleteById(imageId)) {
             return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
         return R.fail(MessageSource.M("IMAGE_USING_FORBID_DELETE"));
@@ -96,9 +95,8 @@ public class ForecastImageController extends BaseController {
     @Log(title = "删除切片", menu = "切片管理", subMenu = "预测图片", businessType = BusinessType.DELETE)
     @ApiOperation(value = "逻辑批量删除切片")
     @PostMapping("/deleteBatchIds")
-    public R<List<Long>> updateDeleteFlagBatchIds(@Validated @RequestBody ImageBatchIdsVO request) {
-        request.setUpdateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
-        List<Long> data = imageService.updateDeleteFlagBatchIds(request);
+    public R<List<Long>> deleteBatchIds(@Validated @RequestBody ImageBatchIdsVO request) {
+        List<Long> data = imageService.deleteBatchIds(request);
         return R.ok(data, MessageSource.M("OPERATE_SUCCEED"));
     }
 

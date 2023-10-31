@@ -91,7 +91,7 @@ public interface ImageService extends IService<Image> {
      * @param imageId
      * @return
      */
-    int deleteById(Long imageId);
+    Boolean deleteById(Long imageId) throws InterruptedException;
 
     /**
      * 标注图像删除
@@ -102,7 +102,7 @@ public interface ImageService extends IService<Image> {
     int updateDeleteFlagById(Long imageId);
 
 
-    List<Long> updateDeleteFlagBatchIds(ImageBatchIdsVO ids);
+    List<Long> deleteBatchIds(ImageBatchIdsVO ids);
 
     /**
      * 更改图像上传状态

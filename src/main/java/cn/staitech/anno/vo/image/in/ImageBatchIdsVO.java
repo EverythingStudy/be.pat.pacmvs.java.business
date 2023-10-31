@@ -15,7 +15,4 @@ public class ImageBatchIdsVO {
      */
     @ApiModelProperty(value = "图像ID", required = true)
     private List<Long> imageIdList;
-
-    @ApiModelProperty(value = "修改人", required = false, hidden = true)
-    private Long updateBy;
 }
