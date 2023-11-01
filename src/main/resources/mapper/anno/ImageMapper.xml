@@ -526,7 +526,7 @@
         <if test="imageId != null and imageId != ''">
             delete
             from tb_image
-            where status = 0 and image_id = #{imageId}
+            where image_id = #{imageId}
         </if>
     </delete>
 </mapper>
