@@ -1,5 +1,6 @@
 package cn.staitech.anno.service.impl;
 
+import cn.staitech.anno.config.AsyncTask;
 import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.Topic;
 import cn.staitech.anno.service.*;
@@ -39,6 +40,9 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     @Resource
     private FilesService filesService;
+
+    @Resource
+    private AsyncTask asyncTask;
 
     @Resource
     private MarkingService markingService;
@@ -185,7 +189,8 @@ public class FileUploadServiceImpl implements FileUploadService {
                 if (!Optional.ofNullable(fileUploadVO.getProjectId()).isPresent()) {
                     throw new Exception(MessageSource.M("DISALLOW_NOT_PROJECT"));
                 }
-                markingService.zipExport(files.getFilesPath(), fileUploadVO.getProjectId());
+//                markingService.zipExport(files.getFilesPath(), fileUploadVO.getProjectId());
+                asyncTask.zipExport(files.getFilesPath(), fileUploadVO.getProjectId());
                 break;
 
             case 5:
@@ -270,7 +275,8 @@ public class FileUploadServiceImpl implements FileUploadService {
                     if (!Optional.ofNullable(chunk.getProjectId()).isPresent()) {
                         throw new Exception(MessageSource.M("DISALLOW_NOT_PROJECT"));
                     }
-                    markingService.zipExport(filesBy.getFilesPath(), chunk.getProjectId());
+//                    markingService.zipExport(filesBy.getFilesPath(), chunk.getProjectId());
+                    asyncTask.zipExport(filesBy.getFilesPath(), chunk.getProjectId());
                     break;
                 case 5:
                     if (!Optional.ofNullable(chunk.getProjectId()).isPresent()) {
