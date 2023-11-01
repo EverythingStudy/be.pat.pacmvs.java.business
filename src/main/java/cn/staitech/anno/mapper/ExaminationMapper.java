@@ -1,9 +1,9 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.vo.ExaminationListVO;
-import cn.staitech.anno.domain.vo.ExaminationSelectVO;
-import cn.staitech.anno.domain.vo.ExaminationStateVO;
-import cn.staitech.anno.domain.vo.ExaminationSubmitVO;
+import cn.staitech.anno.vo.examination.ExaminationListVO;
+import cn.staitech.anno.vo.examination.ExaminationSelectVO;
+import cn.staitech.anno.vo.examination.ExaminationStateVO;
+import cn.staitech.anno.vo.examination.ExaminationSubmitVO;
 
 import java.util.List;
 

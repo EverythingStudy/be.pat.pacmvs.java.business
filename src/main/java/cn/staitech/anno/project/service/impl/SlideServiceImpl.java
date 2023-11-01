@@ -61,7 +61,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
     }
 
     @Override
-    public PageMaster<SlideVO> pageSlides(Page page, SlideQueryIN params) throws Exception {
+    public PageMaster<SlideVO> pageSlides(Page page, SlideQueryIn params) throws Exception {
         getBaseMapper().pageSlides(page, params);
         List<SlideVO> list = page.getRecords();
         List<Long> slideIds = new ArrayList<>();
@@ -80,7 +80,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
     }
 
     @Override
-    public PageMaster<ReviewSlideVO> pageReviewSlide(Page page, ReviewSlideIN params) {
+    public PageMaster<ReviewSlideVO> pageReviewSlide(Page page, ReviewSlideIn params) {
         getBaseMapper().pageReviewSlide(page, params);
         List<ReviewSlideVO> list = page.getRecords();
         PageMaster<ReviewSlideVO> pageMaster = PageMaster.of(list);
@@ -113,7 +113,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
      * @throws Exception
      */
     @Override
-    public List<SlideAnnoStatisticsVO> getSlideAnnoStatistics(SlideQueryIN params) throws Exception {
+    public List<SlideAnnoStatisticsVO> getSlideAnnoStatistics(SlideQueryIn params) throws Exception {
         List<SlideAnnoStatisticsVO> voList = new ArrayList<>();
         QueryWrapper<Marking> queryWrapper = Wrappers.query();
         queryWrapper.eq("annotation_type", "Draw");
@@ -155,7 +155,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
      * @return
      * @throws Exception
      */
-    public void slideAnnoStatisticsExport(SlideQueryIN params) throws Exception {
+    public void slideAnnoStatisticsExport(SlideQueryIn params) throws Exception {
         List<SlideExportVO> list = getBaseMapper().querySlides(params);
         Map<Long, SlideExportVO> map = new HashMap<>();
         List<Map<String, String>> catesMapList = new ArrayList<>();
@@ -255,7 +255,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
     }
 
 
-    private List<Marking> queryAnnotation(List<Long> slideIds, SlideQueryIN params) throws Exception {
+    private List<Marking> queryAnnotation(List<Long> slideIds, SlideQueryIn params) throws Exception {
         QueryWrapper<Marking> queryWrapper = Wrappers.query();
         queryWrapper.eq("annotation_type", "Draw");
         queryWrapper.eq("project_id", params.getProjectId());

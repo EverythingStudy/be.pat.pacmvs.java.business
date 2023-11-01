@@ -1,6 +1,6 @@
 package cn.staitech.anno.elasticsearch;
 
-import cn.staitech.anno.domain.document.GeometryDoc;
+import cn.staitech.anno.vo.document.GeometryDoc;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 import java.util.List;

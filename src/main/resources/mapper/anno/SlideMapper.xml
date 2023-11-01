@@ -115,14 +115,14 @@
         <result property="updateTime" column="update_time"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.vo.statistic.StatisticSlideListOutVO" id="statisticSlideResult">
+    <resultMap type="cn.staitech.anno.vo.statistic.StatisticSlideListOutVO" id="statisticSlideResult">
         <result property="slideId" column="slide_id"/>
         <result property="slideName" column="image_name"/>
         <result property="projectId" column="project_id"/>
         <result property="projectName" column="project_name"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.vo.ProjectListOutVO" id="projectSlideResult">
+    <resultMap type="cn.staitech.anno.vo.project.ProjectListOutVO" id="projectSlideResult">
         <result property="slideId" column="slide_id"/>
         <result property="imageName" column="image_name"/>
         <result property="thumbUrl" column="thumb_url"/>
@@ -148,7 +148,7 @@
 
     <!--通过项目ID列表查询图像列表-->
     <select id="selectSlideListByProjectIdList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticSlideListInVO"
+            parameterType="cn.staitech.anno.vo.statistic.StatisticSlideListInVO"
             resultMap="statisticSlideResult">
         select s.slide_id, i.image_name, p.project_id, p.project_name
         from tb_slide as s
@@ -169,7 +169,7 @@
     </select>
 
     <!--更新切片表人工标注数及标注状态-->
-    <update id="updateSlideHumanAnnotationQuantity" parameterType="cn.staitech.anno.domain.vo.ExaminationListVO">
+    <update id="updateSlideHumanAnnotationQuantity" parameterType="cn.staitech.anno.vo.examination.ExaminationListVO">
         update tb_slide
         <set>
             <if test="humanAnnotationTotal != null">
@@ -216,12 +216,12 @@
         <result property="projectName" column="project_name"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.marking.SlideRes" id="slideResult">
+    <resultMap type="cn.staitech.anno.vo.slide.SlideRes" id="slideResult">
         <result property="slideId" column="slide_id"/>
         <result property="imageName" column="image_name"/>
     </resultMap>
 
-    <resultMap id="SlideFileNameResultMap" type="cn.staitech.anno.domain.vo.file.SlideFileName">
+    <resultMap id="SlideFileNameResultMap" type="cn.staitech.anno.vo.slide.SlideFileName">
         <id column="topic_name" jdbcType="BIGINT" property="topicName"/>
         <result column="image_name" jdbcType="BIGINT" property="imageName"/>
         <result column="slide_type" jdbcType="VARCHAR" property="slideType"/>
@@ -318,7 +318,7 @@
           and project_id = #{projectId}
     </select>
 
-    <select id="selectByStatus" parameterType="cn.staitech.anno.domain.vo.slide.SlideSelectVO"
+    <select id="selectByStatus" parameterType="cn.staitech.anno.vo.slide.SlideSelectVO"
             resultMap="projectSlideResult">
         SELECT s.slide_id,
         s.human_annotation_total,
@@ -446,7 +446,7 @@
 
     <!--查询组内切片报表摘要-->
     <select id="selectSlideByProjectAndGroup" parameterType="java.util.Map"
-            resultType="cn.staitech.anno.domain.vo.image.SlideReportSummaryVo">
+            resultType="cn.staitech.anno.vo.slide.SlideReportSummaryVO">
         select p.project_name,
         g.group_name,
         case when g.gender = 0 then '雌' else '雄' end as gender,
@@ -472,7 +472,7 @@
 
     <!--组内切片报表分页查询-->
     <select id="pageSlideWithSubImage" parameterType="java.util.Map"
-            resultType="cn.staitech.anno.domain.vo.image.SlideReportVo">
+            resultType="cn.staitech.anno.vo.slide.SlideReportVO">
         select m.*,
         s.slide_id,
         s.diagnosis,
@@ -522,7 +522,7 @@
 
     <!--项目内切片统计-->
     <select id="pageSlideStatisticsByProject" parameterType="java.util.Map"
-            resultType="cn.staitech.anno.domain.vo.image.ProjectStatisticsVo">
+            resultType="cn.staitech.anno.vo.project.ProjectStatisticsVO">
         select p.project_id,
         p.project_name,
         count(s.slide_id) as slide_total,
@@ -558,7 +558,7 @@
 
     <!--切片报表分页查询-->
     <select id="pageSlideStatistics" parameterType="java.util.Map"
-            resultType="cn.staitech.anno.domain.vo.image.SlideReportVo">
+            resultType="cn.staitech.anno.vo.slide.SlideReportVO">
         select m.*,
         s.slide_id,
         s.diagnosis,
@@ -685,8 +685,8 @@
     </select>
 
     <!--分页查询切片列表信息-->
-    <select id="pageImageCsvListVOList" parameterType="cn.staitech.anno.domain.vo.imagecsv.ImageCsvGetVO"
-            resultType="cn.staitech.anno.domain.vo.imagecsv.ImageCsvListVO">
+    <select id="pageImageCsvListVOList" parameterType="cn.staitech.anno.vo.imagecsv.ImageCsvGetVO"
+            resultType="cn.staitech.anno.vo.imagecsv.ImageCsvListVO">
         select s.slide_id,
         s.review_round_id,
         s.diagnosis,
@@ -775,8 +775,8 @@
     </select>
 
 
-    <select id="pageImageCsvListVOList1" parameterType="cn.staitech.anno.domain.vo.imagecsv.ImageCsvGetVO"
-            resultType="cn.staitech.anno.domain.vo.imagecsv.ImageCsvListVO">
+    <select id="pageImageCsvListVOList1" parameterType="cn.staitech.anno.vo.imagecsv.ImageCsvGetVO"
+            resultType="cn.staitech.anno.vo.imagecsv.ImageCsvListVO">
         select s.slide_id,
         s.review_round_id,
         s.diagnosis,
@@ -862,7 +862,7 @@
 
 
     <select id="pageImageCsvListVOBy" parameterType="long"
-            resultType="cn.staitech.anno.domain.vo.marking.out.SlideSelectBy">
+            resultType="cn.staitech.anno.vo.slide.SlideSelectBy">
         select s.slide_id,
         s.review_round_id,
         s.description,

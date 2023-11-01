@@ -1,6 +1,6 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.special.SpecialReclaim;
+import cn.staitech.anno.vo.special.SpecialReclaim;
 
 /**
  * @author gjt.

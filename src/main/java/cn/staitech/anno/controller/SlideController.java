@@ -3,17 +3,16 @@ package cn.staitech.anno.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.topic.TopicIdName;
-import cn.staitech.anno.domain.vo.image.ProjectStatisticsVo;
-import cn.staitech.anno.domain.vo.image.SlideReportSummaryVo;
-import cn.staitech.anno.domain.vo.image.SlideReportVo;
-import cn.staitech.anno.domain.vo.imagecsv.ImageCsvGetPagerVO;
-import cn.staitech.anno.domain.vo.imagecsv.ImageCsvGetVO;
-import cn.staitech.anno.domain.vo.imagecsv.ImageCsvListVO;
-import cn.staitech.anno.domain.vo.slide.*;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.imagecsv.ImageCsvGetPagerVO;
+import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
+import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
+import cn.staitech.anno.vo.project.ProjectStatisticsVO;
+import cn.staitech.anno.vo.slide.*;
+import cn.staitech.anno.vo.topic.GetTopicListVO;
+import cn.staitech.anno.vo.topic.TopicIdName;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
@@ -134,7 +133,7 @@ public class SlideController extends BaseController {
      */
     @ApiOperation(value = "更改切片描述接口")
     @PostMapping("/updateDescription")
-    public R<String> updateDescription(@Validated @RequestBody SlideDescriptionVo req) {
+    public R<String> updateDescription(@Validated @RequestBody SlideDescriptionVO req) {
         for (Long id : req.getSlideId()) {
             Slide slide = new Slide();
             slide.setSlideId(id);
@@ -147,13 +146,13 @@ public class SlideController extends BaseController {
 
     @ApiOperation(value = "查询组内切片报表摘要")
     @PostMapping("/getSlideByProjectAndGroup")
-    public R<SlideReportSummaryVo> getSlideByProjectAndGroup(@RequestBody Map params) {
+    public R<SlideReportSummaryVO> getSlideByProjectAndGroup(@RequestBody Map params) {
         return slideService.querySlideByProjectAndGroup(params);
     }
 
     @ApiOperation(value = "组内切片报表分页查询")
     @PostMapping("/pageSlideWithSubImage")
-    public R<PageMaster<SlideReportVo>> pageSlideWithSubImage(@RequestBody Map params) {
+    public R<PageMaster<SlideReportVO>> pageSlideWithSubImage(@RequestBody Map params) {
         return slideService.pageSlideWithSubImage(params);
     }
 
@@ -165,7 +164,7 @@ public class SlideController extends BaseController {
      */
     @ApiOperation(value = "项目内切片统计")
     @PostMapping("/pageSlideStatisticsByProject")
-    public R<PageMaster<ProjectStatisticsVo>> pageSlideStatisticsByProject(@RequestBody Map params) {
+    public R<PageMaster<ProjectStatisticsVO>> pageSlideStatisticsByProject(@RequestBody Map params) {
         return slideService.pageSlideStatisticsByProject(params);
     }
 
@@ -177,7 +176,7 @@ public class SlideController extends BaseController {
      */
     @ApiOperation(value = "切片统计报表分页查询")
     @PostMapping("/pageSlideStatistics")
-    public R<PageMaster<SlideReportVo>> pageSlideStatistics(@RequestBody Map params) {
+    public R<PageMaster<SlideReportVO>> pageSlideStatistics(@RequestBody Map params) {
         return slideService.pageSlideStatistics(params);
     }
 

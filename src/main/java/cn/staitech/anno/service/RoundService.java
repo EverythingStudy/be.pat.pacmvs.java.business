@@ -1,6 +1,6 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.round.Round;
+import cn.staitech.anno.vo.round.Round;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.Map;

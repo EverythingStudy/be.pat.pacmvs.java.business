@@ -3,7 +3,7 @@ package cn.staitech.anno.project.service.impl;
 import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.project.service.ProjectService;
-import cn.staitech.anno.project.vo.ProjectIN;
+import cn.staitech.anno.project.vo.ProjectIn;
 import cn.staitech.anno.project.vo.ProjectVO;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -22,12 +22,12 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapperV1, Project>
         implements ProjectService {
 
     @Override
-    public List<ProjectVO> queryProject(ProjectIN params) throws Exception {
+    public List<ProjectVO> queryProject(ProjectIn params) throws Exception {
         return getBaseMapper().queryProject(params);
     }
 
     @Override
-    public IPage<ProjectVO> pageProject(Page page, ProjectIN params) throws Exception {
+    public IPage<ProjectVO> pageProject(Page page, ProjectIn params) throws Exception {
         return getBaseMapper().pageProject(page, params);
     }
 

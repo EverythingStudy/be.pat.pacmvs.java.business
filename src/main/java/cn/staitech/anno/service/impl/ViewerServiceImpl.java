@@ -1,16 +1,8 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.config.RedisClientUtil;
-import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.document.GeometryDoc;
-import cn.staitech.anno.domain.geojson.Features;
-import cn.staitech.anno.domain.geojson.Properties;
-import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
-import cn.staitech.anno.domain.geojson.in.ViewAddIn;
-import cn.staitech.anno.domain.marking.Marking;
-import cn.staitech.anno.domain.marking.SlideRes;
 import cn.staitech.anno.mapper.MarkingMapper;
 import cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper;
 import cn.staitech.anno.service.SlideService;
@@ -18,6 +10,12 @@ import cn.staitech.anno.service.ViewerService;
 import cn.staitech.anno.utils.CustomizationIdUtils;
 import cn.staitech.anno.utils.FileUtils;
 import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.vo.geojson.Features;
+import cn.staitech.anno.vo.geojson.Properties;
+import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
+import cn.staitech.anno.vo.geojson.in.ViewAddIn;
+import cn.staitech.anno.vo.marking.Marking;
+import cn.staitech.anno.vo.slide.SlideRes;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -34,6 +32,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+import static cn.staitech.anno.constant.CommonConstant.GLIDE_LINE;
 import static cn.staitech.anno.utils.FileUtils.getFileNameNoEx;
 import static cn.staitech.anno.utils.TimeUtils.CurrentTime;
 import static org.reflections.Reflections.log;
@@ -89,10 +88,10 @@ public class ViewerServiceImpl implements ViewerService {
         marking.setType("Feature");
         marking.setGeometry(req.getGeometry());
 
-        String numKey = req.getSlide_id() + "_" + req.getMeasure_name();
+        String numKey = req.getSlide_id() + GLIDE_LINE + req.getMeasure_name();
         Long numId = redisClientUtil.getAndAddLong("labelNameNum:" + numKey, 1L);
         // 获取标注名称
-        String measure_full_name = req.getMeasure_name() + numId + "_";
+        String measure_full_name = req.getMeasure_name() + numId + GLIDE_LINE;
         if (req.getCategory_id() != null) {
             //根据标注id获取标注类别详情
             PathologicalIndicatorCategory categoryBy = pathologicalIndicatorCategoryMapper.selectByPrimaryKey(req.getCategory_id());
@@ -139,10 +138,10 @@ public class ViewerServiceImpl implements ViewerService {
                 properties.setLabel_color(categoryBy.getHex());
                 properties.setLabel_name(categoryBy.getCategoryName());
                 String res1 = String.valueOf(measureFullName.charAt(measureFullName.length() - 1));
-                if (CommonConstant.GLIDE_LINE.equals(res1)) {
+                if (GLIDE_LINE.equals(res1)) {
                     measureFullName = measureFullName + categoryBy.getCategoryName();
                 } else {
-                    measureFullName = measureFullName.replaceAll(measureFullName.split("_")[measureFullName.split("_").length - 1], categoryBy.getCategoryName());
+                    measureFullName = measureFullName.replaceAll(measureFullName.split(GLIDE_LINE)[measureFullName.split(GLIDE_LINE).length - 1], categoryBy.getCategoryName());
                 }
             }
         }
@@ -233,15 +232,6 @@ public class ViewerServiceImpl implements ViewerService {
                                             marking.setSlide_id(slideRes.getSlideId());
                                             cn.staitech.common.core.utils.bean.BeanUtils.copyProperties(properties1, marking);
                                             markingMapper.insert(marking);
-                                            // 添加到es中
-                                            GeometryDoc geometryDoc = new GeometryDoc();
-                                            cn.staitech.common.core.utils.bean.BeanUtils.copyProperties(properties1, geometryDoc);
-                                            geometryDoc.setId(marking.getMarking_id());
-                                            geometryDoc.setMarking_id(marking.getMarking_id());
-                                            String jsonStr = geometry.toString();
-                                            geometryDoc.setGeometry(jsonStr);
-                                            geometryDoc.setSlideId(slideRes.getSlideId());
-                                            //geometryDocMapper.save(geometryDoc);
                                             // 存入文件中
                                             // 查询切片详情
                                             Slide slide = slideService.getById(slideRes.getSlideId());
@@ -255,7 +245,6 @@ public class ViewerServiceImpl implements ViewerService {
                                                 if (slide.getGeojsonUrl() != null) {
                                                     slideService.updateById(slide);
                                                 }
-                                                properties1.setMarking_id(marking.getMarking_id());
                                                 FileUtils.addGeojson(features1, geojsonUrl, slideRes.getSlideId());
                                             }
                                         }

@@ -1,7 +1,7 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.files.Files;
-import cn.staitech.anno.domain.files.in.FileUploadVO;
+import cn.staitech.anno.vo.files.Files;
+import cn.staitech.anno.vo.files.in.FileUploadVO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;

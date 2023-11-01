@@ -14,7 +14,7 @@
         <result property="createTime" column="create_time"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.vo.ExaminationLogVO" id="ExaminationLogRecord">
+    <resultMap type="cn.staitech.anno.vo.examination.ExaminationLogVO" id="ExaminationLogRecord">
         <result property="slideId" column="slide_id"/>
         <result property="examinationFlag" column="examination_flag"/>
         <result property="createBy" column="create_by"/>

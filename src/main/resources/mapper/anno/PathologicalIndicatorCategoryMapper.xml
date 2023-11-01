@@ -21,7 +21,7 @@
     </resultMap>
 
 
-    <resultMap type="cn.staitech.anno.domain.vo.statistic.StatisticCategoryListOutVO"
+    <resultMap type="cn.staitech.anno.vo.statistic.StatisticCategoryListOutVO"
                id="SysAnnotationCategoryStatisticResult">
         <result property="categoryId" column="category_id"/>
         <result property="categoryName" column="category_name"/>
@@ -31,13 +31,13 @@
         <result property="sum" column="sum"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.geojson.GeoLabel" id="GeoLabelResult">
+    <resultMap type="cn.staitech.anno.vo.geojson.GeoLabel" id="GeoLabelResult">
         <result property="label_name" column="label_name"/>
         <result property="label_color" column="label_color"/>
         <result property="label_code" column="label_code"/>
     </resultMap>
 
-    <resultMap id="BaseResult" type="cn.staitech.anno.domain.vo.LabelListVO">
+    <resultMap id="BaseResult" type="cn.staitech.anno.vo.annotation.LabelListVO">
         <id column="category_id" jdbcType="BIGINT" property="categoryId"/>
         <result column="indicator_id" jdbcType="BIGINT" property="indicatorId"/>
         <result column="color" jdbcType="VARCHAR" property="color"/>
@@ -354,7 +354,7 @@
     </select>
 
 
-    <select id="selectByIndicator" parameterType="cn.staitech.anno.domain.vo.LabelVO" resultMap="BaseResult">
+    <select id="selectByIndicator" parameterType="cn.staitech.anno.vo.annotation.LabelVO" resultMap="BaseResult">
         select
         p.indicator_id,p.category_name,p.category_id,p.structure_id,p.rgb,p.hex,p.create_by,p.create_time,p.order_number,s.user_name,p.number,idc.species_id,idc.organ_id
         from tb_pathological_indicator_category as p

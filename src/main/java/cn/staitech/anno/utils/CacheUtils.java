@@ -5,10 +5,10 @@ import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.Project;
-import cn.staitech.anno.domain.vo.ProjectListVO;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.IndicatorService;
 import cn.staitech.anno.service.ProjectService;
+import cn.staitech.anno.vo.project.ProjectListVO;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
  * @author: YL
  * @email: yangl@staitech.cn
  * @date: 2022/10/28 星期五 11:18
+ * @Component
  */
-//@Component
 public class CacheUtils {
 
     public static CacheUtils cacheUtils;
@@ -65,7 +65,7 @@ public class CacheUtils {
      *
      * @param project
      */
-    public static void ProjectCache(Project project) {
+    public static void projectCache(Project project) {
         cacheUtils.iCache.removeList(CommonConstant.PROJECT_CACHE_KEY);
         List<ProjectListVO> projectList = cacheUtils.projectService.selectProjectList(project);
         Map<String, Object> projectMap = projectList.stream()
@@ -84,7 +84,9 @@ public class CacheUtils {
         return cacheUtils.iCache.getAndAddLong(key, delta);
     }
 
-    // @PostConstruct
+    /**
+     * @PostConstruct
+     */
     public void init() {
         cacheUtils = this;
         cacheUtils.iCache = this.iCache;

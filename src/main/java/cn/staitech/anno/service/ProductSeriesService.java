@@ -1,6 +1,6 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.productseries.ProductSeries;
+import cn.staitech.anno.domain.ProductSeries;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.Map;

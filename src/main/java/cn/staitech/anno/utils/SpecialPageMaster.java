@@ -1,6 +1,6 @@
 package cn.staitech.anno.utils;
 
-import cn.staitech.anno.domain.vo.special.SpecialResVo;
+import cn.staitech.anno.vo.special.SpecialResVo;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageSerializable;
 import io.swagger.annotations.Api;

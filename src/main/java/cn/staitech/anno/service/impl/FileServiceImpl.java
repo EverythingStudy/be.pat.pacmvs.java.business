@@ -2,9 +2,6 @@ package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.MarkingExamine;
 import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.file.Chunk;
-import cn.staitech.anno.domain.geojson.GeoLabel;
-import cn.staitech.anno.domain.vo.file.SlideFileName;
 import cn.staitech.anno.mapper.MarkingExamineMapper;
 import cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper;
 import cn.staitech.anno.mapper.SlideMapper;
@@ -15,6 +12,9 @@ import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.service.FileService;
 import cn.staitech.anno.utils.FileUtils;
 import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.vo.file.Chunk;
+import cn.staitech.anno.vo.geojson.GeoLabel;
+import cn.staitech.anno.vo.slide.SlideFileName;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +25,8 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static cn.staitech.anno.constant.CommonConstant.GLIDE_LINE;
 
 @Service
 public class FileServiceImpl implements FileService {
@@ -148,7 +150,7 @@ public class FileServiceImpl implements FileService {
         createFolder(threeFolderName);
         String fileUrl = threeFolderName + File.separator + slideFileName.getImageName();
         if (slideFileName.getSlideType() != null) {
-            fileUrl += "_" + slideFileName.getSlideType();
+            fileUrl += GLIDE_LINE + slideFileName.getSlideType();
         }
         // 根据切片查询标注表中所使用的标签
         QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
@@ -166,12 +168,13 @@ public class FileServiceImpl implements FileService {
             for (GeoLabel geoLabel : categoryList) {
                 categoryNumber.append(geoLabel.getLabel_code());
             }
-            fileUrl += "_" + categoryNumber;
+            fileUrl += GLIDE_LINE + categoryNumber;
         }
-        fileUrl += "_" + System.currentTimeMillis() + suffix;
+        fileUrl += GLIDE_LINE + System.currentTimeMillis() + suffix;
         createFile(fileUrl);
         return fileUrl;
     }
+
     @Override
     public String createExamineScoreFiles(Long slideId, String suffix, Long questionProjectId, Long createBy) throws Exception {
         // 查询项目表中信息，判断项目是什么类型
@@ -193,7 +196,7 @@ public class FileServiceImpl implements FileService {
         createFolder(threeFolderName);
         String fileUrl = threeFolderName + File.separator + slideFileName.getImageName();
         if (slideFileName.getSlideType() != null) {
-            fileUrl += "_" + slideFileName.getSlideType();
+            fileUrl += GLIDE_LINE + slideFileName.getSlideType();
         }
         // 根据切片查询标注表中所使用的标签
         QueryWrapper<MarkingExamine> markingQueryWrapper = new QueryWrapper<>();
@@ -216,9 +219,9 @@ public class FileServiceImpl implements FileService {
             for (GeoLabel geoLabel : categoryList) {
                 categoryNumber.append(geoLabel.getLabel_code());
             }
-            fileUrl += "_" + categoryNumber;
+            fileUrl += GLIDE_LINE + categoryNumber;
         }
-        fileUrl += "_" + System.currentTimeMillis() + suffix;
+        fileUrl += GLIDE_LINE + System.currentTimeMillis() + suffix;
         createFile(fileUrl);
         return fileUrl;
     }

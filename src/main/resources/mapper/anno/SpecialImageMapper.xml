@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.SpecialImageMapper">
-    <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.special.SpecialImage">
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.vo.special.SpecialImage">
         <id column="special_image_id" jdbcType="BIGINT" property="specialImageId"/>
         <result column="image_id" jdbcType="BIGINT" property="imageId" javaType="Long"/>
         <result column="special_id" jdbcType="BIGINT" property="specialId"/>
@@ -41,7 +41,7 @@
         from tb_special_image
         where special_image_id = #{specialImageId,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="cn.staitech.anno.domain.special.SpecialImage">
+    <insert id="insert" parameterType="cn.staitech.anno.vo.special.SpecialImage">
         insert into tb_special_image (special_image_id, image_id, special_id,
                                       status, delete_flag, create_by,
                                       create_time, update_by, update_time)
@@ -49,7 +49,7 @@
                 #{status,jdbcType=SMALLINT}, #{deleteFlag,jdbcType=SMALLINT}, #{createBy,jdbcType=BIGINT},
                 #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP})
     </insert>
-    <insert id="insertSelective" parameterType="cn.staitech.anno.domain.special.SpecialImage"
+    <insert id="insertSelective" parameterType="cn.staitech.anno.vo.special.SpecialImage"
             useGeneratedKeys="true" keyProperty="specialImageId">
         insert into tb_special_image
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -121,7 +121,7 @@
         </foreach>
     </insert>
 
-    <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.special.SpecialImage">
+    <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.vo.special.SpecialImage">
         update tb_special_image
         <set>
             <if test="imageId != null">
@@ -194,7 +194,7 @@
             </if>
         </where>
     </update>
-    <update id="updateByPrimaryKey" parameterType="cn.staitech.anno.domain.special.SpecialImage">
+    <update id="updateByPrimaryKey" parameterType="cn.staitech.anno.vo.special.SpecialImage">
         update tb_special_image
         set image_id    = #{imageId,jdbcType=BIGINT},
             special_id  = #{specialId,jdbcType=BIGINT},
@@ -207,8 +207,8 @@
         where special_image_id = #{specialImageId,jdbcType=BIGINT}
     </update>
 
-    <select id="selectWaitSpecialImage" parameterType="cn.staitech.anno.domain.vo.specialimage.SpecialImageSelectVO"
-            resultType="cn.staitech.anno.domain.vo.specialimage.WaitSpecialImageVO">
+    <select id="selectWaitSpecialImage" parameterType="cn.staitech.anno.vo.specialimage.SpecialImageSelectVO"
+            resultType="cn.staitech.anno.vo.specialimage.WaitSpecialImageVO">
         SELECT
         p.image_id,
         p.thumb_url,
@@ -281,7 +281,7 @@
     </select>
 
 
-    <select id="getImageBySpecialId" parameterType="cn.staitech.anno.domain.vo.specialimage.SpecialImageSelectVO"
+    <select id="getImageBySpecialId" parameterType="cn.staitech.anno.vo.specialimage.SpecialImageSelectVO"
             resultType="cn.staitech.anno.domain.Image">
         SELECT
         t1.topic_id
@@ -300,8 +300,8 @@
     </select>
 
 
-    <select id="selectSpecialImageList" parameterType="cn.staitech.anno.domain.vo.specialimage.SpecialImageSelectVO"
-            resultType="cn.staitech.anno.domain.vo.specialimage.SpecialImageVO">
+    <select id="selectSpecialImageList" parameterType="cn.staitech.anno.vo.specialimage.SpecialImageSelectVO"
+            resultType="cn.staitech.anno.vo.specialimage.SpecialImageVO">
         SELECT
         t1.special_image_id,
         t1.image_id,
@@ -369,8 +369,8 @@
 
 
     <select id="selectSpecialSliceVoList"
-            parameterType="cn.staitech.anno.domain.vo.specialsliceimage.SpecialSliceSelectVO"
-            resultType="cn.staitech.anno.domain.vo.specialsliceimage.SpecialSliceVo">
+            parameterType="cn.staitech.anno.vo.specialsliceimage.SpecialSliceSelectVO"
+            resultType="cn.staitech.anno.vo.specialsliceimage.SpecialSliceVo">
         SELECT
         t1.special_image_id,
         t1.special_id,
@@ -583,7 +583,7 @@
 
     <!-- 通过切片ID（imageId）批量查询SpecialImageList -->
     <select id="selectListByImageIds" resultMap="BaseResultMap"
-            parameterType="cn.staitech.anno.domain.image.in.ImageBatchIdsVO">
+            parameterType="cn.staitech.anno.vo.image.in.ImageBatchIdsVO">
         select
         <include refid="Base_Column_List"/>
         from tb_special_image
@@ -595,7 +595,7 @@
 
     <!-- 通过切片ID（imageId）批量查询selectImageIdsListByImageIds -->
     <select id="selectImageIdsListByImageIds" resultType="java.lang.Long"
-            parameterType="cn.staitech.anno.domain.image.in.ImageBatchIdsVO">
+            parameterType="cn.staitech.anno.vo.image.in.ImageBatchIdsVO">
         select distinct image_id
         from tb_special_image
         where `status` = 1 and `delete_flag` =1 and image_id in

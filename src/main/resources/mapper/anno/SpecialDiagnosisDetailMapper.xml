@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.SpecialDiagnosisDetailMapper">
     <resultMap id="BaseResultMap"
-               type="cn.staitech.anno.domain.diagnosis.SpecialDiagnosisDetail">
+               type="cn.staitech.anno.vo.diagnosis.SpecialDiagnosisDetail">
         <id column="special_diagnosis_detail_id" jdbcType="BIGINT"
             property="specialDiagnosisDetailId"/>
         <result column="special_diagnosis_id" jdbcType="BIGINT"
@@ -33,7 +33,7 @@
               #{specialDiagnosisDetailId,jdbcType=BIGINT}
     </delete>
     <insert id="insert"
-            parameterType="cn.staitech.anno.domain.diagnosis.SpecialDiagnosisDetail">
+            parameterType="cn.staitech.anno.vo.diagnosis.SpecialDiagnosisDetail">
         insert into tb_special_diagnosis_detail
         (special_diagnosis_detail_id,
          special_diagnosis_id,
@@ -45,7 +45,7 @@
                 #{tags,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
     </insert>
     <insert id="insertSelective"
-            parameterType="cn.staitech.anno.domain.diagnosis.SpecialDiagnosisDetail" useGeneratedKeys="true"
+            parameterType="cn.staitech.anno.vo.diagnosis.SpecialDiagnosisDetail" useGeneratedKeys="true"
             keyProperty="specialDiagnosisDetailId">
         insert into tb_special_diagnosis_detail
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -96,7 +96,7 @@
         </trim>
     </insert>
     <update id="updateByPrimaryKeySelective"
-            parameterType="cn.staitech.anno.domain.diagnosis.SpecialDiagnosisDetail">
+            parameterType="cn.staitech.anno.vo.diagnosis.SpecialDiagnosisDetail">
         update tb_special_diagnosis_detail
         <set>
             <if test="specialDiagnosisId != null">
@@ -123,7 +123,7 @@
         #{specialDiagnosisDetailId,jdbcType=BIGINT}
     </update>
     <update id="updateByPrimaryKey"
-            parameterType="cn.staitech.anno.domain.diagnosis.SpecialDiagnosisDetail">
+            parameterType="cn.staitech.anno.vo.diagnosis.SpecialDiagnosisDetail">
         update tb_special_diagnosis_detail
         set special_diagnosis_id = #{specialDiagnosisId,jdbcType=BIGINT},
             dict_type            = #{dictType,jdbcType=VARCHAR},

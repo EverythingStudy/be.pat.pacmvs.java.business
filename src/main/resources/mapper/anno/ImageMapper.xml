@@ -55,7 +55,7 @@
     </sql>
 
 
-    <resultMap type="cn.staitech.anno.domain.image.in.ImageListVO" id="ImageSlide">
+    <resultMap type="cn.staitech.anno.vo.image.in.ImageListVO" id="ImageSlide">
         <result property="imageId" column="image_id"/>
         <result property="imageName" column="image_name"/>
         <result property="imageUrl" column="image_url"/>
@@ -461,7 +461,7 @@
 
 
     <!-- 通过切片ID批量修改专题 -->
-    <update id="updateBatchIds" parameterType="cn.staitech.anno.domain.image.in.ImageTopicBatchIdsVO">
+    <update id="updateBatchIds" parameterType="cn.staitech.anno.vo.image.in.ImageTopicBatchIdsVO">
         update tb_image
         <set>
             topic_id = #{topicId},
@@ -506,7 +506,7 @@
 
 
     <!-- 通过切片ID批量 逻辑删除图像 -->
-    <update id="updateDeleteFlagBatchIds" parameterType="cn.staitech.anno.domain.image.in.ImageBatchIdsVO">
+    <update id="updateDeleteFlagBatchIds" parameterType="cn.staitech.anno.vo.image.in.ImageBatchIdsVO">
         update tb_image
         <set>
             delete_flag = 0,
@@ -520,12 +520,13 @@
     </update>
 
 
-    <!--物理删除图像-->
+    <!-- 物理删除图像:1：物理删除。2：没有被任何项目绑定或使用的切片可以删除。3：不可用状态的切片的可以删除
+     `status` 是否可用0不可用1可用,`delete_flag` 逻辑删除状态（0删除，1未删除）',-->
     <delete id="deleteById" parameterType="java.lang.Long">
         <if test="imageId != null and imageId != ''">
             delete
             from tb_image
-            where delete_flag = 0 and image_id = #{imageId}
+            where image_id = #{imageId}
         </if>
     </delete>
 </mapper>

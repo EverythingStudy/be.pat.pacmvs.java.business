@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.MarkingMapper">
-    <resultMap type="cn.staitech.anno.domain.marking.Marking" id="markingResult">
+    <resultMap type="cn.staitech.anno.vo.marking.Marking" id="markingResult">
         <result property="marking_id" column="marking_id"/>
         <result property="annotation_id" column="annotation_id"/>
         <result property="area" column="area"/>
@@ -30,7 +30,7 @@
     </resultMap>
 
 
-    <resultMap type="cn.staitech.anno.domain.geojson.JsonExport" id="jsonExportResult">
+    <resultMap type="cn.staitech.anno.vo.geojson.JsonExport" id="jsonExportResult">
         <result property="topicName" column="topic_name"/>
         <result property="projectId" column="project_id"/>
         <result property="projectName" column="project_name"/>
@@ -43,7 +43,7 @@
         <result property="createTime" column="create_time"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo" id="markingSelectListVoResult">
+    <resultMap type="cn.staitech.anno.vo.marking.MarkingSelectListVO" id="markingSelectListVoResult">
         <result property="marking_id" column="marking_id"/>
         <result property="area" column="area"/>
         <result property="perimeter" column="perimeter"/>
@@ -58,7 +58,7 @@
     </resultMap>
 
 
-    <resultMap type="cn.staitech.anno.domain.geojson.Features" id="featuresResult">
+    <resultMap type="cn.staitech.anno.vo.geojson.Features" id="featuresResult">
         <result property="id" column="annotation_id"/>
         <result property="geometry" column="geometry"
                 typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
@@ -66,7 +66,7 @@
                 typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.geojson.Properties" id="propertiesResult">
+    <resultMap type="cn.staitech.anno.vo.geojson.Properties" id="propertiesResult">
         <result property="marking_id" column="marking_id"/>
         <result property="area" column="area"/>
         <result property="perimeter" column="perimeter"/>
@@ -100,12 +100,12 @@
         <result property="image_url" column="image_url"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.marking.SlideRes" id="slideResult">
+    <resultMap type="cn.staitech.anno.vo.slide.SlideRes" id="slideResult">
         <result property="slideId" column="slide_id"/>
         <result property="imageName" column="image_name"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.marking.PointCount" id="pointCountResult">
+    <resultMap type="cn.staitech.anno.vo.marking.PointCount" id="pointCountResult">
         <result property="category_id" column="category_id"/>
         <result property="point_count" column="point_count"/>
         <result property="label_name" column="category_name"/>
@@ -295,6 +295,10 @@
                        CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name),
                        "image_id",
                        t.image_id,
+                       "update_by",
+                       t.update_by,
+                       "annotation_update_owner",
+                       t.annotation_update_owner,
                        "project_id",
                        t.project_id,
                        "image_url",
@@ -405,7 +409,7 @@
         GROUP BY category_id
     </select>
 
-    <select id="selectCategoryCount" parameterType="cn.staitech.anno.domain.marking.Marking"
+    <select id="selectCategoryCount" parameterType="cn.staitech.anno.vo.marking.Marking"
             resultMap="pointCountResult">
         SELECT
         category_id,
@@ -511,7 +515,7 @@
     <!--        where marking_id = #{marking_id}-->
     <!--    </update>-->
 
-    <update id="updatePointCount" parameterType="cn.staitech.anno.domain.marking.Marking" useGeneratedKeys="true"
+    <update id="updatePointCount" parameterType="cn.staitech.anno.vo.marking.Marking" useGeneratedKeys="true"
             keyProperty="marking_id">
         update tb_marking
         <set>

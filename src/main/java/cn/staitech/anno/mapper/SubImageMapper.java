@@ -1,9 +1,9 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.SubImage;
-import cn.staitech.anno.domain.organization.SysOrganizationAuthorization;
-import cn.staitech.anno.domain.vo.image.ImageRelVo;
-import cn.staitech.anno.domain.vo.image.SubImageVo;
+import cn.staitech.anno.vo.image.ImageRelVO;
+import cn.staitech.anno.vo.organization.SysOrganizationAuthorization;
+import cn.staitech.anno.vo.slide.SubImageVO;
+import cn.staitech.anno.vo.subimage.SubImage;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -21,11 +21,11 @@ import java.util.Map;
  */
 public interface SubImageMapper extends BaseMapper<SubImage> {
 
-    List<ImageRelVo> selectImageRelByIds(@Param("imageIds") List<Long> imageIds);
+    List<ImageRelVO> selectImageRelByIds(@Param("imageIds") List<Long> imageIds);
 
-    IPage<SubImageVo> pageSubImage(@Param("page") Page page, @Param("params") Map params);
+    IPage<SubImageVO> pageSubImage(@Param("page") Page page, @Param("params") Map params);
 
-    int updateByPrimaryKeySelective(SubImageVo record);
+    int updateByPrimaryKeySelective(SubImageVO record);
 
     /**
      * 根据专题id查询总数

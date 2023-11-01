@@ -1,14 +1,14 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.*;
-import cn.staitech.anno.domain.vo.AnnotationBroadcastVO;
-import cn.staitech.anno.domain.vo.AnnotationJsonVO;
-import cn.staitech.anno.domain.vo.AnnotationPageVO;
-import cn.staitech.anno.domain.vo.AnnotationStateVO;
 import cn.staitech.anno.mapper.AnnotationMapper;
 import cn.staitech.anno.service.*;
 import cn.staitech.anno.service.impl.manage.AnnotationManage;
 import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.vo.annotation.AnnotationBroadcastVO;
+import cn.staitech.anno.vo.annotation.AnnotationJsonVO;
+import cn.staitech.anno.vo.annotation.AnnotationPageVO;
+import cn.staitech.anno.vo.annotation.AnnotationStateVO;
 import cn.staitech.common.core.utils.StringUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysProjectRole;

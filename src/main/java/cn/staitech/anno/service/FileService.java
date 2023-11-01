@@ -1,6 +1,6 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.file.Chunk;
+import cn.staitech.anno.vo.file.Chunk;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface FileService {

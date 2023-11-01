@@ -25,7 +25,7 @@
         <result property="organizationName" column="organization_name"/>
     </resultMap>
 
-    <resultMap id="ProjectMessage" type="cn.staitech.anno.domain.vo.ProjectListVO">
+    <resultMap id="ProjectMessage" type="cn.staitech.anno.vo.project.ProjectListVO">
         <result property="projectId" column="project_id"/>
         <result property="projectName" column="project_name"/>
         <result property="imageTotal" column="image_total"/>
@@ -59,21 +59,21 @@
         <result property="organizationId" column="organization_id"/>
     </resultMap>
 
-    <resultMap id="annotationSum" type="cn.staitech.anno.domain.vo.AnnotationsAddVO">
+    <resultMap id="annotationSum" type="cn.staitech.anno.vo.annotation.AnnotationsAddVO">
         <result property="projectId" column="project_id"/>
         <result property="slideId" column="slide_id"/>
         <result property="createBy" column="create_by"/>
         <result property="sum" column="sum"/>
     </resultMap>
 
-    <resultMap id="projectStatistic" type="cn.staitech.anno.domain.vo.statistic.StatisticProjectListOutVO">
+    <resultMap id="projectStatistic" type="cn.staitech.anno.vo.statistic.StatisticProjectListOutVO">
         <result property="projectId" column="project_id"/>
         <result property="projectName" column="project_name"/>
         <result property="indicatorId" column="indicator_id"/>
     </resultMap>
 
 
-    <resultMap type="cn.staitech.anno.domain.vo.ImageMessageVO" id="ImageResult">
+    <resultMap type="cn.staitech.anno.vo.image.ImageMessageVO" id="ImageResult">
         <result property="imageId" column="image_id"/>
         <result property="imageName" column="image_name"/>
         <result property="imageUrl" column="image_url"/>
@@ -104,7 +104,7 @@
         <result property="organizationId" column="organization_id"/>
     </resultMap>
 
-    <resultMap id="projectIdList" type="cn.staitech.anno.domain.vo.ProjectIdListVO">
+    <resultMap id="projectIdList" type="cn.staitech.anno.vo.project.ProjectIdListVO">
         <result property="projectId" column="project_id"/>
     </resultMap>
 
@@ -171,7 +171,7 @@
 
     <!--统计时使用的项目列表-->
     <select id="selectProjectStatisticList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticProjectListOutVO" resultMap="projectStatistic">
+            parameterType="cn.staitech.anno.vo.statistic.StatisticProjectListOutVO" resultMap="projectStatistic">
         select project_id, project_name, indicator_id
         from tb_project
         <where>
@@ -347,7 +347,7 @@
     </select>
 
 
-    <select id="selectProjectName" parameterType="cn.staitech.anno.domain.vo.ProjectGetVO" resultMap="ProjectResult">
+    <select id="selectProjectName" parameterType="cn.staitech.anno.vo.project.ProjectGetVO" resultMap="ProjectResult">
         select *
         from tb_project
         where project_id !=#{projectId}
@@ -355,7 +355,7 @@
     </select>
 
 
-    <select id="selectUserMessage" parameterType="cn.staitech.anno.domain.vo.slide.SlideCategoryProcessFlagVO"
+    <select id="selectUserMessage" parameterType="cn.staitech.anno.vo.slide.SlideCategoryProcessFlagVO"
             resultMap="SlideAnnotationResult">
         select sum(sum) as sum from tb_slide_annotation_result where category_id =0
         <if test="slideId != null and slideId != ''">
@@ -374,7 +374,7 @@
     </select>
 
     <!--根据标注类别查询标注数量1-->
-    <select id="selectByCategoryId" parameterType="cn.staitech.anno.domain.vo.slide.SlideCategoryProcessFlagVO"
+    <select id="selectByCategoryId" parameterType="cn.staitech.anno.vo.slide.SlideCategoryProcessFlagVO"
             resultMap="SlideAnnotationResult">
         select sum(sum) as sum from tb_slide_annotation_result where 1=1
         <if test="slideId != null and slideId != ''">
@@ -389,7 +389,7 @@
     </select>
 
     <!--项目获取图片列表-->
-    <select id="getImageList" parameterType="cn.staitech.anno.domain.image.in.ImageAllVO" resultMap="ImageResult">
+    <select id="getImageList" parameterType="cn.staitech.anno.vo.image.in.ImageAllVO" resultMap="ImageResult">
         select *
         from tb_image
         where process_flag = 2
@@ -421,7 +421,7 @@
         where slide_id = #{slideId}
     </delete>
 
-    <select id="selectSumByProjectId" parameterType="cn.staitech.anno.domain.vo.AnnotationsAddVO"
+    <select id="selectSumByProjectId" parameterType="cn.staitech.anno.vo.annotation.AnnotationsAddVO"
             resultMap="annotationSum">
         select count(*) as sum from tb_annotation where 1=1
         <if test="slideId != null and slideId != '' ">
@@ -438,7 +438,7 @@
         </if>
     </select>
 
-    <select id="selectCategorySum" parameterType="cn.staitech.anno.domain.vo.slide.SlideCategoryProcessFlagVO"
+    <select id="selectCategorySum" parameterType="cn.staitech.anno.vo.slide.SlideCategoryProcessFlagVO"
             resultType="java.lang.Integer">
         select sum(sum)
         from tb_slide_annotation_result
@@ -451,7 +451,7 @@
         </if>
     </select>
 
-    <update id="updateProjectHumanAnnotationQuantity" parameterType="cn.staitech.anno.domain.vo.ProjectAnnotationVO">
+    <update id="updateProjectHumanAnnotationQuantity" parameterType="cn.staitech.anno.vo.project.ProjectAnnotationVO">
         update tb_project
         <set>
             <if test="sum != null">
@@ -477,7 +477,7 @@
         where project_id = #{projectId}
     </update>
 
-    <select id="selectProjectDetails" parameterType="cn.staitech.anno.domain.vo.ProjectInForImageVO"
+    <select id="selectProjectDetails" parameterType="cn.staitech.anno.vo.project.ProjectInForImageVO"
             resultMap="ProjectMessage">
         SELECT DISTINCT
         s.project_id,
@@ -503,7 +503,7 @@
         order by s.update_time desc
     </select>
 
-    <select id="selectCategoryTotal" parameterType="cn.staitech.anno.domain.vo.slide.SlideCategoryProcessFlagVO"
+    <select id="selectCategoryTotal" parameterType="cn.staitech.anno.vo.slide.SlideCategoryProcessFlagVO"
             resultType="java.lang.Integer">
         select sum(sum) from tb_slide_annotation_result
         <where>
@@ -517,7 +517,7 @@
         </where>
     </select>
 
-    <update id="updateProjectStatus" parameterType="cn.staitech.anno.domain.vo.ProjectStatusVO">
+    <update id="updateProjectStatus" parameterType="cn.staitech.anno.vo.project.ProjectStatusVO">
         update tb_project
         <set>
             <if test="status != null">
@@ -552,7 +552,8 @@
     </select>
 
     <!--根据projectId 和 createBy查询slideId-->
-    <select id="selectSlideId" parameterType="cn.staitech.anno.domain.vo.ProjectInForImageVO" resultMap="annotationSum">
+    <select id="selectSlideId" parameterType="cn.staitech.anno.vo.project.ProjectInForImageVO"
+            resultMap="annotationSum">
         select distinct slide_id from tb_annotation
         <where>
             <if test="projectId != null and projectId != '' ">

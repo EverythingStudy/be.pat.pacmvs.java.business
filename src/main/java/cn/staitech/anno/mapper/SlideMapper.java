@@ -1,21 +1,16 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.marking.SlideRes;
-import cn.staitech.anno.domain.vo.ExaminationListVO;
-import cn.staitech.anno.domain.vo.ProjectListOutVO;
-import cn.staitech.anno.domain.vo.diagnosis.SpecialDiagnosisAddVo;
-import cn.staitech.anno.domain.vo.file.SlideFileName;
-import cn.staitech.anno.domain.vo.image.ProjectStatisticsVo;
-import cn.staitech.anno.domain.vo.image.SlideReportSummaryVo;
-import cn.staitech.anno.domain.vo.image.SlideReportVo;
-import cn.staitech.anno.domain.vo.imagecsv.ImageCsvGetVO;
-import cn.staitech.anno.domain.vo.imagecsv.ImageCsvListVO;
-import cn.staitech.anno.domain.vo.marking.out.SlideSelectBy;
-import cn.staitech.anno.domain.vo.slide.SlideSelectVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticSlideListInVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticSlideListOutVO;
 import cn.staitech.anno.project.domain.Review;
+import cn.staitech.anno.vo.diagnosis.SpecialDiagnosisAddVo;
+import cn.staitech.anno.vo.examination.ExaminationListVO;
+import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
+import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
+import cn.staitech.anno.vo.project.ProjectListOutVO;
+import cn.staitech.anno.vo.project.ProjectStatisticsVO;
+import cn.staitech.anno.vo.slide.*;
+import cn.staitech.anno.vo.statistic.StatisticSlideListInVO;
+import cn.staitech.anno.vo.statistic.StatisticSlideListOutVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -164,7 +159,7 @@ public interface SlideMapper extends BaseMapper<Slide> {
      * @param params
      * @return
      */
-    SlideReportSummaryVo selectSlideByProjectAndGroup(@Param("params") Map params);
+    SlideReportSummaryVO selectSlideByProjectAndGroup(@Param("params") Map params);
 
     /**
      * 组内切片报表分页查询
@@ -172,7 +167,7 @@ public interface SlideMapper extends BaseMapper<Slide> {
      * @param params
      * @return
      */
-    IPage<SlideReportVo> pageSlideWithSubImage(@Param("page") Page page, @Param("params") Map params);
+    IPage<SlideReportVO> pageSlideWithSubImage(@Param("page") Page page, @Param("params") Map params);
 
     /**
      * 项目内切片统计
@@ -180,7 +175,7 @@ public interface SlideMapper extends BaseMapper<Slide> {
      * @param params
      * @return
      */
-    IPage<ProjectStatisticsVo> pageSlideStatisticsByProject(@Param("page") Page page, @Param("params") Map params);
+    IPage<ProjectStatisticsVO> pageSlideStatisticsByProject(@Param("page") Page page, @Param("params") Map params);
 
     /**
      * 切片报表分页查询
@@ -189,7 +184,7 @@ public interface SlideMapper extends BaseMapper<Slide> {
      * @param params
      * @return
      */
-    IPage<SlideReportVo> pageSlideStatistics(@Param("page") Page page, @Param("params") Map params);
+    IPage<SlideReportVO> pageSlideStatistics(@Param("page") Page page, @Param("params") Map params);
 
     /**
      * 脏器病变报告查询

@@ -29,8 +29,8 @@
     </sql>
 
 
-    <select id="selectQuestionList" parameterType="cn.staitech.anno.domain.question.in.GetQuestionListIn"
-            resultType="cn.staitech.anno.domain.question.out.GetQuestionListOut">
+    <select id="selectQuestionList" parameterType="cn.staitech.anno.vo.question.in.GetQuestionListIn"
+            resultType="cn.staitech.anno.vo.question.out.GetQuestionListOut">
         select p.project_name projectName,
         tt.topic_name topicName,
         qb.question_id questionId,
@@ -80,8 +80,8 @@
         </where>
         order by qb.create_time desc
     </select>
-    <select id="selectQuestionListExt" parameterType="cn.staitech.anno.domain.question.in.GetQuestionsIn"
-            resultType="cn.staitech.anno.domain.question.out.GetQuestionListOut">
+    <select id="selectQuestionListExt" parameterType="cn.staitech.anno.vo.question.in.GetQuestionsIn"
+            resultType="cn.staitech.anno.vo.question.out.GetQuestionListOut">
         select p.project_name projectName,
         tt.topic_name topicName,
         ti.thumb_url thumbUrl,
@@ -116,7 +116,7 @@
         </where>
         order by qb.create_time desc
     </select>
-    <select id="selectProjectList" resultType="cn.staitech.anno.domain.question.out.GetProjectBoxOut"
+    <select id="selectProjectList" resultType="cn.staitech.anno.vo.question.out.GetProjectBoxOut"
             parameterType="java.lang.Long">
         select distinct
         qb.project_id projectId,

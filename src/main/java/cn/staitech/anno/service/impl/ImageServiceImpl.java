@@ -1,11 +1,10 @@
 package cn.staitech.anno.service.impl;
 
+import cn.staitech.anno.config.AsyncTask;
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.image.in.*;
-import cn.staitech.anno.domain.image.out.ImageListOutVO;
 import cn.staitech.anno.mapper.ImageMapper;
 import cn.staitech.anno.mapper.SpecialImageMapper;
 import cn.staitech.anno.service.ImageService;
@@ -13,6 +12,8 @@ import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.service.SysOrganizationService;
 import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.image.in.*;
+import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +49,9 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     private SpecialImageMapper specialImageMapper;
     @Resource
     private SysOrganizationService sysOrganizationService;
+
+    @Resource
+    private AsyncTask asyncTask;
 
     /**
      * 切片列表（原图像）
@@ -336,14 +341,27 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     }
 
     /**
-     * 运维图像删除
+     * 切片删除
      *
      * @param imageId
      * @return
      */
     @Override
-    public int deleteById(Long imageId) {
-        return imageMapper.deleteById(imageId);
+    public Boolean deleteById(Long imageId) throws InterruptedException {
+        // 先查询
+        if (imageId > 0) {
+            // 查切片表中有没有绑定此图片
+            if (imageMapper.selectSlideCountByImageId(imageId) > 0) {
+                return false;
+            } else {
+                Image image = imageMapper.selectById(imageId);
+                asyncTask.deleteFileTask(new File(image.getImagePath()));
+                asyncTask.deleteFileTask(new File(image.getImageUrl()));
+                imageMapper.deleteById(imageId);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -363,31 +381,23 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     }
 
     /***
-     * 批量删除图片（逻辑删除）
+     * 批量删除图片（物理删除）
      * @param ids
      * @return
      */
     @Override
-    public List<Long> updateDeleteFlagBatchIds(ImageBatchIdsVO ids) {
-        // return imageMapper.updateDeleteFlagBatchIds(ids);
-        // Check: is using
-        List<Long> usingIds = specialImageMapper.selectImageIdsListByImageIds(ids);
-
+    public List<Long> deleteBatchIds(ImageBatchIdsVO ids) throws InterruptedException {
+        // 不可删除的列表
         List<Long> forbidIds = new ArrayList<>();
-        // remove id in forbid list
         for (Long imageId : ids.getImageIdList()) {
-            if (usingIds.contains(imageId)) {
+            // 查询切片表中是否包含该切片
+            if (imageMapper.selectSlideCountByImageId(imageId) > 0) {
                 forbidIds.add(imageId);
-                continue;
-            }
-
-            if (imageId > 0) {
-                Slide slide = new Slide();
-                slide.setImageId(imageId);
-                // 查切片表中有没有绑定此图片
-                if (slideService.selectImageExist(slide).size() > 0) {
-                    imageMapper.updateDeleteFlagById(imageId);
-                }
+            } else {
+                Image image = imageMapper.selectById(imageId);
+                asyncTask.deleteFileTask(new File(image.getImagePath()));
+                asyncTask.deleteFileTask(new File(image.getImageUrl()));
+                imageMapper.deleteById(imageId);
             }
         }
         return forbidIds;

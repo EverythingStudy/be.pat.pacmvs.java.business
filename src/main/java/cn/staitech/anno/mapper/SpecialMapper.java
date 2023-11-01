@@ -1,10 +1,6 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.special.Special;
-import cn.staitech.anno.domain.vo.special.SpecialResVo;
-import cn.staitech.anno.domain.vo.special.SpecialSlideStatisticsVO;
-import cn.staitech.anno.domain.vo.special.SpecialStatisticsListVO;
-import cn.staitech.anno.domain.vo.special.SpecialStatisticsQueryVO;
+import cn.staitech.anno.vo.special.*;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.SpecialAnnotationMapper">
-    <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.special.SpecialAnnotation">
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.vo.special.SpecialAnnotation">
         <id column="slice_annotation_id" jdbcType="BIGINT" property="sliceAnnotationId"/>
         <result column="annotation_id" jdbcType="VARCHAR" property="annotationId"/>
         <result column="special_image_id" jdbcType="BIGINT" property="specialImageId"/>
@@ -35,7 +35,7 @@
         <result column="geometry" jdbcType="LONGVARCHAR" property="geometry"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.marking.PointCount" id="pointCountResult">
+    <resultMap type="cn.staitech.anno.vo.marking.PointCount" id="pointCountResult">
         <result property="category_id" column="category_id"/>
         <result property="point_count" column="point_count"/>
         <result property="label_name" column="category_name"/>
@@ -59,7 +59,7 @@
         from tb_special_annotation
         where slice_annotation_id = #{sliceAnnotationId,jdbcType=BIGINT}
     </delete>
-    <insert id="insert" parameterType="cn.staitech.anno.domain.special.SpecialAnnotation">
+    <insert id="insert" parameterType="cn.staitech.anno.vo.special.SpecialAnnotation">
         insert into tb_special_annotation (slice_annotation_id, annotation_id, special_image_id,
                                            special_id, image_id, area,
                                            measure, perimeter, category_id,
@@ -83,7 +83,7 @@
                 #{locationType,jdbcType=VARCHAR}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP},
                 #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP})
     </insert>
-    <insert id="insertSelective" parameterType="cn.staitech.anno.domain.special.SpecialAnnotation"
+    <insert id="insertSelective" parameterType="cn.staitech.anno.vo.special.SpecialAnnotation"
             keyProperty="sliceAnnotationId" useGeneratedKeys="true">
         insert into tb_special_annotation
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -279,7 +279,7 @@
         </trim>
     </insert>
     <update id="updateByPrimaryKeySelective"
-            parameterType="cn.staitech.anno.domain.special.SpecialAnnotation">
+            parameterType="cn.staitech.anno.vo.special.SpecialAnnotation">
         update tb_special_annotation
         <set>
             <if test="annotationId != null">
@@ -376,7 +376,7 @@
         </set>
         where slice_annotation_id = #{sliceAnnotationId,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="cn.staitech.anno.domain.special.SpecialAnnotation">
+    <update id="updateByPrimaryKey" parameterType="cn.staitech.anno.vo.special.SpecialAnnotation">
         update tb_special_annotation
         set annotation_id     = #{annotationId,jdbcType=VARCHAR},
             special_image_id  = #{specialImageId,jdbcType=BIGINT},
@@ -409,8 +409,8 @@
         where slice_annotation_id = #{sliceAnnotationId,jdbcType=BIGINT}
     </update>
 
-    <select id="selectSpecialAnnotationList" parameterType="cn.staitech.anno.domain.special.SpecialAnnotation"
-            resultType="cn.staitech.anno.domain.special.SpecialAnnotation">
+    <select id="selectSpecialAnnotationList" parameterType="cn.staitech.anno.vo.special.SpecialAnnotation"
+            resultType="cn.staitech.anno.vo.special.SpecialAnnotation">
         SELECT
         t1.slice_annotation_id,
         t1.annotation_id,
@@ -470,7 +470,7 @@
         GROUP BY category_id
     </select>
 
-    <select id="selectCategoryCount" parameterType="cn.staitech.anno.domain.special.SpecialAnnotation"
+    <select id="selectCategoryCount" parameterType="cn.staitech.anno.vo.special.SpecialAnnotation"
             resultMap="pointCountResult">
         SELECT
         category_id,
@@ -487,7 +487,7 @@
         </if>
     </select>
 
-    <update id="updatePointCount" parameterType="cn.staitech.anno.domain.special.SpecialAnnotation"
+    <update id="updatePointCount" parameterType="cn.staitech.anno.vo.special.SpecialAnnotation"
             useGeneratedKeys="true"
             keyProperty="sliceAnnotationId">
         update tb_special_annotation
@@ -500,8 +500,8 @@
     </update>
 
 
-    <select id="selectAnnotationList" parameterType="cn.staitech.anno.domain.special.SpecialAnnotation"
-            resultType="cn.staitech.anno.domain.special.SpecialAnnotation">
+    <select id="selectAnnotationList" parameterType="cn.staitech.anno.vo.special.SpecialAnnotation"
+            resultType="cn.staitech.anno.vo.special.SpecialAnnotation">
         SELECT
         t1.*
         FROM
@@ -521,8 +521,8 @@
     </select>
 
 
-    <select id="selectSpecialPropertiesList" parameterType="cn.staitech.anno.domain.special.SpecialAnnotation"
-            resultType="cn.staitech.anno.domain.vo.specialimageanno.in.SpecialAnnoProperties">
+    <select id="selectSpecialPropertiesList" parameterType="cn.staitech.anno.vo.special.SpecialAnnotation"
+            resultType="cn.staitech.anno.vo.specialimageanno.in.SpecialAnnoProperties">
         SELECT
         t1.slice_annotation_id,
         t1.annotation_id,

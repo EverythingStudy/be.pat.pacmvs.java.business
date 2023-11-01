@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.ProductSeriesMapper">
-    <resultMap type="cn.staitech.anno.domain.productseries.ProductSeries" id="ProductSeriesResult">
+    <resultMap type="cn.staitech.anno.domain.ProductSeries" id="ProductSeriesResult">
         <result property="productSeriesId" column="product_series_id"/>
         <result property="name" column="name"/>
     </resultMap>

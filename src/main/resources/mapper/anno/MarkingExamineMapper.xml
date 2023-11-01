@@ -17,7 +17,7 @@
         <result column="annotation_owner" property="annotationOwner"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.geojson.Properties" id="propertiesResult">
+    <resultMap type="cn.staitech.anno.vo.geojson.Properties" id="propertiesResult">
         <result property="marking_id" column="marking_id"/>
         <result property="area" column="area"/>
         <result property="perimeter" column="perimeter"/>
@@ -50,7 +50,7 @@
         <result property="image_url" column="image_url"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.geojson.Features" id="featuresResult">
+    <resultMap type="cn.staitech.anno.vo.geojson.Features" id="featuresResult">
         <result property="id" column="annotation_id"/>
         <result property="geometry" column="geometry"
                 typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>

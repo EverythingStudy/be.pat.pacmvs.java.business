@@ -1,6 +1,6 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.domain.productseries.ProductSeries;
+import cn.staitech.anno.domain.ProductSeries;
 import cn.staitech.anno.service.ProductSeriesService;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;

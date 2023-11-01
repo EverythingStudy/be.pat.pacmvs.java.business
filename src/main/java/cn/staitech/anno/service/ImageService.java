@@ -1,9 +1,9 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.Image;
-import cn.staitech.anno.domain.image.in.*;
-import cn.staitech.anno.domain.image.out.ImageListOutVO;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.image.in.*;
+import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -91,7 +91,7 @@ public interface ImageService extends IService<Image> {
      * @param imageId
      * @return
      */
-    int deleteById(Long imageId);
+    Boolean deleteById(Long imageId) throws InterruptedException;
 
     /**
      * 标注图像删除
@@ -102,7 +102,7 @@ public interface ImageService extends IService<Image> {
     int updateDeleteFlagById(Long imageId);
 
 
-    List<Long> updateDeleteFlagBatchIds(ImageBatchIdsVO ids);
+    List<Long> deleteBatchIds(ImageBatchIdsVO ids) throws InterruptedException;
 
     /**
      * 更改图像上传状态

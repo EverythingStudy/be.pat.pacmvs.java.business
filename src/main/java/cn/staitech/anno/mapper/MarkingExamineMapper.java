@@ -1,8 +1,8 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.MarkingExamine;
-import cn.staitech.anno.domain.geojson.Features;
-import cn.staitech.anno.domain.geojson.Properties;
+import cn.staitech.anno.vo.geojson.Features;
+import cn.staitech.anno.vo.geojson.Properties;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;

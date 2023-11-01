@@ -1,8 +1,8 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.geojson.Features;
-import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
-import cn.staitech.anno.domain.geojson.in.ViewAddIn;
+import cn.staitech.anno.vo.geojson.Features;
+import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
+import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import org.springframework.stereotype.Service;
 
 @Service

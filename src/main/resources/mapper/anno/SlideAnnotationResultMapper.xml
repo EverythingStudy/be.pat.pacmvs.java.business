@@ -12,7 +12,7 @@
         <result property="updateTime" column="update_time"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.vo.ProjectAnnotationVO" id="ProjectAnnotationVO">
+    <resultMap type="cn.staitech.anno.vo.project.ProjectAnnotationVO" id="ProjectAnnotationVO">
         <result property="projectId" column="project_id"/>
         <result property="sum" column="sum"/>
     </resultMap>
@@ -192,7 +192,7 @@
         order by sum desc
     </select>
 
-    <select id="selectUpdateBy" parameterType="cn.staitech.anno.domain.vo.ProjectInForImageVO"
+    <select id="selectUpdateBy" parameterType="cn.staitech.anno.vo.project.ProjectInForImageVO"
             resultMap="SlideAnnotationResult">
         select DISTINCT a.update_by,sum(a.sum) as sum from tb_slide_annotation_result as a left join tb_slide as s
         on a.slide_id=s.slide_id
@@ -208,7 +208,7 @@
         group by update_by order by sum desc
     </select>
 
-    <select id="selectAnnotationNum" parameterType="cn.staitech.anno.domain.vo.ProjectInForImageVO"
+    <select id="selectAnnotationNum" parameterType="cn.staitech.anno.vo.project.ProjectInForImageVO"
             resultMap="SlideAnnotationResult">
         select distinct r.update_by,sum(r.sum) as sum from tb_slide as s left join tb_image as i on
         s.image_id=i.image_id left join

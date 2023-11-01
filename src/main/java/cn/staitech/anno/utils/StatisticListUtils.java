@@ -2,13 +2,13 @@ package cn.staitech.anno.utils;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.staitech.anno.constant.CommonConstant;
-import cn.staitech.anno.domain.vo.statistic.StatisticListInVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticListOutVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticObjectOutVO;
-import cn.staitech.anno.domain.vo.statistic.TableDateOutVO;
-import cn.staitech.anno.domain.vo.statistic.excel.AnnotationCountExcelVO;
-import cn.staitech.anno.domain.vo.statistic.excel.AnnotationDateExcelVO;
 import cn.staitech.anno.service.StatisticService;
+import cn.staitech.anno.vo.statistic.StatisticListInVO;
+import cn.staitech.anno.vo.statistic.StatisticListOutVO;
+import cn.staitech.anno.vo.statistic.StatisticObjectOutVO;
+import cn.staitech.anno.vo.statistic.TableDateOutVO;
+import cn.staitech.anno.vo.statistic.excel.AnnotationCountExcelVO;
+import cn.staitech.anno.vo.statistic.excel.AnnotationDateExcelVO;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.util.ListUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -345,7 +345,7 @@ public class StatisticListUtils {
      * @throws IOException
      */
     public static void exportExcelDateUtil(HttpServletResponse response, String displayQuantity, String statisticalDimension, List<StatisticObjectOutVO> result) throws IOException {
-        String fileName = displayQuantity + "_" + statisticalDimension;
+        String fileName = displayQuantity + GLIDE_LINE + statisticalDimension;
 
         List<List<String>> title = ListUtils.newArrayList();
         List<String> head0 = ListUtils.newArrayList();
@@ -378,7 +378,7 @@ public class StatisticListUtils {
      * @throws IOException
      */
     public static void exportExcelUtil(HttpServletResponse response, String displayQuantity, String statisticalDimension, List<StatisticObjectOutVO> result) throws IOException {
-        String fileName = displayQuantity + "_" + statisticalDimension;
+        String fileName = displayQuantity + GLIDE_LINE + statisticalDimension;
 
         // 标题
         List<List<String>> title = ListUtils.newArrayList();

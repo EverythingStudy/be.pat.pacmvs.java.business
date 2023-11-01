@@ -3,11 +3,6 @@ package cn.staitech.anno.service.impl;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.ParseJson;
 import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.algorithm.AlgorithmAssessment;
-import cn.staitech.anno.domain.algorithm.AlgorithmJson;
-import cn.staitech.anno.domain.assessment.in.*;
-import cn.staitech.anno.domain.assessment.out.AssessmentExportOut;
-import cn.staitech.anno.domain.assessment.out.GetAssessmentListOut;
 import cn.staitech.anno.mapper.AlgorithmAssessmentMapper;
 import cn.staitech.anno.mapper.AlgorithmJsonMapper;
 import cn.staitech.anno.mapper.AssessmentResultsMapper;
@@ -19,11 +14,12 @@ import cn.staitech.anno.service.AlgorithmAssessmentService;
 import cn.staitech.anno.service.AlgorithmJsonService;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.SlideService;
-import cn.staitech.anno.utils.Column;
-import cn.staitech.anno.utils.ExcelTool;
-import cn.staitech.anno.utils.MessageSource;
-import cn.staitech.anno.utils.ParseJsonUtil;
-import cn.staitech.anno.utils.DateUtils;
+import cn.staitech.anno.utils.*;
+import cn.staitech.anno.vo.algorithm.AlgorithmAssessment;
+import cn.staitech.anno.vo.algorithm.AlgorithmJson;
+import cn.staitech.anno.vo.assessment.in.*;
+import cn.staitech.anno.vo.assessment.out.AssessmentExportOut;
+import cn.staitech.anno.vo.assessment.out.GetAssessmentListOut;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.StringUtils;
@@ -360,8 +356,9 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
         }).collect(Collectors.toList());
         //批量插入考核算法
-        saveBatch(algorithmAssessments);
-        List<AlgorithmJson> collect = algorithmAssessments.stream().map(e -> {
+        List<AlgorithmJson> collect=new ArrayList<>();
+        for (AlgorithmAssessment e : algorithmAssessments) {
+            baseMapper.insert(e);
             AlgorithmJson resp = new AlgorithmJson();
             resp.setAlgorithmAssessmentId(e.getAlgorithmAssessmentId());
             resp.setSlideId(e.getSlideId());
@@ -370,8 +367,8 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
             resp.setCreateBy(SecurityUtils.getUserId());
             resp.setCreateTime(new Date());
             resp.setJsonType("0");
-            return resp;
-        }).collect(Collectors.toList());
+            collect.add(resp);
+        }
         //批量插入json表
         algorithmJsonService.saveBatch(collect);
         //修改切片是否生成状态

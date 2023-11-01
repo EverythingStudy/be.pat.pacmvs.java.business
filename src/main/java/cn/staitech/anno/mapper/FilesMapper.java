@@ -1,6 +1,6 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.files.Files;
+import cn.staitech.anno.vo.files.Files;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

@@ -1,10 +1,10 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.QuestionBank;
-import cn.staitech.anno.domain.question.in.*;
-import cn.staitech.anno.domain.question.out.GetProjectBoxOut;
-import cn.staitech.anno.domain.question.out.GetQuestionListOut;
-import cn.staitech.anno.domain.question.out.GetQuestionsOut;
+import cn.staitech.anno.vo.question.in.*;
+import cn.staitech.anno.vo.question.out.GetProjectBoxOut;
+import cn.staitech.anno.vo.question.out.GetQuestionListOut;
+import cn.staitech.anno.vo.question.out.GetQuestionsOut;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import com.baomidou.mybatisplus.extension.service.IService;

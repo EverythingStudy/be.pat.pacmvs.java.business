@@ -1,9 +1,9 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.special.SpecialReclaim;
-import cn.staitech.anno.domain.vo.special.SpecialReclaimResVo;
-import cn.staitech.anno.domain.vo.special.SpecialReclaimSelectVo;
-import cn.staitech.anno.domain.vo.special.SpecialResVo;
+import cn.staitech.anno.vo.special.SpecialReclaim;
+import cn.staitech.anno.vo.special.SpecialReclaimResVo;
+import cn.staitech.anno.vo.special.SpecialReclaimSelectVo;
+import cn.staitech.anno.vo.special.SpecialResVo;
 
 import java.util.List;
 

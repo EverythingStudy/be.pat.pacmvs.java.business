@@ -36,7 +36,9 @@ import static cn.staitech.anno.aspect.LogFileAspect.response;
 @RequestMapping("/test")
 public class TestController {
 
-    //输出名称
+    /**
+     * 输出名称
+     */
     private static final String FILE_NAME = "output_dict.txt";
     private static List<String> typeLists = Arrays.asList("java.lang.Integer", "java.lang.Double", "java.lang.Float", "java.lang.Long", "java.lang.Short", "java.lang.Byte", "java.lang.Boolean", "java.lang.Char", "java.lang.String", "int", "double", "long", "short", "byte", "boolean", "char", "float");
     private static int LENGTH = 5000;
@@ -283,7 +285,12 @@ public class TestController {
         return "ok";
     }
 
-    // 删除
+    /**
+     * 删除
+     *
+     * @param res
+     * @return
+     */
     @GetMapping("/delStr")
     public boolean delStr(String res) {
         redissonClient.getKeys().delete(res);

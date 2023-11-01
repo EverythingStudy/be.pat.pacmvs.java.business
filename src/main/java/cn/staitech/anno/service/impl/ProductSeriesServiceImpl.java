@@ -1,6 +1,6 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.domain.productseries.ProductSeries;
+import cn.staitech.anno.domain.ProductSeries;
 import cn.staitech.anno.mapper.ProductSeriesMapper;
 import cn.staitech.anno.service.ProductSeriesService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

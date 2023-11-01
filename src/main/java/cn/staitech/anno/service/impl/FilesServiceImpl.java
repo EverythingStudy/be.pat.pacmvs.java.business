@@ -1,12 +1,12 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.domain.files.Files;
-import cn.staitech.anno.domain.files.in.FilesListVO;
 import cn.staitech.anno.mapper.FilesMapper;
 import cn.staitech.anno.service.FilesService;
 import cn.staitech.anno.service.SysOrganizationService;
 import cn.staitech.anno.service.TopicService;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.files.Files;
+import cn.staitech.anno.vo.files.in.FilesListVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;

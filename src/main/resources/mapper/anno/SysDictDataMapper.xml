@@ -278,7 +278,7 @@
     </select>
 
     <select id="getSysDictDataVoListByParm" parameterType="map"
-            resultType="cn.staitech.anno.domain.vo.diagnosis.SysDictDataVo">
+            resultType="cn.staitech.anno.vo.diagnosis.SysDictDataVo">
         select
         <include refid="Base_Column_List"/>
         from sys_dict_data t
