@@ -75,6 +75,9 @@
             <if test="params.userId!= null">
                 AND m.user_id = #{params.userId}
             </if>
+            <if test="params.indicatorId!= null">
+                AND p.indicator_id = #{params.indicatorId}
+            </if>
             <if test="params.projectName!= null">
                 AND p.project_name like CONCAT('%',#{params.projectName},'%')
             </if>

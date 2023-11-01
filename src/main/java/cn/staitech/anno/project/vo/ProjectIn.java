@@ -57,6 +57,8 @@ public class ProjectIn {
     private Integer pageNum;
 
     private Integer pageSize;
+    @ApiModelProperty("关联指标")
+    private Long indicatorId;
 
 
 }
