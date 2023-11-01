@@ -30,7 +30,7 @@ public class Marking implements Serializable {
      * 主键自增id
      */
     @TableId(value = "marking_id", type = IdType.AUTO)
-    private String marking_id;
+    private Long marking_id;
 
     /**
      * 标注id

@@ -149,7 +149,7 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String insert(ViewAddIn req) throws Exception {
+    public Long insert(ViewAddIn req) throws Exception {
         cn.staitech.anno.project.domain.Slide slideBy = slideMapperV1.selectById(req.getSlide_id());
         if (slideBy == null) {
             throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
@@ -225,7 +225,7 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String update(MarkingUpdateIn req) throws Exception {
+    public Long update(MarkingUpdateIn req) throws Exception {
         // 查询标注表中信息
         Marking markingBy = markingMapper.selectById(req.getMarking_id());
         if (!Optional.ofNullable(markingBy).isPresent()) {
@@ -296,7 +296,7 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int delete(String markingId) throws Exception {
+    public int delete(Long markingId) throws Exception {
         if (!Optional.ofNullable(markingId).isPresent()) {
             throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }

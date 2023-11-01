@@ -65,8 +65,8 @@ public class MarkingController {
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "添加标注")
     @PostMapping("/intelligentAnno/insert")
-    public R<String> add(@Validated @RequestBody ViewAddIn req) throws Exception {
-        String markingId = markingService.insert(req);
+    public R<Long> add(@Validated @RequestBody ViewAddIn req) throws Exception {
+        Long markingId = markingService.insert(req);
         return R.ok(markingId, MessageSource.M("OPERATE_SUCCEED"));
     }
 
@@ -74,7 +74,7 @@ public class MarkingController {
     @ApiOperation(value = "删除标注")
     @ApiImplicitParams({@ApiImplicitParam(name = "markingId", value = "标注id", required = true, dataType = "Long", paramType = "query")})
     @DeleteMapping("/intelligentAnno/delete")
-    public R<String> del(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) String marking_id) throws Exception {
+    public R<String> del(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) Long marking_id) throws Exception {
         markingService.delete(marking_id);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
@@ -82,7 +82,7 @@ public class MarkingController {
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "更新标注")
     @PutMapping("/intelligentAnno/update")
-    public R<String> update(@Validated @RequestBody MarkingUpdateIn req) throws Exception {
+    public R<Long> update(@Validated @RequestBody MarkingUpdateIn req) throws Exception {
         markingService.update(req);
         return R.ok(req.getMarking_id(), MessageSource.M("OPERATE_SUCCEED"));
     }

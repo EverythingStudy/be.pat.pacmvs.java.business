@@ -11,7 +11,7 @@ public class MarkingUpdateIn {
 
     @NotNull(message = "{DescriptionUpdateVO.annotationId.isnull}")
     @ApiModelProperty(value = "标注id")
-    private String marking_id;
+    private Long marking_id;
 
     @ApiModelProperty(value = "标注作者(绘制者)")
     private Long update_by;
