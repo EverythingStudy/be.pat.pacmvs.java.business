@@ -750,6 +750,7 @@ public class MarkingServiceImpl implements MarkingService {
         if (imageName != null) {
             for (SlideRes slide : slideResList) {
                 // 判断名称切片名称是否相同
+
                 if (Objects.equals(slide.getImageName(), imageName)) {
                     // 删除当前切片中所有标注
                     QueryWrapper<cn.staitech.anno.project.domain.Marking> markingQueryWrapperBy = new QueryWrapper<>();
@@ -768,11 +769,11 @@ public class MarkingServiceImpl implements MarkingService {
                     JsonFactory f = new MappingJsonFactory();
                     JsonParser jp = f.createParser(newBf);
                     JsonToken current;
+                    current = jp.nextToken();
                     while (jp.nextToken() != JsonToken.END_OBJECT) {
                         String fieldName = jp.getCurrentName();
                         // move from field name to field value
                         current = jp.nextToken();
-
                         if ("features".equals(fieldName)) {
                             if (current == JsonToken.START_ARRAY) {
                                 while (jp.nextToken() != JsonToken.END_ARRAY) {
@@ -871,7 +872,7 @@ public class MarkingServiceImpl implements MarkingService {
         marking.setImageId(Long.valueOf(slideBy.getImageId()));
         marking.setImageUrl(image.getImageUrl());
         marking.setCreateBy(Long.valueOf(properties1.getAnnotation_owner()));
-        marking.setGeometry(geometry);
+        marking.setGeometry(GeometryUtil.updateYAxle(geometry));
         marking.setSlideId(slideId);
         marking.setCreateTime(new Date());
         map.put("marking", marking);

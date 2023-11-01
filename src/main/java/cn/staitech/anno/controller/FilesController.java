@@ -73,6 +73,7 @@ public class FilesController extends BaseController {
             FileUploadVO fileUploadVO) throws Exception {
         fileUploadVO.setMultipartFile(file);
         Files files = fileUploadService.uploadAndProcessBusiness(fileUploadVO);
+//        if(fileUploadVO.getBusinessType() == "5")
         if (files.getFileNameList() != null) {
             if (files.getFileNameList().size() > 0) {
                 return R.fail(files.getFileNameList() + MessageSource.M("JSON_MULTIPLE_LABElS"));
