@@ -5,8 +5,7 @@ INSERT INTO `tb_project_type` (`project_type_id`, `project_type_name`, `project_
 
 添加字段
 （图片表添加字段）
-ALTER TABLE `tb_image`
-MODIFY COLUMN `folder_id` bigint NULL DEFAULT 0 COMMENT '文件夹id' AFTER `source`;
+ALTER TABLE `tb_image` ADD COLUMN `folder_id` bigint(20) DEFAULT 0 COMMENT '文件夹id';
 
  （项目表添加字段）
 ALTER TABLE tb_project ADD COLUMN tissue_id bigint(20) DEFAULT NULL COMMENT '病理组织ID';
