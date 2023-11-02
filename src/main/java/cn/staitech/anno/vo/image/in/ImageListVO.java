@@ -60,14 +60,14 @@ public class ImageListVO extends Pager implements Serializable {
     private Integer processFlag;
     @ApiModelProperty(value = "", hidden = true)
     private String searchValue;
-    @ApiModelProperty(value = "", hidden = true)
+    @ApiModelProperty(value = "创建人", hidden = true)
     private Long createBy;
     @ApiModelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
-    @ApiModelProperty(value = "", hidden = true)
+    @ApiModelProperty(value = "修改人", hidden = true)
     private Long updateBy;
-    @ApiModelProperty(value = "", hidden = true)
+    @ApiModelProperty(value = "修改时间", hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
     @ApiModelProperty(value = "切片编号")
@@ -98,4 +98,9 @@ public class ImageListVO extends Pager implements Serializable {
     private Integer bizType;
     @ApiModelProperty(value = "图像来源(1前端上传，2目录选片，3TCP客户端上传)", hidden = true)
     private Integer source;
+    @ApiModelProperty(value = "文件夹ID")
+    private Long folderId;
+    @ApiModelProperty(value = "创建人")
+    private String nickName;
+
 }
