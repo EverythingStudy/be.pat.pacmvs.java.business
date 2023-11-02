@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.AipreAlgorithmModelMapper">
+  <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.AipreAlgorithmModel">
+    <id column="model_id" jdbcType="BIGINT" property="modelId" />
+    <result column="model_name" jdbcType="VARCHAR" property="modelName" />
+    <result column="model_name_en" jdbcType="VARCHAR" property="modelNameEn" />
+    <result column="tissue_id" jdbcType="BIGINT" property="tissueId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    model_id, model_name, model_name_en, tissue_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from aipre_algorithm_model
+    where model_id = #{modelId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from aipre_algorithm_model
+    where model_id = #{modelId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="model_id" keyProperty="modelId" parameterType="cn.staitech.anno.domain.AipreAlgorithmModel" useGeneratedKeys="true">
+    insert into aipre_algorithm_model (model_name, model_name_en, tissue_id
+      )
+    values (#{modelName,jdbcType=VARCHAR}, #{modelNameEn,jdbcType=VARCHAR}, #{tissueId,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="model_id" keyProperty="modelId" parameterType="cn.staitech.anno.domain.AipreAlgorithmModel" useGeneratedKeys="true">
+    insert into aipre_algorithm_model
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="modelName != null">
+        model_name,
+      </if>
+      <if test="modelNameEn != null">
+        model_name_en,
+      </if>
+      <if test="tissueId != null">
+        tissue_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="modelName != null">
+        #{modelName,jdbcType=VARCHAR},
+      </if>
+      <if test="modelNameEn != null">
+        #{modelNameEn,jdbcType=VARCHAR},
+      </if>
+      <if test="tissueId != null">
+        #{tissueId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.AipreAlgorithmModel">
+    update aipre_algorithm_model
+    <set>
+      <if test="modelName != null">
+        model_name = #{modelName,jdbcType=VARCHAR},
+      </if>
+      <if test="modelNameEn != null">
+        model_name_en = #{modelNameEn,jdbcType=VARCHAR},
+      </if>
+      <if test="tissueId != null">
+        tissue_id = #{tissueId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where model_id = #{modelId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.staitech.anno.domain.AipreAlgorithmModel">
+    update aipre_algorithm_model
+    set model_name = #{modelName,jdbcType=VARCHAR},
+      model_name_en = #{modelNameEn,jdbcType=VARCHAR},
+      tissue_id = #{tissueId,jdbcType=BIGINT}
+    where model_id = #{modelId,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.AipreSlidePredictionMapper">
+  <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.AipreSlidePrediction">
+    <id column="slide_prediction_id" jdbcType="BIGINT" property="slidePredictionId" />
+    <result column="slide_id" jdbcType="INTEGER" property="slideId" />
+    <result column="image_id" jdbcType="INTEGER" property="imageId" />
+    <result column="ai_analyzed" jdbcType="SMALLINT" property="aiAnalyzed" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    slide_prediction_id, slide_id, image_id, ai_analyzed, description, organization_id, 
+    create_by, create_time, update_by, update_time, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from aipre_slide_prediction
+    where slide_prediction_id = #{slidePredictionId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from aipre_slide_prediction
+    where slide_prediction_id = #{slidePredictionId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="slide_prediction_id" keyProperty="slidePredictionId" parameterType="cn.staitech.anno.domain.AipreSlidePrediction" useGeneratedKeys="true">
+    insert into aipre_slide_prediction (slide_id, image_id, ai_analyzed, 
+      description, organization_id, create_by, 
+      create_time, update_by, update_time, 
+      del_flag)
+    values (#{slideId,jdbcType=INTEGER}, #{imageId,jdbcType=INTEGER}, #{aiAnalyzed,jdbcType=SMALLINT}, 
+      #{description,jdbcType=VARCHAR}, #{organizationId,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{delFlag,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="slide_prediction_id" keyProperty="slidePredictionId" parameterType="cn.staitech.anno.domain.AipreSlidePrediction" useGeneratedKeys="true">
+    insert into aipre_slide_prediction
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="slideId != null">
+        slide_id,
+      </if>
+      <if test="imageId != null">
+        image_id,
+      </if>
+      <if test="aiAnalyzed != null">
+        ai_analyzed,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="organizationId != null">
+        organization_id,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="slideId != null">
+        #{slideId,jdbcType=INTEGER},
+      </if>
+      <if test="imageId != null">
+        #{imageId,jdbcType=INTEGER},
+      </if>
+      <if test="aiAnalyzed != null">
+        #{aiAnalyzed,jdbcType=SMALLINT},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="organizationId != null">
+        #{organizationId,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.AipreSlidePrediction">
+    update aipre_slide_prediction
+    <set>
+      <if test="slideId != null">
+        slide_id = #{slideId,jdbcType=INTEGER},
+      </if>
+      <if test="imageId != null">
+        image_id = #{imageId,jdbcType=INTEGER},
+      </if>
+      <if test="aiAnalyzed != null">
+        ai_analyzed = #{aiAnalyzed,jdbcType=SMALLINT},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="organizationId != null">
+        organization_id = #{organizationId,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=CHAR},
+      </if>
+    </set>
+    where slide_prediction_id = #{slidePredictionId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.staitech.anno.domain.AipreSlidePrediction">
+    update aipre_slide_prediction
+    set slide_id = #{slideId,jdbcType=INTEGER},
+      image_id = #{imageId,jdbcType=INTEGER},
+      ai_analyzed = #{aiAnalyzed,jdbcType=SMALLINT},
+      description = #{description,jdbcType=VARCHAR},
+      organization_id = #{organizationId,jdbcType=BIGINT},
+      create_by = #{createBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=BIGINT},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=CHAR}
+    where slide_prediction_id = #{slidePredictionId,jdbcType=BIGINT}
+  </update>
+</mapper>
