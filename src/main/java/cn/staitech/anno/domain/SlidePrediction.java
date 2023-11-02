@@ -1,69 +1,64 @@
 package cn.staitech.anno.domain;
 
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.IdType;
 import java.util.Date;
+import com.baomidou.mybatisplus.annotation.TableId;
+import java.io.Serializable;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
- * aipre_slide_prediction
- * @author 
+ * <p>
+ * 眼科切片预测表
+ * </p>
+ *
+ * @author wanglibei
+ * @since 2023-11-02
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
+@TableName("aipre_slide_prediction")
+@ApiModel(value="SlidePrediction对象", description="眼科切片预测表")
 public class SlidePrediction implements Serializable {
-    /**
-     * 切片预测ID
-     */
+
+    private static final long serialVersionUID=1L;
+
+    @ApiModelProperty(value = "切片预测ID")
+    @TableId(value = "slide_prediction_id", type = IdType.AUTO)
     private Long slidePredictionId;
 
-    /**
-     * 项目ID
-     */
+    @ApiModelProperty(value = "项目ID")
     private Integer slideId;
 
-    /**
-     * 图像ID
-     */
+    @ApiModelProperty(value = "图像ID")
     private Integer imageId;
 
-    /**
-     * AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败）
-     */
-    private Short aiAnalyzed;
+    @ApiModelProperty(value = "AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败）")
+    private Integer aiAnalyzed;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     private String description;
 
-    /**
-     * 机构ID
-     */
+    @ApiModelProperty(value = "机构ID")
     private Long organizationId;
 
-    /**
-     * 创建者
-     */
+    @ApiModelProperty(value = "创建者")
     private Long createBy;
 
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty(value = "创建时间")
     private Date createTime;
 
-    /**
-     * 更新者
-     */
+    @ApiModelProperty(value = "更新者")
     private Long updateBy;
 
-    /**
-     * 更新时间
-     */
+    @ApiModelProperty(value = "更新时间")
     private Date updateTime;
 
-    /**
-     * 删除标志（0代表存在 1代表删除）
-     */
+    @ApiModelProperty(value = "删除标志（0代表存在 1代表删除）")
     private String delFlag;
 
-    private static final long serialVersionUID = 1L;
+
 }
