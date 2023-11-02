@@ -5,43 +5,43 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * aipre_slide_prediction
+ * aipre_folder
  * @author 
  */
 @Data
-public class AipreSlidePrediction implements Serializable {
+public class Folder implements Serializable {
     /**
-     * 切片预测ID
+     * 文件夹id
      */
-    private Long slidePredictionId;
+    private Long folderId;
 
     /**
-     * 项目ID
+     * 文件夹名称
      */
-    private Integer slideId;
+    private String folderName;
 
     /**
-     * 图像ID
+     * 文件大小
      */
-    private Integer imageId;
+    private Long folderSize;
 
     /**
-     * AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败）
+     * 文件夹url地址
      */
-    private Short aiAnalyzed;
+    private String folderUrl;
 
     /**
-     * 描述
+     * 压缩包id
      */
-    private String description;
+    private Long filesId;
 
     /**
-     * 机构ID
+     * 机构id
      */
     private Long organizationId;
 
     /**
-     * 创建者
+     * 创建者id
      */
     private Long createBy;
 
@@ -51,7 +51,7 @@ public class AipreSlidePrediction implements Serializable {
     private Date createTime;
 
     /**
-     * 更新者
+     * 更新者id
      */
     private Long updateBy;
 
@@ -61,9 +61,9 @@ public class AipreSlidePrediction implements Serializable {
     private Date updateTime;
 
     /**
-     * 删除标志（0代表存在 1代表删除）
+     * 逻辑删除（0删除，1未删除）
      */
-    private String delFlag;
+    private String deleteFlag;
 
     private static final long serialVersionUID = 1L;
 }

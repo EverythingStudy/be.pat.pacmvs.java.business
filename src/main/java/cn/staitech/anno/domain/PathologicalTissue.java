@@ -8,7 +8,7 @@ import lombok.Data;
  * @author 
  */
 @Data
-public class AiprePathologicalTissue implements Serializable {
+public class PathologicalTissue implements Serializable {
     /**
      * 病理组织id
      */

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.staitech.anno.mapper.AipreSlidePredictionMapper">
-  <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.AipreSlidePrediction">
+<mapper namespace="cn.staitech.anno.mapper.SlidePredictionMapper">
+  <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.SlidePrediction">
     <id column="slide_prediction_id" jdbcType="BIGINT" property="slidePredictionId" />
     <result column="slide_id" jdbcType="INTEGER" property="slideId" />
     <result column="image_id" jdbcType="INTEGER" property="imageId" />
@@ -28,7 +28,7 @@
     delete from aipre_slide_prediction
     where slide_prediction_id = #{slidePredictionId,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" keyColumn="slide_prediction_id" keyProperty="slidePredictionId" parameterType="cn.staitech.anno.domain.AipreSlidePrediction" useGeneratedKeys="true">
+  <insert id="insert" keyColumn="slide_prediction_id" keyProperty="slidePredictionId" parameterType="cn.staitech.anno.domain.SlidePrediction" useGeneratedKeys="true">
     insert into aipre_slide_prediction (slide_id, image_id, ai_analyzed, 
       description, organization_id, create_by, 
       create_time, update_by, update_time, 
@@ -38,7 +38,7 @@
       #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{delFlag,jdbcType=CHAR})
   </insert>
-  <insert id="insertSelective" keyColumn="slide_prediction_id" keyProperty="slidePredictionId" parameterType="cn.staitech.anno.domain.AipreSlidePrediction" useGeneratedKeys="true">
+  <insert id="insertSelective" keyColumn="slide_prediction_id" keyProperty="slidePredictionId" parameterType="cn.staitech.anno.domain.SlidePrediction" useGeneratedKeys="true">
     insert into aipre_slide_prediction
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="slideId != null">
@@ -105,7 +105,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.AipreSlidePrediction">
+  <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.SlidePrediction">
     update aipre_slide_prediction
     <set>
       <if test="slideId != null">
@@ -141,7 +141,7 @@
     </set>
     where slide_prediction_id = #{slidePredictionId,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="cn.staitech.anno.domain.AipreSlidePrediction">
+  <update id="updateByPrimaryKey" parameterType="cn.staitech.anno.domain.SlidePrediction">
     update aipre_slide_prediction
     set slide_id = #{slideId,jdbcType=INTEGER},
       image_id = #{imageId,jdbcType=INTEGER},

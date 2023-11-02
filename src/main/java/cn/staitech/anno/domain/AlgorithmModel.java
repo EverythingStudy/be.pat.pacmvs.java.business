@@ -8,7 +8,7 @@ import lombok.Data;
  * @author 
  */
 @Data
-public class AipreAlgorithmModel implements Serializable {
+public class AlgorithmModel implements Serializable {
     /**
      * 算法模型id
      */

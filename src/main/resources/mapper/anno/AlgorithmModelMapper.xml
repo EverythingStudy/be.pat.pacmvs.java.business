@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.staitech.anno.mapper.AipreAlgorithmModelMapper">
-  <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.AipreAlgorithmModel">
+<mapper namespace="cn.staitech.anno.mapper.AlgorithmModelMapper">
+  <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.AlgorithmModel">
     <id column="model_id" jdbcType="BIGINT" property="modelId" />
     <result column="model_name" jdbcType="VARCHAR" property="modelName" />
     <result column="model_name_en" jdbcType="VARCHAR" property="modelNameEn" />
@@ -20,13 +20,13 @@
     delete from aipre_algorithm_model
     where model_id = #{modelId,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" keyColumn="model_id" keyProperty="modelId" parameterType="cn.staitech.anno.domain.AipreAlgorithmModel" useGeneratedKeys="true">
+  <insert id="insert" keyColumn="model_id" keyProperty="modelId" parameterType="cn.staitech.anno.domain.AlgorithmModel" useGeneratedKeys="true">
     insert into aipre_algorithm_model (model_name, model_name_en, tissue_id
       )
     values (#{modelName,jdbcType=VARCHAR}, #{modelNameEn,jdbcType=VARCHAR}, #{tissueId,jdbcType=BIGINT}
       )
   </insert>
-  <insert id="insertSelective" keyColumn="model_id" keyProperty="modelId" parameterType="cn.staitech.anno.domain.AipreAlgorithmModel" useGeneratedKeys="true">
+  <insert id="insertSelective" keyColumn="model_id" keyProperty="modelId" parameterType="cn.staitech.anno.domain.AlgorithmModel" useGeneratedKeys="true">
     insert into aipre_algorithm_model
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="modelName != null">
@@ -51,7 +51,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.AipreAlgorithmModel">
+  <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.AlgorithmModel">
     update aipre_algorithm_model
     <set>
       <if test="modelName != null">
@@ -66,7 +66,7 @@
     </set>
     where model_id = #{modelId,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="cn.staitech.anno.domain.AipreAlgorithmModel">
+  <update id="updateByPrimaryKey" parameterType="cn.staitech.anno.domain.AlgorithmModel">
     update aipre_algorithm_model
     set model_name = #{modelName,jdbcType=VARCHAR},
       model_name_en = #{modelNameEn,jdbcType=VARCHAR},
