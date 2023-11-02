@@ -5,6 +5,7 @@ import cn.staitech.anno.vo.files.Files;
 import cn.staitech.anno.vo.files.in.FilesListVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
@@ -15,4 +16,6 @@ import java.util.concurrent.ExecutionException;
  */
 public interface FilesService extends IService<Files> {
     PageMaster<Files> selectList(FilesListVO filesListVO) throws ExecutionException, InterruptedException;
+
+    List<String> zipExport(String zipUrl, Long projectId) throws Exception;
 }
