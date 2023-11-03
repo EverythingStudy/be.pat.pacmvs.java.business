@@ -19,7 +19,7 @@
     create_by, create_time, update_by, update_time, del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from aipre_slide_prediction
     where slide_prediction_id = #{slidePredictionId,jdbcType=BIGINT}
@@ -29,13 +29,13 @@
     where slide_prediction_id = #{slidePredictionId,jdbcType=BIGINT}
   </delete>
   <insert id="insert" keyColumn="slide_prediction_id" keyProperty="slidePredictionId" parameterType="cn.staitech.anno.domain.SlidePrediction" useGeneratedKeys="true">
-    insert into aipre_slide_prediction (slide_id, image_id, ai_analyzed, 
-      description, organization_id, create_by, 
-      create_time, update_by, update_time, 
+    insert into aipre_slide_prediction (slide_id, image_id, ai_analyzed,
+      description, organization_id, create_by,
+      create_time, update_by, update_time,
       del_flag)
-    values (#{slideId,jdbcType=INTEGER}, #{imageId,jdbcType=INTEGER}, #{aiAnalyzed,jdbcType=SMALLINT}, 
-      #{description,jdbcType=VARCHAR}, #{organizationId,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, 
+    values (#{slideId,jdbcType=INTEGER}, #{imageId,jdbcType=INTEGER}, #{aiAnalyzed,jdbcType=SMALLINT},
+      #{description,jdbcType=VARCHAR}, #{organizationId,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT},
+      #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP},
       #{delFlag,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" keyColumn="slide_prediction_id" keyProperty="slidePredictionId" parameterType="cn.staitech.anno.domain.SlidePrediction" useGeneratedKeys="true">

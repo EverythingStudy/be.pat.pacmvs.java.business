@@ -37,19 +37,12 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     @Resource
     private TopicService topicService;
-
     @Resource
     private FilesService filesService;
-
     @Resource
     private AsyncTask asyncTask;
-
-    @Resource
-    private MarkingService markingService;
-
     @Resource
     private FilesProcessService filesProcessService;
-
     @Resource
     private AlgorithmAssessmentService algorithmAssessmentService;
     private String basePath = "/home/pat_saas";
@@ -121,17 +114,17 @@ public class FileUploadServiceImpl implements FileUploadService {
     public Files uploadAndProcessBusiness(FileUploadVO fileUploadVO) throws Exception {
 
         Files files = new Files();
-
         Integer businessType = fileUploadVO.getBusinessType();
-
         String dirPath = basePath;
 
         switch (businessType) {
             case 3:
+            case 6:
                 if (Objects.equals(fileUploadVO.getTopicName(), "")) {
                     throw new Exception(MessageSource.M("ARGUMENT_INVALID_NOT_FIND_TOPIC"));
                 }
-                Topic topic = topicService.selectOne(fileUploadVO.getTopicName(), 1);
+                Integer projectTypeId = businessType == 6 ? 6 : 1;
+                Topic topic = topicService.selectOne(fileUploadVO.getTopicName(), projectTypeId);
                 // 定义文件夹名称
                 dirPath = dirPath + File.separator + "Slides" + File.separator + topic.getTopicName();
                 //创建文件夹
@@ -143,12 +136,9 @@ public class FileUploadServiceImpl implements FileUploadService {
                 files.setTopicId(topic.getTopicId());
                 break;
             case 4:
-                dirPath = zipPath;
-                break;
             case 5:
                 dirPath = zipPath;
                 break;
-
         }
         String fileName = fileUploadVO.getFileName();
         // 文件名称
@@ -212,6 +202,10 @@ public class FileUploadServiceImpl implements FileUploadService {
                 // 解析zip压缩包
                 List<String> fileNameList = algorithmAssessmentService.zipExport(files.getFilesPath(), fileUploadVO.getProjectId(), fileUrl);
                 files.setFileNameList(fileNameList);
+                break;
+            case 6:
+                // 解析zip压缩包
+                filesService.zipExport(files.getFilesPath(), fileUploadVO.getProjectId());
                 break;
         }
         return files;

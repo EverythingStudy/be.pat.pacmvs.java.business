@@ -58,6 +58,24 @@ public class ImageController extends BaseController {
         return R.ok(page);
     }
 
+
+    /**
+     * 切片列表 - 原始切片 .
+     */
+    @ApiOperationSupport(author = "wangfeng")
+    @ApiOperation(value = "切片列表", notes = "切片列表 - 王峰")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pageNum", value = "当前记录起始索引", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+            @ApiImplicitParam(name = "pageSize", value = "每页显示记录数", dataTypeClass = Integer.class, paramType = "query", example = "10")})
+    @Log(title = "查询切片列表", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.QUERY)
+    @PostMapping("/eyeList")
+    public R<PageMaster<ImageListOutVO>> eyeList(@Validated @RequestBody ImageListVO image) throws ExecutionException, InterruptedException {
+        image.setBizType(7);
+        PageMaster<ImageListOutVO> page = imageService.selectList(image);
+        return R.ok(page);
+    }
+
+
     /**
      * 单个切片详细信息 .
      */
