@@ -16,11 +16,11 @@ import java.util.List;
  * @Entity cn.staitech.anno.project.domain.Slide
  */
 public interface SlideMapperV1 extends BaseMapper<Slide> {
-    IPage<SlideVO> pageSlides(@Param("page") Page page, @Param("params") SlideQueryIN params);
+    IPage<SlideVO> pageSlides(@Param("page") Page page, @Param("params") SlideQueryIn params);
 
-    IPage<ReviewSlideVO> pageReviewSlide(@Param("page") Page page, @Param("params") ReviewSlideIN params);
+    IPage<ReviewSlideVO> pageReviewSlide(@Param("page") Page page, @Param("params") ReviewSlideIn params);
 
-    List<SlideExportVO> querySlides(@Param("params") SlideQueryIN params);
+    List<SlideExportVO> querySlides(@Param("params") SlideQueryIn params);
 }
 
 

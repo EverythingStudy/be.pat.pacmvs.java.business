@@ -1,6 +1,6 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.round.Round;
+import cn.staitech.anno.vo.round.Round;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;

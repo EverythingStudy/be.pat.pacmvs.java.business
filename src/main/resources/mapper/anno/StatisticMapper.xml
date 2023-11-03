@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.StatisticMapper">
-    <resultMap id="StatisticResult" type="cn.staitech.anno.domain.vo.statistic.StatisticObjectOutVO">
+    <resultMap id="StatisticResult" type="cn.staitech.anno.vo.statistic.StatisticObjectOutVO">
         <result property="statisticCount" column="annotation_count"/>
         <result property="statisticCount" column="image_count"/>
         <result property="statisticId" column="project_id"/>
@@ -20,7 +20,7 @@
     </resultMap>
 
     <resultMap id="AnnotationResult"
-               type="cn.staitech.anno.domain.vo.statistic.AnnotationStatisticIdListOutVO">
+               type="cn.staitech.anno.vo.statistic.AnnotationStatisticIdListOutVO">
         <result property="statisticId" column="project_id"/>
         <result property="statisticName" column="project_name"/>
         <result property="statisticId" column="indicator_id"/>
@@ -34,21 +34,21 @@
     </resultMap>
 
     <resultMap id="AnnotationPageResult"
-               type="cn.staitech.anno.domain.vo.statistic.AnnotationStatisticListPageOutVO">
+               type="cn.staitech.anno.vo.statistic.AnnotationStatisticListPageOutVO">
         <result property="markingId" column="marking_id"/>
     </resultMap>
 
-    <resultMap id="UserListResult" type="cn.staitech.anno.domain.vo.statistic.StatisticUserListOutVO">
+    <resultMap id="UserListResult" type="cn.staitech.anno.vo.statistic.StatisticUserListOutVO">
         <result property="userId" column="user_id"/>
         <result property="userName" column="user_name"/>
     </resultMap>
 
-    <resultMap id="EarliestDateResult" type="cn.staitech.anno.domain.vo.statistic.TableDateOutVO">
+    <resultMap id="EarliestDateResult" type="cn.staitech.anno.vo.statistic.TableDateOutVO">
         <result property="earliestDate" column="earliest_date"/>
     </resultMap>
 
     <resultMap id="DictDataResult"
-               type="cn.staitech.anno.domain.vo.statistic.StatisticSysDictDataOutVO">
+               type="cn.staitech.anno.vo.statistic.StatisticSysDictDataOutVO">
         <result property="dictCode" column="dict_code"/>
         <result property="dictLabel" column="dict_label"/>
         <result property="dictSort" column="dict_sort"/>
@@ -197,7 +197,7 @@
     </sql>
 
     <!--综合统计列表：标注数量-项目-->
-    <select id="statisticSelectAnnoProjectList" parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO"
+    <select id="statisticSelectAnnoProjectList" parameterType="cn.staitech.anno.vo.statistic.StatisticListInVO"
             resultMap="StatisticResult">
         SELECT
         a.project_id,
@@ -215,7 +215,7 @@
 
     <!--综合统计列表：标注数量-病理指标-->
     <select id="statisticSelectAnnoIndicatorList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
+            parameterType="cn.staitech.anno.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
         SELECT
         pi.indicator_id,
         pi.indicator_name,
@@ -233,7 +233,7 @@
 
     <!--综合统计列表：标注数量-标注类别-->
     <select id="statisticSelectAnnoCategoryList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
+            parameterType="cn.staitech.anno.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
         SELECT
         pic.category_id,
         pic.category_name,
@@ -250,7 +250,7 @@
 
     <!--综合统计列表：标注数量-成员-->
     <select id="statisticSelectMemberList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
+            parameterType="cn.staitech.anno.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
         SELECT a.create_by,
         u.user_name,
         count(a.marking_id) AS annotation_count
@@ -264,7 +264,7 @@
     </select>
 
     <!--综合统计列表：标注数量-图像-->
-    <select id="statisticSelectAnnoImageList" parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO"
+    <select id="statisticSelectAnnoImageList" parameterType="cn.staitech.anno.vo.statistic.StatisticListInVO"
             resultMap="StatisticResult">
         SELECT
         i.image_id,
@@ -282,7 +282,7 @@
 
     <!--综合统计列表：标注数量-日期-按天统计-->
     <select id="statisticSelectAnnoDateDaysList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
+            parameterType="cn.staitech.anno.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
         SELECT
         DATE_FORMAT(a.update_time,'%Y-%m-%d') as statistic_date,
         count(a.annotation_id) as annotation_count
@@ -359,7 +359,7 @@
 
     <!--综合统计列表：标注数量-日期-按天统计-->
     <select id="statisticSelectAnnoDateDaysListExt"
-            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
+            parameterType="cn.staitech.anno.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
         SELECT
         DATE_FORMAT(a.update_time,'%Y-%m-%d') as statistic_date,
         count(a.marking_id) as annotation_count
@@ -426,7 +426,7 @@
 
     <!--综合统计列表：标注数量-日期-按月统计-->
     <select id="statisticSelectAnnoDateMonthsList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
+            parameterType="cn.staitech.anno.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
         SELECT
         DATE_FORMAT(a.create_time,'%Y-%m') as statistic_date,
         count(a.annotation_id) as annotation_count
@@ -502,7 +502,7 @@
     </select>
 
     <select id="statisticSelectAnnoDateMonthsListExt"
-            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
+            parameterType="cn.staitech.anno.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
         SELECT
         DATE_FORMAT(a.update_time,'%Y-%m') as statistic_date,
         count(a.marking_id) as annotation_count
@@ -570,7 +570,7 @@
 
     <!--综合统计列表：图像数量-项目-->
     <select id="statisticSelectImageProjectList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
+            parameterType="cn.staitech.anno.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
         SELECT
         p.project_id,
         p.project_name,
@@ -590,7 +590,7 @@
 
     <!--综合统计列表：图像数量-病理指标-->
     <select id="statisticSelectImageIndicatorList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
+            parameterType="cn.staitech.anno.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
         SELECT
         pi.indicator_id,
         pi.indicator_name,
@@ -611,7 +611,7 @@
 
     <!--综合统计列表：图像数量-标注类别-->
     <select id="statisticSelectImageCategoryList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
+            parameterType="cn.staitech.anno.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
         SELECT
         pic.category_id,
         pic.category_name,
@@ -636,7 +636,7 @@
 
     <!--综合统计列表：图像数量-成员-->
     <select id="statisticSelectImageMemberList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
+            parameterType="cn.staitech.anno.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
         SELECT
         s.create_by,
         u.user_name,
@@ -661,7 +661,7 @@
 
     <!--综合统计列表：图像数量-日期  按天统计-->
     <select id="statisticSelectImageDateDaysList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
+            parameterType="cn.staitech.anno.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
         SELECT
         DATE_FORMAT(a.create_time,'%Y-%m-%d') as statistic_date,
         count(distinct(s.slide_id)) as image_count
@@ -680,7 +680,7 @@
 
     <!--综合统计列表：图像数量-日期  按月统计-->
     <select id="statisticSelectImageDateMonthsList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
+            parameterType="cn.staitech.anno.vo.statistic.StatisticListInVO" resultMap="StatisticResult">
         SELECT
         DATE_FORMAT(a.create_time,'%Y-%m') as statistic_date,
         count(distinct(s.slide_id)) as image_count
@@ -699,7 +699,7 @@
 
 
     <!--综合统计列表: 成员列表-标注  -->
-    <select id="queryAnnotationMembersList" parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO"
+    <select id="queryAnnotationMembersList" parameterType="cn.staitech.anno.vo.statistic.StatisticListInVO"
             resultMap="UserListResult">
         SELECT DISTINCT
         u.user_id,
@@ -715,7 +715,7 @@
     </select>
 
     <!--综合统计列表: 成员列表-图像  -->
-    <select id="queryImageMembersList" parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO"
+    <select id="queryImageMembersList" parameterType="cn.staitech.anno.vo.statistic.StatisticListInVO"
             resultMap="UserListResult">
         SELECT DISTINCT
         u.user_id,
@@ -736,7 +736,7 @@
 
     <!--标注统计列表: 项目列表 inner join 和left join 效果一样标准从属于一个项目 -->
     <select id="statisticSelectAnnoProjectIdList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO"
+            parameterType="cn.staitech.anno.vo.statistic.StatisticListInVO"
             resultMap="AnnotationResult">
         SELECT
         p.project_id,
@@ -753,7 +753,7 @@
 
     <!--标注统计列表: 病理指标列表-->
     <select id="statisticSelectAnnoIndicatorIdList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO"
+            parameterType="cn.staitech.anno.vo.statistic.StatisticListInVO"
             resultMap="AnnotationResult">
         SELECT
         pi.indicator_id,
@@ -771,7 +771,7 @@
 
     <!--标注统计列表: 标注类别列表-->
     <select id="statisticSelectAnnoCategoryIdList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO"
+            parameterType="cn.staitech.anno.vo.statistic.StatisticListInVO"
             resultMap="AnnotationResult">
         SELECT
         pic.category_id,
@@ -788,7 +788,7 @@
 
     <!--标注统计列表: 成员列表  -->
     <select id="statisticSelectAnnoMembersIdList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO"
+            parameterType="cn.staitech.anno.vo.statistic.StatisticListInVO"
             resultMap="AnnotationResult">
         SELECT DISTINCT
         u.user_id,
@@ -805,7 +805,7 @@
 
     <!--标注统计列表: 图像列表-->
     <select id="statisticSelectAnnoImageIdList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.StatisticListInVO"
+            parameterType="cn.staitech.anno.vo.statistic.StatisticListInVO"
             resultMap="AnnotationResult">
         SELECT
         i.image_id,
@@ -823,7 +823,7 @@
 
     <!--标注统计列表-项目Page-->
     <select id="statisticSelectAnnoProjectPageList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.AnnotationStatisticListPageInVO"
+            parameterType="cn.staitech.anno.vo.statistic.AnnotationStatisticListPageInVO"
             resultMap="AnnotationPageResult">
         SELECT
         p.project_id,
@@ -843,7 +843,7 @@
 
     <!--标注统计列表-病理指标Page-->
     <select id="statisticSelectAnnoIndicatorPageList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.AnnotationStatisticListPageInVO"
+            parameterType="cn.staitech.anno.vo.statistic.AnnotationStatisticListPageInVO"
             resultMap="AnnotationPageResult">
         SELECT
         pi.indicator_id,
@@ -862,7 +862,7 @@
 
     <!--标注统计列表: 标注类别Page-->
     <select id="statisticSelectAnnoCategoryPageList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.AnnotationStatisticListPageInVO"
+            parameterType="cn.staitech.anno.vo.statistic.AnnotationStatisticListPageInVO"
             resultMap="AnnotationPageResult">
         SELECT
         a.category_id,
@@ -880,7 +880,7 @@
 
     <!--标注统计列表: 成员Page-->
     <select id="SelectMembersPageList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.AnnotationStatisticListPageInVO"
+            parameterType="cn.staitech.anno.vo.statistic.AnnotationStatisticListPageInVO"
             resultMap="AnnotationPageResult">
         SELECT
         u.user_id,
@@ -901,7 +901,7 @@
 
     <!--标注统计列表: 图像Page-->
     <select id="statisticSelectAnnoImagePageList"
-            parameterType="cn.staitech.anno.domain.vo.statistic.AnnotationStatisticListPageInVO"
+            parameterType="cn.staitech.anno.vo.statistic.AnnotationStatisticListPageInVO"
             resultMap="AnnotationPageResult">
         SELECT
         i.image_id,
@@ -934,5 +934,100 @@
         select dict_code, dict_label, dict_sort
         from sys_dict_data
         where dict_code = #{dictCode}
+    </select>
+
+    <select id="statisticCategoryName" resultType="cn.staitech.anno.domain.PathologicalIndicatorCategory">
+        select pic.category_name,
+        pic.category_id
+        from tb_pathological_indicator_category pic
+        left join tb_marking m on m.category_id = pic.category_id
+        left join tb_project p on p.project_id = m.project_id
+        <where>
+            and p.del_flag = 0
+            and pic.del_flag = 0
+            and p.organization_id = #{organizationId}
+            <if test="projectIds != null and projectIds.size()>0">
+                AND p.project_id IN
+                <foreach item="item" index="index" collection="projectIds" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+
+        group by pic.category_name,pic.category_id;
+
+    </select>
+
+    <select id="statisticSlideByProject" resultType="cn.staitech.anno.vo.statistic.ExportSlideOrderProjectOut">
+        select s.slide_id slideId, i.image_name imageName, p.project_name projectName, s.description,
+        count(m.marking_id) markingTotal
+        from tb_slide s
+        left join tb_image i on s.image_id = i.image_id
+        left join tb_project p on s.project_id = p.project_id
+        left join tb_marking m on m.slide_id = s.slide_id
+        <where>
+            and i.delete_flag = 1
+            and p.del_flag = 0
+            and p.organization_id = #{organizationId}
+            <if test="projectIds != null and projectIds.size()>0">
+                AND p.project_id IN
+                <foreach item="item" index="index" collection="projectIds" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+
+        group by s.slide_id, i.image_name, p.project_name, s.description
+
+    </select>
+
+    <select id="countSlideByProject" resultType="java.lang.Integer">
+        select count(0)
+        from tb_marking
+        <where>
+            and slide_id = #{slideId}
+            and category_id= #{categoryId}
+        </where>
+    </select>
+    <select id="statisticMembersByProject" resultType="cn.staitech.anno.vo.statistic.ExportMemberOrderProjectOut">
+
+        select u.user_name userName,
+        u.user_id userId,
+        p.project_id projectId,
+        p.project_name projectName,
+        count(m.marking_id) markingTotal,
+        sum(case when s.status &lt; 6 then 1 else 0 end) notReviewed,
+        sum(case when s.status &gt; 5 then 1 else 0 end) reviewed
+        from sys_user u
+        LEFT JOIN tb_marking m on u.user_id=m.create_by
+        left join tb_project p on p.project_id = m.project_id
+        left join tb_slide s on s.project_id=p.project_id
+        AND m.slide_id=s.slide_id
+        <where>
+            and u.del_flag = '0'
+            and p.del_flag = 0
+            and p.organization_id = #{organizationId}
+            <if test="projectIds != null and projectIds.size()>0">
+                AND p.project_id IN
+                <foreach item="item" index="index" collection="projectIds" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        group by u.user_name,u.user_id,
+        p.project_id, p.project_name;
+
+    </select>
+
+    <select id="countMembersByProject" resultType="cn.staitech.anno.vo.statistic.CountMembersByProjecOut">
+        select count(0)                                         markingTotal,
+               sum(case when s.status &lt; 6 then 1 else 0 end) notReviewed,
+               sum(case when s.status &gt; 5 then 1 else 0 end) reviewed
+        from tb_marking m
+                 left join tb_slide s on m.slide_id = s.slide_id
+        where m.project_id = #{projectId}
+          AND m.create_by = #{userId}
+          and m.category_id = #{categoryId}
+
     </select>
 </mapper>

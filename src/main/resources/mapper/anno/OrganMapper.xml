@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.OrganMapper">
-    <resultMap type="cn.staitech.anno.domain.organ.Organ" id="OrganResult">
+    <resultMap type="cn.staitech.anno.domain.Organ" id="OrganResult">
         <result property="organId" column="organ_id"/>
         <result property="name" column="name"/>
         <result property="nameEn" column="name_en"/>
@@ -11,7 +11,7 @@
     </resultMap>
 
     <select id="getOrganBySpeciesId" parameterType="java.lang.String"
-            resultType="cn.staitech.anno.domain.organ.Organ">
+            resultType="cn.staitech.anno.domain.Organ">
         SELECT organ_id,`name`,`name_en`,species_code
         FROM tb_organ
         <where>

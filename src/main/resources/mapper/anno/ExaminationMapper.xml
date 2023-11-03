@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.ExaminationMapper">
-    <resultMap type="cn.staitech.anno.domain.vo.ExaminationListVO" id="ExaminationResult">
+    <resultMap type="cn.staitech.anno.vo.examination.ExaminationListVO" id="ExaminationResult">
         <result property="slideId" column="slide_id"/>
         <result property="projectId" column="project_id"/>
         <result property="imageId" column="image_id"/>
@@ -50,7 +50,7 @@
     </sql>
 
     <!-- 切片提交复核 -->
-    <update id="updateExaminationSubmit" parameterType="cn.staitech.anno.domain.vo.ExaminationSubmitVO">
+    <update id="updateExaminationSubmit" parameterType="cn.staitech.anno.vo.examination.ExaminationSubmitVO">
         update tb_slide
         <set>
             <if test="processFlag != null and processFlag != ''">
@@ -68,7 +68,7 @@
     </update>
 
     <!--查询复核图像列表-->
-    <select id="selectExaminationList" parameterType="cn.staitech.anno.domain.vo.ExaminationSelectVO"
+    <select id="selectExaminationList" parameterType="cn.staitech.anno.vo.examination.ExaminationSelectVO"
             resultMap="ExaminationResult">
         <include refid="selectExaminationVo"/>
         <where>
@@ -100,7 +100,7 @@
     </select>
 
     <!--修改复核图像状态-->
-    <update id="updateExaminationState" parameterType="cn.staitech.anno.domain.vo.ExaminationStateVO">
+    <update id="updateExaminationState" parameterType="cn.staitech.anno.vo.examination.ExaminationStateVO">
         update tb_slide
         <set>
             <if test="examinationFlag != ''">

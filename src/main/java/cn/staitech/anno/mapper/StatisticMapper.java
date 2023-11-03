@@ -1,6 +1,8 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.vo.statistic.*;
+import cn.staitech.anno.domain.PathologicalIndicatorCategory;
+import cn.staitech.anno.vo.statistic.*;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
@@ -242,4 +244,14 @@ public interface StatisticMapper {
      * @return
      */
     StatisticSysDictDataOutVO statisticSelectDictDataById(@PathVariable("dictCode") Long dictCode);
+
+    List<PathologicalIndicatorCategory> statisticCategoryName(@Param("projectIds") List<Long> projectIds, @Param("organizationId")Long organizationId);
+
+    List<ExportSlideOrderProjectOut> statisticSlideByProject(@Param("projectIds") List<Long> projectIds, @Param("organizationId")Long organizationId);
+
+    int countSlideByProject(@Param("slideId") Long slideId,@Param("categoryId")Long categoryId);
+
+    List<ExportMemberOrderProjectOut> statisticMembersByProject(@Param("projectIds") List<Long> projectIds, @Param("organizationId")Long organizationId);
+
+    CountMembersByProjecOut countMembersByProject(@Param("projectId") Long projectId, @Param("userId")Long userId,@Param("categoryId")Long categoryId);
 }

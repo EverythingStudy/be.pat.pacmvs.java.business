@@ -1,11 +1,11 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.domain.projectgroup.ProjectGroup;
-import cn.staitech.anno.domain.projectgroup.in.RemoveProjectGroupIn;
-import cn.staitech.anno.domain.projectgroup.out.ProjectGroupListOut;
 import cn.staitech.anno.mapper.ProjectGroupMapper;
 import cn.staitech.anno.service.ProjectGroupService;
 import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.vo.projectgroup.ProjectGroup;
+import cn.staitech.anno.vo.projectgroup.in.RemoveProjectGroupIn;
+import cn.staitech.anno.vo.projectgroup.out.ProjectGroupListOut;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.bean.BeanUtils;

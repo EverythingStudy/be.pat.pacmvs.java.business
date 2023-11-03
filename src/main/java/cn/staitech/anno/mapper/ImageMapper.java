@@ -1,9 +1,9 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.Image;
-import cn.staitech.anno.domain.image.in.ImageBatchIdsVO;
-import cn.staitech.anno.domain.image.in.ImageListVO;
-import cn.staitech.anno.domain.image.in.ImageTopicBatchIdsVO;
+import cn.staitech.anno.vo.image.in.ImageBatchIdsVO;
+import cn.staitech.anno.vo.image.in.ImageListVO;
+import cn.staitech.anno.vo.image.in.ImageTopicBatchIdsVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 

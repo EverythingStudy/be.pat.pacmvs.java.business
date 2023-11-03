@@ -1,8 +1,9 @@
 package cn.staitech.anno.utils;
 
 import cn.staitech.anno.domain.*;
-import cn.staitech.anno.domain.vo.*;
 import cn.staitech.anno.service.*;
+import cn.staitech.anno.vo.examination.ExaminationListVO;
+import cn.staitech.anno.vo.project.*;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -168,7 +169,7 @@ public class ProjectUtils {
 
         //更新项目人工标注数
         projectUtils.projectService.updateProjectHumanAnnotationQuantity(annotationVO);
-        CacheUtils.ProjectCache(new Project());
+        CacheUtils.projectCache(new Project());
     }
 
     /**

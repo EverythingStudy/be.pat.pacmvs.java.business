@@ -1,12 +1,12 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.Project;
-import cn.staitech.anno.domain.project.ProjectPo;
-import cn.staitech.anno.domain.project.in.OperateProjectIn;
-import cn.staitech.anno.domain.project.in.ProjectListQueryIn;
-import cn.staitech.anno.domain.project.in.ProjectRemoveIn;
-import cn.staitech.anno.domain.project.out.*;
-import cn.staitech.anno.domain.projectgroup.ProjectGroup;
+import cn.staitech.anno.domain.ProjectPo;
+import cn.staitech.anno.vo.project.in.OperateProjectIn;
+import cn.staitech.anno.vo.project.in.ProjectListQueryIn;
+import cn.staitech.anno.vo.project.in.ProjectRemoveIn;
+import cn.staitech.anno.vo.project.out.*;
+import cn.staitech.anno.vo.projectgroup.ProjectGroup;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import com.baomidou.mybatisplus.extension.service.IService;

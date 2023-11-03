@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.SpecialReclaimMapper">
-    <resultMap type="cn.staitech.anno.domain.special.SpecialReclaim" id="SpecialReclaimResult">
+    <resultMap type="cn.staitech.anno.vo.special.SpecialReclaim" id="SpecialReclaimResult">
         <result property="specialReclaimId" column="special_reclaim_id"/>
         <result property="specialId" column="special_id"/>
         <result property="projectNum" column="project_num"/>
@@ -41,7 +41,7 @@
     </select>
 
     <!--    根据专题id查询列表,按照时间排序,并取出第一条数据-->
-    <select id="selectOne" parameterType="cn.staitech.anno.domain.special.SpecialReclaim"
+    <select id="selectOne" parameterType="cn.staitech.anno.vo.special.SpecialReclaim"
             resultMap="SpecialReclaimResult">
         <include refid="selectList"/>
         <where>
@@ -68,7 +68,7 @@
         ORDER BY reclaim_time DESC LIMIT 1
     </select>
 
-    <insert id="insert" parameterType="cn.staitech.anno.domain.special.SpecialReclaim" useGeneratedKeys="true"
+    <insert id="insert" parameterType="cn.staitech.anno.vo.special.SpecialReclaim" useGeneratedKeys="true"
             keyProperty="specialReclaimId">
         insert into tb_special_reclaim (
         <if test="specialId != null and specialId != '' ">

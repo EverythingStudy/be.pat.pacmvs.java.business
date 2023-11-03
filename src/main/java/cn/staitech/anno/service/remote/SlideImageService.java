@@ -1,7 +1,7 @@
 package cn.staitech.anno.service.remote;
 
-import cn.staitech.anno.domain.special.SpecialImage;
-import cn.staitech.anno.domain.vo.specialimageanno.AlgorithmCutImageVO;
+import cn.staitech.anno.vo.special.SpecialImage;
+import cn.staitech.anno.vo.specialimageanno.AlgorithmCutImageVO;
 import cn.staitech.common.core.constant.SecurityConstants;
 import cn.staitech.common.core.domain.R;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -18,7 +18,6 @@ import java.util.List;
  * @Description:切图处理
  * @date 2023年8月7日
  */
-//@FeignClient(contextId = "SlideImageService", value = "staitech-openslide",configuration = FeignConfigure.class)
 @FeignClient(contextId = "SlideImageService", value = "staitech-openslide")
 public interface SlideImageService {
 

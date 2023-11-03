@@ -2,21 +2,19 @@ package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.Group;
 import cn.staitech.anno.domain.Project;
+import cn.staitech.anno.domain.ProjectPo;
 import cn.staitech.anno.domain.RecentlyVisited;
-import cn.staitech.anno.domain.project.ProjectExt;
-import cn.staitech.anno.domain.project.ProjectPo;
-import cn.staitech.anno.domain.project.in.OperateProjectIn;
-import cn.staitech.anno.domain.project.in.ProjectListQueryIn;
-import cn.staitech.anno.domain.project.in.ProjectRemoveIn;
-import cn.staitech.anno.domain.project.out.*;
-import cn.staitech.anno.domain.project.out.data.NavigationBarData;
-import cn.staitech.anno.domain.project.out.data.NavigationBarDataOut;
-import cn.staitech.anno.domain.projectgroup.ProjectGroup;
-import cn.staitech.anno.domain.special.Special;
 import cn.staitech.anno.enums.ReasonsEnum;
 import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.service.ProjectExtService;
 import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.vo.project.ProjectExt;
+import cn.staitech.anno.vo.project.in.OperateProjectIn;
+import cn.staitech.anno.vo.project.in.ProjectListQueryIn;
+import cn.staitech.anno.vo.project.in.ProjectRemoveIn;
+import cn.staitech.anno.vo.project.out.*;
+import cn.staitech.anno.vo.projectgroup.ProjectGroup;
+import cn.staitech.anno.vo.special.Special;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.bean.BeanUtils;
@@ -361,7 +359,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
      */
     @Override
     public R queryProjectWithGroupByUserId(Long userId) {
-        Map<Long, ProjectWithGroupsVo> resultProjectMap = new HashMap<>(16);
+        Map<Long, ProjectWithGroupsVO> resultProjectMap = new HashMap<>(16);
         //查询专题
         Map<String, Object> querySpecialParams = ImmutableMap.of("delFlag", "0", "userId", userId);
         Object o = querySpecialParams.get("delFlag");
@@ -381,7 +379,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
             if (!projectList.isEmpty()) {
                 projectList.forEach(p -> {
                     //构建前端所需项目对象
-                    ProjectWithGroupsVo vo = new ProjectWithGroupsVo();
+                    ProjectWithGroupsVO vo = new ProjectWithGroupsVO();
                     BeanUtils.copyBeanProp(vo, p);
                     resultProjectMap.put(p.getProjectId(), vo);
                     projectIds.add(p.getProjectId());
@@ -390,7 +388,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
                 List<ProjectGroup> projectGroupList = projectGroupMapper.selectProjectGroupByProjectId(projectIds, "", null);
                 if (!projectGroupList.isEmpty()) {
                     projectGroupList.forEach(g -> {
-                        ProjectWithGroupsVo p = resultProjectMap.get(g.getProjectId());
+                        ProjectWithGroupsVO p = resultProjectMap.get(g.getProjectId());
                         if (p.getChildren() == null) {
                             List<ProjectGroup> children = new ArrayList<>();
                             children.add(g);
@@ -468,7 +466,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
                 if (!projectList.isEmpty()) {
                     projectList.forEach(p -> {
                         //构建前端所需项目对象
-                        ProjectWithGroupsVo vo = new ProjectWithGroupsVo();
+                        ProjectWithGroupsVO vo = new ProjectWithGroupsVO();
                         BeanUtils.copyBeanProp(vo, p);
                         projectIds.add(p.getProjectId());
                     });

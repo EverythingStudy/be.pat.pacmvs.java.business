@@ -2,7 +2,7 @@ package cn.staitech.anno.utils;
 
 import cn.staitech.anno.domain.ExaminationLog;
 import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.vo.AnnotationJsonVO;
+import cn.staitech.anno.vo.annotation.AnnotationJsonVO;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.serializer.SerializerFeature;

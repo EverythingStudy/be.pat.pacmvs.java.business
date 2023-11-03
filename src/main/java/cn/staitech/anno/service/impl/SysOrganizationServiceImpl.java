@@ -1,9 +1,9 @@
 package cn.staitech.anno.service.impl;
 
 
-import cn.staitech.anno.domain.organization.OrganizationIdName;
 import cn.staitech.anno.mapper.SysOrganizationMapper;
 import cn.staitech.anno.service.SysOrganizationService;
+import cn.staitech.anno.vo.organization.OrganizationIdName;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

@@ -1,6 +1,6 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.domain.species.Species;
+import cn.staitech.anno.domain.Species;
 import cn.staitech.anno.service.SpeciesService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.R;

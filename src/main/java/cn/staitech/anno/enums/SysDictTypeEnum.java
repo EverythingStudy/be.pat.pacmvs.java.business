@@ -6,11 +6,29 @@ package cn.staitech.anno.enums;
  */
 
 public enum SysDictTypeEnum {
+    /**
+     * sys_viscera
+     */
     organization(1, "sys_viscera"),
+    /**
+     * sys_position
+     */
     position(2, "sys_position"),
+    /**
+     * sys_lesion
+     */
     lesion(3, "sys_lesion"),
+    /**
+     * sys_ddefinition
+     */
     ddefinition(4, "sys_ddefinition"),
+    /**
+     * sys_grade
+     */
     grade(5, "sys_grade"),
+    /**
+     * sys_viscera_organization
+     */
     sysvisceraorganization(6, "sys_viscera_organization");
 
     private int value;

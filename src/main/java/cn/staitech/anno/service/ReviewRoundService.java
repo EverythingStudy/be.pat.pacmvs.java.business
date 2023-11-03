@@ -1,9 +1,9 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.ReviewRound;
-import cn.staitech.anno.domain.reviewround.ReviewRoundBatchInVO;
-import cn.staitech.anno.domain.reviewround.ReviewRoundOutVO;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.reviewround.ReviewRoundBatchInVO;
+import cn.staitech.anno.vo.reviewround.ReviewRoundOutVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

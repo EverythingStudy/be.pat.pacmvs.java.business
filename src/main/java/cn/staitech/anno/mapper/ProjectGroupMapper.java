@@ -1,8 +1,8 @@
 package cn.staitech.anno.mapper;
 
 
-import cn.staitech.anno.domain.project.ProjectExt;
-import cn.staitech.anno.domain.projectgroup.ProjectGroup;
+import cn.staitech.anno.vo.project.ProjectExt;
+import cn.staitech.anno.vo.projectgroup.ProjectGroup;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

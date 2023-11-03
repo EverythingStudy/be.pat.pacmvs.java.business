@@ -2,8 +2,8 @@ package cn.staitech.anno.mapper;
 
 
 import cn.staitech.anno.domain.SysDictData;
-import cn.staitech.anno.domain.vo.diagnosis.SysDictDataVo;
-import cn.staitech.anno.domain.vo.diagnosis.SysDictTagVo;
+import cn.staitech.anno.vo.diagnosis.SysDictDataVo;
+import cn.staitech.anno.vo.diagnosis.SysDictTagVo;
 
 import java.util.List;
 import java.util.Map;

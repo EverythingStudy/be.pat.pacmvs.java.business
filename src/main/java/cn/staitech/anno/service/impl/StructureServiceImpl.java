@@ -1,6 +1,6 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.domain.structure.Structure;
+import cn.staitech.anno.domain.Structure;
 import cn.staitech.anno.mapper.StructureMapper;
 import cn.staitech.anno.service.StructureService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;

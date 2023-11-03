@@ -246,4 +246,5 @@ public class MapConstant {
         STRUCTURE_MAP = structureService.selectMap();
         STRUCTURE_MAP_EN = structureService.selectMapEn();
     }
+
 }

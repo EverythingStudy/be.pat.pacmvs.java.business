@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.StructureMapper">
-    <resultMap type="cn.staitech.anno.domain.structure.Structure" id="StructureResult">
+    <resultMap type="cn.staitech.anno.domain.Structure" id="StructureResult">
         <result property="structureId" column="structure_id"/>
         <result property="name" column="name"/>
         <result property="nameEn" column="name_en"/>
@@ -11,8 +11,8 @@
         <result property="speciesId" column="species_id"/>
     </resultMap>
 
-    <select id="selectList" parameterType="cn.staitech.anno.domain.structure.Structure"
-            resultType="cn.staitech.anno.domain.structure.Structure">
+    <select id="selectList" parameterType="cn.staitech.anno.domain.Structure"
+            resultType="cn.staitech.anno.domain.Structure">
         SELECT organ_id,`name`, `name_en`, species_id, structure_id FROM tb_structure
         <where>
             <if test="structureId != null">

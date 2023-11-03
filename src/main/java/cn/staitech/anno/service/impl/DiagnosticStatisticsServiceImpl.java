@@ -2,17 +2,17 @@ package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.collection.ListUtil;
 import cn.staitech.anno.constant.CommonConstant;
-import cn.staitech.anno.domain.special.Special;
-import cn.staitech.anno.domain.vo.diagnosis.StatisticsBodyVo;
-import cn.staitech.anno.domain.vo.diagnosis.StatisticsHeadVo;
-import cn.staitech.anno.domain.vo.reportrecord.ReportRecordAddVO;
 import cn.staitech.anno.exception.ReportException;
 import cn.staitech.anno.mapper.SpecialDiagnosisMapper;
 import cn.staitech.anno.mapper.SpecialMapper;
 import cn.staitech.anno.service.DiagnosticStatisticsService;
+import cn.staitech.anno.utils.DateUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.WordTool;
-import cn.staitech.anno.utils.DateUtils;
+import cn.staitech.anno.vo.diagnosis.StatisticsBodyVo;
+import cn.staitech.anno.vo.diagnosis.StatisticsHeadVo;
+import cn.staitech.anno.vo.reportrecord.ReportRecordAddVO;
+import cn.staitech.anno.vo.special.Special;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -214,7 +214,6 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
         return retMap;
     }
 
-    //
     public List<Map<String, Integer>> getTotalnMap(List<StatisticsBodyVo> dataAllList) {
         List<Map<String, Integer>> list = new ArrayList<>();
         Map<String, Integer> visceraMap = new HashMap<>(16);
@@ -234,7 +233,7 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
             String visceraKey = headerKey + CommonConstant.GLIDE_LINE + sysVisceraName;
             String lesionAndPositionKey = visceraKey + CommonConstant.GLIDE_LINE + sysLesionName + CommonConstant.GLIDE_LINE + sysPositionName;
             String lesionAndPositionGradeKey = lesionAndPositionKey + CommonConstant.GLIDE_LINE + sysGradeName;
-            String gradeKey = visceraKey + CommonConstant.GLIDE_LINE +"未见明显异常";
+            String gradeKey = visceraKey + CommonConstant.GLIDE_LINE + "未见明显异常";
             // 器官诊断数量
             visceraMap = countData(visceraMap, visceraKey);
             // 未见明显异常
@@ -403,8 +402,8 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
             String groupName = vo.getGroupName();
             String dosage = vo.getDosage();
 
-            String headerKey = genderName + "_" + groupName + "_" + dosage;
-            String visceraKey = headerKey + "_" + sysVisceraName;
+            String headerKey = genderName + GLIDE_LINE + groupName + GLIDE_LINE + dosage;
+            String visceraKey = headerKey + GLIDE_LINE + sysVisceraName;
             String gradeKey = visceraKey + "_未见明显异常";
             Map<String, Integer> noChangeMap = staticsData.get(1);
             String diagnosedTotal = "-";
@@ -430,9 +429,9 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
             String groupName = vo.getGroupName();
             String dosage = vo.getDosage();
 
-            String headerKey = genderName + "_" + groupName + "_" + dosage;
-            String visceraKey = headerKey + "_" + sysVisceraName;
-            String lesionAndPositionKey = visceraKey + "_" + sysLesionName + "_" + sysPositionName;
+            String headerKey = genderName + GLIDE_LINE + groupName + GLIDE_LINE + dosage;
+            String visceraKey = headerKey + GLIDE_LINE + sysVisceraName;
+            String lesionAndPositionKey = visceraKey + GLIDE_LINE + sysLesionName + GLIDE_LINE + sysPositionName;
             Map<String, Integer> lesionPositionMap = staticsData.get(2);
             String diagnosedTotal = "-";
             if (lesionPositionMap.containsKey(lesionAndPositionKey)) {
@@ -456,10 +455,10 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
             String genderName = vo.getSex();
             String groupName = vo.getGroupName();
             String dosage = vo.getDosage();
-            String headerKey = genderName + "_" + groupName + "_" + dosage;
-            String visceraKey = headerKey + "_" + sysVisceraName;
-            String lesionAndPositionKey = visceraKey + "_" + sysLesionName + "_" + sysPositionName;
-            String lesionAndPositionGradeKey = lesionAndPositionKey + "_" + perGrade;
+            String headerKey = genderName + GLIDE_LINE + groupName + GLIDE_LINE + dosage;
+            String visceraKey = headerKey + GLIDE_LINE + sysVisceraName;
+            String lesionAndPositionKey = visceraKey + GLIDE_LINE + sysLesionName + GLIDE_LINE + sysPositionName;
+            String lesionAndPositionGradeKey = lesionAndPositionKey + GLIDE_LINE + perGrade;
             Map<String, Integer> lesionPositioGradenMap = staticsData.get(3);
 
             String diagnosedTotal = "-";
@@ -472,7 +471,16 @@ public class DiagnosticStatisticsServiceImpl implements DiagnosticStatisticsServ
         return gradeInfo;
     }
 
-    // 表头处理
+    /**
+     * 表头处理
+     *
+     * @param fList
+     * @param mList
+     * @param maxFCount
+     * @param maxMCount
+     * @param tableCount
+     * @return
+     */
     public List<List<String>> autoHeader(List<List<StatisticsHeadVo>> fList, List<List<StatisticsHeadVo>> mList,
                                          int maxFCount, int maxMCount, int tableCount) {
         List<List<String>> headerList = new ArrayList<>();

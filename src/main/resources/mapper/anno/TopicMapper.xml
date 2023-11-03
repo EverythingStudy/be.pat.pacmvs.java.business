@@ -15,7 +15,7 @@
         <result property="delFlag" column="del_flag"/>
     </resultMap>
 
-    <resultMap type="cn.staitech.anno.domain.topic.TopicIdName" id="topicIdNameResult">
+    <resultMap type="cn.staitech.anno.vo.topic.TopicIdName" id="topicIdNameResult">
         <result property="topicId" column="topic_id"/>
         <result property="topicName" column="topic_name"/>
     </resultMap>

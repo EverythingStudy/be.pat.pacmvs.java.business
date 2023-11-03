@@ -3,8 +3,8 @@ package cn.staitech.anno.project.controller;
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.anno.project.service.ProjectService;
-import cn.staitech.anno.project.vo.DownTaskIN;
-import cn.staitech.anno.project.vo.ProjectIN;
+import cn.staitech.anno.project.vo.DownTaskIn;
+import cn.staitech.anno.project.vo.ProjectIn;
 import cn.staitech.anno.project.vo.ProjectVO;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.utils.LanguageUtils;
@@ -45,7 +45,7 @@ public class ProjectController {
 
     @ApiOperation(value = "分页查询")
     @PostMapping("/page")
-    public R<PageMaster<ProjectVO>> page(@RequestBody ProjectIN in) throws Exception {
+    public R<PageMaster<ProjectVO>> page(@RequestBody ProjectIn in) throws Exception {
         handleAuth(in);
         Page page = new Page(in.getPageNum(), in.getPageSize());
         projectService.pageProject(page, in);
@@ -71,7 +71,7 @@ public class ProjectController {
     @RequiresPermissions("smartAnno:project:list")
     @ApiOperation(value = "列表查询")
     @PostMapping("/query")
-    public R<List<ProjectVO>> query(@RequestBody ProjectIN in) throws Exception {
+    public R<List<ProjectVO>> query(@RequestBody ProjectIn in) throws Exception {
         handleAuth(in);
         return R.ok(projectService.queryProject(in));
     }
@@ -86,15 +86,16 @@ public class ProjectController {
     @ApiOperation(value = "项目导出json")
     @PostMapping("/jsonExport")
     @RequiresPermissions(value = {"smartAnno:project:slice:exportList", "smartAnno:project:slice:operation:exportJson", "smartAnno:project:export"}, logical = Logical.OR)
-    public R<DownTask> jsonExport(@RequestBody DownTaskIN downTaskIN) throws Exception {
+    public R<DownTask> jsonExport(@RequestBody DownTaskIn downTaskIN) throws Exception {
         return R.ok(markingService.projectJsonExport(downTaskIN.getProjectId(), downTaskIN.getSlideIds()));
     }
 
     /**
      * 管理员id为1
+     *
      * @param in
      */
-    private void handleAuth(ProjectIN in) {
+    private void handleAuth(ProjectIn in) {
         Long userId = SecurityUtils.getUserId();
         if (userId > 1) {
             in.setUserId(userId);

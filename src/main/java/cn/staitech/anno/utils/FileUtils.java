@@ -1,7 +1,7 @@
 package cn.staitech.anno.utils;
 
-import cn.staitech.anno.domain.geojson.Features;
-import cn.staitech.anno.domain.geojson.MarkGeojson;
+import cn.staitech.anno.vo.geojson.Features;
+import cn.staitech.anno.vo.marking.MarkGeojson;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;

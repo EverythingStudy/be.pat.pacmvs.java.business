@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.SpecialMenuMapper">
-    <resultMap type="cn.staitech.anno.domain.special.SpecialMenu" id="SysMenuResult">
+    <resultMap type="cn.staitech.anno.vo.special.SpecialMenu" id="SysMenuResult">
         <id property="menuId" column="menu_id"/>
         <result property="menuName" column="menu_name"/>
         <result property="parentName" column="parent_name"/>
@@ -45,7 +45,7 @@
         FROM tb_special_menu
     </sql>
 
-    <select id="selectMenuList" parameterType="cn.staitech.anno.domain.special.SpecialMenu" resultMap="SysMenuResult">
+    <select id="selectMenuList" parameterType="cn.staitech.anno.vo.special.SpecialMenu" resultMap="SysMenuResult">
         <include refid="selectMenuVo"/>
         <where>
             <if test="menuName != null and menuName != ''">
@@ -70,7 +70,7 @@
         WHERE srm.role_id = #{roleId}
     </select>
 
-    <select id="selectMenuListByUserId" parameterType="cn.staitech.anno.domain.special.SpecialMenu"
+    <select id="selectMenuListByUserId" parameterType="cn.staitech.anno.vo.special.SpecialMenu"
             resultMap="SysMenuResult">
         SELECT DISTINCT
         m.menu_id,

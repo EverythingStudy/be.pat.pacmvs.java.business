@@ -1,6 +1,6 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.color.Color;
+import cn.staitech.anno.domain.Color;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

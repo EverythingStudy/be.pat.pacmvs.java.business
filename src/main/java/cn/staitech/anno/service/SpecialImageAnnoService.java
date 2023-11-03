@@ -1,18 +1,18 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.marking.PointCount;
-import cn.staitech.anno.domain.special.SpecialAnnotation;
-import cn.staitech.anno.domain.special.SpecialImage;
-import cn.staitech.anno.domain.vo.specialimage.SpecialImageSelectVO;
-import cn.staitech.anno.domain.vo.specialimage.WaitSpecialImageVO;
-import cn.staitech.anno.domain.vo.specialimageanno.AnnoMarkGeojson;
-import cn.staitech.anno.domain.vo.specialimageanno.AnnoProperties;
-import cn.staitech.anno.domain.vo.specialimageanno.SpecialAnnoAddVO;
-import cn.staitech.anno.domain.vo.specialimageanno.in.AlgorithmAnnIn;
-import cn.staitech.anno.domain.vo.specialimageanno.in.CallBackAnnAddIn;
-import cn.staitech.anno.domain.vo.specialimageanno.in.SpecialAnnoProperties;
-import cn.staitech.anno.domain.vo.specialsliceimage.AuditSpecialImageVO;
-import cn.staitech.anno.domain.vo.specialsliceimage.OrganDict;
+import cn.staitech.anno.vo.marking.PointCount;
+import cn.staitech.anno.vo.special.SpecialAnnotation;
+import cn.staitech.anno.vo.special.SpecialImage;
+import cn.staitech.anno.vo.specialimage.SpecialImageSelectVO;
+import cn.staitech.anno.vo.specialimage.WaitSpecialImageVO;
+import cn.staitech.anno.vo.specialimageanno.AnnoMarkGeojson;
+import cn.staitech.anno.vo.specialimageanno.AnnoProperties;
+import cn.staitech.anno.vo.specialimageanno.SpecialAnnoAddVO;
+import cn.staitech.anno.vo.specialimageanno.in.AlgorithmAnnIn;
+import cn.staitech.anno.vo.specialimageanno.in.CallBackAnnAddIn;
+import cn.staitech.anno.vo.specialimageanno.in.SpecialAnnoProperties;
+import cn.staitech.anno.vo.specialsliceimage.AuditSpecialImageVO;
+import cn.staitech.anno.vo.specialsliceimage.OrganDict;
 import cn.staitech.common.core.domain.R;
 
 import java.util.List;
@@ -25,18 +25,6 @@ import java.util.List;
  * @date 2023年6月12日
  */
 public interface SpecialImageAnnoService {
-
-
-    /**
-     * @param @param  specialImageList
-     * @param @return
-     * @return int
-     * @throws
-     * @Title: insertSpecialImageList
-     * @Description: 批量插入专题选片列表
-     */
-//	R<List<Long>>  insertSpecialAnnotationList(List<SpecialAnnotation> list);
-
 
     R<List<SpecialAnnoAddVO>> annotationSave(List<SpecialAnnoAddVO> list, SpecialImage sImage) throws Exception;
 
@@ -147,16 +135,6 @@ public interface SpecialImageAnnoService {
 
     List<OrganDict> getSystemDict(OrganDict dict);
 
-
-    /**
-     * 根据原图生成需要的缩略图，保存到tb_sub_image表中
-     *
-     * @param inFile
-     * @param id
-     * @return
-     */
-    String generateThumbnails(Long specialId, Long specialImageId);
-
     AnnoMarkGeojson getMarkGeojsonByList(List<SpecialAnnotation> list);
 
     AnnoProperties getPropertiesBy(SpecialAnnotation req);
@@ -164,6 +142,5 @@ public interface SpecialImageAnnoService {
     R callBackSlideViscer(List<CallBackAnnAddIn> list);
 
     void callBackAnnoResult(AlgorithmAnnIn algorithmAnnIn);
-
 
 }

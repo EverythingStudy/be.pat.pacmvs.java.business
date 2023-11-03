@@ -1,6 +1,6 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.algorithm.AlgorithmSpecialImage;
+import cn.staitech.anno.vo.algorithm.AlgorithmSpecialImage;
 
 import java.util.List;
 

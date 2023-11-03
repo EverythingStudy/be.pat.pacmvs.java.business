@@ -3,7 +3,6 @@ package cn.staitech.anno.project.controller;
 import cn.hutool.core.io.IoUtil;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.reviewround.ReviewRoundOutVO;
 import cn.staitech.anno.mapper.SlideMapper;
 import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.anno.project.domain.Review;
@@ -13,6 +12,7 @@ import cn.staitech.anno.project.service.SlideService;
 import cn.staitech.anno.project.vo.*;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.reviewround.ReviewRoundOutVO;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -58,14 +58,14 @@ public class ReviewController {
 
     @ApiOperation(value = "viewer新增评审")
     @PostMapping("/insertReview")
-    public R<String> insertReview(@Validated @RequestBody ReviewIN reviews) throws Exception {
+    public R<String> insertReview(@Validated @RequestBody ReviewIn reviews) throws Exception {
         reviewService.insert(reviews);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     @ApiOperation(value = "viewer编辑评审")
     @PutMapping("/updateReview")
-    public R<String> updateReview(@Validated @RequestBody ReviewUP reviews) throws Exception {
+    public R<String> updateReview(@Validated @RequestBody ReviewUp reviews) throws Exception {
         reviewService.update(reviews);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
@@ -80,7 +80,7 @@ public class ReviewController {
     @RequiresPermissions("smartReview:project:export")
     @ApiOperation(value = "评审数据导出")
     @PostMapping("/exportReview")
-    public R<DownTask> exportReview(@RequestBody DownTaskIN in) throws Exception {
+    public R<DownTask> exportReview(@RequestBody DownTaskIn in) throws Exception {
         return R.ok(reviewService.csvExportReview(in.getProjectId(), in.getSlideIds()));
     }
 
@@ -129,7 +129,7 @@ public class ReviewController {
     @GetMapping("/pageReviewRound")
     public R<PageMaster<ReviewRoundOutVO>> pageReviewRound(@NotNull(message = "分页参数为空！") @RequestParam("pageNum") @ApiParam(name = "pageNum", value = "分页参数", required = true) Integer pageNum,
                                                            @NotNull(message = "分页参数为空！") @RequestParam("pageSize") @ApiParam(name = "pageSize", value = "分页参数", required = true) Integer pageSize,
-                                                           ReviewRoundIN params) {
+                                                           ReviewRoundIn params) {
         Page page = new Page(pageNum, pageSize);
         return R.ok(reviewService.pageReviewRound(page, params));
     }
@@ -139,7 +139,7 @@ public class ReviewController {
     @GetMapping("/pageReviewSlide")
     public R<PageMaster<ReviewSlideVO>> pageReviewSlide(@NotNull(message = "分页参数为空！") @RequestParam("pageNum") @ApiParam(name = "pageNum", value = "分页参数", required = true) Integer pageNum,
                                                         @NotNull(message = "分页参数为空！") @RequestParam("pageSize") @ApiParam(name = "pageSize", value = "分页参数", required = true) Integer pageSize,
-                                                        ReviewSlideIN in) {
+                                                        ReviewSlideIn in) {
         Page page = new Page(pageNum, pageSize);
         return R.ok(slideService.pageReviewSlide(page, in));
     }

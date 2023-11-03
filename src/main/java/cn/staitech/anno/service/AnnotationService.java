@@ -2,10 +2,10 @@ package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.Annotation;
 import cn.staitech.anno.domain.SlideViewer;
-import cn.staitech.anno.domain.vo.AnnotationBroadcastVO;
-import cn.staitech.anno.domain.vo.AnnotationJsonVO;
-import cn.staitech.anno.domain.vo.AnnotationPageVO;
-import cn.staitech.anno.domain.vo.AnnotationStateVO;
+import cn.staitech.anno.vo.annotation.AnnotationBroadcastVO;
+import cn.staitech.anno.vo.annotation.AnnotationJsonVO;
+import cn.staitech.anno.vo.annotation.AnnotationPageVO;
+import cn.staitech.anno.vo.annotation.AnnotationStateVO;
 
 import java.util.List;
 

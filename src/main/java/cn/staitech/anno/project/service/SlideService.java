@@ -11,13 +11,13 @@ import java.util.List;
 
 public interface SlideService extends IService<Slide> {
 
-    PageMaster<SlideVO> pageSlides(Page page, SlideQueryIN params) throws Exception;
+    PageMaster<SlideVO> pageSlides(Page page, SlideQueryIn params) throws Exception;
 
-    List<SlideAnnoStatisticsVO> getSlideAnnoStatistics(SlideQueryIN params) throws Exception;
+    List<SlideAnnoStatisticsVO> getSlideAnnoStatistics(SlideQueryIn params) throws Exception;
 
-    void slideAnnoStatisticsExport(SlideQueryIN params) throws Exception;
+    void slideAnnoStatisticsExport(SlideQueryIn params) throws Exception;
 
-    PageMaster<ReviewSlideVO> pageReviewSlide(Page page, ReviewSlideIN params);
+    PageMaster<ReviewSlideVO> pageReviewSlide(Page page, ReviewSlideIn params);
 
 
 }

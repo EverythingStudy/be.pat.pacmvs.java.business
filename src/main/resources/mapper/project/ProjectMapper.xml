@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.project.mapper.ProjectMapperV1">
-    <select id="queryProject" parameterType="cn.staitech.anno.project.vo.ProjectIN"
+    <select id="queryProject" parameterType="cn.staitech.anno.project.vo.ProjectIn"
             resultType="cn.staitech.anno.project.vo.ProjectVO">
         select p.*,s.name as species_val,s.name_en as
         species_val_en,o.organization_name,u.user_name,i.indicator_name,i.indicator_name_en,ps.name as
@@ -57,7 +57,7 @@
         order by p.create_time desc
     </select>
 
-    <select id="pageProject" parameterType="cn.staitech.anno.project.vo.ProjectIN"
+    <select id="pageProject" parameterType="cn.staitech.anno.project.vo.ProjectIn"
             resultType="cn.staitech.anno.project.vo.ProjectVO">
         select distinct p.*,s.name as species_val,s.name_en as
         species_val_en,o.organization_name,u.user_name,i.indicator_name,i.indicator_name_en,ps.name as
@@ -74,6 +74,9 @@
             p.status != '1'
             <if test="params.userId!= null">
                 AND m.user_id = #{params.userId}
+            </if>
+            <if test="params.indicatorId!= null">
+                AND p.indicator_id = #{params.indicatorId}
             </if>
             <if test="params.projectName!= null">
                 AND p.project_name like CONCAT('%',#{params.projectName},'%')

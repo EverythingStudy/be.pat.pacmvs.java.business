@@ -32,7 +32,7 @@ public class SlideManage {
         //更新项目表数据（更新项目表图片数量）
         projectService.updateProject(project);
         //重新缓存项目数据
-        CacheUtils.ProjectCache(new Project());
+        CacheUtils.projectCache(new Project());
         return 1;
     }
 }

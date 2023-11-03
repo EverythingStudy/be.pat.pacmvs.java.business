@@ -1,6 +1,6 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.structure.Structure;
+import cn.staitech.anno.domain.Structure;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;

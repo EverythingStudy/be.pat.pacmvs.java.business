@@ -75,8 +75,8 @@
         </where>
     </select>
 
-    <select id="pageReviewRound" parameterType="cn.staitech.anno.project.vo.ReviewRoundIN"
-            resultType="cn.staitech.anno.domain.reviewround.ReviewRoundOutVO">
+    <select id="pageReviewRound" parameterType="cn.staitech.anno.project.vo.ReviewRoundIn"
+            resultType="cn.staitech.anno.vo.reviewround.ReviewRoundOutVO">
         SELECT
         rr.*,g.group_name,t.topic_name,r.round_name,u.user_name as create_by_name
         FROM tb_review_round rr

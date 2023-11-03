@@ -1,7 +1,7 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.ExaminationLog;
-import cn.staitech.anno.domain.vo.ExaminationLogVO;
+import cn.staitech.anno.vo.examination.ExaminationLogVO;
 
 import java.util.List;
 

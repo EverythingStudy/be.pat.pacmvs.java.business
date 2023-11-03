@@ -1,14 +1,14 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.domain.algorithm.AlgorithmAssessment;
-import cn.staitech.anno.domain.algorithm.AlgorithmJson;
-import cn.staitech.anno.domain.algorithm.in.SelectGeoJson;
-import cn.staitech.anno.domain.algorithm.out.SelectGeoJsonList;
 import cn.staitech.anno.mapper.AlgorithmAssessmentMapper;
 import cn.staitech.anno.mapper.AlgorithmJsonMapper;
 import cn.staitech.anno.service.AlgorithmJsonService;
 import cn.staitech.anno.utils.GeometryUtil;
 import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.vo.algorithm.AlgorithmAssessment;
+import cn.staitech.anno.vo.algorithm.AlgorithmJson;
+import cn.staitech.anno.vo.algorithm.in.SelectGeoJson;
+import cn.staitech.anno.vo.algorithm.out.SelectGeoJsonList;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.RemoteLabelService;
 import com.alibaba.fastjson.JSONArray;

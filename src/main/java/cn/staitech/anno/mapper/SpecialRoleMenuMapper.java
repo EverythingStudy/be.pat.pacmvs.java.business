@@ -1,6 +1,6 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.special.SpecialRoleMenu;
+import cn.staitech.anno.vo.special.SpecialRoleMenu;
 
 import java.util.List;
 

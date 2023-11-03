@@ -1,6 +1,6 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.structure.Structure;
+import cn.staitech.anno.domain.Structure;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;

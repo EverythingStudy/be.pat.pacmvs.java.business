@@ -14,7 +14,7 @@
         <result column="special_id" jdbcType="BIGINT" property="specialId"/>
     </resultMap>
 
-    <resultMap id="BaseResult" type="cn.staitech.anno.domain.vo.reportrecord.ReportRecordAllVO">
+    <resultMap id="BaseResult" type="cn.staitech.anno.vo.reportrecord.ReportRecordAllVO">
         <id column="report_id" jdbcType="BIGINT" property="reportId"/>
         <result column="file_name" jdbcType="VARCHAR" property="fileName"/>
         <result column="format" jdbcType="VARCHAR" property="format"/>
@@ -32,13 +32,13 @@
         <result column="report_url" jdbcType="VARCHAR" property="reportUrl"/>
     </resultMap>
 
-    <resultMap id="ProjectResult" type="cn.staitech.anno.domain.vo.ProjectAllVO">
+    <resultMap id="ProjectResult" type="cn.staitech.anno.vo.project.ProjectAllVO">
         <id column="project_id" jdbcType="BIGINT" property="projectId"/>
         <id column="special_id" jdbcType="BIGINT" property="specialId"/>
         <result column="project_name" jdbcType="VARCHAR" property="projectName"/>
     </resultMap>
 
-    <resultMap id="slideNumberResult" type="cn.staitech.anno.domain.vo.reportrecord.ReportRecordExportVO">
+    <resultMap id="slideNumberResult" type="cn.staitech.anno.vo.reportrecord.ReportRecordExportVO">
         <id column="slide_id" jdbcType="BIGINT" property="slideId"/>
         <result column="image_code" jdbcType="VARCHAR" property="imageCode"/>
     </resultMap>
@@ -51,7 +51,7 @@
         , r.file_name, r.format, r.file_size, r.user_id, r.apply_time, r.del_flag, r.report_type,
     r.report_file,r.special_id, u.user_name,r.pace,r.status,r.reasons
     </sql>
-    <select id="selectByPrimaryKey" parameterType="cn.staitech.anno.domain.vo.reportrecord.ReportRecordViewVO"
+    <select id="selectByPrimaryKey" parameterType="cn.staitech.anno.vo.reportrecord.ReportRecordViewVO"
             resultMap="BaseResult">
         select
         <include refid="Base_Column_List"/>
@@ -180,7 +180,7 @@
     </update>
 
     <!--查询专题下的所有项目-->
-    <select id="selectProjectList" parameterType="cn.staitech.anno.domain.vo.ProjectAllVO" resultMap="ProjectResult">
+    <select id="selectProjectList" parameterType="cn.staitech.anno.vo.project.ProjectAllVO" resultMap="ProjectResult">
         select project_id,project_name,special_id from tb_project
         <where>
             <if test="systemCode != null and systemCode != ''">
@@ -193,7 +193,7 @@
         </where>
     </select>
 
-    <select id="selectSlideNumber" parameterType="cn.staitech.anno.domain.vo.reportrecord.ReportRecordSingleVO"
+    <select id="selectSlideNumber" parameterType="cn.staitech.anno.vo.reportrecord.ReportRecordSingleVO"
             resultMap="slideNumberResult">
         select i.image_code,s.slide_id from tb_project as p left join tb_slide as s on p.project_id=s.project_id
         left join tb_sub_image as i on s.image_id=i.image_id
@@ -225,7 +225,7 @@
           and del_flag = 0
     </select>
 
-    <select id="selectImage" parameterType="java.lang.Long" resultType="cn.staitech.anno.domain.SubImage">
+    <select id="selectImage" parameterType="java.lang.Long" resultType="cn.staitech.anno.vo.subimage.SubImage">
         select *
         from tb_sub_image
         where special_id = #{specialId}

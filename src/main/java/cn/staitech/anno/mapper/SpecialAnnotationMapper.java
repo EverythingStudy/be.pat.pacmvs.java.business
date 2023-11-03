@@ -1,9 +1,9 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.marking.PointCount;
-import cn.staitech.anno.domain.special.SpecialAnnotation;
-import cn.staitech.anno.domain.vo.specialimageanno.in.SpecialAnnoProperties;
-import cn.staitech.anno.domain.vo.specialsliceimage.OrganDict;
+import cn.staitech.anno.vo.marking.PointCount;
+import cn.staitech.anno.vo.special.SpecialAnnotation;
+import cn.staitech.anno.vo.specialimageanno.in.SpecialAnnoProperties;
+import cn.staitech.anno.vo.specialsliceimage.OrganDict;
 
 import java.util.List;
 
@@ -40,7 +40,12 @@ public interface SpecialAnnotationMapper {
     List<SpecialAnnoProperties> selectSpecialPropertiesList(SpecialAnnotation specialAnnotation);
 
 
-    //匹配新增字段之前的表
+    /**
+     * 匹配新增字段之前的表
+     *
+     * @param specialAnnotation
+     * @return
+     */
     List<SpecialAnnotation> selectAnnotationList(SpecialAnnotation specialAnnotation);
 
     List<OrganDict> getSystemDict(OrganDict dict);

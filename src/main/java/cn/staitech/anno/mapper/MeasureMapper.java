@@ -1,8 +1,8 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.Measure;
-import cn.staitech.anno.domain.vo.measurevo.MeasureJsonVO;
-import cn.staitech.anno.domain.vo.measurevo.MeasureSelectVO;
+import cn.staitech.anno.vo.measurevo.MeasureJsonVO;
+import cn.staitech.anno.vo.measurevo.MeasureSelectVO;
 
 import java.util.List;
 

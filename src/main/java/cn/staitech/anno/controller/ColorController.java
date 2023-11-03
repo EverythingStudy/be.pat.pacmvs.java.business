@@ -1,7 +1,7 @@
 package cn.staitech.anno.controller;
 
 import cn.staitech.anno.constant.Container;
-import cn.staitech.anno.domain.color.Color;
+import cn.staitech.anno.domain.Color;
 import cn.staitech.anno.service.ColorService;
 import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.common.core.domain.R;

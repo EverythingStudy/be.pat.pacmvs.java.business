@@ -1,6 +1,6 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.domain.organ.Organ;
+import cn.staitech.anno.domain.Organ;
 import cn.staitech.anno.mapper.OrganMapper;
 import cn.staitech.anno.service.OrganService;
 import cn.staitech.anno.utils.LanguageUtils;

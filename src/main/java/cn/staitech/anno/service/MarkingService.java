@@ -1,13 +1,14 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.geojson.Features;
-import cn.staitech.anno.domain.geojson.in.MarkingUpdateIn;
-import cn.staitech.anno.domain.geojson.in.ViewAddIn;
-import cn.staitech.anno.domain.marking.Marking;
-import cn.staitech.anno.domain.marking.PointCount;
-import cn.staitech.anno.domain.marking.SlideRes;
-import cn.staitech.anno.domain.vo.marking.out.MarkingSelectListVo;
 import cn.staitech.anno.project.domain.DownTask;
+import cn.staitech.anno.vo.geojson.Features;
+import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
+import cn.staitech.anno.vo.geojson.in.ViewAddIn;
+import cn.staitech.anno.vo.marking.Marking;
+import cn.staitech.anno.vo.marking.MarkingSelectListVO;
+import cn.staitech.anno.vo.marking.PointCount;
+import cn.staitech.anno.vo.slide.SlideRes;
+import cn.staitech.system.api.domain.SysUser;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -20,7 +21,7 @@ public interface MarkingService {
      * @param slideId 标注信息
      * @return List<Slide>
      */
-    List<MarkingSelectListVo> selectList(Long slideId) throws Exception;
+    List<MarkingSelectListVO> selectList(Long slideId) throws Exception;
 
 
     List<Features> selectListBy(Long slideId) throws Exception;
@@ -97,6 +98,15 @@ public interface MarkingService {
      * @return
      */
     String slideJsonExport(Long slideId) throws Exception;
+
+
+    /**
+     * 导出json数据
+     *
+     * @param slideId
+     * @return
+     */
+    String slideJsonExportExt(Long slideId, SysUser sysUser) throws Exception;
 
     /**
      * 导入zip压缩包

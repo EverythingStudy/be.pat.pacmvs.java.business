@@ -1,6 +1,6 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.vo.reportrecord.ReportRecordAddVO;
+import cn.staitech.anno.vo.reportrecord.ReportRecordAddVO;
 
 /**
  * @author wanglibei

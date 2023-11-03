@@ -1,6 +1,6 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.domain.species.Species;
+import cn.staitech.anno.domain.Species;
 import cn.staitech.anno.mapper.SpeciesMapper;
 import cn.staitech.anno.service.SpeciesService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

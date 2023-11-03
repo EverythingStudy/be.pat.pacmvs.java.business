@@ -2,10 +2,10 @@ package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.ExamineScore;
 import cn.staitech.anno.domain.QuestionBank;
-import cn.staitech.anno.domain.examine.ExamineScoreBy;
-import cn.staitech.anno.domain.examine.ExamineScoreExportVO;
-import cn.staitech.anno.domain.examine.ExamineSelectVo;
-import cn.staitech.anno.domain.examine.SelectExaminationListVO;
+import cn.staitech.anno.vo.examination.SelectExaminationListVO;
+import cn.staitech.anno.vo.examine.ExamineScoreBy;
+import cn.staitech.anno.vo.examine.ExamineScoreExportVO;
+import cn.staitech.anno.vo.examine.ExamineSelectVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 

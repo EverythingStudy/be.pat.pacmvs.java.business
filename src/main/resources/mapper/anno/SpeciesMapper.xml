@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.SpeciesMapper">
-    <resultMap type="cn.staitech.anno.domain.species.Species" id="SpeciesResult">
+    <resultMap type="cn.staitech.anno.domain.Species" id="SpeciesResult">
         <result property="speciesId" column="species_id"/>
         <result property="name" column="name"/>
         <result property="nameEn" column="name_en"/>

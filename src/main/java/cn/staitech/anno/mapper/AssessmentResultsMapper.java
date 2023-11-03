@@ -1,8 +1,8 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.AssessmentResults;
-import cn.staitech.anno.domain.assessment.in.AssessmentExportIn;
-import cn.staitech.anno.domain.assessment.out.AssessmentExportOut;
+import cn.staitech.anno.vo.assessment.in.AssessmentExportIn;
+import cn.staitech.anno.vo.assessment.out.AssessmentExportOut;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;

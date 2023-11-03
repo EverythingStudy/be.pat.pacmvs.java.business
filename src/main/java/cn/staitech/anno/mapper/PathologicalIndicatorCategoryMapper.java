@@ -1,11 +1,11 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
-import cn.staitech.anno.domain.geojson.GeoLabel;
-import cn.staitech.anno.domain.vo.LabelListVO;
-import cn.staitech.anno.domain.vo.LabelVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListInVO;
-import cn.staitech.anno.domain.vo.statistic.StatisticCategoryListOutVO;
+import cn.staitech.anno.vo.annotation.LabelListVO;
+import cn.staitech.anno.vo.annotation.LabelVO;
+import cn.staitech.anno.vo.geojson.GeoLabel;
+import cn.staitech.anno.vo.statistic.StatisticCategoryListInVO;
+import cn.staitech.anno.vo.statistic.StatisticCategoryListOutVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 

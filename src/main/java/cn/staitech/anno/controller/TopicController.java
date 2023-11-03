@@ -1,11 +1,11 @@
 package cn.staitech.anno.controller;
 
 import cn.staitech.anno.domain.Topic;
-import cn.staitech.anno.domain.topic.in.TopicInsert;
-import cn.staitech.anno.domain.topic.in.TopicQueryIn;
 import cn.staitech.anno.service.TopicService;
-import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.utils.DateUtils;
+import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.topic.TopicInsert;
+import cn.staitech.anno.vo.topic.TopicQueryIn;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;

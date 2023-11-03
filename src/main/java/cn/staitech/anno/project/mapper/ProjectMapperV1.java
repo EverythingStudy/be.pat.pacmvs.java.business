@@ -1,7 +1,7 @@
 package cn.staitech.anno.project.mapper;
 
 import cn.staitech.anno.project.domain.Project;
-import cn.staitech.anno.project.vo.ProjectIN;
+import cn.staitech.anno.project.vo.ProjectIn;
 import cn.staitech.anno.project.vo.ProjectVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -18,9 +18,9 @@ import java.util.List;
  */
 public interface ProjectMapperV1 extends BaseMapper<Project> {
 
-    List<ProjectVO> queryProject(@Param("params") ProjectIN params);
+    List<ProjectVO> queryProject(@Param("params") ProjectIn params);
 
-    IPage<ProjectVO> pageProject(@Param("page") Page page, @Param("params") ProjectIN params) throws Exception;
+    IPage<ProjectVO> pageProject(@Param("page") Page page, @Param("params") ProjectIn params) throws Exception;
 }
 
 

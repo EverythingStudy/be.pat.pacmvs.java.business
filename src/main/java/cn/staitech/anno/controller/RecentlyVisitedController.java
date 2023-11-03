@@ -1,8 +1,8 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.domain.vo.recentlyvisited.RecentlyVisitedSelectVO;
 import cn.staitech.anno.service.RecentlyVisitedService;
 import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.vo.recentlyvisited.RecentlyVisitedSelectVO;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;

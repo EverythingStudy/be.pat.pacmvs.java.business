@@ -1,13 +1,12 @@
 package cn.staitech.anno.controller;
 
 import cn.staitech.anno.domain.Image;
-import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.image.in.*;
-import cn.staitech.anno.domain.image.out.ImageListOutVO;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.image.in.*;
+import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
@@ -79,19 +78,12 @@ public class ImageController extends BaseController {
     @RequiresPermissions("section:slices:remove")
     @ApiOperationSupport(author = "wangfeng")
     @Log(title = "删除", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.DELETE)
-    @ApiOperation(value = "逻辑删除单个切片")
+    @ApiOperation(value = "删除单个切片(物理删除)")
     @GetMapping("/deleteById/{imageId}")
     @Transactional(rollbackFor = Exception.class)
     public R deleteById(@PathVariable("imageId") @ApiParam(value = "图像ID") Long imageId) {
-        if (imageId > 0) {
-            Slide slide = Slide.builder().imageId(imageId).build();
-            // 查切片表中有没有绑定此图片
-            if (slideService.selectImageExist(slide).size() > 0) {
-                int deleteImageById = imageService.updateDeleteFlagById(imageId);
-                if (deleteImageById > 0) {
-                    return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
-                }
-            }
+        if (imageService.deleteById(imageId)) {
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
         return R.fail(MessageSource.M("IMAGE_USING_FORBID_DELETE"));
     }
@@ -106,10 +98,8 @@ public class ImageController extends BaseController {
     @Log(title = "删除切片", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.DELETE)
     @ApiOperation(value = "逻辑批量删除切片")
     @PostMapping("/deleteBatchIds")
-    public R<List<Long>> updateDeleteFlagBatchIds(@Validated @RequestBody ImageBatchIdsVO request) {
-        Long uid = SecurityUtils.getUserId();
-        request.setUpdateBy(uid);
-        List<Long> data = imageService.updateDeleteFlagBatchIds(request);
+    public R<List<Long>> deleteBatchIds(@Validated @RequestBody ImageBatchIdsVO request) throws InterruptedException {
+        List<Long> data = imageService.deleteBatchIds(request);
         return R.ok(data, MessageSource.M("OPERATE_SUCCEED"));
     }
 

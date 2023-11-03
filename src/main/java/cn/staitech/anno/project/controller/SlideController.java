@@ -43,7 +43,7 @@ public class SlideController {
     @RequiresPermissions(value = {"smartAnno:project:slice", "smartAnnoInfo:slice"}, logical = Logical.OR)
     @ApiOperation(value = "智能标注-切片分页查询")
     @PostMapping("/page")
-    public R<PageMaster<SlideVO>> page(@RequestBody SlideQueryIN in) throws Exception {
+    public R<PageMaster<SlideVO>> page(@RequestBody SlideQueryIn in) throws Exception {
         Page page = new Page(in.getPageNum(), in.getPageSize());
         return R.ok(slideService.pageSlides(page, in));
     }
@@ -51,21 +51,21 @@ public class SlideController {
     @RequiresPermissions("smartAnno:project:slice:check")
     @ApiOperation(value = "查看标注数目")
     @PostMapping("/getSlideAnnoStatistics")
-    public R<List<SlideAnnoStatisticsVO>> getSlideAnnoStatistics(@RequestBody SlideQueryIN in) throws Exception {
+    public R<List<SlideAnnoStatisticsVO>> getSlideAnnoStatistics(@RequestBody SlideQueryIn in) throws Exception {
         return R.ok(slideService.getSlideAnnoStatistics(in));
     }
 
     @RequiresPermissions("smartAnno:project:slice:export")
     @ApiOperation(value = "标注数据导出")
     @GetMapping("/slideAnnoStatisticsExport")
-    public void slideAnnoStatisticsExport(SlideQueryIN in) throws Exception {
+    public void slideAnnoStatisticsExport(SlideQueryIn in) throws Exception {
         slideService.slideAnnoStatisticsExport(in);
     }
 
     @RequiresPermissions("smartAnno:project:slice:remarkList")
     @ApiOperation(value = "批量修改备注")
     @PostMapping("/updateRemarkBySlideIds")
-    public R<Boolean> updateRemarkBySlideIds(@RequestBody SlideRemarkIN in) {
+    public R<Boolean> updateRemarkBySlideIds(@RequestBody SlideRemarkIn in) {
         Collection<Slide> slides = slideService.listByIds(in.getSlideIds());
         slides.forEach(slide -> {
             slide.setRemark(in.getRemark());
@@ -77,7 +77,7 @@ public class SlideController {
     @RequiresPermissions("smartAnno:project:slice:editList")
     @ApiOperation(value = "批量修改状态")
     @PostMapping("/updateStatusBySlideIds")
-    public R<Boolean> updateStatusBySlideIds(@RequestBody SlideStatusIN in) {
+    public R<Boolean> updateStatusBySlideIds(@RequestBody SlideStatusIn in) {
         Long userId = SecurityUtils.getUserId();
         String userName = SecurityUtils.getUsername();
         List<Opt> optList = new ArrayList<>();

@@ -2,11 +2,11 @@ package cn.staitech.anno.controller;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.staitech.anno.domain.Project;
-import cn.staitech.anno.domain.vo.AnnotationBroadcastVO;
-import cn.staitech.anno.domain.vo.statistic.*;
 import cn.staitech.anno.service.*;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.annotation.AnnotationBroadcastVO;
+import cn.staitech.anno.vo.statistic.*;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.security.utils.SecurityUtils;
@@ -53,6 +53,27 @@ public class StatisticController extends BaseController {
     private PathologicalIndicatorCategoryService pathologicalIndicatorCategoryService;
     @Resource
     private AnnotationService annotationService;
+
+
+    /**
+     *
+     * @param
+     * @return
+     * @throws ParseException
+     */
+    @ApiOperation(value = "数据统计导出-切片维度")
+    @PostMapping("/exportOrderSlide")
+    public void exportOrderSlide( @RequestBody ExportOrderProjectIn req) throws IOException {
+        statisticService.exportOrderSlide(req);
+
+    }
+
+    @ApiOperation(value = "数据统计导出-参与者维度")
+    @PostMapping("/exportOrderMember")
+    public void exportOrderMember( @RequestBody ExportOrderProjectIn req) throws IOException {
+        statisticService.exportOrderMember(req);
+
+    }
 
     /**
      * 综合统计列表页面接口

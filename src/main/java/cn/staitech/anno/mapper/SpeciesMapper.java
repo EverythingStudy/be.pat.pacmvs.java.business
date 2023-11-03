@@ -1,6 +1,6 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.species.Species;
+import cn.staitech.anno.domain.Species;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;

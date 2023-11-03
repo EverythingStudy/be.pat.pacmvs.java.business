@@ -1,10 +1,10 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.QuestionBank;
-import cn.staitech.anno.domain.question.in.GetQuestionListIn;
-import cn.staitech.anno.domain.question.in.GetQuestionsIn;
-import cn.staitech.anno.domain.question.out.GetProjectBoxOut;
-import cn.staitech.anno.domain.question.out.GetQuestionListOut;
+import cn.staitech.anno.vo.question.in.GetQuestionListIn;
+import cn.staitech.anno.vo.question.in.GetQuestionsIn;
+import cn.staitech.anno.vo.question.out.GetProjectBoxOut;
+import cn.staitech.anno.vo.question.out.GetQuestionListOut;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;

@@ -1,10 +1,10 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.domain.geojson.Features;
-import cn.staitech.anno.domain.marking.MarkingExamineInsertVO;
-import cn.staitech.anno.domain.marking.MarkingExamineUpdateVO;
 import cn.staitech.anno.service.MarkingExamineService;
 import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.vo.geojson.Features;
+import cn.staitech.anno.vo.marking.MarkingExamineInsertVO;
+import cn.staitech.anno.vo.marking.MarkingExamineUpdateVO;
 import cn.staitech.common.core.domain.R;
 import com.alibaba.fastjson.JSONArray;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;

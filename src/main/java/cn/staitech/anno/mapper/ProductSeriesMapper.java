@@ -1,6 +1,6 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.productseries.ProductSeries;
+import cn.staitech.anno.domain.ProductSeries;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;
