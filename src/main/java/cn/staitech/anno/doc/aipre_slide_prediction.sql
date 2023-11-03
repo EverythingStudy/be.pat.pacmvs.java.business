@@ -23,8 +23,8 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `aipre_slide_prediction`;
 CREATE TABLE `aipre_slide_prediction`  (
   `slide_prediction_id` bigint NOT NULL AUTO_INCREMENT COMMENT '切片预测ID',
-  `slide_id` int NULL DEFAULT NULL COMMENT '项目ID',
-  `image_id` int NULL DEFAULT NULL COMMENT '图像ID',
+  `slide_id` bigint NULL DEFAULT NULL COMMENT '合成的切片ID',
+  `image_id` bigint NULL DEFAULT NULL COMMENT '图像ID',
   `ai_analyzed` smallint NULL DEFAULT 0 COMMENT 'AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败）',
   `description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '描述',
   `organization_id` bigint NULL DEFAULT 0 COMMENT '机构ID',
