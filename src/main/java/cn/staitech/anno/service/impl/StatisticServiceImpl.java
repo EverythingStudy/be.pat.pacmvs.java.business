@@ -468,8 +468,8 @@ public class StatisticServiceImpl implements StatisticService {
                     categoryList.forEach(category->{
                         CountMembersByProjecOut projecOuts = statisticMapper.countMembersByProject(e.getProjectId(), e.getUserId(), category.getCategoryId());
                         temp.add(projecOuts.getMarkingTotal());
-                        temp.add(projecOuts.getNotReviewed());
-                        temp.add(projecOuts.getReviewed());
+                        temp.add(projecOuts.getNotReviewed()!=null?e.getNotReviewed():0);
+                        temp.add(projecOuts.getReviewed()!=null?e.getReviewed():0);
                     });
                 }
                 datas.add(temp);
