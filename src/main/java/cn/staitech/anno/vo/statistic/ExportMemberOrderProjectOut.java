@@ -14,11 +14,11 @@ public class ExportMemberOrderProjectOut {
     private String userName;
     private Long projectId;
     private String projectName;
-    private Long markingTotal=0L;
+    private Long markingTotal;
     @ApiModelProperty("未复核标注数")
-    private Long notReviewed=0L;
+    private Long notReviewed;
     @ApiModelProperty("已复核标注数")
-    private Long reviewed=0L;
+    private Long reviewed;
 
 
 }
