@@ -3,6 +3,8 @@ package cn.staitech.anno.service;
 import cn.staitech.anno.vo.statistic.*;
 import cn.staitech.common.core.domain.R;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.List;
 
@@ -229,4 +231,8 @@ public interface StatisticService {
     StatisticSysDictDataOutVO statisticSelectDictDataById(Long dictCode);
 
     R<StatisticListOutVO> statisticList(StatisticListInVO statisticList) throws ParseException;
+
+    void exportOrderSlide(ExportOrderProjectIn req) throws IOException;
+
+    void exportOrderMember(ExportOrderProjectIn req) throws IOException;
 }

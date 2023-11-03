@@ -233,6 +233,12 @@ public class AsyncTask {
                     if (categoryMap.size() > 0) {
                         categoryList.addAll(categoryMap.values());
                     }
+                    // 更新切片表中状态
+                    if (Objects.equals(slideBy.getStatus(), "1")) {
+                        // 更新切片表中状态至切片中
+                        slideBy.setStatus("2");
+                        slideMapperV1.updateById(slideBy);
+                    }
                     // 添加结束之后，更新标签信息
                     slideAttrService.saveAnnoUsers(slide.getSlideId(), userByList);
                     slideAttrService.saveAnnoCategory(slide.getSlideId(), categoryList);

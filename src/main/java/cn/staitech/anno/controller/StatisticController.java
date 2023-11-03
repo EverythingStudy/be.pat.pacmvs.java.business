@@ -54,6 +54,27 @@ public class StatisticController extends BaseController {
     @Resource
     private AnnotationService annotationService;
 
+
+    /**
+     *
+     * @param
+     * @return
+     * @throws ParseException
+     */
+    @ApiOperation(value = "数据统计导出-切片维度")
+    @PostMapping("/exportOrderSlide")
+    public void exportOrderSlide( @RequestBody ExportOrderProjectIn req) throws IOException {
+        statisticService.exportOrderSlide(req);
+
+    }
+
+    @ApiOperation(value = "数据统计导出-参与者维度")
+    @PostMapping("/exportOrderMember")
+    public void exportOrderMember( @RequestBody ExportOrderProjectIn req) throws IOException {
+        statisticService.exportOrderMember(req);
+
+    }
+
     /**
      * 综合统计列表页面接口
      *

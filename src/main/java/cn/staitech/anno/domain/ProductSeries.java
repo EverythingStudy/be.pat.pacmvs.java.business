@@ -40,4 +40,11 @@ public class ProductSeries {
     @ApiModelProperty(value = "品系名称en", required = true)
     @NotNull(message = "{ProductSeries.name.isnull}")
     private String nameEn;
+
+
+    /**
+     * 种属id
+     */
+    @ApiModelProperty(value = "种属id", required = true)
+    private Integer speciesId;
 }
