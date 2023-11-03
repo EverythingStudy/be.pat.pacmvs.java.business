@@ -3,8 +3,8 @@
 <mapper namespace="cn.staitech.anno.mapper.SlidePredictionMapper">
   <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.SlidePrediction">
     <id column="slide_prediction_id" jdbcType="BIGINT" property="slidePredictionId" />
-    <result column="slide_id" jdbcType="INTEGER" property="slideId" />
-    <result column="image_id" jdbcType="INTEGER" property="imageId" />
+    <result column="slide_id" jdbcType="BIGINT" property="slideId" />
+    <result column="image_id" jdbcType="BIGINT" property="imageId" />
     <result column="ai_analyzed" jdbcType="SMALLINT" property="aiAnalyzed" />
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
@@ -33,7 +33,7 @@
       description, organization_id, create_by,
       create_time, update_by, update_time,
       del_flag)
-    values (#{slideId,jdbcType=INTEGER}, #{imageId,jdbcType=INTEGER}, #{aiAnalyzed,jdbcType=SMALLINT},
+    values (#{slideId,jdbcType=BIGINT}, #{imageId,jdbcType=BIGINT}, #{aiAnalyzed,jdbcType=SMALLINT},
       #{description,jdbcType=VARCHAR}, #{organizationId,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT},
       #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP},
       #{delFlag,jdbcType=CHAR})
@@ -74,10 +74,10 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="slideId != null">
-        #{slideId,jdbcType=INTEGER},
+        #{slideId,jdbcType=BIGINT},
       </if>
       <if test="imageId != null">
-        #{imageId,jdbcType=INTEGER},
+        #{imageId,jdbcType=BIGINT},
       </if>
       <if test="aiAnalyzed != null">
         #{aiAnalyzed,jdbcType=SMALLINT},
@@ -109,10 +109,10 @@
     update aipre_slide_prediction
     <set>
       <if test="slideId != null">
-        slide_id = #{slideId,jdbcType=INTEGER},
+        slide_id = #{slideId,jdbcType=BIGINT},
       </if>
       <if test="imageId != null">
-        image_id = #{imageId,jdbcType=INTEGER},
+        image_id = #{imageId,jdbcType=BIGINT},
       </if>
       <if test="aiAnalyzed != null">
         ai_analyzed = #{aiAnalyzed,jdbcType=SMALLINT},
@@ -143,8 +143,8 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.staitech.anno.domain.SlidePrediction">
     update aipre_slide_prediction
-    set slide_id = #{slideId,jdbcType=INTEGER},
-      image_id = #{imageId,jdbcType=INTEGER},
+    set slide_id = #{slideId,jdbcType=BIGINT},
+      image_id = #{imageId,jdbcType=BIGINT},
       ai_analyzed = #{aiAnalyzed,jdbcType=SMALLINT},
       description = #{description,jdbcType=VARCHAR},
       organization_id = #{organizationId,jdbcType=BIGINT},

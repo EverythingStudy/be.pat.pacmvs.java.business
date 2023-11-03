@@ -31,10 +31,10 @@ public class SlidePrediction implements Serializable {
     private Long slidePredictionId;
 
     @ApiModelProperty(value = "项目ID")
-    private Integer slideId;
+    private Long slideId;
 
     @ApiModelProperty(value = "图像ID")
-    private Integer imageId;
+    private Long imageId;
 
     @ApiModelProperty(value = "AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败）")
     private Integer aiAnalyzed;
