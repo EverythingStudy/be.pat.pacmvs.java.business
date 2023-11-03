@@ -198,4 +198,25 @@ public class ProjectListVO extends BaseEntity {
     private Long organizationId;
     @ApiModelProperty(value = "机构名称")
     private String organizationName;
+
+    /**
+     * 算法模型id
+     * */
+    @ApiModelProperty(value = "算法模型id")
+    private Long modelId;
+
+    /**
+     * 算法模型名称
+     * */
+    @ApiModelProperty(value = "算法模型名称")
+    private String modelName;
+
+    /**
+     * 算法模型名称en
+     * */
+    @ApiModelProperty(value = "算法模型名称en")
+    private String modelNameEn;
+
+
+
 }

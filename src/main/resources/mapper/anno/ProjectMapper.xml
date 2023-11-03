@@ -47,6 +47,9 @@
         <result property="organizationId" column="organization_id"/><!-- 机构 -->
         <result property="productSeries" column="product_series"/>
         <result property="organizationName" column="organization_name"/>
+        <result property="modelId" column="model_id"/>
+        <result property="modelName" column="model_name"/>
+        <result property="modelNameEn" column="model_name_en"/>
     </resultMap>
 
     <resultMap id="SlideAnnotationResult" type="cn.staitech.anno.domain.SlideAnnotationResult">
@@ -128,12 +131,16 @@
                i.indicator_name,
                i.indicator_name_en,
                ps.name as product_series,
-               org.organization_name
+               org.organization_name,
+               p.model_id,
+               m.model_name,
+               m.model_name_en
         from tb_project p
                  left join sys_user u on p.create_by = u.user_id
                  left join tb_pathological_indicator i on p.indicator_id = i.indicator_id
                  left join tb_product_series ps on p.product_series_id = ps.product_series_id
                  left join sys_organization org on p.organization_id = org.organization_id
+                 left join aipre_algorithm_model m on p.model_id=m.model_id
     </sql>
 
     <sql id="selectProjectBy">
