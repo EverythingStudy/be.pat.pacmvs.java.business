@@ -11,6 +11,7 @@ import cn.staitech.anno.vo.project.ProjectStatisticsVO;
 import cn.staitech.anno.vo.slide.*;
 import cn.staitech.anno.vo.statistic.StatisticSlideListInVO;
 import cn.staitech.anno.vo.statistic.StatisticSlideListOutVO;
+import cn.staitech.anno.vo.topic.TopicIdName;
 import cn.staitech.common.core.domain.R;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Param;
@@ -219,5 +220,11 @@ public interface SlideService extends IService<Slide> {
      * @return
      */
     SlideSelectBy pageImageCsvListVOBy(Long slideId);
+
+
+    /**
+     * 查询专题编号
+     * */
+    List<TopicIdName>topicList();
 
 }

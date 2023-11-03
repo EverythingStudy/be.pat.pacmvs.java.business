@@ -4,8 +4,12 @@ package cn.staitech.anno.controller;
 import cn.hutool.core.bean.BeanUtil;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.service.SlideService;
+import cn.staitech.anno.service.SysUserService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.eyeslide.EyeSlideIn;
+import cn.staitech.anno.vo.eyeslide.EyeSlideListOut;
+import cn.staitech.anno.vo.eyeslide.EyeSlideSave;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetPagerVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
@@ -19,6 +23,7 @@ import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -47,6 +52,9 @@ import java.util.Map;
 public class SlideController extends BaseController {
     @Resource
     private SlideService slideService;
+
+    @Resource
+    private SysUserService sysUserService;
 
     @RequiresPermissions("special:project:slicelist")
     @ApiOperation(value = "查询切片操作")
@@ -327,5 +335,52 @@ public class SlideController extends BaseController {
         }
         return false;
     }
+
+
+    //=================================================================================================================
+
+    /**
+     * 上传人员
+     * */
+    @ApiOperation(value = "上传人员")
+    @PostMapping("/uploadPersonnel")
+    public R<List<SysUser>>uploadPersonnel() {
+        List<SysUser> userList=sysUserService.userList();
+        return R.ok(userList);
+    }
+
+    @ApiOperation(value = "专题编号")
+    @PostMapping("/eyeTopicList")
+    public R<List<TopicIdName>>topicList() {
+        List<TopicIdName>topicList=slideService.topicList();
+        return R.ok(topicList);
+    }
+
+
+    /**
+     * 获取图片碎片
+     * */
+    @ApiOperation(value = "查询评审项目切片列表")
+    @PostMapping("/folderList")
+    public R<PageMaster<EyeSlideListOut>>folderList(@RequestBody EyeSlideIn eyeSlideIn) {
+
+        return R.ok();
+    }
+
+    /**
+     * 拼接图象类项目保存图片碎片
+     * */
+    @ApiOperation(value = "保存图片碎片")
+    @PostMapping("/saveDebris")
+    public R<String>saveDebris(@RequestBody @Validated EyeSlideSave eyeSlideSave) {
+
+        return R.ok();
+    }
+
+    /**
+     * 获取
+     * */
+
+
 }
 

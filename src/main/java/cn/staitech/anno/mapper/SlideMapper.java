@@ -11,6 +11,7 @@ import cn.staitech.anno.vo.project.ProjectStatisticsVO;
 import cn.staitech.anno.vo.slide.*;
 import cn.staitech.anno.vo.statistic.StatisticSlideListInVO;
 import cn.staitech.anno.vo.statistic.StatisticSlideListOutVO;
+import cn.staitech.anno.vo.topic.TopicIdName;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -215,5 +216,8 @@ public interface SlideMapper extends BaseMapper<Slide> {
      */
     SlideSelectBy pageImageCsvListVOBy(Long slideId);
 
-
+    /**
+     * 查询专题编号
+     * */
+    List<TopicIdName>topicList(Long organizationId);
 }

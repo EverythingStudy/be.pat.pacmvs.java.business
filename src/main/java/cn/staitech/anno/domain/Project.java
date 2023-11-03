@@ -173,4 +173,10 @@ public class Project extends BaseEntity {
     @TableField(exist = false)
     @ApiModelProperty(value = "品系名称")
     private Map<String, Object> params;
+
+    @ApiModelProperty(value = "算法模型id")
+    private Long modelId;
+
+    @ApiModelProperty(value = "病理组织id")
+    private Long tissueId;
 }

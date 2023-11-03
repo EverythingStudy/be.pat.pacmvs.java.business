@@ -2,16 +2,13 @@ package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.AlgorithmModel;
 
+import java.util.List;
+
 public interface AlgorithmModelMapper {
-    int deleteByPrimaryKey(Long modelId);
+    /**
+     * 查询算法
+     * */
+    List<AlgorithmModel> selectByPrimaryKey(AlgorithmModel algorithmModel);
 
-    int insert(AlgorithmModel record);
 
-    int insertSelective(AlgorithmModel record);
-
-    AlgorithmModel selectByPrimaryKey(Long modelId);
-
-    int updateByPrimaryKeySelective(AlgorithmModel record);
-
-    int updateByPrimaryKey(AlgorithmModel record);
 }

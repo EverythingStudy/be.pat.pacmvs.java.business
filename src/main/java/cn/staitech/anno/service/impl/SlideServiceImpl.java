@@ -20,6 +20,7 @@ import cn.staitech.anno.vo.slide.*;
 import cn.staitech.anno.vo.special.Special;
 import cn.staitech.anno.vo.statistic.StatisticSlideListInVO;
 import cn.staitech.anno.vo.statistic.StatisticSlideListOutVO;
+import cn.staitech.anno.vo.topic.TopicIdName;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -34,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.ibatis.annotations.Param;
+import org.omg.CORBA.PUBLIC_MEMBER;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
@@ -686,6 +688,18 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                 }
             }
         }
+    }
+
+
+
+
+    /**
+     * 查询专题编号
+     * */
+    @Override
+    public List<TopicIdName>topicList(){
+        Long organizationId=SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+        return slideMapper.topicList(organizationId);
     }
 
 

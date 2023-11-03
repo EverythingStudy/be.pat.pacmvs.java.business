@@ -13,3 +13,5 @@ ALTER TABLE tb_project ADD COLUMN model_id bigint(20) DEFAULT NULL COMMENT '算�
 
 tb_slide添加字段
 ALTER TABLE tb_slide ADD COLUMN folder_id bigint(20) DEFAULT NULL COMMENT '文件夹ID';
+ALTER TABLE tb_slide ADD COLUMN eye_ment char(1) DEFAULT 0 COMMENT '默认为0校验通过，1校验不通过';
+ALTER TABLE tb_slide ADD COLUMN prompt varchar(255) DEFAULT NULL COMMENT '提示语';

@@ -230,6 +230,9 @@
             <if test="createBy != null and createBy != ''">
                 AND p.create_by = #{createBy}
             </if>
+            <if test="modelId != null and modelId != ''">
+                AND p.model_id = #{modelId}
+            </if>
             <if test="createTimeParams != null">
                 <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
                     <!-- 开始时间检索 -->
@@ -274,6 +277,12 @@
         <if test="organizationId != null">
             organization_id,
         </if>
+        <if test="tissueId != null">
+            tissue_id,
+        </if>
+        <if test="modelId != null">
+            model_id,
+        </if>
         create_time,
         image_total,
         update_time
@@ -304,6 +313,12 @@
         </if>
         <if test="organizationId != null">
             #{organizationId},
+        </if>
+        <if test="tissueId != null">
+            #{tissueId},
+        </if>
+        <if test="modelId != null">
+            #{modelId},
         </if>
         sysdate(),
         0,

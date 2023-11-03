@@ -7,70 +7,25 @@
     <result column="tissue_name_en" jdbcType="VARCHAR" property="tissueNameEn" />
     <result column="project_type_id" jdbcType="BIGINT" property="projectTypeId" />
   </resultMap>
+
+  <resultMap id="BaseResult" type="cn.staitech.anno.vo.pathologicaltissue.PathologicalTissueVO">
+    <id column="tissue_id" jdbcType="BIGINT" property="tissueId" />
+    <result column="tissue_name" jdbcType="VARCHAR" property="tissueName" />
+    <result column="tissue_name_en" jdbcType="VARCHAR" property="tissueNameEn" />
+    <result column="project_type_id" jdbcType="BIGINT" property="projectTypeId" />
+  </resultMap>
   <sql id="Base_Column_List">
     tissue_id, tissue_name, tissue_name_en, project_type_id
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+
+  <!--查询项目类型下的病理组织-->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResult">
     select 
     <include refid="Base_Column_List" />
     from aipre_pathological_tissue
-    where tissue_id = #{tissueId,jdbcType=BIGINT}
+    where project_type_id = #{projectTypeId}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from aipre_pathological_tissue
-    where tissue_id = #{tissueId,jdbcType=BIGINT}
-  </delete>
-  <insert id="insert" keyColumn="tissue_id" keyProperty="tissueId" parameterType="cn.staitech.anno.domain.PathologicalTissue" useGeneratedKeys="true">
-    insert into aipre_pathological_tissue (tissue_name, tissue_name_en, project_type_id
-      )
-    values (#{tissueName,jdbcType=VARCHAR}, #{tissueNameEn,jdbcType=VARCHAR}, #{projectTypeId,jdbcType=BIGINT}
-      )
-  </insert>
-  <insert id="insertSelective" keyColumn="tissue_id" keyProperty="tissueId" parameterType="cn.staitech.anno.domain.PathologicalTissue" useGeneratedKeys="true">
-    insert into aipre_pathological_tissue
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="tissueName != null">
-        tissue_name,
-      </if>
-      <if test="tissueNameEn != null">
-        tissue_name_en,
-      </if>
-      <if test="projectTypeId != null">
-        project_type_id,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="tissueName != null">
-        #{tissueName,jdbcType=VARCHAR},
-      </if>
-      <if test="tissueNameEn != null">
-        #{tissueNameEn,jdbcType=VARCHAR},
-      </if>
-      <if test="projectTypeId != null">
-        #{projectTypeId,jdbcType=BIGINT},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.PathologicalTissue">
-    update aipre_pathological_tissue
-    <set>
-      <if test="tissueName != null">
-        tissue_name = #{tissueName,jdbcType=VARCHAR},
-      </if>
-      <if test="tissueNameEn != null">
-        tissue_name_en = #{tissueNameEn,jdbcType=VARCHAR},
-      </if>
-      <if test="projectTypeId != null">
-        project_type_id = #{projectTypeId,jdbcType=BIGINT},
-      </if>
-    </set>
-    where tissue_id = #{tissueId,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="cn.staitech.anno.domain.PathologicalTissue">
-    update aipre_pathological_tissue
-    set tissue_name = #{tissueName,jdbcType=VARCHAR},
-      tissue_name_en = #{tissueNameEn,jdbcType=VARCHAR},
-      project_type_id = #{projectTypeId,jdbcType=BIGINT}
-    where tissue_id = #{tissueId,jdbcType=BIGINT}
-  </update>
+
+
+
 </mapper>

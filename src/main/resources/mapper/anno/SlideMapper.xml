@@ -912,4 +912,11 @@
             </if>
         </where>
     </select>
+
+    <select id="topicList" parameterType="java.lang.Long" resultType="cn.staitech.anno.vo.topic.TopicIdName">
+        select distinct topic_id, topic_name
+        from tb_topic
+        where organization_id=#{organizationId} and del_flag=1
+        order by topic_id asc;
+    </select>
 </mapper>
