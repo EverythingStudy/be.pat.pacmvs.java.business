@@ -4,6 +4,8 @@ import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.project.domain.Review;
 import cn.staitech.anno.vo.diagnosis.SpecialDiagnosisAddVo;
 import cn.staitech.anno.vo.examination.ExaminationListVO;
+import cn.staitech.anno.vo.image.in.ImageTopicVO;
+import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
 import cn.staitech.anno.vo.project.ProjectListOutVO;
@@ -216,8 +218,13 @@ public interface SlideMapper extends BaseMapper<Slide> {
      */
     SlideSelectBy pageImageCsvListVOBy(Long slideId);
 
+//    /**
+//     * 查询专题编号
+//     * */
+//    List<TopicIdName>topicList(Long organizationId);
+
     /**
-     * 查询专题编号
+     * 眼科选择图片查询
      * */
-    List<TopicIdName>topicList(Long organizationId);
+    List<ImageListOutVO> eyeSlideList(ImageTopicVO imageTopicVO);
 }

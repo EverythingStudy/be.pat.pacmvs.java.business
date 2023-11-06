@@ -14,13 +14,13 @@ public class AlgorithmModelServiceImpl implements AlgorithmModelService {
     @Resource
     private AlgorithmModelMapper algorithmModelMapper;
 
-    /**
-     * 查询算法
-     * */
-    @Override
-    public List<AlgorithmModel> selectByPrimaryKey(){
-        AlgorithmModel algorithmModel=new AlgorithmModel();
-        return algorithmModelMapper.selectByPrimaryKey(algorithmModel);
-    }
+//    /**
+//     * 查询算法
+//     * */
+//    @Override
+//    public List<AlgorithmModel> selectByPrimaryKey(){
+//        AlgorithmModel algorithmModel=new AlgorithmModel();
+//        return algorithmModelMapper.selectByPrimaryKey(algorithmModel);
+//    }
 
 }

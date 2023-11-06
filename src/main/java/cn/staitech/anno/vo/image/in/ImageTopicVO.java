@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * 选片查询VO
@@ -36,6 +37,19 @@ public class ImageTopicVO extends Pager implements Serializable {
     private Long reviewRoundId;
     @ApiModelProperty(value = "机构编号", hidden = true)
     private Long organizationId;
-    @ApiModelProperty(value = "业务类型:1原始切片（默认）、2预测切片", hidden = true)
+    @ApiModelProperty(value = "业务类型:1原始切片（默认）、2预测切片、6兔眼", hidden = true)
     private Integer bizType;
+
+    /**
+     * 眼科新增
+     * */
+
+    @ApiModelProperty(value = "文件夹名称")
+    private String folderName;
+
+    @ApiModelProperty(value ="上传人员id")
+    private Long createBy;
+
+    @ApiModelProperty("上传时间")
+    private Map<String, Object> params;
 }

@@ -83,4 +83,10 @@ public class ImageListOutVO {
     private Long folderId;
     @ApiModelProperty(value = "创建人")
     private String nickName;
+
+    /**
+     * 眼科新添加字段
+     * */
+    @ApiModelProperty(value = "文件夹名称")
+    private String folderName;
 }

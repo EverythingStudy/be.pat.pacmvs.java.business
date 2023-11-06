@@ -135,6 +135,17 @@
         <result property="size" column="size"/>
     </resultMap>
 
+    <resultMap type="cn.staitech.anno.vo.image.out.ImageListOutVO" id="eyeSlideResult">
+        <result property="folderId" column="folder_id"/>
+        <result property="imageName" column="image_name"/>
+        <result property="folderName" column="folder_name"/>
+        <result property="topicName" column="topic_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="nickName" column="nick_name"/>
+    </resultMap>
+
+
+
     <sql id="selectByIdVo">
         SELECT slide_id,
                project_id,
@@ -913,10 +924,46 @@
         </where>
     </select>
 
-    <select id="topicList" parameterType="java.lang.Long" resultType="cn.staitech.anno.vo.topic.TopicIdName">
-        select distinct topic_id, topic_name
-        from tb_topic
-        where organization_id=#{organizationId} and del_flag=1
-        order by topic_id asc;
+    <!--查询专题编号-->
+    <!--    <select id="topicList" parameterType="java.lang.Long" resultType="cn.staitech.anno.vo.topic.TopicIdName">-->
+    <!--        select distinct topic_id, topic_name-->
+    <!--        from tb_topic-->
+    <!--        where organization_id=#{organizationId} and del_flag=1-->
+    <!--        order by topic_id asc;-->
+    <!--    </select>-->
+
+    <!--    <select>-->
+
+    <!--    </select>-->
+
+    <!--眼科选择图片查询-->
+    <select id="eyeSlideList" parameterType="cn.staitech.anno.vo.image.in.ImageTopicVO" resultMap="eyeSlideResult">
+        select f.folder_id, e.image_name, f.folder_name, i.topic_name, i.create_time, u.user_name as nick_name
+        from aipre_folder as f
+                 left join tb_files as i on f.files_id = i.files_id
+                 left join tb_image as e on e.folder_id = f.folder_id
+                 left join sys_user as u on i.create_by = u.user_id
+        <where>
+            <if test="createBy != null">
+                AND i.create_by = #{createBy}
+            </if>
+            <if test="topicName != null">
+                AND i.topic_name LIKE CONCAT('%', #{topicName}, '%')
+            </if>
+            <if test="folderName != null">
+                AND f.folder_name LIKE CONCAT('%', #{folderName}, '%')
+            </if>
+            <if test="params != null">
+                <if test="params.beginTime != null and params.beginTime != ''">
+                    <!-- 开始时间检索 -->
+                    and date_format(i.create_time, '%y%m%d') &gt;= date_format(#{params.beginTime}, '%y%m%d')
+                </if>
+                <if test="params.endTime != null and params.endTime != ''">
+                    <!-- 结束时间检索 -->
+                    and date_format(i.create_time, '%y%m%d') &lt;= date_format(#{params.endTime}, '%y%m%d')
+                </if>
+            </if>
+            and e.biz_type=6
+        </where>
     </select>
 </mapper>

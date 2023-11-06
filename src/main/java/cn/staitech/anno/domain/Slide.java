@@ -344,4 +344,16 @@ public class Slide {
     @ApiModelProperty(value = "是否生成考题；0-未生成；1-已生成")
     private String ifCreateQuestions;
 
+    @ApiModelProperty(value = "文件夹id")
+    private Long folderId;
+
+    @ApiModelProperty(value = "预测缩略图url")
+    private String predictionThumbUrl;
+
+    @ApiModelProperty(value = "碎片状态（默认为0校验通过，1校验不通过）")
+    private String eyeMent;
+
+    @ApiModelProperty(value = "提示语")
+    private String prompt;
+
 }

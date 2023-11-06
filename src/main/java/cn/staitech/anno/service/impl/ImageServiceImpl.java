@@ -4,8 +4,11 @@ import cn.staitech.anno.config.AsyncTask;
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.Image;
+import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.mapper.ImageMapper;
+import cn.staitech.anno.mapper.ProjectMapper;
+import cn.staitech.anno.mapper.SlideMapper;
 import cn.staitech.anno.mapper.SpecialImageMapper;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.SlideService;
@@ -15,9 +18,11 @@ import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.image.in.*;
 import cn.staitech.anno.vo.image.out.ImageListOutVO;
+import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -29,6 +34,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -53,6 +59,12 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
     @Resource
     private AsyncTask asyncTask;
+
+    @Resource
+    private ProjectMapper projectMapper;
+
+    @Resource
+    private SlideMapper slideMapper;
 
     /**
      * 切片列表（原图像）
@@ -169,6 +181,11 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
     @Transactional(rollbackFor = Exception.class)
     public PageMaster<ImageListOutVO> choiceList(ImageTopicVO vo) throws ExecutionException, InterruptedException {
+        Project project=projectMapper.selectPrimKey(vo.getProjectId());
+        //眼科
+        if (Objects.equals(project.getProjectType(), "6")){
+            return eyeImage(vo);
+        }
 
         Image image = new Image();
         BeanUtils.copyProperties(vo, image);
@@ -437,4 +454,13 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         image.setUpdateBy(loginUser);
         return imageMapper.updateById(image);
     }
+
+    public PageMaster<ImageListOutVO> eyeImage(ImageTopicVO vo){
+        PageHelper.startPage(vo.getPageNum(), vo.getPageSize()).setReasonable(true);
+        List<ImageListOutVO> imageListOutVOS=slideMapper.eyeSlideList(vo);
+        PageMaster pageMaster = new PageMaster<>(imageListOutVOS);
+        return pageMaster;
+    }
+
+
 }

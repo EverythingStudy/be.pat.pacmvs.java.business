@@ -24,13 +24,13 @@ public class AlgorithmModelController {
     private AlgorithmModelService algorithmModelService;
 
 
-    @ApiOperationSupport(author = "zmj")
-    @ApiOperation(value = "病理病变列表")
-    @PostMapping("/list")
-    public R<List<AlgorithmModel>> getModelList() {
-        List<AlgorithmModel> algorithmModelList=algorithmModelService.selectByPrimaryKey();
-        return R.ok(algorithmModelList);
-    }
+//    @ApiOperationSupport(author = "zmj")
+//    @ApiOperation(value = "病理病变列表")
+//    @PostMapping("/list")
+//    public R<List<AlgorithmModel>> getModelList() {
+//        List<AlgorithmModel> algorithmModelList=algorithmModelService.selectByPrimaryKey();
+//        return R.ok(algorithmModelList);
+//    }
 
 
 

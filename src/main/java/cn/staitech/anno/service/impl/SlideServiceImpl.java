@@ -693,14 +693,14 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
 
 
 
-    /**
-     * 查询专题编号
-     * */
-    @Override
-    public List<TopicIdName>topicList(){
-        Long organizationId=SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-        return slideMapper.topicList(organizationId);
-    }
+//    /**
+//     * 查询专题编号
+//     * */
+//    @Override
+//    public List<TopicIdName>topicList(){
+//        Long organizationId=SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+//        return slideMapper.topicList(organizationId);
+//    }
 
 
 }

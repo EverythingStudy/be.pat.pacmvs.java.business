@@ -11,7 +11,7 @@
  Target Server Version : 80027
  File Encoding         : 65001
 
- Date: 02/11/2023 16:41:30
+ Date: 06/11/2023 09:15:04
 */
 
 SET NAMES utf8mb4;
@@ -28,6 +28,7 @@ CREATE TABLE `aipre_slide_prediction`  (
   `ai_analyzed` smallint NULL DEFAULT 0 COMMENT 'AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败）',
   `description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '描述',
   `organization_id` bigint NULL DEFAULT 0 COMMENT '机构ID',
+  `main_image` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '2' COMMENT '是否是主图默认为2，1是，2否',
   `create_by` bigint NULL DEFAULT NULL COMMENT '创建者',
   `create_time` datetime NULL DEFAULT 'sysdate()' COMMENT '创建时间',
   `update_by` bigint NULL DEFAULT NULL COMMENT '更新者',

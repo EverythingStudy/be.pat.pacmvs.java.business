@@ -222,9 +222,9 @@ public interface SlideService extends IService<Slide> {
     SlideSelectBy pageImageCsvListVOBy(Long slideId);
 
 
-    /**
-     * 查询专题编号
-     * */
-    List<TopicIdName>topicList();
+//    /**
+//     * 查询专题编号
+//     * */
+//    List<TopicIdName>topicList();
 
 }
