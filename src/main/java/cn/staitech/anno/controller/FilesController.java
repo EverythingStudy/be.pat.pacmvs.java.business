@@ -60,7 +60,7 @@ public class FilesController extends BaseController {
      * 上传文件-仅用于上传
      */
     @ApiOperationSupport(author = "wangfeng")
-    @RequiresPermissions(value = {"smartAnno:project:upload"}, logical = Logical.OR)
+//    @RequiresPermissions(value = {"smartAnno:project:upload"}, logical = Logical.OR)
     @ApiOperation(value = "文件上传并处理下游业务逻辑", notes = "文件上传并处理下游业务逻辑 - 王峰")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file", value = "MultipartFile文件", required = true, dataType = "file"),
