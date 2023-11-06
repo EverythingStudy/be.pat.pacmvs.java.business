@@ -314,7 +314,7 @@
     </select>
 
 
-    <select id="selectBy" parameterType="long" resultMap="propertiesResult">
+    <select id="selectBy" parameterType="string" resultMap="propertiesResult">
         <include refid="selectBy"/>
         where marking_id = #{markingId}
     </select>
