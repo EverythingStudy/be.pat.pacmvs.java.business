@@ -3,6 +3,8 @@ package cn.staitech.anno.project.mapper;
 import cn.staitech.anno.project.domain.Marking;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
+import java.util.List;
+
 /**
  * @author 86186
  * @description 针对表【tb_marking】的数据库操作Mapper
@@ -10,6 +12,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @Entity cn.staitech.anno.project.domain.Marking
  */
 public interface MarkingMapperV1 extends BaseMapper<Marking> {
+
+    List<Marking> selectMarkings();
 
 }
 
