@@ -65,7 +65,7 @@ public interface MarkingService {
      * @param req 标注数据
      * @return true || false
      */
-    Long insert(ViewAddIn req) throws Exception;
+    String insert(ViewAddIn req) throws Exception;
 
     /**
      * 删除标注
@@ -73,7 +73,7 @@ public interface MarkingService {
      * @param marking 标注数据
      * @return true || false
      */
-    Long update(MarkingUpdateIn marking) throws Exception;
+    String update(MarkingUpdateIn marking) throws Exception;
 
     /**
      * 更新标注点数
@@ -89,7 +89,7 @@ public interface MarkingService {
      * @param markingId 标注id
      * @return true || false
      */
-    int delete(Long markingId) throws Exception;
+    int delete(String markingId) throws Exception;
 
     /**
      * 导出json数据
