@@ -50,6 +50,7 @@
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="host_id" jdbcType="TINYINT" property="hostId"/>
         <result column="if_create_questions" jdbcType="VARCHAR" property="ifCreateQuestions"/>
+        <result column="prediction_image_id" jdbcType="BIGINT" property="predictionImageId"/>
     </resultMap>
     <sql id="Base_Column_List">
         slide_id
@@ -97,6 +98,7 @@
         topic_name,
         delete_flag,
         organization_id,
+        prediction_image_id,
         host_id
     </sql>
 
@@ -402,6 +404,9 @@
         <set>
             <if test="description != null">
                 description = #{description},
+            </if>
+             <if test="remark != null">
+                remark = #{remark},
             </if>
             <if test="updateBy != null and updateBy != ''">
                 update_by = #{updateBy},
@@ -736,9 +741,13 @@
         m.source_lens,
         m.image_path,
         m.thumb_url,
-        m.image_name
+        m.image_name,
+        n.folder_name,
+        p.thumb_url prediction_thumb_url,
         from tb_slide s
         left join tb_image m on m.image_id = s.image_id
+        left join aipre_folder n on s.folder_id = n.folder_id
+        left join tb_image p on s.prediction_image_id = p.image_id
         <where>
             <!--            切片编号        imageName
                         组别        groupName
@@ -753,6 +762,12 @@
             </if>
             <if test="imageName != null">
                 AND m.image_name LIKE CONCAT('%', #{imageName}, '%')
+            </if>
+            <if test="folderName != null">
+                AND n.folder_name LIKE CONCAT('%', #{folderName}, '%')
+            </if>
+             <if test="aiAnalyzed != null">
+                AND s.ai_analyzed = #{aiAnalyzed}
             </if>
             <if test="groupName != null">
                 AND s.group_name LIKE CONCAT('%', #{groupName}, '%')

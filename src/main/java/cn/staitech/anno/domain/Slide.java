@@ -348,7 +348,7 @@ public class Slide {
     private Long folderId;
 
     @ApiModelProperty(value = "预测缩略图url")
-    private String predictionThumbUrl;
+    private Long predictionImageId;
 
     @ApiModelProperty(value = "碎片状态（默认为0校验通过，1校验不通过）")
     private String eyeMent;

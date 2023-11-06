@@ -48,6 +48,18 @@ public class ImageCsvGetPagerVO extends Pager implements Serializable {
      * 病变程度1
      */
     private String lesionDegree;
+    
+    /**
+     * 文件名称
+     */
+    private String folderName;
+    
+    
+    /**
+     * AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败
+     */
+    private Integer aiAnalyzed;
+    
 
     /**
      * reviewRoundId

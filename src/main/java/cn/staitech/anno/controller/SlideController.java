@@ -26,6 +26,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+
+import antlr.StringUtils;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
@@ -135,9 +137,9 @@ public class SlideController extends BaseController {
     }
 
     /**
-     * 更改切片描述接口
+     * 更改切片描述/备注接口
      */
-    @ApiOperation(value = "更改切片描述接口")
+    @ApiOperation(value = "更改切片描述/备注接口")
     @PostMapping("/updateDescription")
     public R<String> updateDescription(@Validated @RequestBody SlideDescriptionVO req) {
         for (Long id : req.getSlideId()) {
@@ -145,6 +147,9 @@ public class SlideController extends BaseController {
             slide.setSlideId(id);
             slide.setDescription(req.getDescription());
             slide.setUpdateBy(SecurityUtils.getUserId());
+            if(org.apache.commons.lang3.StringUtils.isNotEmpty(req.getRemark())){
+            	slide.setRemark(req.getRemark());
+            }
             slideService.updateDescription(slide);
         }
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
