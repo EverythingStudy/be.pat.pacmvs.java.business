@@ -1,6 +1,11 @@
 package cn.staitech.anno.service.impl;
 
+import cn.staitech.anno.constant.CommonConstant;
+import cn.staitech.anno.domain.Folder;
+import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.mapper.FilesMapper;
+import cn.staitech.anno.mapper.FolderMapper;
+import cn.staitech.anno.mapper.ImageMapper;
 import cn.staitech.anno.service.FilesService;
 import cn.staitech.anno.service.SysOrganizationService;
 import cn.staitech.anno.service.TopicService;
@@ -8,21 +13,29 @@ import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.files.Files;
 import cn.staitech.anno.vo.files.in.FilesListVO;
+import cn.staitech.common.core.utils.uuid.IdUtils;
+import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 /**
@@ -38,9 +51,12 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
     private FilesMapper filesMapper;
     @Resource
     private SysOrganizationService organizationService;
-
     @Resource
     private TopicService topicService;
+    @Resource
+    private FolderMapper folderMapper;
+    @Resource
+    private ImageMapper imageMapper;
 
     @Override
     public PageMaster<Files> selectList(FilesListVO req) throws ExecutionException, InterruptedException {
@@ -86,94 +102,239 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         return pageMaster;
     }
 
+    /**
+     * 解压压缩包并解析
+     *
+     * @param files
+     * @throws Exception
+     */
     @Override
-    public List<String> zipExport(String zipUrl, Long projectId) throws Exception {
-        StringBuilder sb;
-        File file1 = new File(zipUrl);
-        List<String> fileNameList = new ArrayList<>();
-        Map<String, String> ddlList = new HashMap<>(16);
-        try {
-            //zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
-            //必须指明读取的各式，不然会存在问题
-            ZipFile zipFile = new ZipFile(file1, Charset.forName("gbk"));
-            //按流的方式读取文件，输入到管道中
-            InputStream in = new BufferedInputStream(java.nio.file.Files.newInputStream(file1.toPath()));
-            //字节流转换为压缩文件输入流，通常用来读取压缩文件
-            ZipInputStream zp = new ZipInputStream(in);
-            //定义文件条目
-            ZipEntry ze;
-            Enumeration<? extends ZipEntry> zipEnum = zipFile.entries();
-            // 循环压缩包中解压内容
-            while (zipEnum.hasMoreElements()) {
-                // 获取下一个元素
-                ze = zipEnum.nextElement();
-                sb = new StringBuilder();
-                long size = ze.getSize();
-                // 获取文件名称
-                String fileNames = ze.getName();
+    public void process(Files files) throws Exception {
 
-/*              文件夹:2042935-OS-4/
-                文件：2042935-OS-4/2042935-OS-40-0-0.jpg
-                文件：2042935-OS-4/2042935-OS-40-1-0.jpg
-                文件：2042935-OS-4/2042935-OS-40-1-1.jpg
-                文件：2042935-OS-4/2042935-OS-40-1-2.jpg
-                */
+        String zipFilePath = files.getFilesPath();
+        // 1、解析zip压缩包
+        if (unZip(zipFilePath)) {
+            SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 
-                if (ze.isDirectory()) {
-                    log.info("文件夹:{}", fileNames);
-                }else{
-                    log.info("文件：{}", fileNames);
+            // 遍历文件夹
+            Long filesId = files.getFilesId();
+            String zipFileRootDir = zipFilePath.substring(0, zipFilePath.lastIndexOf(CommonConstant.FILE_SUFFIX));
+            File zipFileSrc = new File(zipFileRootDir);
 
-                    if (size > 0) {
-
-
-
-
-                        /*
-                        //读取文件内容
-                        BufferedReader bf = new BufferedReader(new InputStreamReader(zipFile.getInputStream(ze), StandardCharsets.UTF_8));
-                        String line;
-                        while ((line = bf.readLine()) != null) {
-                            sb.append(line);
-                        }
-                        // 获取文件内容并转换成string
-                        String fileContent = sb.toString();
-
-
-                        // 获取文件中的内容
-                        org.json.JSONObject jsonObject = new org.json.JSONObject(fileContent);
-                        // 获取图像相关信息
-                        org.json.JSONObject image = jsonObject.getJSONObject("image");
-                        // 获取标签相关信息
-                        org.json.JSONArray labelInfo = jsonObject.getJSONArray("label_info");
-                        // 标签列表长度超出一个，抛出异常
-                        if (labelInfo.length() > 1) {
-                            fileNameList.add(ze.getName());
-                            continue;
-                        }
-                        if (image != null) {
-                            // 获取标注名称
-                            String imageName = image.getString("image_name");
-
-                            if (imageName != null) {
-                                log.info("{}", fileNames);
-                                // 写入数据库
-                                // writeAlgorithm(projectId, imageName, fileContent, fileUrl, fileNames);
-                            }
-                            //这里是对读取的文件内容进行处理
-                            ddlList.put(ze.getName(), sb.toString());
-                            bf.close();
-                        }*/
+            if (zipFileSrc.isDirectory()) {
+                File[] fileArray = zipFileSrc.listFiles();
+                AtomicInteger dirCount = new AtomicInteger(0);
+                AtomicInteger fileCount = new AtomicInteger(0);
+                for (File file : fileArray) {
+                    if (file.isDirectory()) {
+                        dirCount.getAndIncrement();
+                    } else {
+                        fileCount.getAndIncrement();
                     }
                 }
-                zp.closeEntry();
+                // 只有根目录，根目录下为图像
+                if (dirCount.get() == 0) {
+                    // INSERT INTO aipre_folder
+                    Folder folder = new Folder();
+
+                    folder.setFolderName(zipFileSrc.getName());
+                    folder.setFolderUrl(zipFileRootDir);
+                    folder.setFilesId(filesId);
+                    folder.setOrganizationId(sysUser.getOrganizationId());
+                    folder.setCreateBy(sysUser.getUserId());
+                    folder.setCreateTime(new Date());
+                    folder.setDeleteFlag("1");
+
+                    folderMapper.insert(folder);
+                    Long folderSize = 0L;
+                    Long folderId = folder.getFolderId();
+
+                    for (File file : fileArray) {
+                        // INSERT INTO tb_image
+                        if (file.isFile()) {
+                            String absolutePath = file.getAbsolutePath();
+                            Image image = new Image();
+
+                            image.setFileName(file.getName().substring(0, file.getName().lastIndexOf(CommonConstant.FILE_SUFFIX)));
+                            image.setImageName(file.getName());
+                            image.setImagePath(absolutePath);
+                            image.setImageUrl(absolutePath);
+                            image.setFolderId(folderId);
+                            image.setOrganizationId(sysUser.getOrganizationId());
+                            image.setTopicId(files.getTopicId());
+                            image.setTopicName(files.getTopicName());
+                            image.setCreateBy(sysUser.getUserId());
+                            image.setCreateTime(new Date());
+
+                            // 是否可用0不可用1可用',
+                            image.setStatus(1);
+                            // 逻辑删除状态（0删除，1未删除）
+                            image.setProcessFlag(1);
+                            // 逻辑删除状态（0删除，1未删除）
+                            image.setDeleteFlag(1);
+
+                            image = imageTransfer(image);
+
+                            imageMapper.insert(image);
+
+                            folderSize = folderSize + Long.valueOf(image.getSize());
+                        }
+                    }
+                    folder.setFolderSize(folderSize);
+
+
+                } else if (dirCount.get() > 0) {
+                    for (File file : fileArray) {
+                        if (file.isDirectory()) {
+                            // INSERT INTO aipre_folder
+                            Folder subFolder = new Folder();
+
+                            subFolder.setFolderName(file.getName());
+                            subFolder.setFolderUrl(file.getAbsolutePath());
+                            subFolder.setFilesId(filesId);
+                            subFolder.setOrganizationId(sysUser.getOrganizationId());
+                            subFolder.setCreateBy(sysUser.getUserId());
+                            subFolder.setCreateTime(new Date());
+                            subFolder.setDeleteFlag("1");
+
+                            folderMapper.insert(subFolder);
+                            Long subFolderId = subFolder.getFolderId();
+
+                            Long folderSize = 0L;
+
+                            File[] subFileArray = file.listFiles();
+                            for (File subfile : subFileArray) {
+                                // INSERT INTO tb_image
+                                if (subfile.isFile()) {
+                                    String absolutePath = subfile.getAbsolutePath();
+                                    Image image = new Image();
+
+                                    image.setFileName(subfile.getName().substring(0, subfile.getName().lastIndexOf(CommonConstant.FILE_SUFFIX)));
+                                    image.setImageName(subfile.getName());
+                                    image.setImagePath(absolutePath);
+                                    image.setImageUrl(absolutePath);
+                                    image.setFolderId(subFolderId);
+                                    image.setOrganizationId(sysUser.getOrganizationId());
+                                    image.setTopicId(files.getTopicId());
+                                    image.setTopicName(files.getTopicName());
+                                    image.setCreateBy(sysUser.getUserId());
+                                    image.setCreateTime(new Date());
+                                    // 是否可用0不可用1可用',
+                                    image.setStatus(1);
+                                    // 逻辑删除状态（0删除，1未删除）
+                                    image.setProcessFlag(1);
+                                    // 逻辑删除状态（0删除，1未删除）
+                                    image.setDeleteFlag(1);
+
+                                    image = imageTransfer(image);
+
+                                    imageMapper.insert(image);
+
+                                    folderSize = folderSize + Long.valueOf(image.getSize());
+                                }
+                            }
+                            subFolder.setFolderSize(folderSize);
+                            folderMapper.updateByPrimaryKey(subFolder);
+                        }
+                    }
+                }
             }
-        } catch (Exception e) {
-            throw new Exception(MessageSource.M("JSON_FILE_PARSE_FAILURE"));
+
+
+        } else {
+            throw new Exception(MessageSource.M("ZIP_FILE_UNZIP_FAILURE"));
         }
-        return fileNameList;
+
     }
 
+
+    /**
+     * 解压缩ZIP文件
+     *
+     * @param zipUrl
+     * @return
+     * @throws Exception
+     */
+    public Boolean unZip(String zipUrl) throws Exception {
+        // ZIP文件
+        File zipFile = new File(zipUrl);
+        // 目标路径
+        File destDir = new File(zipUrl.substring(0, zipUrl.lastIndexOf(File.separator)));
+
+        byte[] buffer = new byte[1024];
+        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))) {
+            ZipEntry entry = zis.getNextEntry();
+            while (entry != null) {
+                File file = new File(destDir, entry.getName());
+                if (entry.isDirectory()) {
+                    log.info("文件夹:{}", file.getAbsolutePath());
+                    file.mkdirs();
+                } else {
+                    log.info("文件:{}", file.getAbsolutePath());
+
+                    File parent = file.getParentFile();
+                    if (!parent.exists()) {
+                        parent.mkdirs();
+                    }
+                    try (FileOutputStream fos = new FileOutputStream(file)) {
+                        int len;
+                        while ((len = zis.read(buffer)) > 0) {
+                            fos.write(buffer, 0, len);
+                        }
+                    }
+                }
+                entry = zis.getNextEntry();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.info("解压异常:{}", zipFile.getAbsolutePath());
+            throw new Exception(MessageSource.M("ZIP_FILE_UNZIP_FAILURE"));
+        } finally {
+            if (zipFile.exists()) {
+                boolean delete = zipFile.delete();
+                if (delete) {
+                    log.info("压缩文件删除成功:{}", zipFile.getAbsolutePath());
+                } else {
+                    log.info("压缩文件删除失败:{}", zipFile.getAbsolutePath());
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 文件前置信息上传-初始化文件路径
+     *
+     * @param image
+     * @return
+     */
+    public Image imageTransfer(Image image) throws IOException {
+        if (org.apache.commons.lang3.StringUtils.isNotEmpty(image.getImagePath())) {
+            File file = new File(image.getImagePath());
+            image.setSize(String.valueOf(file.length()));
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+            String folderName = simpleDateFormat.format(new Date());
+            String uuid = IdUtils.randomUUID();
+            String filePathStr = folderName + "/" + uuid + "/0.jpg";
+
+            String thumbPath = "/file/statics/thumbnail/" + filePathStr;
+            image.setThumbUrl(thumbPath);
+            image.setMacroUrl(thumbPath);
+            image.setLabelUrl(thumbPath);
+            image.setCacheUrl(thumbPath);
+
+            String absFilePath = "/home/pat_saas/Slides" + thumbPath.replace("/file/statics", thumbPath);
+            FileUtils.copyFile(file, new File(absFilePath));
+
+            image.setFormat(image.getImagePath().substring(image.getImagePath().lastIndexOf('.') + 1));
+            image.setImageCode(uuid);
+            image.setBizType(6);
+        }
+
+        return image;
+    }
 }
 
 

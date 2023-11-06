@@ -50,6 +50,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     private String uploadPath = File.separator + "home" + File.separator + "pat_saas" + File.separator + "Upload";
 
+
     /**
      * @param fileUrl  上传文件路径
      * @param filename 文件名称
@@ -204,8 +205,8 @@ public class FileUploadServiceImpl implements FileUploadService {
                 files.setFileNameList(fileNameList);
                 break;
             case 6:
-                // 解析zip压缩包
-                filesService.zipExport(files.getFilesPath(), fileUploadVO.getProjectId());
+                // 解析文件
+                filesService.process(files);
                 break;
         }
         return files;
