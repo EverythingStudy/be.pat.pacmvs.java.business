@@ -11,7 +11,7 @@
  Target Server Version : 80027
  File Encoding         : 65001
 
- Date: 02/11/2023 14:15:44
+ Date: 06/11/2023 16:25:38
 */
 
 SET NAMES utf8mb4;
@@ -22,7 +22,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `aipre_folder`;
 CREATE TABLE `aipre_folder`  (
-  `folder_id` bigint NOT NULL COMMENT '文件夹id',
+  `folder_id` bigint NOT NULL AUTO_INCREMENT COMMENT '文件夹id',
   `folder_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '文件夹名称',
   `folder_size` bigint NULL DEFAULT NULL COMMENT '文件大小',
   `folder_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '文件夹url地址',
