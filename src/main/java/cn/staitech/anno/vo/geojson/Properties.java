@@ -13,7 +13,7 @@ public class Properties {
     private String annotation_owner;
 
     @ApiModelProperty(value = "标注id")
-    private Long marking_id;
+    private String marking_id;
 
     @ApiModelProperty(value = "创建时间")
     private String create_time;
