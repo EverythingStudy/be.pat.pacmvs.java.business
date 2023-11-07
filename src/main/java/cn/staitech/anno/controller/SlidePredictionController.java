@@ -23,6 +23,7 @@ import cn.staitech.anno.service.AlgorithmModelService;
 import cn.staitech.anno.service.AlgorithmPredictionService;
 import cn.staitech.anno.service.ProjectService;
 import cn.staitech.anno.service.SlidePredictionService;
+import cn.staitech.anno.service.remote.SlideImageService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.predictionInfo.in.SetMainImageDataIn;
@@ -57,6 +58,9 @@ public class SlidePredictionController {
 
 	@Resource
 	private ProjectService projectService;
+
+	@Resource
+	private SlideImageService slideImageService;
 
 	@Resource
 	private AlgorithmModelService algorithmModelService;

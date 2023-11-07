@@ -762,6 +762,7 @@
              <if test="aiAnalyzed != null">
                 AND s.ai_analyzed = #{aiAnalyzed}
             </if>
+            
             <if test="groupName != null">
                 AND s.group_name LIKE CONCAT('%', #{groupName}, '%')
             </if>

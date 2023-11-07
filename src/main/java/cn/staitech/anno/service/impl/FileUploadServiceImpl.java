@@ -231,11 +231,14 @@ public class FileUploadServiceImpl implements FileUploadService {
             }
             Container.FILE_MAP.put(chunk.getUuid(), chunkList);
         }
-        File file = new File(filesBy.getFilesPath());
-        if (file.exists()) {
-            // 删除文件
-            file.delete();
-        }
+
+        // if (filesBy !=null && filesBy.getFilesPath() !=null) {
+            File file = new File(filesBy.getFilesPath());
+            if (file.exists()) {
+                // 删除文件
+                file.delete();
+            }
+//        }
         // 写入文件
         try (InputStream fis = chunk.getMultipartFile().getInputStream();
              RandomAccessFile raf = new RandomAccessFile(file, "rw")) {
@@ -287,6 +290,8 @@ public class FileUploadServiceImpl implements FileUploadService {
                     }
                     List<String> fileNameList = algorithmAssessmentService.zipExport(filesBy.getFilesPath(), chunk.getProjectId(), fileUrl);
                     return fileNameList.toString();
+                case 6:
+                    break;
             }
         }
         return "1";
@@ -297,13 +302,12 @@ public class FileUploadServiceImpl implements FileUploadService {
         // 根据不同的业务id生成不同的文件
         switch (fileUploadVO.getBusinessType()) {
             case 4:
-                // 若有二级目录,生成在获取文件名称上方即可
-                path = zipPath + File.separator + fileUploadVO.getFileName();
-                break;
             case 5:
                 // 若有二级目录,生成在获取文件名称上方即可
                 path = zipPath + File.separator + fileUploadVO.getFileName();
                 break;
+            case 6:
+
         }
         // 创建文件
         if (path != null) {

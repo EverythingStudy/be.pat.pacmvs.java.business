@@ -22,6 +22,7 @@ import cn.staitech.anno.mapper.SlidePredictionMapper;
 import cn.staitech.anno.service.AlgorithmModelService;
 import cn.staitech.anno.service.AlgorithmPredictionService;
 import cn.staitech.anno.service.SlidePredictionService;
+import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
 import cn.staitech.anno.vo.predictionInfo.in.PreExecData;

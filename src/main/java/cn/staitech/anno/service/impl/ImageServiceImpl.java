@@ -18,11 +18,9 @@ import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.image.in.*;
 import cn.staitech.anno.vo.image.out.ImageListOutVO;
-import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -113,15 +111,17 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                 Integer status = in.getStatus();
 
                 if (LanguageUtils.isEn()) {
+                    String fileStatus = bizType == 7 ? Container.IMAGE_STATUS_MAP_7_EN.get(status) : Container.IMAGE_STATUS_MAP_EN.get(status);
                     // 可用、不可用状态解析中
-                    out.setFileStatus(Container.IMAGE_STATUS_MAP_EN.get(status));
+                    out.setFileStatus(fileStatus);
                     // 评审轮次
                     if (bizType.equals(2)) {
                         out.setRoundName(MapConstant.getRoundNameEn(in.getRoundId()));
                     }
                 } else {
+                    String fileStatus = bizType == 7 ? Container.IMAGE_STATUS_MAP_7.get(status) : Container.IMAGE_STATUS_MAP.get(status);
                     // 可用、不可用状态解析中
-                    out.setFileStatus(Container.IMAGE_STATUS_MAP.get(status));
+                    out.setFileStatus(fileStatus);
                     // 评审轮次
                     if (bizType.equals(2)) {
                         out.setRoundName(MapConstant.getRoundName(in.getRoundId()));
@@ -181,9 +181,9 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
     @Transactional(rollbackFor = Exception.class)
     public PageMaster<ImageListOutVO> choiceList(ImageTopicVO vo) throws ExecutionException, InterruptedException {
-        Project project=projectMapper.selectPrimKey(vo.getProjectId());
+        Project project = projectMapper.selectPrimKey(vo.getProjectId());
         //眼科
-        if (Objects.equals(project.getProjectType(), "6")){
+        if (Objects.equals(project.getProjectType(), "6")) {
             return eyeImage(vo);
         }
 
@@ -455,9 +455,9 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         return imageMapper.updateById(image);
     }
 
-    public PageMaster<ImageListOutVO> eyeImage(ImageTopicVO vo){
+    public PageMaster<ImageListOutVO> eyeImage(ImageTopicVO vo) {
         PageHelper.startPage(vo.getPageNum(), vo.getPageSize()).setReasonable(true);
-        List<ImageListOutVO> imageListOutVOS=slideMapper.eyeSlideList(vo);
+        List<ImageListOutVO> imageListOutVOS = slideMapper.eyeSlideList(vo);
         PageMaster pageMaster = new PageMaster<>(imageListOutVOS);
         return pageMaster;
     }

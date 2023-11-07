@@ -7,9 +7,12 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * @Author wudi
- * @Date 2023/10/17 16:55
- * @desc
+ * 
+* @ClassName: PreExecData
+* @Description:
+* @author wanglibei
+* @date 2023年11月7日
+* @version V1.0
  */
 @Data
 public class PreExecData {
@@ -22,6 +25,9 @@ public class PreExecData {
     
     @ApiModelProperty(value = "原始切片数据")
     private List<SlidePredictionInfo> slidePredictionList;
+    
+    
+    
     
 
 }
