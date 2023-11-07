@@ -325,12 +325,12 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
             image.setLabelUrl(thumbPath);
             image.setCacheUrl(thumbPath);
 
-            String absFilePath = "/home/pat_saas/Slides" + thumbPath.replace("/file/statics", thumbPath);
+            String absFilePath = thumbPath.replace("/file/statics", "/home/pat_saas/Slides");
             FileUtils.copyFile(file, new File(absFilePath));
 
             image.setFormat(image.getImagePath().substring(image.getImagePath().lastIndexOf('.') + 1));
             image.setImageCode(uuid);
-            image.setBizType(6);
+            image.setBizType(7);
         }
 
         return image;
