@@ -1,14 +1,9 @@
 package cn.staitech.anno.service;
 
-import java.util.List;
-
-import cn.staitech.anno.vo.assessment.in.AssessmentExportIn;
-import cn.staitech.anno.vo.assessment.in.CreateAssessmentIn;
-import cn.staitech.anno.vo.assessment.in.GetAssessmentListIn;
-import cn.staitech.anno.vo.assessment.in.GetJsonInfoIn;
-import cn.staitech.anno.vo.assessment.in.RemoveAssessmentIn;
-import cn.staitech.anno.vo.assessment.out.GetAssessmentListOut;
-import cn.staitech.common.core.domain.PageResponse;
+import cn.staitech.anno.domain.Project;
+import cn.staitech.anno.vo.predictionInfo.in.SlidePredictionIn;
+import cn.staitech.anno.vo.predictionInfo.in.StartPredictionIn;
+import cn.staitech.anno.vo.predictionInfo.out.SlidePredictionOut;
 import cn.staitech.common.core.domain.R;
 
 /**
@@ -21,15 +16,7 @@ import cn.staitech.common.core.domain.R;
  */
 public interface AlgorithmPredictionService{
 
-    R createAssessment(CreateAssessmentIn req);
+    R startPrediction(StartPredictionIn req,Project project);
 
-    PageResponse<GetAssessmentListOut> getAssessmentList(GetAssessmentListIn req);
-
-    R removeAssessment(RemoveAssessmentIn req);
-
-    void export(AssessmentExportIn assessmentExportIn) throws Exception;
-
-    List<String> zipExport(String zipUrl, Long projectId, String fileUrl) throws Exception;
-
-    R getJsonInfo(GetJsonInfoIn req);
+    SlidePredictionOut getOriginalSlideList(SlidePredictionIn req);
 }

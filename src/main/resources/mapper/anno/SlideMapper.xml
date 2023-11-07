@@ -743,6 +743,7 @@
         m.thumb_url,
         m.image_name,
         n.folder_name,
+        n.folder_url,
         p.thumb_url prediction_thumb_url,
         from tb_slide s
         left join tb_image m on m.image_id = s.image_id
@@ -774,6 +775,9 @@
             </if>
             <if test="gender != null">
                 AND s.gender = #{gender}
+            </if>
+            <if test="eyeMent != null">
+                AND s.eye_ment = #{eyeMent}
             </if>
             <if test="lesionType != null">
                 AND s.lesion_type1 LIKE CONCAT('%', #{lesionType}, '%')
