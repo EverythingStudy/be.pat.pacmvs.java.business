@@ -217,6 +217,9 @@ public class FileUploadServiceImpl implements FileUploadService {
         // 查询文件是否存在
         QueryWrapper<Files> filesQueryWrapper = new QueryWrapper<>();
         filesQueryWrapper.eq("files_code", chunk.getUuid());
+        filesQueryWrapper.orderByDesc("files_id");
+        filesQueryWrapper.last("limit 1");
+
         Files filesBy = filesService.getOne(filesQueryWrapper);
         // 文件为空,第一片文件上传时添加到文件表中
         if (filesBy == null) {
@@ -232,13 +235,12 @@ public class FileUploadServiceImpl implements FileUploadService {
             Container.FILE_MAP.put(chunk.getUuid(), chunkList);
         }
 
-        // if (filesBy !=null && filesBy.getFilesPath() !=null) {
-            File file = new File(filesBy.getFilesPath());
-            if (file.exists()) {
-                // 删除文件
-                file.delete();
-            }
-//        }
+        File file = new File(filesBy.getFilesPath());
+        if (file.exists()) {
+            // 删除文件
+            file.delete();
+        }
+
         // 写入文件
         try (InputStream fis = chunk.getMultipartFile().getInputStream();
              RandomAccessFile raf = new RandomAccessFile(file, "rw")) {
@@ -291,14 +293,21 @@ public class FileUploadServiceImpl implements FileUploadService {
                     List<String> fileNameList = algorithmAssessmentService.zipExport(filesBy.getFilesPath(), chunk.getProjectId(), fileUrl);
                     return fileNameList.toString();
                 case 6:
+                    Files files = new Files();
+                    files.setFilesPath(filesBy.getFilesPath());
+                    // 解析文件
+                    filesService.process(files);
                     break;
             }
         }
         return "1";
     }
 
-    public Long saveFiles(FileUploadVO fileUploadVO) {
+    public Long saveFiles(FileUploadVO fileUploadVO) throws Exception {
         String path = null;
+        String topicName = "";
+        Long topicId = 0L;
+
         // 根据不同的业务id生成不同的文件
         switch (fileUploadVO.getBusinessType()) {
             case 4:
@@ -307,7 +316,20 @@ public class FileUploadServiceImpl implements FileUploadService {
                 path = zipPath + File.separator + fileUploadVO.getFileName();
                 break;
             case 6:
-
+                if (Objects.equals(fileUploadVO.getTopicName(), "")) {
+                    throw new Exception(MessageSource.M("ARGUMENT_INVALID_NOT_FIND_TOPIC"));
+                }
+                Topic topic = topicService.selectOne(fileUploadVO.getTopicName(), 6);
+                // 定义文件夹名称
+                String dirPath = basePath + File.separator + "Slides" + File.separator + topic.getTopicName();
+                //创建文件夹
+                File dir = new File(dirPath);
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+                topicName = topic.getTopicName();
+                topicId = topic.getTopicId();
+                break;
         }
         // 创建文件
         if (path != null) {
@@ -319,7 +341,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             }
         }
         // 获取文件后缀
-        String suffixName = fileUploadVO.getFileName().substring(fileUploadVO.getFileName().lastIndexOf("."));
+        String suffixName = fileUploadVO.getFileName().substring(fileUploadVO.getFileName().lastIndexOf(".") + 1);
 
         Files files = Files.builder()
                 .filesName(fileUploadVO.getFileName())
@@ -331,6 +353,8 @@ public class FileUploadServiceImpl implements FileUploadService {
                 .deleteFlag(1)
                 .hostId(1)
                 .businessType(fileUploadVO.getBusinessType())
+                .topicId(topicId)
+                .topicName(topicName)
                 .createTime(new Date())
                 .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId())
                 .createBy(SecurityUtils.getUserId())
