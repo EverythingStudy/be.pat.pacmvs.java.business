@@ -4,7 +4,9 @@ import cn.staitech.anno.domain.AlgorithmModel;
 
 import java.util.List;
 
-public interface AlgorithmModelMapper {
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+public interface AlgorithmModelMapper extends BaseMapper<AlgorithmModel> {
     /**
      * 查询算法
      * */

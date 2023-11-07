@@ -2,6 +2,11 @@ package cn.staitech.anno.domain;
 
 import java.io.Serializable;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,12 +20,15 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@TableName("aipre_algorithm_model")
 @Builder
+@ApiModel(value="眼科-算法模型表", description="眼科-算法模型表")
 public class AlgorithmModel implements Serializable {
     /**
      * 算法模型id
      */
     @ApiModelProperty(value = "id")
+    @TableId(value = "model_id", type = IdType.AUTO)
     private Long modelId;
 
     /**

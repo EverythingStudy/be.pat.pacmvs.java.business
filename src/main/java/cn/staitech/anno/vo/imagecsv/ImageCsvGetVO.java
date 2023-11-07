@@ -55,6 +55,12 @@ public class ImageCsvGetVO implements Serializable {
     
     
     /**
+     * 碎片状态默认为0校验通过，1校验不通过
+     */
+    private String eyeMent;
+    
+    
+    /**
      * AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败
      */
     private Integer aiAnalyzed;
