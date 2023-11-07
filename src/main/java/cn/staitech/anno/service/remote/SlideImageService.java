@@ -1,6 +1,6 @@
 package cn.staitech.anno.service.remote;
 
-import cn.staitech.anno.vo.predictionInfo.PredictionInfoVO;
+import cn.staitech.anno.vo.predictionInfo.in.PredictionInfoVO;
 import cn.staitech.anno.vo.special.SpecialImage;
 import cn.staitech.anno.vo.specialimageanno.AlgorithmCutImageVO;
 import cn.staitech.common.core.constant.SecurityConstants;

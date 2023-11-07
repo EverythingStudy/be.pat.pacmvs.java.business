@@ -1,15 +1,17 @@
 package cn.staitech.anno.service.impl;
 
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
 import cn.staitech.anno.domain.AlgorithmModel;
 import cn.staitech.anno.mapper.AlgorithmModelMapper;
 import cn.staitech.anno.service.AlgorithmModelService;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.util.List;
 
 @Service
-public class AlgorithmModelServiceImpl implements AlgorithmModelService {
+public class AlgorithmModelServiceImpl extends ServiceImpl<AlgorithmModelMapper, AlgorithmModel> implements AlgorithmModelService {
 
     @Resource
     private AlgorithmModelMapper algorithmModelMapper;

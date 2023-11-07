@@ -1,7 +1,12 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.SlidePrediction;
+import java.util.List;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import cn.staitech.anno.domain.SlidePrediction;
+import cn.staitech.anno.vo.predictionInfo.in.SlidePredictionQuery;
+import cn.staitech.anno.vo.predictionInfo.out.SlidePredictionInfo;
 
 /**
  * <p>
@@ -13,4 +18,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface SlidePredictionMapper extends BaseMapper<SlidePrediction> {
 
+	List<SlidePredictionInfo> getOriginalSlideList(SlidePredictionQuery req);
 }
