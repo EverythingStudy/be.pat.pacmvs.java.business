@@ -217,6 +217,9 @@ public class FileUploadServiceImpl implements FileUploadService {
         // 查询文件是否存在
         QueryWrapper<Files> filesQueryWrapper = new QueryWrapper<>();
         filesQueryWrapper.eq("files_code", chunk.getUuid());
+        filesQueryWrapper.orderByDesc("files_id");
+        filesQueryWrapper.last("limit 1");
+
         Files filesBy = filesService.getOne(filesQueryWrapper);
         // 文件为空,第一片文件上传时添加到文件表中
         if (filesBy == null) {
