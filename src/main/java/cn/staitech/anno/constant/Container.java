@@ -54,6 +54,21 @@ public class Container {
             .build();
 
     /**
+     * Image - 可用状态：0不可用1可用
+     */
+    public static final Map<Integer, String> IMAGE_STATUS_MAP_7 = new ImmutableMap.Builder<Integer, String>()
+            .put(0, "解析失败")
+            .put(1, "解析成功")
+            .build();
+
+    /**
+     * Image - EN - 可用状态：0不可用1可用
+     */
+    public static final Map<Integer, String> IMAGE_STATUS_MAP_7_EN = new ImmutableMap.Builder<Integer, String>()
+            .put(0, "Unavailable")
+            .put(1, "Available")
+            .build();
+    /**
      * 项目状态
      */
     public static final Map<Integer, String> PROJECT_STATUS = new ImmutableMap.Builder<Integer, String>()
