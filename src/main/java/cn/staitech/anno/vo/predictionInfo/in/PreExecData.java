@@ -24,7 +24,7 @@ public class PreExecData {
     private String folderUrl;
     
     @ApiModelProperty(value = "原始切片数据")
-    private List<SlidePredictionInfo> slidePredictionList;
+    private List<PredictionInfo> predictionInfoList;
     
     
     

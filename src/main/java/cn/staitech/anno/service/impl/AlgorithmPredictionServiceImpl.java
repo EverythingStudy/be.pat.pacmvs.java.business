@@ -27,6 +27,7 @@ import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
 import cn.staitech.anno.vo.predictionInfo.in.PreExecData;
 import cn.staitech.anno.vo.predictionInfo.in.PredictionDataIn;
+import cn.staitech.anno.vo.predictionInfo.in.PredictionInfo;
 import cn.staitech.anno.vo.predictionInfo.in.SlidePredictionIn;
 import cn.staitech.anno.vo.predictionInfo.in.SlidePredictionQuery;
 import cn.staitech.anno.vo.predictionInfo.in.StartPredictionIn;
@@ -89,6 +90,7 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 		//查询需要的数据
 		List<ImageCsvListVO> list = slidePredictionMapper.getImageCsvListVOList(request);
 		List<PreExecData> slideList = new ArrayList<PreExecData>();
+		List<PredictionInfo> pInfoList = new ArrayList<>();
 		if(CollectionUtils.isNotEmpty(list)){
 			for(ImageCsvListVO vo:list){
 				PreExecData ped = new PreExecData();
@@ -98,7 +100,15 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 					spQuery.setSlideId(vo.getSlideId());
 					spQuery.setEyeMent("0");
 				List<SlidePredictionInfo> spList = slidePredictionMapper.getOriginalSlideList(spQuery);
-				ped.setSlidePredictionList(spList);
+				if(CollectionUtils.isNotEmpty(spList)){
+					for(SlidePredictionInfo sInfo:spList){
+						PredictionInfo pInfo = new PredictionInfo();
+						BeanUtils.copyProperties(sInfo,pInfo);
+						pInfoList.add(pInfo);
+					}
+				}
+//				ped.setSlidePredictionList(spList);
+				ped.setPredictionInfoList(pInfoList);
 				slideList.add(ped);
 			}
 			predictionData.setSlideList(slideList);
