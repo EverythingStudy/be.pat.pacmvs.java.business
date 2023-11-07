@@ -27,6 +27,7 @@ import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
 import cn.staitech.anno.vo.predictionInfo.in.PreExecData;
 import cn.staitech.anno.vo.predictionInfo.in.PredictionDataIn;
+import cn.staitech.anno.vo.predictionInfo.in.PredictionInfo;
 import cn.staitech.anno.vo.predictionInfo.in.SlidePredictionIn;
 import cn.staitech.anno.vo.predictionInfo.in.SlidePredictionQuery;
 import cn.staitech.anno.vo.predictionInfo.in.StartPredictionIn;
@@ -47,8 +48,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionService {
 
-	@Autowired
-	private SlideService slideService;
 
 	@Resource
 	private AlgorithmModelService algorithmModelService;
@@ -68,7 +67,6 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 	@SuppressWarnings("rawtypes")
 	@Override
 	public R startPrediction(StartPredictionIn req, cn.staitech.anno.domain.Project project) {
-		List<PreExecData> slideList = new ArrayList<PreExecData>();
 		//请求算法类型 0：启动算法 1：重算失败数据
 		int type = req.getType();
 		//算法模型id
@@ -90,15 +88,31 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 		//碎片状态（默认为0校验通过，1校验不通过）
 		request.setEyeMent("0");  
 		//查询需要的数据
-		List<ImageCsvListVO> list = slideService.pageSlides(request);
-
+		List<ImageCsvListVO> list = slidePredictionMapper.getImageCsvListVOList(request);
+		List<PreExecData> slideList = new ArrayList<PreExecData>();
+		List<PredictionInfo> pInfoList = new ArrayList<>();
 		if(CollectionUtils.isNotEmpty(list)){
 			for(ImageCsvListVO vo:list){
 				PreExecData ped = new PreExecData();
 				BeanUtils.copyProperties(vo, ped);
+				//根据slideId 查询SlidePrediction信息
+				SlidePredictionQuery spQuery = new SlidePredictionQuery();
+					spQuery.setSlideId(vo.getSlideId());
+					spQuery.setEyeMent("0");
+				List<SlidePredictionInfo> spList = slidePredictionMapper.getOriginalSlideList(spQuery);
+				if(CollectionUtils.isNotEmpty(spList)){
+					for(SlidePredictionInfo sInfo:spList){
+						PredictionInfo pInfo = new PredictionInfo();
+						BeanUtils.copyProperties(sInfo,pInfo);
+						pInfoList.add(pInfo);
+					}
+				}
+//				ped.setSlidePredictionList(spList);
+				ped.setPredictionInfoList(pInfoList);
 				slideList.add(ped);
 			}
 			predictionData.setSlideList(slideList);
+			log.info("请求数据：{}",JSONUtil.toJsonStr(predictionData));
 			//TODO 请求算法接口
 			try{
 				ResponseEntity<String> resp =  restTemplate.postForEntity(algorithmPredictionPath, predictionData, String.class);

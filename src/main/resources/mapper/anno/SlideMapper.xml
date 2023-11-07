@@ -741,14 +741,9 @@
         m.source_lens,
         m.image_path,
         m.thumb_url,
-        m.image_name,
-        n.folder_name,
-        n.folder_url,
-        p.thumb_url prediction_thumb_url,
+        m.image_name
         from tb_slide s
         left join tb_image m on m.image_id = s.image_id
-        left join aipre_folder n on s.folder_id = n.folder_id
-        left join tb_image p on s.prediction_image_id = p.image_id
         <where>
             <!--            切片编号        imageName
                         组别        groupName
@@ -764,12 +759,10 @@
             <if test="imageName != null">
                 AND m.image_name LIKE CONCAT('%', #{imageName}, '%')
             </if>
-            <if test="folderName != null">
-                AND n.folder_name LIKE CONCAT('%', #{folderName}, '%')
-            </if>
              <if test="aiAnalyzed != null">
                 AND s.ai_analyzed = #{aiAnalyzed}
             </if>
+            
             <if test="groupName != null">
                 AND s.group_name LIKE CONCAT('%', #{groupName}, '%')
             </if>

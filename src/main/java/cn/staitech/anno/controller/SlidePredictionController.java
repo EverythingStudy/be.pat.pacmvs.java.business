@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 
-import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.SlidePrediction;
@@ -27,7 +26,6 @@ import cn.staitech.anno.service.SlidePredictionService;
 import cn.staitech.anno.service.remote.SlideImageService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
-import cn.staitech.anno.vo.algorithm.AlgorithmJson;
 import cn.staitech.anno.vo.predictionInfo.in.SetMainImageDataIn;
 import cn.staitech.anno.vo.predictionInfo.in.SlidePredictionIn;
 import cn.staitech.anno.vo.predictionInfo.in.StartPredictionIn;
@@ -37,6 +35,7 @@ import cn.staitech.anno.vo.project.in.ProjectListQueryIn;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,6 +47,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author wanglibei
  * @since 2023-11-02
  */
+@Api(value = "算法预测模块", tags = "算法预测模块")
 @Slf4j
 @RestController
 @RequestMapping("/slidePrediction")
