@@ -43,7 +43,7 @@ public class ImageListOutVO {
     private String fileStatus;
     @ApiModelProperty(value = "创建人id")
     private Long createBy;
-    @ApiModelProperty(value = "创建时间")
+    @ApiModelProperty(value = "创建时间/上传时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
     @ApiModelProperty(value = "更新人id")

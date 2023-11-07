@@ -23,6 +23,8 @@
         <result property="indicatorNameEn" column="indicator_name_en"/>
         <result property="productSeries" column="product_series"/>
         <result property="organizationName" column="organization_name"/>
+        <result property="modelId" column="model_id"/>
+        <result property="tissueId" column="tissue_id"/>
     </resultMap>
 
     <resultMap id="ProjectMessage" type="cn.staitech.anno.vo.project.ProjectListVO">
@@ -147,7 +149,6 @@
         select project_id,
                project_name,
                image_total,
-               annotation_total,
                create_by,
                description,
                indicator_id,
@@ -157,7 +158,9 @@
                species_id,
                product_series_id,
                project_type,
-               organization_id
+               organization_id,
+               tissue_id,
+               model_id
         from tb_project
     </sql>
 

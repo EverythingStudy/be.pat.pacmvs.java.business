@@ -39,6 +39,8 @@
       #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP},
       #{delFlag,jdbcType=CHAR},#{mainImage,jdbcType=CHAR})
   </insert>
+
+  <!--眼科-添加-->
   <insert id="insertSelective" keyColumn="slide_prediction_id" keyProperty="slidePredictionId" parameterType="cn.staitech.anno.domain.SlidePrediction" useGeneratedKeys="true">
     insert into aipre_slide_prediction
     <trim prefix="(" suffix=")" suffixOverrides=",">

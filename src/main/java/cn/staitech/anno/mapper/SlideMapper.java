@@ -1,10 +1,15 @@
 package cn.staitech.anno.mapper;
 
+import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.Slide;
+import cn.staitech.anno.domain.SlidePrediction;
 import cn.staitech.anno.project.domain.Review;
 import cn.staitech.anno.vo.diagnosis.SpecialDiagnosisAddVo;
 import cn.staitech.anno.vo.examination.ExaminationListVO;
-import cn.staitech.anno.vo.image.in.ImageTopicVO;
+import cn.staitech.anno.vo.eyeslide.EyeProjectSlideOut;
+import cn.staitech.anno.vo.eyeslide.EyeSaveSlide;
+import cn.staitech.anno.vo.eyeslide.EyeSlideIn;
+import cn.staitech.anno.vo.eyeslide.ProjectSlideOut;
 import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
@@ -13,7 +18,6 @@ import cn.staitech.anno.vo.project.ProjectStatisticsVO;
 import cn.staitech.anno.vo.slide.*;
 import cn.staitech.anno.vo.statistic.StatisticSlideListInVO;
 import cn.staitech.anno.vo.statistic.StatisticSlideListOutVO;
-import cn.staitech.anno.vo.topic.TopicIdName;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -226,5 +230,40 @@ public interface SlideMapper extends BaseMapper<Slide> {
     /**
      * 眼科选择图片查询
      * */
-    List<ImageListOutVO> eyeSlideList(ImageTopicVO imageTopicVO);
+    List<ImageListOutVO> eyeSlideList(EyeSlideIn eyeSlideIn);
+
+    /**
+     * 删除文件夹下的图片
+     * */
+    int updateByPrimaryKeySelective(SlidePrediction slidePrediction);
+
+    /**
+     * 眼科项目图片
+     * */
+    List<EyeProjectSlideOut>eyeProjectSlide(EyeProjectSlideOut eyeProjectSlideOut);
+
+    /**
+     * 查询项目文件夹
+     * */
+    List<EyeProjectSlideOut> eyeProjectFolder(EyeProjectSlideOut eyeProjectSlideOut);
+
+    /**
+     * 眼科-查询是否有算法结果
+     * */
+    int algorithmResult(Long projectId);
+
+    /**
+     * 眼科-查询要添加的数据
+     * */
+    List<ProjectSlideOut> eyeFolder(EyeSaveSlide eyeSaveSlide);
+
+    /**
+     * 眼科-查询图片信息
+     * */
+    List<Image> eyeFolderSlide(Long folderId);
+
+    /**
+     * 眼科-添加slide
+     * */
+    int eyeInsertSlide(Slide slide);
 }

@@ -8,6 +8,7 @@ import cn.staitech.anno.service.SysUserService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.eyeslide.*;
+import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetPagerVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
@@ -27,7 +28,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 
-import antlr.StringUtils;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
@@ -345,7 +345,7 @@ public class SlideController extends BaseController {
     /**
      * 上传人员
      * */
-    @ApiOperation(value = "上传人员")
+    @ApiOperation(value = "拼接图象类项目---上传人员")
     @PostMapping("/uploadPersonnel")
     public R<List<SysUser>>uploadPersonnel() {
         List<SysUser> userList=sysUserService.userList();
@@ -360,34 +360,34 @@ public class SlideController extends BaseController {
 //    }
 
 
+    /**
+     * 获取图片碎片
+     * */
+    @ApiOperation(value = "拼接图象类项目---切片列表")
+    @PostMapping("/folderList")
+    public R<PageMaster<ImageListOutVO>>folderList(@RequestBody EyeSlideIn eyeSlideIn) {
+        PageMaster<ImageListOutVO> eyeImage=slideService.eyeImage(eyeSlideIn);
+        return R.ok(eyeImage);
+    }
+
 //    /**
-//     * 获取图片碎片
+//     * 拼接图象类项目---保存图片碎片
 //     * */
-//    @ApiOperation(value = "拼接图象类项目---切片列表")
-//    @PostMapping("/folderList")
-//    public R<PageMaster<EyeSlideListOut>>folderList(@RequestBody EyeSlideIn eyeSlideIn) {
+//    @ApiOperation(value = "拼接图象类项目---保存图片碎片")
+//    @PostMapping("/saveDebris")
+//    public R<String>saveDebris(@RequestBody @Validated EyeSlideSave eyeSlideSave) {
 //
 //        return R.ok();
 //    }
-
-    /**
-     * 拼接图象类项目---保存图片碎片
-     * */
-    @ApiOperation(value = "拼接图象类项目---保存图片碎片")
-    @PostMapping("/saveDebris")
-    public R<String>saveDebris(@RequestBody @Validated EyeSlideSave eyeSlideSave) {
-
-        return R.ok();
-    }
 
     /**
      * 获取拼接图象类项目---项目图片
      * */
     @ApiOperation(value = "拼接图象类项目---项目图片")
     @PostMapping("/projectPictureList")
-    public R<List<ProjectSlideOut>>projectPictureList(@RequestBody @Validated ProjectSlideIn projectSlideIn) {
-
-        return R.ok();
+    public R<PageMaster<EyeProjectSlideOut>>projectPictureList(@RequestBody @Validated EyeProjectSlideIn eyeProjectSlideIn) {
+        PageMaster<EyeProjectSlideOut> eyeProjectSlide=slideService.eyeProjectSlide(eyeProjectSlideIn);
+        return R.ok(eyeProjectSlide);
     }
 
     /**
@@ -395,19 +395,41 @@ public class SlideController extends BaseController {
      * */
     @ApiOperation(value = "拼接图象类项目---项目图片删除")
     @PostMapping("/projectPictureDel")
-    public R<String>projectPictureDel(@RequestBody @Validated ProjectSlideDel projectSlideDel) {
+    public R projectPictureDel(@RequestBody @Validated ProjectSlideDel projectSlideDel) {
+        return slideService.deleteProjectImage(projectSlideDel);
+    }
+
+//    /**
+//     * 获取拼接图象类项目---原始切片
+//     * */
+//    @ApiOperation(value = "拼接图象类项目---原始切片")
+//    @GetMapping("/original")
+//    public R<List<ProjectSlideOut>>original(@RequestParam(name = "folderId") @ApiParam(name = "folderId", value = "文件夹id") Long folderId) {
+//
+//        return R.ok();
+//    }
+
+    /**
+     * 保存文件夹和切片
+     * */
+    @ApiOperation(value = "拼接图象类项目---保存文件夹和切片")
+    @PostMapping("/eyeSave")
+    public R<String>eyeSave(@RequestBody @Validated EyeSaveSlide eyeSaveSlide) {
+            slideService.eyeFolder(eyeSaveSlide);
+
+
 
         return R.ok();
     }
 
     /**
-     * 获取拼接图象类项目---原始切片
+     * 拼接图象类项目---是否有算法结果
      * */
-    @ApiOperation(value = "拼接图象类项目---原始切片")
-    @GetMapping("/original")
-    public R<List<ProjectSlideOut>>original(@RequestParam(name = "folderId") @ApiParam(name = "folderId", value = "文件夹id") Long folderId) {
-
-        return R.ok();
+    @ApiOperation(value = "拼接图象类项目---是否有算法结果")
+    @GetMapping("/algorithmResult")
+    public R<Integer>algorithmResult(@RequestParam(name = "projectId") @ApiParam(name = "projectId", value = "项目id") Long projectId) {
+        Integer num=slideService.algorithmResult(projectId);
+        return R.ok(num);
     }
 
 

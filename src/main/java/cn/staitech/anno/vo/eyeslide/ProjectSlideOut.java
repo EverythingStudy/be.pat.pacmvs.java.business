@@ -2,10 +2,7 @@ package cn.staitech.anno.vo.eyeslide;
 
 import cn.staitech.anno.domain.Image;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 public class ProjectSlideOut extends Image {

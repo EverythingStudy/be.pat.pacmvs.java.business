@@ -208,13 +208,13 @@ public class ProjectListVO extends BaseEntity {
     /**
      * 算法模型名称
      * */
-    @ApiModelProperty(value = "病理病变")
+    @ApiModelProperty(value = "算法模型名称")
     private String modelName;
 
     /**
      * 算法模型名称en
      * */
-    @ApiModelProperty(value = "病理病变en")
+    @ApiModelProperty(value = "算法模型名称en")
     private String modelNameEn;
 
 

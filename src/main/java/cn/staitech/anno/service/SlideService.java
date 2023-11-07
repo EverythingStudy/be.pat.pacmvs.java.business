@@ -3,6 +3,9 @@ package cn.staitech.anno.service;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.examination.ExaminationListVO;
+import cn.staitech.anno.vo.eyeslide.*;
+import cn.staitech.anno.vo.image.in.ImageTopicVO;
+import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetPagerVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
@@ -226,5 +229,35 @@ public interface SlideService extends IService<Slide> {
 //     * 查询专题编号
 //     * */
 //    List<TopicIdName>topicList();
+
+//    /**
+//     * 保存文件夹和图片
+//     * */
+//    int eyeSlideList(EyeSaveSlide eyeSaveSlide);
+
+    /**
+     * 删除项目切片
+     * */
+    R deleteProjectImage(ProjectSlideDel projectSlideDel);
+
+    /**
+     * 眼科-查询是否有算法结果
+     * */
+    int algorithmResult(Long projectId);
+
+    /**
+     * 眼科项目图片
+     * */
+    PageMaster<EyeProjectSlideOut> eyeProjectSlide(EyeProjectSlideIn request);
+
+    /**
+     * 眼科选择图片查询
+     * */
+    PageMaster<ImageListOutVO> eyeImage(EyeSlideIn eyeSlideIn);
+
+    /**
+     * 眼科-查询要添加的数据
+     * */
+    List<ProjectSlideOut> eyeFolder(EyeSaveSlide eyeSaveSlide);
 
 }

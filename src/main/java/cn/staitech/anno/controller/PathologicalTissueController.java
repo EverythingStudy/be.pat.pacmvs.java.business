@@ -24,7 +24,7 @@ public class PathologicalTissueController {
     private PathologicalTissueService pathologicalTissueService;
 
     @ApiOperationSupport(author = "zmj")
-    @ApiOperation(value = "病理组织列表")
+    @ApiOperation(value = "拼接图象类项目---病理组织列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "projectTypeId", value = "项目类型id", dataTypeClass = Long.class, paramType = "query")})
     @GetMapping("/list")

@@ -181,11 +181,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
     @Transactional(rollbackFor = Exception.class)
     public PageMaster<ImageListOutVO> choiceList(ImageTopicVO vo) throws ExecutionException, InterruptedException {
-        Project project = projectMapper.selectPrimKey(vo.getProjectId());
-        //眼科
-        if (Objects.equals(project.getProjectType(), "6")) {
-            return eyeImage(vo);
-        }
 
         Image image = new Image();
         BeanUtils.copyProperties(vo, image);
@@ -455,12 +450,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         return imageMapper.updateById(image);
     }
 
-    public PageMaster<ImageListOutVO> eyeImage(ImageTopicVO vo) {
-        PageHelper.startPage(vo.getPageNum(), vo.getPageSize()).setReasonable(true);
-        List<ImageListOutVO> imageListOutVOS = slideMapper.eyeSlideList(vo);
-        PageMaster pageMaster = new PageMaster<>(imageListOutVOS);
-        return pageMaster;
-    }
+
 
 
 }

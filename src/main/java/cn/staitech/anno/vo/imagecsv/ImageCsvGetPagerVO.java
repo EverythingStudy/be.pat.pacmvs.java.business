@@ -23,30 +23,36 @@ public class ImageCsvGetPagerVO extends Pager implements Serializable {
     /**
      * 项目ID
      */
+    @ApiModelProperty(value = "项目ID")
     private Long projectId;
     /**
      * 切片编号
      */
+    @ApiModelProperty(value = "切片编号")
     private String imageName;
 
     /**
      * 组别
      */
+    @ApiModelProperty(value = "组别")
     private String groupName;
 
     /**
      * 性别
      */
+    @ApiModelProperty(value = "性别")
     private String gender;
 
     /**
      * 病变类型1
      */
+    @ApiModelProperty(value = "病变类型1")
     private String lesionType;
 
     /**
      * 病变程度1
      */
+    @ApiModelProperty(value = "病变程度1")
     private String lesionDegree;
     
     /**
@@ -64,8 +70,12 @@ public class ImageCsvGetPagerVO extends Pager implements Serializable {
     /**
      * reviewRoundId
      */
+    @ApiModelProperty(value = "reviewRoundId")
     private Long reviewRoundId;
 
     @ApiModelProperty("请求参数（开始和结束时间）")
     private Map<String, Object> createTimeParams;
+
+    @ApiModelProperty(value = "碎片状态(默认为0校验通过，1校验不通过)",hidden = true)
+    private String eyeMent;
 }

@@ -9,6 +9,9 @@ import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.examination.ExaminationListVO;
+import cn.staitech.anno.vo.eyeslide.*;
+import cn.staitech.anno.vo.image.in.ImageTopicVO;
+import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetPagerVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
@@ -43,11 +46,9 @@ import javax.annotation.Resource;
 import java.io.BufferedOutputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 
 import static cn.staitech.anno.aspect.LogFileAspect.response;
 
@@ -631,6 +632,10 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
 
     @Override
     public PageMaster<ImageCsvListVO> pageReviewRoundSSlides(ImageCsvGetPagerVO request) {
+//        Project project=projectMapper.selectPrimKey(request.getProjectId());
+//        if (Objects.equals(project.getProjectType(), "6")){
+//            return eyeProjectSlide(request);
+//        }
         PageHelper.startPage(request.getPageNum(), request.getPageSize()).setReasonable(true);
         ImageCsvGetVO imageCsvGetVO = new ImageCsvGetVO();
         BeanUtil.copyProperties(request, imageCsvGetVO);
@@ -699,6 +704,145 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
 //        Long organizationId=SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
 //        return slideMapper.topicList(organizationId);
 //    }
+
+//    @Override
+//    public int eyeSlideList(EyeSaveSlide eyeSaveSlide){
+//        ImageTopicVO imageTopicVO=new ImageTopicVO();
+//        imageTopicVO.setFolderName(eyeSaveSlide.getFolderName());
+//        imageTopicVO.setCreateBy(eyeSaveSlide.getCreateBy());
+//        imageTopicVO.setParams(eyeSaveSlide.getParams());
+//        imageTopicVO.setTopicName(eyeSaveSlide.getTopicName());
+//        List<ImageListOutVO> eyeSlideList=slideMapper.eyeSlideList(imageTopicVO);
+
+
+
+//        return 1;
+//    }
+
+    /**
+     * 删除项目切片
+     * */
+    @Override
+    public R deleteProjectImage(ProjectSlideDel projectSlideDel){
+        for (Long slideId:projectSlideDel.getSlideIdList()){
+            //切片表删除（物理删）
+            slideMapper.deleteProjectImage(slideId);
+            SlidePrediction slidePrediction=new SlidePrediction();
+            slidePrediction.setSlideId(slideId);
+            slidePrediction.setUpdateBy(SecurityUtils.getUserId());
+            slidePrediction.setDelFlag("1");
+            //切片预测表删除（逻辑删除）
+            slideMapper.updateByPrimaryKeySelective(slidePrediction);
+        }
+        return R.ok();
+    }
+
+    /**
+     * 眼科项目图片
+     * */
+    @Override
+    public PageMaster<EyeProjectSlideOut> eyeProjectSlide(EyeProjectSlideIn request){
+        EyeProjectSlideOut eyeProjectSlideOut=new EyeProjectSlideOut();
+        eyeProjectSlideOut.setEyeMent("0");
+        eyeProjectSlideOut.setImageName(request.getImageName());
+        eyeProjectSlideOut.setFolderName(request.getFolderName());
+        eyeProjectSlideOut.setProjectId(request.getProjectId());
+        List<EyeProjectSlideOut> listVOList=slideMapper.eyeProjectSlide(eyeProjectSlideOut);
+        eyeProjectSlideOut.setEyeMent("1");
+        List<EyeProjectSlideOut> listVOS=slideMapper.eyeProjectFolder(eyeProjectSlideOut);
+        listVOList.addAll(listVOS);
+        PageHelper.startPage(request.getPageNum(), request.getPageSize()).setReasonable(true);
+        PageMaster<EyeProjectSlideOut> pageMaster = new PageMaster<>(listVOList);
+        PageHelper.clearPage();
+        return pageMaster;
+    }
+
+    /**
+     * 眼科-查询是否有算法结果
+     * */
+    @Override
+    public int algorithmResult(Long projectId){
+        return slideMapper.algorithmResult(projectId);
+    }
+
+    /**
+     * 眼科选择图片查询
+     * */
+    @Override
+    public PageMaster<ImageListOutVO> eyeImage(EyeSlideIn eyeSlideIn){
+        PageHelper.startPage(eyeSlideIn.getPageNum(), eyeSlideIn.getPageSize()).setReasonable(true);
+        List<ImageListOutVO> imageListOutVOS=slideMapper.eyeSlideList(eyeSlideIn);
+        PageMaster pageMaster = new PageMaster<>(imageListOutVOS);
+        return pageMaster;
+    }
+
+
+    /**
+     * 眼科-查询要添加的数据
+     * */
+    public List<ProjectSlideOut> eyeFolder(EyeSaveSlide eyeSaveSlide){
+        List<ProjectSlideOut> projectSlideOutList=slideMapper.eyeFolder(eyeSaveSlide);
+        Project project=projectMapper.selectPrimKey(eyeSaveSlide.getProjectId());
+        switch (project.getModelId().intValue()){
+            case 1:
+                for (ProjectSlideOut projectSlideOut:projectSlideOutList){
+                    Long folderId=projectSlideOut.getFolderId();
+                    List<Image>imageList=slideMapper.eyeFolderSlide(folderId);
+                    List<SlidePrediction> predictions=new ArrayList<>();
+//                    List<Long>
+                    if (imageList.size()<5){
+                         Slide slide=Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(SecurityUtils.getUserId()).folderId(folderId).prompt("1").eyeMent("1").build();
+                         //存储文件夹id
+                        slideMapper.eyeInsertSlide(slide);
+                         for (Image image:imageList){
+                     SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId())
+                             .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
+                      predictions.add(slidePrediction);
+                    }
+                }else{
+                    for (Image image:imageList){
+                        if (isNumeric(image.getImageName())){
+
+                        }else{
+                            Slide slide=Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(SecurityUtils.getUserId()).folderId(folderId).prompt("2").eyeMent("1").build();
+                            //存储文件夹id
+                            slideMapper.eyeInsertSlide(slide);
+                            for (Image images:imageList){
+                                SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId())
+                                        .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(images.getImageId()).build();
+                                predictions.add(slidePrediction);
+                            }
+                            break;
+                        }
+
+
+                    }
+
+                    }
+                }
+
+                return projectSlideOutList;
+            case 2:
+                for (ProjectSlideOut projectSlideOut:projectSlideOutList){
+                    Long folderId=projectSlideOut.getFolderId();
+
+                }
+                return projectSlideOutList;
+        }
+
+
+
+        return projectSlideOutList;
+    }
+
+    /**
+     * 检验是否是纯数字
+     * */
+    public static boolean isNumeric(String str){
+        Pattern pattern = Pattern.compile("[0-9]*");
+        return pattern.matcher(str).matches();
+    }
+
 
 
 }

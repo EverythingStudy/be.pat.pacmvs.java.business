@@ -162,4 +162,15 @@ public class Container {
             .put(1, "未删除")
             .build();
 
+    /**
+     * 眼科-提示语
+     */
+    public static final Map<Integer, String> EYE_PROMPT_MAP = new ImmutableMap.Builder<Integer, String>()
+            .put(1, "数量不满足")
+            .put(2, "文件名称不符合")
+            .build();
+
+
+
+
 }
