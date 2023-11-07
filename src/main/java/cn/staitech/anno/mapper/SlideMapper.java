@@ -53,6 +53,7 @@ public interface SlideMapper extends BaseMapper<Slide> {
 
     SlideFileName slideFileName(Long slideId);
 
+
     /**
      * 根据项目ID列表查询图像列表
      *
