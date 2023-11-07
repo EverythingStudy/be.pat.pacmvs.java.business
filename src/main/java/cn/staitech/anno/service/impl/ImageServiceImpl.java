@@ -28,6 +28,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -67,8 +68,10 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         BeanUtils.copyProperties(vo, image);
 
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-        image.setOrganizationId(sysUser.getOrganizationId());
 
+        if(!Objects.equals(sysUser.getUserName(), "admin")){
+            image.setOrganizationId(sysUser.getOrganizationId());
+        }
         // 业务类型 1 原始切片 2 预测切片
         Integer bizType = image.getBizType();
 
