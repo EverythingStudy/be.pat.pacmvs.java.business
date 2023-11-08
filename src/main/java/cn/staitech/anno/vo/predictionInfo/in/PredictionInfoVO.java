@@ -1,5 +1,7 @@
 package cn.staitech.anno.vo.predictionInfo.in;
 
+import javax.validation.constraints.NotNull;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -45,4 +47,10 @@ public class PredictionInfoVO {
 
 	@ApiModelProperty(value = "登录人")
 	private  Long userId ;
+	
+	@ApiModelProperty(value = "slideId")
+	private Long slideId;
+	
+	@ApiModelProperty(value = "ai分析状态")
+    private Integer aiAnalyzed;
 }

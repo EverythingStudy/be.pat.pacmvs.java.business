@@ -17,8 +17,7 @@ import lombok.Data;
 @Data
 public class PreExecData {
     
-    @ApiModelProperty(value = "切片id")
-    private Long slideId;
+   
     
     @ApiModelProperty(value = "文件夹路径")
     private String folderUrl;

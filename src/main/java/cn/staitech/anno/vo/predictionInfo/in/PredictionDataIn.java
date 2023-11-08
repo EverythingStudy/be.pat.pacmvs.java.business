@@ -22,6 +22,12 @@ public class PredictionDataIn {
     @ApiModelProperty(value = "算法模型名称")
     private String modelName;
     
+    @ApiModelProperty(value = "切片id")
+    private Long slideId;
+    
+    @ApiModelProperty(value = "文件夹名称")
+    private String folderName;
+    
     @ApiModelProperty(value = "切片数据")
     private List<PreExecData> slideList;
 

@@ -14,9 +14,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 
 import cn.hutool.json.JSONUtil;
 import cn.staitech.anno.domain.AlgorithmModel;
+import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.SlidePrediction;
 import cn.staitech.anno.mapper.SlidePredictionMapper;
 import cn.staitech.anno.service.AlgorithmModelService;
@@ -57,6 +60,9 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 	
 	@Resource
 	private SlidePredictionService slidePredictionService;
+	
+	@Resource
+	private SlideService slideService;
 
 	@Autowired
 	private RestTemplate restTemplate ;
@@ -72,10 +78,7 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 		//算法模型id
 		Long modelId = project.getModelId();
 		AlgorithmModel algorithmModel = algorithmModelService.getById(modelId);
-		//算法需要的数据
-		PredictionDataIn predictionData = new PredictionDataIn();
-		predictionData.setProjectId(project.getProjectId());
-		predictionData.setModelName(algorithmModel.getModelName());
+		
 
 		ImageCsvGetVO request = new ImageCsvGetVO();
 		request.setProjectId(project.getProjectId());
@@ -89,10 +92,16 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 		request.setEyeMent("0");  
 		//查询需要的数据
 		List<ImageCsvListVO> list = slidePredictionMapper.getImageCsvListVOList(request);
-		List<PreExecData> slideList = new ArrayList<PreExecData>();
-		List<PredictionInfo> pInfoList = new ArrayList<>();
 		if(CollectionUtils.isNotEmpty(list)){
 			for(ImageCsvListVO vo:list){
+				List<PreExecData> slideList = new ArrayList<PreExecData>();
+				List<PredictionInfo> pInfoList = new ArrayList<>();
+				//算法需要的数据
+				PredictionDataIn predictionData = new PredictionDataIn();
+				predictionData.setProjectId(project.getProjectId());
+				predictionData.setModelName(algorithmModel.getModelName());
+				predictionData.setSlideId(vo.getSlideId());
+				predictionData.setFolderName(vo.getFolderName());
 				PreExecData ped = new PreExecData();
 				BeanUtils.copyProperties(vo, ped);
 				//根据slideId 查询SlidePrediction信息
@@ -110,18 +119,35 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 //				ped.setSlidePredictionList(spList);
 				ped.setPredictionInfoList(pInfoList);
 				slideList.add(ped);
-			}
-			predictionData.setSlideList(slideList);
-			log.info("请求数据：{}",JSONUtil.toJsonStr(predictionData));
-			//TODO 请求算法接口
-			try{
-				ResponseEntity<String> resp =  restTemplate.postForEntity(algorithmPredictionPath, predictionData, String.class);
-				String body = resp.getBody();
-				log.info("标注请求算法数据返回{},内容是{}",JSONUtil.toJsonStr(resp),body);
-			}catch(Exception e){
-				e.printStackTrace();
-			}finally {
-
+				predictionData.setSlideList(slideList);
+				log.info("请求数据：{}",JSONUtil.toJsonStr(predictionData));
+				//TODO 请求算法接口
+				try{
+					ResponseEntity<String> resp =  restTemplate.postForEntity(algorithmPredictionPath, predictionData, String.class);
+					String body = resp.getBody();
+					log.info("标注请求算法数据返回{},内容是{}",JSONUtil.toJsonStr(resp),body);
+					if(1==1){
+						//修改当前SlidePrediction分析状态为进行中
+						UpdateWrapper<SlidePrediction> updateWrapper = Wrappers.update();
+						// 修改条件为id=5的数据
+						updateWrapper.eq("slide_id", vo.getSlideId());
+						
+						SlidePrediction sp1 = new SlidePrediction();
+						sp1.setAiAnalyzed(1);
+						//修改分析状态为进行中
+						slidePredictionService.update(sp1, updateWrapper);
+						//修改slide分析状态为进行中
+						Slide slide = new Slide();
+						slide.setSlideId(vo.getSlideId());
+						//AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败
+						slide.setAiAnalyzed(Short.parseShort("1"));
+						slideService.updateById(slide);
+					}
+				}catch(Exception e){
+					e.printStackTrace();
+				}finally {
+					
+				}
 			}
 
 		}
