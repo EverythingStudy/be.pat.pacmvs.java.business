@@ -1078,4 +1078,77 @@
         )
     </insert>
 
+    <!--眼科添加碎片-->
+    <insert id="eyeInsert" useGeneratedKeys="true"
+            keyProperty="slideId">
+        insert into aipre_slide_prediction (slide_id,
+        image_id,
+        organization_id,
+        create_by,
+        create_time,
+        )values
+        <foreach collection="slideList" item="slide" separator=",">
+            (#{slide.slideId},
+            #{slide.imageId},
+            #{slide.organizationId},
+            #{slide.createBy},
+            sysdate())
+        </foreach>
+    </insert>
+
+    <!--眼科-更新文件夹状态-->
+    <update id="eyeUpdateFolder" parameterType="cn.staitech.anno.domain.Slide">
+        update tb_slide
+        <set>
+            <if test="prompt != null">
+                prompt = #{prompt},
+            </if>
+            <if test="eyeMent != null">
+                eye_ment = #{eyeMent},
+            </if>
+        </set>
+        where slide_id = #{slideId}
+    </update>
+
+    <!--更新添加主图-->
+    <update id="eyeUpdateMainImage" parameterType="cn.staitech.anno.domain.SlidePrediction">
+        update aipre_slide_prediction
+        <set>
+            <if test="slideId != null">
+                slide_id = #{slideId,jdbcType=BIGINT},
+            </if>
+            <if test="imageId != null">
+                image_id = #{imageId,jdbcType=BIGINT},
+            </if>
+            <if test="aiAnalyzed != null">
+                ai_analyzed = #{aiAnalyzed,jdbcType=SMALLINT},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="organizationId != null">
+                organization_id = #{organizationId,jdbcType=BIGINT},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy,jdbcType=BIGINT},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag,jdbcType=CHAR},
+            </if>
+            <if test="mainImage != null">
+                main_image = #{mainImage,jdbcType=CHAR},
+            </if>
+        </set>
+        where slide_id = #{slideId} and image_id=#{imageId}
+    </update>
+
 </mapper>

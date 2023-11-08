@@ -399,27 +399,15 @@ public class SlideController extends BaseController {
         return slideService.deleteProjectImage(projectSlideDel);
     }
 
-//    /**
-//     * 获取拼接图象类项目---原始切片
-//     * */
-//    @ApiOperation(value = "拼接图象类项目---原始切片")
-//    @GetMapping("/original")
-//    public R<List<ProjectSlideOut>>original(@RequestParam(name = "folderId") @ApiParam(name = "folderId", value = "文件夹id") Long folderId) {
-//
-//        return R.ok();
-//    }
+
 
     /**
      * 保存文件夹和切片
      * */
     @ApiOperation(value = "拼接图象类项目---保存文件夹和切片")
     @PostMapping("/eyeSave")
-    public R<String>eyeSave(@RequestBody @Validated EyeSaveSlide eyeSaveSlide) {
-            slideService.eyeFolder(eyeSaveSlide);
-
-
-
-        return R.ok();
+    public R eyeSave(@RequestBody @Validated EyeSaveSlide eyeSaveSlide) {
+        return slideService.eyeFolder(eyeSaveSlide);
     }
 
     /**

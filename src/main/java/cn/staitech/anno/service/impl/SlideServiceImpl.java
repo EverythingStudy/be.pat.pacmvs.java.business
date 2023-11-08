@@ -780,7 +780,8 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
     /**
      * 眼科-查询要添加的数据
      * */
-    public List<ProjectSlideOut> eyeFolder(EyeSaveSlide eyeSaveSlide){
+    @Override
+    public R eyeFolder(EyeSaveSlide eyeSaveSlide){
         List<ProjectSlideOut> projectSlideOutList=slideMapper.eyeFolder(eyeSaveSlide);
         Project project=projectMapper.selectPrimKey(eyeSaveSlide.getProjectId());
         switch (project.getModelId().intValue()){
@@ -788,9 +789,8 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                 for (ProjectSlideOut projectSlideOut:projectSlideOutList){
                     Long folderId=projectSlideOut.getFolderId();
                     List<Image>imageList=slideMapper.eyeFolderSlide(folderId);
-                    List<SlidePrediction> predictions=new ArrayList<>();
-//                    List<Long>
                     if (imageList.size()<5){
+                        List<SlidePrediction> predictions=new ArrayList<>();
                          Slide slide=Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(SecurityUtils.getUserId()).folderId(folderId).prompt("1").eyeMent("1").build();
                          //存储文件夹id
                         slideMapper.eyeInsertSlide(slide);
@@ -799,40 +799,119 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                              .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
                       predictions.add(slidePrediction);
                     }
+                     //存储碎片信息
+                    slideMapper.eyeInsert(predictions);
+
                 }else{
+                        Slide slide=Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(SecurityUtils.getUserId()).folderId(folderId).build();
+                        //存储文件夹id
+                        slideMapper.eyeInsertSlide(slide);
+                        List<SlidePrediction> predictions=new ArrayList<>();
+                        int testNum=0;
+                        //
+                        Map<Long,Long>imageIdList=new HashMap<>();
+                        List<Long>imageName=new ArrayList<>();
                     for (Image image:imageList){
+                            imageIdList.put(image.getImageId(), Long.valueOf(image.getImageName()));
+                            imageName.add(Long.valueOf(image.getImageName()));
                         if (isNumeric(image.getImageName())){
+                            SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId())
+                                    .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
+                            predictions.add(slidePrediction);
 
                         }else{
-                            Slide slide=Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(SecurityUtils.getUserId()).folderId(folderId).prompt("2").eyeMent("1").build();
-                            //存储文件夹id
-                            slideMapper.eyeInsertSlide(slide);
-                            for (Image images:imageList){
                                 SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId())
-                                        .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(images.getImageId()).build();
+                                        .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
                                 predictions.add(slidePrediction);
-                            }
-                            break;
+                            testNum=1;
                         }
-
-
                     }
-
+                    /**
+                     * 存储碎片信息
+                     * */
+                        slideMapper.eyeInsert(predictions);
+                        if (testNum==1){
+                            Slide slides=Slide.builder().slideId(slide.getSlideId()).prompt("2").eyeMent("1").build();
+                            slideMapper.eyeUpdateFolder(slides);
+                        }else{
+                            //获取最小的图片名称
+                            Long minImageName=Collections.min(imageName);
+                            for(Long key: imageIdList.keySet()){
+                                if(imageIdList.get(key).equals(minImageName)){
+                                    SlidePrediction slidePrediction=SlidePrediction.builder().slideId(slide.getSlideId()).imageId(key).mainImage("1").build();
+                                    slideMapper.eyeUpdateMainImage(slidePrediction);
+                                }
+                            }
+                        }
                     }
                 }
 
-                return projectSlideOutList;
+                return R.ok();
             case 2:
                 for (ProjectSlideOut projectSlideOut:projectSlideOutList){
                     Long folderId=projectSlideOut.getFolderId();
+                    List<Image>imageList=slideMapper.eyeFolderSlide(folderId);
 
+                    if (imageList.size()<7){
+                        List<SlidePrediction> predictions=new ArrayList<>();
+                        Slide slide=Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(SecurityUtils.getUserId()).folderId(folderId).prompt("1").eyeMent("1").build();
+                        //存储文件夹id
+                        slideMapper.eyeInsertSlide(slide);
+                        for (Image image:imageList){
+                            SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId())
+                                    .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
+                            predictions.add(slidePrediction);
+                        }
+                        //存储碎片信息
+                        slideMapper.eyeInsert(predictions);
+
+                    }else{
+                        Slide slide=Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(SecurityUtils.getUserId()).folderId(folderId).build();
+                        //存储文件夹id
+                        slideMapper.eyeInsertSlide(slide);
+                        List<SlidePrediction> predictions=new ArrayList<>();
+                        int testNum=0;
+                        //
+                        Map<Long,Long>imageIdList=new HashMap<>();
+                        List<Long>imageName=new ArrayList<>();
+                        for (Image image:imageList){
+                            imageIdList.put(image.getImageId(), Long.valueOf(image.getImageName()));
+                            imageName.add(Long.valueOf(image.getImageName()));
+                            if (isNumeric(image.getImageName())){
+                                SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId())
+                                        .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
+                                predictions.add(slidePrediction);
+
+                            }else{
+                                SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId())
+                                        .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
+                                predictions.add(slidePrediction);
+                                testNum=1;
+                            }
+                        }
+                        /**
+                         * 存储碎片信息
+                         * */
+                        slideMapper.eyeInsert(predictions);
+                        if (testNum==1){
+                            Slide slides=Slide.builder().slideId(slide.getSlideId()).prompt("2").eyeMent("1").build();
+                            slideMapper.eyeUpdateFolder(slides);
+                        }else{
+                            //获取最小的图片名称
+                            Long minImageName=Collections.min(imageName);
+                            for(Long key: imageIdList.keySet()){
+                                if(imageIdList.get(key).equals(minImageName)){
+                                    SlidePrediction slidePrediction=SlidePrediction.builder().slideId(slide.getSlideId()).imageId(key).mainImage("1").build();
+                                    slideMapper.eyeUpdateMainImage(slidePrediction);
+                                }
+                            }
+                        }
+                    }
                 }
-                return projectSlideOutList;
+
+                return R.ok();
         }
-
-
-
-        return projectSlideOutList;
+        return R.fail(MessageSource.M("EYE_DATA_ERROR"));
     }
 
     /**

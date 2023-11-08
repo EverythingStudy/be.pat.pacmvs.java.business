@@ -267,4 +267,19 @@ public interface SlideMapper extends BaseMapper<Slide> {
      * 眼科-添加slide
      * */
     int eyeInsertSlide(Slide slide);
+
+    /**
+     * 眼科添加碎片
+     * */
+    int eyeInsert(List<SlidePrediction> slideList);
+
+    /**
+     * 眼科-更新文件夹状态
+     * */
+    int eyeUpdateFolder(Slide slide);
+
+    /**
+     * 更新添加主图
+     * */
+    int eyeUpdateMainImage(SlidePrediction slidePrediction);
 }

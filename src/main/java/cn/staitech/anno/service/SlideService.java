@@ -258,6 +258,6 @@ public interface SlideService extends IService<Slide> {
     /**
      * 眼科-查询要添加的数据
      * */
-    List<ProjectSlideOut> eyeFolder(EyeSaveSlide eyeSaveSlide);
+    R eyeFolder(EyeSaveSlide eyeSaveSlide);
 
 }
