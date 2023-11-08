@@ -29,6 +29,13 @@ public class Image extends BaseEntity {
     @TableId(value = "image_id", type = IdType.AUTO)
     @ApiModelProperty(value = "图像id", hidden = true)
     private Long imageId;
+
+    /**
+     * 无扩展名文件名称
+     */
+    @TableField(value = "file_name")
+    @ApiModelProperty(value = "无扩展名文件名称")
+    private String fileName;
     @TableField(value = "image_name")
     @ApiModelProperty(value = "图像名称-文件名称（文件名）", hidden = true)
     private String imageName;
@@ -107,13 +114,6 @@ public class Image extends BaseEntity {
     @ApiModelProperty(value = "", hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
-
-    /**
-     * 无扩展名文件名称
-     */
-    @TableField(value = "file_name")
-    @ApiModelProperty(value = "无扩展名文件名称")
-    private String fileName;
 
     /**
      * 1024缩略图路径（用于缓存、标注缩略图时需要）

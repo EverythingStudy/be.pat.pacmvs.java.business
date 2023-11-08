@@ -214,6 +214,12 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     @Override
     public String mergeChunk(FileUploadVO chunk) throws Exception {
+
+        // 重复文件重命名规则
+
+
+
+
         // 查询文件是否存在
         QueryWrapper<Files> filesQueryWrapper = new QueryWrapper<>();
         filesQueryWrapper.eq("files_code", chunk.getUuid());
@@ -221,6 +227,8 @@ public class FileUploadServiceImpl implements FileUploadService {
         filesQueryWrapper.last("limit 1");
 
         Files filesBy = filesService.getOne(filesQueryWrapper);
+
+
 
         // 文件为空,第一片文件上传时添加到文件表中
         if (filesBy == null) {

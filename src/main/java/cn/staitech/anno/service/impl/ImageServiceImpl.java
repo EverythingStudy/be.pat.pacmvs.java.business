@@ -58,12 +58,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     @Resource
     private AsyncTask asyncTask;
 
-    @Resource
-    private ProjectMapper projectMapper;
-
-    @Resource
-    private SlideMapper slideMapper;
-
     /**
      * 切片列表（原图像）
      *
@@ -449,8 +443,5 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         image.setUpdateBy(loginUser);
         return imageMapper.updateById(image);
     }
-
-
-
 
 }

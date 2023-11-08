@@ -302,6 +302,10 @@
                 <!-- 图像来源：上传方式 -->
                 and i.source = #{source}
             </if>
+            <if test="fileName != null and imageName != ''">
+                <!-- 图像名称(不带扩展名) -->
+                and i.file_name like concat('%', #{fileName}, '%')
+            </if>
             <if test="imageName != null and imageName != ''">
                 <!-- 图像名称 -->
                 and i.image_name like concat('%', #{imageName}, '%')
@@ -325,7 +329,7 @@
                 </if>
             </if>
         </where>
-        order by image_id desc
+        order by i.image_id desc
     </select>
 
     <!-- 查询未选中的切片列表 -->

@@ -1,6 +1,7 @@
 package cn.staitech.anno.vo.image.in;
 
 import cn.staitech.anno.domain.Pager;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,6 +17,8 @@ import java.util.Map;
 public class ImageListVO extends Pager implements Serializable {
     @ApiModelProperty(value = "图像ID", hidden = true)
     private Long imageId;
+    @ApiModelProperty(value = "无扩展名文件名称")
+    private String fileName;
     @ApiModelProperty(value = "图像名称/文件名称（文件名）")
     private String imageName;
     @ApiModelProperty(value = "图像url地址", hidden = true)
