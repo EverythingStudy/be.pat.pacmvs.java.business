@@ -17,6 +17,8 @@ import java.util.Date;
 public class ImageListOutVO {
     @ApiModelProperty(value = "切片ID（原图像ID）")
     private Long imageId;
+    @ApiModelProperty(value = "无扩展名文件名称")
+    private String fileName;
     @ApiModelProperty(value = "文件名称（文件名）")
     private String imageName;
     @ApiModelProperty(value = "图像url地址")
@@ -86,7 +88,7 @@ public class ImageListOutVO {
 
     /**
      * 眼科新添加字段
-     * */
+     */
     @ApiModelProperty(value = "文件夹名称")
     private String folderName;
 }

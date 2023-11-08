@@ -221,27 +221,32 @@ public class FileUploadServiceImpl implements FileUploadService {
         filesQueryWrapper.last("limit 1");
 
         Files filesBy = filesService.getOne(filesQueryWrapper);
+
         // 文件为空,第一片文件上传时添加到文件表中
         if (filesBy == null) {
             Long filesId = saveFiles(chunk);
             filesBy = filesService.getById(filesId);
-        }
-        // 将文件数量和文件id添加至map中
-        if (!Container.FILE_MAP.containsKey(chunk.getUuid())) {
-            ArrayList<Integer> chunkList = new ArrayList<Integer>();
-            for (int i = 0; i < chunk.getChunkTotal(); i++) {
-                chunkList.add(i);
-            }
-            Container.FILE_MAP.put(chunk.getUuid(), chunkList);
-        }
 
-        File file = new File(filesBy.getFilesPath());
-        if (file.exists()) {
-            // 删除文件
-            file.delete();
+            // 删除已经有文件
+            File file = new File(filesBy.getFilesPath());
+            if (file.exists()) {
+                // 删除文件
+                file.delete();
+            }
+
+            // 将文件数量和文件id添加至map中
+            if (!Container.FILE_MAP.containsKey(chunk.getUuid())) {
+                ArrayList<Integer> chunkList = new ArrayList<Integer>();
+                for (int i = 0; i < chunk.getChunkTotal(); i++) {
+                    chunkList.add(i);
+                }
+                Container.FILE_MAP.put(chunk.getUuid(), chunkList);
+            }
         }
 
         // 写入文件
+        File file = new File(filesBy.getFilesPath());
+
         try (InputStream fis = chunk.getMultipartFile().getInputStream();
              RandomAccessFile raf = new RandomAccessFile(file, "rw")) {
             int len = -1;
@@ -261,10 +266,11 @@ public class FileUploadServiceImpl implements FileUploadService {
 
         // map为空时,代表文件上传完成,根据业务类型执行不同业务
         if (Container.FILE_MAP.get(chunk.getUuid()) != null && Container.FILE_MAP.get(chunk.getUuid()).isEmpty()) {
-
             // map中删除当前文件信息
             Container.FILE_MAP.remove(chunk.getUuid());
 
+            // 更新文件大小
+            filesBy.setSize(file.length());
             // 更新文件表中传输状态
             filesBy.setProcessFlag(2);
             filesService.updateById(filesBy);
@@ -293,10 +299,8 @@ public class FileUploadServiceImpl implements FileUploadService {
                     List<String> fileNameList = algorithmAssessmentService.zipExport(filesBy.getFilesPath(), chunk.getProjectId(), fileUrl);
                     return fileNameList.toString();
                 case 6:
-                    Files files = new Files();
-                    files.setFilesPath(filesBy.getFilesPath());
                     // 解析文件
-                    filesService.process(files);
+                    filesService.process(filesBy);
                     break;
             }
         }
@@ -321,12 +325,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 }
                 Topic topic = topicService.selectOne(fileUploadVO.getTopicName(), 6);
                 // 定义文件夹名称
-                String dirPath = basePath + File.separator + "Slides" + File.separator + topic.getTopicName();
-                //创建文件夹
-                File dir = new File(dirPath);
-                if (!dir.exists()) {
-                    dir.mkdirs();
-                }
+                path = basePath + File.separator + "Slides" + File.separator + topic.getTopicName() + File.separator + fileUploadVO.getFileName();
                 topicName = topic.getTopicName();
                 topicId = topic.getTopicId();
                 break;

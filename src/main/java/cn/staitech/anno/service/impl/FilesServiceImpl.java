@@ -9,6 +9,7 @@ import cn.staitech.anno.mapper.ImageMapper;
 import cn.staitech.anno.service.FilesService;
 import cn.staitech.anno.service.SysOrganizationService;
 import cn.staitech.anno.service.TopicService;
+import cn.staitech.anno.utils.ImgPicCompression;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.files.Files;
@@ -20,11 +21,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -110,15 +112,20 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
      */
     @Override
     public void process(Files files) throws Exception {
-
         String zipFilePath = files.getFilesPath();
+        Long topicId = files.getTopicId();
+        String topicName = files.getTopicName();
+        Long filesId = files.getFilesId();
+
         // 1、解析zip压缩包
         if (unZip(zipFilePath)) {
             SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+            Long createBy = sysUser.getUserId();
+            Long organizationId = sysUser.getOrganizationId();
 
             // 遍历文件夹
-            Long filesId = files.getFilesId();
             String zipFileRootDir = zipFilePath.substring(0, zipFilePath.lastIndexOf(CommonConstant.FILE_SUFFIX));
+            // String zipFileRootDir = zipFilePath;
             File zipFileSrc = new File(zipFileRootDir);
 
             if (zipFileSrc.isDirectory()) {
@@ -140,8 +147,8 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                     folder.setFolderName(zipFileSrc.getName());
                     folder.setFolderUrl(zipFileRootDir);
                     folder.setFilesId(filesId);
-                    folder.setOrganizationId(sysUser.getOrganizationId());
-                    folder.setCreateBy(sysUser.getUserId());
+                    folder.setOrganizationId(organizationId);
+                    folder.setCreateBy(createBy);
                     folder.setCreateTime(new Date());
                     folder.setDeleteFlag("1");
 
@@ -160,10 +167,10 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                             image.setImagePath(absolutePath);
                             image.setImageUrl(absolutePath);
                             image.setFolderId(folderId);
-                            image.setOrganizationId(sysUser.getOrganizationId());
-                            image.setTopicId(files.getTopicId());
-                            image.setTopicName(files.getTopicName());
-                            image.setCreateBy(sysUser.getUserId());
+                            image.setOrganizationId(organizationId);
+                            image.setTopicId(topicId);
+                            image.setTopicName(topicName);
+                            image.setCreateBy(createBy);
                             image.setCreateTime(new Date());
 
                             // 是否可用0不可用1可用',
@@ -192,8 +199,8 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                             subFolder.setFolderName(file.getName());
                             subFolder.setFolderUrl(file.getAbsolutePath());
                             subFolder.setFilesId(filesId);
-                            subFolder.setOrganizationId(sysUser.getOrganizationId());
-                            subFolder.setCreateBy(sysUser.getUserId());
+                            subFolder.setOrganizationId(organizationId);
+                            subFolder.setCreateBy(createBy);
                             subFolder.setCreateTime(new Date());
                             subFolder.setDeleteFlag("1");
 
@@ -214,10 +221,10 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                                     image.setImagePath(absolutePath);
                                     image.setImageUrl(absolutePath);
                                     image.setFolderId(subFolderId);
-                                    image.setOrganizationId(sysUser.getOrganizationId());
-                                    image.setTopicId(files.getTopicId());
-                                    image.setTopicName(files.getTopicName());
-                                    image.setCreateBy(sysUser.getUserId());
+                                    image.setOrganizationId(organizationId);
+                                    image.setTopicId(topicId);
+                                    image.setTopicName(topicName);
+                                    image.setCreateBy(createBy);
                                     image.setCreateTime(new Date());
                                     // 是否可用0不可用1可用',
                                     image.setStatus(1);
@@ -239,8 +246,6 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                     }
                 }
             }
-
-
         } else {
             throw new Exception(MessageSource.M("ZIP_FILE_UNZIP_FAILURE"));
         }
@@ -311,7 +316,15 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
      */
     public Image imageTransfer(Image image) throws IOException {
         if (org.apache.commons.lang3.StringUtils.isNotEmpty(image.getImagePath())) {
+            // 步骤一：创建 File 对象
             File file = new File(image.getImagePath());
+            // 步骤二：读取图片并转换为 BufferedImage 对象
+            BufferedImage bufferedImage = ImageIO.read(file);
+            // 步骤三：获取图片的宽度
+            image.setWidth(String.valueOf(bufferedImage.getWidth()));
+            // 步骤四：获取图片的高度
+            image.setHeight(String.valueOf(bufferedImage.getHeight()));
+            // 获取文件大小
             image.setSize(String.valueOf(file.length()));
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -326,13 +339,15 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
             image.setCacheUrl(thumbPath);
 
             String absFilePath = thumbPath.replace("/file/statics", "/home/pat_saas/Slides");
-            FileUtils.copyFile(file, new File(absFilePath));
+            // 不缩放直接Copy
+            // FileUtils.copyFile(file, new File(absFilePath));
+            // 缩放图片
+            ImgPicCompression.doCompress(image.getImagePath(), 256, 256, absFilePath, true);
 
             image.setFormat(image.getImagePath().substring(image.getImagePath().lastIndexOf('.') + 1));
             image.setImageCode(uuid);
             image.setBizType(7);
         }
-
         return image;
     }
 }
