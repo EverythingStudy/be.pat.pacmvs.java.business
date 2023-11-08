@@ -271,8 +271,20 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
             ZipEntry entry = zis.getNextEntry();
             while (entry != null) {
                 File file = new File(destDir, entry.getName());
+
+                log.info("destDir:{}  ,  entry.getName:{}", file.getAbsolutePath(), entry.getName());
+
                 if (entry.isDirectory()) {
                     log.info("文件夹:{}", file.getAbsolutePath());
+                    log.info("destDir:{}", destDir);
+
+/*                    if (!file.getAbsolutePath().equals(destDir.getAbsolutePath())) {
+                        log.info("文件夹 重名校验:{}", file.getAbsolutePath());
+                        if (destDir.getAbsolutePath().equals(file.getAbsolutePath().substring(0, destDir.getAbsolutePath().length()))) {
+
+                        }
+                    }*/
+
                     file.mkdirs();
                 } else {
                     log.info("文件:{}", file.getAbsolutePath());
@@ -297,12 +309,12 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
             throw new Exception(MessageSource.M("ZIP_FILE_UNZIP_FAILURE"));
         } finally {
             if (zipFile.exists()) {
-                boolean delete = zipFile.delete();
-                if (delete) {
-                    log.info("压缩文件删除成功:{}", zipFile.getAbsolutePath());
-                } else {
-                    log.info("压缩文件删除失败:{}", zipFile.getAbsolutePath());
-                }
+//                boolean delete = zipFile.delete();
+//                if (delete) {
+//                    log.info("压缩文件删除成功:{}", zipFile.getAbsolutePath());
+//                } else {
+//                    log.info("压缩文件删除失败:{}", zipFile.getAbsolutePath());
+//                }
             }
         }
         return true;

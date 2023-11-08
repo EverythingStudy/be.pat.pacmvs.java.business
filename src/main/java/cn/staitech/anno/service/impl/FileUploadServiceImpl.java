@@ -1,6 +1,7 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.config.AsyncTask;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.Topic;
 import cn.staitech.anno.service.*;
@@ -9,6 +10,7 @@ import cn.staitech.anno.vo.file.FileNode;
 import cn.staitech.anno.vo.files.Files;
 import cn.staitech.anno.vo.files.in.FileUploadVO;
 import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -214,12 +216,6 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     @Override
     public String mergeChunk(FileUploadVO chunk) throws Exception {
-
-        // 重复文件重命名规则
-
-
-
-
         // 查询文件是否存在
         QueryWrapper<Files> filesQueryWrapper = new QueryWrapper<>();
         filesQueryWrapper.eq("files_code", chunk.getUuid());
@@ -227,8 +223,6 @@ public class FileUploadServiceImpl implements FileUploadService {
         filesQueryWrapper.last("limit 1");
 
         Files filesBy = filesService.getOne(filesQueryWrapper);
-
-
 
         // 文件为空,第一片文件上传时添加到文件表中
         if (filesBy == null) {
@@ -319,6 +313,9 @@ public class FileUploadServiceImpl implements FileUploadService {
         String path = null;
         String topicName = "";
         Long topicId = 0L;
+        String filesName = fileUploadVO.getFileName();
+        // 获取文件后缀
+        String suffixName = filesName.substring(filesName.lastIndexOf(".") + 1);
 
         // 根据不同的业务id生成不同的文件
         switch (fileUploadVO.getBusinessType()) {
@@ -332,10 +329,20 @@ public class FileUploadServiceImpl implements FileUploadService {
                     throw new Exception(MessageSource.M("ARGUMENT_INVALID_NOT_FIND_TOPIC"));
                 }
                 Topic topic = topicService.selectOne(fileUploadVO.getTopicName(), 6);
-                // 定义文件夹名称
-                path = basePath + File.separator + "Slides" + File.separator + topic.getTopicName() + File.separator + fileUploadVO.getFileName();
                 topicName = topic.getTopicName();
                 topicId = topic.getTopicId();
+                // 定义文件夹名称
+                path = basePath + File.separator + "Slides" + File.separator + topicName + File.separator + fileUploadVO.getFileName();
+                // 重复文件重命名规则
+                QueryWrapper<Files> filesQueryWrapper = new QueryWrapper<>();
+                filesQueryWrapper.likeLeft("files_url", path);
+                List<Files> filesList = filesService.list(filesQueryWrapper);
+                if (filesList.size() > 0) {
+                    String pathPre = path.substring(0, path.lastIndexOf(CommonConstant.FILE_SUFFIX));
+                    String pathEnd = path.substring(path.lastIndexOf(CommonConstant.FILE_SUFFIX), path.length());
+                    path = pathPre + "(" + filesList.size() + 1 + ")" + pathEnd;
+                    filesName = filesName.substring(0, filesName.lastIndexOf(CommonConstant.FILE_SUFFIX)) + "(" + filesList.size() + 1 + ")" + suffixName;
+                }
                 break;
         }
         // 创建文件
@@ -347,11 +354,12 @@ public class FileUploadServiceImpl implements FileUploadService {
                 }
             }
         }
-        // 获取文件后缀
-        String suffixName = fileUploadVO.getFileName().substring(fileUploadVO.getFileName().lastIndexOf(".") + 1);
+
+
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 
         Files files = Files.builder()
-                .filesName(fileUploadVO.getFileName())
+                .filesName(filesName)
                 .filesCode(fileUploadVO.getUuid())
                 .filesUrl(path)
                 .filesPath(path)
@@ -363,8 +371,8 @@ public class FileUploadServiceImpl implements FileUploadService {
                 .topicId(topicId)
                 .topicName(topicName)
                 .createTime(new Date())
-                .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId())
-                .createBy(SecurityUtils.getUserId())
+                .organizationId(sysUser.getOrganizationId())
+                .createBy(sysUser.getUserId())
                 .build();
         // 写入文件表中
         filesService.save(files);
