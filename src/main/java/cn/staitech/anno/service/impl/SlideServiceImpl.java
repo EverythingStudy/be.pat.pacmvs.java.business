@@ -747,6 +747,9 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         List<EyeProjectSlideOut> listVOList=slideMapper.eyeProjectSlide(eyeProjectSlideOut);
         eyeProjectSlideOut.setEyeMent("1");
         List<EyeProjectSlideOut> listVOS=slideMapper.eyeProjectFolder(eyeProjectSlideOut);
+        for (EyeProjectSlideOut slideOut:listVOS) {
+            slideOut.setReason(Container.EYE_PROMPT_MAP.get(Integer.valueOf(slideOut.getPrompt())));
+        }
         listVOList.addAll(listVOS);
         PageHelper.startPage(request.getPageNum(), request.getPageSize()).setReasonable(true);
         PageMaster<EyeProjectSlideOut> pageMaster = new PageMaster<>(listVOList);

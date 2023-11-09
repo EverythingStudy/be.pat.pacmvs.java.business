@@ -1008,7 +1008,7 @@
 
     <!--眼科-查询项目文件夹-->
     <select id="eyeProjectFolder" parameterType="cn.staitech.anno.vo.eyeslide.EyeProjectSlideIn" resultType="cn.staitech.anno.vo.eyeslide.EyeProjectSlideOut">
-        select f.folder_name,s.eye_ment,s.slide_id from tb_slide as s left join aipre_folder as f on s.folder_id=f.folder_id
+        select f.folder_name,s.eye_ment,s.slide_id,s.prompt from tb_slide as s left join aipre_folder as f on s.folder_id=f.folder_id
         <where>
             <if test="projectId != null">
                 AND s.project_id = #{projectId}

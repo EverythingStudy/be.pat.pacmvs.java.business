@@ -35,6 +35,12 @@ public class EyeProjectSlideOut {
 
     @ApiModelProperty(value = "项目id")
     private Long projectId;
+
+    @ApiModelProperty(value = "提示语code")
+    private String prompt;
+
+    @ApiModelProperty(value = "错误提示语")
+    private String reason;
 }
 
 
