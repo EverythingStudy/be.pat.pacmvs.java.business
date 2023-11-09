@@ -263,32 +263,26 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
     public Boolean unZip(String zipUrl) throws Exception {
         // ZIP文件
         File zipFile = new File(zipUrl);
-        // 目标路径
-        File destDir = new File(zipUrl.substring(0, zipUrl.lastIndexOf(File.separator)));
+
+        // 处理ZIP重复不覆盖逻辑
+        // 重命名后的zip文件名称，不带扩展名，即新的解压文件夹
+        String zipFileNameNoExt = zipUrl.substring(zipUrl.lastIndexOf(File.separator) + 1, zipUrl.lastIndexOf("."));
+        // 目标路径根目录
+        String destDirRoot = zipUrl.substring(0, zipUrl.lastIndexOf(File.separator) + 1) + zipFileNameNoExt;
 
         byte[] buffer = new byte[1024];
         try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))) {
             ZipEntry entry = zis.getNextEntry();
             while (entry != null) {
-                File file = new File(destDir, entry.getName());
-
-                log.info("destDir:{}  ,  entry.getName:{}", file.getAbsolutePath(), entry.getName());
+                // 处理ZIP重复不覆盖逻辑
+                String entryName = entry.getName();
+                String entryNamePath = entry.getName().substring(entry.getName().indexOf("/"), entryName.length());
+                String filePath = destDirRoot + entryNamePath;
+                File file = new File(filePath);
 
                 if (entry.isDirectory()) {
-                    log.info("文件夹:{}", file.getAbsolutePath());
-                    log.info("destDir:{}", destDir);
-
-/*                    if (!file.getAbsolutePath().equals(destDir.getAbsolutePath())) {
-                        log.info("文件夹 重名校验:{}", file.getAbsolutePath());
-                        if (destDir.getAbsolutePath().equals(file.getAbsolutePath().substring(0, destDir.getAbsolutePath().length()))) {
-
-                        }
-                    }*/
-
                     file.mkdirs();
                 } else {
-                    log.info("文件:{}", file.getAbsolutePath());
-
                     File parent = file.getParentFile();
                     if (!parent.exists()) {
                         parent.mkdirs();
@@ -309,12 +303,12 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
             throw new Exception(MessageSource.M("ZIP_FILE_UNZIP_FAILURE"));
         } finally {
             if (zipFile.exists()) {
-//                boolean delete = zipFile.delete();
-//                if (delete) {
-//                    log.info("压缩文件删除成功:{}", zipFile.getAbsolutePath());
-//                } else {
-//                    log.info("压缩文件删除失败:{}", zipFile.getAbsolutePath());
-//                }
+                boolean delete = zipFile.delete();
+                if (delete) {
+                    log.info("压缩文件删除成功:{}", zipFile.getAbsolutePath());
+                } else {
+                    log.info("压缩文件删除失败:{}", zipFile.getAbsolutePath());
+                }
             }
         }
         return true;

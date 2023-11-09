@@ -143,9 +143,45 @@ public class FileUploadServiceImpl implements FileUploadService {
                 dirPath = zipPath;
                 break;
         }
+
         String fileName = fileUploadVO.getFileName();
+        // 获取文件的后缀名
+        String suffixName = fileName.substring(fileName.lastIndexOf("."));
         // 文件名称
         String filePath = dirPath + File.separator + fileName;
+
+
+        // ZIP重复上传重命名逻辑
+        if (businessType == 6) {
+            if (Objects.equals(fileUploadVO.getTopicName(), "")) {
+                throw new Exception(MessageSource.M("ARGUMENT_INVALID_NOT_FIND_TOPIC"));
+            }
+            String topicName = files.getTopicName();
+            Long topicId = files.getTopicId();
+
+            String filesName = fileUploadVO.getFileName();
+            // 定义文件夹名称
+            String path = basePath + File.separator + "Slides" + File.separator + topicName + File.separator + filesName;
+            // 重复文件重命名规则
+            QueryWrapper<Files> filesQueryWrapper = new QueryWrapper<>();
+            filesQueryWrapper.eq("topic_id", topicId);
+            filesQueryWrapper.likeRight("files_name", filesName.substring(0, filesName.lastIndexOf(".")));
+
+            List<Files> filesList = filesService.list(filesQueryWrapper);
+            if (filesList.size() > 0) {
+                String pathPre = path.substring(0, path.lastIndexOf(CommonConstant.FILE_SUFFIX));
+                String pathEnd = path.substring(path.lastIndexOf(CommonConstant.FILE_SUFFIX), path.length());
+                int index = filesList.size();
+                path = pathPre + "(" + index + ")" + pathEnd;
+                filesName = filesName.substring(0, filesName.lastIndexOf(CommonConstant.FILE_SUFFIX)) + "(" + index + ")" + suffixName;
+
+                filePath = path;
+                fileName = filesName;
+            }
+
+        }
+
+
         // (真实存入)拷贝+
         File file = new File(filePath);
         if (!file.exists()) {
@@ -161,8 +197,6 @@ public class FileUploadServiceImpl implements FileUploadService {
         files.setFilesPath(localFile.getAbsolutePath());
         files.setFilesUrl(localFile.getAbsolutePath());
         files.setSize(localFile.length());
-        // 获取文件的后缀名
-        String suffixName = fileName.substring(fileName.lastIndexOf("."));
         files.setFormat(suffixName);
         // 逻辑删除状态（0删除，1未删除）
         files.setDeleteFlag(1);
@@ -335,13 +369,16 @@ public class FileUploadServiceImpl implements FileUploadService {
                 path = basePath + File.separator + "Slides" + File.separator + topicName + File.separator + fileUploadVO.getFileName();
                 // 重复文件重命名规则
                 QueryWrapper<Files> filesQueryWrapper = new QueryWrapper<>();
-                filesQueryWrapper.likeLeft("files_url", path);
+                filesQueryWrapper.eq("topic_id", topicId);
+                filesQueryWrapper.likeRight("files_name", filesName.substring(0, filesName.lastIndexOf(".")));
+
                 List<Files> filesList = filesService.list(filesQueryWrapper);
                 if (filesList.size() > 0) {
                     String pathPre = path.substring(0, path.lastIndexOf(CommonConstant.FILE_SUFFIX));
                     String pathEnd = path.substring(path.lastIndexOf(CommonConstant.FILE_SUFFIX), path.length());
-                    path = pathPre + "(" + filesList.size() + 1 + ")" + pathEnd;
-                    filesName = filesName.substring(0, filesName.lastIndexOf(CommonConstant.FILE_SUFFIX)) + "(" + filesList.size() + 1 + ")" + suffixName;
+                    int index = filesList.size();
+                    path = pathPre + "(" + index + ")" + pathEnd;
+                    filesName = filesName.substring(0, filesName.lastIndexOf(CommonConstant.FILE_SUFFIX)) + "(" + index + ")" + suffixName;
                 }
                 break;
         }
