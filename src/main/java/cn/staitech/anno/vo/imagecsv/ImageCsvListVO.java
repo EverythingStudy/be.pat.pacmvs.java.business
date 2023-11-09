@@ -23,6 +23,9 @@ public class ImageCsvListVO extends ImageCsv implements Serializable {
 
 //    @ApiModelProperty(value = "是否是主图（默认为2，1是，2否）")
 //    private String mainImage;
+    
+    @ApiModelProperty(value = "AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败")
+    private Integer aiAnalyzed;
 
     @ApiModelProperty(value = "碎片状态默认为0校验通过，1校验不通过")
     private String eyeMent;
