@@ -16,7 +16,9 @@ import org.springframework.web.client.RestTemplate;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.github.pagehelper.PageHelper;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
 import cn.staitech.anno.domain.AlgorithmModel;
 import cn.staitech.anno.domain.Slide;
@@ -26,11 +28,13 @@ import cn.staitech.anno.service.AlgorithmModelService;
 import cn.staitech.anno.service.AlgorithmPredictionService;
 import cn.staitech.anno.service.SlidePredictionService;
 import cn.staitech.anno.service.SlideService;
+import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
 import cn.staitech.anno.vo.predictionInfo.in.PreExecData;
 import cn.staitech.anno.vo.predictionInfo.in.PredictionDataIn;
 import cn.staitech.anno.vo.predictionInfo.in.PredictionInfo;
+import cn.staitech.anno.vo.predictionInfo.in.SlideImagePagerVO;
 import cn.staitech.anno.vo.predictionInfo.in.SlidePredictionIn;
 import cn.staitech.anno.vo.predictionInfo.in.SlidePredictionQuery;
 import cn.staitech.anno.vo.predictionInfo.in.StartPredictionIn;
@@ -174,6 +178,18 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 		}
 		spo.setAlreadyMainImage(alreadyMainImage);
 		return spo;
+	}
+
+
+	@Override
+	public PageMaster<ImageCsvListVO> slidePageList(SlideImagePagerVO request) {
+		PageHelper.startPage(request.getPageNum(), request.getPageSize()).setReasonable(true);
+		ImageCsvGetVO imageCsvGetVO = new ImageCsvGetVO();
+		BeanUtil.copyProperties(request, imageCsvGetVO);
+		List<ImageCsvListVO> list = slidePredictionMapper.getImageCsvListVOList(imageCsvGetVO);
+		PageMaster<ImageCsvListVO> pageMaster = new PageMaster<>(list);
+		PageHelper.clearPage();
+		return pageMaster;
 	}
 
 }

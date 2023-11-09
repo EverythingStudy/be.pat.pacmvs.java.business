@@ -17,11 +17,11 @@ import lombok.Data;
 public class StartPredictionIn {
 
     
-    @ApiModelProperty(name = "项目ID", notes = "必填")
+    @ApiModelProperty(value = "项目ID")
     @NotNull(message = "{StartPredictionIn.projectId.isnull}")
     private Long projectId;
     
-    @ApiModelProperty(name = "请求算法类型 0：启动算法 1：重算失败数据", notes = "必填")
+    @ApiModelProperty(value = "请求算法类型 0：启动算法 1：重算失败数据")
     @NotNull(message = "{StartPredictionIn.type.isnull}")
     private Integer type;
 }
