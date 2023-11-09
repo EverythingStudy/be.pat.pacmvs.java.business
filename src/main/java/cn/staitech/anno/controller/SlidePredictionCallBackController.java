@@ -1,5 +1,6 @@
 package cn.staitech.anno.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -61,12 +62,14 @@ public class SlidePredictionCallBackController {
 			String mergeImagePath = req.getMergeImagePath();
 			List<EyeAnalyzedResult> aiAnalyResult = req.getAiAnalyResult();
 			if(CollectionUtils.isNotEmpty(aiAnalyResult)){
+				List<SlidePrediction> batchList = new ArrayList<SlidePrediction>();
 				for(EyeAnalyzedResult result:aiAnalyResult){
 					SlidePrediction sp = new SlidePrediction();
 					sp.setSlidePredictionId(result.getSlidePredictionId());
 					sp.setAiAnalyzed(result.getAiAnalyzed());
-					slidePredictionService.updateById(sp);
+					batchList.add(sp);
 				}
+				slidePredictionService.updateBatchById(batchList);
 			}
 //			{"chunkTotal":1,"imageName":"test","algorithmImageUrl":"C:/Users/86153/Desktop/dc/image/s1-168.ndpi","userId":10,"organizationId":95,"size":"447"}
 			PredictionInfoVO predictionInfoVO = new PredictionInfoVO();
