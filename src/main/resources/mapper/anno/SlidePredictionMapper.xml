@@ -198,7 +198,7 @@
     </select>
     
     
-    <!--查询切片列表信息-->
+    <!--查询 原始切片列表信息-->
     <select id="getImageCsvListVOList" parameterType="cn.staitech.anno.vo.imagecsv.ImageCsvGetVO"
             resultType="cn.staitech.anno.vo.imagecsv.ImageCsvListVO">
         select s.slide_id,

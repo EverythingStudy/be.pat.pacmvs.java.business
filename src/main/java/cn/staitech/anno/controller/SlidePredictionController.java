@@ -23,10 +23,14 @@ import cn.staitech.anno.service.AlgorithmModelService;
 import cn.staitech.anno.service.AlgorithmPredictionService;
 import cn.staitech.anno.service.ProjectService;
 import cn.staitech.anno.service.SlidePredictionService;
+import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.service.remote.SlideImageService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.imagecsv.ImageCsvGetPagerVO;
+import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
 import cn.staitech.anno.vo.predictionInfo.in.SetMainImageDataIn;
+import cn.staitech.anno.vo.predictionInfo.in.SlideImagePagerVO;
 import cn.staitech.anno.vo.predictionInfo.in.SlidePredictionIn;
 import cn.staitech.anno.vo.predictionInfo.in.StartPredictionIn;
 import cn.staitech.anno.vo.predictionInfo.out.SlidePredictionOut;
@@ -67,6 +71,9 @@ public class SlidePredictionController {
 
 	@Resource
 	private SlidePredictionService slidePredictionService;
+	
+	@Resource
+    private SlideService slideService;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@ApiOperation(value = "算法项目列表分页查询")
@@ -90,7 +97,16 @@ public class SlidePredictionController {
 		return R.ok(pageMaster);
 	}
 
-
+	
+	 /**
+     * 查询切片列表-分页
+     */
+    @ApiOperation(value = "查询算法项目切片列表")
+    @PostMapping("/slidePageList")
+    public R<PageMaster<ImageCsvListVO>> slidePageList(@RequestBody SlideImagePagerVO req) {
+        return R.ok(algorithmPredictionService.slidePageList(req));
+    }
+    
 
 	@ApiOperation(value = "查询原始切片列表")
 	@PostMapping("/originalSlideList")
