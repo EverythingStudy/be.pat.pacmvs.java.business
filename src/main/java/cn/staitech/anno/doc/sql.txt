@@ -1,13 +1,13 @@
 2023-11-2
-添加数据
+
+tb_project_type添加数据
 INSERT INTO `tb_project_type` (`project_type_id`, `project_type_name`, `project_type_name_en`) VALUES ('6', '图像拼接', '图像拼接en');
 INSERT INTO `tb_project_type` (`project_type_id`, `project_type_name`, `project_type_name_en`) VALUES ('7', '算法预测', '算法预测en');
 
-添加字段
-（图片表添加字段）
+tb_image添加字段
 ALTER TABLE `tb_image` ADD COLUMN `folder_id` bigint(20) DEFAULT 0 COMMENT '文件夹id';
 
- （项目表添加字段）
+tb_project添加字段
 ALTER TABLE tb_project ADD COLUMN tissue_id bigint(20) DEFAULT NULL COMMENT '病理组织ID';
 ALTER TABLE tb_project ADD COLUMN model_id bigint(20) DEFAULT NULL COMMENT '算法模型ID';
 
