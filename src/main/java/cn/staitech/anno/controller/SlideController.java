@@ -421,5 +421,15 @@ public class SlideController extends BaseController {
     }
 
 
+    /**
+     * 拼接图象类项目---查询错误原因
+     * */
+    @ApiOperation(value = "拼接图象类项目---查询错误原因")
+    @GetMapping("/errorReason")
+    public R<EyeErrorReasonOut>errorReason(@RequestParam(name = "slideId") @ApiParam(name = "slideId", value = "切片id") Long slideId) {
+        EyeErrorReasonOut errorReason=slideService.errorReason(slideId);
+        return R.ok(errorReason);
+    }
+
 }
 

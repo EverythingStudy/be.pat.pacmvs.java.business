@@ -2,6 +2,7 @@ package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.staitech.anno.constant.CommonConstant;
+import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.*;
 import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.service.MarkingService;
@@ -727,12 +728,8 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         for (Long slideId:projectSlideDel.getSlideIdList()){
             //切片表删除（物理删）
             slideMapper.deleteProjectImage(slideId);
-            SlidePrediction slidePrediction=new SlidePrediction();
-            slidePrediction.setSlideId(slideId);
-            slidePrediction.setUpdateBy(SecurityUtils.getUserId());
-            slidePrediction.setDelFlag("1");
-            //切片预测表删除（逻辑删除）
-            slideMapper.updateByPrimaryKeySelective(slidePrediction);
+            //删除文件夹下的图片（物理删除）
+            slideMapper.eyeDeleteImage(slideId);
         }
         return R.ok();
     }
@@ -782,6 +779,9 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
      * */
     @Override
     public R eyeFolder(EyeSaveSlide eyeSaveSlide){
+        if (eyeSaveSlide.getFolderName()==null && eyeSaveSlide.getParams()==null && eyeSaveSlide.getTopicName()==null && eyeSaveSlide.getCreateBy()==null){
+            return R.ok();
+        }
         List<ProjectSlideOut> projectSlideOutList=slideMapper.eyeFolder(eyeSaveSlide);
         Project project=projectMapper.selectPrimKey(eyeSaveSlide.getProjectId());
         switch (project.getModelId().intValue()){
@@ -803,7 +803,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                     slideMapper.eyeInsert(predictions);
 
                 }else{
-                        Slide slide=Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(SecurityUtils.getUserId()).folderId(folderId).build();
+                        Slide slide=Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(1L).folderId(folderId).build();
                         //存储文件夹id
                         slideMapper.eyeInsertSlide(slide);
                         List<SlidePrediction> predictions=new ArrayList<>();
@@ -815,8 +815,8 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                             imageIdList.put(image.getImageId(), Long.valueOf(image.getImageName()));
                             imageName.add(Long.valueOf(image.getImageName()));
                         if (isNumeric(image.getImageName())){
-                            SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId())
-                                    .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
+                            SlidePrediction slidePrediction=SlidePrediction.builder().createBy(1L)
+                                    .organizationId(1L).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
                             predictions.add(slidePrediction);
 
                         }else{
@@ -829,7 +829,9 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                     /**
                      * 存储碎片信息
                      * */
+                    if (predictions.size()>0){
                         slideMapper.eyeInsert(predictions);
+                    }
                         if (testNum==1){
                             Slide slides=Slide.builder().slideId(slide.getSlideId()).prompt("2").eyeMent("1").build();
                             slideMapper.eyeUpdateFolder(slides);
@@ -922,6 +924,17 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         return pattern.matcher(str).matches();
     }
 
+
+    /**
+     * 眼科——查询图片错误原因
+     * */
+    @Override
+    public EyeErrorReasonOut errorReason(Long slideId){
+        EyeErrorReasonOut errorReason=slideMapper.errorReason(slideId);
+         errorReason.setReason(Container.EYE_PROMPT_MAP.get(Integer.valueOf(errorReason.getPrompt())));
+
+         return errorReason;
+    }
 
 
 }

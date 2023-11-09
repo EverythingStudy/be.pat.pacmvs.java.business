@@ -260,4 +260,9 @@ public interface SlideService extends IService<Slide> {
      * */
     R eyeFolder(EyeSaveSlide eyeSaveSlide);
 
+    /**
+     * 眼科——查询图片错误原因
+     * */
+    EyeErrorReasonOut errorReason(Long slideId);
+
 }

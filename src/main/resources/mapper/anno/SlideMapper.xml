@@ -281,6 +281,7 @@
         GROUP BY t.topic_name
     </select>
 
+    <!--眼科-删除-->
     <delete id="deleteProjectImage" parameterType="java.lang.Long">
         delete
         from tb_slide
@@ -967,7 +968,7 @@
         </where>
     </select>
 
-    <!--眼科-删除文件夹下的图片-->
+    <!--眼科-逻辑删除文件夹下的图片-->
     <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.SlidePrediction">
         update aipre_slide_prediction
         <set>
@@ -1049,7 +1050,7 @@
                     and date_format(i.create_time, '%y%m%d') &lt;= date_format(#{params.endTime}, '%y%m%d')
                 </if>
             </if>
-            and e.biz_type=7 and e.folder_id>0
+            and i.biz_type=7 and i.folder_id>0
         </where>
     </select>
 
@@ -1150,5 +1151,17 @@
         </set>
         where slide_id = #{slideId} and image_id=#{imageId}
     </update>
+
+    <!--眼科——查询图片错误原因-->
+    <select id="errorReason" parameterType="java.lang.Long" resultType="cn.staitech.anno.vo.eyeslide.EyeErrorReasonOut">
+        select prompt from tb_slide where slide_id=#{slideId}
+    </select>
+
+    <!--眼科-删除-->
+    <delete id="eyeDeleteImage" parameterType="java.lang.Long">
+        delete
+        from aipre_slide_prediction
+        where slide_id = #{slideId}
+    </delete>
 
 </mapper>

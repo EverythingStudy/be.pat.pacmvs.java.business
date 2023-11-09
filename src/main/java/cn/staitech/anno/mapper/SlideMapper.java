@@ -6,10 +6,7 @@ import cn.staitech.anno.domain.SlidePrediction;
 import cn.staitech.anno.project.domain.Review;
 import cn.staitech.anno.vo.diagnosis.SpecialDiagnosisAddVo;
 import cn.staitech.anno.vo.examination.ExaminationListVO;
-import cn.staitech.anno.vo.eyeslide.EyeProjectSlideOut;
-import cn.staitech.anno.vo.eyeslide.EyeSaveSlide;
-import cn.staitech.anno.vo.eyeslide.EyeSlideIn;
-import cn.staitech.anno.vo.eyeslide.ProjectSlideOut;
+import cn.staitech.anno.vo.eyeslide.*;
 import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
@@ -282,4 +279,14 @@ public interface SlideMapper extends BaseMapper<Slide> {
      * 更新添加主图
      * */
     int eyeUpdateMainImage(SlidePrediction slidePrediction);
+
+    /**
+     * 眼科——查询图片错误原因
+     * */
+    EyeErrorReasonOut errorReason(Long slideId);
+
+    /**
+     * 眼科-删除文件夹下的图片
+     * */
+    int eyeDeleteImage(Long slideId);
 }
