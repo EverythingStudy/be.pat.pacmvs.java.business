@@ -787,51 +787,55 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         }
         List<ProjectSlideOut> projectSlideOutList=slideMapper.eyeFolder(eyeSaveSlide);
         Project project=projectMapper.selectPrimKey(eyeSaveSlide.getProjectId());
+        Long userId=SecurityUtils.getUserId();
+//        Long userId=1L;
+        Long organizationId=SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+//        Long organizationId=1L;
         switch (project.getModelId().intValue()){
             case 1:
                 for (ProjectSlideOut projectSlideOut:projectSlideOutList){
                     Long folderId=projectSlideOut.getFolderId();
                     List<Image>imageList=slideMapper.eyeFolderSlide(folderId);
-                    if (imageList.size() >= 5){
+                    if (imageList.size() < 5){
                         List<SlidePrediction> predictions=new ArrayList<>();
-                         Slide slide=Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(SecurityUtils.getUserId()).folderId(folderId).prompt("1").eyeMent("1").build();
+                         Slide slide=Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(userId).folderId(folderId).prompt("1").eyeMent("1").build();
                          //存储文件夹id
                         slideMapper.eyeInsertSlide(slide);
                          for (Image image:imageList){
-                     SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId())
-                             .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
+                     SlidePrediction slidePrediction=SlidePrediction.builder().createBy(userId)
+                             .organizationId(organizationId).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
                       predictions.add(slidePrediction);
                     }
                      //存储碎片信息
-                    slideMapper.eyeInsert(predictions);
+                        if (predictions.size()>0){
+                            slideMapper.eyeInsert(predictions);
+                        }
 
                 }else{
-                        Slide slide=Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(SecurityUtils.getUserId()).folderId(folderId).build();
+                        Slide slide=Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(userId).folderId(folderId).build();
                         //存储文件夹id
                         slideMapper.eyeInsertSlide(slide);
                         List<SlidePrediction> predictions=new ArrayList<>();
                         int testNum=0;
                         //
-                        Map<Long,Long>imageIdList=new HashMap<>();
-                        List<Long>imageName=new ArrayList<>();
+                        Map<Long,String>imageIdList=new HashMap<>();
+                        List<String>imageName=new ArrayList<>();
                     for (Image image:imageList){
-                            imageIdList.put(image.getImageId(), Long.valueOf(image.getImageName()));
-                            imageName.add(Long.valueOf(image.getImageName()));
+                            imageIdList.put(image.getImageId(), image.getImageName());
+                            imageName.add(image.getImageName());
                         if (isNumeric(image.getImageName())){
-                            SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId())
-                                    .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
+                            SlidePrediction slidePrediction=SlidePrediction.builder().createBy(userId)
+                                    .organizationId(organizationId).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
                             predictions.add(slidePrediction);
 
                         }else{
-                                SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId())
-                                        .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
+                                SlidePrediction slidePrediction=SlidePrediction.builder().createBy(userId)
+                                        .organizationId(organizationId).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
                                 predictions.add(slidePrediction);
                             testNum=1;
                         }
                     }
-                    /**
-                     * 存储碎片信息
-                     * */
+                     //存储碎片信息
                     if (predictions.size()>0){
                         slideMapper.eyeInsert(predictions);
                     }
@@ -840,7 +844,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                             slideMapper.eyeUpdateFolder(slides);
                         }else{
                             //获取最小的图片名称
-                            Long minImageName=Collections.min(imageName);
+                            String minImageName=Collections.min(imageName);
                             for(Long key: imageIdList.keySet()){
                                 if(imageIdList.get(key).equals(minImageName)){
                                     SlidePrediction slidePrediction=SlidePrediction.builder().slideId(slide.getSlideId()).imageId(key).mainImage("1").build();
@@ -857,53 +861,53 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                     Long folderId=projectSlideOut.getFolderId();
                     List<Image>imageList=slideMapper.eyeFolderSlide(folderId);
 
-                    if (imageList.size()>= 7){
+                    if (imageList.size()< 7){
                         List<SlidePrediction> predictions=new ArrayList<>();
-                        Slide slide=Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(SecurityUtils.getUserId()).folderId(folderId).prompt("1").eyeMent("1").build();
+                        Slide slide=Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(userId).folderId(folderId).prompt("1").eyeMent("1").build();
                         //存储文件夹id
                         slideMapper.eyeInsertSlide(slide);
                         for (Image image:imageList){
-                            SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId())
-                                    .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
+                            SlidePrediction slidePrediction=SlidePrediction.builder().createBy(userId)
+                                    .organizationId(organizationId).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
                             predictions.add(slidePrediction);
                         }
                         //存储碎片信息
-                        slideMapper.eyeInsert(predictions);
+                        if (predictions.size()>0){
+                            slideMapper.eyeInsert(predictions);
+                        }
 
                     }else{
-                        Slide slide=Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(SecurityUtils.getUserId()).folderId(folderId).build();
+                        Slide slide=Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(userId).folderId(folderId).build();
                         //存储文件夹id
                         slideMapper.eyeInsertSlide(slide);
                         List<SlidePrediction> predictions=new ArrayList<>();
                         int testNum=0;
                         //
-                        Map<Long,Long>imageIdList=new HashMap<>();
-                        List<Long>imageName=new ArrayList<>();
+                        Map<Long,String>imageIdList=new HashMap<>();
+                        List<String>imageName=new ArrayList<>();
                         for (Image image:imageList){
-                            imageIdList.put(image.getImageId(), Long.valueOf(image.getImageName()));
-                            imageName.add(Long.valueOf(image.getImageName()));
+                            imageIdList.put(image.getImageId(), image.getImageName());
+                            imageName.add(image.getImageName());
                             if (isNumeric(image.getImageName())){
-                                SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId())
-                                        .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
+                                SlidePrediction slidePrediction=SlidePrediction.builder().createBy(userId)
+                                        .organizationId(organizationId).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
                                 predictions.add(slidePrediction);
 
                             }else{
-                                SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId())
-                                        .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
+                                SlidePrediction slidePrediction=SlidePrediction.builder().createBy(userId)
+                                        .organizationId(organizationId).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
                                 predictions.add(slidePrediction);
                                 testNum=1;
                             }
                         }
-                        /**
-                         * 存储碎片信息
-                         * */
+                         //存储碎片信息
                         slideMapper.eyeInsert(predictions);
                         if (testNum==1){
                             Slide slides=Slide.builder().slideId(slide.getSlideId()).prompt("2").eyeMent("1").build();
                             slideMapper.eyeUpdateFolder(slides);
                         }else{
                             //获取最小的图片名称
-                            Long minImageName=Collections.min(imageName);
+                            String minImageName=Collections.min(imageName);
                             for(Long key: imageIdList.keySet()){
                                 if(imageIdList.get(key).equals(minImageName)){
                                     SlidePrediction slidePrediction=SlidePrediction.builder().slideId(slide.getSlideId()).imageId(key).mainImage("1").build();

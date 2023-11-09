@@ -1080,19 +1080,18 @@
     </insert>
 
     <!--眼科添加碎片-->
-    <insert id="eyeInsert" useGeneratedKeys="true"
-            keyProperty="slideId">
+    <insert id="eyeInsert">
         insert into aipre_slide_prediction (slide_id,
         image_id,
         organization_id,
         create_by,
-        create_time,
+        create_time
         )values
-        <foreach collection="slideList" item="slide" separator=",">
-            (#{slide.slideId},
-            #{slide.imageId},
-            #{slide.organizationId},
-            #{slide.createBy},
+        <foreach collection="list" item="item" separator=",">
+            (#{item.slideId},
+            #{item.imageId},
+            #{item.organizationId},
+            #{item.createBy},
             sysdate())
         </foreach>
     </insert>
