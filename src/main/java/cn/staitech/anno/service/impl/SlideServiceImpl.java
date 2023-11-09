@@ -792,7 +792,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                 for (ProjectSlideOut projectSlideOut:projectSlideOutList){
                     Long folderId=projectSlideOut.getFolderId();
                     List<Image>imageList=slideMapper.eyeFolderSlide(folderId);
-                    if (imageList.size()<5){
+                    if (imageList.size() >= 5){
                         List<SlidePrediction> predictions=new ArrayList<>();
                          Slide slide=Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(SecurityUtils.getUserId()).folderId(folderId).prompt("1").eyeMent("1").build();
                          //存储文件夹id
@@ -857,7 +857,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                     Long folderId=projectSlideOut.getFolderId();
                     List<Image>imageList=slideMapper.eyeFolderSlide(folderId);
 
-                    if (imageList.size()<7){
+                    if (imageList.size()>= 7){
                         List<SlidePrediction> predictions=new ArrayList<>();
                         Slide slide=Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(SecurityUtils.getUserId()).folderId(folderId).prompt("1").eyeMent("1").build();
                         //存储文件夹id
