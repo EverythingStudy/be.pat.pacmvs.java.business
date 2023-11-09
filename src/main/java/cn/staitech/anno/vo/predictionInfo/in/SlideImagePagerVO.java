@@ -88,6 +88,8 @@ public class SlideImagePagerVO extends Pager implements Serializable {
 //    @ApiModelProperty("请求参数（开始和结束时间）")
 //    private Map<String, Object> createTimeParams;
 
+
 //    @ApiModelProperty(value = "碎片状态(默认为0校验通过，1校验不通过)",hidden = true)
 //    private String eyeMent;
 }
+
