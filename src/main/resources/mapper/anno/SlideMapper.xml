@@ -963,7 +963,7 @@
                     and date_format(i.create_time, '%y%m%d') &lt;= date_format(#{params.endTime}, '%y%m%d')
                 </if>
             </if>
-            and e.biz_type=6
+            and e.biz_type=7 and e.folder_id>0
         </where>
     </select>
 
