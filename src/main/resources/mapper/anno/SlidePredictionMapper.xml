@@ -229,6 +229,7 @@
         s.organization_id,
         s.host_id,
         s.create_time,
+        s.remark,
         n.folder_name,
         n.folder_url,
         p.thumb_url prediction_thumb_url

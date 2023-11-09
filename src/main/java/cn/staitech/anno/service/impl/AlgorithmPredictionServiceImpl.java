@@ -6,6 +6,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -130,7 +131,9 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 					ResponseEntity<String> resp =  restTemplate.postForEntity(algorithmPredictionPath, predictionData, String.class);
 					String body = resp.getBody();
 					log.info("标注请求算法数据返回{},内容是{}",JSONUtil.toJsonStr(resp),body);
-					if(1==1){
+					JSONObject jsonObject = new JSONObject(body);
+					String code = jsonObject.getString("code");					
+					if(code.equals("200")){
 						//修改当前SlidePrediction分析状态为进行中
 						UpdateWrapper<SlidePrediction> updateWrapper = Wrappers.update();
 						// 修改条件为id=5的数据

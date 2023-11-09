@@ -98,9 +98,6 @@ public class SlidePredictionController {
 	}
 
 	
-	 /**
-     * 查询切片列表-分页
-     */
     @ApiOperation(value = "查询算法项目切片列表")
     @PostMapping("/slidePageList")
     public R<PageMaster<ImageCsvListVO>> slidePageList(@RequestBody SlideImagePagerVO req) {
@@ -119,7 +116,6 @@ public class SlidePredictionController {
 	@ApiOperation(value = "原始切片设置主图")
 	@PostMapping("/setMainImage")
 	public R<List<SlidePrediction>> setMainImage(@Validated @RequestBody SetMainImageDataIn req) {
-		//		SlidePrediction slidePredictionService.getById(req.getSlidePredictionId());
 		QueryWrapper<SlidePrediction> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("slide_id", req.getSlideId()).eq("del_flag", "0").eq("main_image", "1");
 		//查询是否已经有主图了

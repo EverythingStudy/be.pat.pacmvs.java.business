@@ -25,7 +25,7 @@ public class SlidePredictionInfo{
     private Long imageId;
     
     @ApiModelProperty(value = "图像名称")
-    private String image_name;
+    private String imageName;
     
     @ApiModelProperty(value = "缩略图地址")
     private String thumbUrl;
