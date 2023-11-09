@@ -5,6 +5,7 @@ import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.Topic;
 import cn.staitech.anno.service.*;
 import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.utils.OrganizationUtils;
 import cn.staitech.anno.vo.file.FileNode;
 import cn.staitech.anno.vo.files.Files;
 import cn.staitech.anno.vo.files.in.FileUploadVO;
@@ -53,9 +54,10 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Resource
     private AlgorithmAssessmentService algorithmAssessmentService;
     private String basePath = "/home/pat_saas";
-    private String zipPath = "/home/pat_saas/Upload/json/zip";
+    private String zipPath = "/Upload/json/zip";
 
-    private String uploadPath = File.separator + "home" + File.separator + "pat_saas" + File.separator + "Upload";
+    private String uploadPath = File.separator + "Upload";
+
 
     /**
      * @param fileUrl  上传文件路径
@@ -93,9 +95,10 @@ public class FileUploadServiceImpl implements FileUploadService {
      * @return
      * @throws IOException
      */
+    @Override
     public Files upload(MultipartFile file) throws IOException {
 
-        String dirPath = basePath + "/topicName";
+        String dirPath = basePath + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()) + "/topicName";
         //创建文件夹
         File dir = new File(dirPath);
         if (!dir.exists()) {
@@ -125,7 +128,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 
         Integer businessType = fileUploadVO.getBusinessType();
 
-        String dirPath = basePath;
+        String dirPath = basePath + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
 
         switch (businessType) {
             case 3:
@@ -144,10 +147,8 @@ public class FileUploadServiceImpl implements FileUploadService {
                 files.setTopicId(topic.getTopicId());
                 break;
             case 4:
-                dirPath = zipPath;
-                break;
             case 5:
-                dirPath = zipPath;
+                dirPath = dirPath + zipPath;
                 break;
 
         }
@@ -204,7 +205,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                     fileUrl = fileUploadVO.getFileUrl();
                 } else {
                     // 获取文件路径
-                    fileUrl = uploadPath + File.separator + getFileUrl(fileUploadVO);
+                    fileUrl = basePath + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()) + uploadPath + File.separator + getFileUrl(fileUploadVO);
                     File dir = new File(fileUrl);
                     if (!dir.exists()) {
                         dir.mkdirs();
@@ -243,8 +244,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             file.delete();
         }
         // 写入文件
-        try (InputStream fis = chunk.getMultipartFile().getInputStream();
-             RandomAccessFile raf = new RandomAccessFile(file, "rw")) {
+        try (InputStream fis = chunk.getMultipartFile().getInputStream(); RandomAccessFile raf = new RandomAccessFile(file, "rw")) {
             int len = -1;
             byte[] buffer = new byte[1024 * 4 * 10];
             // 指针移动到当前块开始写的位置，chunk.getChunkNumber()是指当前是第几块，减一后乘
@@ -286,10 +286,10 @@ public class FileUploadServiceImpl implements FileUploadService {
                     String fileUrl;
                     // 获取json文件最终存储路径
                     if (chunk.getFileUrl() != null) {
-                        fileUrl = uploadPath + File.separator + chunk.getFileUrl();
+                        fileUrl = basePath + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()) + uploadPath + File.separator + chunk.getFileUrl();
                     } else {
                         // 获取文件路径
-                        fileUrl = uploadPath + File.separator + getFileUrl(chunk);
+                        fileUrl = basePath + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()) + uploadPath + File.separator + getFileUrl(chunk);
                     }
                     List<String> fileNameList = algorithmAssessmentService.zipExport(filesBy.getFilesPath(), chunk.getProjectId(), fileUrl);
                     return fileNameList.toString();
@@ -303,12 +303,9 @@ public class FileUploadServiceImpl implements FileUploadService {
         // 根据不同的业务id生成不同的文件
         switch (fileUploadVO.getBusinessType()) {
             case 4:
-                // 若有二级目录,生成在获取文件名称上方即可
-                path = zipPath + File.separator + fileUploadVO.getFileName();
-                break;
             case 5:
                 // 若有二级目录,生成在获取文件名称上方即可
-                path = zipPath + File.separator + fileUploadVO.getFileName();
+                path = basePath + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()) + zipPath + File.separator + fileUploadVO.getFileName();
                 break;
         }
         // 创建文件
@@ -323,20 +320,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         // 获取文件后缀
         String suffixName = fileUploadVO.getFileName().substring(fileUploadVO.getFileName().lastIndexOf("."));
 
-        Files files = Files.builder()
-                .filesName(fileUploadVO.getFileName())
-                .filesCode(fileUploadVO.getUuid())
-                .filesUrl(path)
-                .filesPath(path)
-                .format(suffixName)
-                .processFlag(1)
-                .deleteFlag(1)
-                .hostId(1)
-                .businessType(fileUploadVO.getBusinessType())
-                .createTime(new Date())
-                .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId())
-                .createBy(SecurityUtils.getUserId())
-                .build();
+        Files files = Files.builder().filesName(fileUploadVO.getFileName()).filesCode(fileUploadVO.getUuid()).filesUrl(path).filesPath(path).format(suffixName).processFlag(1).deleteFlag(1).hostId(1).businessType(fileUploadVO.getBusinessType()).createTime(new Date()).organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).createBy(SecurityUtils.getUserId()).build();
         // 写入文件表中
         filesService.save(files);
         return files.getFilesId();
@@ -359,7 +343,8 @@ public class FileUploadServiceImpl implements FileUploadService {
             throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }
         String fileName = fileUploadVO.getTopicName() + GLIDE_LINE + fileUploadVO.getProjectTypeId() + fileUploadVO.getRoundId() + GLIDE_LINE + fileUploadVO.getNumber();
-        String filesName = getFolderName(uploadPath, fileName);
+        String upath = basePath + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()) + uploadPath;
+        String filesName = getFolderName(upath, fileName);
         String filePath;
         if (Objects.equals(filesName, filesName)) {
             filePath = filesName + GLIDE_LINE + System.currentTimeMillis();

@@ -58,7 +58,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -75,8 +78,8 @@ public class MarkingServiceImpl implements MarkingService {
     private static final int BATCH_SIZE = 5000;
 
     private static final ExecutorService executor = ExecutorBuilder.create()
-            .setCorePoolSize(1)
-            .setMaxPoolSize(1)
+            .setCorePoolSize(Runtime.getRuntime().availableProcessors() * 2 + 1)
+            .setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 4 + 1)
             .setKeepAliveTime(0)
             .build();
     @Resource
@@ -417,6 +420,32 @@ public class MarkingServiceImpl implements MarkingService {
         return fileUrl;
     }
 
+
+
+
+    class TaskGenerateJson implements Runnable{
+
+
+        private CountDownLatch countDownLatch;
+        private Features features;
+        private ConcurrentLinkedQueue<Features> concurrentLinkedQueue;
+
+        public TaskGenerateJson(CountDownLatch countDownLatch, Features features, ConcurrentLinkedQueue<Features> concurrentLinkedQueue) {
+            this.countDownLatch = countDownLatch;
+            this.features = features;
+            this.concurrentLinkedQueue = concurrentLinkedQueue;
+        }
+
+        @Override
+        public void run() {
+            features.setGeometry(GeometryUtil.updateYAxle(features.getGeometry()));
+            concurrentLinkedQueue.add(features);
+            countDownLatch.countDown();
+        }
+    }
+
+
+
     @Override
     public String slideJsonExportExt(Long slideId, SysUser sysUser) throws Exception {
         if (!Optional.ofNullable(slideId).isPresent()) {
@@ -434,16 +463,25 @@ public class MarkingServiceImpl implements MarkingService {
                 throw new RuntimeException(e);
             }
         }
-
         String fileUrl = null;
         try {
             fileUrl = fileService.createFiles(slideId, FILE_SUFFIX_JSON);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        // 标注数据
+
         List<Features> features = markingMapper.selectLists(slideId);
-        features.forEach(i -> i.setGeometry(GeometryUtil.updateYAxle(i.getGeometry())));
+        ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
+        CountDownLatch countDownLatch = new CountDownLatch(features.size());
+        ConcurrentLinkedQueue<Features> concurrentLinkedQueue = new ConcurrentLinkedQueue<>();
+        for(Features features1:features){
+            cachedThreadPool.submit(new TaskGenerateJson(countDownLatch,features1,concurrentLinkedQueue));
+
+        }
+        countDownLatch.await();
+        cachedThreadPool.shutdown();
+
+//        features.forEach(i -> i.setGeometry(GeometryUtil.updateYAxle(i.getGeometry())));
 
         // 查询项目详情
         JsonExport jsonExport = null;
@@ -497,10 +535,11 @@ public class MarkingServiceImpl implements MarkingService {
                 categoryList.add(geoLabel);
             }
         }
-
         // 构建geoJson数据
         GeoJson geoJson = new GeoJson();
-        geoJson.setFeatures(features);
+
+        List<Features> featuresList = new ArrayList<>(concurrentLinkedQueue);
+        geoJson.setFeatures(featuresList);
         geoJson.setImage(image);
         geoJson.setProject(project);
         geoJson.setAttribute(attribute);
@@ -508,8 +547,9 @@ public class MarkingServiceImpl implements MarkingService {
         String jsonString = JSON.toJSONString(geoJson, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue);
         // 写入文件
         exportJson(fileUrl, jsonString);
-//            return R.ok(fileUrl);
-//        });
+
+
+
         return fileUrl;
     }
 
