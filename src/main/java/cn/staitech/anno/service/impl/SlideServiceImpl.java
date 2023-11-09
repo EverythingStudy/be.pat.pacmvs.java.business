@@ -806,7 +806,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                     slideMapper.eyeInsert(predictions);
 
                 }else{
-                        Slide slide=Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(1L).folderId(folderId).build();
+                        Slide slide=Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(SecurityUtils.getUserId()).folderId(folderId).build();
                         //存储文件夹id
                         slideMapper.eyeInsertSlide(slide);
                         List<SlidePrediction> predictions=new ArrayList<>();
@@ -818,8 +818,8 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                             imageIdList.put(image.getImageId(), Long.valueOf(image.getImageName()));
                             imageName.add(Long.valueOf(image.getImageName()));
                         if (isNumeric(image.getImageName())){
-                            SlidePrediction slidePrediction=SlidePrediction.builder().createBy(1L)
-                                    .organizationId(1L).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
+                            SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId())
+                                    .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
                             predictions.add(slidePrediction);
 
                         }else{
