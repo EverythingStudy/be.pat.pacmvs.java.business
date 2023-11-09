@@ -236,6 +236,12 @@
             <if test="modelId != null and modelId != ''">
                 AND p.model_id = #{modelId}
             </if>
+            <if test="projectTypeArray != null and projectTypeArray.length > 0">
+		        AND p.project_type in
+		                <foreach collection="projectTypeArray" item="item" separator="," open="("  close=")">
+		                    #{item}
+		                </foreach>
+			 </if>
             <if test="createTimeParams != null">
                 <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
                     <!-- 开始时间检索 -->

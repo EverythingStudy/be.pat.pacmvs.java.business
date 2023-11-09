@@ -162,6 +162,10 @@ public class Project extends BaseEntity {
     @TableField(exist = false)
     @ApiModelProperty(value = "品系名称")
     private String productSeries;
+    
+    @TableField(exist = false)
+    @ApiModelProperty(value = "eye项目类型")
+    private Integer[] projectTypeArray;
 
     @ApiModelProperty("是否已生成考题0-未生成；1-已生成")
     private String ifCreateQuestions;
