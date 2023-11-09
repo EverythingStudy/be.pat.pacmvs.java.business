@@ -71,9 +71,9 @@ public class SlidePredictionController {
 
 	@Resource
 	private SlidePredictionService slidePredictionService;
-	
+
 	@Resource
-    private SlideService slideService;
+	private SlideService slideService;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@ApiOperation(value = "算法项目列表分页查询")
@@ -90,20 +90,20 @@ public class SlidePredictionController {
 		}
 		//项目列表来源于项目管理模块的项目类型为算法检测和图像拼接的项目,除了系统管理员外，每个用户只能看到自己参与的项目
 		//项目类型:1标注2评审3标准训练集  6图像拼接  7算法预测
-		//        Integer[] projectArray = new 
-		//        project.setProjectType(projectType);
+		Integer[] projectArray = {6,7};
+		project.setProjectTypeArray(projectArray);
 		List<ProjectListVO> list = projectService.selectProjectList(project);
 		PageMaster pageMaster = new PageMaster<>(list);
 		return R.ok(pageMaster);
 	}
 
-	
-    @ApiOperation(value = "查询算法项目切片列表")
-    @PostMapping("/slidePageList")
-    public R<PageMaster<ImageCsvListVO>> slidePageList(@RequestBody SlideImagePagerVO req) {
-        return R.ok(algorithmPredictionService.slidePageList(req));
-    }
-    
+
+	@ApiOperation(value = "查询算法项目切片列表")
+	@PostMapping("/slidePageList")
+	public R<PageMaster<ImageCsvListVO>> slidePageList(@RequestBody SlideImagePagerVO req) {
+		return R.ok(algorithmPredictionService.slidePageList(req));
+	}
+
 
 	@ApiOperation(value = "查询原始切片列表")
 	@PostMapping("/originalSlideList")
