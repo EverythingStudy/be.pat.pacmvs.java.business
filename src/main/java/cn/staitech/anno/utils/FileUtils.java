@@ -2,6 +2,7 @@ package cn.staitech.anno.utils;
 
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.marking.MarkGeojson;
+import cn.staitech.common.security.utils.SecurityUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -21,7 +22,7 @@ import java.util.zip.ZipOutputStream;
 
 @Slf4j
 public class FileUtils {
-    private static final String FILE_URL = "/home/pat_saas/Data/geojson";
+    private static final String FILE_URL = "/home/pat_saas";
     private static final byte[] ZIP_HEADER_1 = new byte[]{80, 75, 3, 4};
     private static final byte[] ZIP_HEADER_2 = new byte[]{80, 75, 5, 6};
 
@@ -83,10 +84,11 @@ public class FileUtils {
     }
 
     public static String createFile(Long imageId) {
-        if (!FileUtils.createFolder(FILE_URL)) {
+        String fileUrl = FILE_URL + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()) + "/Data/geojson";
+        if (!FileUtils.createFolder(fileUrl)) {
             log.error("创建文件夹失败");
         }
-        String geojsonUrl = FILE_URL + File.separator + imageId + ".geojson";
+        String geojsonUrl = fileUrl + File.separator + imageId + ".geojson";
         File file = new File(geojsonUrl);
         if (!file.exists()) {
             try {

@@ -26,6 +26,8 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
 
+import static cn.staitech.common.security.utils.SecurityUtils.isAdmin;
+
 
 /**
  * @author wangfeng
@@ -67,7 +69,8 @@ public class IndicatorController extends BaseController {
         indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().toString().concat(req.getOrganId().toString())));
         indicator.setNumber(indicator.getSpeciesId().toString().concat(indicator.getOrganId().toString()));
         indicator.setCreateBy(sysUser.getUserId());
-
+        //20231107wd结构指标关联机构
+        indicator.setOrganizationId(sysUser.getOrganizationId());
         //添加结构指标
         indicatorService.insertIndicator(indicator);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
@@ -86,6 +89,9 @@ public class IndicatorController extends BaseController {
     public R<PageMaster<Indicator>> list1(@RequestBody IndicatorListVO indicatorListVO) {
         Indicator indicator = new Indicator();
         BeanUtils.copyProperties(indicatorListVO, indicator);
+        //20231107wd_机构
+        indicator.setOrganizationId(indicatorListVO.getOrganizationId());
+
         PageMaster<Indicator> pageMaster = indicatorService.selectIndicatorList(indicator, indicatorListVO.getPageNum(), indicatorListVO.getPageSize());
         return R.ok(pageMaster);
     }
@@ -188,6 +194,10 @@ public class IndicatorController extends BaseController {
         clearPage();
         Indicator indicator = new Indicator();
         indicator.setSpeciesId(speciesId);
+        //20231107wd补充需求机构
+        if (!isAdmin(SecurityUtils.getUserId())) {
+            indicator.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        }
         List<Indicator> list = indicatorService.selectIndicatorInformation(indicator);
         return R.ok(list);
     }

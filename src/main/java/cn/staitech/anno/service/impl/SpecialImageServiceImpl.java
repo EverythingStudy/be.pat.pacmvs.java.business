@@ -11,6 +11,7 @@ import cn.staitech.anno.service.SpecialImageService;
 import cn.staitech.anno.service.SpecialService;
 import cn.staitech.anno.service.SubImageService;
 import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.utils.OrganizationUtils;
 import cn.staitech.anno.utils.WktUtil;
 import cn.staitech.anno.vo.slide.SubImageVO;
 import cn.staitech.anno.vo.special.Special;
@@ -70,6 +71,8 @@ public class SpecialImageServiceImpl implements SpecialImageService {
 
     @Resource
     private ImageMapper imageMapper;
+
+    private String baseDir = "/home/pat_saas";
 
     /**
      *
@@ -231,7 +234,7 @@ public class SpecialImageServiceImpl implements SpecialImageService {
         cutVo.setImageId(imageId);
         cutVo.setFilePath(imageInfo.getImagePath());
         String currentDate = DateUtil.format(new Date(), "yyyyMMdd");
-        String folderPath = "/home/pat_saas/Upload/big/" + currentDate + "/";
+        String folderPath = baseDir + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()) + "/Upload/big/" + currentDate + "/";
         checkDirectory(folderPath);
         cutVo.setOutPath(folderPath);
 
@@ -521,7 +524,8 @@ public class SpecialImageServiceImpl implements SpecialImageService {
         Map<String, Object> o1 = new HashMap<>(16);
         o1.put("_roi_polygon", all_1);
         o1.put("file_path", "");
-        o1.put("out_path", "/home/pat_saas/Upload/special/big/");
+        String bigPath = baseDir + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()) + "/Upload/special/big/";
+        o1.put("out_path", bigPath);
         String cd = JSONUtil.toJsonStr(o1);
         return cd;
     }

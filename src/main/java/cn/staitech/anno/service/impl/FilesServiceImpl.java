@@ -7,6 +7,7 @@ import cn.staitech.anno.service.TopicService;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.files.Files;
 import cn.staitech.anno.vo.files.in.FilesListVO;
+import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
@@ -51,6 +52,9 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         }
         if (req.getCreateTimeParams() != null && req.getCreateTimeParams().containsKey("endTime")) {
             queryWrapper.le("create_time", req.getCreateTimeParams().get("endTime"));
+        }
+        if(!SecurityUtils.isAdmin(SecurityUtils.getLoginUser().getSysUser().getUserId())){
+            queryWrapper.eq("organization_id",SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         }
 
         queryWrapper.orderByDesc("files_id");

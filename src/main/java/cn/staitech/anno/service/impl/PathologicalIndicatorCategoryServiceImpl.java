@@ -227,7 +227,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
         Project project = projectMapperv1.selectById(projectId);
         if (project != null) {
             QueryWrapper<PathologicalIndicatorCategory> pathologicalIndicatorCategoryQueryWrapper = new QueryWrapper<>();
-            pathologicalIndicatorCategoryQueryWrapper.eq("indicator_id", project.getIndicatorId()).orderByDesc("order_number");
+            pathologicalIndicatorCategoryQueryWrapper.eq("indicator_id", project.getIndicatorId()).eq("del_flag","0").orderByDesc("order_number");
             List<PathologicalIndicatorCategory> list = pathologicalIndicatorCategoryMapper.selectList(pathologicalIndicatorCategoryQueryWrapper);
             for (PathologicalIndicatorCategory category : list) {
                 // 处理标签集中英文
