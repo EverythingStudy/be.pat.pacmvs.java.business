@@ -17,8 +17,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -579,4 +581,31 @@ public class StatisticListUtils {
                 statisticCategoryDictLabel, statisticDimensionDictLabel, daysBetween);
         return statisticListRep;
     }
+
+    /**
+     * 机构数字格式化
+     * @param number
+     * @return C012
+     */
+    public static String getFourNumberNoSlide(Long number){
+        NumberFormat formatter = NumberFormat.getNumberInstance();
+        formatter.setMinimumIntegerDigits(3);
+        formatter.setGroupingUsed(false);
+        return "C"+formatter.format(number);
+    }
+
+
+    /**
+     * 数字格式化
+     * @param number
+     * @return C012\Slides
+     */
+    public static String getFourNumber(Long number){
+        NumberFormat formatter = NumberFormat.getNumberInstance();
+        formatter.setMinimumIntegerDigits(3);
+        formatter.setGroupingUsed(false);
+        return "C"+formatter.format(number)+ "/Slides";
+    }
+
+
 }
