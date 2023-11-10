@@ -116,6 +116,7 @@ public class MarkingServiceImpl implements MarkingService {
         if (!Optional.ofNullable(slideBy).isPresent()) {
             throw new Exception(MessageSource.M("SLIDE_ABNORMAL_NO_INFORMATION"));
         }
+        Integer resPageNum = pageNum;
         if(pageNum > 0){
             pageNum = pageNum -1;
         }else{
@@ -146,10 +147,10 @@ public class MarkingServiceImpl implements MarkingService {
                 }
             }
         }
-        resp.setTotal(markingCount);
+        resp.setTotal(markingSelectListVoList.size());
         resp.setList(markingSelectListVoList);
         resp.setPages(pageShow);
-        resp.setPageNum(pageNum);
+        resp.setPageNum(resPageNum);
         resp.setPageSize(pageSize);
         return resp;
     }
