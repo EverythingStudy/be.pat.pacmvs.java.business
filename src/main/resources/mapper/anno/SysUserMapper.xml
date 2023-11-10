@@ -301,6 +301,6 @@
     </delete>
 
     <select id="userList" parameterType="java.lang.Long" resultMap="SysUserResult">
-        select user_id,user_name from sys_user where organization_id=#{organizationId} and del_flag=0
+        select user_id,user_name,nick_name from sys_user where organization_id=#{organizationId} and del_flag=0
     </select>
 </mapper>

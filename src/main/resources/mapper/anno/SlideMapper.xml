@@ -145,6 +145,7 @@
         <result property="topicName" column="topic_name"/>
         <result property="createTime" column="create_time"/>
         <result property="nickName" column="nick_name"/>
+        <result property="size" column="size"/>
     </resultMap>
 
 
@@ -940,7 +941,7 @@
 
     <!--眼科-选择图片查询-->
     <select id="eyeSlideList" parameterType="cn.staitech.anno.vo.eyeslide.EyeSlideIn" resultMap="eyeSlideResult">
-        select f.folder_id, e.image_name, f.folder_name, i.topic_name, i.create_time, u.user_name as nick_name
+        select f.folder_id, e.image_name,e.size, f.folder_name, i.topic_name, i.create_time, u.user_name as nick_name
         from aipre_folder as f
         left join tb_files as i on f.files_id = i.files_id
         left join tb_image as e on e.folder_id = f.folder_id
@@ -1026,7 +1027,7 @@
                 AND i.image_name LIKE CONCAT('%', #{imageName}, '%')
             </if>
             <if test="folderName != null">
-                AND as.folder_name LIKE CONCAT('%', #{folderName}, '%')
+                AND af.folder_name LIKE CONCAT('%', #{folderName}, '%')
             </if>
             <if test="eyeMent != null">
                 AND s.eye_ment = #{eyeMent}
