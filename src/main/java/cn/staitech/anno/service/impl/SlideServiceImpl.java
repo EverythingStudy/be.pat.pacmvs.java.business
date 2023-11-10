@@ -1,6 +1,7 @@
 package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.*;
@@ -814,7 +815,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                          //存储文件夹id
                         slideMapper.eyeInsertSlide(slide);
                          for (Image image:imageList){
-                     SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId())
+                     SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId()).aiAnalyzed(0).delFlag("0").mainImage("2").createTime(DateUtil.date())
                              .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).delFlag("0").build();
                       predictions.add(slidePrediction);
                     }
@@ -835,7 +836,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                             imageIdList.put(image.getImageId(), image.getImageName());
                             imageName.add(image.getImageName());
                         if (isNumeric(image.getImageName())){
-                            SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId())
+                            SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId()).aiAnalyzed(0).delFlag("0").mainImage("2").createTime(DateUtil.date())
                                     .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
                             predictions.add(slidePrediction);
 
@@ -879,7 +880,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                         //存储文件夹id
                         slideMapper.eyeInsertSlide(slide);
                         for (Image image:imageList){
-                            SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId())
+                            SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId()).aiAnalyzed(0).delFlag("0").mainImage("2").createTime(DateUtil.date())
                                     .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).delFlag("0").imageId(image.getImageId()).build();
                             predictions.add(slidePrediction);
                         }
@@ -900,7 +901,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                             imageIdList.put(image.getImageId(), image.getImageName());
                             imageName.add(image.getImageName());
                             if (isNumeric(image.getImageName())){
-                                SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId())
+                                SlidePrediction slidePrediction=SlidePrediction.builder().createBy(SecurityUtils.getUserId()).aiAnalyzed(0).delFlag("0").mainImage("2").createTime(DateUtil.date())
                                         .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).delFlag("0").imageId(image.getImageId()).build();
                                 predictions.add(slidePrediction);
 
