@@ -27,6 +27,8 @@ public interface MarkingMapper extends BaseMapper<Marking> {
      */
     List<MarkingSelectListVO> selectList(Map<String, Object> map);
 
+    int selectListCount(Map<String, Object> map);
+
     /**
      * json文件导出的列表
      *

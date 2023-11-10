@@ -122,24 +122,21 @@ public class MarkingServiceImpl implements MarkingService {
         }else{
             pageNum = 0;
         }
-        // 查询总数量
-        QueryWrapper<cn.staitech.anno.project.domain.Marking> markingQueryWrapper = new QueryWrapper<>();
-        markingQueryWrapper.eq("slide_id", slideId).ne("location_type","Point");
-        Integer markingCount = markingMapperV1.selectCount(markingQueryWrapper);
 
         Map<String, Object> map = new HashMap<>();
         map.put("slideId", slideId);
         map.put("measureFullName", measureFullName);
         map.put("pageSize", pageSize);
         map.put("pageNum", pageNum * pageSize);
+        // 查询总数量
+        Integer markingCount = markingMapper.selectListCount(map);
         List<MarkingSelectListVO> pointCountList = markingMapper.selectPointCountList(map);
+        List<MarkingSelectListVO> markingSelectListVoList = markingMapper.selectList(map);
         markingCount = markingCount + pointCountList.size();
         // 总页数
         int pageShow = (markingCount / pageSize) + 1;
         PageResponse<MarkingSelectListVO> resp = new PageResponse<>();
         // 查询考核评分表中信息
-
-        List<MarkingSelectListVO> markingSelectListVoList = markingMapper.selectList(map);
         if (markingSelectListVoList.size() < pageSize) {
             for(MarkingSelectListVO markingSelectListVO:pointCountList){
                 if(markingSelectListVoList.size() < pageSize){
@@ -147,7 +144,7 @@ public class MarkingServiceImpl implements MarkingService {
                 }
             }
         }
-        resp.setTotal(markingSelectListVoList.size());
+        resp.setTotal(markingCount);
         resp.setList(markingSelectListVoList);
         resp.setPages(pageShow);
         resp.setPageNum(resPageNum);
