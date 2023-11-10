@@ -30,6 +30,7 @@ import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.PointCount;
 import cn.staitech.anno.vo.slide.SlideRes;
+import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -110,15 +111,40 @@ public class MarkingServiceImpl implements MarkingService {
     private DownTaskService downTaskService;
 
     @Override
-    public List<MarkingSelectListVO> selectList(Long slideId) throws Exception {
+    public PageResponse<MarkingSelectListVO> selectList(Long slideId, Integer pageNum, Integer pageSize, String measureFullName) throws Exception {
         Slide slideBy = slideMapperV1.selectById(slideId);
         if (!Optional.ofNullable(slideBy).isPresent()) {
             throw new Exception(MessageSource.M("SLIDE_ABNORMAL_NO_INFORMATION"));
         }
-        List<MarkingSelectListVO> markingSelectListVoList = markingMapper.selectList(slideId);
+        // 查询总数量
+        QueryWrapper<cn.staitech.anno.project.domain.Marking> markingQueryWrapper = new QueryWrapper<>();
+        markingQueryWrapper.eq("slide_id", slideId).ne("location_type","Point");
+        Integer markingCount = markingMapperV1.selectCount(markingQueryWrapper);
         List<MarkingSelectListVO> pointCountList = markingMapper.selectPointCountList(slideId);
-        markingSelectListVoList = Stream.of(markingSelectListVoList, pointCountList).flatMap(Collection::stream).collect(Collectors.toList());
-        return markingSelectListVoList;
+        markingCount = markingCount + pointCountList.size();
+        // 总页数
+        int pageShow = (markingCount / pageSize) + 1;
+        PageResponse<MarkingSelectListVO> resp = new PageResponse<>();
+        // 查询考核评分表中信息
+        Map<String, Object> map = new HashMap<>();
+        map.put("slideId", slideId);
+        map.put("measureFullName", measureFullName);
+        map.put("pageSize", pageSize);
+        map.put("pageNum", pageNum * pageSize);
+        List<MarkingSelectListVO> markingSelectListVoList = markingMapper.selectList(map);
+        if (markingSelectListVoList.size() < pageSize) {
+            for(MarkingSelectListVO markingSelectListVO:pointCountList){
+                if(markingSelectListVoList.size() < pageSize){
+                    markingSelectListVoList.add(markingSelectListVO);
+                }
+            }
+        }
+        resp.setTotal(markingCount);
+        resp.setList(markingSelectListVoList);
+        resp.setPages(pageShow);
+        resp.setPageNum(pageNum);
+        resp.setPageSize(pageSize);
+        return resp;
     }
 
     @Override
@@ -421,9 +447,7 @@ public class MarkingServiceImpl implements MarkingService {
     }
 
 
-
-
-    class TaskGenerateJson implements Runnable{
+    class TaskGenerateJson implements Runnable {
 
 
         private CountDownLatch countDownLatch;
@@ -443,7 +467,6 @@ public class MarkingServiceImpl implements MarkingService {
             countDownLatch.countDown();
         }
     }
-
 
 
     @Override
@@ -474,8 +497,8 @@ public class MarkingServiceImpl implements MarkingService {
         ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
         CountDownLatch countDownLatch = new CountDownLatch(features.size());
         ConcurrentLinkedQueue<Features> concurrentLinkedQueue = new ConcurrentLinkedQueue<>();
-        for(Features features1:features){
-            cachedThreadPool.submit(new TaskGenerateJson(countDownLatch,features1,concurrentLinkedQueue));
+        for (Features features1 : features) {
+            cachedThreadPool.submit(new TaskGenerateJson(countDownLatch, features1, concurrentLinkedQueue));
 
         }
         countDownLatch.await();
@@ -547,7 +570,6 @@ public class MarkingServiceImpl implements MarkingService {
         String jsonString = JSON.toJSONString(geoJson, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue);
         // 写入文件
         exportJson(fileUrl, jsonString);
-
 
 
         return fileUrl;
