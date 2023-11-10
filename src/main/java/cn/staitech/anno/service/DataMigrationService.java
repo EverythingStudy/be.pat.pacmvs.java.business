@@ -1,5 +1,6 @@
 package cn.staitech.anno.service;
 
+import cn.staitech.anno.domain.DataMigration;
 import cn.staitech.common.core.domain.R;
 
 /**
@@ -16,5 +17,7 @@ public interface DataMigrationService {
      int markingData();
      int questionBankData();
      int recentlyVisitedData();
+
+     DataMigration otherMarking();
 
 }

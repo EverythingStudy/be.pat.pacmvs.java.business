@@ -82,4 +82,13 @@ public class DataMigrationController {
 
         return R.ok(dataMigrationService.markingData());
     }
+
+    @GetMapping("/otherMarking")
+    public R otherMarking() {
+
+        DataMigration dataMigration = dataMigrationService.otherMarking();
+
+
+        return R.ok(dataMigration);
+    }
 }

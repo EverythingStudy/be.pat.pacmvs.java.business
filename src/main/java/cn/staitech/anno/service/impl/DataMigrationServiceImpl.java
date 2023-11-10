@@ -1,5 +1,6 @@
 package cn.staitech.anno.service.impl;
 
+import cn.staitech.anno.domain.DataMigration;
 import cn.staitech.anno.domain.ExamineScore;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.QuestionBank;
@@ -29,6 +30,7 @@ import cn.staitech.anno.utils.StatisticListUtils;
 import cn.staitech.anno.vo.algorithm.AlgorithmAssessment;
 import cn.staitech.anno.vo.algorithm.AlgorithmJson;
 import cn.staitech.anno.vo.files.Files;
+import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.StringUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -37,6 +39,7 @@ import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -234,6 +237,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
      * @return
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int markingData() {
         log.info("tb_marking表数据迁移开始：");
         boolean flag = true;
@@ -302,6 +306,21 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         boolean b = recentlyVisitedService.updateBatchById(recentlyVisiteds);
         log.info("tb_recently_visited表数据迁移{}数量：{}", b, recentlyVisiteds.size());
         return recentlyVisiteds.size();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public DataMigration otherMarking() {
+        DataMigration dataMigration = new DataMigration();
+        dataMigration.setImageData(imageData());
+        dataMigration.setAssessmentData(assessmentData());
+        dataMigration.setAlgorithmJsonData(algorithmJsonData());
+        dataMigration.setExamineScoreData(examineScoreData());
+        dataMigration.setFilesData(filesData());
+        dataMigration.setQuestionBankData(questionBankData());
+        dataMigration.setRecentlyVisitedData(recentlyVisitedData());
+
+        return dataMigration;
     }
 
 
