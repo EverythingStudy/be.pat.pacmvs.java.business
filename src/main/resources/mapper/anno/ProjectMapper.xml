@@ -238,7 +238,7 @@
             </if>
             <!-- 眼科针对已启动项目查询 -->
             <if test="projectTypeArray != null and projectTypeArray.length > 0">
-            	AND p.`status` &lt;&gt; 0
+            	AND p.`status` &lt;&gt; 1
             </if>
             <!-- 眼科针对6、7项目类型查询 -->
             <if test="projectTypeArray != null and projectTypeArray.length > 0">
