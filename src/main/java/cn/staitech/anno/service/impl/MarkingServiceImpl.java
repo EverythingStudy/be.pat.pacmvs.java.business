@@ -116,6 +116,11 @@ public class MarkingServiceImpl implements MarkingService {
         if (!Optional.ofNullable(slideBy).isPresent()) {
             throw new Exception(MessageSource.M("SLIDE_ABNORMAL_NO_INFORMATION"));
         }
+        if(pageNum > 0){
+            pageNum = pageNum -1;
+        }else{
+            pageNum = 0;
+        }
         // 查询总数量
         QueryWrapper<cn.staitech.anno.project.domain.Marking> markingQueryWrapper = new QueryWrapper<>();
         markingQueryWrapper.eq("slide_id", slideId).ne("location_type","Point");
