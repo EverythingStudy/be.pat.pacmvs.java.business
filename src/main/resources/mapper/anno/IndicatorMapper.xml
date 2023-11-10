@@ -122,7 +122,7 @@
             </if>
             <if test="organizationId != null and organizationId != ''">
                 <!-- 机构ID -->
-                AND i.organization_id = concat('%', #{organizationId}, '%')
+                AND i.organization_id = #{organizationId}
             </if>
             <if test="createBy != null and createBy != ''">
                 AND i.create_by like concat('%', #{createBy}, '%')
