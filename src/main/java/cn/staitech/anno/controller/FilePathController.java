@@ -30,16 +30,21 @@ public class FilePathController {
     @PostMapping("/getFilePath")
     public R getFilePath(@RequestBody  GetFilePathIn req){
         if(req.getFlag()==1){
-            String fourNumber = StatisticListUtils.getFourNumber(req.getOrganizationId());
+            String fourNumber = StatisticListUtils.getFourNumberNoSlide(req.getOrganizationId());
             String replace = req.getOldPath().replace("/home/pat_saas", "/home/pat_saas/" + fourNumber);
             return R.ok(replace);
         }else{
             Project project = projectMapperV1.selectById(req.getProjectId());
-            String fourNumber = StatisticListUtils.getFourNumber(project.getOrganizationId());
+            String fourNumber = StatisticListUtils.getFourNumberNoSlide(project.getOrganizationId());
             String replace = req.getOldPath().replace("/home/pat_saas", "/home/pat_saas/" + fourNumber);
             return R.ok(replace);
         }
 
     }
 
+    public static void main(String[] args) {
+        String fourNumber = StatisticListUtils.getFourNumberNoSlide(12L);
+        String replace = "/home/pat_saas/slides".replace("/home/pat_saas", "/home/pat_saas/" + fourNumber);
+        System.out.println(replace);
+    }
 }
