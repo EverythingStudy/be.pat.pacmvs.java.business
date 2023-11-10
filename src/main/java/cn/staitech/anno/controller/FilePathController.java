@@ -7,6 +7,7 @@ import cn.staitech.anno.vo.filepath.in.GetFilePathIn;
 import cn.staitech.common.core.domain.R;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,17 +28,34 @@ public class FilePathController {
 
     @Resource
     private ProjectMapperV1 projectMapperV1;
+
+    @Value("${slidePath}")
+    private String slidePath;
+
+    @Value("${uploadPath}")
+    private String uploadPath;
+
     @PostMapping("/getFilePath")
-    public R getFilePath(@RequestBody  GetFilePathIn req){
-        if(req.getFlag()==1){
-            String fourNumber = StatisticListUtils.getFourNumberNoSlide(req.getOrganizationId());
-            String replace = req.getOldPath().replace("/home/pat_saas", "/home/pat_saas/" + fourNumber);
-            return R.ok(replace);
-        }else{
+    public R getFilePath(@RequestBody GetFilePathIn req) {
+        //String slidePath = "/home/pat_saas/Slides";
+        //String uploadPath = "/home/pat_saas/Upload";
+        if (req.getProjectId() != null && req.getProjectId() != 0) {
             Project project = projectMapperV1.selectById(req.getProjectId());
             String fourNumber = StatisticListUtils.getFourNumberNoSlide(project.getOrganizationId());
-            String replace = req.getOldPath().replace("/home/pat_saas", "/home/pat_saas/" + fourNumber);
+            String replace = uploadPath.replace("/home/pat_saas", "/home/pat_saas/" + fourNumber);
             return R.ok(replace);
+        } else {
+            if (req.getFlag() == 1) {
+                String fourNumber = StatisticListUtils.getFourNumberNoSlide(req.getOrganizationId());
+                String replace = slidePath.replace("/home/pat_saas", "/home/pat_saas/" + fourNumber);
+                return R.ok(replace);
+            } else {
+                String fourNumber = StatisticListUtils.getFourNumberNoSlide(req.getOrganizationId());
+                String replace = uploadPath.replace("/home/pat_saas", "/home/pat_saas/" + fourNumber);
+                return R.ok(replace);
+            }
+
+
         }
 
     }
