@@ -289,4 +289,14 @@ public interface SlideMapper extends BaseMapper<Slide> {
      * 眼科-删除文件夹下的图片
      * */
     int eyeDeleteImage(Long slideId);
+
+    /**
+     * 查询已添加的文件
+     * */
+    List<Slide>addedFolder(Long projectId);
+
+    /**
+     * 眼科-更新审核状态
+     * */
+    int updateMent(Slide slide);
 }

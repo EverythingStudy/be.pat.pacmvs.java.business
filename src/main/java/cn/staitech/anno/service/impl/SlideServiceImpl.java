@@ -51,6 +51,7 @@ import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static cn.staitech.anno.aspect.LogFileAspect.response;
 
@@ -790,7 +791,17 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         if (eyeSaveSlide.getFolderName()==null && eyeSaveSlide.getParams()==null && eyeSaveSlide.getTopicName()==null && eyeSaveSlide.getCreateBy()==null){
             return R.ok();
         }
-        List<ProjectSlideOut> projectSlideOutList=slideMapper.eyeFolder(eyeSaveSlide);
+        List<ProjectSlideOut> projectSlideOutLists=slideMapper.eyeFolder(eyeSaveSlide);
+        List<ProjectSlideOut> projectSlideOutList=new ArrayList<>();
+        //去重
+        List<Slide>slideFolder=slideMapper.addedFolder(eyeSaveSlide.getProjectId());
+        List<Long> keyList = slideFolder.stream().map(e -> e.getFolderId()).collect(Collectors.toList());
+        for (ProjectSlideOut projectSlideOut:projectSlideOutLists){
+            if(!keyList.contains(projectSlideOut.getFolderId())){
+                projectSlideOutList.add(projectSlideOut);
+            }
+        }
+
         Project project=projectMapper.selectPrimKey(eyeSaveSlide.getProjectId());
         switch (project.getModelId().intValue()){
             case 1:
@@ -835,9 +846,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                             testNum=1;
                         }
                     }
-                    /**
-                     * 存储碎片信息
-                     * */
+                    //存储碎片信息
                     if (predictions.size()>0){
                         //slideMapper.eyeInsert(predictions);
                     	 slidePredictionService.saveBatch(predictions);
@@ -902,9 +911,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                                 testNum=1;
                             }
                         }
-                        /**
-                         * 存储碎片信息
-                         * */
+                       //存储碎片信息
                         //slideMapper.eyeInsert(predictions);
                         slidePredictionService.saveBatch(predictions);
                         if (testNum==1){
@@ -946,6 +953,15 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
          errorReason.setReason(Container.EYE_PROMPT_MAP.get(Integer.valueOf(errorReason.getPrompt())));
 
          return errorReason;
+    }
+
+
+    /**
+     * 眼科-更新审核状态
+     * */
+    @Override
+    public int updateMent(Slide slide){
+        return slideMapper.updateMent(slide);
     }
 
 

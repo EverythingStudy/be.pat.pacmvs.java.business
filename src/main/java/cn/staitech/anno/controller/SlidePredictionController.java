@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import cn.staitech.anno.domain.Slide;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.validation.annotation.Validated;
@@ -130,6 +131,9 @@ public class SlidePredictionController {
 		slidePrediction.setUpdateBy(SecurityUtils.getUserId());
 		slidePrediction.setUpdateTime(DateUtil.date());
 		slidePredictionService.updateById(slidePrediction);
+		//更改校验状态（0通过，1不通过）和提示语（提示语给为null）
+		Slide slide= Slide.builder().slideId(req.getSlideId()).eyeMent("0").prompt(null).createBy(SecurityUtils.getUserId()).build();
+		slideService.updateMent(slide);
 		return R.ok();
 	}
 

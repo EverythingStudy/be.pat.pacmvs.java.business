@@ -265,4 +265,10 @@ public interface SlideService extends IService<Slide> {
      * */
     EyeErrorReasonOut errorReason(Long slideId);
 
+
+    /**
+     * 眼科-更新审核状态
+     * */
+    int updateMent(Slide slide);
+
 }

@@ -51,6 +51,7 @@
         <result column="host_id" jdbcType="TINYINT" property="hostId"/>
         <result column="if_create_questions" jdbcType="VARCHAR" property="ifCreateQuestions"/>
         <result column="prediction_image_id" jdbcType="BIGINT" property="predictionImageId"/>
+        <result column="folder_id" jdbcType="BIGINT" property="folderId"/>
     </resultMap>
     <sql id="Base_Column_List">
         slide_id
@@ -1162,5 +1163,27 @@
         from aipre_slide_prediction
         where slide_id = #{slideId}
     </delete>
+
+    <!--查询已添加的文件-->
+    <select id="addedFolder" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select folder_id from tb_slide where project_id=#{projectId}
+    </select>
+
+    <!--眼科-更新审核状态-->
+    <update id="updateMent" parameterType="cn.staitech.anno.domain.Slide" useGeneratedKeys="true"
+            keyProperty="slideId">
+        update tb_slide
+        <set>
+            <if test="updateBy != null and updateBy != ''">
+                update_by = #{updateBy},
+            </if>
+            <if test="eyeMent != null and eyeMent != ''">
+                eye_ment = #{eyeMent},
+            </if>
+            prompt=#{prompt},
+            update_time = sysdate()
+        </set>
+        where slide_id = #{slideId}
+    </update>
 
 </mapper>
