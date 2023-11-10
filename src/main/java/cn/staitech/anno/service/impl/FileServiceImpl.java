@@ -12,9 +12,11 @@ import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.service.FileService;
 import cn.staitech.anno.utils.FileUtils;
 import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.utils.OrganizationUtils;
 import cn.staitech.anno.vo.file.Chunk;
 import cn.staitech.anno.vo.geojson.GeoLabel;
 import cn.staitech.anno.vo.slide.SlideFileName;
+import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,8 +32,10 @@ import static cn.staitech.anno.constant.CommonConstant.GLIDE_LINE;
 
 @Service
 public class FileServiceImpl implements FileService {
+
+    private static final String pathUrl = "/home/pat_saas";
     private static final String zipUrl = "/home/pat_saas/Data/zipFile/";
-    String fileUrl = "/home/pat_saas/Data";
+    String fileUrl = "/Data";
 
     @Resource
     private SlideMapper slideMapper;
@@ -143,7 +147,7 @@ public class FileServiceImpl implements FileService {
             slideFileName = slideMapper.slideFileName(slideId);
         }
         // 生成二级目录 (以专题名称命名)
-        String twoFolderName = fileUrl + File.separator + slideFileName.getTopicName();
+        String twoFolderName = pathUrl + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()) + fileUrl + File.separator + slideFileName.getTopicName();
         createFolder(twoFolderName);
         // 生成三级目录 (以图片名称命名)
         String threeFolderName = twoFolderName + File.separator + slideFileName.getImageName();
@@ -189,7 +193,7 @@ public class FileServiceImpl implements FileService {
             slideFileName = slideMapper.slideFileName(slideId);
         }
         // 生成二级目录 (以专题名称命名)
-        String twoFolderName = fileUrl + File.separator + slideFileName.getTopicName();
+        String twoFolderName = pathUrl + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()) + fileUrl + File.separator + slideFileName.getTopicName();
         createFolder(twoFolderName);
         // 生成三级目录 (以图片名称命名)
         String threeFolderName = twoFolderName + File.separator + slideFileName.getImageName();
@@ -263,6 +267,7 @@ public class FileServiceImpl implements FileService {
         return zipFIleUrl;
     }
 
+    @Override
     public String upload(MultipartFile file) throws Exception {
         if (file == null || file.isEmpty()) {
             return null;
