@@ -125,17 +125,19 @@ public class MarkingServiceImpl implements MarkingService {
         QueryWrapper<cn.staitech.anno.project.domain.Marking> markingQueryWrapper = new QueryWrapper<>();
         markingQueryWrapper.eq("slide_id", slideId).ne("location_type","Point");
         Integer markingCount = markingMapperV1.selectCount(markingQueryWrapper);
-        List<MarkingSelectListVO> pointCountList = markingMapper.selectPointCountList(slideId);
-        markingCount = markingCount + pointCountList.size();
-        // 总页数
-        int pageShow = (markingCount / pageSize) + 1;
-        PageResponse<MarkingSelectListVO> resp = new PageResponse<>();
-        // 查询考核评分表中信息
+
         Map<String, Object> map = new HashMap<>();
         map.put("slideId", slideId);
         map.put("measureFullName", measureFullName);
         map.put("pageSize", pageSize);
         map.put("pageNum", pageNum * pageSize);
+        List<MarkingSelectListVO> pointCountList = markingMapper.selectPointCountList(map);
+        markingCount = markingCount + pointCountList.size();
+        // 总页数
+        int pageShow = (markingCount / pageSize) + 1;
+        PageResponse<MarkingSelectListVO> resp = new PageResponse<>();
+        // 查询考核评分表中信息
+
         List<MarkingSelectListVO> markingSelectListVoList = markingMapper.selectList(map);
         if (markingSelectListVoList.size() < pageSize) {
             for(MarkingSelectListVO markingSelectListVO:pointCountList){

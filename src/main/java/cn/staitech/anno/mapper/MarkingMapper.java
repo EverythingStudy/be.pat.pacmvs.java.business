@@ -48,7 +48,7 @@ public interface MarkingMapper extends BaseMapper<Marking> {
     List<MarkingSelectListVO> selectUnionList(Map<String, Object> map);
 
 
-    List<MarkingSelectListVO> selectPointCountList(Long slideId);
+    List<MarkingSelectListVO> selectPointCountList(Map<String, Object> map);
 
     Properties selectBy(String markingId);
 

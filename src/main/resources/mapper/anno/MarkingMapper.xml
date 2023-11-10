@@ -435,9 +435,12 @@
         limit #{pageNum},#{pageSize}
     </select>
 
-    <select id="selectPointCountList" parameterType="long" resultMap="markingSelectListVoResult">
+    <select id="selectPointCountList" parameterType="map" resultMap="markingSelectListVoResult">
         <include refid="selectPoint"/>
         where slide_id = #{slideId}
+        <if test="measureFullName != null and measureFullName != ''">
+            AND CONCAT_WS("_", t.measure_name, t1.category_name) LIKE concat('%', #{measureFullName}, '%')
+        </if>
         AND location_type = "Point"
     </select>
 
