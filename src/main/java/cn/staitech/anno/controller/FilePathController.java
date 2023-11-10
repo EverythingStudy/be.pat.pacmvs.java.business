@@ -7,7 +7,7 @@ import cn.staitech.anno.vo.filepath.in.GetFilePathIn;
 import cn.staitech.common.core.domain.R;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,19 +27,24 @@ public class FilePathController {
 
     @Resource
     private ProjectMapperV1 projectMapperV1;
-    @GetMapping("/getFilePath")
+    @PostMapping("/getFilePath")
     public R getFilePath(@RequestBody  GetFilePathIn req){
         if(req.getFlag()==1){
-            String fourNumber = StatisticListUtils.getFourNumber(req.getOrganizationId());
+            String fourNumber = StatisticListUtils.getFourNumberNoSlide(req.getOrganizationId());
             String replace = req.getOldPath().replace("/home/pat_saas", "/home/pat_saas/" + fourNumber);
             return R.ok(replace);
         }else{
             Project project = projectMapperV1.selectById(req.getProjectId());
-            String fourNumber = StatisticListUtils.getFourNumber(project.getOrganizationId());
+            String fourNumber = StatisticListUtils.getFourNumberNoSlide(project.getOrganizationId());
             String replace = req.getOldPath().replace("/home/pat_saas", "/home/pat_saas/" + fourNumber);
             return R.ok(replace);
         }
 
     }
 
+    public static void main(String[] args) {
+        String fourNumber = StatisticListUtils.getFourNumberNoSlide(12L);
+        String replace = "/home/pat_saas/slides".replace("/home/pat_saas", "/home/pat_saas/" + fourNumber);
+        System.out.println(replace);
+    }
 }
