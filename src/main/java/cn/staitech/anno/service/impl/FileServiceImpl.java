@@ -35,7 +35,7 @@ public class FileServiceImpl implements FileService {
 
     private static final String pathUrl = "/home/pat_saas";
     private static final String zipUrl = "/home/pat_saas/Data/zipFile/";
-    String fileUrl = "/Data";
+    String fileUrl =  File.separator + "Data";
 
     @Resource
     private SlideMapper slideMapper;
@@ -146,10 +146,16 @@ public class FileServiceImpl implements FileService {
             // 非评审
             slideFileName = slideMapper.slideFileName(slideId);
         }
-        // 生成二级目录 (以专题名称命名)
-        String twoFolderName = pathUrl + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()) + fileUrl + File.separator + slideFileName.getTopicName();
+        // 生成二级目录 (以机构名称命名)
+        String organizationFileName = pathUrl + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        createFolder(organizationFileName);
+        // 生成三级目录 (以机构下默认文件夹名称命名)
+        String dataFileName = organizationFileName + fileUrl;
+        createFolder(dataFileName);
+        // 生成四级目录 (以专题名称命名)
+        String twoFolderName = dataFileName + File.separator + slideFileName.getTopicName();
         createFolder(twoFolderName);
-        // 生成三级目录 (以图片名称命名)
+        // 生成五级目录 (以图片名称命名)
         String threeFolderName = twoFolderName + File.separator + slideFileName.getImageName();
         createFolder(threeFolderName);
         String fileUrl = threeFolderName + File.separator + slideFileName.getImageName();
