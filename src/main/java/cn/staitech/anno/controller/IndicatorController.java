@@ -94,7 +94,7 @@ public class IndicatorController extends BaseController {
 
         if(indicatorListVO.getOrganizationId()==null || indicatorListVO.getOrganizationId()<1 ){
             if (!SysUser.isAdmin(SecurityUtils.getUserId())) {
-                indicator.setOrganizationId(SecurityUtils.getUserId());
+                indicator.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
             }
         }
 
