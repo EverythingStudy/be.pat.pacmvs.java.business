@@ -242,6 +242,9 @@
             <if test="organId !=null">
                 and organ_id = #{organId}
             </if>
+            <if test="organizationId !=null and organizationId !=0">
+                and organization_id = #{organizationId}
+            </if>
         </where>
     </select>
 
