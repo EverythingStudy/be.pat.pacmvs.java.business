@@ -58,6 +58,7 @@ public class IndicatorController extends BaseController {
         Indicator indicator = new Indicator();
         indicator.setSpeciesId(req.getSpeciesId());
         indicator.setOrganId(req.getOrganId());
+        indicator.setOrganizationId(sysUser.getOrganizationId());
 
         // 查询结构指标是否存在
         List<Indicator> indicatorList = indicatorService.selectIndicator(indicator);
