@@ -8,6 +8,7 @@ import cn.staitech.anno.vo.topic.TopicInsert;
 import cn.staitech.anno.vo.topic.TopicQueryIn;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
@@ -42,7 +43,7 @@ public class TopicController {
         // 组织ID
         Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
         QueryWrapper<Topic> qw = new QueryWrapper();
-        qw.eq("organization_id", organizationId)
+        qw.eq(!SysUser.isAdmin(SecurityUtils.getUserId()),"organization_id", organizationId)
                 .eq("project_type_id", projectTypeId)
                 .eq("del_flag", 1)
                 .orderByDesc("topic_id");
