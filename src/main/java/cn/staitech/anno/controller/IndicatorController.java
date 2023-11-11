@@ -92,6 +92,12 @@ public class IndicatorController extends BaseController {
         //20231107wd_机构
         indicator.setOrganizationId(indicatorListVO.getOrganizationId());
 
+        if(indicatorListVO.getOrganizationId()==null || indicatorListVO.getOrganizationId()<1 ){
+            if (!SysUser.isAdmin(SecurityUtils.getUserId())) {
+                indicator.setOrganizationId(SecurityUtils.getUserId());
+            }
+        }
+
         PageMaster<Indicator> pageMaster = indicatorService.selectIndicatorList(indicator, indicatorListVO.getPageNum(), indicatorListVO.getPageSize());
         return R.ok(pageMaster);
     }
