@@ -13,6 +13,7 @@ import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.annotation.Logical;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -47,6 +48,13 @@ public class ProjectController {
     @PostMapping("/page")
     public R<PageMaster<ProjectVO>> page(@RequestBody ProjectIn in) throws Exception {
         handleAuth(in);
+
+        //20231111wd_机构层级
+        if(in.getOrganizationId()==null || in.getOrganizationId()<1 ){
+            if (!SysUser.isAdmin(SecurityUtils.getUserId())) {
+                in.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+            }
+        }
         Page page = new Page(in.getPageNum(), in.getPageSize());
         projectService.pageProject(page, in);
 
