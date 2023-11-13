@@ -18,7 +18,7 @@ public class IndicatorListVO {
     @ApiModelProperty(value = "病例指标名称")
     private String indicatorName;
     @ApiModelProperty(value = "种属编码")
-    private Long speciesId;
+    private String speciesId;
     @ApiModelProperty(value = "脏器编码")
     private String organId;
     //20231107wd_机构维度

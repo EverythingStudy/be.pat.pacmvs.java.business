@@ -35,7 +35,7 @@ public class InsertProjectVO implements Serializable {
      * 种属ID
      */
     @ApiModelProperty("种属ID")
-    private Integer speciesId;
+    private String speciesId;
 
     @ApiModelProperty("染色类型（1RGB，2HEX）")
     private Integer colorType;

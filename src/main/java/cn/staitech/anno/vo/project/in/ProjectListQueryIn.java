@@ -31,7 +31,7 @@ public class ProjectListQueryIn extends Pager implements Serializable {
     @ApiModelProperty(value = "项目名称")
     private String projectName;
     @ApiModelProperty("种属ID")
-    private Integer speciesId;
+    private String speciesId;
     @ApiModelProperty("品系ID")
     private Integer productSeriesId;
     @ApiModelProperty(value = "结构指标ID")
