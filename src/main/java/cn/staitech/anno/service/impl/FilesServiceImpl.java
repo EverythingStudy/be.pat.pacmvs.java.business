@@ -43,7 +43,8 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         Files files = new Files();
         BeanUtils.copyProperties(req, files);
 
-        QueryWrapper<Files> queryWrapper = new QueryWrapper<>(files);
+        QueryWrapper<Files> queryWrapper = new QueryWrapper<>();
+
         if (req.getTopicName() != null && req.getTopicName() != "" && req.getTopicName() != "null") {
             queryWrapper.like("topic_name", req.getTopicName());
         }
