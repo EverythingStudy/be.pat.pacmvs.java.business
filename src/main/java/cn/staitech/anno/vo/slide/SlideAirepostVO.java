@@ -42,10 +42,10 @@ public class SlideAirepostVO {
     private String format;
     @TableField(value = "width")
     @ApiModelProperty(value = "宽度", hidden = true)
-    private String width;
+    private Double width;
     @TableField(value = "height")
     @ApiModelProperty(value = "高度", hidden = true)
-    private String height;
+    private Double height;
     @ApiModelProperty(value = "预测缩略图ID")
     private Long predictionImageId;
 }
