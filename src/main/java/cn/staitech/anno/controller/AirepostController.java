@@ -8,6 +8,8 @@ import cn.staitech.anno.vo.slide.SlideIdVO;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
+import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +24,9 @@ import java.util.List;
  * @author wangfeng
  * @date 2023-11-10
  */
+
+@Slf4j
+@Api(value = "拼接Viewer", tags = "拼接Viewer")
 @RestController
 @RequestMapping("/airepost")
 public class AirepostController {
