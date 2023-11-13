@@ -17,8 +17,8 @@ public class MapConstant {
     /**
      * 种属
      */
-    public static Map<Long, String> SPECIES_MAP;
-    public static Map<Long, String> SPECIES_MAP_EN;
+    public static Map<String, String> SPECIES_MAP;
+    public static Map<String, String> SPECIES_MAP_EN;
     public static Map<Long, String> GROUP_MAP;
     public static Map<Long, String> ROUND_MAP;
     public static Map<Long, String> ROUND_MAP_EN;

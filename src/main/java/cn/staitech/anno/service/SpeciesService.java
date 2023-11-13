@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public interface SpeciesService extends IService<Species> {
 
-    Map<Long, String> selectMap();
+    Map<String, String> selectMap();
 
-    Map<Long, String> selectMapEn();
+    Map<String, String> selectMapEn();
 }

@@ -47,6 +47,9 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         if (req.getTopicName() != null && req.getTopicName() != "" && req.getTopicName() != "null") {
             queryWrapper.like("topic_name", req.getTopicName());
         }
+        if (req.getFilesName() != null && !"".equals(req.getFilesName()) && !"null".equals(req.getFilesName())) {
+            queryWrapper.like("files_name", req.getFilesName());
+        }
         if (req.getCreateTimeParams() != null && req.getCreateTimeParams().containsKey("beginTime")) {
             queryWrapper.ge("create_time", req.getCreateTimeParams().get("beginTime"));
         }
