@@ -143,7 +143,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
                     projectName = reviewVO.getProjectName();
                     String[] body = new String[]{reviewVO.getProjectName(), reviewVO.getContent(), reviewVO.getRoundName(), reviewVO.getTopicName(),
                             reviewVO.getGroupName(), reviewVO.getImageCode(), String.valueOf(reviewVO.getScore()), reviewVO.getDetails() + "\t",
-                            reviewVO.getCreateName(), DateUtil.format(reviewVO.getCreateTime(), "yyyy-MM-dd hh:mm:ss") + "\t"};
+                            reviewVO.getCreateName(), DateUtil.format(reviewVO.getCreateTime(), "yyyy-MM-dd HH:mm:ss") + "\t"};
                     writer.write(body);
                 }
                 writer.flush();
@@ -285,7 +285,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
                                 projectName = reviewVO.getProjectName();
                                 String[] body = new String[]{reviewVO.getProjectName(), reviewVO.getContent(), reviewVO.getRoundName(), reviewVO.getTopicName(),
                                         reviewVO.getGroupName(), reviewVO.getImageCode(), String.valueOf(reviewVO.getScore()), reviewVO.getDetails(),
-                                        reviewVO.getCreateName(), DateUtil.format(reviewVO.getCreateTime(), "yyyy-MM-dd hh24:mm:ss")};
+                                        reviewVO.getCreateName(), DateUtil.format(reviewVO.getCreateTime(), "yyyy-MM-dd HH:mm:ss") + "\t"};
                                 writer.write(body);
                             }
                             map.put(CommonConstant.PATH, path);
