@@ -39,6 +39,9 @@ public class PredictionDataIn {
     
     @ApiModelProperty(value = "切片数据")
     private List<PreExecData> slideList;
+    
+    @ApiModelProperty(value = "机构编码")
+	private String organizationNumber;
 
 
 

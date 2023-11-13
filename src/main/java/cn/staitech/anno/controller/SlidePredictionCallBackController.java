@@ -20,7 +20,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import javax.annotation.Resource;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,6 +72,8 @@ public class SlidePredictionCallBackController {
             predictionInfoVO.setAlgorithmImageUrl(mergeImagePath);
             predictionInfoVO.setUserId(req.getUserId());
             predictionInfoVO.setOrganizationId(req.getOrganizationId());
+            File file = new File(mergeImagePath);
+            predictionInfoVO.setImageName(file.getName());
 
 //			{"chunkTotal":1,"imageName":"test","algorithmImageUrl":"C:/Users/86153/Desktop/dc/image/s1-168.ndpi","userId":10,"organizationId":95,"size":"447"}
             slideImageService.uploadImage(predictionInfoVO, SecurityConstants.INNER);

@@ -1,5 +1,6 @@
 package cn.staitech.anno.service.impl;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,10 +65,10 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 
 	@Resource
 	private SlidePredictionMapper slidePredictionMapper;
-	
+
 	@Resource
 	private SlidePredictionService slidePredictionService;
-	
+
 	@Resource
 	private SlideService slideService;
 
@@ -80,8 +81,8 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 	@SuppressWarnings("rawtypes")
 	@Override
 	public R startPrediction(StartPredictionIn req, cn.staitech.anno.domain.Project project) {
-//		Long userId = SecurityUtils.getUserId();
-//		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+		//		Long userId = SecurityUtils.getUserId();
+		//		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
 		Long userId = 1L;
 		Long organizationId = 1L;
 		//请求算法类型 0：启动算法 1：重算失败数据
@@ -89,7 +90,7 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 		//算法模型id
 		Long modelId = project.getModelId();
 		AlgorithmModel algorithmModel = algorithmModelService.getById(modelId);
-		
+
 
 		ImageCsvGetVO request = new ImageCsvGetVO();
 		request.setProjectId(project.getProjectId());
@@ -117,8 +118,8 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 				BeanUtils.copyProperties(vo, ped);
 				//根据slideId 查询SlidePrediction信息
 				SlidePredictionQuery spQuery = new SlidePredictionQuery();
-					spQuery.setSlideId(vo.getSlideId());
-					spQuery.setEyeMent("0");
+				spQuery.setSlideId(vo.getSlideId());
+				spQuery.setEyeMent("0");
 				List<SlidePredictionInfo> spList = slidePredictionMapper.getOriginalSlideList(spQuery);
 				if(CollectionUtils.isNotEmpty(spList)){
 					for(SlidePredictionInfo sInfo:spList){
@@ -127,20 +128,23 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 						pInfoList.add(pInfo);
 					}
 				}
-//				ped.setSlidePredictionList(spList);
+				//				ped.setSlidePredictionList(spList);
 				ped.setPredictionInfoList(pInfoList);
 				slideList.add(ped);
 				predictionData.setSlideList(slideList);
-				predictionData.setOrganizationId( organizationId);
+				predictionData.setOrganizationId(organizationId);
 				predictionData.setUserId(userId);
-				
+				//
+				String organizationNumber = geNumber(organizationId);
 				String folderPath = "";
 				if(StringUtils.isNotEmpty(vo.getFolderUrl())){
 					folderPath = vo.getFolderUrl();
 				}
 				predictionData.setFolderUrl(folderPath);
-				
+				predictionData.setOrganizationNumber(organizationNumber);
+
 				log.info("请求数据：{}",JSONUtil.toJsonStr(predictionData));
+				
 				//TODO 请求算法接口
 				try{
 					ResponseEntity<String> resp =  restTemplate.postForEntity(algorithmPredictionPath, predictionData, String.class);
@@ -153,7 +157,7 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 						UpdateWrapper<SlidePrediction> updateWrapper = Wrappers.update();
 						// 修改条件为id=5的数据
 						updateWrapper.eq("slide_id", vo.getSlideId());
-						
+
 						SlidePrediction sp1 = new SlidePrediction();
 						sp1.setAiAnalyzed(1);
 						//修改分析状态为进行中
@@ -168,12 +172,20 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 				}catch(Exception e){
 					e.printStackTrace();
 				}finally {
-					
+
 				}
 			}
 
 		}
 		return R.ok();
+	}
+
+
+	public static String geNumber(Long organizationId){
+		NumberFormat formatter = NumberFormat.getNumberInstance();
+		formatter.setMinimumIntegerDigits(3);
+		formatter.setGroupingUsed(false);
+		return "C" + formatter.format(organizationId);
 	}
 
 
@@ -185,7 +197,7 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 		List<SlidePredictionInfo>  list  =  slidePredictionMapper.getOriginalSlideList(query);
 		SlidePredictionOut spo = new SlidePredictionOut();
 		spo.setList(list);
-		
+
 		int alreadyMainImage = 0;
 		//查询是否已经有主图了
 		QueryWrapper<SlidePrediction> queryWrapper = new QueryWrapper<>();
