@@ -701,8 +701,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         }
     }
 
-
-
     /**
      * 删除项目切片
      */
