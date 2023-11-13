@@ -708,11 +708,13 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
      */
     @Override
     public R deleteProjectImage(ProjectSlideDel projectSlideDel) {
+        if (CollectionUtils.isNotEmpty(projectSlideDel.getSlideIdList())){
         for (Long slideId : projectSlideDel.getSlideIdList()) {
             //切片表删除（物理删）
             slideMapper.deleteProjectImage(slideId);
             //删除文件夹下的图片（物理删除）
             slideMapper.eyeDeleteImage(slideId);
+        }
         }
         return R.ok();
     }
