@@ -236,6 +236,7 @@
         from tb_slide s
         left join aipre_folder n on s.folder_id = n.folder_id
         left join tb_image p on s.prediction_image_id = p.image_id
+        left join tb_project m on s.project_id = m.project_id
         <where>
             <!--            切片编号        imageName
                         组别        groupName
@@ -244,6 +245,9 @@
                         病变类型        lesionType-->
             <if test="projectId != null">
                 AND s.project_id = #{projectId, jdbcType=NUMERIC}
+            </if>
+            <if test="projectId != null">
+            	AND m.`status` &lt;&gt; 1
             </if>
             <if test="reviewRoundId != null">
                 AND s.review_round_id = #{reviewRoundId, jdbcType=NUMERIC}
