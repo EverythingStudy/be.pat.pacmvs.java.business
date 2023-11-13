@@ -197,7 +197,7 @@ public class IndicatorController extends BaseController {
      */
     @ApiOperation(value = "关联病理指标列表", notes = "wangfeng")
     @GetMapping("/getIndicatorList")
-    public R<List<Indicator>> getIndicatorList(@Validated @RequestParam Long speciesId) {
+    public R<List<Indicator>> getIndicatorList(@Validated @RequestParam String speciesId) {
         clearPage();
         Indicator indicator = new Indicator();
         indicator.setSpeciesId(speciesId);
