@@ -3,13 +3,14 @@ package cn.staitech.anno.controller;
 import cn.staitech.anno.domain.Airepost;
 import cn.staitech.anno.service.AirepostService;
 import cn.staitech.anno.utils.MessageSource;
-import cn.staitech.anno.vo.airepost.AirepostQueryVO;
+import cn.staitech.anno.vo.airepost.AirepostList;
+import cn.staitech.anno.vo.slide.SlideIdVO;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -21,37 +22,30 @@ import java.util.List;
 @RestController
 @RequestMapping("/airepost")
 public class AirepostController {
-    @Autowired
+    @Resource
     private AirepostService airepostService;
 
     /**
      * 查询Airepost列表
      */
     @GetMapping("/list")
-    public R<List<Airepost>> list(@RequestBody AirepostQueryVO request) {
+    public R<List<Airepost>> list(@RequestBody SlideIdVO request) {
         Airepost airepost = new Airepost();
-        airepost.setProjectId(request.getProjectId().toString());
+        airepost.setSlideId(request.getSlideId());
         List<Airepost> list = airepostService.selectAirepostList(airepost);
         return R.ok(list);
     }
 
     /**
-     * 获取Airepost详细信息
-     */
-    @GetMapping(value = "/{reportUuid}")
-    public R<Airepost> getInfo(@PathVariable("reportUuid") Long reportUuid) {
-        return R.ok(airepostService.selectAirepostByReportUuid(reportUuid));
-    }
-
-    /**
-     * 修改Airepost
+     * 批量修改Airepost
      */
     @Log(title = "Airepost", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
-    public R<String> edit(@RequestBody Airepost airepost) {
-        airepostService.updateAirepost(airepost);
+    public R<String> edit(@RequestBody AirepostList request) {
+        if (!request.getAirepostLists().isEmpty()) {
+            airepostService.saveBatch(request.getAirepostLists());
+        }
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
-
 
 }

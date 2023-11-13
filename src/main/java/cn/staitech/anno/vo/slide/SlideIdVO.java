@@ -1,4 +1,4 @@
-package cn.staitech.anno.vo.airepost;
+package cn.staitech.anno.vo.slide;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -9,10 +9,8 @@ import lombok.Data;
  * @Description: 拼接Viewer列表查询条件
  */
 @Data
-public class AirepostQueryVO {
+public class SlideIdVO {
     @ApiModelProperty(value = "切片ID")
     private Long slideId;
-    @ApiModelProperty(value = "项目ID")
-    private Long projectId;
 }
 

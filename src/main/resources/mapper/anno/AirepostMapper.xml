@@ -23,76 +23,85 @@
         <result property="rotation" column="rotation"/>
         <result property="level" column="level"/>
         <result property="primary" column="primary"/>
+        <result property="slideId" column="slide_id"/>
+        <result property="fileName" column="file_name"/>
     </resultMap>
 
     <sql id="selectAirepostVo">
-        select report_uuid,
-               ai_status,
-               ai_report_json,
-               image_uuid_id,
-               project_id,
-               start_time,
-               end_time,
-               waste_time,
-               msg,
-               json_addr,
-               task_id,
-               graphics_card_model,
-               server_model,
-               width,
-               height,
-               center,
-               rotation,
-               level,
-               `primary`
-        from aipre_airepost
+        select a.report_uuid,
+               a.ai_status,
+               a.ai_report_json,
+               a.image_uuid_id,
+               a.project_id,
+               a.start_time,
+               a.end_time,
+               a.waste_time,
+               a.msg,
+               a.json_addr,
+               a.task_id,
+               a.graphics_card_model,
+               a.server_model,
+               a.width,
+               a.height,
+               a.center,
+               a.rotation,
+               a.level,
+               a.`primary`,
+               s.slide_id,
+               i.file_name
+        from aipre_airepost a
+                 LEFT JOIN aipre_slide_prediction s ON a.report_uuid = s.slide_prediction_id
+                 LEFT JOIN tb_image i ON s.image_id = i.image_id
     </sql>
 
     <select id="selectAirepostList" parameterType="cn.staitech.anno.domain.Airepost" resultMap="AirepostResult">
         <include refid="selectAirepostVo"/>
         <where>
+            <if test="slideId != null">
+                and s.slide_id = #{slideId}
+            </if>
             <if test="aiStatus != null  and aiStatus != ''">
-                and ai_status = #{aiStatus}
+                and a.ai_status = #{aiStatus}
             </if>
             <if test="aiReportJson != null  and aiReportJson != ''">
-                and ai_report_json = #{aiReportJson}
+                and a.ai_report_json = #{aiReportJson}
             </if>
             <if test="imageUuidId != null  and imageUuidId != ''">
-                and image_uuid_id = #{imageUuidId}
+                and a.image_uuid_id = #{imageUuidId}
             </if>
             <if test="projectId != null  and projectId != ''">
-                and project_id = #{projectId}
+                and a.project_id = #{projectId}
             </if>
             <if test="startTime != null ">
-                and start_time = #{startTime}
+                and a.start_time = #{startTime}
             </if>
             <if test="endTime != null ">
-                and end_time = #{endTime}
+                and a.end_time = #{endTime}
             </if>
             <if test="wasteTime != null ">
-                and waste_time = #{wasteTime}
+                and a.waste_time = #{wasteTime}
             </if>
             <if test="msg != null  and msg != ''">
-                and msg = #{msg}
+                and a.msg = #{msg}
             </if>
             <if test="jsonAddr != null  and jsonAddr != ''">
-                and json_addr = #{jsonAddr}
+                and a.json_addr = #{jsonAddr}
             </if>
             <if test="taskId != null  and taskId != ''">
-                and task_id = #{taskId}
+                and a.task_id = #{taskId}
             </if>
             <if test="graphicsCardModel != null  and graphicsCardModel != ''">
-                and graphics_card_model = #{graphicsCardModel}
+                and a.graphics_card_model = #{graphicsCardModel}
             </if>
             <if test="serverModel != null  and serverModel != ''">
-                and server_model = #{serverModel}
+                and a.server_model = #{serverModel}
             </if>
         </where>
     </select>
 
     <select id="selectAirepostByReportUuid" parameterType="Long" resultMap="AirepostResult">
         <include refid="selectAirepostVo"/>
-        where report_uuid = #{reportUuid}
+        where a.report_uuid = #{reportUuid}
     </select>
 
     <insert id="insertAirepost" parameterType="cn.staitech.anno.domain.Airepost" useGeneratedKeys="true"

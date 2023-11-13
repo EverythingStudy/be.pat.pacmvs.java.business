@@ -1,19 +1,20 @@
 package cn.staitech.anno.mapper;
 
-import java.util.List;
 import cn.staitech.anno.domain.Airepost;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import java.util.List;
 
 /**
  * AirepostMapper接口
- * 
+ *
  * @author wangfeng
  * @date 2023-11-10
  */
-public interface AirepostMapper 
-{
+public interface AirepostMapper extends BaseMapper<Airepost> {
     /**
      * 查询Airepost
-     * 
+     *
      * @param reportUuid Airepost主键
      * @return Airepost
      */
@@ -21,7 +22,7 @@ public interface AirepostMapper
 
     /**
      * 查询Airepost列表
-     * 
+     *
      * @param airepost Airepost
      * @return Airepost集合
      */
@@ -29,7 +30,7 @@ public interface AirepostMapper
 
     /**
      * 新增Airepost
-     * 
+     *
      * @param airepost Airepost
      * @return 结果
      */
@@ -37,7 +38,7 @@ public interface AirepostMapper
 
     /**
      * 修改Airepost
-     * 
+     *
      * @param airepost Airepost
      * @return 结果
      */
@@ -45,7 +46,7 @@ public interface AirepostMapper
 
     /**
      * 删除Airepost
-     * 
+     *
      * @param reportUuid Airepost主键
      * @return 结果
      */
@@ -53,7 +54,7 @@ public interface AirepostMapper
 
     /**
      * 批量删除Airepost
-     * 
+     *
      * @param reportUuids 需要删除的数据主键集合
      * @return 结果
      */
