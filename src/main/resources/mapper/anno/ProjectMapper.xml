@@ -136,7 +136,8 @@
                org.organization_name,
                p.model_id,
                m.model_name,
-               m.model_name_en
+               m.model_name_en,
+               p.tissue_id
         from tb_project p
                  left join sys_user u on p.create_by = u.user_id
                  left join tb_pathological_indicator i on p.indicator_id = i.indicator_id

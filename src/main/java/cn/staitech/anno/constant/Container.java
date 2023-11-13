@@ -171,6 +171,15 @@ public class Container {
             .build();
 
 
+    /**
+     * 眼科-提示语-en
+     */
+    public static final Map<Integer, String> EYE_PROMPT_MAP_EN = new ImmutableMap.Builder<Integer, String>()
+            .put(1, "数量不满足en")
+            .put(2, "文件名称不符合en")
+            .build();
+
+
 
 
 }

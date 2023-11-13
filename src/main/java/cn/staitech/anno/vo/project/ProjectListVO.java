@@ -217,6 +217,9 @@ public class ProjectListVO extends BaseEntity {
     @ApiModelProperty(value = "算法模型名称en")
     private String modelNameEn;
 
+    @ApiModelProperty(value = "病理组织id")
+    private Long tissueId;
+
 
 
 }

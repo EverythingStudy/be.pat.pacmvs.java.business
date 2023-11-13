@@ -9,6 +9,7 @@ import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.SlidePredictionService;
 import cn.staitech.anno.service.SlideService;
+import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.examination.ExaminationListVO;
@@ -754,7 +755,12 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         eyeProjectSlideOut.setEyeMent("1");
         List<EyeProjectSlideOut> listVOS=slideMapper.eyeProjectFolder(eyeProjectSlideOut);
         for (EyeProjectSlideOut slideOut:listVOS) {
-            slideOut.setReason(Container.EYE_PROMPT_MAP.get(Integer.valueOf(slideOut.getPrompt())));
+            if (LanguageUtils.isEn()){
+                slideOut.setReason(Container.EYE_PROMPT_MAP_EN.get(Integer.valueOf(slideOut.getPrompt())));
+            }else{
+                slideOut.setReason(Container.EYE_PROMPT_MAP.get(Integer.valueOf(slideOut.getPrompt())));
+            }
+
         }
         listVOList.addAll(listVOS);
         PageHelper.startPage(request.getPageNum(), request.getPageSize()).setReasonable(true);
@@ -778,7 +784,16 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
     public PageMaster<ImageListOutVO> eyeImage(EyeSlideIn eyeSlideIn){
         PageHelper.startPage(eyeSlideIn.getPageNum(), eyeSlideIn.getPageSize()).setReasonable(true);
         List<ImageListOutVO> imageListOutVOS=slideMapper.eyeSlideList(eyeSlideIn);
-        PageMaster pageMaster = new PageMaster<>(imageListOutVOS);
+        List<ImageListOutVO> projectSlideOutList=new ArrayList<>();
+        //去重
+        List<Slide>slideFolder=slideMapper.addedFolder(eyeSlideIn.getProjectId());
+        List<Long> keyList = slideFolder.stream().map(e -> e.getFolderId()).collect(Collectors.toList());
+        for (ImageListOutVO projectSlideOut:imageListOutVOS){
+            if(!keyList.contains(projectSlideOut.getFolderId())){
+                projectSlideOutList.add(projectSlideOut);
+            }
+        }
+        PageMaster pageMaster = new PageMaster<>(projectSlideOutList);
         return pageMaster;
     }
 

@@ -30,4 +30,7 @@ public class EyeSlideIn extends Pager {
     @ApiModelProperty(value = "上传人员id")
     private Long createBy;
 
+    @ApiModelProperty(value = "项目id")
+    private Long projectId;
+
 }
