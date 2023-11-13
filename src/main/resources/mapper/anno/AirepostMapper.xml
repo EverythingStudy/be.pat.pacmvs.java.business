@@ -52,7 +52,7 @@
                s.slide_id,
                i.file_name
         from aipre_airepost a
-                 LEFT JOIN aipre_slide_prediction s ON a.report_uuid = s.slide_prediction_id
+                 LEFT JOIN aipre_slide_prediction s ON a.image_uuid_id = s.slide_prediction_id
                  LEFT JOIN tb_image i ON s.image_id = i.image_id
     </sql>
 
@@ -99,6 +99,7 @@
                 and a.server_model = #{serverModel}
             </if>
         </where>
+        ORDER BY a.level ASC
     </select>
 
     <select id="selectAirepostByReportUuid" parameterType="Long" resultMap="AirepostResult">
