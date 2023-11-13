@@ -4,12 +4,14 @@ import cn.hutool.core.io.FileUtil;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.service.ExaminationService;
 import cn.staitech.anno.service.ProjectService;
+import cn.staitech.anno.utils.OrganizationUtils;
 import cn.staitech.anno.utils.PdfFontUtil;
 import cn.staitech.anno.vo.examination.ExaminationListVO;
 import cn.staitech.anno.vo.examination.ExaminationSelectVO;
 import cn.staitech.anno.vo.project.ProjectListVO;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.annotation.RequiresPermissions;
+import cn.staitech.common.security.utils.SecurityUtils;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Font;
@@ -47,16 +49,21 @@ public class PdfExportController {
     @Resource
     private ExaminationService reviewService;
 
+    private String baseDir = "/home/pat_saas";
+
+    private String pdfFileUrl = "/Data/pdfFile/";
+
     public File pdfAddress() {
         Date date = new Date();
         DateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmss");
         //创建pdf存储路径
-        File f0 = new File("/home/pat_saas/Data/pdfFile/");
+        String pdfPath = baseDir + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()) + pdfFileUrl;
+        File f0 = new File(pdfPath);
         if (!f0.exists()) {
             f0.mkdir();
         }
         //创建pdf文件
-        File f1 = new File("/home/pat_saas/Data/pdfFile/" + fmt.format(date) + ".pdf");
+        File f1 = new File(pdfPath + fmt.format(date) + ".pdf");
         return f1;
     }
 

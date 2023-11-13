@@ -46,5 +46,5 @@ public class ProductSeries {
      * 种属id
      */
     @ApiModelProperty(value = "种属id", required = true)
-    private Integer speciesId;
+    private String speciesId;
 }

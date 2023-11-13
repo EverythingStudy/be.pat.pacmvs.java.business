@@ -47,7 +47,7 @@ public class Project implements Serializable {
     /**
      * 种属ID
      */
-    private Integer speciesId;
+    private String speciesId;
 
     /**
      * 品系ID

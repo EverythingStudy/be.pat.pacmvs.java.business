@@ -122,7 +122,7 @@
             </if>
             <if test="organizationId != null and organizationId != ''">
                 <!-- 机构ID -->
-                AND i.organization_id like concat('%', #{organizationId}, '%')
+                AND i.organization_id = #{organizationId}
             </if>
             <if test="createBy != null and createBy != ''">
                 AND i.create_by like concat('%', #{createBy}, '%')
@@ -224,6 +224,9 @@
             <if test="speciesId !=null">
                 and species_id = #{speciesId}
             </if>
+            <if test="organizationId !=null and organizationId !=0">
+                and organization_id = #{organizationId}
+            </if>
         </where>
         order by indicator_id desc
     </select>
@@ -238,6 +241,9 @@
             </if>
             <if test="organId !=null">
                 and organ_id = #{organId}
+            </if>
+            <if test="organizationId !=null and organizationId !=0">
+                and organization_id = #{organizationId}
             </if>
         </where>
     </select>

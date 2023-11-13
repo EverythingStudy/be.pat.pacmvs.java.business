@@ -26,7 +26,7 @@ public class ProjectIn {
     private String projectName;
 
     @ApiModelProperty("种属ID")
-    private Integer speciesId;
+    private String speciesId;
 
     @ApiModelProperty("品系ID")
     private Integer productSeriesId;
@@ -59,6 +59,9 @@ public class ProjectIn {
     private Integer pageSize;
     @ApiModelProperty("关联指标")
     private Long indicatorId;
+
+    @ApiModelProperty(value = "机构编号")
+    private Long organizationId;
 
 
 }

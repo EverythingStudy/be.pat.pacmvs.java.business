@@ -8,6 +8,7 @@ import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.PointCount;
 import cn.staitech.anno.vo.slide.SlideRes;
+import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.system.api.domain.SysUser;
 
 import javax.servlet.http.HttpServletResponse;
@@ -21,7 +22,7 @@ public interface MarkingService {
      * @param slideId 标注信息
      * @return List<Slide>
      */
-    List<MarkingSelectListVO> selectList(Long slideId) throws Exception;
+    PageResponse<MarkingSelectListVO> selectList(Long slideId, Integer pageNum, Integer pageSize,String measureFullName) throws Exception;
 
 
     List<Features> selectListBy(Long slideId) throws Exception;
