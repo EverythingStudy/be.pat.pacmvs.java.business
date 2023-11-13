@@ -194,7 +194,7 @@
                 AND t3.eye_ment  = #{eyeMent}
             </if>
         </where>
-        ORDER BY t1.create_time desc
+        ORDER BY t1.ai_analyzed desc,t2.image_name asc
     </select>
     
     
