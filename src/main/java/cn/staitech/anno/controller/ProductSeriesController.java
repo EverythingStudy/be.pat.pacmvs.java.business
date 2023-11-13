@@ -6,6 +6,7 @@ import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -41,6 +42,19 @@ public class ProductSeriesController extends BaseController {
     @GetMapping("/list")
     public R<List<ProductSeries>> list() throws ExecutionException, InterruptedException {
         List<ProductSeries> list = productSeriesService.list();
+        return R.ok(list);
+    }
+
+
+
+    @ApiOperationSupport(author = "wangfeng")
+    @ApiOperation(value = "种属查询品系列表", notes = "种属查询品系列表 - 王峰")
+    @Log(title = "品系列表", menu = "品系", subMenu = "种属查询品系列表", businessType = BusinessType.QUERY)
+    @GetMapping("/speciesList")
+    public R<List<ProductSeries>> speciesList(String speciesId)  {
+        QueryWrapper<ProductSeries> productSeriesQueryWrapper = new QueryWrapper<>();
+        productSeriesQueryWrapper.eq("species_id",speciesId);
+        List<ProductSeries> list = productSeriesService.list(productSeriesQueryWrapper);
         return R.ok(list);
     }
 

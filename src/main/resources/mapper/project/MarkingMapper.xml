@@ -54,4 +54,8 @@
         annotation_owner,annotation_update_owner,project_id,
         image_id,image_url,organization_id
     </sql>
+
+    <select id="selectMarkings" resultMap="BaseResultMap">
+        select * from tb_marking_tmp
+    </select>
 </mapper>

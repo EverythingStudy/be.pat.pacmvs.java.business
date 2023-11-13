@@ -10,6 +10,7 @@ import cn.staitech.anno.vo.slide.SlideRes;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * viewer 标注页面 .
@@ -24,7 +25,9 @@ public interface MarkingMapper extends BaseMapper<Marking> {
      * @param slideId 标注信息
      * @return List<Slide>
      */
-    List<MarkingSelectListVO> selectList(Long slideId);
+    List<MarkingSelectListVO> selectList(Map<String, Object> map);
+
+    int selectListCount(Map<String, Object> map);
 
     /**
      * json文件导出的列表
@@ -44,9 +47,12 @@ public interface MarkingMapper extends BaseMapper<Marking> {
     List<Features> selectListBy(Long slideId);
 
 
-    List<MarkingSelectListVO> selectPointCountList(Long slideId);
+    List<MarkingSelectListVO> selectUnionList(Map<String, Object> map);
 
-    Properties selectBy(Long markingId);
+
+    List<MarkingSelectListVO> selectPointCountList(Map<String, Object> map);
+
+    Properties selectBy(String markingId);
 
     List<Properties> selectMeasureList(Long slideId);
 
@@ -114,7 +120,7 @@ public interface MarkingMapper extends BaseMapper<Marking> {
      * @param markingId 标注id
      * @return true || false
      */
-    int delete(Long markingId);
+    int delete(String markingId);
 
 
 }

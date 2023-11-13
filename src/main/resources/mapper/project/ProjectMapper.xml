@@ -84,6 +84,10 @@
             <if test="params.productSeriesId!= null">
                 AND p.product_series_id = #{params.productSeriesId}
             </if>
+            <if test="params.organizationId != null">
+                <!-- 组织机构ID -->
+                AND p.organization_id = #{params.organizationId}
+            </if>
             <if test="params.speciesId!= null">
                 AND p.species_id = #{params.speciesId}
             </if>

@@ -4,6 +4,8 @@ import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.Structure;
+import cn.staitech.anno.project.domain.Marking;
+import cn.staitech.anno.project.service.MarkingServiceV1;
 import cn.staitech.anno.service.IndicatorService;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
 import cn.staitech.anno.service.StructureService;
@@ -20,6 +22,7 @@ import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,6 +51,8 @@ public class PathologicalController {
 
     @Resource
     private IndicatorService indicatorService;
+    @Resource
+    private MarkingServiceV1 markingServiceV1;
 
     @Resource
     private StructureService structureService;
@@ -86,7 +91,7 @@ public class PathologicalController {
 
         String structureName = "";
         // 获取structureName
-        Structure structure = structureService.getOneStructure(indicator.getSpeciesId().toString(), indicator.getOrganId(), vo.getStructureId());
+        Structure structure = structureService.getOneStructure(indicator.getSpeciesId(), indicator.getOrganId(), vo.getStructureId());
         if (structure != null) {
             structureName = structure.getName();
         }
@@ -222,6 +227,12 @@ public class PathologicalController {
         //查询标签数据
         PathologicalIndicatorCategory category = pathologicalIndicatorCategoryService.selectCategoryAll(categoryVO.getCategoryId());
         PathologicalIndicatorCategory Pathological = PathologicalIndicatorCategory.builder().categoryId(categoryVO.getCategoryId()).delFlag(1).build();
+        // 查询标注数量，大于0不可删除
+        QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
+        markingQueryWrapper.eq("category_id",category.getCategoryId());
+        if(markingServiceV1.count(markingQueryWrapper) > 0){
+            return R.fail(MessageSource.M("USED"));
+        }
         //删除标注类别
         pathologicalIndicatorCategoryService.updateByPrimaryKeySelective(Pathological);
         IndicatorReviseVO indicatorReviseVO = IndicatorReviseVO.builder().indicatorId(category.getIndicatorId().intValue()).build();

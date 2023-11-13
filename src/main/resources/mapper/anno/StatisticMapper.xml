@@ -935,4 +935,99 @@
         from sys_dict_data
         where dict_code = #{dictCode}
     </select>
+
+    <select id="statisticCategoryName" resultType="cn.staitech.anno.domain.PathologicalIndicatorCategory">
+        select pic.category_name,
+        pic.category_id
+        from tb_pathological_indicator_category pic
+        left join tb_marking m on m.category_id = pic.category_id
+        left join tb_project p on p.project_id = m.project_id
+        <where>
+            and p.del_flag = 0
+            and pic.del_flag = 0
+            and p.organization_id = #{organizationId}
+            <if test="projectIds != null and projectIds.size()>0">
+                AND p.project_id IN
+                <foreach item="item" index="index" collection="projectIds" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+
+        group by pic.category_name,pic.category_id;
+
+    </select>
+
+    <select id="statisticSlideByProject" resultType="cn.staitech.anno.vo.statistic.ExportSlideOrderProjectOut">
+        select s.slide_id slideId, i.image_name imageName, p.project_name projectName, s.description,
+        count(m.marking_id) markingTotal
+        from tb_slide s
+        left join tb_image i on s.image_id = i.image_id
+        left join tb_project p on s.project_id = p.project_id
+        left join tb_marking m on m.slide_id = s.slide_id
+        <where>
+            and i.delete_flag = 1
+            and p.del_flag = 0
+            and p.organization_id = #{organizationId}
+            <if test="projectIds != null and projectIds.size()>0">
+                AND p.project_id IN
+                <foreach item="item" index="index" collection="projectIds" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+
+        group by s.slide_id, i.image_name, p.project_name, s.description
+
+    </select>
+
+    <select id="countSlideByProject" resultType="java.lang.Integer">
+        select count(0)
+        from tb_marking
+        <where>
+            and slide_id = #{slideId}
+            and category_id= #{categoryId}
+        </where>
+    </select>
+    <select id="statisticMembersByProject" resultType="cn.staitech.anno.vo.statistic.ExportMemberOrderProjectOut">
+
+        select u.user_name userName,
+        u.user_id userId,
+        p.project_id projectId,
+        p.project_name projectName,
+        count(m.marking_id) markingTotal,
+        sum(case when s.status &lt; 6 then 1 else 0 end) notReviewed,
+        sum(case when s.status &gt; 5 then 1 else 0 end) reviewed
+        from sys_user u
+        LEFT JOIN tb_marking m on u.user_id=m.create_by
+        left join tb_project p on p.project_id = m.project_id
+        left join tb_slide s on s.project_id=p.project_id
+        AND m.slide_id=s.slide_id
+        <where>
+            and u.del_flag = '0'
+            and p.del_flag = 0
+            and p.organization_id = #{organizationId}
+            <if test="projectIds != null and projectIds.size()>0">
+                AND p.project_id IN
+                <foreach item="item" index="index" collection="projectIds" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        group by u.user_name,u.user_id,
+        p.project_id, p.project_name;
+
+    </select>
+
+    <select id="countMembersByProject" resultType="cn.staitech.anno.vo.statistic.CountMembersByProjecOut">
+        select count(0)                                         markingTotal,
+               sum(case when s.status &lt; 6 then 1 else 0 end) notReviewed,
+               sum(case when s.status &gt; 5 then 1 else 0 end) reviewed
+        from tb_marking m
+                 left join tb_slide s on m.slide_id = s.slide_id
+        where m.project_id = #{projectId}
+          AND m.create_by = #{userId}
+          and m.category_id = #{categoryId}
+
+    </select>
 </mapper>

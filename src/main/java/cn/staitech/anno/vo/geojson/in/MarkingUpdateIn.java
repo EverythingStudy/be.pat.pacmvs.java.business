@@ -11,7 +11,7 @@ public class MarkingUpdateIn {
 
     @NotNull(message = "{DescriptionUpdateVO.annotationId.isnull}")
     @ApiModelProperty(value = "标注id")
-    private Long marking_id;
+    private String marking_id;
 
     @ApiModelProperty(value = "标注作者(绘制者)")
     private Long update_by;
@@ -50,13 +50,13 @@ public class MarkingUpdateIn {
     private String radius;
 
     @ApiModelProperty(value = "平均间距")
-    private String mean_distance;
+    private Double mean_distance;
 
     @ApiModelProperty(value = "最大间距")
-    private String max_distance;
+    private Double max_distance;
 
     @ApiModelProperty(value = "最小间距")
-    private String min_distance;
+    private Double min_distance;
 
     @ApiModelProperty(value = "内角")
     private String inner_angle;

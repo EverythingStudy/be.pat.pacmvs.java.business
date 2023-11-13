@@ -8,6 +8,7 @@ import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.PointCount;
 import cn.staitech.anno.vo.slide.SlideRes;
+import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.system.api.domain.SysUser;
 
 import javax.servlet.http.HttpServletResponse;
@@ -21,7 +22,7 @@ public interface MarkingService {
      * @param slideId 标注信息
      * @return List<Slide>
      */
-    List<MarkingSelectListVO> selectList(Long slideId) throws Exception;
+    PageResponse<MarkingSelectListVO> selectList(Long slideId, Integer pageNum, Integer pageSize,String measureFullName) throws Exception;
 
 
     List<Features> selectListBy(Long slideId) throws Exception;
@@ -65,7 +66,7 @@ public interface MarkingService {
      * @param req 标注数据
      * @return true || false
      */
-    Long insert(ViewAddIn req) throws Exception;
+    String insert(ViewAddIn req) throws Exception;
 
     /**
      * 删除标注
@@ -73,7 +74,7 @@ public interface MarkingService {
      * @param marking 标注数据
      * @return true || false
      */
-    Long update(MarkingUpdateIn marking) throws Exception;
+    String update(MarkingUpdateIn marking) throws Exception;
 
     /**
      * 更新标注点数
@@ -89,7 +90,7 @@ public interface MarkingService {
      * @param markingId 标注id
      * @return true || false
      */
-    int delete(Long markingId) throws Exception;
+    int delete(String markingId) throws Exception;
 
     /**
      * 导出json数据

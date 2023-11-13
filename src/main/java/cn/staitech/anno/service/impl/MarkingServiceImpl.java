@@ -30,6 +30,7 @@ import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.PointCount;
 import cn.staitech.anno.vo.slide.SlideRes;
+import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -58,7 +59,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -75,8 +79,8 @@ public class MarkingServiceImpl implements MarkingService {
     private static final int BATCH_SIZE = 5000;
 
     private static final ExecutorService executor = ExecutorBuilder.create()
-            .setCorePoolSize(1)
-            .setMaxPoolSize(1)
+            .setCorePoolSize(Runtime.getRuntime().availableProcessors() * 2 + 1)
+            .setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 4 + 1)
             .setKeepAliveTime(0)
             .build();
     @Resource
@@ -107,15 +111,45 @@ public class MarkingServiceImpl implements MarkingService {
     private DownTaskService downTaskService;
 
     @Override
-    public List<MarkingSelectListVO> selectList(Long slideId) throws Exception {
+    public PageResponse<MarkingSelectListVO> selectList(Long slideId, Integer pageNum, Integer pageSize, String measureFullName) throws Exception {
         Slide slideBy = slideMapperV1.selectById(slideId);
         if (!Optional.ofNullable(slideBy).isPresent()) {
             throw new Exception(MessageSource.M("SLIDE_ABNORMAL_NO_INFORMATION"));
         }
-        List<MarkingSelectListVO> markingSelectListVoList = markingMapper.selectList(slideId);
-        List<MarkingSelectListVO> pointCountList = markingMapper.selectPointCountList(slideId);
-        markingSelectListVoList = Stream.of(markingSelectListVoList, pointCountList).flatMap(Collection::stream).collect(Collectors.toList());
-        return markingSelectListVoList;
+        Integer resPageNum = pageNum;
+        if(pageNum > 0){
+            pageNum = pageNum -1;
+        }else{
+            pageNum = 0;
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("slideId", slideId);
+        map.put("measureFullName", measureFullName);
+        map.put("pageSize", pageSize);
+        map.put("pageNum", pageNum * pageSize);
+        // 查询总数量
+        Integer markingCount = markingMapper.selectListCount(map);
+        List<MarkingSelectListVO> pointCountList = markingMapper.selectPointCountList(map);
+        List<MarkingSelectListVO> markingSelectListVoList = markingMapper.selectList(map);
+        markingCount = markingCount + pointCountList.size();
+        // 总页数
+        int pageShow = (markingCount / pageSize) + 1;
+        PageResponse<MarkingSelectListVO> resp = new PageResponse<>();
+        // 查询考核评分表中信息
+        if (markingSelectListVoList.size() < pageSize) {
+            for(MarkingSelectListVO markingSelectListVO:pointCountList){
+                if(markingSelectListVoList.size() < pageSize){
+                    markingSelectListVoList.add(markingSelectListVO);
+                }
+            }
+        }
+        resp.setTotal(markingCount);
+        resp.setList(markingSelectListVoList);
+        resp.setPages(pageShow);
+        resp.setPageNum(resPageNum);
+        resp.setPageSize(pageSize);
+        return resp;
     }
 
     @Override
@@ -149,7 +183,7 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Long insert(ViewAddIn req) throws Exception {
+    public String insert(ViewAddIn req) throws Exception {
         cn.staitech.anno.project.domain.Slide slideBy = slideMapperV1.selectById(req.getSlide_id());
         if (slideBy == null) {
             throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
@@ -225,7 +259,7 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Long update(MarkingUpdateIn req) throws Exception {
+    public String update(MarkingUpdateIn req) throws Exception {
         // 查询标注表中信息
         Marking markingBy = markingMapper.selectById(req.getMarking_id());
         if (!Optional.ofNullable(markingBy).isPresent()) {
@@ -296,7 +330,7 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int delete(Long markingId) throws Exception {
+    public int delete(String markingId) throws Exception {
         if (!Optional.ofNullable(markingId).isPresent()) {
             throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }
@@ -417,6 +451,29 @@ public class MarkingServiceImpl implements MarkingService {
         return fileUrl;
     }
 
+
+    class TaskGenerateJson implements Runnable {
+
+
+        private CountDownLatch countDownLatch;
+        private Features features;
+        private ConcurrentLinkedQueue<Features> concurrentLinkedQueue;
+
+        public TaskGenerateJson(CountDownLatch countDownLatch, Features features, ConcurrentLinkedQueue<Features> concurrentLinkedQueue) {
+            this.countDownLatch = countDownLatch;
+            this.features = features;
+            this.concurrentLinkedQueue = concurrentLinkedQueue;
+        }
+
+        @Override
+        public void run() {
+            features.setGeometry(GeometryUtil.updateYAxle(features.getGeometry()));
+            concurrentLinkedQueue.add(features);
+            countDownLatch.countDown();
+        }
+    }
+
+
     @Override
     public String slideJsonExportExt(Long slideId, SysUser sysUser) throws Exception {
         if (!Optional.ofNullable(slideId).isPresent()) {
@@ -434,16 +491,25 @@ public class MarkingServiceImpl implements MarkingService {
                 throw new RuntimeException(e);
             }
         }
-
         String fileUrl = null;
         try {
             fileUrl = fileService.createFiles(slideId, FILE_SUFFIX_JSON);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        // 标注数据
+
         List<Features> features = markingMapper.selectLists(slideId);
-        features.forEach(i -> i.setGeometry(GeometryUtil.updateYAxle(i.getGeometry())));
+        ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
+        CountDownLatch countDownLatch = new CountDownLatch(features.size());
+        ConcurrentLinkedQueue<Features> concurrentLinkedQueue = new ConcurrentLinkedQueue<>();
+        for (Features features1 : features) {
+            cachedThreadPool.submit(new TaskGenerateJson(countDownLatch, features1, concurrentLinkedQueue));
+
+        }
+        countDownLatch.await();
+        cachedThreadPool.shutdown();
+
+//        features.forEach(i -> i.setGeometry(GeometryUtil.updateYAxle(i.getGeometry())));
 
         // 查询项目详情
         JsonExport jsonExport = null;
@@ -497,10 +563,11 @@ public class MarkingServiceImpl implements MarkingService {
                 categoryList.add(geoLabel);
             }
         }
-
         // 构建geoJson数据
         GeoJson geoJson = new GeoJson();
-        geoJson.setFeatures(features);
+
+        List<Features> featuresList = new ArrayList<>(concurrentLinkedQueue);
+        geoJson.setFeatures(featuresList);
         geoJson.setImage(image);
         geoJson.setProject(project);
         geoJson.setAttribute(attribute);
@@ -508,8 +575,8 @@ public class MarkingServiceImpl implements MarkingService {
         String jsonString = JSON.toJSONString(geoJson, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue);
         // 写入文件
         exportJson(fileUrl, jsonString);
-//            return R.ok(fileUrl);
-//        });
+
+
         return fileUrl;
     }
 

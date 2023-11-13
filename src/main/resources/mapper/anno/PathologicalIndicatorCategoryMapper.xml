@@ -350,7 +350,7 @@
         FROM tb_pathological_indicator_category AS i
                  LEFT JOIN tb_structure AS s ON s.structure_id = i.structure_id
         WHERE i.indicator_id = #{indicatorId}
-          AND s.NAME != "标注区域"
+          AND s.type != "ROE"
     </select>
 
 

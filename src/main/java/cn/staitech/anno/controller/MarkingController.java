@@ -9,6 +9,7 @@ import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.slide.SlideSelectBy;
+import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
@@ -21,6 +22,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,11 +45,15 @@ public class MarkingController {
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "获取标注列表")
     @GetMapping("/intelligentEvaluation/selectListBy")
-    public R<List<MarkingSelectListVO>> selectListBy(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) throws Exception {
+    public R<PageResponse<MarkingSelectListVO>> selectListBy(
+            @NotNull(message = "{ReviewRoundController.list.isnull}") @RequestParam("pageNum") @ApiParam(name = "pageNum", value = "分页参数", required = true) Integer pageNum,
+            @NotNull(message = "{ReviewRoundController.list.isnull}") @RequestParam("pageSize") @ApiParam(name = "pageSize", value = "分页参数", required = true) Integer pageSize,
+            @RequestParam(value = "measureFullName", required = false) @ApiParam(name = "measureFullName", value = "标注名称", required = true) String measureFullName,
+            @RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) throws Exception {
         if (!Optional.ofNullable(slideId).isPresent()) {
             return R.fail(MessageSource.M("ARGUMENT_INVALID"));
         }
-        return R.ok(markingService.selectList(slideId));
+        return R.ok(markingService.selectList(slideId,pageNum,pageSize,measureFullName));
     }
 
 
@@ -61,12 +67,41 @@ public class MarkingController {
         return R.ok(markingService.selectListBy(slideId));
     }
 
+//    @ApiOperationSupport(author = "gjt")
+//    @ApiOperation(value = "获取GeoJson数据")
+//    @GetMapping("/intelligentEvaluation/selectLists")
+//    public R<byte[]> selectLists(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) throws Exception {
+//        if (!Optional.ofNullable(slideId).isPresent()) {
+//            return R.fail(MessageSource.M("ARGUMENT_INVALID"));
+//        }
+//        long stime = System.currentTimeMillis();
+//        List<Features> featuresList = markingService.selectListBy(slideId);
+//        long etime = System.currentTimeMillis();
+//        System.out.printf("执行时长：%d 毫秒.", (etime - stime));
+//
+//        long stime1 = System.currentTimeMillis();
+//        byte[] res = CompressUtils.compressData(featuresList.toString(),"UTF-8");
+//        long etime1 = System.currentTimeMillis();
+//        System.out.printf("压缩数据执行时长：%d 毫秒.", (etime1 - stime1));
+//
+//
+//        System.out.println("--------------------------------------------------------->");
+//        System.out.println(markingServiceV1.getById("e7ddeb67ee184b89a0667e638fe252a2"));
+//
+//        return R.ok(res);
+////        return R.ok(CompressUtils.compress(featuresList.toString()));
+//    }
+
+
+
+
+
 
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "添加标注")
     @PostMapping("/intelligentAnno/insert")
-    public R<Long> add(@Validated @RequestBody ViewAddIn req) throws Exception {
-        Long markingId = markingService.insert(req);
+    public R<String> add(@Validated @RequestBody ViewAddIn req) throws Exception {
+        String markingId = markingService.insert(req);
         return R.ok(markingId, MessageSource.M("OPERATE_SUCCEED"));
     }
 
@@ -74,7 +109,7 @@ public class MarkingController {
     @ApiOperation(value = "删除标注")
     @ApiImplicitParams({@ApiImplicitParam(name = "markingId", value = "标注id", required = true, dataType = "Long", paramType = "query")})
     @DeleteMapping("/intelligentAnno/delete")
-    public R<String> del(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) Long marking_id) throws Exception {
+    public R<String> del(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) String marking_id) throws Exception {
         markingService.delete(marking_id);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
@@ -82,7 +117,7 @@ public class MarkingController {
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "更新标注")
     @PutMapping("/intelligentAnno/update")
-    public R<Long> update(@Validated @RequestBody MarkingUpdateIn req) throws Exception {
+    public R<String> update(@Validated @RequestBody MarkingUpdateIn req) throws Exception {
         markingService.update(req);
         return R.ok(req.getMarking_id(), MessageSource.M("OPERATE_SUCCEED"));
     }

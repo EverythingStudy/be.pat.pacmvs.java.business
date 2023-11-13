@@ -307,8 +307,17 @@ public class ProjectController extends BaseController {
         PageHelper.startPage(req.getPageNum(), req.getPageSize()).setReasonable(true);
         Project project = new Project();
         BeanUtils.copyProperties(req, project);
-        Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-        project.setOrganizationId(organizationId);
+        //20231111wd_机构层级
+        if(req.getOrganizationId()==null || req.getOrganizationId()<1 ){
+            if (!SysUser.isAdmin(SecurityUtils.getUserId())) {
+                project.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+            }
+        }else{
+            project.setOrganizationId(req.getOrganizationId());
+        }
+
+       //Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+       //project.setOrganizationId(organizationId);
         List<ProjectListVO> list = projectService.selectProjectList(project);
         PageMaster pageMaster = new PageMaster<>(list);
         return R.ok(pageMaster);

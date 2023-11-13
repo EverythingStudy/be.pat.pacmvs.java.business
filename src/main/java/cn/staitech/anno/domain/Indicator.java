@@ -48,7 +48,7 @@ public class Indicator extends BaseEntity {
     private Long userId;
 
     @ApiModelProperty(hidden = true, value = "种属ID")
-    private Long speciesId;
+    private String speciesId;
     @ApiModelProperty(hidden = true, value = "种属名称")
     @TableField(exist = false)
     private String speciesName;

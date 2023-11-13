@@ -36,6 +36,8 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import static cn.staitech.common.security.utils.SecurityUtils.isAdmin;
+
 /**
  * 切片列表（原图像）服务层实现
  *
@@ -72,8 +74,10 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         BeanUtils.copyProperties(vo, image);
 
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-        image.setOrganizationId(sysUser.getOrganizationId());
 
+        if(!Objects.equals(sysUser.getUserName(), "admin")){
+            image.setOrganizationId(sysUser.getOrganizationId());
+        }
         // 业务类型 1 原始切片 2 预测切片
         Integer bizType = image.getBizType();
 
@@ -181,7 +185,11 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
         // 机构ID
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-        image.setOrganizationId(sysUser.getOrganizationId());
+
+        if(!isAdmin(sysUser.getUserId())){
+            image.setOrganizationId(sysUser.getOrganizationId());
+        }
+
         // 只查可用状态的
         image.setStatus(1);
         // 业务类型 1 原始切片 2 预测切片

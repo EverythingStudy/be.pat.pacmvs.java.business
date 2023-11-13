@@ -1,7 +1,8 @@
 package cn.staitech.anno.controller;
 
 import cn.staitech.anno.domain.ProjectMember;
-import cn.staitech.anno.domain.RecentlyVisited;
+import cn.staitech.anno.domain.RecentlyVisited;import cn.staitech.anno.project.domain.Project;
+import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.service.ProjectMemberService;
 import cn.staitech.anno.service.RecentlyVisitedService;
 import cn.staitech.anno.utils.MessageSource;
@@ -52,6 +53,9 @@ public class ProjectMemberController extends BaseController {
     @Resource
     private RecentlyVisitedService recentlyVisitedService;
 
+    @Resource
+    private ProjectMapperV1 projectMapperV;
+
     @Log(title = "项目成员表增加", businessType = BusinessType.INSERT)
     @ApiOperation(value = "项目成员表增加")
     @PostMapping("/addProjectMember")
@@ -62,13 +66,14 @@ public class ProjectMemberController extends BaseController {
         Long projectId = projectMemberAddVO.getProjectId();
         // 添加有效用户总数
         AtomicInteger sum = new AtomicInteger(0);
-
+        //20231107wd admin没有机构，新增时无法获得机构id取项目机构
+        Project project = projectMapperV.selectById(projectId);
         // 遍历添加
         for (Long userId : projectMemberAddVO.getUserId()) {
             ProjectMember projectMember = ProjectMember.builder()
                     .projectId(projectId)
                     .userId(userId)
-                    .organizationId(sysUser.getOrganizationId())
+                    .organizationId(project.getOrganizationId())
                     .build();
 
             List<ProjectMember> list = projectMemberService.select(projectMember);

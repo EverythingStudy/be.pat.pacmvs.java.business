@@ -18,9 +18,12 @@ public class IndicatorListVO {
     @ApiModelProperty(value = "病例指标名称")
     private String indicatorName;
     @ApiModelProperty(value = "种属编码")
-    private Integer speciesId;
+    private String speciesId;
     @ApiModelProperty(value = "脏器编码")
     private String organId;
+    //20231107wd_机构维度
+    @ApiModelProperty(value = "机构id")
+    private Long organizationId;
     @ApiModelProperty("请求参数（开始和结束时间）")
     private Map<String, Object> createTimeParams;
 }

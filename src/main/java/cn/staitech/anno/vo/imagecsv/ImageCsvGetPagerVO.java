@@ -32,6 +32,11 @@ public class ImageCsvGetPagerVO extends Pager implements Serializable {
     private String imageName;
 
     /**
+     * 移走原因
+     */
+    private String removeReason;
+
+    /**
      * 组别
      */
     @ApiModelProperty(value = "组别")
