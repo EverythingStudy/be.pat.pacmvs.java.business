@@ -1,6 +1,7 @@
 package cn.staitech.anno.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -63,5 +64,13 @@ public class Airepost {
     private String level;
     @ApiModelProperty(value = "是否主图：主图1、非主图0")
     private String primary;
-
+    @TableField(exist = false)
+    @ApiModelProperty(value = "切片ID")
+    private Long slideId;
+    @TableField(exist = false)
+    @ApiModelProperty(value = "文件名")
+    private String fileName;
+    @TableField(exist = false)
+    @ApiModelProperty(value = "图像的URL")
+    private String aiImageUrl;
 }
