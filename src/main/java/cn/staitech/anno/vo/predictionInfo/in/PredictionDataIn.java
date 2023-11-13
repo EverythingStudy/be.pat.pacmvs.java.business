@@ -34,6 +34,9 @@ public class PredictionDataIn {
     @ApiModelProperty(value = "组织id")
     private Long organizationId;
     
+    @ApiModelProperty(value = "文件夹路径")
+    private String folderUrl;
+    
     @ApiModelProperty(value = "切片数据")
     private List<PreExecData> slideList;
 

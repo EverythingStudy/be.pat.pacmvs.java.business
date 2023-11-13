@@ -132,6 +132,7 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 				predictionData.setSlideList(slideList);
 				predictionData.setOrganizationId( organizationId);
 				predictionData.setUserId(userId);
+				predictionData.setFolderUrl(vo.getFolderUrl());
 				log.info("请求数据：{}",JSONUtil.toJsonStr(predictionData));
 				//TODO 请求算法接口
 				try{

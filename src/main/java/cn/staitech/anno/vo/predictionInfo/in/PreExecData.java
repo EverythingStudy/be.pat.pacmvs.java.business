@@ -17,11 +17,6 @@ import lombok.Data;
 @Data
 public class PreExecData {
     
-   
-    
-    @ApiModelProperty(value = "文件夹路径")
-    private String folderUrl;
-    
     @ApiModelProperty(value = "原始切片数据")
     private List<PredictionInfo> predictionInfoList;
     
