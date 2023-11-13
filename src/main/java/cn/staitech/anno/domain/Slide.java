@@ -1,5 +1,6 @@
 package cn.staitech.anno.domain;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -348,6 +349,7 @@ public class Slide {
     private Long folderId;
 
     @ApiModelProperty(value = "预测缩略图ID")
+    @TableField(value = "prediction_image_id", updateStrategy = FieldStrategy.IGNORED)
     private Long predictionImageId;
 
     @ApiModelProperty(value = "碎片状态（默认为0校验通过，1校验不通过）")

@@ -121,8 +121,14 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 				spQuery.setSlideId(vo.getSlideId());
 				spQuery.setEyeMent("0");
 				List<SlidePredictionInfo> spList = slidePredictionMapper.getOriginalSlideList(spQuery);
+				List<SlidePrediction> spcList = new ArrayList<>(); 
 				if(CollectionUtils.isNotEmpty(spList)){
 					for(SlidePredictionInfo sInfo:spList){
+						SlidePrediction spc = new SlidePrediction();
+						spc.setSlidePredictionId(sInfo.getSlidePredictionId());
+						//AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败
+						spc.setAiAnalyzed(1);
+						spcList.add(spc);
 						PredictionInfo pInfo = new PredictionInfo();
 						BeanUtils.copyProperties(sInfo,pInfo);
 						pInfoList.add(pInfo);
@@ -153,6 +159,8 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 					JSONObject jsonObject = new JSONObject(body);
 					Integer code = jsonObject.getInt("code");					
 					if(code.equals(200)){
+						
+						
 						//修改当前SlidePrediction分析状态为进行中
 						UpdateWrapper<SlidePrediction> updateWrapper = Wrappers.update();
 						// 修改条件为id=5的数据
@@ -165,9 +173,18 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 						//修改slide分析状态为进行中
 						Slide slide = new Slide();
 						slide.setSlideId(vo.getSlideId());
+						//请求算法类型 0：启动算法 1：重算失败数据
+						if(type == 1){
+							slide.setPredictionImageId(null);
+						}
 						//AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败
 						slide.setAiAnalyzed(Short.parseShort("1"));
 						slideService.updateById(slide);
+						
+						if(CollectionUtils.isNotEmpty(spcList)){
+							slidePredictionService.updateBatchById(spcList);
+						}
+						
 					}
 				}catch(Exception e){
 					e.printStackTrace();
