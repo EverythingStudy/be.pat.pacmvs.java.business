@@ -169,7 +169,7 @@
                t.update_time,
                t.update_by,
                t.image_id,
-               t.project_id,
+               t.project_id
 --                t.image_url
         FROM tb_marking AS t
                  LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
