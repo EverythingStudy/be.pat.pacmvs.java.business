@@ -981,4 +981,13 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
     }
 
 
+    /**
+     * 眼科-查新文件夹状态
+     * */
+    @Override
+    public Slide selectFolderMent(Long slideId){
+        return slideMapper.selectFolderMent(slideId);
+    }
+
+
 }

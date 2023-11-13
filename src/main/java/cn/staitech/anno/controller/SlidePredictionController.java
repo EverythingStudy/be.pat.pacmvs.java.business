@@ -2,6 +2,7 @@ package cn.staitech.anno.controller;
 
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 
@@ -117,23 +118,28 @@ public class SlidePredictionController {
 	@ApiOperation(value = "原始切片设置主图")
 	@PostMapping("/setMainImage")
 	public R<List<SlidePrediction>> setMainImage(@Validated @RequestBody SetMainImageDataIn req) {
+		Slide selectFolderMent=slideService.selectFolderMent(req.getSlideId());
 		QueryWrapper<SlidePrediction> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("slide_id", req.getSlideId()).eq("del_flag", "0").eq("main_image", "1");
 		//查询是否已经有主图了
 		List<SlidePrediction> list = slidePredictionService.list(queryWrapper);
-		if(CollectionUtils.isNotEmpty(list)){
-			return R.fail(MessageSource.M("SETTING_MAIN_IMAGE_ERROR")); 
-		}
 		SlidePrediction slidePrediction = new SlidePrediction();
 		slidePrediction.setSlidePredictionId(req.getSlidePredictionId());
 		//是否是主图默认为2，1是，2否
+		//改为主图
 		slidePrediction.setMainImage("1");
 		slidePrediction.setUpdateBy(SecurityUtils.getUserId());
 		slidePrediction.setUpdateTime(DateUtil.date());
 		slidePredictionService.updateById(slidePrediction);
-		//更改校验状态（0通过，1不通过）和提示语（提示语给为null）
-		Slide slide= Slide.builder().slideId(req.getSlideId()).eyeMent("0").prompt(null).createBy(SecurityUtils.getUserId()).build();
-		slideService.updateMent(slide);
+		//改为非主图
+		slidePrediction.setSlidePredictionId(list.get(0).getSlidePredictionId());
+		slidePrediction.setMainImage("2");
+		slidePredictionService.updateById(slidePrediction);
+		if (Objects.equals(selectFolderMent.getEyeMent(), "1") && Objects.equals(selectFolderMent.getPrompt(), "2")){
+			//更改校验状态（0通过，1不通过）和提示语（提示语给为null）
+			Slide slide= Slide.builder().slideId(req.getSlideId()).eyeMent("0").prompt(null).createBy(SecurityUtils.getUserId()).build();
+			slideService.updateMent(slide);
+		}
 		return R.ok();
 	}
 

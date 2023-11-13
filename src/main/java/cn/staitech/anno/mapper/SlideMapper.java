@@ -299,4 +299,9 @@ public interface SlideMapper extends BaseMapper<Slide> {
      * 眼科-更新审核状态
      * */
     int updateMent(Slide slide);
+
+    /**
+     * 眼科-查新文件夹状态
+     * */
+    Slide selectFolderMent(Long slideId);
 }

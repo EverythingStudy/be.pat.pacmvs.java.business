@@ -271,4 +271,9 @@ public interface SlideService extends IService<Slide> {
      * */
     int updateMent(Slide slide);
 
+    /**
+     * 眼科-查新文件夹状态
+     * */
+    Slide selectFolderMent(Long slideId);
+
 }
