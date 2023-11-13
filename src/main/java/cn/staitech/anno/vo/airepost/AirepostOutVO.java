@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.Date;
-
 /**
  * @author: wangfeng
  * @create: 2023-11-10 17:52:04
@@ -24,29 +22,30 @@ public class AirepostOutVO {
     @ApiModelProperty(value = "图像ID")
     private String imageUuidId;
     @ApiModelProperty(value = "项目ID")
-    private String projectId;
-     @ApiModelProperty(value = "")
+    private Long projectId;
+    @ApiModelProperty(value = "")
     private String msg;
     @ApiModelProperty(value = "图像物理路径")
     private String jsonAddr;
     @ApiModelProperty(value = "")
-    private String taskId;
+    private Long taskId;
     @ApiModelProperty(value = "")
     private String graphicsCardModel;
     @ApiModelProperty(value = "")
     private String serverModel;
     @ApiModelProperty(value = "宽")
-    private String width;
+    private Double width;
     @ApiModelProperty(value = "高")
-    private String height;
-    @ApiModelProperty(value = "中心点")
-    private String center;
+    private Double height;
+    @ApiModelProperty(value = "中心点Y")
+    private Integer centerX;
+    @ApiModelProperty(value = "中心点Y")
+    private Integer centerY;
     @ApiModelProperty(value = "旋转角度（默认0）")
-    private String rotation;
+    private Integer rotation;
     @ApiModelProperty(value = "层级:解析不出的给0）")
-    private String level;
+    private Integer level;
     @ApiModelProperty(value = "是否主图：主图1、非主图0")
-    private String primary;
-
+    private Integer primary;
 }
 

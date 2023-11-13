@@ -35,7 +35,7 @@ public class Airepost {
     @ApiModelProperty(value = "图像ID")
     private String imageUuidId;
     @ApiModelProperty(value = "项目ID")
-    private String projectId;
+    private Long projectId;
     @ApiModelProperty(value = "")
     private Date startTime;
     @ApiModelProperty(value = "")
@@ -47,23 +47,25 @@ public class Airepost {
     @ApiModelProperty(value = "")
     private String jsonAddr;
     @ApiModelProperty(value = "")
-    private String taskId;
+    private Long taskId;
     @ApiModelProperty(value = "")
     private String graphicsCardModel;
     @ApiModelProperty(value = "")
     private String serverModel;
     @ApiModelProperty(value = "宽")
-    private String width;
+    private Double width;
     @ApiModelProperty(value = "高")
-    private String height;
-    @ApiModelProperty(value = "中心点")
-    private String center;
+    private Double height;
+    @ApiModelProperty(value = "中心点x")
+    private Integer centerX;
+    @ApiModelProperty(value = "中心点y")
+    private Integer centerY;
     @ApiModelProperty(value = "旋转角度（默认0）")
-    private String rotation;
+    private Integer rotation;
     @ApiModelProperty(value = "层级:解析不出的给0）")
-    private String level;
+    private Integer level;
     @ApiModelProperty(value = "是否主图：主图1、非主图0")
-    private String primary;
+    private Integer primary;
     @TableField(exist = false)
     @ApiModelProperty(value = "切片ID")
     private Long slideId;

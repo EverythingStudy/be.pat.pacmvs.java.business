@@ -19,7 +19,8 @@
         <result property="serverModel" column="server_model"/>
         <result property="width" column="width"/>
         <result property="height" column="height"/>
-        <result property="center" column="center"/>
+        <result property="centerX" column="center_x"/>
+        <result property="centerY" column="center_y"/>
         <result property="rotation" column="rotation"/>
         <result property="level" column="level"/>
         <result property="primary" column="primary"/>
@@ -43,7 +44,8 @@
                a.server_model,
                a.width,
                a.height,
-               a.center,
+               a.center_x,
+               a.center_y,
                a.rotation,
                a.level,
                a.`primary`,
@@ -231,8 +233,11 @@
             <if test="height != null">
                 height= #{height},
             </if>
-            <if test="center != null">
-                center= #{center},
+            <if test="centerX != null">
+                center_x= #{centerX},
+            </if>
+            <if test="centerY != null">
+                center_y= #{centerY},
             </if>
             <if test="rotation != null">
                 rotation= #{rotation},
