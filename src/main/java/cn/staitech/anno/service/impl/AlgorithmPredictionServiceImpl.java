@@ -133,11 +133,13 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 				predictionData.setSlideList(slideList);
 				predictionData.setOrganizationId( organizationId);
 				predictionData.setUserId(userId);
+				
 				String folderPath = "";
 				if(StringUtils.isNotEmpty(vo.getFolderUrl())){
 					folderPath = vo.getFolderUrl();
 				}
 				predictionData.setFolderUrl(folderPath);
+				
 				log.info("请求数据：{}",JSONUtil.toJsonStr(predictionData));
 				//TODO 请求算法接口
 				try{
