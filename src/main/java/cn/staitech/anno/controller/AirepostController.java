@@ -8,7 +8,10 @@ import cn.staitech.anno.vo.slide.SlideIdVO;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -28,7 +31,7 @@ public class AirepostController {
     /**
      * 查询Airepost列表
      */
-    @GetMapping("/list")
+    @PostMapping("/list")
     public R<List<Airepost>> list(@RequestBody SlideIdVO request) {
         Airepost airepost = new Airepost();
         airepost.setSlideId(request.getSlideId());
