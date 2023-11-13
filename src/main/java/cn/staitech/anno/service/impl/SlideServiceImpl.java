@@ -26,6 +26,7 @@ import cn.staitech.anno.vo.slide.*;
 import cn.staitech.anno.vo.special.Special;
 import cn.staitech.anno.vo.statistic.StatisticSlideListInVO;
 import cn.staitech.anno.vo.statistic.StatisticSlideListOutVO;
+import cn.staitech.anno.vo.topic.TopicIdName;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -700,39 +701,18 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         }
     }
 
-
-//    /**
-//     * 查询专题编号
-//     * */
-//    @Override
-//    public List<TopicIdName>topicList(){
-//        Long organizationId=SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-//        return slideMapper.topicList(organizationId);
-//    }
-
-//    @Override
-//    public int eyeSlideList(EyeSaveSlide eyeSaveSlide){
-//        ImageTopicVO imageTopicVO=new ImageTopicVO();
-//        imageTopicVO.setFolderName(eyeSaveSlide.getFolderName());
-//        imageTopicVO.setCreateBy(eyeSaveSlide.getCreateBy());
-//        imageTopicVO.setParams(eyeSaveSlide.getParams());
-//        imageTopicVO.setTopicName(eyeSaveSlide.getTopicName());
-//        List<ImageListOutVO> eyeSlideList=slideMapper.eyeSlideList(imageTopicVO);
-
-
-//        return 1;
-//    }
-
     /**
      * 删除项目切片
      */
     @Override
     public R deleteProjectImage(ProjectSlideDel projectSlideDel) {
+        if (CollectionUtils.isNotEmpty(projectSlideDel.getSlideIdList())){
         for (Long slideId : projectSlideDel.getSlideIdList()) {
             //切片表删除（物理删）
             slideMapper.deleteProjectImage(slideId);
             //删除文件夹下的图片（物理删除）
             slideMapper.eyeDeleteImage(slideId);
+        }
         }
         return R.ok();
     }
@@ -741,13 +721,15 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
      * 眼科项目图片
      */
     @Override
-    public PageMaster<EyeProjectSlideOut> eyeProjectSlide(EyeProjectSlideIn request) {
-        EyeProjectSlideOut eyeProjectSlideOut = new EyeProjectSlideOut();
+    public PageMaster<EyeProjectSlideOut> eyeProjectSlide(EyeProjectSlideIn request){
+        EyeProjectSlideOut eyeProjectSlideOut=new EyeProjectSlideOut();
+        //查询校验通过的文件和图片
         eyeProjectSlideOut.setEyeMent("0");
         eyeProjectSlideOut.setImageName(request.getImageName());
         eyeProjectSlideOut.setFolderName(request.getFolderName());
         eyeProjectSlideOut.setProjectId(request.getProjectId());
-        List<EyeProjectSlideOut> listVOList = slideMapper.eyeProjectSlide(eyeProjectSlideOut);
+        List<EyeProjectSlideOut> listVOList=slideMapper.eyeProjectSlide(eyeProjectSlideOut);
+        //查询校验不通过的文件
         eyeProjectSlideOut.setEyeMent("1");
         List<EyeProjectSlideOut> listVOS = slideMapper.eyeProjectFolder(eyeProjectSlideOut);
         for (EyeProjectSlideOut slideOut : listVOS) {
@@ -756,9 +738,10 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
             } else {
                 slideOut.setReason(Container.EYE_PROMPT_MAP.get(Integer.valueOf(slideOut.getPrompt())));
             }
-
         }
         listVOList.addAll(listVOS);
+        //排序（按照文件夹名称A-Z升序排列，相同名称按照切片名称升序排列）
+        listVOList.sort(Comparator.comparing(EyeProjectSlideOut::getFolderName).thenComparing(EyeProjectSlideOut::getImageName));
         PageHelper.startPage(request.getPageNum(), request.getPageSize()).setReasonable(true);
         PageMaster<EyeProjectSlideOut> pageMaster = new PageMaster<>(listVOList);
         PageHelper.clearPage();

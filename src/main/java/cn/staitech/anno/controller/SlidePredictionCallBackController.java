@@ -1,5 +1,6 @@
 package cn.staitech.anno.controller;
 
+import cn.hutool.json.JSONUtil;
 import cn.staitech.anno.domain.SlidePrediction;
 import cn.staitech.anno.service.SlidePredictionService;
 import cn.staitech.anno.service.remote.SlideImageService;
@@ -42,10 +43,11 @@ public class SlidePredictionCallBackController {
     @Resource
     private SlideImageService slideImageService;
 
-    @ApiOperation(value = "查询原始切片列表")
+    @ApiOperation(value = "眼科回调")
     @PostMapping("/eyeAlgorithm")
     public R<SlidePredictionOut> eyeAlgorithm(@Validated @RequestBody EyeAlgorithmCallBackIn req) {
         if (null != req) {
+        	log.info("算法预测:{}",JSONUtil.toJsonStr(req));
             Long slideId = req.getSlideId();
             int aiAnalyzed = req.getAiAnalyzed();
             String mergeImagePath = req.getMergeImagePath();
@@ -60,7 +62,6 @@ public class SlidePredictionCallBackController {
                 }
                 slidePredictionService.updateBatchById(batchList);
             }
-//			{"chunkTotal":1,"imageName":"test","algorithmImageUrl":"C:/Users/86153/Desktop/dc/image/s1-168.ndpi","userId":10,"organizationId":95,"size":"447"}
             PredictionInfoVO predictionInfoVO = new PredictionInfoVO();
             predictionInfoVO.setSlideId(slideId);
             predictionInfoVO.setChunkTotal(1);
@@ -69,6 +70,7 @@ public class SlidePredictionCallBackController {
             predictionInfoVO.setUserId(req.getUserId());
             predictionInfoVO.setOrganizationId(req.getOrganizationId());
 
+//			{"chunkTotal":1,"imageName":"test","algorithmImageUrl":"C:/Users/86153/Desktop/dc/image/s1-168.ndpi","userId":10,"organizationId":95,"size":"447"}
             slideImageService.uploadImage(predictionInfoVO, SecurityConstants.INNER);
         }
         return R.ok();
