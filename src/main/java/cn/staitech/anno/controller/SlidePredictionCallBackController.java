@@ -77,8 +77,8 @@ public class SlidePredictionCallBackController {
 			predictionInfoVO.setChunkTotal(1);
 			predictionInfoVO.setAiAnalyzed(aiAnalyzed);
 			predictionInfoVO.setAlgorithmImageUrl(mergeImagePath);
-			predictionInfoVO.setUserId(1L);
-			predictionInfoVO.setOrganizationId(1L);
+			predictionInfoVO.setUserId(req.getUserId());
+			predictionInfoVO.setOrganizationId(req.getOrganizationId());
 			
 			slideImageService.uploadImage(predictionInfoVO, SecurityConstants.INNER);
 		}

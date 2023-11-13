@@ -45,6 +45,12 @@ public class EyeAlgorithmCallBackIn{
     @ApiModelProperty(value = "合成图")
     private String mergeImagePath;
     
+    @ApiModelProperty(value = "用户id")
+    private Long userId;
+    
+    @ApiModelProperty(value = "组织id")
+    private Long organizationId;
+    
     @ApiModelProperty(value = "分析结果")
     private List<EyeAnalyzedResult> aiAnalyResult;
 

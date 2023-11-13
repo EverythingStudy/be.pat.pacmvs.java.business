@@ -42,6 +42,7 @@ import cn.staitech.anno.vo.predictionInfo.in.StartPredictionIn;
 import cn.staitech.anno.vo.predictionInfo.out.SlidePredictionInfo;
 import cn.staitech.anno.vo.predictionInfo.out.SlidePredictionOut;
 import cn.staitech.common.core.domain.R;
+import cn.staitech.common.security.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -78,6 +79,10 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 	@SuppressWarnings("rawtypes")
 	@Override
 	public R startPrediction(StartPredictionIn req, cn.staitech.anno.domain.Project project) {
+//		Long userId = SecurityUtils.getUserId();
+//		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+		Long userId = 1L;
+		Long organizationId = 1L;
 		//请求算法类型 0：启动算法 1：重算失败数据
 		int type = req.getType();
 		//算法模型id
@@ -125,6 +130,8 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 				ped.setPredictionInfoList(pInfoList);
 				slideList.add(ped);
 				predictionData.setSlideList(slideList);
+				predictionData.setOrganizationId( organizationId);
+				predictionData.setUserId(userId);
 				log.info("请求数据：{}",JSONUtil.toJsonStr(predictionData));
 				//TODO 请求算法接口
 				try{
