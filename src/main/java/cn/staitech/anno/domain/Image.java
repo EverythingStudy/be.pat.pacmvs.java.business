@@ -29,10 +29,6 @@ public class Image extends BaseEntity {
     @TableId(value = "image_id", type = IdType.AUTO)
     @ApiModelProperty(value = "图像id", hidden = true)
     private Long imageId;
-
-    /**
-     * 无扩展名文件名称
-     */
     @TableField(value = "file_name")
     @ApiModelProperty(value = "无扩展名文件名称")
     private String fileName;
@@ -181,11 +177,9 @@ public class Image extends BaseEntity {
     private String businessTypeName;
     @ApiModelProperty(value = "图像来源、上传方式(1前端上传，2目录选片，3TCP客户端上传)")
     private Integer source;
-
     @TableField(exist = false)
     @ApiModelProperty(value = "", hidden = true)
     private String searchValue;
-
     @ApiModelProperty(value = "项目编号")
     @TableField(exist = false)
     private Long projectId;

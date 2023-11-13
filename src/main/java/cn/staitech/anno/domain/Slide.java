@@ -347,7 +347,7 @@ public class Slide {
     @ApiModelProperty(value = "文件夹id")
     private Long folderId;
 
-    @ApiModelProperty(value = "预测缩略图url")
+    @ApiModelProperty(value = "预测缩略图ID")
     private Long predictionImageId;
 
     @ApiModelProperty(value = "碎片状态（默认为0校验通过，1校验不通过）")

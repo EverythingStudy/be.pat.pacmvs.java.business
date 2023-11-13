@@ -2,7 +2,6 @@ package cn.staitech.anno.controller;
 
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.service.ImageService;
-import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.image.in.*;
@@ -38,9 +37,6 @@ import java.util.concurrent.ExecutionException;
 public class ImageController extends BaseController {
     @Resource
     private ImageService imageService;
-
-    @Resource
-    private SlideService slideService;
 
     /**
      * 切片列表 - 原始切片 .

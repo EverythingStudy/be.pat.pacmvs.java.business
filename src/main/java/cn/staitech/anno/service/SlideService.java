@@ -276,4 +276,9 @@ public interface SlideService extends IService<Slide> {
      * */
     Slide selectFolderMent(Long slideId);
 
+    /**
+     * 拼接图像-单个切片详细信息 .
+     * 宽高、文件名、缩略图、宽高是 最大画布的:拼图的三倍宽高
+     */
+    SlideAirepostVO selectSlideAirepostVOById(Long slideId);
 }

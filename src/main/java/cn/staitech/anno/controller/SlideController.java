@@ -27,8 +27,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-
 import io.swagger.annotations.*;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.validation.annotation.Validated;
@@ -52,7 +52,6 @@ import java.util.Map;
 public class SlideController extends BaseController {
     @Resource
     private SlideService slideService;
-
     @Resource
     private SysUserService sysUserService;
 
@@ -147,8 +146,8 @@ public class SlideController extends BaseController {
             slide.setSlideId(id);
             slide.setDescription(req.getDescription());
             slide.setUpdateBy(SecurityUtils.getUserId());
-            if(org.apache.commons.lang3.StringUtils.isNotEmpty(req.getRemark())){
-            	slide.setRemark(req.getRemark());
+            if (org.apache.commons.lang3.StringUtils.isNotEmpty(req.getRemark())) {
+                slide.setRemark(req.getRemark());
             }
             slideService.updateDescription(slide);
         }
@@ -203,8 +202,6 @@ public class SlideController extends BaseController {
         slideService.jsonExport(slideList, projectId, status);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
-
-    // =======================================================================================================
 
     /**
      * 查询某个项目或者review_round_id对应的已经绑定的topic
@@ -339,60 +336,39 @@ public class SlideController extends BaseController {
         return false;
     }
 
-
-    //=================================================================================================================
-
     /**
      * 上传人员
-     * */
+     */
     @ApiOperation(value = "拼接图象类项目---上传人员")
     @PostMapping("/uploadPersonnel")
-    public R<List<SysUser>>uploadPersonnel() {
-        List<SysUser> userList=sysUserService.userList();
+    public R<List<SysUser>> uploadPersonnel() {
+        List<SysUser> userList = sysUserService.userList();
         return R.ok(userList);
     }
 
-//    @ApiOperation(value = "专题编号")
-//    @PostMapping("/eyeTopicList")
-//    public R<List<TopicIdName>>topicList() {
-//        List<TopicIdName>topicList=slideService.topicList();
-//        return R.ok(topicList);
-//    }
-
-
     /**
      * 获取图片碎片
-     * */
+     */
     @ApiOperation(value = "拼接图象类项目---切片列表")
     @PostMapping("/folderList")
-    public R<PageMaster<ImageListOutVO>>folderList(@RequestBody EyeSlideIn eyeSlideIn) {
-        PageMaster<ImageListOutVO> eyeImage=slideService.eyeImage(eyeSlideIn);
+    public R<PageMaster<ImageListOutVO>> folderList(@RequestBody EyeSlideIn eyeSlideIn) {
+        PageMaster<ImageListOutVO> eyeImage = slideService.eyeImage(eyeSlideIn);
         return R.ok(eyeImage);
     }
 
-//    /**
-//     * 拼接图象类项目---保存图片碎片
-//     * */
-//    @ApiOperation(value = "拼接图象类项目---保存图片碎片")
-//    @PostMapping("/saveDebris")
-//    public R<String>saveDebris(@RequestBody @Validated EyeSlideSave eyeSlideSave) {
-//
-//        return R.ok();
-//    }
-
     /**
      * 获取拼接图象类项目---项目图片
-     * */
+     */
     @ApiOperation(value = "拼接图象类项目---项目图片")
     @PostMapping("/projectPictureList")
-    public R<PageMaster<EyeProjectSlideOut>>projectPictureList(@RequestBody @Validated EyeProjectSlideIn eyeProjectSlideIn) {
-        PageMaster<EyeProjectSlideOut> eyeProjectSlide=slideService.eyeProjectSlide(eyeProjectSlideIn);
+    public R<PageMaster<EyeProjectSlideOut>> projectPictureList(@RequestBody @Validated EyeProjectSlideIn eyeProjectSlideIn) {
+        PageMaster<EyeProjectSlideOut> eyeProjectSlide = slideService.eyeProjectSlide(eyeProjectSlideIn);
         return R.ok(eyeProjectSlide);
     }
 
     /**
      * 获取拼接图象类项目---项目图片删除
-     * */
+     */
     @ApiOperation(value = "拼接图象类项目---项目图片删除")
     @PostMapping("/projectPictureDel")
     public R projectPictureDel(@RequestBody @Validated ProjectSlideDel projectSlideDel) {
@@ -400,10 +376,9 @@ public class SlideController extends BaseController {
     }
 
 
-
     /**
      * 保存文件夹和切片
-     * */
+     */
     @ApiOperation(value = "拼接图象类项目---保存文件夹和切片")
     @PostMapping("/eyeSave")
     public R eyeSave(@RequestBody @Validated EyeSaveSlide eyeSaveSlide) {
@@ -412,23 +387,36 @@ public class SlideController extends BaseController {
 
     /**
      * 拼接图象类项目---是否有算法结果
-     * */
+     */
     @ApiOperation(value = "拼接图象类项目---是否有算法结果")
     @GetMapping("/algorithmResult")
-    public R<Integer>algorithmResult(@RequestParam(name = "projectId") @ApiParam(name = "projectId", value = "项目id") Long projectId) {
-        Integer num=slideService.algorithmResult(projectId);
+    public R<Integer> algorithmResult(@RequestParam(name = "projectId") @ApiParam(name = "projectId", value = "项目id") Long projectId) {
+        Integer num = slideService.algorithmResult(projectId);
         return R.ok(num);
     }
 
 
     /**
      * 拼接图象类项目---查询错误原因
-     * */
+     */
     @ApiOperation(value = "拼接图象类项目---查询错误原因")
     @GetMapping("/errorReason")
-    public R<EyeErrorReasonOut>errorReason(@RequestParam(name = "slideId") @ApiParam(name = "slideId", value = "切片id") Long slideId) {
-        EyeErrorReasonOut errorReason=slideService.errorReason(slideId);
+    public R<EyeErrorReasonOut> errorReason(@RequestParam(name = "slideId") @ApiParam(name = "slideId", value = "切片id") Long slideId) {
+        EyeErrorReasonOut errorReason = slideService.errorReason(slideId);
         return R.ok(errorReason);
+    }
+
+
+    /**
+     * 拼接图像-单个切片详细信息 .
+     * 宽高、文件名、缩略图、宽高是 最大画布的:拼图的三倍宽高
+     */
+    @SneakyThrows
+    @ApiOperationSupport(author = "wangfeng")
+    @ApiOperation(value = "拼接图像单个切片", notes = "拼接图像单个切片 - 王峰")
+    @GetMapping("/airepost/{slideId}")
+    public R<SlideAirepostVO> selectById(@PathVariable("slideId") @ApiParam(value = "切片ID") Long slideId) {
+        return R.ok(slideService.selectSlideAirepostVOById(slideId));
     }
 
 }
