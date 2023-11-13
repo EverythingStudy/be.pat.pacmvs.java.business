@@ -640,10 +640,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
 
     @Override
     public PageMaster<ImageCsvListVO> pageReviewRoundSSlides(ImageCsvGetPagerVO request) {
-//        Project project=projectMapper.selectPrimKey(request.getProjectId());
-//        if (Objects.equals(project.getProjectType(), "6")){
-//            return eyeProjectSlide(request);
-//        }
         PageHelper.startPage(request.getPageNum(), request.getPageSize()).setReasonable(true);
         ImageCsvGetVO imageCsvGetVO = new ImageCsvGetVO();
         BeanUtil.copyProperties(request, imageCsvGetVO);
