@@ -30,7 +30,7 @@ public class IndicatorReviseVO {
     @ApiModelProperty(hidden = true, value = "关联项目数量")
     private Integer projectTotal;
     @ApiModelProperty(value = "种属编号")
-    private Long speciesId;
+    private String speciesId;
     @ApiModelProperty(value = "脏器编号")
     private String organId;
 }

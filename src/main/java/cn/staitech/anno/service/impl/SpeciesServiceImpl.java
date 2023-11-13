@@ -24,19 +24,19 @@ class SpeciesServiceImpl extends ServiceImpl<SpeciesMapper, Species> implements 
     private SpeciesMapper speciesMapper;
 
     @Override
-    public Map<Long, String> selectMap() {
+    public Map<String, String> selectMap() {
 
         List<Species> list = speciesMapper.selectList();
-        Map<Long, String> map = list.stream()
+        Map<String, String> map = list.stream()
                 .collect(Collectors.toMap(Species::getSpeciesId, Species::getName));
         return map;
     }
 
     @Override
-    public Map<Long, String> selectMapEn() {
+    public Map<String, String> selectMapEn() {
 
         List<Species> list = speciesMapper.selectList();
-        Map<Long, String> map = list.stream()
+        Map<String, String> map = list.stream()
                 .collect(Collectors.toMap(Species::getSpeciesId, Species::getNameEn));
         return map;
     }

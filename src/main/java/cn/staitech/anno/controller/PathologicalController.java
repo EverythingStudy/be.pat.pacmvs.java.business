@@ -91,7 +91,7 @@ public class PathologicalController {
 
         String structureName = "";
         // 获取structureName
-        Structure structure = structureService.getOneStructure(indicator.getSpeciesId().toString(), indicator.getOrganId(), vo.getStructureId());
+        Structure structure = structureService.getOneStructure(indicator.getSpeciesId(), indicator.getOrganId(), vo.getStructureId());
         if (structure != null) {
             structureName = structure.getName();
         }

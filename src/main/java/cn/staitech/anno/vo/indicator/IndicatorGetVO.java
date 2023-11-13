@@ -19,5 +19,5 @@ public class IndicatorGetVO {
     @ApiModelProperty(required = true, value = "病理指标名称")
     private String indicatorName;
     @ApiModelProperty(value = "种属编号")
-    private Long speciesId;
+    private String speciesId;
 }

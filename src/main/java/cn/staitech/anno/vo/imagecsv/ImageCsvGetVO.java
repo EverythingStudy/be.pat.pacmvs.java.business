@@ -29,6 +29,11 @@ public class ImageCsvGetVO implements Serializable {
     private String imageName;
 
     /**
+     * 切片编号
+     */
+    private String removeReason;
+
+    /**
      * 组别
      */
     private String groupName;

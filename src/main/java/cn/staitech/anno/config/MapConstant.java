@@ -17,8 +17,8 @@ public class MapConstant {
     /**
      * 种属
      */
-    public static Map<Long, String> SPECIES_MAP;
-    public static Map<Long, String> SPECIES_MAP_EN;
+    public static Map<String, String> SPECIES_MAP;
+    public static Map<String, String> SPECIES_MAP_EN;
     public static Map<Long, String> GROUP_MAP;
     public static Map<Long, String> ROUND_MAP;
     public static Map<Long, String> ROUND_MAP_EN;
@@ -51,7 +51,7 @@ public class MapConstant {
      * @param topicId
      * @return
      */
-    public static String getSpeciesName(Long topicId) {
+    public static String getSpeciesName(String topicId) {
         if (SPECIES_MAP.containsKey(topicId)) {
 
             return SPECIES_MAP.get(topicId);
@@ -65,7 +65,7 @@ public class MapConstant {
      * @param topicId
      * @return
      */
-    public static String getSpeciesNameEn(Long topicId) {
+    public static String getSpeciesNameEn(String topicId) {
         if (SPECIES_MAP_EN.containsKey(topicId)) {
 
             return SPECIES_MAP_EN.get(topicId);

@@ -752,6 +752,9 @@
             <if test="lesionType != null">
                 AND s.lesion_type1 LIKE CONCAT('%', #{lesionType}, '%')
             </if>
+            <if test="removeReason != null">
+                AND s.remove_reason LIKE CONCAT('%', #{removeReason}, '%')
+            </if>
             <if test="lesionType != null">
                 AND s.lesion_type2 LIKE CONCAT('%', #{lesionType}, '%')
             </if>

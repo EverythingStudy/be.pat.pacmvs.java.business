@@ -51,7 +51,7 @@ public class ProductSeriesController extends BaseController {
     @ApiOperation(value = "种属查询品系列表", notes = "种属查询品系列表 - 王峰")
     @Log(title = "品系列表", menu = "品系", subMenu = "种属查询品系列表", businessType = BusinessType.QUERY)
     @GetMapping("/speciesList")
-    public R<List<ProductSeries>> speciesList(Integer speciesId)  {
+    public R<List<ProductSeries>> speciesList(String speciesId)  {
         QueryWrapper<ProductSeries> productSeriesQueryWrapper = new QueryWrapper<>();
         productSeriesQueryWrapper.eq("species_id",speciesId);
         List<ProductSeries> list = productSeriesService.list(productSeriesQueryWrapper);
