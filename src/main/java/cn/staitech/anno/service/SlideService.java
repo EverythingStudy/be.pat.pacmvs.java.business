@@ -225,15 +225,6 @@ public interface SlideService extends IService<Slide> {
     SlideSelectBy pageImageCsvListVOBy(Long slideId);
 
 
-//    /**
-//     * 查询专题编号
-//     * */
-//    List<TopicIdName>topicList();
-
-//    /**
-//     * 保存文件夹和图片
-//     * */
-//    int eyeSlideList(EyeSaveSlide eyeSaveSlide);
 
     /**
      * 删除项目切片
