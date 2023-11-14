@@ -16,7 +16,9 @@ import cn.staitech.anno.mapper.RecentlyVisitedMapper;
 import cn.staitech.anno.mapper.SlideMapper;
 import cn.staitech.anno.mapper.SysUserMapper;
 import cn.staitech.anno.project.domain.Marking;
+import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.mapper.MarkingMapperV1;
+import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.project.service.MarkingServiceV1;
 import cn.staitech.anno.service.AlgorithmAssessmentService;
 import cn.staitech.anno.service.AlgorithmJsonService;
@@ -40,6 +42,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -102,6 +105,9 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 
     @Resource
     SysUserMapper sysUserMapper;
+
+    @Resource
+    ProjectMapperV1 projectMapperV1;
 
 
     @Override
@@ -250,9 +256,9 @@ public class DataMigrationServiceImpl implements DataMigrationService {
             List<Marking> markings = markingMapperV1.selectList(qw);
             if (markings.size() > 0) {
                 markings.forEach(e -> {
-                    SysUser sysUser = sysUserMapper.selectUserById(e.getCreateBy());
-                    if (StringUtils.isNotEmpty(e.getImageUrl())) {
-                        e.setImageUrl(e.getImageUrl().replace("/home/pat_saas", "/home/pat_saas/" + StatisticListUtils.getFourNumberNoSlide(sysUser.getOrganizationId())));
+                    Project project = projectMapperV1.selectById(e.getProjectId());
+                    if (StringUtils.isNotEmpty(e.getImageUrl())&& !ObjectUtils.isEmpty(project)) {
+                        e.setImageUrl(e.getImageUrl().replace("/home/pat_saas", "/home/pat_saas/" + StatisticListUtils.getFourNumberNoSlide(project.getOrganizationId())));
                     }
                 });
                 markingServiceV1.updateBatchById(markings);
