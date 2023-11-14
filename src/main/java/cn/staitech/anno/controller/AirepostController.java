@@ -10,6 +10,7 @@ import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,8 +51,9 @@ public class AirepostController {
     @Log(title = "Airepost", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     public R<String> edit(@RequestBody AirepostList request) {
-        if (!request.getAirepostLists().isEmpty()) {
-            airepostService.saveBatch(request.getAirepostLists());
+        List<Airepost> list = request.getAirepostLists();
+        if (CollectionUtils.isNotEmpty(list)) {
+            airepostService.updateBatchById(list);
         }
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }

@@ -54,7 +54,6 @@ public class FileUploadServiceImpl implements FileUploadService {
     private String uploadPath = File.separator + "Upload";
 
 
-
     /**
      * @param fileUrl  上传文件路径
      * @param filename 文件名称
@@ -166,7 +165,8 @@ public class FileUploadServiceImpl implements FileUploadService {
 
             String filesName = fileUploadVO.getFileName();
             // 定义文件夹名称
-            String path = basePath + File.separator + "Slides" + File.separator + topicName + File.separator + filesName;
+            // String path = basePath + File.separator + "Slides" + File.separator + topicName + File.separator + filesName;
+            String path = dirPath + File.separator + filesName;
             // 重复文件重命名规则
             QueryWrapper<Files> filesQueryWrapper = new QueryWrapper<>();
             filesQueryWrapper.eq("topic_id", topicId);
@@ -221,7 +221,6 @@ public class FileUploadServiceImpl implements FileUploadService {
                 if (!Optional.ofNullable(fileUploadVO.getProjectId()).isPresent()) {
                     throw new Exception(MessageSource.M("DISALLOW_NOT_PROJECT"));
                 }
-//                markingService.zipExport(files.getFilesPath(), fileUploadVO.getProjectId());
                 asyncTask.zipExport(files.getFilesPath(), fileUploadVO.getProjectId());
                 break;
 

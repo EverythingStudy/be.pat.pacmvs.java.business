@@ -24,6 +24,7 @@
         <result property="rotation" column="rotation"/>
         <result property="level" column="level"/>
         <result property="primary" column="primary"/>
+        <result property="visible" column="visible"/>
         <result property="slideId" column="slide_id"/>
         <result property="fileName" column="file_name"/>
     </resultMap>
@@ -49,6 +50,7 @@
                a.rotation,
                a.level,
                a.`primary`,
+               a.visible,
                s.slide_id,
                i.file_name
         from aipre_airepost a
@@ -147,6 +149,9 @@
             <if test="serverModel != null">
                 server_model,
             </if>
+            <if test="visible != null">
+                visible,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="aiStatus != null">
@@ -184,6 +189,9 @@
             </if>
             <if test="serverModel != null">
                 #{serverModel},
+            </if>
+            <if test="visible != null">
+                #{visible},
             </if>
         </trim>
     </insert>
@@ -248,6 +256,9 @@
             </if>
             <if test="primary != null">
                 primary= #{primary},
+            </if>
+            <if test="visible != null">
+                visible= #{visible},
             </if>
         </trim>
         where report_uuid = #{reportUuid}
