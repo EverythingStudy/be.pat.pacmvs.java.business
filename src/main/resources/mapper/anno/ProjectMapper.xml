@@ -137,13 +137,16 @@
                p.model_id,
                m.model_name,
                m.model_name_en,
-               p.tissue_id
+               p.tissue_id,
+               a.tissue_name,
+               a.tissue_name_en
         from tb_project p
                  left join sys_user u on p.create_by = u.user_id
                  left join tb_pathological_indicator i on p.indicator_id = i.indicator_id
                  left join tb_product_series ps on p.product_series_id = ps.product_series_id
                  left join sys_organization org on p.organization_id = org.organization_id
                  left join aipre_algorithm_model m on p.model_id=m.model_id
+                 left join aipre_pathological_tissue a on p.tissue_id=a.tissue_id
     </sql>
 
     <sql id="selectProjectBy">
@@ -234,8 +237,11 @@
             <if test="createBy != null and createBy != ''">
                 AND p.create_by = #{createBy}
             </if>
-            <if test="modelId != null and modelId != ''">
+            <if test="modelId != null">
                 AND p.model_id = #{modelId}
+            </if>
+            <if test="tissueId != null">
+                AND p.tissue_id = #{tissueId}
             </if>
             <if test="projectType != null">
                 AND p.project_type = #{projectType}
