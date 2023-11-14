@@ -170,7 +170,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
 
     /**
-     * 项目管理-图像列表
+     * 项目管理-图像列表 TODO:
      *
      * @param vo
      * @return
@@ -179,7 +179,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
     @Transactional(rollbackFor = Exception.class)
     public PageMaster<ImageListOutVO> choiceList(ImageTopicVO vo) throws ExecutionException, InterruptedException {
-
         Image image = new Image();
         BeanUtils.copyProperties(vo, image);
 
@@ -271,9 +270,10 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                         slide.setProjectId(vo.getProjectId());
                     }
                     // 查询当前项目或评审轮次是否选中此图片
-                    out.setChoiceState(0);
                     if (slideService.selectImageExist(slide).size() > 0) {
                         out.setChoiceState(1);
+                    }else{
+                        out.setChoiceState(0);
                     }
                 } else if (vo.getChoiceState() == 0) {
                     out.setChoiceState(0);

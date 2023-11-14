@@ -313,7 +313,7 @@
         where project_id = #{projectId}
     </delete>
 
-    <!-- 根据项目ID和图片列表查询切片 -->
+    <!-- 根据项目ID、图片ID、reviewRoundId查询切片 -->
     <select id="selectImageExist" parameterType="cn.staitech.anno.domain.Slide" resultMap="SlideResult">
         select *
         from tb_slide
@@ -323,6 +323,9 @@
             </if>
             <if test="imageId != null and imageId != ''">
                 AND image_id = #{imageId}
+            </if>
+            <if test="reviewRoundId != null">
+                AND review_round_id = #{reviewRoundId}
             </if>
         </where>
     </select>
