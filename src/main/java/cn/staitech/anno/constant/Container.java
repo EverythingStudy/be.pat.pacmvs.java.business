@@ -113,6 +113,7 @@ public class Container {
             /*.put(18, "免疫组织化学染色")
             .put(19, "荧光标记染色")*/
             .put(20, "其他")
+            .put(21,"嗜银染色")
             .build();
 
     /**
@@ -137,6 +138,7 @@ public class Container {
             .put(16, "Tunel")
             .put(17, "Ki67")
             .put(20, "Other")
+            .put(21,"Argyrophilic staining")
             .build();
 
     /**
