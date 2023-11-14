@@ -26,7 +26,6 @@ import cn.staitech.anno.vo.slide.*;
 import cn.staitech.anno.vo.special.Special;
 import cn.staitech.anno.vo.statistic.StatisticSlideListInVO;
 import cn.staitech.anno.vo.statistic.StatisticSlideListOutVO;
-import cn.staitech.anno.vo.topic.TopicIdName;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -702,13 +701,13 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
      */
     @Override
     public R deleteProjectImage(ProjectSlideDel projectSlideDel) {
-        if (CollectionUtils.isNotEmpty(projectSlideDel.getSlideIdList())){
-        for (Long slideId : projectSlideDel.getSlideIdList()) {
-            //切片表删除（物理删）
-            slideMapper.deleteProjectImage(slideId);
-            //删除文件夹下的图片（物理删除）
-            slideMapper.eyeDeleteImage(slideId);
-        }
+        if (CollectionUtils.isNotEmpty(projectSlideDel.getSlideIdList())) {
+            for (Long slideId : projectSlideDel.getSlideIdList()) {
+                //切片表删除（物理删）
+                slideMapper.deleteProjectImage(slideId);
+                //删除文件夹下的图片（物理删除）
+                slideMapper.eyeDeleteImage(slideId);
+            }
         }
         return R.ok();
     }
@@ -717,14 +716,14 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
      * 眼科项目图片
      */
     @Override
-    public PageMaster<EyeProjectSlideOut> eyeProjectSlide(EyeProjectSlideIn request){
-        EyeProjectSlideOut eyeProjectSlideOut=new EyeProjectSlideOut();
+    public PageMaster<EyeProjectSlideOut> eyeProjectSlide(EyeProjectSlideIn request) {
+        EyeProjectSlideOut eyeProjectSlideOut = new EyeProjectSlideOut();
         //查询校验通过的文件和图片
         eyeProjectSlideOut.setEyeMent("0");
         eyeProjectSlideOut.setImageName(request.getImageName());
         eyeProjectSlideOut.setFolderName(request.getFolderName());
         eyeProjectSlideOut.setProjectId(request.getProjectId());
-        List<EyeProjectSlideOut> listVOList=slideMapper.eyeProjectSlide(eyeProjectSlideOut);
+        List<EyeProjectSlideOut> listVOList = slideMapper.eyeProjectSlide(eyeProjectSlideOut);
         //查询校验不通过的文件
         eyeProjectSlideOut.setEyeMent("1");
         List<EyeProjectSlideOut> listVOS = slideMapper.eyeProjectFolder(eyeProjectSlideOut);
@@ -962,19 +961,22 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
     @Override
     public SlideAirepostVO selectSlideAirepostVOById(Long slideId) {
         Slide slide = slideMapper.selectById(slideId);
-        Image image = imageMapper.selectById(slide.getPredictionImageId());
-        SlideAirepostVO slideAirepostVO = new SlideAirepostVO();
-        BeanUtil.copyProperties(image, slideAirepostVO);
-        slideAirepostVO.setSlideId(slideId);
-        slideAirepostVO.setPredictionImageId(slide.getPredictionImageId());
-        return slideAirepostVO;
+        if (slide.getPredictionImageId() > 0 && slide.getAiCheck() == 2) {
+            Image image = imageMapper.selectById(slide.getPredictionImageId());
+            SlideAirepostVO slideAirepostVO = new SlideAirepostVO();
+            BeanUtil.copyProperties(image, slideAirepostVO);
+            slideAirepostVO.setSlideId(slideId);
+            slideAirepostVO.setPredictionImageId(slide.getPredictionImageId());
+            return slideAirepostVO;
+        }
+        return null;
     }
 
     /**
      * 眼科-查新文件夹状态
-     * */
+     */
     @Override
-    public Slide selectFolderMent(Long slideId){
+    public Slide selectFolderMent(Long slideId) {
         return slideMapper.selectFolderMent(slideId);
     }
 
