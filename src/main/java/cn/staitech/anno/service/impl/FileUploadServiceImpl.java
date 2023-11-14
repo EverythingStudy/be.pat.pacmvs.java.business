@@ -1,5 +1,6 @@
 package cn.staitech.anno.service.impl;
 
+import cn.hutool.core.collection.ConcurrentHashSet;
 import cn.staitech.anno.config.AsyncTask;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.constant.Container;
@@ -276,11 +277,12 @@ public class FileUploadServiceImpl implements FileUploadService {
 
             // 将文件数量和文件id添加至map中
             if (!Container.FILE_MAP.containsKey(chunk.getUuid())) {
-                ArrayList<Integer> chunkList = new ArrayList<Integer>();
+
+                ConcurrentHashSet<Integer> chunkSet = new ConcurrentHashSet<Integer>(chunk.getChunkTotal());
                 for (int i = 0; i < chunk.getChunkTotal(); i++) {
-                    chunkList.add(i);
+                    chunkSet.add(i);
                 }
-                Container.FILE_MAP.put(chunk.getUuid(), chunkList);
+                Container.FILE_MAP.put(chunk.getUuid(), chunkSet);
             }
         }
 

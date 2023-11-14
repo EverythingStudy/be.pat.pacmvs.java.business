@@ -67,7 +67,7 @@ public class Airepost {
     @ApiModelProperty(value = "是否主图：主图1、非主图0")
     private Integer primary;
     @ApiModelProperty(value = "是否显示：1是显示、0不显示，默认是1，不允许为空")
-    private Integer visible;
+    private Boolean visible;
     @TableField(exist = false)
     @ApiModelProperty(value = "切片ID")
     private Long slideId;

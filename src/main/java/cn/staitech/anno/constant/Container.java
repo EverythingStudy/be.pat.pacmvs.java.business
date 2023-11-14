@@ -1,5 +1,6 @@
 package cn.staitech.anno.constant;
 
+import cn.hutool.core.collection.ConcurrentHashSet;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class Container {
     /**
      * FileUpload - 定义一个基于多线程 的 hashmap
      */
-    public static final Map<String, ArrayList<Integer>> FILE_MAP = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, ConcurrentHashSet<Integer>> FILE_MAP = new ConcurrentHashMap<>();
 
 
     /**
