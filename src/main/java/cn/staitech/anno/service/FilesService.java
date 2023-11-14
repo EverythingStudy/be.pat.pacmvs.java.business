@@ -25,5 +25,4 @@ public interface FilesService extends IService<Files> {
      */
     void process(Files files) throws Exception;
 
-//    Boolean unZip(String zipUrl) throws Exception;
 }

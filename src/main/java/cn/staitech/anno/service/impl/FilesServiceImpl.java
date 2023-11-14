@@ -11,13 +11,13 @@ import cn.staitech.anno.service.SysOrganizationService;
 import cn.staitech.anno.service.TopicService;
 import cn.staitech.anno.utils.ImgPicCompression;
 import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.utils.OrganizationUtils;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.files.Files;
 import cn.staitech.anno.vo.files.in.FilesListVO;
 import cn.staitech.common.core.utils.uuid.IdUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
-import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
@@ -83,8 +83,8 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         if (req.getCreateTimeParams() != null && req.getCreateTimeParams().containsKey("endTime")) {
             queryWrapper.le("create_time", req.getCreateTimeParams().get("endTime"));
         }
-        if(!SecurityUtils.isAdmin(SecurityUtils.getLoginUser().getSysUser().getUserId())){
-            queryWrapper.eq("organization_id",SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        if (!SecurityUtils.isAdmin(SecurityUtils.getLoginUser().getSysUser().getUserId())) {
+            queryWrapper.eq("organization_id", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         }
 
         queryWrapper.orderByDesc("files_id");
@@ -324,11 +324,15 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
 
     /**
      * 文件前置信息上传-初始化文件路径
+     * TODO:修改路径
      *
      * @param image
      * @return
      */
     public Image imageTransfer(Image image) throws IOException {
+
+        String basePath = "/home/pat_saas";
+
         if (org.apache.commons.lang3.StringUtils.isNotEmpty(image.getImagePath())) {
             // 步骤一：创建 File 对象
             File file = new File(image.getImagePath());
@@ -345,17 +349,13 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
             String folderName = simpleDateFormat.format(new Date());
             String uuid = IdUtils.randomUUID();
             String filePathStr = folderName + "/" + uuid + "/0.jpg";
-
-            String thumbPath = "/file/statics/thumbnail/" + filePathStr;
+            String thumbPath = "/file/statics/" + OrganizationUtils.geNumber(image.getOrganizationId()) + "/thumbnail/" + filePathStr;
             image.setThumbUrl(thumbPath);
-            image.setMacroUrl(thumbPath);
-            image.setLabelUrl(thumbPath);
-            image.setCacheUrl(thumbPath);
+            String absFilePath = thumbPath.replace("/file/statics", "/home/pat_saas");
 
-            String absFilePath = thumbPath.replace("/file/statics", "/home/pat_saas/Slides");
             // 不缩放直接Copy
             // FileUtils.copyFile(file, new File(absFilePath));
-            // 缩放图片
+            // 生成缩略图
             ImgPicCompression.doCompress(image.getImagePath(), 256, 256, absFilePath, true);
 
             image.setFormat(image.getImagePath().substring(image.getImagePath().lastIndexOf('.') + 1));
