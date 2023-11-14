@@ -236,7 +236,7 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 		ImageCsvGetVO imageCsvGetVO = new ImageCsvGetVO();
 		BeanUtil.copyProperties(request, imageCsvGetVO);
 		List<ImageCsvListVO> list = slidePredictionMapper.getImageCsvListVOList(imageCsvGetVO);
-		/*for(ImageCsvListVO vo:list){
+		for(ImageCsvListVO vo:list){
 			EyeThumImageQuery query = new EyeThumImageQuery();
 			Long slideId = vo.getSlideId();
 			query.setSlideId(slideId);
@@ -245,8 +245,10 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 			List<Image> mainImageList = slidePredictionMapper.getMainImageList(query);
 			if(CollectionUtils.isNotEmpty(mainImageList)){
 				vo.setPredictionThumbUrl(mainImageList.get(0).getThumbUrl());
+			}else{
+				vo.setPredictionThumbUrl("");
 			}
-		}*/
+		}
 		PageMaster<ImageCsvListVO> pageMaster = new PageMaster<>(list);
 		PageHelper.clearPage();
 		return pageMaster;
