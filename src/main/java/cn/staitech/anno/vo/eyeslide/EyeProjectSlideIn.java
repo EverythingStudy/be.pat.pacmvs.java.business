@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class EyeProjectSlideIn extends Pager {
+public class EyeProjectSlideIn {
     @ApiModelProperty(value = "图片名称")
     private String imageName;
 
@@ -26,6 +26,10 @@ public class EyeProjectSlideIn extends Pager {
 
     @ApiModelProperty(value = "状态",hidden = true)
     private String eyeMent;
+
+    public int pageNum;
+
+    public int pageSize;
 
 
 }

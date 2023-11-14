@@ -12,6 +12,7 @@ import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.utils.ProjectUtils;
 import cn.staitech.anno.vo.examination.ExaminationListVO;
 import cn.staitech.anno.vo.eyeslide.*;
 import cn.staitech.anno.vo.image.out.ImageListOutVO;
@@ -19,6 +20,7 @@ import cn.staitech.anno.vo.imagecsv.ImageCsvGetPagerVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
 import cn.staitech.anno.vo.marking.Marking;
+import cn.staitech.anno.vo.project.ProjectDelVO;
 import cn.staitech.anno.vo.project.ProjectExt;
 import cn.staitech.anno.vo.project.ProjectListOutVO;
 import cn.staitech.anno.vo.project.ProjectStatisticsVO;
@@ -717,7 +719,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
      */
     @Override
     public PageMaster<EyeProjectSlideOut> eyeProjectSlide(EyeProjectSlideIn request) {
-        PageHelper.startPage(request.getPageNum(), request.getPageSize()).setReasonable(true);
         EyeProjectSlideOut eyeProjectSlideOut = new EyeProjectSlideOut();
         //查询校验通过的文件和图片
         eyeProjectSlideOut.setEyeMent("0");
@@ -737,9 +738,26 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         }
         listVOList.addAll(listVOS);
         //排序（按照文件夹名称A-Z升序排列，相同名称按照切片名称升序排列）
-        listVOList.sort(Comparator.comparing(EyeProjectSlideOut::getFolderName).thenComparing(EyeProjectSlideOut::getImageName));
-        PageMaster<EyeProjectSlideOut> pageMaster = new PageMaster<>(listVOList);
-//        PageHelper.clearPage();
+            listVOList.sort(Comparator.comparing(EyeProjectSlideOut::getFolderName));
+
+        //分页
+        ProjectDelVO projectDelVO = ProjectUtils.paging(request);
+        int pageSize = projectDelVO.getPageSize();
+        int pageNum = projectDelVO.getPageNum();
+        boolean flag1 = projectDelVO.getFlag();
+        List<EyeProjectSlideOut> result = projectDelVO.getResult();
+        for (int i = pageNum * pageSize; i < pageNum * pageSize + pageSize; i++) {
+            if (i < listVOList.size()) {
+                result.add(listVOList.get(i));
+            }
+        }
+        PageMaster<EyeProjectSlideOut> pageMaster = new PageMaster<>(result);
+        if (flag1) {
+            pageNum++;
+        }
+        pageMaster.setPageNum(pageNum);
+        pageMaster.setPageSize(pageSize);
+        pageMaster.setTotal(listVOList.size());
         return pageMaster;
     }
 
@@ -756,7 +774,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
      */
     @Override
     public PageMaster<ImageListOutVO> eyeImage(EyeSlideIn eyeSlideIn) {
-        PageHelper.startPage(eyeSlideIn.getPageNum(), eyeSlideIn.getPageSize()).setReasonable(true);
         List<ImageListOutVO> imageListOutVOS = slideMapper.eyeSlideList(eyeSlideIn);
         List<ImageListOutVO> projectSlideOutList = new ArrayList<>();
         //去重
@@ -767,7 +784,24 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                 projectSlideOutList.add(projectSlideOut);
             }
         }
-        PageMaster pageMaster = new PageMaster<>(projectSlideOutList);
+        //分页
+        ProjectDelVO projectDelVO = ProjectUtils.pagingEye(eyeSlideIn);
+        int pageSize = projectDelVO.getPageSize();
+        int pageNum = projectDelVO.getPageNum();
+        boolean flag1 = projectDelVO.getFlag();
+        List<ImageListOutVO> result = projectDelVO.getResults();
+        for (int i = pageNum * pageSize; i < pageNum * pageSize + pageSize; i++) {
+            if (i < projectSlideOutList.size()) {
+                result.add(projectSlideOutList.get(i));
+            }
+        }
+        PageMaster<ImageListOutVO> pageMaster = new PageMaster<>(result);
+        if (flag1) {
+            pageNum++;
+        }
+        pageMaster.setPageNum(pageNum);
+        pageMaster.setPageSize(pageSize);
+        pageMaster.setTotal(projectSlideOutList.size());
         return pageMaster;
     }
 
