@@ -27,4 +27,6 @@ public interface SlidePredictionMapper extends BaseMapper<SlidePrediction> {
 	List<ImageCsvListVO> getImageCsvListVOList(ImageCsvGetVO request);
 	
 	List<Image> getMainImageList(EyeThumImageQuery query);
+	
+	List<ImageCsvListVO> getSlidePredictionList(ImageCsvGetVO request);
 }
