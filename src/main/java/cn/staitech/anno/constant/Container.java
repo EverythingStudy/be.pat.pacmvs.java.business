@@ -169,8 +169,8 @@ public class Container {
      * 眼科-提示语
      */
     public static final Map<Integer, String> EYE_PROMPT_MAP = new ImmutableMap.Builder<Integer, String>()
-            .put(1, "数量不满足")
-            .put(2, "文件名称不符合")
+            .put(1, "算法要求最小图片数量为5张。请删除后重新上传")
+            .put(2, "因图像命名不符合要求，未识别到主图，请在原始切片中手动设置主图")
             .build();
 
 
@@ -178,8 +178,8 @@ public class Container {
      * 眼科-提示语-en
      */
     public static final Map<Integer, String> EYE_PROMPT_MAP_EN = new ImmutableMap.Builder<Integer, String>()
-            .put(1, "数量不满足en")
-            .put(2, "文件名称不符合en")
+            .put(1, "算法要求最小图片数量为5张。请删除后重新上传en")
+            .put(2, "因图像命名不符合要求，未识别到主图，请在原始切片中手动设置主图en")
             .build();
 
 
