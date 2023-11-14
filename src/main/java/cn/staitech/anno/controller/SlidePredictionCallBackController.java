@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import javax.annotation.Resource;
 
@@ -52,31 +53,50 @@ public class SlidePredictionCallBackController {
         if (null != req) {
         	log.info("算法预测:{}",JSONUtil.toJsonStr(req));
             Long slideId = req.getSlideId();
+            //AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败 4：部分分析成功
             int aiAnalyzed = req.getAiAnalyzed();
-            String mergeImagePath = req.getMergeImagePath();
-            List<EyeAnalyzedResult> aiAnalyResult = req.getAiAnalyResult();
-            if (CollectionUtils.isNotEmpty(aiAnalyResult)) {
-                List<SlidePrediction> batchList = new ArrayList<SlidePrediction>();
-                for (EyeAnalyzedResult result : aiAnalyResult) {
-                    SlidePrediction sp = new SlidePrediction();
-                    sp.setSlidePredictionId(result.getSlidePredictionId());
-                    sp.setAiAnalyzed(result.getAiAnalyzed());
-                    batchList.add(sp);
-                }
-                slidePredictionService.updateBatchById(batchList);
-            }
-            PredictionInfoVO predictionInfoVO = new PredictionInfoVO();
-            predictionInfoVO.setSlideId(slideId);
-            predictionInfoVO.setChunkTotal(1);
-            predictionInfoVO.setAiAnalyzed(aiAnalyzed);
-            predictionInfoVO.setAlgorithmImageUrl(mergeImagePath);
-            predictionInfoVO.setUserId(req.getUserId());
-            predictionInfoVO.setOrganizationId(req.getOrganizationId());
-            File file = new File(mergeImagePath);
-            predictionInfoVO.setImageName(file.getName());
+            if(aiAnalyzed == 2 || aiAnalyzed == 4){
+            	List<EyeAnalyzedResult> aiAnalyResult = req.getAiAnalyResult();
+            	if (CollectionUtils.isNotEmpty(aiAnalyResult)) {
+            		List<SlidePrediction> batchList = new ArrayList<SlidePrediction>();
+            		for (EyeAnalyzedResult result : aiAnalyResult) {
+            			SlidePrediction sp = new SlidePrediction();
+            			sp.setSlidePredictionId(result.getSlidePredictionId());
+            			sp.setAiAnalyzed(result.getAiAnalyzed());
+            			batchList.add(sp);
+            		}
+            		slidePredictionService.updateBatchById(batchList);
+            		PredictionInfoVO predictionInfoVO = new PredictionInfoVO();
+            		predictionInfoVO.setSlideId(slideId);
+            		predictionInfoVO.setChunkTotal(1);
+            		predictionInfoVO.setAiAnalyzed(aiAnalyzed);
+            		predictionInfoVO.setAlgorithmImageUrl(req.getMergeImagePath());
+            		predictionInfoVO.setUserId(req.getUserId());
+            		predictionInfoVO.setOrganizationId(req.getOrganizationId());
+            		File file = new File(req.getMergeImagePath());
+            		predictionInfoVO.setImageName(file.getName());
 
-//			{"chunkTotal":1,"imageName":"test","algorithmImageUrl":"C:/Users/86153/Desktop/dc/image/s1-168.ndpi","userId":10,"organizationId":95,"size":"447"}
-            slideImageService.uploadImage(predictionInfoVO, SecurityConstants.INNER);
+            		//			{"chunkTotal":1,"imageName":"test","algorithmImageUrl":"C:/Users/86153/Desktop/dc/image/s1-168.ndpi","userId":10,"organizationId":95,"size":"447"}
+            		slideImageService.uploadImage(predictionInfoVO, SecurityConstants.INNER);
+            	}
+            }else if(aiAnalyzed == 3){
+            	//失败处理
+            	//查询当前slideId对应的所有小切片id,全部修改为失败
+            	 QueryWrapper<SlidePrediction> queryWrapper = new QueryWrapper<>();
+                 queryWrapper.eq("slide_id", slideId).eq("del_flag", "0");
+                 List<SlidePrediction> list = slidePredictionService.list(queryWrapper);
+                 if(CollectionUtils.isNotEmpty(list)){
+                	 List<SlidePrediction> spList = new ArrayList<>();
+                	 for(SlidePrediction slidePrediction:list){
+                		 SlidePrediction slideP = new SlidePrediction();
+                		 slideP.setSlidePredictionId(slidePrediction.getSlidePredictionId());
+                		 ////AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败 4：部分分析成功
+                		 slideP.setAiAnalyzed(3);
+                		 spList.add(slideP);
+                	 }
+                	 slidePredictionService.updateBatchById(spList);
+                 }
+            }
         }
         return R.ok();
     }
