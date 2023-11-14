@@ -340,6 +340,7 @@ public class SlideController extends BaseController {
      * 上传人员
      */
     @ApiOperation(value = "拼接图象类项目---上传人员")
+    @ApiOperationSupport(author = "zmj")
     @PostMapping("/uploadPersonnel")
     public R<List<SysUser>> uploadPersonnel() {
         List<SysUser> userList = sysUserService.userList();
@@ -350,6 +351,7 @@ public class SlideController extends BaseController {
      * 获取图片碎片
      */
     @ApiOperation(value = "拼接图象类项目---切片列表")
+    @ApiOperationSupport(author = "zmj")
     @PostMapping("/folderList")
     public R<PageMaster<ImageListOutVO>> folderList(@RequestBody @Validated EyeSlideIn eyeSlideIn) {
         if (eyeSlideIn.getFolderName()==null && eyeSlideIn.getTopicName()==null && eyeSlideIn.getParams()==null && eyeSlideIn.getCreateBy()==null){
@@ -363,6 +365,7 @@ public class SlideController extends BaseController {
      * 获取拼接图象类项目---项目图片
      */
     @ApiOperation(value = "拼接图象类项目---项目图片")
+    @ApiOperationSupport(author = "zmj")
     @PostMapping("/projectPictureList")
     public R<PageMaster<EyeProjectSlideOut>> projectPictureList(@RequestBody @Validated EyeProjectSlideIn eyeProjectSlideIn) {
         PageMaster<EyeProjectSlideOut> eyeProjectSlide = slideService.eyeProjectSlide(eyeProjectSlideIn);
@@ -373,6 +376,7 @@ public class SlideController extends BaseController {
      * 获取拼接图象类项目---项目图片删除
      */
     @ApiOperation(value = "拼接图象类项目---项目图片删除")
+    @ApiOperationSupport(author = "zmj")
     @PostMapping("/projectPictureDel")
     public R projectPictureDel(@RequestBody @Validated ProjectSlideDel projectSlideDel) {
         return slideService.deleteProjectImage(projectSlideDel);
@@ -383,6 +387,7 @@ public class SlideController extends BaseController {
      * 保存文件夹和切片
      */
     @ApiOperation(value = "拼接图象类项目---保存文件夹和切片")
+    @ApiOperationSupport(author = "zmj")
     @PostMapping("/eyeSave")
     public R eyeSave(@RequestBody @Validated EyeSaveSlide eyeSaveSlide) {
         return slideService.eyeFolder(eyeSaveSlide);
@@ -392,6 +397,7 @@ public class SlideController extends BaseController {
      * 拼接图象类项目---是否有算法结果
      */
     @ApiOperation(value = "拼接图象类项目---是否有算法结果")
+    @ApiOperationSupport(author = "zmj")
     @GetMapping("/algorithmResult")
     public R<Integer> algorithmResult(@RequestParam(name = "projectId") @ApiParam(name = "projectId", value = "项目id") Long projectId) {
         Integer num = slideService.algorithmResult(projectId);
@@ -403,6 +409,7 @@ public class SlideController extends BaseController {
      * 拼接图象类项目---查询错误原因
      */
     @ApiOperation(value = "拼接图象类项目---查询错误原因")
+    @ApiOperationSupport(author = "zmj")
     @GetMapping("/errorReason")
     public R<EyeErrorReasonOut> errorReason(@RequestParam(name = "slideId") @ApiParam(name = "slideId", value = "切片id") Long slideId) {
         EyeErrorReasonOut errorReason = slideService.errorReason(slideId);
