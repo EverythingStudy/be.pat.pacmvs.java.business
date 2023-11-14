@@ -383,9 +383,9 @@
         <profile>
             <!--108线开发环境-->
             <id>patsaasdev</id>
-            <activation>
+<!--            <activation>
                 <activeByDefault>true</activeByDefault>
-            </activation>
+            </activation>-->
             <properties>
                 <activatedProperties>patsaasdev</activatedProperties>
                 <nacosNamespace>9db07238-8e80-49f9-b665-5afa03e8d569</nacosNamespace>
@@ -419,9 +419,9 @@
         <profile>
             <!--114线测试环境-->
             <id>saastest</id>
-            <activation>
+<!--            <activation>
                 <activeByDefault>true</activeByDefault>
-            </activation>
+            </activation>-->
             <properties>
                 <activatedProperties>saastest</activatedProperties>
                 <nacosNamespace>301bbb5d-e3f9-4703-bb92-327d62eb1efd</nacosNamespace>
