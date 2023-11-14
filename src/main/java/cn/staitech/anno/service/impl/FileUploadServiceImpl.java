@@ -372,7 +372,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 topicName = topic.getTopicName();
                 topicId = topic.getTopicId();
                 // 定义文件夹名称
-                path = basePath + File.separator + "Slides" + File.separator + topicName + File.separator + fileUploadVO.getFileName();
+                path = basePath + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()) + "/Slides" + File.separator + topicName + File.separator + fileUploadVO.getFileName();
                 // 重复文件重命名规则
                 QueryWrapper<Files> filesQueryWrapper = new QueryWrapper<>();
                 filesQueryWrapper.eq("topic_id", topicId);
