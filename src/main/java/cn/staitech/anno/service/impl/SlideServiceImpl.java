@@ -830,8 +830,8 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                                 predictions.add(slidePrediction);
 
                             } else {
-                                SlidePrediction slidePrediction = SlidePrediction.builder().createBy(SecurityUtils.getUserId())
-                                        .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).delFlag("0").imageId(image.getImageId()).build();
+                                SlidePrediction slidePrediction = SlidePrediction.builder().createBy(SecurityUtils.getUserId()).aiAnalyzed(0)
+                                        .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).delFlag("0").mainImage("2").createTime(DateUtil.date()).imageId(image.getImageId()).build();
                                 predictions.add(slidePrediction);
                                 testNum = 1;
                             }
@@ -862,7 +862,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                 for (ProjectSlideOut projectSlideOut : projectSlideOutList) {
                     Long folderId = projectSlideOut.getFolderId();
                     List<Image> imageList = slideMapper.eyeFolderSlide(folderId);
-
                     if (imageList.size() < 7) {
                         List<SlidePrediction> predictions = new ArrayList<>();
                         Slide slide = Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(SecurityUtils.getUserId()).folderId(folderId).prompt("1").eyeMent("1").build();
@@ -870,7 +869,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                         slideMapper.eyeInsertSlide(slide);
                         for (Image image : imageList) {
                             SlidePrediction slidePrediction = SlidePrediction.builder().createBy(SecurityUtils.getUserId()).aiAnalyzed(0).delFlag("0").mainImage("2").createTime(DateUtil.date())
-                                    .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).delFlag("0").imageId(image.getImageId()).build();
+                                    .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).delFlag("0").build();
                             predictions.add(slidePrediction);
                         }
                         //存储碎片信息
@@ -891,19 +890,21 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                             imageName.add(image.getImageName());
                             if (isNumeric(image.getImageName())) {
                                 SlidePrediction slidePrediction = SlidePrediction.builder().createBy(SecurityUtils.getUserId()).aiAnalyzed(0).delFlag("0").mainImage("2").createTime(DateUtil.date())
-                                        .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).delFlag("0").imageId(image.getImageId()).build();
+                                        .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
                                 predictions.add(slidePrediction);
 
                             } else {
-                                SlidePrediction slidePrediction = SlidePrediction.builder().createBy(SecurityUtils.getUserId())
-                                        .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).delFlag("0").imageId(image.getImageId()).build();
+                                SlidePrediction slidePrediction = SlidePrediction.builder().createBy(SecurityUtils.getUserId()).aiAnalyzed(0)
+                                        .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).delFlag("0").mainImage("2").createTime(DateUtil.date()).imageId(image.getImageId()).build();
                                 predictions.add(slidePrediction);
                                 testNum = 1;
                             }
                         }
                         //存储碎片信息
-                        //slideMapper.eyeInsert(predictions);
-                        slidePredictionService.saveBatch(predictions);
+                        if (predictions.size() > 0) {
+                            //slideMapper.eyeInsert(predictions);
+                            slidePredictionService.saveBatch(predictions);
+                        }
                         if (testNum == 1) {
                             Slide slides = Slide.builder().slideId(slide.getSlideId()).prompt("2").eyeMent("1").build();
                             slideMapper.eyeUpdateFolder(slides);
