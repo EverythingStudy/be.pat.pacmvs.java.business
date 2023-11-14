@@ -419,9 +419,6 @@
         <profile>
             <!--114线测试环境-->
             <id>saastest</id>
-<!--            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>-->
             <properties>
                 <activatedProperties>saastest</activatedProperties>
                 <nacosNamespace>301bbb5d-e3f9-4703-bb92-327d62eb1efd</nacosNamespace>
