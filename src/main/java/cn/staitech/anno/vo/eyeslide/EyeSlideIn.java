@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Map;
 
@@ -31,6 +32,7 @@ public class EyeSlideIn extends Pager {
     private Long createBy;
 
     @ApiModelProperty(value = "项目id")
+    @NotNull(message = "{ProjectRemoveIn.projectId.isnull}")
     private Long projectId;
 
 }

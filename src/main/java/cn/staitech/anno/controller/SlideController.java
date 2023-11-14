@@ -351,7 +351,10 @@ public class SlideController extends BaseController {
      */
     @ApiOperation(value = "拼接图象类项目---切片列表")
     @PostMapping("/folderList")
-    public R<PageMaster<ImageListOutVO>> folderList(@RequestBody EyeSlideIn eyeSlideIn) {
+    public R<PageMaster<ImageListOutVO>> folderList(@RequestBody @Validated EyeSlideIn eyeSlideIn) {
+        if (eyeSlideIn.getFolderName()==null && eyeSlideIn.getTopicName()==null && eyeSlideIn.getParams()==null && eyeSlideIn.getCreateBy()==null){
+            return R.ok();
+        }
         PageMaster<ImageListOutVO> eyeImage = slideService.eyeImage(eyeSlideIn);
         return R.ok(eyeImage);
     }
