@@ -210,7 +210,7 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 	public SlidePredictionOut getOriginalSlideList(SlidePredictionIn req) {
 		SlidePredictionQuery query = new SlidePredictionQuery();
 		BeanUtils.copyProperties(req, query);
-		query.setEyeMent("0");
+//		query.setEyeMent("0");
 		List<SlidePredictionInfo>  list  =  slidePredictionMapper.getOriginalSlideList(query);
 		SlidePredictionOut spo = new SlidePredictionOut();
 		spo.setList(list);
