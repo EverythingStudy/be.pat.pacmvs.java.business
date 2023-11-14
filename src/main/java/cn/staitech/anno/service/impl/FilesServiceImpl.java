@@ -297,9 +297,10 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                 // 处理ZIP重复不覆盖逻辑
                 String entryName = entry.getName();
                 // TODO--------------
-                // String entryNamePath = entry.getName().substring(entry.getName().indexOf("/"), entryName.length());
-                // String filePath = destDirRoot + entryNamePath;
-                String filePath = destDirRoot + entryName;
+                String entryNamePath = entry.getName().substring(entry.getName().indexOf("/"), entryName.length());
+                String filePath = destDirRoot + entryNamePath;
+
+                // String filePath = destDirRoot + entryName;
                 log.info("destDirRoot: {} , zipFileNameNoExt: {} entryName：{} filePath {}", destDirRoot, zipFileNameNoExt, entryName, filePath);
 
                 File file = new File(filePath);
