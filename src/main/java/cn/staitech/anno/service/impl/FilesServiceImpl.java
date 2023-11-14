@@ -254,6 +254,18 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                     }
                 }
             }
+
+            // 删除ZIP文件
+            File zipFile = new File(zipFilePath);
+            if (zipFile.exists()) {
+                boolean delete = zipFile.delete();
+                if (delete) {
+                    log.info("压缩文件删除成功:{}", zipFile.getAbsolutePath());
+                } else {
+                    log.info("压缩文件删除失败:{}", zipFile.getAbsolutePath());
+                }
+            }
+
         } else {
             throw new Exception(MessageSource.M("ZIP_FILE_UNZIP_FAILURE"));
         }
@@ -285,9 +297,11 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                 // 处理ZIP重复不覆盖逻辑
                 String entryName = entry.getName();
                 // TODO--------------
-                log.info("destDirRoot: {} , zipFileNameNoExt: {} entry.getName： {}", destDirRoot, zipFileNameNoExt, entry.getName());
-                String entryNamePath = entry.getName().substring(entry.getName().indexOf("/"), entryName.length());
-                String filePath = destDirRoot + entryNamePath;
+                // String entryNamePath = entry.getName().substring(entry.getName().indexOf("/"), entryName.length());
+                // String filePath = destDirRoot + entryNamePath;
+                String filePath = destDirRoot + entryName;
+                log.info("destDirRoot: {} , zipFileNameNoExt: {} entryName：{} filePath {}", destDirRoot, zipFileNameNoExt, entryName, filePath);
+
                 File file = new File(filePath);
 
                 if (entry.isDirectory()) {
@@ -311,15 +325,6 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
             e.printStackTrace();
             log.info("解压异常:{}", zipFile.getAbsolutePath());
             throw new Exception(MessageSource.M("ZIP_FILE_UNZIP_FAILURE"));
-        } finally {
-            if (zipFile.exists()) {
-                boolean delete = zipFile.delete();
-                if (delete) {
-                    log.info("压缩文件删除成功:{}", zipFile.getAbsolutePath());
-                } else {
-                    log.info("压缩文件删除失败:{}", zipFile.getAbsolutePath());
-                }
-            }
         }
         return true;
     }
