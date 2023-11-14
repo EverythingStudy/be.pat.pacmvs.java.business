@@ -24,6 +24,7 @@ import com.github.pagehelper.PageHelper;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
 import cn.staitech.anno.domain.AlgorithmModel;
+import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.SlidePrediction;
 import cn.staitech.anno.mapper.SlidePredictionMapper;
@@ -34,6 +35,7 @@ import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
+import cn.staitech.anno.vo.predictionInfo.in.EyeThumImageQuery;
 import cn.staitech.anno.vo.predictionInfo.in.PreExecData;
 import cn.staitech.anno.vo.predictionInfo.in.PredictionDataIn;
 import cn.staitech.anno.vo.predictionInfo.in.PredictionInfo;
@@ -234,6 +236,18 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 		ImageCsvGetVO imageCsvGetVO = new ImageCsvGetVO();
 		BeanUtil.copyProperties(request, imageCsvGetVO);
 		List<ImageCsvListVO> list = slidePredictionMapper.getImageCsvListVOList(imageCsvGetVO);
+		//
+		for(ImageCsvListVO vo:list){
+			EyeThumImageQuery query = new EyeThumImageQuery();
+			Long slideId = vo.getSlideId();
+			query.setSlideId(slideId);
+			query.setMainImage("1");
+			query.setDelFlag("0");
+			List<Image> mainImageList = slidePredictionMapper.getMainImageList(query);
+			if(CollectionUtils.isNotEmpty(mainImageList)){
+				vo.setPredictionThumbUrl(mainImageList.get(0).getThumbUrl());
+			}
+		}
 		PageMaster<ImageCsvListVO> pageMaster = new PageMaster<>(list);
 		PageHelper.clearPage();
 		return pageMaster;

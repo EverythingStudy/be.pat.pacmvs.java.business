@@ -4,9 +4,11 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
+import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.SlidePrediction;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
+import cn.staitech.anno.vo.predictionInfo.in.EyeThumImageQuery;
 import cn.staitech.anno.vo.predictionInfo.in.SlidePredictionQuery;
 import cn.staitech.anno.vo.predictionInfo.out.SlidePredictionInfo;
 
@@ -23,4 +25,6 @@ public interface SlidePredictionMapper extends BaseMapper<SlidePrediction> {
 	List<SlidePredictionInfo> getOriginalSlideList(SlidePredictionQuery req);
 	
 	List<ImageCsvListVO> getImageCsvListVOList(ImageCsvGetVO request);
+	
+	List<Image> getMainImageList(EyeThumImageQuery query);
 }
