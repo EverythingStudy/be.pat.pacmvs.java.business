@@ -265,10 +265,10 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                     // 查询选中状态
                     Slide slide = new Slide();
                     slide.setImageId(out.getImageId());
-                    slide.setProjectId(vo.getProjectId());
-
                     if (vo.getReviewRoundId() != null && vo.getReviewRoundId() > 0) {
                         slide.setReviewRoundId(vo.getReviewRoundId());
+                    }else{
+                        slide.setProjectId(vo.getProjectId());
                     }
                     // 查询当前项目或评审轮次是否选中此图片
                     out.setChoiceState(0);
