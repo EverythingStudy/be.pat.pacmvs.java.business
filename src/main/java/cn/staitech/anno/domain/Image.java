@@ -190,6 +190,6 @@ public class Image extends BaseEntity {
     @TableField(value = "folder_id")
     private Long folderId;
     @ApiModelProperty(value = "创建人")
-    @TableField(value = "nick_name")
+    @TableField(exist = false)
     private String nickName;
 }

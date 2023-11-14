@@ -104,6 +104,7 @@ public class ImageListVO extends Pager implements Serializable {
     @ApiModelProperty(value = "文件夹ID")
     private Long folderId;
     @ApiModelProperty(value = "创建人")
+    @TableField(exist = false)
     private String nickName;
 
 }
