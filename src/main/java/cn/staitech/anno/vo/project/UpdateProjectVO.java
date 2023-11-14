@@ -73,4 +73,14 @@ public class UpdateProjectVO implements Serializable {
     private Integer status;
     @ApiModelProperty(required = false, hidden = true, value = "切片列表(可以不传参数)")
     private Long[] imageIdList;
+
+    /**
+     * 眼科新添加字段
+     * */
+    @ApiModelProperty(value = "病理组织id")
+    private Long tissueId;
+
+    @ApiModelProperty(value = "算法模型id")
+    private Long modelId;
+
 }

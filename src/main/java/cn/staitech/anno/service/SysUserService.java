@@ -2,6 +2,8 @@ package cn.staitech.anno.service;
 
 import cn.staitech.system.api.domain.SysUser;
 
+import java.util.List;
+
 /**
  * 用户 业务层
  *
@@ -17,5 +19,8 @@ public interface SysUserService {
      */
     public SysUser selectUserById(Long userId);
 
-
+    /**
+     * 根据机构id查询用户列表
+     * */
+    List<SysUser> userList();
 }

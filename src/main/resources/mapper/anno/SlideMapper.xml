@@ -50,6 +50,8 @@
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="host_id" jdbcType="TINYINT" property="hostId"/>
         <result column="if_create_questions" jdbcType="VARCHAR" property="ifCreateQuestions"/>
+        <result column="prediction_image_id" jdbcType="BIGINT" property="predictionImageId"/>
+        <result column="folder_id" jdbcType="BIGINT" property="folderId"/>
     </resultMap>
     <sql id="Base_Column_List">
         slide_id
@@ -97,6 +99,7 @@
         topic_name,
         delete_flag,
         organization_id,
+        prediction_image_id,
         host_id
     </sql>
 
@@ -134,6 +137,18 @@
         <result property="createTime" column="create_time"/>
         <result property="size" column="size"/>
     </resultMap>
+
+    <resultMap type="cn.staitech.anno.vo.image.out.ImageListOutVO" id="eyeSlideResult">
+        <result property="folderId" column="folder_id"/>
+        <result property="imageName" column="image_name"/>
+        <result property="folderName" column="folder_name"/>
+        <result property="topicName" column="topic_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="size" column="size"/>
+    </resultMap>
+
+
 
     <sql id="selectByIdVo">
         SELECT slide_id,
@@ -268,6 +283,7 @@
         GROUP BY t.topic_name
     </select>
 
+    <!--眼科-删除-->
     <delete id="deleteProjectImage" parameterType="java.lang.Long">
         delete
         from tb_slide
@@ -391,6 +407,9 @@
         <set>
             <if test="description != null">
                 description = #{description},
+            </if>
+             <if test="remark != null">
+                remark = #{remark},
             </if>
             <if test="updateBy != null and updateBy != ''">
                 update_by = #{updateBy},
@@ -743,11 +762,18 @@
             <if test="imageName != null">
                 AND m.image_name LIKE CONCAT('%', #{imageName}, '%')
             </if>
+             <if test="aiAnalyzed != null">
+                AND s.ai_analyzed = #{aiAnalyzed}
+            </if>
+
             <if test="groupName != null">
                 AND s.group_name LIKE CONCAT('%', #{groupName}, '%')
             </if>
             <if test="gender != null">
                 AND s.gender = #{gender}
+            </if>
+            <if test="eyeMent != null">
+                AND s.eye_ment = #{eyeMent}
             </if>
             <if test="lesionType != null">
                 AND s.lesion_type1 LIKE CONCAT('%', #{lesionType}, '%')
@@ -915,4 +941,268 @@
             </if>
         </where>
     </select>
+
+    <!--眼科-选择图片查询-->
+    <select id="eyeSlideList" parameterType="cn.staitech.anno.vo.eyeslide.EyeSlideIn" resultMap="eyeSlideResult">
+        select f.folder_id, e.image_name,e.size, f.folder_name, i.topic_name, i.create_time, u.nick_name
+        from aipre_folder as f
+        left join tb_files as i on f.files_id = i.files_id
+        left join tb_image as e on e.folder_id = f.folder_id
+        left join sys_user as u on i.create_by = u.user_id
+        <where>
+            <if test="createBy != null">
+                AND i.create_by = #{createBy}
+            </if>
+            <if test="topicName != null">
+                AND i.topic_name LIKE CONCAT('%', #{topicName}, '%')
+            </if>
+            <if test="folderName != null">
+                AND f.folder_name LIKE CONCAT('%', #{folderName}, '%')
+            </if>
+            <if test="params != null">
+                <if test="params.beginTime != null and params.beginTime != ''">
+                    <!-- 开始时间检索 -->
+                    and date_format(i.create_time, '%y%m%d') &gt;= date_format(#{params.beginTime}, '%y%m%d')
+                </if>
+                <if test="params.endTime != null and params.endTime != ''">
+                    <!-- 结束时间检索 -->
+                    and date_format(i.create_time, '%y%m%d') &lt;= date_format(#{params.endTime}, '%y%m%d')
+                </if>
+            </if>
+            and e.biz_type=7 and e.folder_id>0
+        </where>
+    </select>
+
+    <!--眼科-逻辑删除文件夹下的图片-->
+    <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.SlidePrediction">
+        update aipre_slide_prediction
+        <set>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag},
+            </if>
+            update_time=sysdate()
+        </set>
+        where slide_id = #{slideId} and del_flag=0
+    </update>
+
+    <!--眼科-项目图片-->
+    <select id="eyeProjectSlide" parameterType="cn.staitech.anno.vo.eyeslide.EyeProjectSlideIn" resultType="cn.staitech.anno.vo.eyeslide.EyeProjectSlideOut">
+        SELECT
+			p.slide_id,
+			p.image_id,
+			i.thumb_url,
+			i.image_name,
+			p.main_image,
+			af.folder_name,
+			s.eye_ment 
+		FROM
+		aipre_slide_prediction AS p
+		LEFT JOIN tb_slide AS s ON p.slide_id = s.slide_id
+		LEFT JOIN tb_image AS i ON p.image_id = i.image_id
+		LEFT JOIN aipre_folder AS af ON s.folder_id = af.folder_id
+		<where>
+            <if test="projectId != null">
+                AND s.project_id = #{projectId}
+            </if>
+            <if test="imageName != null">
+                AND i.image_name LIKE CONCAT('%', #{imageName}, '%')
+            </if>
+            <if test="folderName != null">
+                AND af.folder_name LIKE CONCAT('%', #{folderName}, '%')
+            </if>
+            <if test="eyeMent != null">
+                AND s.eye_ment = #{eyeMent}
+            </if>
+        </where>
+        order by af.folder_name, i.image_name
+    </select>
+
+    <!--眼科-查询项目文件夹-->
+    <select id="eyeProjectFolder" parameterType="cn.staitech.anno.vo.eyeslide.EyeProjectSlideIn" resultType="cn.staitech.anno.vo.eyeslide.EyeProjectSlideOut">
+        select f.folder_name,s.eye_ment,s.slide_id,s.prompt from tb_slide as s left join aipre_folder as f on s.folder_id=f.folder_id
+        <where>
+            <if test="projectId != null">
+                AND s.project_id = #{projectId}
+            </if>
+            <if test="folderName != null">
+                AND f.folder_name LIKE CONCAT('%', #{folderName}, '%')
+            </if>
+            <if test="eyeMent != null">
+                AND s.eye_ment = #{eyeMent}
+            </if>
+        </where>
+        order by f.folder_name
+    </select>
+
+    <!--眼科-查询是否有算法结果-->
+    <select id="algorithmResult" parameterType="java.lang.Long" resultType="int">
+        select count(*) from tb_slide where project_id=#{proejctId} and (ai_analyzed=2 or ai_analyzed=3)
+    </select>
+
+    <!--眼科-查询要添加的数据-->
+    <select id="eyeFolder" parameterType="cn.staitech.anno.vo.eyeslide.EyeSaveSlide" resultType="cn.staitech.anno.vo.eyeslide.ProjectSlideOut">
+        select distinct f.folder_id from aipre_folder as f left join tb_image as i on i.folder_id=f.folder_id
+        <where>
+            <if test="createBy != null">
+                AND i.create_by = #{createBy}
+            </if>
+            <if test="topicName != null">
+                AND i.topic_name LIKE CONCAT('%', #{topicName}, '%')
+            </if>
+            <if test="folderName != null">
+                AND f.folder_name LIKE CONCAT('%', #{folderName}, '%')
+            </if>
+            <if test="params != null">
+                <if test="params.beginTime != null and params.beginTime != ''">
+                    <!-- 开始时间检索 -->
+                    and date_format(i.create_time, '%y%m%d') &gt;= date_format(#{params.beginTime}, '%y%m%d')
+                </if>
+                <if test="params.endTime != null and params.endTime != ''">
+                    <!-- 结束时间检索 -->
+                    and date_format(i.create_time, '%y%m%d') &lt;= date_format(#{params.endTime}, '%y%m%d')
+                </if>
+            </if>
+            and i.biz_type=7 and i.folder_id>0
+        </where>
+    </select>
+
+    <!--眼科-查询图片信息-->
+    <select id="eyeFolderSlide" parameterType="java.lang.Long" resultType="cn.staitech.anno.domain.Image">
+        select image_id,substring_index( image_name, '.',1) AS image_name from tb_image where folder_id=#{folderId}
+    </select>
+
+    <!--眼科-添加slide-->
+    <insert id="eyeInsertSlide" parameterType="cn.staitech.anno.domain.Slide" useGeneratedKeys="true"
+            keyProperty="slideId">
+        insert into tb_slide (
+        <if test="projectId != null and projectId != '' ">project_id,</if>
+        <if test="folderId != null and folderId != '' ">folder_id,</if>
+        <if test="createBy != null and createBy != '' ">create_by,</if>
+        <if test="prompt != null and prompt != '' ">prompt,</if>
+        <if test="eyeMent != null and eyeMent != '' ">eye_ment,</if>
+        create_time
+        )values(
+        <if test="projectId != null and projectId != ''">#{projectId},</if>
+        <if test="folderId != null and folderId != ''">#{folderId},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        <if test="prompt != null and prompt != ''">#{prompt},</if>
+        <if test="eyeMent != null and eyeMent != ''">#{eyeMent},</if>
+        sysdate()
+        )
+    </insert>
+
+    <!--眼科添加碎片-->
+    <insert id="eyeInsert">
+        insert into aipre_slide_prediction (slide_id,
+        image_id,
+        organization_id,
+        create_by,
+        create_time
+        )values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.slideId},
+            #{item.imageId},
+            #{item.organizationId},
+            #{item.createBy},
+            sysdate())
+        </foreach>
+    </insert>
+
+    <!--眼科-更新文件夹状态-->
+    <update id="eyeUpdateFolder" parameterType="cn.staitech.anno.domain.Slide">
+        update tb_slide
+        <set>
+            <if test="prompt != null">
+                prompt = #{prompt},
+            </if>
+            <if test="eyeMent != null">
+                eye_ment = #{eyeMent},
+            </if>
+        </set>
+        where slide_id = #{slideId}
+    </update>
+
+    <!--更新添加主图-->
+    <update id="eyeUpdateMainImage" parameterType="cn.staitech.anno.domain.SlidePrediction">
+        update aipre_slide_prediction
+        <set>
+            <if test="slideId != null">
+                slide_id = #{slideId,jdbcType=BIGINT},
+            </if>
+            <if test="imageId != null">
+                image_id = #{imageId,jdbcType=BIGINT},
+            </if>
+            <if test="aiAnalyzed != null">
+                ai_analyzed = #{aiAnalyzed,jdbcType=SMALLINT},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="organizationId != null">
+                organization_id = #{organizationId,jdbcType=BIGINT},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy,jdbcType=BIGINT},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag,jdbcType=CHAR},
+            </if>
+            <if test="mainImage != null">
+                main_image = #{mainImage,jdbcType=CHAR},
+            </if>
+        </set>
+        where slide_id = #{slideId} and image_id=#{imageId}
+    </update>
+
+    <!--眼科——查询图片错误原因-->
+    <select id="errorReason" parameterType="java.lang.Long" resultType="cn.staitech.anno.vo.eyeslide.EyeErrorReasonOut">
+        select prompt from tb_slide where slide_id=#{slideId}
+    </select>
+
+    <!--眼科-删除-->
+    <delete id="eyeDeleteImage" parameterType="java.lang.Long">
+        delete
+        from aipre_slide_prediction
+        where slide_id = #{slideId}
+    </delete>
+
+    <!--查询已添加的文件-->
+    <select id="addedFolder" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select folder_id from tb_slide where project_id=#{projectId}
+    </select>
+
+    <!--眼科-更新审核状态-->
+    <update id="updateMent" parameterType="cn.staitech.anno.domain.Slide" useGeneratedKeys="true"
+            keyProperty="slideId">
+        update tb_slide
+        <set>
+            <if test="updateBy != null and updateBy != ''">
+                update_by = #{updateBy},
+            </if>
+            <if test="eyeMent != null and eyeMent != ''">
+                eye_ment = #{eyeMent},
+            </if>
+            prompt=#{prompt},
+            update_time = sysdate()
+        </set>
+        where slide_id = #{slideId}
+    </update>
+
+    <!--眼科-查新文件夹状态-->
+    <select id="selectFolderMent" parameterType="java.lang.Long" resultType="cn.staitech.anno.domain.Slide">
+        select folder_id,prompt,slide_id,eye_ment from tb_slide where slide_id=#{slideId}
+    </select>
+
 </mapper>

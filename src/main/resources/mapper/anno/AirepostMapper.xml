@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.AirepostMapper">
+    <resultMap type="cn.staitech.anno.domain.Airepost" id="AirepostResult">
+        <result property="reportUuid" column="report_uuid"/>
+        <result property="aiStatus" column="ai_status"/>
+        <result property="aiReportJson" column="ai_report_json"/>
+        <result property="imageUuidId" column="image_uuid_id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="wasteTime" column="waste_time"/>
+        <result property="msg" column="msg"/>
+        <result property="jsonAddr" column="json_addr"/>
+        <result property="taskId" column="task_id"/>
+        <result property="graphicsCardModel" column="graphics_card_model"/>
+        <result property="serverModel" column="server_model"/>
+        <result property="width" column="width"/>
+        <result property="height" column="height"/>
+        <result property="centerX" column="center_x"/>
+        <result property="centerY" column="center_y"/>
+        <result property="rotation" column="rotation"/>
+        <result property="level" column="level"/>
+        <result property="primary" column="primary"/>
+        <result property="visible" column="visible"/>
+        <result property="slideId" column="slide_id"/>
+        <result property="fileName" column="file_name"/>
+    </resultMap>
+
+    <sql id="selectAirepostVo">
+        select a.report_uuid,
+               a.ai_status,
+               a.ai_report_json,
+               a.image_uuid_id,
+               a.project_id,
+               a.start_time,
+               a.end_time,
+               a.waste_time,
+               a.msg,
+               a.json_addr,
+               a.task_id,
+               a.graphics_card_model,
+               a.server_model,
+               a.width,
+               a.height,
+               a.center_x,
+               a.center_y,
+               a.rotation,
+               a.level,
+               a.`primary`,
+               a.visible,
+               s.slide_id,
+               i.file_name
+        from aipre_airepost a
+                 LEFT JOIN aipre_slide_prediction s ON a.image_uuid_id = s.slide_prediction_id
+                 LEFT JOIN tb_image i ON s.image_id = i.image_id
+    </sql>
+
+    <select id="selectAirepostList" parameterType="cn.staitech.anno.domain.Airepost" resultMap="AirepostResult">
+        <include refid="selectAirepostVo"/>
+        <where>
+            <if test="slideId != null">
+                and s.slide_id = #{slideId}
+            </if>
+            <if test="aiStatus != null  and aiStatus != ''">
+                and a.ai_status = #{aiStatus}
+            </if>
+            <if test="aiReportJson != null  and aiReportJson != ''">
+                and a.ai_report_json = #{aiReportJson}
+            </if>
+            <if test="imageUuidId != null  and imageUuidId != ''">
+                and a.image_uuid_id = #{imageUuidId}
+            </if>
+            <if test="projectId != null  and projectId != ''">
+                and a.project_id = #{projectId}
+            </if>
+            <if test="startTime != null ">
+                and a.start_time = #{startTime}
+            </if>
+            <if test="endTime != null ">
+                and a.end_time = #{endTime}
+            </if>
+            <if test="wasteTime != null ">
+                and a.waste_time = #{wasteTime}
+            </if>
+            <if test="msg != null  and msg != ''">
+                and a.msg = #{msg}
+            </if>
+            <if test="jsonAddr != null  and jsonAddr != ''">
+                and a.json_addr = #{jsonAddr}
+            </if>
+            <if test="taskId != null  and taskId != ''">
+                and a.task_id = #{taskId}
+            </if>
+            <if test="graphicsCardModel != null  and graphicsCardModel != ''">
+                and a.graphics_card_model = #{graphicsCardModel}
+            </if>
+            <if test="serverModel != null  and serverModel != ''">
+                and a.server_model = #{serverModel}
+            </if>
+        </where>
+        ORDER BY a.level ASC
+    </select>
+
+    <select id="selectAirepostByReportUuid" parameterType="Long" resultMap="AirepostResult">
+        <include refid="selectAirepostVo"/>
+        where a.report_uuid = #{reportUuid}
+    </select>
+
+    <insert id="insertAirepost" parameterType="cn.staitech.anno.domain.Airepost" useGeneratedKeys="true"
+            keyProperty="reportUuid">
+        insert into aipre_airepost
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="aiStatus != null">
+                ai_status,
+            </if>
+            <if test="aiReportJson != null">
+                ai_report_json,
+            </if>
+            <if test="imageUuidId != null and imageUuidId != ''">
+                image_uuid_id,
+            </if>
+            <if test="projectId != null and projectId != ''">
+                project_id,
+            </if>
+            <if test="startTime != null">
+                start_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="wasteTime != null">
+                waste_time,
+            </if>
+            <if test="msg != null and msg != ''">
+                msg,
+            </if>
+            <if test="jsonAddr != null and jsonAddr != ''">
+                json_addr,
+            </if>
+            <if test="taskId != null and taskId != ''">
+                task_id,
+            </if>
+            <if test="graphicsCardModel != null">
+                graphics_card_model,
+            </if>
+            <if test="serverModel != null">
+                server_model,
+            </if>
+            <if test="visible != null">
+                visible,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="aiStatus != null">
+                #{aiStatus},
+            </if>
+            <if test="aiReportJson != null">
+                #{aiReportJson},
+            </if>
+            <if test="imageUuidId != null and imageUuidId != ''">
+                #{imageUuidId},
+            </if>
+            <if test="projectId != null and projectId != ''">
+                #{projectId},
+            </if>
+            <if test="startTime != null">
+                #{startTime},
+            </if>
+            <if test="endTime != null">
+                #{endTime},
+            </if>
+            <if test="wasteTime != null">
+                #{wasteTime},
+            </if>
+            <if test="msg != null and msg != ''">
+                #{msg},
+            </if>
+            <if test="jsonAddr != null and jsonAddr != ''">
+                #{jsonAddr},
+            </if>
+            <if test="taskId != null and taskId != ''">
+                #{taskId},
+            </if>
+            <if test="graphicsCardModel != null">
+                #{graphicsCardModel},
+            </if>
+            <if test="serverModel != null">
+                #{serverModel},
+            </if>
+            <if test="visible != null">
+                #{visible},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateAirepost" parameterType="cn.staitech.anno.domain.Airepost">
+        update aipre_airepost
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="aiStatus != null">
+                ai_status = #{aiStatus},
+            </if>
+            <if test="aiReportJson != null">
+                ai_report_json = #{aiReportJson},
+            </if>
+            <if test="imageUuidId != null and imageUuidId != ''">
+                image_uuid_id = #{imageUuidId},
+            </if>
+            <if test="projectId != null and projectId != ''">
+                project_id = #{projectId},
+            </if>
+            <if test="startTime != null">
+                start_time = #{startTime},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime},
+            </if>
+            <if test="wasteTime != null">
+                waste_time = #{wasteTime},
+            </if>
+            <if test="msg != null and msg != ''">
+                msg = #{msg},
+            </if>
+            <if test="jsonAddr != null and jsonAddr != ''">
+                json_addr = #{jsonAddr},
+            </if>
+            <if test="taskId != null and taskId != ''">
+                task_id = #{taskId},
+            </if>
+            <if test="graphicsCardModel != null">
+                graphics_card_model = #{graphicsCardModel},
+            </if>
+            <if test="serverModel != null">
+                server_model = #{serverModel},
+            </if>
+
+            <if test="width != null">
+                width= #{width},
+            </if>
+            <if test="height != null">
+                height= #{height},
+            </if>
+            <if test="centerX != null">
+                center_x= #{centerX},
+            </if>
+            <if test="centerY != null">
+                center_y= #{centerY},
+            </if>
+            <if test="rotation != null">
+                rotation= #{rotation},
+            </if>
+            <if test="level != null">
+                level= #{level},
+            </if>
+            <if test="primary != null">
+                primary= #{primary},
+            </if>
+            <if test="visible != null">
+                visible= #{visible},
+            </if>
+        </trim>
+        where report_uuid = #{reportUuid}
+    </update>
+
+    <delete id="deleteAirepostByReportUuid" parameterType="Long">
+        delete
+        from aipre_airepost
+        where report_uuid = #{reportUuid}
+    </delete>
+
+    <delete id="deleteAirepostByReportUuids" parameterType="String">
+        delete from aipre_airepost where report_uuid in
+        <foreach item="reportUuid" collection="array" open="(" separator="," close=")">
+            #{reportUuid}
+        </foreach>
+    </delete>
+</mapper>

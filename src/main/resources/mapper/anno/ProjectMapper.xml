@@ -23,6 +23,8 @@
         <result property="indicatorNameEn" column="indicator_name_en"/>
         <result property="productSeries" column="product_series"/>
         <result property="organizationName" column="organization_name"/>
+        <result property="modelId" column="model_id"/>
+        <result property="tissueId" column="tissue_id"/>
     </resultMap>
 
     <resultMap id="ProjectMessage" type="cn.staitech.anno.vo.project.ProjectListVO">
@@ -47,6 +49,9 @@
         <result property="organizationId" column="organization_id"/><!-- 机构 -->
         <result property="productSeries" column="product_series"/>
         <result property="organizationName" column="organization_name"/>
+        <result property="modelId" column="model_id"/>
+        <result property="modelName" column="model_name"/>
+        <result property="modelNameEn" column="model_name_en"/>
     </resultMap>
 
     <resultMap id="SlideAnnotationResult" type="cn.staitech.anno.domain.SlideAnnotationResult">
@@ -128,19 +133,23 @@
                i.indicator_name,
                i.indicator_name_en,
                ps.name as product_series,
-               org.organization_name
+               org.organization_name,
+               p.model_id,
+               m.model_name,
+               m.model_name_en,
+               p.tissue_id
         from tb_project p
                  left join sys_user u on p.create_by = u.user_id
                  left join tb_pathological_indicator i on p.indicator_id = i.indicator_id
                  left join tb_product_series ps on p.product_series_id = ps.product_series_id
                  left join sys_organization org on p.organization_id = org.organization_id
+                 left join aipre_algorithm_model m on p.model_id=m.model_id
     </sql>
 
     <sql id="selectProjectBy">
         select project_id,
                project_name,
                image_total,
-               annotation_total,
                create_by,
                description,
                indicator_id,
@@ -150,7 +159,9 @@
                species_id,
                product_series_id,
                project_type,
-               organization_id
+               organization_id,
+               tissue_id,
+               model_id
         from tb_project
     </sql>
 
@@ -223,6 +234,23 @@
             <if test="createBy != null and createBy != ''">
                 AND p.create_by = #{createBy}
             </if>
+            <if test="modelId != null and modelId != ''">
+                AND p.model_id = #{modelId}
+            </if>
+            <if test="projectType != null">
+                AND p.project_type = #{projectType}
+            </if>
+            <!-- 眼科针对已启动项目查询 -->
+            <if test="projectTypeArray != null and projectTypeArray.length > 0">
+                AND p.`status` &lt;&gt; 1
+            </if>
+            <!-- 眼科针对6、7项目类型查询 -->
+            <if test="projectTypeArray != null and projectTypeArray.length > 0">
+                AND p.project_type in
+                <foreach collection="projectTypeArray" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
             <if test="createTimeParams != null">
                 <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
                     <!-- 开始时间检索 -->
@@ -267,6 +295,12 @@
         <if test="organizationId != null">
             organization_id,
         </if>
+        <if test="tissueId != null">
+            tissue_id,
+        </if>
+        <if test="modelId != null">
+            model_id,
+        </if>
         create_time,
         image_total,
         update_time
@@ -297,6 +331,12 @@
         </if>
         <if test="organizationId != null">
             #{organizationId},
+        </if>
+        <if test="tissueId != null">
+            #{tissueId},
+        </if>
+        <if test="modelId != null">
+            #{modelId},
         </if>
         sysdate(),
         0,

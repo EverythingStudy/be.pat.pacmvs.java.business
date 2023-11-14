@@ -17,6 +17,8 @@ import java.util.Date;
 public class ImageListOutVO {
     @ApiModelProperty(value = "切片ID（原图像ID）")
     private Long imageId;
+    @ApiModelProperty(value = "无扩展名文件名称")
+    private String fileName;
     @ApiModelProperty(value = "文件名称（文件名）")
     private String imageName;
     @ApiModelProperty(value = "图像url地址")
@@ -43,7 +45,7 @@ public class ImageListOutVO {
     private String fileStatus;
     @ApiModelProperty(value = "创建人id")
     private Long createBy;
-    @ApiModelProperty(value = "创建时间")
+    @ApiModelProperty(value = "创建时间/上传时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
     @ApiModelProperty(value = "更新人id")
@@ -79,4 +81,14 @@ public class ImageListOutVO {
     private Integer deleState;
     @ApiModelProperty(value = "添加状态：0未添加、1已添加")
     private Integer choiceState;
+    @ApiModelProperty(value = "文件夹ID")
+    private Long folderId;
+    @ApiModelProperty(value = "创建人")
+    private String nickName;
+
+    /**
+     * 眼科新添加字段
+     */
+    @ApiModelProperty(value = "文件夹名称")
+    private String folderName;
 }

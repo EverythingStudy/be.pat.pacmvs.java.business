@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.SlidePredictionMapper">
+  <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.SlidePrediction">
+    <id column="slide_prediction_id" jdbcType="BIGINT" property="slidePredictionId" />
+    <result column="slide_id" jdbcType="BIGINT" property="slideId" />
+    <result column="image_id" jdbcType="BIGINT" property="imageId" />
+    <result column="ai_analyzed" jdbcType="SMALLINT" property="aiAnalyzed" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+    <result column="main_image" jdbcType="CHAR" property="mainImage" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    slide_prediction_id, slide_id, image_id, ai_analyzed, description, organization_id, 
+    create_by, create_time, update_by, update_time, del_flag,main_image
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from aipre_slide_prediction
+    where slide_prediction_id = #{slidePredictionId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from aipre_slide_prediction
+    where slide_prediction_id = #{slidePredictionId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="slide_prediction_id" keyProperty="slidePredictionId" parameterType="cn.staitech.anno.domain.SlidePrediction" useGeneratedKeys="true">
+    insert into aipre_slide_prediction (slide_id, image_id, ai_analyzed,
+      description, organization_id, create_by,
+      create_time, update_by, update_time,
+      del_flag,main_image)
+    values (#{slideId,jdbcType=BIGINT}, #{imageId,jdbcType=BIGINT}, #{aiAnalyzed,jdbcType=SMALLINT},
+      #{description,jdbcType=VARCHAR}, #{organizationId,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT},
+      #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP},
+      #{delFlag,jdbcType=CHAR},#{mainImage,jdbcType=CHAR})
+  </insert>
+
+  <!--眼科-添加-->
+  <insert id="insertSelective" keyColumn="slide_prediction_id" keyProperty="slidePredictionId" parameterType="cn.staitech.anno.domain.SlidePrediction" useGeneratedKeys="true">
+    insert into aipre_slide_prediction
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="slideId != null">
+        slide_id,
+      </if>
+      <if test="imageId != null">
+        image_id,
+      </if>
+      <if test="aiAnalyzed != null">
+        ai_analyzed,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="organizationId != null">
+        organization_id,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+       <if test="mainImage != null">
+        main_image,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="slideId != null">
+        #{slideId,jdbcType=BIGINT},
+      </if>
+      <if test="imageId != null">
+        #{imageId,jdbcType=BIGINT},
+      </if>
+      <if test="aiAnalyzed != null">
+        #{aiAnalyzed,jdbcType=SMALLINT},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="organizationId != null">
+        #{organizationId,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=CHAR},
+      </if>
+      <if test="mainImage != null">
+        #{mainImage,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.SlidePrediction">
+    update aipre_slide_prediction
+    <set>
+      <if test="slideId != null">
+        slide_id = #{slideId,jdbcType=BIGINT},
+      </if>
+      <if test="imageId != null">
+        image_id = #{imageId,jdbcType=BIGINT},
+      </if>
+      <if test="aiAnalyzed != null">
+        ai_analyzed = #{aiAnalyzed,jdbcType=SMALLINT},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="organizationId != null">
+        organization_id = #{organizationId,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=CHAR},
+      </if>
+       <if test="mainImage != null">
+        main_image = #{mainImage,jdbcType=CHAR},
+      </if>
+    </set>
+    where slide_prediction_id = #{slidePredictionId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.staitech.anno.domain.SlidePrediction">
+    update aipre_slide_prediction
+    set slide_id = #{slideId,jdbcType=BIGINT},
+      image_id = #{imageId,jdbcType=BIGINT},
+      ai_analyzed = #{aiAnalyzed,jdbcType=SMALLINT},
+      description = #{description,jdbcType=VARCHAR},
+      organization_id = #{organizationId,jdbcType=BIGINT},
+      create_by = #{createBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=BIGINT},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=CHAR}
+    where slide_prediction_id = #{slidePredictionId,jdbcType=BIGINT}
+  </update>
+  
+  <select id="getOriginalSlideList" parameterType="cn.staitech.anno.vo.predictionInfo.in.SlidePredictionQuery"
+            resultType="cn.staitech.anno.vo.predictionInfo.out.SlidePredictionInfo">
+        SELECT
+			t1.slide_prediction_id,
+			t1.slide_id,
+			t1.image_id,
+			t2.image_name,
+			t2.thumb_url,
+			t2.image_path,
+			t1.ai_analyzed,
+			t1.description,
+			t1.organization_id,
+			t1.main_image,
+			t3.project_id 
+		FROM
+			aipre_slide_prediction t1
+			LEFT JOIN tb_image t2 ON t1.image_id = t2.image_id
+			LEFT JOIN tb_slide t3 ON t1.slide_id = t3.slide_id 
+        <where>
+            <if test="slideId != null">
+                AND t1.slide_id  = #{slideId}
+            </if>
+            <if test="eyeMent != null and eyeMent != ''">
+                AND t3.eye_ment  = #{eyeMent}
+            </if>
+        </where>
+        ORDER BY t1.ai_analyzed desc,t2.image_name asc
+    </select>
+    
+    
+    <!--查询 原始切片列表信息-->
+    <select id="getImageCsvListVOList" parameterType="cn.staitech.anno.vo.imagecsv.ImageCsvGetVO"
+            resultType="cn.staitech.anno.vo.imagecsv.ImageCsvListVO">
+        select s.slide_id,
+        s.review_round_id,
+        s.diagnosis,
+        s.status,
+        s.description,
+        s.ai_analyzed,
+        s.ai_check,
+        s.group_name,
+        s.gender,
+        s.species,
+        s.product_series,
+        s.dosage,
+        s.animal_source,
+        s.receiving_week,
+        s.dosing_cycle,
+        s.recovery_cycle,
+        s.date_of_death,
+        s.remove_reason,
+        s.organ,
+        s.lesion_type1,
+        s.lesion_degree1,
+        s.lesion_type2,
+        s.lesion_degree2,
+        s.topic_name,
+        s.delete_flag,
+        s.organization_id,
+        s.host_id,
+        s.create_time,
+        s.remark,
+        n.folder_name,
+        n.folder_url,
+        p.thumb_url prediction_thumb_url
+        from tb_slide s
+        left join aipre_folder n on s.folder_id = n.folder_id
+        left join tb_image p on s.prediction_image_id = p.image_id
+        left join tb_project m on s.project_id = m.project_id
+        <where>
+            <!--            切片编号        imageName
+                        组别        groupName
+                        性别        gender
+                        病变程度        lesionDegree
+                        病变类型        lesionType-->
+            <if test="projectId != null">
+                AND s.project_id = #{projectId, jdbcType=NUMERIC}
+            </if>
+            <if test="projectId != null">
+            	AND m.`status` &lt;&gt; 1
+            </if>
+            <if test="reviewRoundId != null">
+                AND s.review_round_id = #{reviewRoundId, jdbcType=NUMERIC}
+            </if>
+            <!-- <if test="imageName != null">
+                AND m.image_name LIKE CONCAT('%', #{imageName}, '%')
+            </if> -->
+            <if test="folderName != null">
+                AND n.folder_name LIKE CONCAT('%', #{folderName}, '%')
+            </if>
+             <if test="aiAnalyzed != null">
+                AND s.ai_analyzed = #{aiAnalyzed}
+            </if>
+            <if test="groupName != null">
+                AND s.group_name LIKE CONCAT('%', #{groupName}, '%')
+            </if>
+            <if test="gender != null">
+                AND s.gender = #{gender}
+            </if>
+            <if test="eyeMent != null">
+                AND s.eye_ment = #{eyeMent}
+            </if>
+            <if test="lesionType != null">
+                AND s.lesion_type1 LIKE CONCAT('%', #{lesionType}, '%')
+            </if>
+            <if test="lesionType != null">
+                AND s.lesion_type2 LIKE CONCAT('%', #{lesionType}, '%')
+            </if>
+            <if test="lesionDegree != null">
+                AND s.lesion_degree1 LIKE CONCAT('%', #{lesionDegree}, '%')
+            </if>
+            <if test="lesionDegree != null">
+                AND s.lesion_degree2 LIKE CONCAT('%', #{lesionDegree}, '%')
+            </if>
+            <if test="createTimeParams != null">
+                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
+                    <!-- 开始时间检索 -->
+                    and date_format(s.create_time, '%y%m%d') &gt;= date_format(#{createTimeParams.beginTime}, '%y%m%d')
+                </if>
+                <if test="createTimeParams.endTime != null and createTimeParams.endTime != ''">
+                    <!-- 结束时间检索 -->
+                    and date_format(s.create_time, '%y%m%d') &lt;= date_format(#{createTimeParams.endTime}, '%y%m%d')
+                </if>
+            </if>
+        </where>
+    </select>
+    
+    
+</mapper>

@@ -99,8 +99,6 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
             topic.setDelFlag(1);
             this.baseMapper.insert(topic);
         }
-
         return topic;
     }
-
 }
