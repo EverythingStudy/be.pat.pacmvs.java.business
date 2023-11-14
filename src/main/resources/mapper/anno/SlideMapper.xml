@@ -944,7 +944,7 @@
 
     <!--眼科-选择图片查询-->
     <select id="eyeSlideList" parameterType="cn.staitech.anno.vo.eyeslide.EyeSlideIn" resultMap="eyeSlideResult">
-        select f.folder_id, e.image_name,e.size, f.folder_name, i.topic_name, i.create_time, u.user_name as nick_name
+        select f.folder_id, e.image_name,e.size, f.folder_name, i.topic_name, i.create_time, u.nick_name
         from aipre_folder as f
         left join tb_files as i on f.files_id = i.files_id
         left join tb_image as e on e.folder_id = f.folder_id
