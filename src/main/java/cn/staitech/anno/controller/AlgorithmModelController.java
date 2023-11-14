@@ -25,7 +25,7 @@ public class AlgorithmModelController {
     private AlgorithmModelService algorithmModelService;
 
 
-    @ApiOperation(value = "病理病变列表")
+    @ApiOperation(value = "算法模型列表")
     @PostMapping("/list")
     public R<List<AlgorithmModel>> getModelList() {
         List<AlgorithmModel> algorithmModelList=algorithmModelService.list();

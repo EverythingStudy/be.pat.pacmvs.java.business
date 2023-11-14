@@ -27,6 +27,7 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -118,9 +119,11 @@ public class SlidePredictionController {
         slidePrediction.setUpdateTime(DateUtil.date());
         slidePredictionService.updateById(slidePrediction);
         //改为非主图
-        slidePrediction.setSlidePredictionId(list.get(0).getSlidePredictionId());
-        slidePrediction.setMainImage("2");
-        slidePredictionService.updateById(slidePrediction);
+        if (CollectionUtils.isNotEmpty(list)){
+            slidePrediction.setSlidePredictionId(list.get(0).getSlidePredictionId());
+            slidePrediction.setMainImage("2");
+            slidePredictionService.updateById(slidePrediction);
+        }
         if (Objects.equals(selectFolderMent.getEyeMent(), "1") && Objects.equals(selectFolderMent.getPrompt(), "2")) {
             //更改校验状态（0通过，1不通过）和提示语（提示语给为null）
             Slide slide = Slide.builder().slideId(req.getSlideId()).eyeMent("0").prompt(null).createBy(SecurityUtils.getUserId()).build();
