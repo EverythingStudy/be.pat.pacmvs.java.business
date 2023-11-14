@@ -171,6 +171,7 @@ public class Container {
     public static final Map<Integer, String> EYE_PROMPT_MAP = new ImmutableMap.Builder<Integer, String>()
             .put(1, "算法要求最小图片数量为5张。请删除后重新上传")
             .put(2, "因图像命名不符合要求，未识别到主图，请在原始切片中手动设置主图")
+            .put(3, "算法要求最小图片数量为7张。请删除后重新上传")
             .build();
 
 
@@ -180,6 +181,7 @@ public class Container {
     public static final Map<Integer, String> EYE_PROMPT_MAP_EN = new ImmutableMap.Builder<Integer, String>()
             .put(1, "算法要求最小图片数量为5张。请删除后重新上传en")
             .put(2, "因图像命名不符合要求，未识别到主图，请在原始切片中手动设置主图en")
+            .put(3, "算法要求最小图片数量为7张。请删除后重新上传en")
             .build();
 
 

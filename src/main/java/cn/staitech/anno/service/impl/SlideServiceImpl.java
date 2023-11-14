@@ -717,6 +717,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
      */
     @Override
     public PageMaster<EyeProjectSlideOut> eyeProjectSlide(EyeProjectSlideIn request) {
+        PageHelper.startPage(request.getPageNum(), request.getPageSize()).setReasonable(true);
         EyeProjectSlideOut eyeProjectSlideOut = new EyeProjectSlideOut();
         //查询校验通过的文件和图片
         eyeProjectSlideOut.setEyeMent("0");
@@ -737,9 +738,8 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         listVOList.addAll(listVOS);
         //排序（按照文件夹名称A-Z升序排列，相同名称按照切片名称升序排列）
         listVOList.sort(Comparator.comparing(EyeProjectSlideOut::getFolderName).thenComparing(EyeProjectSlideOut::getImageName));
-        PageHelper.startPage(request.getPageNum(), request.getPageSize()).setReasonable(true);
         PageMaster<EyeProjectSlideOut> pageMaster = new PageMaster<>(listVOList);
-        PageHelper.clearPage();
+//        PageHelper.clearPage();
         return pageMaster;
     }
 
@@ -864,7 +864,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                     List<Image> imageList = slideMapper.eyeFolderSlide(folderId);
                     if (imageList.size() < 7) {
                         List<SlidePrediction> predictions = new ArrayList<>();
-                        Slide slide = Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(SecurityUtils.getUserId()).folderId(folderId).prompt("1").eyeMent("1").build();
+                        Slide slide = Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(SecurityUtils.getUserId()).folderId(folderId).prompt("3").eyeMent("1").build();
                         //存储文件夹id
                         slideMapper.eyeInsertSlide(slide);
                         for (Image image : imageList) {
