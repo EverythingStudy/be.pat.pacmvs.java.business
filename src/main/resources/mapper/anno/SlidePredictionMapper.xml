@@ -201,42 +201,43 @@
     <!--查询 原始切片列表信息-->
     <select id="getImageCsvListVOList" parameterType="cn.staitech.anno.vo.imagecsv.ImageCsvGetVO"
             resultType="cn.staitech.anno.vo.imagecsv.ImageCsvListVO">
-        select s.slide_id,
-        s.review_round_id,
-        s.diagnosis,
-        s.status,
-        s.description,
-        s.ai_analyzed,
-        s.ai_check,
-        s.group_name,
-        s.gender,
-        s.species,
-        s.product_series,
-        s.dosage,
-        s.animal_source,
-        s.receiving_week,
-        s.dosing_cycle,
-        s.recovery_cycle,
-        s.date_of_death,
-        s.remove_reason,
-        s.organ,
-        s.lesion_type1,
-        s.lesion_degree1,
-        s.lesion_type2,
-        s.lesion_degree2,
-        s.topic_name,
-        s.delete_flag,
-        s.organization_id,
-        s.host_id,
-        s.create_time,
-        s.remark,
-        n.folder_name,
-        n.folder_url
-        <!-- ,p.thumb_url prediction_thumb_url -->
-        from tb_slide s
-        left join aipre_folder n on s.folder_id = n.folder_id
-        <!-- left join tb_image p on s.prediction_image_id = p.image_id -->
-        left join tb_project m on s.project_id = m.project_id
+       select e1.thumb_url prediction_thumb_url,s4.*  from (
+	        select s.slide_id,
+	        (select p1.image_id from aipre_slide_prediction p1  where p1.slide_id = s.slide_id and p1.main_image = '1' AND p1.del_flag = '0' ) image_id,
+	        s.review_round_id,
+	        s.diagnosis,
+	        s.status,
+	        s.description,
+	        s.ai_analyzed,
+	        s.ai_check,
+	        s.group_name,
+	        s.gender,
+	        s.species,
+	        s.product_series,
+	        s.dosage,
+	        s.animal_source,
+	        s.receiving_week,
+	        s.dosing_cycle,
+	        s.recovery_cycle,
+	        s.date_of_death,
+	        s.remove_reason,
+	        s.organ,
+	        s.lesion_type1,
+	        s.lesion_degree1,
+	        s.lesion_type2,
+	        s.lesion_degree2,
+	        s.topic_name,
+	        s.delete_flag,
+	        s.organization_id,
+	        s.host_id,
+	        s.create_time,
+	        s.remark,
+	        n.folder_name,
+	        n.folder_url
+	        from tb_slide s
+	        left join aipre_folder n on s.folder_id = n.folder_id
+	        left join tb_project m on s.project_id = m.project_id
+        )s4 LEFT JOIN tb_image e1 on s4.image_id = e1.image_id
         <where>
             <!--            切片编号        imageName
                         组别        groupName
