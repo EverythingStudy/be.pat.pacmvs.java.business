@@ -738,7 +738,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         }
         listVOList.addAll(listVOS);
         //排序（按照文件夹名称A-Z升序排列，相同名称按照切片名称升序排列）
-            listVOList.sort(Comparator.comparing(EyeProjectSlideOut::getFolderName));
+        listVOList.sort(Comparator.comparing(EyeProjectSlideOut::getFolderName));
 
         //分页
         ProjectDelVO projectDelVO = ProjectUtils.paging(request);
@@ -996,7 +996,14 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
     @Override
     public SlideAirepostVO selectSlideAirepostVOById(Long slideId) {
         Slide slide = slideMapper.selectById(slideId);
-        if (slide.getPredictionImageId() > 0 && slide.getAiCheck() == 2) {
+        Image image = imageMapper.selectById(slide.getPredictionImageId());
+        SlideAirepostVO slideAirepostVO = new SlideAirepostVO();
+        BeanUtil.copyProperties(image, slideAirepostVO);
+        slideAirepostVO.setSlideId(slideId);
+        slideAirepostVO.setPredictionImageId(slide.getPredictionImageId());
+        return slideAirepostVO;
+
+/*        if (slide.getPredictionImageId() > 0 && slide.getAiCheck() == 2) {
             Image image = imageMapper.selectById(slide.getPredictionImageId());
             SlideAirepostVO slideAirepostVO = new SlideAirepostVO();
             BeanUtil.copyProperties(image, slideAirepostVO);
@@ -1004,7 +1011,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
             slideAirepostVO.setPredictionImageId(slide.getPredictionImageId());
             return slideAirepostVO;
         }
-        return null;
+        return null;*/
     }
 
     /**
