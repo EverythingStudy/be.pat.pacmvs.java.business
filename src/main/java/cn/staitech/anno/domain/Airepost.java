@@ -46,8 +46,8 @@ public class Airepost {
     private String msg;
     @ApiModelProperty(value = "")
     private String jsonAddr;
-    @ApiModelProperty(value = "")
-    private Long taskId;
+    @ApiModelProperty(value = "任务ID")
+    private String taskId;
     @ApiModelProperty(value = "")
     private String graphicsCardModel;
     @ApiModelProperty(value = "")

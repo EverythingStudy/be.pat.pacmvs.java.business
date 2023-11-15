@@ -27,8 +27,8 @@ public class AirepostOutVO {
     private String msg;
     @ApiModelProperty(value = "图像物理路径")
     private String jsonAddr;
-    @ApiModelProperty(value = "")
-    private Long taskId;
+    @ApiModelProperty(value = "任务ID")
+    private String taskId;
     @ApiModelProperty(value = "")
     private String graphicsCardModel;
     @ApiModelProperty(value = "")
