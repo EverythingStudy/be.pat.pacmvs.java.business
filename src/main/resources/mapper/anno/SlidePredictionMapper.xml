@@ -303,7 +303,6 @@
         select s.slide_id,
         m.project_id,
 		(select p1.image_id from aipre_slide_prediction p1  where p1.slide_id = s.slide_id and p1.main_image = 1 AND p1.del_flag = '0' ) image_id,
-		s.review_round_id,
         s.review_round_id,
         s.diagnosis,
         s.status,
