@@ -302,7 +302,7 @@
         select e1.thumb_url prediction_thumb_url ,s4.* from (    
         select s.slide_id,
         m.project_id,
-		(select p1.image_id from aipre_slide_prediction p1  where p1.slide_id = s.slide_id and p1.main_image = 1 AND p1.del_flag = '0' ) image_id,
+		(select p1.image_id from aipre_slide_prediction p1  where p1.slide_id = s.slide_id and p1.main_image = 1 AND p1.del_flag = '0' ) image_id4,
         s.review_round_id,
         s.diagnosis,
         s.status,
@@ -387,7 +387,7 @@
                 </if>
             </if>
         </where>
-        	)s4 LEFT JOIN tb_image e1 on s4.image_id = e1.image_id 
+        	)s4 LEFT JOIN tb_image e1 on s4.image_id4 = e1.image_id 
         	ORDER BY s4.slide_id asc 
     </select>
     
