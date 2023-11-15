@@ -3,6 +3,10 @@ package cn.staitech.anno.utils;
 import cn.staitech.anno.domain.*;
 import cn.staitech.anno.service.*;
 import cn.staitech.anno.vo.examination.ExaminationListVO;
+import cn.staitech.anno.vo.eyeslide.EyeProjectSlideIn;
+import cn.staitech.anno.vo.eyeslide.EyeProjectSlideOut;
+import cn.staitech.anno.vo.eyeslide.EyeSlideIn;
+import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import cn.staitech.anno.vo.project.*;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.alibaba.fastjson.JSONObject;
@@ -43,7 +47,7 @@ public class ProjectUtils {
      * @param projectInforImageVO
      * @return
      */
-    public static ProjectDelVO paging(ProjectInForImageVO projectInforImageVO) {
+    public static ProjectDelVO paging(EyeProjectSlideIn projectInforImageVO) {
         int pageNum = projectInforImageVO.getPageNum();
         int pageSize = projectInforImageVO.getPageSize();
         boolean flag = false;
@@ -51,7 +55,7 @@ public class ProjectUtils {
             pageNum--;
             flag = true;
         }
-        List<ProjectListOutVO> result = new ArrayList<>();
+        List<EyeProjectSlideOut> result = new ArrayList<>();
         ProjectDelVO projectDelVO = new ProjectDelVO();
         projectDelVO.setPageNum(pageNum);
         projectDelVO.setPageSize(pageSize);
@@ -326,5 +330,25 @@ public class ProjectUtils {
         projectUtils.slideAnnotationResultService = this.slideAnnotationResultService;
         projectUtils.pathologicalIndicatorCategoryService = this.pathologicalIndicatorCategoryService;
 
+    }
+
+    /**
+     * 眼科--分页
+     * */
+    public static ProjectDelVO pagingEye(EyeSlideIn projectInforImageVO) {
+        int pageNum = projectInforImageVO.getPageNum();
+        int pageSize = projectInforImageVO.getPageSize();
+        boolean flag = false;
+        if (pageNum > 0) {
+            pageNum--;
+            flag = true;
+        }
+        List<ImageListOutVO> result = new ArrayList<>();
+        ProjectDelVO projectDelVO = new ProjectDelVO();
+        projectDelVO.setPageNum(pageNum);
+        projectDelVO.setPageSize(pageSize);
+        projectDelVO.setFlag(flag);
+        projectDelVO.setResults(result);
+        return projectDelVO;
     }
 }

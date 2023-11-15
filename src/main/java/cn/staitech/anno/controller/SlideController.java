@@ -4,8 +4,11 @@ package cn.staitech.anno.controller;
 import cn.hutool.core.bean.BeanUtil;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.service.SlideService;
+import cn.staitech.anno.service.SysUserService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.eyeslide.*;
+import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetPagerVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
@@ -19,11 +22,13 @@ import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.validation.annotation.Validated;
@@ -47,6 +52,8 @@ import java.util.Map;
 public class SlideController extends BaseController {
     @Resource
     private SlideService slideService;
+    @Resource
+    private SysUserService sysUserService;
 
     @RequiresPermissions("special:project:slicelist")
     @ApiOperation(value = "查询切片操作")
@@ -129,9 +136,9 @@ public class SlideController extends BaseController {
     }
 
     /**
-     * 更改切片描述接口
+     * 更改切片描述/备注接口
      */
-    @ApiOperation(value = "更改切片描述接口")
+    @ApiOperation(value = "更改切片描述/备注接口")
     @PostMapping("/updateDescription")
     public R<String> updateDescription(@Validated @RequestBody SlideDescriptionVO req) {
         for (Long id : req.getSlideId()) {
@@ -139,6 +146,9 @@ public class SlideController extends BaseController {
             slide.setSlideId(id);
             slide.setDescription(req.getDescription());
             slide.setUpdateBy(SecurityUtils.getUserId());
+            if (org.apache.commons.lang3.StringUtils.isNotEmpty(req.getRemark())) {
+                slide.setRemark(req.getRemark());
+            }
             slideService.updateDescription(slide);
         }
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
@@ -192,8 +202,6 @@ public class SlideController extends BaseController {
         slideService.jsonExport(slideList, projectId, status);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
-
-    // =======================================================================================================
 
     /**
      * 查询某个项目或者review_round_id对应的已经绑定的topic
@@ -327,5 +335,101 @@ public class SlideController extends BaseController {
         }
         return false;
     }
+
+    /**
+     * 上传人员
+     */
+    @ApiOperation(value = "拼接图象类项目---上传人员")
+    @ApiOperationSupport(author = "zmj")
+    @PostMapping("/uploadPersonnel")
+    public R<List<SysUser>> uploadPersonnel() {
+        List<SysUser> userList = sysUserService.userList();
+        return R.ok(userList);
+    }
+
+    /**
+     * 获取图片碎片
+     */
+    @ApiOperation(value = "拼接图象类项目---切片列表")
+    @ApiOperationSupport(author = "zmj")
+    @PostMapping("/folderList")
+    public R<PageMaster<ImageListOutVO>> folderList(@RequestBody @Validated EyeSlideIn eyeSlideIn) {
+        if (eyeSlideIn.getFolderName()==null && eyeSlideIn.getTopicName()==null && eyeSlideIn.getParams()==null && eyeSlideIn.getCreateBy()==null){
+            return R.ok();
+        }
+        PageMaster<ImageListOutVO> eyeImage = slideService.eyeImage(eyeSlideIn);
+        return R.ok(eyeImage);
+    }
+
+    /**
+     * 获取拼接图象类项目---项目图片
+     */
+    @ApiOperation(value = "拼接图象类项目---项目图片")
+    @ApiOperationSupport(author = "zmj")
+    @PostMapping("/projectPictureList")
+    public R<PageMaster<EyeProjectSlideOut>> projectPictureList(@RequestBody @Validated EyeProjectSlideIn eyeProjectSlideIn) {
+        PageMaster<EyeProjectSlideOut> eyeProjectSlide = slideService.eyeProjectSlide(eyeProjectSlideIn);
+        return R.ok(eyeProjectSlide);
+    }
+
+    /**
+     * 获取拼接图象类项目---项目图片删除
+     */
+    @Log(title = "删除图片", menu = "项目管理", subMenu = "项目详情", businessType = BusinessType.DELETE)
+    @ApiOperation(value = "拼接图象类项目---项目图片删除")
+    @ApiOperationSupport(author = "zmj")
+    @PostMapping("/projectPictureDel")
+    public R projectPictureDel(@RequestBody @Validated ProjectSlideDel projectSlideDel) {
+        return slideService.deleteProjectImage(projectSlideDel);
+    }
+
+
+    /**
+     * 保存文件夹和切片
+     */
+    @Log(title = "保存图片", menu = "项目管理", subMenu = "项目详情", businessType = BusinessType.INSERT)
+    @ApiOperation(value = "拼接图象类项目---保存文件夹和切片")
+    @ApiOperationSupport(author = "zmj")
+    @PostMapping("/eyeSave")
+    public R eyeSave(@RequestBody @Validated EyeSaveSlide eyeSaveSlide) {
+        return slideService.eyeFolder(eyeSaveSlide);
+    }
+
+    /**
+     * 拼接图象类项目---是否有算法结果
+     */
+    @ApiOperation(value = "拼接图象类项目---是否有算法结果")
+    @ApiOperationSupport(author = "zmj")
+    @GetMapping("/algorithmResult")
+    public R<Integer> algorithmResult(@RequestParam(name = "projectId") @ApiParam(name = "projectId", value = "项目id") Long projectId) {
+        Integer num = slideService.algorithmResult(projectId);
+        return R.ok(num);
+    }
+
+
+    /**
+     * 拼接图象类项目---查询错误原因
+     */
+    @ApiOperation(value = "拼接图象类项目---查询错误原因")
+    @ApiOperationSupport(author = "zmj")
+    @GetMapping("/errorReason")
+    public R<EyeErrorReasonOut> errorReason(@RequestParam(name = "slideId") @ApiParam(name = "slideId", value = "切片id") Long slideId) {
+        EyeErrorReasonOut errorReason = slideService.errorReason(slideId);
+        return R.ok(errorReason);
+    }
+
+
+    /**
+     * 拼接图像-单个切片详细信息 .
+     * 宽高、文件名、缩略图、宽高是 最大画布的:拼图的三倍宽高
+     */
+    @SneakyThrows
+    @ApiOperationSupport(author = "wangfeng")
+    @ApiOperation(value = "拼接图像单个切片", notes = "拼接图像单个切片 - 王峰")
+    @GetMapping("/airepost/{slideId}")
+    public R<SlideAirepostVO> selectById(@PathVariable("slideId") @ApiParam(value = "切片ID") Long slideId) {
+        return R.ok(slideService.selectSlideAirepostVOById(slideId));
+    }
+
 }
 

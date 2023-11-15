@@ -124,4 +124,9 @@ public interface SysUserMapper {
      * @return 结果
      */
     public SysUser checkEmailUnique(String email);
+
+    /**
+     * 根据机构id查询用户列表
+     * */
+    List<SysUser> userList(Long organizationId);
 }

@@ -4,13 +4,17 @@ import cn.staitech.anno.config.AsyncTask;
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.Image;
+import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.mapper.ImageMapper;
+import cn.staitech.anno.mapper.ProjectMapper;
+import cn.staitech.anno.mapper.SlideMapper;
 import cn.staitech.anno.mapper.SpecialImageMapper;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.service.SysOrganizationService;
 import cn.staitech.anno.utils.LanguageUtils;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.image.in.*;
 import cn.staitech.anno.vo.image.out.ImageListOutVO;
@@ -99,20 +103,23 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
             for (Image in : list) {
                 ImageListOutVO out = new ImageListOutVO();
                 BeanUtils.copyProperties(in, out);
+                out.setBusinessType(in.getBizType());
 
                 // 提取处理状态文本描述并赋值
                 Integer status = in.getStatus();
 
                 if (LanguageUtils.isEn()) {
+                    String fileStatus = bizType == 7 ? Container.IMAGE_STATUS_MAP_7_EN.get(status) : Container.IMAGE_STATUS_MAP_EN.get(status);
                     // 可用、不可用状态解析中
-                    out.setFileStatus(Container.IMAGE_STATUS_MAP_EN.get(status));
+                    out.setFileStatus(fileStatus);
                     // 评审轮次
                     if (bizType.equals(2)) {
                         out.setRoundName(MapConstant.getRoundNameEn(in.getRoundId()));
                     }
                 } else {
+                    String fileStatus = bizType == 7 ? Container.IMAGE_STATUS_MAP_7.get(status) : Container.IMAGE_STATUS_MAP.get(status);
                     // 可用、不可用状态解析中
-                    out.setFileStatus(Container.IMAGE_STATUS_MAP.get(status));
+                    out.setFileStatus(fileStatus);
                     // 评审轮次
                     if (bizType.equals(2)) {
                         out.setRoundName(MapConstant.getRoundName(in.getRoundId()));
@@ -132,6 +139,12 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                 // 匹配机构名称
                 if (map.containsKey(in.getOrganizationId())) {
                     out.setOrganizationName(map.get(in.getOrganizationId()).toString());
+                }
+
+                // 图片类型
+                if (bizType == 7) {
+                    String businessTypeName = out.getFolderId() == 0 ? "BUSINESS_TYPENAME_7_0" : "BUSINESS_TYPENAME_7_1";
+                    out.setBusinessTypeName(MessageSource.M(businessTypeName));
                 }
 
                 Slide slide = new Slide();
@@ -157,7 +170,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
 
     /**
-     * 项目管理-图像列表
+     * 项目管理-图像列表 TODO:
      *
      * @param vo
      * @return
@@ -166,7 +179,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
     @Transactional(rollbackFor = Exception.class)
     public PageMaster<ImageListOutVO> choiceList(ImageTopicVO vo) throws ExecutionException, InterruptedException {
-
         Image image = new Image();
         BeanUtils.copyProperties(vo, image);
 
@@ -252,15 +264,16 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                     // 查询选中状态
                     Slide slide = new Slide();
                     slide.setImageId(out.getImageId());
-                    slide.setProjectId(vo.getProjectId());
-
                     if (vo.getReviewRoundId() != null && vo.getReviewRoundId() > 0) {
                         slide.setReviewRoundId(vo.getReviewRoundId());
+                    }else{
+                        slide.setProjectId(vo.getProjectId());
                     }
                     // 查询当前项目或评审轮次是否选中此图片
-                    out.setChoiceState(0);
                     if (slideService.selectImageExist(slide).size() > 0) {
                         out.setChoiceState(1);
+                    }else{
+                        out.setChoiceState(0);
                     }
                 } else if (vo.getChoiceState() == 0) {
                     out.setChoiceState(0);
@@ -438,4 +451,5 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         image.setUpdateBy(loginUser);
         return imageMapper.updateById(image);
     }
+
 }

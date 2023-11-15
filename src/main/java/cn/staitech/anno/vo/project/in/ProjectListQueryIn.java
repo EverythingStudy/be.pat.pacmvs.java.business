@@ -42,4 +42,8 @@ public class ProjectListQueryIn extends Pager implements Serializable {
     private Long organizationId;
     @ApiModelProperty(value = "创建时间-查询入参")
     private Map<String, Object> createTimeParams;
+    @ApiModelProperty(value = "算法模型id")
+    private Long modelId;
+    @ApiModelProperty(value = "病理组织id")
+    private Long tissueId;
 }

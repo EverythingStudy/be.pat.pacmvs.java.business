@@ -43,6 +43,8 @@
         <result column="round_id" jdbcType="BIGINT" property="roundId"/>
         <result column="biz_type" jdbcType="TINYINT" property="bizType"/>
         <result column="source" jdbcType="TINYINT" property="source"/>
+        <result column="folder_id" jdbcType="BIGINT" property="folderId"/>
+        <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
     </resultMap>
     <sql id="Base_Column_List">
         image_id
@@ -51,7 +53,7 @@
         tile_count_list, level_count, chunk_total, md5, resolution_x, resolution_y, source_lens,
         process_flag, create_by, create_time, update_by, update_time, image_code, topic_id,
         topic_name, `status`, delete_flag, host_id, organization_id, round_id, biz_type,
-        `source`
+        `source`,folder_id
     </sql>
 
 
@@ -94,6 +96,8 @@
         <result property="roundId" column="round_id"/>
         <result property="bizType" column="biz_type"/>
         <result property="source" column="source"/>
+        <result property="folderId" column="folder_id"/>
+        <result property="nickName" column="nick_name"/>
     </resultMap>
 
     <sql id="selectImageVo">
@@ -135,7 +139,8 @@
                organization_id,
                round_id,
                biz_type,
-               `source`
+               `source`,
+               folder_id
         from tb_image
     </sql>
 
@@ -177,11 +182,14 @@
         i.round_id,
         i.biz_type,
         i.source,
+        i.folder_id,
         s.slide_id,
         s.human_annotation_total,
-        s.description
+        s.description,
+        u.nick_name
         from tb_slide s
         left join tb_image i on i.image_id = s.image_id
+        left join sys_user u on i.create_by = u.user_id
         <where>
             <if test="projectId != null and projectId != ''">
                 and s.project_id = #{projectId}
@@ -217,62 +225,111 @@
     process_flag 处理状态，不可用原因共三种，0上传失败（MD5校验不通过），1解析中，2解析失败（不能获得缩略图）
     -->
     <select id="selectListSlfe" parameterType="cn.staitech.anno.domain.Image" resultMap="BaseResultMap">
-        <include refid="selectImageVo">
-        </include>
+        select i.image_id,
+        i.file_name,
+        i.image_name,
+        i.image_path,
+        i.image_url,
+        i.thumb_url,
+        i.macro_url,
+        i.label_url,
+        i.cache_url,
+        i.multiple,
+        i.format,
+        i.width,
+        i.height,
+        i.`depth`,
+        i.`size`,
+        i.global_size,
+        i.resolving_power,
+        i.tile_count_list,
+        i.level_count,
+        i.chunk_total,
+        i.md5,
+        i.resolution_x,
+        i.resolution_y,
+        i.source_lens,
+        i.process_flag,
+        i.create_by,
+        i.create_time,
+        i.update_by,
+        i.update_time,
+        i.image_code,
+        i.topic_id,
+        i.topic_name,
+        i.`status`,
+        i.delete_flag,
+        i.host_id,
+        i.organization_id,
+        i.round_id,
+        i.biz_type,
+        i.`source`,
+        i.folder_id,
+        u.nick_name
+        from tb_image i
+        left join sys_user u on i.create_by = u.user_id
         <where>
-            delete_flag = 1
+            i.delete_flag = 1
             <if test="imageId != null">
                 <!-- 切片（图像）ID -->
-                and image_id = #{imageId}
+                and i.image_id = #{imageId}
             </if>
             <if test="topicId != null">
                 <!-- 专题ID -->
-                and topic_id = #{topicId}
+                and i.topic_id = #{topicId}
             </if>
             <if test="status != null">
                 <!-- 切片状态 -->
-                and status = #{status}
+                and i.status = #{status}
             </if>
             <if test="organizationId != null">
                 <!-- 组织机构编号 -->
-                and organization_id = #{organizationId}
+                and i.organization_id = #{organizationId}
             </if>
             <if test="roundId != null">
                 <!--轮次编号 -->
-                and round_id = #{roundId}
+                and i.round_id = #{roundId}
             </if>
             <if test="bizType != null">
                 <!-- 业务类型编号 -->
-                and biz_type = #{bizType}
+                and i.biz_type = #{bizType}
+            </if>
+            <if test="createBy != null">
+                <!-- 专题名称 -->
+                and i.create_by = #{createBy}
             </if>
             <if test="source != null">
                 <!-- 图像来源：上传方式 -->
-                and source = #{source}
+                and i.source = #{source}
+            </if>
+            <if test="fileName != null and imageName != ''">
+                <!-- 图像名称(不带扩展名) -->
+                and i.file_name like concat('%', #{fileName}, '%')
             </if>
             <if test="imageName != null and imageName != ''">
                 <!-- 图像名称 -->
-                and image_name like concat('%', #{imageName}, '%')
+                and i.image_name like concat('%', #{imageName}, '%')
             </if>
             <if test="imageCode != null and imageCode != ''">
                 <!-- 切片（图像）编号 -->
-                and image_code like concat('%', #{imageCode}, '%')
+                and i.image_code like concat('%', #{imageCode}, '%')
             </if>
             <if test="topicName != null and topicName != ''">
                 <!-- 专题名称 -->
-                and topic_name like concat('%', #{topicName}, '%')
+                and i.topic_name like concat('%', #{topicName}, '%')
             </if>
             <if test="createTimeParams != null">
                 <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
                     <!-- 开始时间检索 -->
-                    and date_format(create_time,'%y%m%d') &gt;= date_format(#{createTimeParams.beginTime},'%y%m%d')
+                    and date_format(i.create_time,'%y%m%d') &gt;= date_format(#{createTimeParams.beginTime},'%y%m%d')
                 </if>
                 <if test="createTimeParams.endTime != null and createTimeParams.endTime != ''">
                     <!-- 结束时间检索 -->
-                    and date_format(create_time,'%y%m%d') &lt;= date_format(#{createTimeParams.endTime},'%y%m%d')
+                    and date_format(i.create_time,'%y%m%d') &lt;= date_format(#{createTimeParams.endTime},'%y%m%d')
                 </if>
             </if>
         </where>
-        order by image_id desc
+        order by i.image_id desc
     </select>
 
     <!-- 查询未选中的切片列表 -->

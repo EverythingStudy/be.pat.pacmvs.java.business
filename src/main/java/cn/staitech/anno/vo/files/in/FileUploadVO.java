@@ -71,7 +71,6 @@ public class FileUploadVO implements Serializable {
      * 分块大小
      */
     private Long filesId;
-
     @ApiModelProperty(value = "uuid")
     private String uuid;
 

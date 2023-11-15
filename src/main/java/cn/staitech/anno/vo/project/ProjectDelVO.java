@@ -1,5 +1,7 @@
 package cn.staitech.anno.vo.project;
 
+import cn.staitech.anno.vo.eyeslide.EyeProjectSlideOut;
+import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -24,5 +26,8 @@ public class ProjectDelVO {
     private Boolean flag;
 
     @ApiModelProperty(value = "", hidden = true)
-    private List<ProjectListOutVO> result;
+    private List<EyeProjectSlideOut> result;
+
+    @ApiModelProperty(value = "", hidden = true)
+    private List<ImageListOutVO> results;
 }

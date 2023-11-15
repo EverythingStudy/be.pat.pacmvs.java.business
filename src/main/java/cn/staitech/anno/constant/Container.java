@@ -1,5 +1,6 @@
 package cn.staitech.anno.constant;
 
+import cn.hutool.core.collection.ConcurrentHashSet;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class Container {
     /**
      * FileUpload - 定义一个基于多线程 的 hashmap
      */
-    public static final Map<String, ArrayList<Integer>> FILE_MAP = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, ConcurrentHashSet<Integer>> FILE_MAP = new ConcurrentHashMap<>();
 
 
     /**
@@ -53,6 +54,21 @@ public class Container {
             .put(1, "Available")
             .build();
 
+    /**
+     * Image - 可用状态：0不可用1可用
+     */
+    public static final Map<Integer, String> IMAGE_STATUS_MAP_7 = new ImmutableMap.Builder<Integer, String>()
+            .put(0, "解析失败")
+            .put(1, "解析成功")
+            .build();
+
+    /**
+     * Image - EN - 可用状态：0不可用1可用
+     */
+    public static final Map<Integer, String> IMAGE_STATUS_MAP_7_EN = new ImmutableMap.Builder<Integer, String>()
+            .put(0, "Unavailable")
+            .put(1, "Available")
+            .build();
     /**
      * 项目状态
      */
@@ -148,5 +164,27 @@ public class Container {
             .put(0, "已删除")
             .put(1, "未删除")
             .build();
+
+    /**
+     * 眼科-提示语
+     */
+    public static final Map<Integer, String> EYE_PROMPT_MAP = new ImmutableMap.Builder<Integer, String>()
+            .put(1, "算法要求最小图片数量为5张。请删除后重新上传")
+            .put(2, "因图像命名不符合要求，未识别到主图，请在原始切片中手动设置主图")
+            .put(3, "算法要求最小图片数量为7张。请删除后重新上传")
+            .build();
+
+
+    /**
+     * 眼科-提示语-en
+     */
+    public static final Map<Integer, String> EYE_PROMPT_MAP_EN = new ImmutableMap.Builder<Integer, String>()
+            .put(1, "算法要求最小图片数量为5张。请删除后重新上传en")
+            .put(2, "因图像命名不符合要求，未识别到主图，请在原始切片中手动设置主图en")
+            .put(3, "算法要求最小图片数量为7张。请删除后重新上传en")
+            .build();
+
+
+
 
 }
