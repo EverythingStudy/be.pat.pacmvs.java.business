@@ -26,7 +26,6 @@ import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.pagehelper.PageHelper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import lombok.SneakyThrows;
@@ -376,6 +375,7 @@ public class SlideController extends BaseController {
     /**
      * 获取拼接图象类项目---项目图片删除
      */
+    @Log(title = "删除图片", menu = "项目管理", subMenu = "项目详情", businessType = BusinessType.DELETE)
     @ApiOperation(value = "拼接图象类项目---项目图片删除")
     @ApiOperationSupport(author = "zmj")
     @PostMapping("/projectPictureDel")
@@ -387,6 +387,7 @@ public class SlideController extends BaseController {
     /**
      * 保存文件夹和切片
      */
+    @Log(title = "保存图片", menu = "项目管理", subMenu = "项目详情", businessType = BusinessType.INSERT)
     @ApiOperation(value = "拼接图象类项目---保存文件夹和切片")
     @ApiOperationSupport(author = "zmj")
     @PostMapping("/eyeSave")
