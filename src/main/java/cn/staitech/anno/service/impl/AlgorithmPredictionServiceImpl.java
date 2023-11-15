@@ -249,7 +249,6 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 				vo.setPredictionThumbUrl("");
 			}
 		}
-//		List<ImageCsvListVO> list = slidePredictionMapper.getSlidePredictionList(imageCsvGetVO);
 		PageMaster<ImageCsvListVO> pageMaster = new PageMaster<>(list);
 		PageHelper.clearPage();
 		return pageMaster;

@@ -8,6 +8,7 @@ import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.SlidePrediction;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
+import cn.staitech.anno.vo.predictionInfo.in.EyeSlideResult;
 import cn.staitech.anno.vo.predictionInfo.in.EyeThumImageQuery;
 import cn.staitech.anno.vo.predictionInfo.in.SlidePredictionQuery;
 import cn.staitech.anno.vo.predictionInfo.out.SlidePredictionInfo;
@@ -28,5 +29,5 @@ public interface SlidePredictionMapper extends BaseMapper<SlidePrediction> {
 	
 	List<Image> getMainImageList(EyeThumImageQuery query);
 	
-	List<ImageCsvListVO> getSlidePredictionList(ImageCsvGetVO request);
+	List<EyeSlideResult> getSlidePredictionList(ImageCsvGetVO request);
 }
