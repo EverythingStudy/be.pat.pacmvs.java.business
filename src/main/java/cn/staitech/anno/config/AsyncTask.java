@@ -99,33 +99,33 @@ public class AsyncTask {
     public void zipExport(String zipUrl, Long projectId)  {
         File file1 = new File(zipUrl);
 //        try {
-            // 查询切片列表
-            List<SlideRes> slideResList = slideMapper.selectImageList(projectId);
-            //zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
-            //必须指明读取的各式，不然会存在问题
-            ZipFile zipFile = new ZipFile(file1, Charset.forName("gbk"));
-            //按流的方式读取文件，输入到管道中
-            InputStream in = new BufferedInputStream(Files.newInputStream(file1.toPath()));
-            //字节流转换为压缩文件输入流，通常用来读取压缩文件
-            ZipInputStream zp = new ZipInputStream(in);
-            //定义文件条目
-            ZipEntry ze;
-            Enumeration<? extends ZipEntry> zipEnum = zipFile.entries();
-            // 循环压缩包中解压内容
-            while (zipEnum.hasMoreElements()) {
-                // 获取下一个元素
-                ze = zipEnum.nextElement();
-                if (!ze.isDirectory()) {
-                    long size = ze.getSize();
-                    if (size > 0) {
-                        InputStream bf = zipFile.getInputStream(ze);
-                        InputStream newBf = zipFile.getInputStream(ze);
-                        parseJson(bf, newBf, slideResList);
-                        bf.close();
-                    }
+        // 查询切片列表
+        List<SlideRes> slideResList = slideMapper.selectImageList(projectId);
+        //zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
+        //必须指明读取的各式，不然会存在问题
+        ZipFile zipFile = new ZipFile(file1, Charset.forName("gbk"));
+        //按流的方式读取文件，输入到管道中
+        InputStream in = new BufferedInputStream(Files.newInputStream(file1.toPath()));
+        //字节流转换为压缩文件输入流，通常用来读取压缩文件
+        ZipInputStream zp = new ZipInputStream(in);
+        //定义文件条目
+        ZipEntry ze;
+        Enumeration<? extends ZipEntry> zipEnum = zipFile.entries();
+        // 循环压缩包中解压内容
+        while (zipEnum.hasMoreElements()) {
+            // 获取下一个元素
+            ze = zipEnum.nextElement();
+            if (!ze.isDirectory()) {
+                long size = ze.getSize();
+                if (size > 0) {
+                    InputStream bf = zipFile.getInputStream(ze);
+                    InputStream newBf = zipFile.getInputStream(ze);
+                    parseJson(bf, newBf, slideResList);
+                    bf.close();
                 }
-                zp.closeEntry();
             }
+            zp.closeEntry();
+        }
 //        } catch (Exception e) {
 //            throw new Exception("json文件解析失败");
 //        }
@@ -172,7 +172,6 @@ public class AsyncTask {
         if (imageName != null) {
             for (SlideRes slide : slideResList) {
                 // 判断名称切片名称是否相同
-
                 if (Objects.equals(slide.getImageName(), imageName)) {
                     // 删除当前切片中所有标注
                     QueryWrapper<Marking> markingQueryWrapperBy = new QueryWrapper<>();
@@ -217,6 +216,7 @@ public class AsyncTask {
                                     // 添加数据入库
                                     if (markingList.size() >= BATCH_SIZE) {
                                         markingServiceV1.saveBatch(markingList);
+                                        markingList = new ArrayList<>();
                                     }
                                 }
                             }
