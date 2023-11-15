@@ -1,8 +1,10 @@
 package cn.staitech.anno.controller;
 
 import cn.hutool.json.JSONUtil;
+import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.SlidePrediction;
 import cn.staitech.anno.service.SlidePredictionService;
+import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.service.remote.SlideImageService;
 import cn.staitech.anno.vo.predictionInfo.in.EyeAlgorithmCallBackIn;
 import cn.staitech.anno.vo.predictionInfo.in.EyeAnalyzedResult;
@@ -46,6 +48,9 @@ public class SlidePredictionCallBackController {
 
     @Resource
     private SlideImageService slideImageService;
+    
+    @Resource
+    private SlideService slideService;
 
     @ApiOperation(value = "眼科回调")
     @PostMapping("/eyeAlgorithm")
@@ -94,7 +99,14 @@ public class SlidePredictionCallBackController {
                 		 slideP.setAiAnalyzed(3);
                 		 spList.add(slideP);
                 	 }
+                	 
                 	 slidePredictionService.updateBatchById(spList);
+                	 //修改slide表状态
+                	 Slide slide = new Slide();
+                	 slide.setSlideId(slideId);
+                	 short shortAiAnalyzed = (short) aiAnalyzed;
+                	 slide.setAiAnalyzed(shortAiAnalyzed);
+                	 slideService.updateById(slide);
                  }
             }
         }
