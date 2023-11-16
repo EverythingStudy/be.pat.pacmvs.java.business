@@ -262,6 +262,10 @@ public class MarkingServiceImpl implements MarkingService {
     public String update(MarkingUpdateIn req) throws Exception {
         // 查询标注表中信息
         Marking markingBy = markingMapper.selectById(req.getMarking_id());
+        //判断是否是自己的标注信息
+        if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId())){
+            throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
+        }
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
@@ -979,10 +983,18 @@ public class MarkingServiceImpl implements MarkingService {
         Long userId = SecurityUtils.getUserId();
         DownTask task = DownTask.builder().code(snowflake.nextIdStr()).status(Constants.DOWN_STATE_RUNNING).createTime(new Date()).updateTime(new Date()).updateBy(userId).createBy(userId).build();
         downTaskMapper.insert(task);
-
+        //过滤掉交付的slide
+        List<Long>slideIdList=slideIds.stream().filter(e->{
+            Slide slideBy = slideMapperV1.selectById(e);
+            if (!Objects.equals(slideBy.getStatus(), "7")){
+                return true;
+            }
+            return false;
+        }).collect(Collectors.toList());
+//        slideMapper.selectFolderMent();
         // 执行任务
         // 查询所有的切片
-        executor.submit(new TaskThread(task, projectId, projectBy.getProjectName(), slideIds, SecurityUtils.getLoginUser().getSysUser()));
+        executor.submit(new TaskThread(task, projectId, projectBy.getProjectName(), slideIdList, SecurityUtils.getLoginUser().getSysUser()));
 
         return task;
 
@@ -1111,7 +1123,10 @@ public class MarkingServiceImpl implements MarkingService {
                     QueryWrapper<Slide> queryWrapper = Wrappers.query();
                     queryWrapper.eq("project_id", projectId);
                     queryWrapper.select("slide_id");
-                    List<Slide> slideList = slideMapperV1.selectList(queryWrapper);
+                    List<Slide> slideLists = slideMapperV1.selectList(queryWrapper);
+                    // 过滤掉交付的slide
+                    List<Slide> slideList = slideLists.stream().filter(s-> !Objects.equals(s.getStatus(), "7")).collect(Collectors.toList());
+
                     slideIds = new ArrayList<>();
                     slideList.forEach(slide -> {
                         slideIds.add(slide.getSlideId());

@@ -38,7 +38,11 @@ public class SysUserServiceImpl implements SysUserService {
      * */
     @Override
     public List<SysUser> userList(){
+        SysUser sysUser=new SysUser();
         Long organizationId=SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-        return userMapper.userList(organizationId);
+        if (!SysUser.isAdmin(SecurityUtils.getUserId())){
+            sysUser.setOrganizationId(organizationId);
+        }
+        return userMapper.userList(sysUser);
     }
 }
