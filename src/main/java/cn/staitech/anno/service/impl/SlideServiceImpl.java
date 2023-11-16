@@ -771,7 +771,10 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
      */
     @Override
     public PageMaster<ImageListOutVO> eyeImage(EyeSlideIn eyeSlideIn) {
-        eyeSlideIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        if (!SysUser.isAdmin(SecurityUtils.getUserId())){
+            eyeSlideIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        }
+
         List<ImageListOutVO> imageListOutVOS = slideMapper.eyeSlideList(eyeSlideIn);
         List<ImageListOutVO> projectSlideOutList = new ArrayList<>();
         //去重

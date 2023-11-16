@@ -128,5 +128,5 @@ public interface SysUserMapper {
     /**
      * 根据机构id查询用户列表
      * */
-    List<SysUser> userList(Long organizationId);
+    List<SysUser> userList(SysUser sysUser);
 }
