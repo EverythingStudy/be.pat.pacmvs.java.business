@@ -199,4 +199,8 @@ public class Project extends BaseEntity {
     @TableField(exist = false)
     @ApiModelProperty(value = "算法模型英文名称")
     private String modelNameEn;
+    
+    @TableField(exist = false)
+    @ApiModelProperty(value = "项目参与人")
+    private Long partUserId;
 }

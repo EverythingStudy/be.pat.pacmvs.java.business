@@ -8,7 +8,7 @@ import cn.staitech.anno.vo.reportrecord.ReportRecordAllVO;
 import cn.staitech.anno.vo.reportrecord.ReportRecordExportVO;
 import cn.staitech.anno.vo.reportrecord.ReportRecordSingleVO;
 import cn.staitech.anno.vo.reportrecord.ReportRecordViewVO;
-import cn.staitech.anno.vo.subimage.SubImage;
+import cn.staitech.anno.domain.SubImage;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

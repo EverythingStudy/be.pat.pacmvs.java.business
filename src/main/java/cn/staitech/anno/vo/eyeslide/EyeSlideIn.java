@@ -35,4 +35,7 @@ public class EyeSlideIn extends Pager {
     @NotNull(message = "{ProjectRemoveIn.projectId.isnull}")
     private Long projectId;
 
+    @ApiModelProperty(value = "机构id",hidden = true)
+    private Long organizationId;
+
 }

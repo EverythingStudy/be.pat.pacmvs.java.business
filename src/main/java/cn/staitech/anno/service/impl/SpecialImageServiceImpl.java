@@ -25,7 +25,7 @@ import cn.staitech.anno.vo.specialimageanno.AlgorithmCutImageVO;
 import cn.staitech.anno.vo.specialimageanno.SpecialAnnDataVO;
 import cn.staitech.anno.vo.specialimageanno.SpecialCutImageVO;
 import cn.staitech.anno.vo.specialsliceimage.AuditSpecialImageVO;
-import cn.staitech.anno.vo.subimage.SubImage;
+import cn.staitech.anno.domain.SubImage;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.uuid.IdUtils;
 import cn.staitech.common.security.utils.SecurityUtils;

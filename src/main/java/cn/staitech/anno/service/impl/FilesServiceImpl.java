@@ -1,6 +1,7 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.constant.CommonConstant;
+import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.Folder;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.mapper.FilesMapper;
@@ -168,8 +169,14 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                         // INSERT INTO tb_image
                         if (file.isFile()) {
                             String absolutePath = file.getAbsolutePath();
-                            Image image = new Image();
+                            // 判断文件格式，非jpg,png排除
+                            String fileExt = absolutePath.substring(absolutePath.lastIndexOf('.') + 1).toLowerCase();
+                            if (!Container.IMAGE_EXT_SET.contains(fileExt)) {
+                                continue;
+                            }
 
+                            Image image = new Image();
+                            image.setFormat(fileExt);
                             image.setFileName(file.getName().substring(0, file.getName().lastIndexOf(CommonConstant.FILE_SUFFIX)));
                             image.setImageName(file.getName());
                             image.setImagePath(absolutePath);
@@ -222,8 +229,13 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                                 // INSERT INTO tb_image
                                 if (subfile.isFile()) {
                                     String absolutePath = subfile.getAbsolutePath();
-                                    Image image = new Image();
+                                    // 判断文件格式，非jpg,png排除
+                                    String fileExt = absolutePath.substring(absolutePath.lastIndexOf('.') + 1).toLowerCase();
+                                    if (!Container.IMAGE_EXT_SET.contains(fileExt)) {
+                                        continue;
+                                    }
 
+                                    Image image = new Image();
                                     image.setFileName(subfile.getName().substring(0, subfile.getName().lastIndexOf(CommonConstant.FILE_SUFFIX)));
                                     image.setImageName(subfile.getName());
                                     image.setImagePath(absolutePath);
@@ -366,7 +378,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
             // 生成缩略图
             ImgPicCompression.doCompress(image.getImagePath(), 256, 256, absFilePath, true);
 
-            image.setFormat(image.getImagePath().substring(image.getImagePath().lastIndexOf('.') + 1));
+
             image.setImageCode(uuid);
             image.setBizType(7);
         }
