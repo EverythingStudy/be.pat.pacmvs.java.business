@@ -176,12 +176,12 @@
 
     <select id="selectProjectById" parameterType="java.lang.Long" resultMap="ProjectMessage">
         <include refid="selectProjectVo"/>
-        where project_id = #{projectId}
+        where p.project_id = #{projectId}
     </select>
 
     <select id="selectProjectByName" parameterType="string" resultMap="ProjectResult">
         <include refid="selectProjectVo"/>
-        where project_name = #{projectName}
+        where p.project_name = #{projectName}
     </select>
 
     <!--统计时使用的项目列表-->
