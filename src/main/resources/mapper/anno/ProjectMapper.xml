@@ -147,7 +147,6 @@
                  left join sys_organization org on p.organization_id = org.organization_id
                  left join aipre_algorithm_model m on p.model_id=m.model_id
                  left join aipre_pathological_tissue a on p.tissue_id=a.tissue_id
-                 left join tb_project_member b on p.project_id = b.project_id
     </sql>
 
     <sql id="selectProjectBy">
@@ -209,7 +208,42 @@
 
     <!--条件查询项目列表-->
     <select id="selectProjectList" parameterType="cn.staitech.anno.domain.Project" resultMap="ProjectMessage">
-        <include refid="selectProjectVo"/>
+          select p.project_id,
+               p.project_name,
+               p.status,
+               p.image_total,
+               p.create_by,
+               p.description,
+               p.indicator_id,
+               p.create_time,
+               p.update_by,
+               p.update_time,
+               p.color_type,
+               p.species_id,
+               p.project_type,
+               p.organization_id,
+               p.product_series_id,
+               u.user_name,
+               i.indicator_name,
+               i.indicator_name_en,
+               ps.name as product_series,
+               org.organization_name,
+               p.model_id,
+               m.model_name,
+               m.model_name_en,
+               p.tissue_id,
+               a.tissue_name,
+               a.tissue_name_en
+        from tb_project p
+                 left join sys_user u on p.create_by = u.user_id
+                 left join tb_pathological_indicator i on p.indicator_id = i.indicator_id
+                 left join tb_product_series ps on p.product_series_id = ps.product_series_id
+                 left join sys_organization org on p.organization_id = org.organization_id
+                 left join aipre_algorithm_model m on p.model_id=m.model_id
+                 left join aipre_pathological_tissue a on p.tissue_id=a.tissue_id
+                 <if test="partUserId != null">
+                 	left join tb_project_member b on p.project_id = b.project_id
+                  </if>
         <where>
             <if test="projectName != null and projectName != ''">
                 AND p.project_name like concat('%', #{projectName}, '%')
