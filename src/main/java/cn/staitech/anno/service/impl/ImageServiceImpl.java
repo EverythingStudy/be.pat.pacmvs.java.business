@@ -4,11 +4,10 @@ import cn.staitech.anno.config.AsyncTask;
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.Image;
-import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.Slide;
+import cn.staitech.anno.domain.SlidePrediction;
 import cn.staitech.anno.mapper.ImageMapper;
-import cn.staitech.anno.mapper.ProjectMapper;
-import cn.staitech.anno.mapper.SlideMapper;
+import cn.staitech.anno.mapper.SlidePredictionMapper;
 import cn.staitech.anno.mapper.SpecialImageMapper;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.SlideService;
@@ -20,6 +19,7 @@ import cn.staitech.anno.vo.image.in.*;
 import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -51,14 +51,14 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     private ImageMapper imageMapper;
     @Resource
     private SlideService slideService;
-
     @Resource
     private SpecialImageMapper specialImageMapper;
     @Resource
     private SysOrganizationService sysOrganizationService;
-
     @Resource
     private AsyncTask asyncTask;
+    @Resource
+    private SlidePredictionMapper slidePredictionMapper;
 
     /**
      * 切片列表（原图像）
@@ -75,7 +75,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 
-        if(!Objects.equals(sysUser.getUserName(), "admin")){
+        if (!Objects.equals(sysUser.getUserName(), "admin")) {
             image.setOrganizationId(sysUser.getOrganizationId());
         }
         // 业务类型 1 原始切片 2 预测切片
@@ -185,7 +185,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         // 机构ID
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 
-        if(!isAdmin(sysUser.getUserId())){
+        if (!isAdmin(sysUser.getUserId())) {
             image.setOrganizationId(sysUser.getOrganizationId());
         }
 
@@ -266,13 +266,13 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                     slide.setImageId(out.getImageId());
                     if (vo.getReviewRoundId() != null && vo.getReviewRoundId() > 0) {
                         slide.setReviewRoundId(vo.getReviewRoundId());
-                    }else{
+                    } else {
                         slide.setProjectId(vo.getProjectId());
                     }
                     // 查询当前项目或评审轮次是否选中此图片
                     if (slideService.selectImageExist(slide).size() > 0) {
                         out.setChoiceState(1);
-                    }else{
+                    } else {
                         out.setChoiceState(0);
                     }
                 } else if (vo.getChoiceState() == 0) {
@@ -404,6 +404,10 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
     /***
      * 批量删除图片（物理删除）
+     * 1、若符合删除条件，图像物理删除；
+     * 2、与切片列表有关联的不能删除；
+     * 3、失败的图像：（1）、按路径查询只有一条MYSQL记录可以删除MYSQL数据和图像物理文件；
+     *              （2）、多条的只删除当前的MYSQL记录；
      * @param ids
      * @return
      */
@@ -412,13 +416,35 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         // 不可删除的列表
         List<Long> forbidIds = new ArrayList<>();
         for (Long imageId : ids.getImageIdList()) {
-            // 查询切片表中是否包含该切片
-            if (imageMapper.selectSlideCountByImageId(imageId) > 0) {
+            // 1、查询aipre_slide_prediction是否有关系图像
+            QueryWrapper<SlidePrediction> slidePredictionQueryWrapper = new QueryWrapper<>();
+            slidePredictionQueryWrapper.eq("image_id", imageId);
+            List<SlidePrediction> slidePredictionList = slidePredictionMapper.selectList(slidePredictionQueryWrapper);
+
+            // 2、查询切片表中是否包含该切片,已经关联的,使用中的不可删除
+            if (slidePredictionList.size() > 0 || imageMapper.selectSlideCountByImageId(imageId) > 0) {
                 forbidIds.add(imageId);
             } else {
                 Image image = imageMapper.selectById(imageId);
-                asyncTask.deleteFileTask(new File(image.getImagePath()));
-                asyncTask.deleteFileTask(new File(image.getImageUrl()));
+                String imagePath = image.getImagePath().trim();
+
+                // 若为空串,只删除SQL记录,跳出
+                if (imagePath.isEmpty()) {
+                    imageMapper.deleteById(imageId);
+                    continue;
+                }
+
+                // 查询相同路径的图像数量
+                QueryWrapper<Image> imageQueryWrapper = new QueryWrapper<>();
+                imageQueryWrapper.eq("image_path", image.getImagePath().trim());
+                List<Image> imageList = imageMapper.selectList(imageQueryWrapper);
+
+                // 只有一条记录,SQL记录和文件全删除
+                if (imageList.size() == 1) {
+                    asyncTask.deleteFileTask(new File(image.getImagePath()));
+                    asyncTask.deleteFileTask(new File(image.getImageUrl()));
+                }
+
                 imageMapper.deleteById(imageId);
             }
         }
