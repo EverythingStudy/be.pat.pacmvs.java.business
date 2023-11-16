@@ -25,7 +25,6 @@ public interface ImageService extends IService<Image> {
      */
     PageMaster<ImageListOutVO> selectList(ImageListVO image) throws ExecutionException, InterruptedException;
 
-
     /**
      * 项目管理-图像列表
      *
@@ -42,16 +41,6 @@ public interface ImageService extends IService<Image> {
      */
     Image selectById(Long imageId);
 
-
-    /**
-     * 查询图像列表 - 通过 projectId 查询
-     *
-     * @param projectId
-     * @return
-     */
-    List<ImageListVO> selectImageListByPorjectId(Long projectId);
-
-
     /**
      * 通过图片ID查询切片
      *
@@ -59,15 +48,6 @@ public interface ImageService extends IService<Image> {
      * @return
      */
     Integer selectSlideCountByImageId(Long imageId);
-
-
-    /**
-     * 标注组选片入口预览图像列表
-     *
-     * @param image
-     * @return
-     */
-    List<Image> selectImageChooseList(Image image);
 
     /**
      * 标注组选片入口传输图像
@@ -85,32 +65,7 @@ public interface ImageService extends IService<Image> {
      */
     List<Image> selectImageAnnotationList(Image image);
 
-    /**
-     * 运维图像删除
-     *
-     * @param imageId
-     * @return
-     */
-    Boolean deleteById(Long imageId) throws InterruptedException;
-
-    /**
-     * 标注图像删除
-     *
-     * @param imageId
-     * @return
-     */
-    int updateDeleteFlagById(Long imageId);
-
-
     List<Long> deleteBatchIds(ImageBatchIdsVO ids) throws InterruptedException;
-
-    /**
-     * 更改图像上传状态
-     *
-     * @param imageIdList 图像ID列表
-     * @return
-     */
-    void updateProcessFlagByIdList(List imageIdList);
 
     int updateById(ImageUpdateVO vo) throws Exception;
 
