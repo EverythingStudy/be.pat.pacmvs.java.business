@@ -532,7 +532,6 @@
         </foreach>
     </update>
 
-
     <update id="updateProcessFlagByIdList" parameterType="java.util.List">
         update tb_image
         <if test="processFlag != null and processFlag != ''">
@@ -549,33 +548,6 @@
             </foreach>
         </if>
     </update>
-
-    <!--逻辑删除图像-->
-    <update id="updateDeleteFlagById" parameterType="java.lang.Long">
-        <if test="imageId != null and imageId != ''">
-            update tb_image
-            set delete_flag = 0,
-            update_time = sysdate(),
-            update_by=#{updateBy}
-            where image_id = #{imageId}
-        </if>
-    </update>
-
-
-    <!-- 通过切片ID批量 逻辑删除图像 -->
-    <update id="updateDeleteFlagBatchIds" parameterType="cn.staitech.anno.vo.image.in.ImageBatchIdsVO">
-        update tb_image
-        <set>
-            delete_flag = 0,
-            update_time = sysdate(),
-            update_by=#{updateBy}
-        </set>
-        where image_id in
-        <foreach collection="imageIdList" item="imageId" open="(" separator="," close=")">
-            #{imageId}
-        </foreach>
-    </update>
-
 
     <!-- 物理删除图像:1：物理删除。2：没有被任何项目绑定或使用的切片可以删除。3：不可用状态的切片的可以删除
      `status` 是否可用0不可用1可用,`delete_flag` 逻辑删除状态（0删除，1未删除）',-->

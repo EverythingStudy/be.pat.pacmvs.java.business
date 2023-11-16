@@ -8,7 +8,6 @@ import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.SlidePrediction;
 import cn.staitech.anno.mapper.ImageMapper;
 import cn.staitech.anno.mapper.SlidePredictionMapper;
-import cn.staitech.anno.mapper.SpecialImageMapper;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.service.SysOrganizationService;
@@ -51,8 +50,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     private ImageMapper imageMapper;
     @Resource
     private SlideService slideService;
-    @Resource
-    private SpecialImageMapper specialImageMapper;
     @Resource
     private SysOrganizationService sysOrganizationService;
     @Resource
@@ -328,18 +325,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         return imageMapper.selectSlideCountByImageId(imageId);
     }
 
-
-    /**
-     * 标注组选片入口预览图像列表
-     *
-     * @param image
-     * @return
-     */
-    @Override
-    public List<Image> selectImageChooseList(Image image) {
-        return imageMapper.selectImageChooseList(image);
-    }
-
     /**
      * 通过ID批量修改图片状态
      *
@@ -360,46 +345,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     @Override
     public List<Image> selectImageAnnotationList(Image image) {
         return imageMapper.selectImageAnnotationList(image);
-    }
-
-    /**
-     * 切片删除
-     *
-     * @param imageId
-     * @return
-     */
-    @Override
-    public Boolean deleteById(Long imageId) throws InterruptedException {
-        // 先查询
-        if (imageId > 0) {
-            // 查切片表中有没有绑定此图片
-            if (imageMapper.selectSlideCountByImageId(imageId) > 0) {
-                return false;
-            } else {
-                Image image = imageMapper.selectById(imageId);
-                asyncTask.deleteFileTask(new File(image.getImagePath()));
-                asyncTask.deleteFileTask(new File(image.getImageUrl()));
-                imageMapper.deleteById(imageId);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * 逻辑删除单张切片
-     *
-     * @param imageId
-     * @return
-     */
-    @Override
-    public int updateDeleteFlagById(Long imageId) {
-        // If the image using,forbid delete
-        if (specialImageMapper.selectListByImageId(imageId).size() > 0) {
-            return 0;
-        }
-        // not using , delete
-        return imageMapper.updateDeleteFlagById(imageId);
     }
 
     /***

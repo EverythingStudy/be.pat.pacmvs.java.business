@@ -10,13 +10,11 @@ import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
-import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -86,31 +84,13 @@ public class ImageController extends BaseController {
     }
 
     /**
-     * 删除单个切片 .
-     */
-    @SneakyThrows
-    @RequiresPermissions("section:slices:remove")
-    @ApiOperationSupport(author = "wangfeng")
-    @Log(title = "删除", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.DELETE)
-    @ApiOperation(value = "删除单个切片(物理删除)")
-    @GetMapping("/deleteById/{imageId}")
-    @Transactional(rollbackFor = Exception.class)
-    public R deleteById(@PathVariable("imageId") @ApiParam(value = "图像ID") Long imageId) {
-        if (imageService.deleteById(imageId)) {
-            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
-        }
-        return R.fail(MessageSource.M("IMAGE_USING_FORBID_DELETE"));
-    }
-
-
-    /**
      * 删除（根据ID 批量删除）
      *
      * @param request 主键ID列表(不能为 null 以及 empty)
      */
     @ApiOperationSupport(author = "wangfeng")
     @Log(title = "删除切片", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.DELETE)
-    @ApiOperation(value = "逻辑批量删除切片")
+    @ApiOperation(value = "批量删除切片-物理删除")
     @PostMapping("/deleteBatchIds")
     public R<List<Long>> deleteBatchIds(@Validated @RequestBody ImageBatchIdsVO request) throws InterruptedException {
         List<Long> data = imageService.deleteBatchIds(request);
