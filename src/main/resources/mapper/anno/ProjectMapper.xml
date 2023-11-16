@@ -147,6 +147,7 @@
                  left join sys_organization org on p.organization_id = org.organization_id
                  left join aipre_algorithm_model m on p.model_id=m.model_id
                  left join aipre_pathological_tissue a on p.tissue_id=a.tissue_id
+                 left join tb_project_member b on p.project_id = b.project_id
     </sql>
 
     <sql id="selectProjectBy">
@@ -236,6 +237,9 @@
             </if>
             <if test="createBy != null and createBy != ''">
                 AND p.create_by = #{createBy}
+            </if>
+            <if test="partUserId != null">
+                AND b.user_id  = #{partUserId}
             </if>
             <if test="modelId != null">
                 AND p.model_id = #{modelId}
