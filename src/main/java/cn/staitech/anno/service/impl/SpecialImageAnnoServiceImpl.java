@@ -23,7 +23,7 @@ import cn.staitech.anno.vo.specialimageanno.SpecialAnnoAddVO;
 import cn.staitech.anno.vo.specialimageanno.in.*;
 import cn.staitech.anno.vo.specialsliceimage.AuditSpecialImageVO;
 import cn.staitech.anno.vo.specialsliceimage.OrganDict;
-import cn.staitech.anno.vo.subimage.SubImage;
+import cn.staitech.anno.domain.SubImage;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;

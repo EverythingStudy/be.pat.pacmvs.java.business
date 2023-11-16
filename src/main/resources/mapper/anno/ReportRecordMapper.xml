@@ -225,7 +225,7 @@
           and del_flag = 0
     </select>
 
-    <select id="selectImage" parameterType="java.lang.Long" resultType="cn.staitech.anno.vo.subimage.SubImage">
+    <select id="selectImage" parameterType="java.lang.Long" resultType="cn.staitech.anno.domain.SubImage">
         select *
         from tb_sub_image
         where special_id = #{specialId}

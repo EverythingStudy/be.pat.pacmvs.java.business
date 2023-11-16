@@ -1,7 +1,7 @@
 package cn.staitech.anno.vo.slide;
 
 import cn.staitech.anno.domain.Group;
-import cn.staitech.anno.vo.subimage.SubImage;
+import cn.staitech.anno.domain.SubImage;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModelProperty;

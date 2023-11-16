@@ -2,8 +2,8 @@ package cn.staitech.anno.constant;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -129,7 +129,7 @@ public class Container {
             /*.put(18, "免疫组织化学染色")
             .put(19, "荧光标记染色")*/
             .put(20, "其他")
-            .put(21,"嗜银染色")
+            .put(21, "嗜银染色")
             .build();
 
     /**
@@ -154,7 +154,7 @@ public class Container {
             .put(16, "Tunel")
             .put(17, "Ki67")
             .put(20, "Other")
-            .put(21,"Argyrophilic staining")
+            .put(21, "Argyrophilic staining")
             .build();
 
     /**
@@ -183,8 +183,9 @@ public class Container {
             .put(2, "因图像命名不符合要求，未识别到主图，请在原始切片中手动设置主图en")
             .put(3, "算法要求最小图片数量为7张。请删除后重新上传en")
             .build();
-
-
-
+    /**
+     * 眼科ZIP压缩包解压后可解析的图像文件
+     */
+    public static final ImmutableSet<String> IMAGE_EXT_SET = ImmutableSet.of("png", "jpg");
 
 }

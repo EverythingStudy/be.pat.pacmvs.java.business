@@ -1,7 +1,7 @@
 package cn.staitech.anno.vo.specialsliceimage;
 
 import cn.staitech.anno.vo.special.SpecialImage;
-import cn.staitech.anno.vo.subimage.SubImage;
+import cn.staitech.anno.domain.SubImage;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
