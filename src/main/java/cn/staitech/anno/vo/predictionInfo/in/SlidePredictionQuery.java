@@ -20,6 +20,9 @@ public class SlidePredictionQuery{
     
     @ApiModelProperty(value = "碎片状态默认为0校验通过，1校验不通过")
     private String eyeMent;
+    
+    @ApiModelProperty(value = "排序 1：原始切片使用 （失败的放前面，imageName asc）2：算法使用(主图放前面、imageName asc)")
+    private int orderNumber;
 
 
 

@@ -122,6 +122,8 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 				SlidePredictionQuery spQuery = new SlidePredictionQuery();
 				spQuery.setSlideId(vo.getSlideId());
 				spQuery.setEyeMent("0");
+				//排序 1：原始切片使用 （失败的放前面，imageName asc）2：算法使用(主图放前面、imageName asc)
+				spQuery.setOrderNumber(2);
 				List<SlidePredictionInfo> spList = slidePredictionMapper.getOriginalSlideList(spQuery);
 				List<SlidePrediction> spcList = new ArrayList<>(); 
 				if(CollectionUtils.isNotEmpty(spList)){
@@ -212,7 +214,8 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 	public SlidePredictionOut getOriginalSlideList(SlidePredictionIn req) {
 		SlidePredictionQuery query = new SlidePredictionQuery();
 		BeanUtils.copyProperties(req, query);
-//		query.setEyeMent("0");
+		//排序 1：原始切片使用 （失败的放前面，imageName asc）2：算法使用(主图放前面、imageName asc)
+		query.setOrderNumber(1);
 		List<SlidePredictionInfo>  list  =  slidePredictionMapper.getOriginalSlideList(query);
 		SlidePredictionOut spo = new SlidePredictionOut();
 		spo.setList(list);
