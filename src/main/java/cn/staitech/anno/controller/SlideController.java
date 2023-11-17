@@ -20,6 +20,7 @@ import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
+import cn.staitech.common.security.annotation.Logical;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -365,6 +366,7 @@ public class SlideController extends BaseController {
      * 获取拼接图象类项目---项目图片
      */
     @ApiOperation(value = "拼接图象类项目---项目图片")
+    @RequiresPermissions("projectConfig:splicelmgConfig:list")
     @ApiOperationSupport(author = "zmj")
     @PostMapping("/projectPictureList")
     public R<PageMaster<EyeProjectSlideOut>> projectPictureList(@RequestBody @Validated EyeProjectSlideIn eyeProjectSlideIn) {
@@ -377,6 +379,7 @@ public class SlideController extends BaseController {
      */
     @Log(title = "删除图片", menu = "项目管理", subMenu = "项目详情", businessType = BusinessType.DELETE)
     @ApiOperation(value = "拼接图象类项目---项目图片删除")
+    @RequiresPermissions(value = {"projectConfigsplicelmgConfig:delete","projectConfig:splicelmgConfig:batchDelete"},logical = Logical.OR)
     @ApiOperationSupport(author = "zmj")
     @PostMapping("/projectPictureDel")
     public R projectPictureDel(@RequestBody @Validated ProjectSlideDel projectSlideDel) {
@@ -389,6 +392,7 @@ public class SlideController extends BaseController {
      */
     @Log(title = "保存图片", menu = "项目管理", subMenu = "项目详情", businessType = BusinessType.INSERT)
     @ApiOperation(value = "拼接图象类项目---保存文件夹和切片")
+    @RequiresPermissions("projectConfig:splicelgConfig:addSlice")
     @ApiOperationSupport(author = "zmj")
     @PostMapping("/eyeSave")
     public R eyeSave(@RequestBody @Validated EyeSaveSlide eyeSaveSlide) {
@@ -430,6 +434,7 @@ public class SlideController extends BaseController {
     public R<SlideAirepostVO> selectById(@PathVariable("slideId") @ApiParam(value = "切片ID") Long slideId) {
         return R.ok(slideService.selectSlideAirepostVOById(slideId));
     }
+
 
 }
 

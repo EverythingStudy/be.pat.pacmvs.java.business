@@ -47,12 +47,11 @@ public class FilesController extends BaseController {
      * 上传文件-仅用于上传
      */
     @ApiOperationSupport(author = "wangfeng")
-    @RequiresPermissions(value = {"smartAnno:project:upload"}, logical = Logical.OR)
+    @RequiresPermissions(value = {"smartAnno:project:upload","smartAnnoInfo:algorithm:batchUploadJson", "section:ophthalmology:uploadZip"}, logical = Logical.OR)
     @ApiOperation(value = "文件上传", notes = "文件列表 - 王峰")
     @Log(title = "文件上传", menu = "文件上传", subMenu = "文件上传", businessType = BusinessType.IMPORT)
     @PostMapping("/upload")
     public R<Files> upload(@RequestParam("file") MultipartFile file) throws IOException {
-
         return R.ok(fileUploadService.upload(file));
     }
 
@@ -66,6 +65,7 @@ public class FilesController extends BaseController {
             @ApiImplicitParam(name = "businessType", value = "businessType", required = true, dataType = "Integer")
     })
     @Log(title = "文件上传并处理下游业务逻辑", menu = "文件上传并处理下游业务逻辑", subMenu = "文件上传并处理下游业务逻辑", businessType = BusinessType.IMPORT)
+    @RequiresPermissions(value = {"smartAnnoInfo:algorithm:batchUploadJson", "section:ophthalmology:uploadZip"})
     @PostMapping("/uploadBusiness")
     public R<Files> uploadBusiness(
             @RequestParam("file") MultipartFile file,
@@ -88,6 +88,7 @@ public class FilesController extends BaseController {
             @ApiImplicitParam(name = "businessType", value = "businessType", required = true, dataType = "Integer")
     })
     @Log(title = "文件上传并处理下游业务逻辑(大文件)", menu = "文件上传并处理下游业务逻辑", subMenu = "文件上传并处理下游业务逻辑", businessType = BusinessType.IMPORT)
+    @RequiresPermissions(value = {"smartAnnoInfo:algorithm:batchUploadJson", "section:ophthalmology:uploadZip"})
     @PostMapping("/uploadBigFileBusiness")
     public R<String> uploadBigFileBusiness(
             @RequestParam("file") MultipartFile file, FileUploadVO fileUploadVO) throws Exception {

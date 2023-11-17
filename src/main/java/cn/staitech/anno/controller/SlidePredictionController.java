@@ -20,6 +20,8 @@ import cn.staitech.anno.vo.predictionInfo.out.SlidePredictionOut;
 import cn.staitech.anno.vo.project.ProjectListVO;
 import cn.staitech.anno.vo.project.in.ProjectListQueryIn;
 import cn.staitech.common.core.domain.R;
+import cn.staitech.common.security.annotation.Logical;
+import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -66,6 +68,7 @@ public class SlidePredictionController {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @ApiOperation(value = "算法项目列表分页查询")
+    @RequiresPermissions("algorithmDetectionInfo:list")
     @PostMapping("/projectList")
     public R<PageMaster<List<ProjectListVO>>> getProjectList(@RequestBody @Validated ProjectListQueryIn req) {
         PageHelper.startPage(req.getPageNum(), req.getPageSize()).setReasonable(true);
@@ -89,6 +92,7 @@ public class SlidePredictionController {
 
 
     @ApiOperation(value = "查询算法项目切片列表")
+    @RequiresPermissions("algorithmDetectionInfo:slice:list")
     @PostMapping("/slidePageList")
     public R<PageMaster<ImageCsvListVO>> slidePageList(@RequestBody SlideImagePagerVO req) {
         return R.ok(algorithmPredictionService.slidePageList(req));
@@ -96,6 +100,7 @@ public class SlidePredictionController {
 
 
     @ApiOperation(value = "查询原始切片列表")
+    @RequiresPermissions("algorithmDetectionInfo:slice:checkSlicesDetail")
     @PostMapping("/originalSlideList")
     public R<SlidePredictionOut> getOriginalSlideList(@Validated @RequestBody SlidePredictionIn req) {
         SlidePredictionOut out = algorithmPredictionService.getOriginalSlideList(req);
@@ -104,6 +109,7 @@ public class SlidePredictionController {
 
 
     @ApiOperation(value = "原始切片设置主图")
+    @RequiresPermissions("projectConfig:spliceImgConfig:setMainImg")
     @PostMapping("/setMainImage")
     public R<List<SlidePrediction>> setMainImage(@Validated @RequestBody SetMainImageDataIn req) {
         Slide selectFolderMent = slideService.selectFolderMent(req.getSlideId());
@@ -136,6 +142,7 @@ public class SlidePredictionController {
 
     @SuppressWarnings("rawtypes")
     @ApiOperation(value = "启动算法/重算失败数据")
+    @RequiresPermissions(value = {"algorithmDetectionInfo:slice:startAlgorithm", "algorithmDetectionInfo:slice:reStartErrorData"}, logical = Logical.OR)
     @PostMapping("/startPrediction")
     public R startPrediction(@Validated @RequestBody StartPredictionIn req) {
         Project project = projectService.getById(req.getProjectId());
