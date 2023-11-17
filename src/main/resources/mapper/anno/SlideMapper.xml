@@ -1208,7 +1208,7 @@
 
     <!--眼科-查新文件夹状态-->
     <select id="selectFolderMent" parameterType="java.lang.Long" resultType="cn.staitech.anno.domain.Slide">
-        select folder_id,prompt,slide_id,eye_ment, from tb_slide where slide_id=#{slideId}
+        select folder_id,prompt,slide_id,eye_ment,status from tb_slide where slide_id=#{slideId}
     </select>
 
 </mapper>
