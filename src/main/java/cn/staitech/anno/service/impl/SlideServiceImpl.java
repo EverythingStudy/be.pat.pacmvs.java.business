@@ -816,6 +816,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         if (eyeSaveSlide.getFolderName() == null && eyeSaveSlide.getParams() == null && eyeSaveSlide.getTopicName() == null && eyeSaveSlide.getCreateBy() == null) {
             return R.ok();
         }
+        eyeSaveSlide.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         List<ProjectSlideOut> projectSlideOutLists = slideMapper.eyeFolder(eyeSaveSlide);
         List<ProjectSlideOut> projectSlideOutList = new ArrayList<>();
         //去重

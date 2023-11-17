@@ -125,6 +125,7 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 				//排序 1：原始切片使用 （失败的放前面，imageName asc）2：算法使用(主图放前面、imageName asc)
 				spQuery.setOrderNumber(2);
 				List<SlidePredictionInfo> spList = slidePredictionMapper.getOriginalSlideList(spQuery);
+				log.info("数据："+spList);
 				List<SlidePrediction> spcList = new ArrayList<>(); 
 				if(CollectionUtils.isNotEmpty(spList)){
 					for(SlidePredictionInfo sInfo:spList){

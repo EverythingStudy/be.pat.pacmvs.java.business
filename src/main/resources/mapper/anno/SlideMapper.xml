@@ -1050,10 +1050,17 @@
 
     <!--眼科-查询要添加的数据-->
     <select id="eyeFolder" parameterType="cn.staitech.anno.vo.eyeslide.EyeSaveSlide" resultType="cn.staitech.anno.vo.eyeslide.ProjectSlideOut">
-        select distinct f.folder_id from aipre_folder as f left join tb_image as i on i.folder_id=f.folder_id
+        select distinct f.folder_id
+        from aipre_folder as f
+        left join tb_files as i on f.files_id = i.files_id
+        left join tb_image as e on e.folder_id = f.folder_id
+        left join sys_user as u on i.create_by = u.user_id
         <where>
             <if test="createBy != null">
                 AND i.create_by = #{createBy}
+            </if>
+            <if test="organizationId != null">
+                AND f.organization_id = #{organizationId}
             </if>
             <if test="topicName != null">
                 AND i.topic_name LIKE CONCAT('%', #{topicName}, '%')
@@ -1071,7 +1078,7 @@
                     and date_format(i.create_time, '%y%m%d') &lt;= date_format(#{params.endTime}, '%y%m%d')
                 </if>
             </if>
-            and i.biz_type=7 and i.folder_id>0
+            and e.biz_type=7 and e.folder_id>0
         </where>
     </select>
 

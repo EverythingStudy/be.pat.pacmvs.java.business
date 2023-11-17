@@ -25,5 +25,8 @@ public class EyeSaveSlide {
     @ApiModelProperty(value = "所属专题-专题名称")
     private String topicName;
 
+    @ApiModelProperty(value = "机构id",hidden = true)
+    private Long organizationId;
+
 
 }
