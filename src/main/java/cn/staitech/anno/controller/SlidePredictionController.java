@@ -19,6 +19,7 @@ import cn.staitech.anno.vo.predictionInfo.in.StartPredictionIn;
 import cn.staitech.anno.vo.predictionInfo.out.SlidePredictionOut;
 import cn.staitech.anno.vo.project.ProjectListVO;
 import cn.staitech.anno.vo.project.in.ProjectListQueryIn;
+import cn.staitech.anno.vo.slide.SlideDescriptionVO;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.annotation.Logical;
 import cn.staitech.common.security.annotation.RequiresPermissions;
@@ -99,12 +100,33 @@ public class SlidePredictionController {
     }
 
 
-    @ApiOperation(value = "查询原始切片列表")
-    @RequiresPermissions("algorithmDetectionInfo:slice:checkSlicesDetail")
+    @ApiOperation(value = "查询原始切片列表")//
+    @RequiresPermissions(value = {"algorithmDetectionInfo:slice:checkSlicesDetail", "projectConfig:spliceImgConfig:checkSlicesDetail"}, logical = Logical.OR)
     @PostMapping("/originalSlideList")
     public R<SlidePredictionOut> getOriginalSlideList(@Validated @RequestBody SlidePredictionIn req) {
         SlidePredictionOut out = algorithmPredictionService.getOriginalSlideList(req);
         return R.ok(out);
+    }
+    
+    
+    /**
+     * 修改备注接口
+     */
+    @ApiOperation(value = "修改备注接口")
+    @RequiresPermissions("algorithmDetectionInfo:slice:setDesc")
+    @PostMapping("/updateDescription")
+    public R<String> updateDescription(@Validated @RequestBody SlideDescriptionVO req) {
+        for (Long id : req.getSlideId()) {
+            Slide slide = new Slide();
+            slide.setSlideId(id);
+            slide.setDescription(req.getDescription());
+            slide.setUpdateBy(SecurityUtils.getUserId());
+            if (org.apache.commons.lang3.StringUtils.isNotEmpty(req.getRemark())) {
+                slide.setRemark(req.getRemark());
+            }
+            slideService.updateDescription(slide);
+        }
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
 
