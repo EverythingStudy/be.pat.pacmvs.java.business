@@ -194,7 +194,7 @@
                 AND t3.eye_ment  = #{eyeMent}
             </if>
         </where>
-    </select>
+    
     	<!-- 原始切片使用 （失败的放前面，imageName asc） -->
     <if test="orderNumber != null and orderNumber == 1">
           ORDER BY t1.ai_analyzed desc,t2.image_name asc
@@ -203,7 +203,8 @@
      <if test="orderNumber != null and orderNumber == 2">
            ORDER BY t1.main_image asc,t2.image_name asc
      </if>
-            
+       
+    </select>     
     
     <!--查询 原始切片列表信息-->
     <select id="getImageCsvListVOList" parameterType="cn.staitech.anno.vo.imagecsv.ImageCsvGetVO"
