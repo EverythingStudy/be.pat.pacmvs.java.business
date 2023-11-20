@@ -238,9 +238,11 @@ public class MarkingServiceImpl implements MarkingService {
             marking.setImage_url(image.getImageUrl());
         }
         marking.setNumber(number);
-        if (req.getGeometry().isEmpty()) {
-            log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
-            throw new Exception("更新失败，轮廓数据不能为空");
+        if(req.getGeometry() != null){
+            if (req.getGeometry().isEmpty()) {
+                log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
+                throw new Exception("更新失败，轮廓数据不能为空");
+            }
         }
         // 添加数据库，添加后返回自增id
         markingMapper.insert(marking);
