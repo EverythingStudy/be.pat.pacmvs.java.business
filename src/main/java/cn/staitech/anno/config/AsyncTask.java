@@ -96,7 +96,7 @@ public class AsyncTask {
     @SneakyThrows
     @Async
     @Transactional
-    public void zipExport(String zipUrl, Long projectId)  {
+    public void zipExport(String zipUrl, Long projectId) {
         File file1 = new File(zipUrl);
 //        try {
         // 查询切片列表
@@ -306,20 +306,6 @@ public class AsyncTask {
         map.put("marking", marking);
         return map;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

@@ -44,15 +44,13 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MappingJsonFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -71,8 +69,10 @@ import java.util.zip.ZipInputStream;
 
 import static cn.staitech.anno.aspect.LogFileAspect.response;
 import static cn.staitech.anno.constant.CommonConstant.*;
+import static org.reflections.Reflections.log;
 
 @Service
+@Slf4j
 public class MarkingServiceImpl implements MarkingService {
 
 
@@ -242,6 +242,10 @@ public class MarkingServiceImpl implements MarkingService {
             marking.setImage_url(image.getImageUrl());
         }
         marking.setNumber(number);
+        if(req.getGeometry() == null){
+            log.info("标注数据异常" + "------------------------------------------------->");
+            throw new Exception("更新失败，轮廓数据不能为空");
+        }
         // 添加数据库，添加后返回自增id
         markingMapper.insert(marking);
         Properties properties = markingMapper.selectBy(marking.getMarking_id());
@@ -262,16 +266,19 @@ public class MarkingServiceImpl implements MarkingService {
     public String update(MarkingUpdateIn req) throws Exception {
         // 查询标注表中信息
         Marking markingBy = markingMapper.selectById(req.getMarking_id());
+        //判断是否是自己的标注信息
+//        if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId())){
+//            throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
+//        }
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
-        // 查询标注表中信息
+        // 查询切片表中信息
         Slide slide = slideMapperV1.selectById(markingBy.getSlide_id());
         if (!Optional.ofNullable(slide).isPresent()) {
             throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
         }
         // 更新前数据
-        // 更新文件中的内容
         Marking marking = new Marking();
         BeanUtils.copyProperties(req, marking);
         if (req.getUpdate_by() != null) {
@@ -285,15 +292,19 @@ public class MarkingServiceImpl implements MarkingService {
             marking.setAnnotation_update_owner(SecurityUtils.getLoginUser().getSysUser().getUserName());
         }
         marking.setUpdate_time(new Date());
-        if (req.getArea() != null) {
+        if (req.getArea() != null && !"".equals(req.getArea())) {
             Double area = new Double(req.getArea()) * MICRON;
             marking.setArea(String.valueOf(area));
         }
-        if (req.getPerimeter() != null) {
+        if (req.getPerimeter() != null && !"".equals(req.getPerimeter())) {
             Double perimeter = new Double(req.getPerimeter()) * MICRON;
             marking.setPerimeter(String.valueOf(perimeter));
         }
         List<PointCount> pointCountList = updatePoint(markingBy.getLocation_type(), markingBy);
+        if(req.getGeometry() == null){
+            log.info("标注数据异常" + "------------------------------------------------->");
+            throw new Exception("更新失败，轮廓数据不能为空");
+        }
         markingMapper.updateById(marking);
         // 判断标签
         if (req.getCategory_id() != null) {
@@ -979,7 +990,14 @@ public class MarkingServiceImpl implements MarkingService {
         Long userId = SecurityUtils.getUserId();
         DownTask task = DownTask.builder().code(snowflake.nextIdStr()).status(Constants.DOWN_STATE_RUNNING).createTime(new Date()).updateTime(new Date()).updateBy(userId).createBy(userId).build();
         downTaskMapper.insert(task);
-
+        //过滤掉交付的slide
+//        List<Long>slideIdList=slideIds.stream().filter(e->{
+//            Slide slideBy = slideMapperV1.selectById(e);
+//            if (!Objects.equals(slideBy.getStatus(), "7")){
+//                return true;
+//            }
+//            return false;
+//        }).collect(Collectors.toList());
         // 执行任务
         // 查询所有的切片
         executor.submit(new TaskThread(task, projectId, projectBy.getProjectName(), slideIds, SecurityUtils.getLoginUser().getSysUser()));
@@ -1112,6 +1130,9 @@ public class MarkingServiceImpl implements MarkingService {
                     queryWrapper.eq("project_id", projectId);
                     queryWrapper.select("slide_id");
                     List<Slide> slideList = slideMapperV1.selectList(queryWrapper);
+                    // 过滤掉交付的slide
+//                    List<Slide> slideList = slideLists.stream().filter(s-> !Objects.equals(s.getStatus(), "7")).collect(Collectors.toList());
+
                     slideIds = new ArrayList<>();
                     slideList.forEach(slide -> {
                         slideIds.add(slide.getSlideId());

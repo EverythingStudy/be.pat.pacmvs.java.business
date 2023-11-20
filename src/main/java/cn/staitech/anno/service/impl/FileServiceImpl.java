@@ -150,7 +150,7 @@ public class FileServiceImpl implements FileService {
         String organizationFileName = pathUrl + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         createFolder(organizationFileName);
         // 生成三级目录 (以机构下默认文件夹名称命名)
-        String dataFileName = organizationFileName + fileUrl;
+        String dataFileName = organizationFileName + File.separator + fileUrl;
         createFolder(dataFileName);
         // 生成四级目录 (以专题名称命名)
         String twoFolderName = dataFileName + File.separator + slideFileName.getTopicName();
