@@ -297,9 +297,11 @@ public class MarkingServiceImpl implements MarkingService {
             marking.setPerimeter(String.valueOf(perimeter));
         }
         List<PointCount> pointCountList = updatePoint(markingBy.getLocation_type(), markingBy);
-        if (req.getGeometry().isEmpty()) {
-            log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
-            throw new Exception("更新失败，轮廓数据不能为空");
+        if(req.getGeometry() != null){
+            if (req.getGeometry().isEmpty()) {
+                log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
+                throw new Exception("更新失败，轮廓数据不能为空");
+            }
         }
         markingMapper.updateById(marking);
         // 判断标签
