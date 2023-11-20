@@ -49,10 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -269,13 +266,12 @@ public class MarkingServiceImpl implements MarkingService {
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
-        // 查询标注表中信息
+        // 查询切片表中信息
         Slide slide = slideMapperV1.selectById(markingBy.getSlide_id());
         if (!Optional.ofNullable(slide).isPresent()) {
             throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
         }
         // 更新前数据
-        // 更新文件中的内容
         Marking marking = new Marking();
         BeanUtils.copyProperties(req, marking);
         if (req.getUpdate_by() != null) {
@@ -289,15 +285,18 @@ public class MarkingServiceImpl implements MarkingService {
             marking.setAnnotation_update_owner(SecurityUtils.getLoginUser().getSysUser().getUserName());
         }
         marking.setUpdate_time(new Date());
-        if (req.getArea() != null) {
+        if (req.getArea() != null && !"".equals(req.getArea())) {
             Double area = new Double(req.getArea()) * MICRON;
             marking.setArea(String.valueOf(area));
         }
-        if (req.getPerimeter() != null) {
+        if (req.getPerimeter() != null && !"".equals(req.getPerimeter())) {
             Double perimeter = new Double(req.getPerimeter()) * MICRON;
             marking.setPerimeter(String.valueOf(perimeter));
         }
         List<PointCount> pointCountList = updatePoint(markingBy.getLocation_type(), markingBy);
+        if(req.getGeometry() == null){
+            throw new Exception("更新失败，轮廓数据不能为空");
+        }
         markingMapper.updateById(marking);
         // 判断标签
         if (req.getCategory_id() != null) {

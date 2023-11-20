@@ -217,6 +217,7 @@ public class AsyncTask {
                                     // 添加数据入库
                                     if (markingList.size() >= BATCH_SIZE) {
                                         markingServiceV1.saveBatch(markingList);
+                                        markingList = new ArrayList<>();
                                     }
                                 }
                             }
