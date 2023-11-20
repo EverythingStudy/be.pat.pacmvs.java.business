@@ -78,11 +78,7 @@ public class MarkingServiceImpl implements MarkingService {
 
     private static final int BATCH_SIZE = 5000;
 
-    private static final ExecutorService executor = ExecutorBuilder.create()
-            .setCorePoolSize(Runtime.getRuntime().availableProcessors() * 2 + 1)
-            .setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 4 + 1)
-            .setKeepAliveTime(0)
-            .build();
+    private static final ExecutorService executor = ExecutorBuilder.create().setCorePoolSize(Runtime.getRuntime().availableProcessors() * 2 + 1).setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 4 + 1).setKeepAliveTime(0).build();
     @Resource
     private SlideMapperV1 slideMapperV1;
     @Resource
@@ -117,9 +113,9 @@ public class MarkingServiceImpl implements MarkingService {
             throw new Exception(MessageSource.M("SLIDE_ABNORMAL_NO_INFORMATION"));
         }
         Integer resPageNum = pageNum;
-        if(pageNum > 0){
-            pageNum = pageNum -1;
-        }else{
+        if (pageNum > 0) {
+            pageNum = pageNum - 1;
+        } else {
             pageNum = 0;
         }
 
@@ -138,8 +134,8 @@ public class MarkingServiceImpl implements MarkingService {
         PageResponse<MarkingSelectListVO> resp = new PageResponse<>();
         // 查询考核评分表中信息
         if (markingSelectListVoList.size() < pageSize) {
-            for(MarkingSelectListVO markingSelectListVO:pointCountList){
-                if(markingSelectListVoList.size() < pageSize){
+            for (MarkingSelectListVO markingSelectListVO : pointCountList) {
+                if (markingSelectListVoList.size() < pageSize) {
                     markingSelectListVoList.add(markingSelectListVO);
                 }
             }
@@ -242,8 +238,8 @@ public class MarkingServiceImpl implements MarkingService {
             marking.setImage_url(image.getImageUrl());
         }
         marking.setNumber(number);
-        if(req.getGeometry() == null){
-            log.info("标注数据异常" + "------------------------------------------------->");
+        if (req.getGeometry().isEmpty()) {
+            log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
             throw new Exception("更新失败，轮廓数据不能为空");
         }
         // 添加数据库，添加后返回自增id
@@ -301,8 +297,8 @@ public class MarkingServiceImpl implements MarkingService {
             marking.setPerimeter(String.valueOf(perimeter));
         }
         List<PointCount> pointCountList = updatePoint(markingBy.getLocation_type(), markingBy);
-        if(req.getGeometry() == null){
-            log.info("标注数据异常" + "------------------------------------------------->");
+        if (req.getGeometry().isEmpty()) {
+            log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
             throw new Exception("更新失败，轮廓数据不能为空");
         }
         markingMapper.updateById(marking);
