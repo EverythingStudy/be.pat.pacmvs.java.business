@@ -254,7 +254,7 @@
             <if test="projectId != null">
                 AND s.project_id = #{projectId, jdbcType=NUMERIC}
             </if>
-            <if test="status != null">
+            <if test="projectId != null">
             	AND m.`status` &lt;&gt; 1
             </if>
             <if test="reviewRoundId != null">
@@ -327,7 +327,7 @@
             <if test="projectId != null">
                 AND s.project_id = #{projectId, jdbcType=NUMERIC}
             </if>
-            <if test="status != null">
+            <if test="projectId != null">
             	AND m.`status` &lt;&gt; 1
             </if>
             <if test="reviewRoundId != null">
