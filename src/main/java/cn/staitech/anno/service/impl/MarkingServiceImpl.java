@@ -44,6 +44,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MappingJsonFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,8 +69,10 @@ import java.util.zip.ZipInputStream;
 
 import static cn.staitech.anno.aspect.LogFileAspect.response;
 import static cn.staitech.anno.constant.CommonConstant.*;
+import static org.reflections.Reflections.log;
 
 @Service
+@Slf4j
 public class MarkingServiceImpl implements MarkingService {
 
 
@@ -239,6 +242,10 @@ public class MarkingServiceImpl implements MarkingService {
             marking.setImage_url(image.getImageUrl());
         }
         marking.setNumber(number);
+        if(req.getGeometry() == null){
+            log.info("标注数据异常" + "------------------------------------------------->");
+            throw new Exception("更新失败，轮廓数据不能为空");
+        }
         // 添加数据库，添加后返回自增id
         markingMapper.insert(marking);
         Properties properties = markingMapper.selectBy(marking.getMarking_id());
@@ -295,6 +302,7 @@ public class MarkingServiceImpl implements MarkingService {
         }
         List<PointCount> pointCountList = updatePoint(markingBy.getLocation_type(), markingBy);
         if(req.getGeometry() == null){
+            log.info("标注数据异常" + "------------------------------------------------->");
             throw new Exception("更新失败，轮廓数据不能为空");
         }
         markingMapper.updateById(marking);
