@@ -31,6 +31,7 @@ import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.PointCount;
 import cn.staitech.anno.vo.slide.SlideRes;
 import cn.staitech.common.core.domain.PageResponse;
+import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -299,10 +300,19 @@ public class MarkingServiceImpl implements MarkingService {
             marking.setPerimeter(String.valueOf(perimeter));
         }
         List<PointCount> pointCountList = updatePoint(markingBy.getLocation_type(), markingBy);
-        if(req.getGeometry() != null){
-            if (req.getGeometry().isEmpty()) {
-                log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
-                throw new Exception("更新失败，轮廓数据不能为空");
+        // 修改轮廓时，未传入标签字段
+        if(req.getCategory_id() == null){
+            // 传入坐标字段
+            if(req.getGeometry() != null){
+                // 坐标字段为{}
+                if (req.getGeometry().isEmpty()) {
+                    log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
+                    throw new Exception("更新失败，轮廓数据不能为空");
+                }
+            }
+            else {
+                log.info("标注数据异常:" + req + "------------------------------------------------->");
+                throw new Exception("修改标注数据异常，更新失败");
             }
         }
         markingMapper.updateById(marking);
