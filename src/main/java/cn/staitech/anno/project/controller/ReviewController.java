@@ -15,6 +15,8 @@ import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.reviewround.ReviewRoundOutVO;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.annotation.RequiresPermissions;
+
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -22,6 +24,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +33,8 @@ import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
+
+import java.io.File;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -98,7 +104,33 @@ public class ReviewController {
     @ApiOperation(value = "下载任务状态查询")
     @GetMapping("/queryDownTaskByCode")
     public R<DownTask> queryDownTaskByCode(@RequestParam("code") @ApiParam(name = "code", value = "下载任务编码", required = true) String code) throws Exception {
-        return R.ok(downTaskService.getOne(Wrappers.query(DownTask.builder().code(code).build())));
+    	DownTask downTask = downTaskService.getOne(Wrappers.query(DownTask.builder().code(code).build()));
+    	//任务状态：1、运行中，2、完成
+    	if(null != downTask && downTask.getStatus().equals("2")){
+    		//获取所有生成的json，计算总大小
+    		JSONObject jsonObjectPath = downTask.getPath();
+    		double totalFileSizeMB = 0.0;
+    		if(null != jsonObjectPath){
+    			for (Map.Entry<String, Object> entry : jsonObjectPath.entrySet()) {
+    			    //String slideIdKey = entry.getKey();
+    			    Object value = entry.getValue();
+    			    JSONObject slideFilePath = (JSONObject) value;
+    			    if(slideFilePath.containsKey("path")){
+    			    	String filePath = slideFilePath.getString("path");
+    			    	//大小计算
+    			    	File file = new File(filePath);
+    			        long fileSize = file.length();
+    			        double fileSizeInMB = (double) fileSize / (1024 * 1024);
+    			        totalFileSizeMB = totalFileSizeMB + fileSizeInMB;
+    			    }
+    			}
+    		}
+    		//如果总大小超过300M，返回错误信息
+    		if(totalFileSizeMB > 300){
+    			downTask.setStatus("3");
+    		}
+    	}
+        return R.ok(downTask);
     }
 
     @ApiOperation(value = "下载目录文件")

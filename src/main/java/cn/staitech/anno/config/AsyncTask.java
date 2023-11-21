@@ -95,7 +95,8 @@ public class AsyncTask {
 
     @SneakyThrows
     @Async
-    @Transactional
+    //TODO1 解析json过程中无法标注
+    //@Transactional
     public void zipExport(String zipUrl, Long projectId)  {
         File file1 = new File(zipUrl);
 //        try {
