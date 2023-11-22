@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,6 +28,9 @@ public class SysUserController {
     @ApiOperation(value = "根据用户id查询用户列表")
     @PostMapping("/selectUserIdList")
     public R<List<cn.staitech.anno.project.domain.SysUser>> selectUserIdList(@RequestBody SelectUserIdListIn req) {
+        if(req.getUserIdList().size() < 1){
+            return R.ok(new ArrayList<>());
+        }
         QueryWrapper<cn.staitech.anno.project.domain.SysUser> sysUserQueryWrapper = new QueryWrapper<>();
         sysUserQueryWrapper.in("user_id", req.getUserIdList()).eq("del_flag", "0");
         return R.ok(userMapper.selectList(sysUserQueryWrapper));
