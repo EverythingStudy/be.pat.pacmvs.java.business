@@ -10,9 +10,7 @@ import java.util.Map;
 /**
  * @Author wangfeng
  * @Date 2023/09/18 10:46
- * @desc 项目列表查询入参
- * <p>
- * 项目列表-搜索条件： POST /anno/project/list
+ * @desc 项目列表查询入参 - 项目列表-搜索条件： POST /anno/project/list
  * 专题编号：    topicId
  * 专题名称： topicName
  * 种属： speciesId
@@ -42,8 +40,10 @@ public class ProjectListQueryIn extends Pager implements Serializable {
     private Long organizationId;
     @ApiModelProperty(value = "创建时间-查询入参")
     private Map<String, Object> createTimeParams;
-    @ApiModelProperty(value = "算法模型id")
+    @ApiModelProperty(value = "算法模型ID")
     private Long modelId;
-    @ApiModelProperty(value = "病理组织id")
+    @ApiModelProperty(value = "病理组织ID")
     private Long tissueId;
+    @ApiModelProperty(value = "项目类型ID")
+    private String projectTypeId;
 }
