@@ -3,16 +3,15 @@ package cn.staitech.anno.service.impl;
 import cn.staitech.anno.domain.Group;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.ProjectPo;
-import cn.staitech.anno.domain.RecentlyVisited;
-import cn.staitech.anno.enums.ReasonsEnum;
 import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.service.ProjectExtService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.project.ProjectExt;
 import cn.staitech.anno.vo.project.in.OperateProjectIn;
 import cn.staitech.anno.vo.project.in.ProjectListQueryIn;
-import cn.staitech.anno.vo.project.in.ProjectRemoveIn;
-import cn.staitech.anno.vo.project.out.*;
+import cn.staitech.anno.vo.project.out.ProjectInfoOut;
+import cn.staitech.anno.vo.project.out.ProjectListQueryOut;
+import cn.staitech.anno.vo.project.out.ProjectWithGroupsVO;
 import cn.staitech.anno.vo.projectgroup.ProjectGroup;
 import cn.staitech.anno.vo.special.Special;
 import cn.staitech.common.core.domain.PageResponse;
@@ -51,55 +50,11 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
     @Resource
     private SpecialMapper specialMapper;
     @Resource
-    private SystemDictMapper systemDictMapper;
-    @Resource
     private ProjectExtMapper projectExtMapper;
     @Resource
     private ProjectGroupMapper projectGroupMapper;
     @Resource
     private GroupMapper groupMapper;
-    @Resource
-    private RecentlyVisitedMapper recentlyVisitedMapper;
-
-    /**
-     * 获得系统、脏器下拉框
-     *
-     * @return
-     */
-    @Override
-    public List<SystemDictOut> getSystemDictOld() {
-        log.info("病理、脏器下拉框接口开始：");
-        List<SystemDictOut> collect = systemDictMapper.selectSystemDict();
-        //对象浅拷贝
-        List<SystemDictOut> menuList = new ArrayList<>(collect);
-        // 遍历两次data来组装带有children关联性的对象，如果找到子级就删除menuList的数据
-        /*for (SystemDictOut entity : collect) {
-            for (SystemDictOut entity2 : collect) {
-                //如果本级id与数据的父id相同，就说明是子父级关系
-                if (entity.getDictId().equals(entity2.getParentId())) {
-                    entity.getChildrenList().add(entity2);
-                    menuList.remove(entity2);
-                }
-            }
-        }*/
-        return menuList;
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public List<SystemDictOut> getSystemDict(Long dictType) {
-        log.info("获得系统脏器下拉框接口开始");
-        //一级下拉框查询查询
-        if (Objects.isNull(dictType) || dictType == 0) {
-
-            return systemDictMapper.selectFirst(0L);
-        } else {
-            return systemDictMapper.selectFirst(dictType);
-
-        }
-    }
 
     /**
      * 项目列表查询
@@ -215,140 +170,6 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
             BeanUtils.copyBeanProp(resp, projectExt);
         }
         return resp;
-    }
-
-    /**
-     * 项目删除
-     *
-     * @param req
-     * @return
-     */
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public R projectRemove(ProjectRemoveIn req) {
-        log.info("项目删除接口开始：");
-        //校验是否绑定切片
-        int i = projectExtMapper.selectCountSlide(req.getProjectId());
-        if (i > 0) {
-            return R.fail(MessageSource.M("PROJECT_SLIDE_EXIST"));
-        }
-
-        Long userId = SecurityUtils.getUserId();
-        //Long userId = 123l;
-        //修改状态
-        projectExtMapper.updateDelFlag(req.getProjectId(), userId);
-        projectGroupMapper.updateDelFlag(req.getProjectId(), userId);
-        // 删除最近访问表中数据
-        QueryWrapper<RecentlyVisited> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("project_id", req.getProjectId());
-        recentlyVisitedMapper.delete(queryWrapper);
-        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
-    }
-
-    /**
-     * 查询项目导航栏
-     *
-     * @param req
-     * @return
-     */
-    @Override
-    public NavigationBarQueryOut getNavigationBar(Long req) {
-        log.info("导航栏查询接口开始：");
-        //创建响应
-        NavigationBarQueryOut resp = new NavigationBarQueryOut();
-        List<NavigationBarData> date = projectExtMapper.selectProjectAll(req);
-        date.forEach(e -> {
-            List<Integer> integers = projectGroupMapper.selectReasonsList(e.getProjectId());
-            List<NavigationBarDataOut> list = new ArrayList<>();
-            integers.forEach(in -> {
-                NavigationBarDataOut ret = new NavigationBarDataOut();
-                ret.setReasons(in);
-                ret.setReasonsDesc(ReasonsEnum.getEnumLabelByValue(in));
-                list.add(ret);
-            });
-            e.setReasonsList(list);
-        });
-
-        resp.setRespList(date);
-        resp.setProjectTotal(date.size());
-        return resp;
-    }
-
-    /**
-     * @param projectId
-     * @return 组间报告
-     */
-    @Override
-    public R<InterGroupReportOut> getInterGroupReport(Long projectId) {
-        log.info("组间报告接口开始");
-        //判断是否存在未完成分析的切片
-        int i = projectExtMapper.countNotReady(projectId);
-        if (i > 0) {
-            return R.fail(MessageSource.M("PROJECT_NO_READY"));
-        }
-        //todo 数据拼接返回
-        return R.ok();
-    }
-
-    /**
-     * @param specialId
-     * @return 一键创建权限
-     */
-    @Override
-    public R<Boolean> getCreateStatus(Long specialId) {
-        log.info("一键创建权限获取接口开始：");
-        //判断是否交付
-        LambdaQueryWrapper<Special> specialWrapper = new LambdaQueryWrapper<>();
-        specialWrapper.eq(Special::getSpecialId, specialId);
-        specialWrapper.eq(Special::getDeliveryStatus, 0);
-        specialWrapper.eq(Special::getDelFlag, 0);
-        Integer integer = specialMapper.selectCount(specialWrapper);
-        if (integer > 0) {
-            return R.ok(false);
-        }
-        //判断专题分组
-        /*LambdaQueryWrapper<Group> groupWrapper = new LambdaQueryWrapper<>();
-        groupWrapper.eq(Group::getSpecialId,specialId);
-        groupWrapper.eq(Group::getDelFlag,0);
-        Integer integer1 = groupMapper.selectCount(groupWrapper);
-        if(integer1<=0){
-            return R.ok(false);
-        }*/
-        //判断项目数
-        /*LambdaQueryWrapper<ProjectPo> projectWrapper = new LambdaQueryWrapper<>();
-        projectWrapper.eq(ProjectPo::getSpecialId,specialId);
-        projectWrapper.eq(ProjectPo::getDelFlag,0);
-        Integer integer2 = projectExtMapper.selectCount(projectWrapper);
-        if(integer2>0){
-            return R.ok(false);
-        }*/
-
-        return R.ok(true);
-    }
-
-    @Override
-    public R<Boolean> getSpecialGroup(Long specialId) {
-
-        LambdaQueryWrapper<Group> groupWrapper = new LambdaQueryWrapper<>();
-/*        groupWrapper.eq(Group::getSpecialId, specialId);
-        groupWrapper.eq(Group::getDelFlag, 0);*/
-        Integer integer1 = groupMapper.selectCount(groupWrapper);
-        if (integer1 <= 0) {
-            return R.ok(false);
-        }
-        return R.ok(true);
-    }
-
-    /**
-     * @param specialId
-     * @return 是否已经点击自动创建
-     */
-    @Override
-    public R<CreateStatusOut> getCreateSt(Long specialId) {
-        log.info("是否已经点击自动创建接口开始：");
-        CreateStatusOut ret = projectExtMapper.selectSpecial(specialId);
-        return R.ok(ret);
-
     }
 
     /**

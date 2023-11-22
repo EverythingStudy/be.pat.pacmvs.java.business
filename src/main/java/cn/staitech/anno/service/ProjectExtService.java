@@ -4,8 +4,8 @@ import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.ProjectPo;
 import cn.staitech.anno.vo.project.in.OperateProjectIn;
 import cn.staitech.anno.vo.project.in.ProjectListQueryIn;
-import cn.staitech.anno.vo.project.in.ProjectRemoveIn;
-import cn.staitech.anno.vo.project.out.*;
+import cn.staitech.anno.vo.project.out.ProjectInfoOut;
+import cn.staitech.anno.vo.project.out.ProjectListQueryOut;
 import cn.staitech.anno.vo.projectgroup.ProjectGroup;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
@@ -14,20 +14,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import java.util.List;
 
 public interface ProjectExtService extends IService<Project> {
-    /**
-     * 获得系统脏器下拉框
-     *
-     * @return
-     */
-    List<SystemDictOut> getSystemDictOld();
-
-    /**
-     * 获得系统脏器下拉框
-     *
-     * @return
-     */
-    List<SystemDictOut> getSystemDict(Long dictType);
-
 
     /**
      * 项目列表查询
@@ -54,22 +40,6 @@ public interface ProjectExtService extends IService<Project> {
     ProjectInfoOut getProjectById(Long projectId);
 
     /**
-     * 项目删除
-     *
-     * @param req
-     * @return
-     */
-    R projectRemove(ProjectRemoveIn req);
-
-    /**
-     * 项目导航栏
-     *
-     * @param req
-     * @return
-     */
-    NavigationBarQueryOut getNavigationBar(Long req);
-
-    /**
      * 根据用户id查询项目列表（包含下级分组）
      *
      * @return
@@ -92,27 +62,4 @@ public interface ProjectExtService extends IService<Project> {
      */
     R<List<ProjectGroup>> queryGroupByProjectId(Long projectId, String groupName, Long reasons);
 
-    /**
-     * @param projectId
-     * @return 组间报告
-     */
-    R<InterGroupReportOut> getInterGroupReport(Long projectId);
-
-    /**
-     * @param specialId
-     * @return 是否存在一键创建权限
-     */
-    R<Boolean> getCreateStatus(Long specialId);
-
-    /**
-     * @param specialId
-     * @return 是否存在分组
-     */
-    R<Boolean> getSpecialGroup(Long specialId);
-
-    /**
-     * @param specialId
-     * @return 是否存在一键创建权限
-     */
-    R<CreateStatusOut> getCreateSt(Long specialId);
 }

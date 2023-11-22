@@ -1,7 +1,10 @@
 package cn.staitech.anno.controller;
 
 import cn.staitech.anno.constant.Container;
-import cn.staitech.anno.domain.*;
+import cn.staitech.anno.domain.ExamineScore;
+import cn.staitech.anno.domain.Project;
+import cn.staitech.anno.domain.ProjectMember;
+import cn.staitech.anno.domain.ProjectPo;
 import cn.staitech.anno.mapper.ExamineScoreMapper;
 import cn.staitech.anno.service.*;
 import cn.staitech.anno.utils.LanguageUtils;
@@ -15,8 +18,8 @@ import cn.staitech.anno.vo.project.UpdateProjectVO;
 import cn.staitech.anno.vo.project.in.OperateProjectIn;
 import cn.staitech.anno.vo.project.in.ProjectIdsVO;
 import cn.staitech.anno.vo.project.in.ProjectListQueryIn;
-import cn.staitech.anno.vo.project.in.ProjectRemoveIn;
-import cn.staitech.anno.vo.project.out.*;
+import cn.staitech.anno.vo.project.out.ProjectInfoOut;
+import cn.staitech.anno.vo.project.out.ProjectListQueryOut;
 import cn.staitech.anno.vo.projectgroup.ProjectGroup;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
@@ -43,7 +46,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -58,42 +60,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ProjectController extends BaseController {
     @Resource
     private ProjectService projectService;
-
     @Resource
     private ExamineScoreMapper examineScoreMapper;
-
     @Resource
     private ProjectMemberService projectMemberService;
-
     @Resource
     private ProjectExtService projectExtService;
-
     @Resource
     private FileService fileService;
-
     @Resource
     private MarkingService markingService;
-
     @Resource
     private RecentlyVisitedService recentlyVisitedService;
-
-
-    @GetMapping("getSystemDictOld")
-    public R<List<SystemDictOut>> getSystemDictOld() {
-        List<SystemDictOut> systemDict = projectExtService.getSystemDictOld();
-        return R.ok(systemDict);
-    }
-
-
-    @ApiOperation(value = "获得系统、脏器下拉框数据")
-    @GetMapping("/getSystemDict")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "dictId", value = "系统脏器类型代码:查询系统类型的时候传0", dataTypeClass = Long.class, paramType = "query", example = "1")})
-    public R<List<SystemDictOut>> getSystemDict(@RequestParam("dictId") Long dictId) {
-        List<SystemDictOut> systemDict = projectExtService.getSystemDict(dictId);
-        return R.ok(systemDict);
-    }
-
 
     @ApiOperation(value = "项目编辑")
     @RequiresPermissions("special:project:edit")
@@ -112,24 +90,6 @@ public class ProjectController extends BaseController {
             @ApiImplicitParam(name = "projectId", value = "项目id", dataTypeClass = Long.class, paramType = "query", example = "1")})
     public R<ProjectInfoOut> getProjectById(@RequestParam("projectId") Long projectId) {
         ProjectInfoOut resp = projectExtService.getProjectById(projectId);
-        return R.ok(resp);
-    }
-
-    @ApiOperation(value = "删除项目接口")
-    @RequiresPermissions("special:project:remove")
-    @PostMapping("/projectDel")
-    @Log(title = "项目配置-删除", menu = "专题管理", subMenu = "专题创建", businessType = BusinessType.DELETE)
-    public R projectRemove(@RequestBody ProjectRemoveIn req) {
-        return projectExtService.projectRemove(req);
-
-    }
-
-    @ApiOperation(value = "获得项目导航列表")
-    @GetMapping("/getNavigationBar")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "specialId", value = "专题id", dataTypeClass = Long.class, paramType = "query", example = "1")})
-    public R<NavigationBarQueryOut> getNavigationBar(@RequestParam("specialId") Long specialId) {
-        NavigationBarQueryOut resp = projectExtService.getNavigationBar(specialId);
         return R.ok(resp);
     }
 
@@ -213,43 +173,6 @@ public class ProjectController extends BaseController {
         return R.ok(resp);
     }
 
-    @ApiOperation(value = "组间报告")
-    @GetMapping("/getInterGroupReport")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "projectId", value = "项目id", dataTypeClass = Long.class, paramType = "query", example = "1")})
-    public R<InterGroupReportOut> getInterGroupReport(@RequestParam("projectId") Long projectId) {
-
-        return projectExtService.getInterGroupReport(projectId);
-
-    }
-
-    @ApiOperation(value = "是否交付：true-已交付；false-未全部交付")
-    @GetMapping("/getCreateStatus")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "specialId", value = "专题id:必填", dataTypeClass = Long.class, paramType = "query", example = "1")})
-    public R<Boolean> getCreateStatus(@RequestParam("specialId") Long specialId) {
-        return projectExtService.getCreateStatus(specialId);
-
-    }
-
-    @ApiOperation(value = "是否存在分组true-存在分组；false-不存在分组")
-    @GetMapping("/getSpecialGroup")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "specialId", value = "专题id:必填", dataTypeClass = Long.class, paramType = "query", example = "1")})
-    public R<Boolean> getSpecialGroup(@RequestParam("specialId") Long specialId) {
-        return projectExtService.getSpecialGroup(specialId);
-
-    }
-
-    @ApiOperation(value = "是否已经点击自动创建")
-    @GetMapping("/getCreateInfo")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "specialId", value = "专题id:必填", dataTypeClass = Long.class, paramType = "query", example = "1")})
-    public R<CreateStatusOut> getCreateInfo(@RequestParam("specialId") Long specialId) {
-        return projectExtService.getCreateSt(specialId);
-    }
-
-
     // 以下为新版：------------------------------------------------------------------
 
     /**
@@ -307,17 +230,17 @@ public class ProjectController extends BaseController {
         PageHelper.startPage(req.getPageNum(), req.getPageSize()).setReasonable(true);
         Project project = new Project();
         BeanUtils.copyProperties(req, project);
-        //20231111wd_机构层级
-        if(req.getOrganizationId()==null || req.getOrganizationId()<1 ){
+        project.setProjectType(req.getProjectTypeId());
+
+        // 机构层级
+        if (req.getOrganizationId() == null || req.getOrganizationId() < 1) {
             if (!SysUser.isAdmin(SecurityUtils.getUserId())) {
                 project.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
             }
-        }else{
+        } else {
             project.setOrganizationId(req.getOrganizationId());
         }
 
-       //Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-       //project.setOrganizationId(organizationId);
         List<ProjectListVO> list = projectService.selectProjectList(project);
         PageMaster pageMaster = new PageMaster<>(list);
         return R.ok(pageMaster);
@@ -349,30 +272,11 @@ public class ProjectController extends BaseController {
     @RequiresPermissions("projectConfig:projectList:remove")
     @PostMapping(value = "/remove")
     public R remove(@RequestBody ProjectIdsVO request) {
-        List<Long> idList = request.getProjectIds();
-        AtomicInteger processCount = new AtomicInteger(0);
-        for (Long projectId : idList) {
-            Project project = new Project();
-            project.setProjectId(projectId);
-            // 只能删除项目状态是未启动的项目。
-            project.setStatus(1);
-            QueryWrapper queryWrapper = new QueryWrapper<>(project);
-
-            Project delProject = projectService.getOne(queryWrapper);
-            if (delProject != null) {
-                projectService.removeById(projectId);
-
-                QueryWrapper<RecentlyVisited> recentlyVisitedQueryWrapper = new QueryWrapper<>();
-                recentlyVisitedQueryWrapper.eq("project_id", projectId);
-                recentlyVisitedService.remove(recentlyVisitedQueryWrapper);
-                processCount.getAndIncrement();
-            }
-        }
-
-        if (processCount.get() > 0) {
+        Integer processCount = projectService.projectRemove(request);
+        if (processCount > 0) {
             return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         } else {
-            return R.fail(MessageSource.M("OPERATE_ERROR"));
+            return R.fail(MessageSource.M("REMOVE_PROJECT_ERROR"));
         }
     }
 

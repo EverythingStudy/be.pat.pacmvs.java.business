@@ -51,6 +51,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -192,9 +193,18 @@ public class MarkingServiceImpl implements MarkingService {
 		return markingMapper.selectById(markingId);
 	}
 
+
+	@Async
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public String insert(ViewAddIn req) throws Exception {
+		//TODO  imageId projectId 前端出入可进一步优化
+		if(req.getGeometry() != null){
+			if (req.getGeometry().isEmpty()) {
+				log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
+				return "更新失败，轮廓数据不能为空";
+			}
+		}
 		//加slide缓存
 		cn.staitech.anno.project.domain.Slide slideBy = redisService.getCacheObject(CommonConstant.ANNO_SLIDE+req.getSlide_id());
 		if(null == slideBy){
@@ -202,16 +212,11 @@ public class MarkingServiceImpl implements MarkingService {
 			redisService.setCacheObject(CommonConstant.ANNO_SLIDE+req.getSlide_id(), slideBy, CommonConstant.SLIDE_CACHE_HOURS, TimeUnit.HOURS);
 		}
 		if (slideBy == null) {
-			throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
+			return MessageSource.M("NO_SLIDE_DATA");
 		}
+
 		//BeanUtils.copyProperties(req, marking);
 		Marking marking = trans2Marking(req);
-		// 判断切片状态是否是未开始
-		if (Objects.equals(slideBy.getStatus(), "1")) {
-			// 更新切片表中状态至切片中
-			slideBy.setStatus("2");
-			slideMapperV1.updateById(slideBy);
-		}
 
 		// 获取规定的geoJson Id
 		String annotationId = CustomizationIdUtils.getSdId();
@@ -238,7 +243,6 @@ public class MarkingServiceImpl implements MarkingService {
 		if (user != null) {
 			marking.setAnnotation_owner(user.getUserName());
 		}
-		//		}
 		// 查询
 		int number = 1;
 		QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
@@ -250,6 +254,7 @@ public class MarkingServiceImpl implements MarkingService {
 				number += markingBy.getNumber();
 			}
 		}
+		marking.setNumber(number);
 		marking.setProject_id(Long.valueOf(slideBy.getProjectId()));
 		//加image缓存
 		Image image = redisService.getCacheObject(CommonConstant.ANNO_IMAGE+slideBy.getImageId());
@@ -261,15 +266,10 @@ public class MarkingServiceImpl implements MarkingService {
 			marking.setImage_id(image.getImageId());
 			marking.setImage_url(image.getImageUrl());
 		}
-		marking.setNumber(number);
-		if(req.getGeometry() != null){
-			if (req.getGeometry().isEmpty()) {
-				log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
-				throw new Exception("更新失败，轮廓数据不能为空");
-			}
-		}
+
 		// 添加数据库，添加后返回自增id
 		markingMapper.insert(marking);
+
 		//增加缓存
 		redisService.setCacheObject(CommonConstant.ANNO_MARKING+marking.getMarking_id(), marking, CommonConstant.MARKING_CACHE_HOURS, TimeUnit.HOURS);
 		Properties properties = markingMapper.selectBy(marking.getMarking_id());
@@ -278,8 +278,9 @@ public class MarkingServiceImpl implements MarkingService {
 		List<PointCount> pointCountList = updatePoint(req.getLocation_type(), marking);
 		BroadcastVO broadcastVO = SendMessage.sendOneMessages(ADD_STATUS, features, pointCountList);
 		NioWebSocketHandler.sendAll(req.getSlide_id(), broadcastVO);
+
 		//TODO 多线程处理
-		annExecutor.submit(new AnnCountThread(1,marking.getSlide_id(), marking.getCreate_by(), marking.getCategory_id()));
+		annExecutor.submit(new AnnCountThread(1,marking.getSlide_id(), marking.getCreate_by(), marking.getCategory_id(),slideBy));
 
 		// 更新切片表中最新状态
 		/* updateSLide(marking.getSlide_id());
@@ -379,7 +380,7 @@ public class MarkingServiceImpl implements MarkingService {
         }*/
 
 		//TODO 多线程处理
-		annExecutor.submit(new AnnCountThread(2,marking.getSlide_id(), marking.getCreate_by(), marking.getCategory_id()));
+		annExecutor.submit(new AnnCountThread(2,marking.getSlide_id(), marking.getCreate_by(), marking.getCategory_id(),slide));
 
 		return markingBy.getMarking_id();
 	}
@@ -1243,17 +1244,26 @@ public class MarkingServiceImpl implements MarkingService {
 		private final Long slideId;
 		private final Long createBy;
 		private final Long categoryId;
+		private final Slide slide;
 
-		public AnnCountThread(Integer type,Long slideId, Long createBy, Long categoryId) {
+		public AnnCountThread(Integer type,Long slideId, Long createBy, Long categoryId,Slide slide) {
 			this.type = type;
 			this.slideId = slideId;
 			this.createBy = createBy;
 			this.categoryId = categoryId;
+			this.slide = slide;
 		}
 
 		@Override
 		public void run() {
 			try {
+				// 判断切片状态是否是未开始
+				if (Objects.equals(slide.getStatus(), "1")) {
+					// 更新切片表中状态至切片中
+					slide.setStatus("2");
+					slideMapperV1.updateById(slide);
+				}
+
 				// 更新切片表中最新状态
 				updateSLide(slideId);
 				if(type == 2){
