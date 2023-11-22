@@ -1,5 +1,6 @@
 package cn.staitech.anno.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.thread.ExecutorBuilder;
 import cn.staitech.anno.constant.CommonConstant;
@@ -296,11 +297,11 @@ public class MarkingServiceImpl implements MarkingService {
 			markingBy = markingMapper.selectById(req.getMarking_id());
 			redisService.setCacheObject(CommonConstant.ANNO_MARKING+req.getMarking_id(), markingBy, CommonConstant.MARKING_CACHE_HOURS, TimeUnit.HOURS);
 		}
-
-		//判断是否是自己的标注信息
-		//        if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId())){
-		//            throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
-		//        }
+		Project project=projectMapperV1.selectById(markingBy.getProject_id());
+		//验证集项目中不能修改他人轮廓
+		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")){
+			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
+		}
 		if (!Optional.ofNullable(markingBy).isPresent()) {
 			throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
 		}
@@ -1039,17 +1040,24 @@ public class MarkingServiceImpl implements MarkingService {
 		Long userId = SecurityUtils.getUserId();
 		DownTask task = DownTask.builder().code(snowflake.nextIdStr()).status(Constants.DOWN_STATE_RUNNING).createTime(new Date()).updateTime(new Date()).updateBy(userId).createBy(userId).build();
 		downTaskMapper.insert(task);
-		//过滤掉交付的slide
-		//        List<Long>slideIdList=slideIds.stream().filter(e->{
-		//            Slide slideBy = slideMapperV1.selectById(e);
-		//            if (!Objects.equals(slideBy.getStatus(), "7")){
-		//                return true;
-		//            }
-		//            return false;
-		//        }).collect(Collectors.toList());
-		// 执行任务
-		// 查询所有的切片
-		executor.submit(new TaskThread(task, projectId, projectBy.getProjectName(), slideIds, SecurityUtils.getLoginUser().getSysUser()));
+		//在标注类项目，切片列表页面，批量导出JSON时，去掉未交付的图片，不允许随时导出未交付的json
+		if (Objects.equals(projectBy.getProjectType(), "1") && CollectionUtil.isNotEmpty(slideIds)){
+			List<Long>slideIdList=slideIds.stream().filter(e->{
+				Slide slideBy = slideMapperV1.selectById(e);
+				if (Objects.equals(slideBy.getStatus(), "7")){
+					return true;
+				}
+				return false;
+			}).collect(Collectors.toList());
+			// 执行任务
+			// 查询所有的切片
+			executor.submit(new TaskThread(task, projectId, projectBy.getProjectName(), slideIdList, SecurityUtils.getLoginUser().getSysUser()));
+
+		}else{
+			// 执行任务
+			// 查询所有的切片
+			executor.submit(new TaskThread(task, projectId, projectBy.getProjectName(), slideIds, SecurityUtils.getLoginUser().getSysUser()));
+		}
 
 		return task;
 
@@ -1177,15 +1185,22 @@ public class MarkingServiceImpl implements MarkingService {
 				if (slideIds == null || slideIds.isEmpty()) {
 					QueryWrapper<Slide> queryWrapper = Wrappers.query();
 					queryWrapper.eq("project_id", projectId);
-					queryWrapper.select("slide_id");
+					queryWrapper.select("slide_id","status");
 					List<Slide> slideList = slideMapperV1.selectList(queryWrapper);
-					// 过滤掉交付的slide
-					//                    List<Slide> slideList = slideLists.stream().filter(s-> !Objects.equals(s.getStatus(), "7")).collect(Collectors.toList());
 
 					slideIds = new ArrayList<>();
-					slideList.forEach(slide -> {
-						slideIds.add(slide.getSlideId());
-					});
+					// 在标注类项目，切片列表页面，批量导出JSON时，去掉未交付的图片，不允许随时导出未交付的json
+					Project project=projectMapperV1.selectById(projectId);
+					if (Objects.equals(project.getProjectType(), "1") && CollectionUtil.isNotEmpty(slideList)){
+						List<Slide> slideLists = slideList.stream().filter(s-> Objects.equals(s.getStatus(), "7")).collect(Collectors.toList());
+						slideLists.forEach(slide -> {
+							slideIds.add(slide.getSlideId());
+						});
+					}else{
+						slideList.forEach(slide -> {
+							slideIds.add(slide.getSlideId());
+						});
+					}
 				}
 				if (slideIds != null && !slideIds.isEmpty()) {
 					for (Long slideId : slideIds) {
