@@ -68,6 +68,13 @@ public class CommonConstant {
     public static final Long IMAGE_CACHE_HOURS = 24L;
     public static final String ANNO_MARKING = "ANNO_MARKING_";
     public static final Long MARKING_CACHE_HOURS = 24L;
+    
+    /**
+     * 上传下载限制
+     */
+    public static final double UPLOAD_FILE_LIMIT = 300;
+    public static final double DOWN_FILE_LIMIT = 300;
+    
     /**
      * Viewer
      */

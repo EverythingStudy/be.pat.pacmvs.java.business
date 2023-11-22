@@ -1,5 +1,6 @@
 package cn.staitech.anno.config;
 
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.mapper.*;
@@ -10,6 +11,7 @@ import cn.staitech.anno.project.mapper.SlideMapperV1;
 import cn.staitech.anno.project.service.MarkingServiceV1;
 import cn.staitech.anno.project.service.SlideAttrService;
 import cn.staitech.anno.utils.GeometryUtil;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.geojson.Properties;
 import cn.staitech.anno.vo.slide.SlideRes;
 import cn.staitech.system.api.domain.SysUser;
@@ -112,6 +114,20 @@ public class AsyncTask {
             //定义文件条目
             ZipEntry ze;
             Enumeration<? extends ZipEntry> zipEnum = zipFile.entries();
+          // 循环压缩包中解压内容==>TODO 增加文件大小的校验
+            while (zipEnum.hasMoreElements()) {
+                // 获取下一个元素
+                ze = zipEnum.nextElement();
+                if (!ze.isDirectory()) {
+                    long size = ze.getSize();
+                    //大小计算
+      		        double fileSizeInMB = (double) size / (1024 * 1024);
+                    if (fileSizeInMB >  CommonConstant.UPLOAD_FILE_LIMIT) {
+                    	throw new Exception(MessageSource.M("FILE_DOWNLOAD_ERROR"));
+                    }
+                }
+                zp.closeEntry();
+            }
             // 循环压缩包中解压内容
             while (zipEnum.hasMoreElements()) {
                 // 获取下一个元素

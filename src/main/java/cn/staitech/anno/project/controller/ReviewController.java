@@ -127,7 +127,7 @@ public class ReviewController {
     			}
     		}
     		//如果总大小超过300M，返回错误信息
-    		if(totalFileSizeMB > 300){
+    		if(totalFileSizeMB > CommonConstant.DOWN_FILE_LIMIT){
     			downTask.setStatus("3");
     		}
     	}
