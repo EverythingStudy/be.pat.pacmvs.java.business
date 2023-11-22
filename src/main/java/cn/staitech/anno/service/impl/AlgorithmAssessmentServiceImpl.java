@@ -403,21 +403,21 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
             collect = algorithmAssessments.stream().map(e -> {
                 GetAssessmentListOut resp2 = new GetAssessmentListOut();
+                if(e.getCategoryIds() != null){
+                    resp2.setCategoryIds(e.getCategoryIds().split(","));
+                    String str = pathologicalIndicatorCategoryMapper.selectCategoryById(e.getCategoryIds().split(","));
 
-                resp2.setCategoryIds(e.getCategoryIds().split(","));
-                String str = pathologicalIndicatorCategoryMapper.selectCategoryById(e.getCategoryIds().split(","));
-
-                BeanUtils.copyProperties(e, resp2);
-                resp2.setCategoryName(str);
-                resp2.setImageCode(e.getImageName());
-                LambdaQueryWrapper<AlgorithmJson> qw2 = new LambdaQueryWrapper<>();
-                qw2.eq(AlgorithmJson::getAlgorithmAssessmentId, e.getAlgorithmAssessmentId());
-                qw2.eq(AlgorithmJson::getJsonType, "1");
-                List<AlgorithmJson> algorithmJsons = algorithmJsonMapper.selectList(qw2);
-                if (!CollectionUtils.isEmpty(algorithmJsons)) {
-                    resp2.setAlgorithmJsonNames(algorithmJsons.stream().map(AlgorithmJson::getAlgorithmJsonName).collect(Collectors.toList()));
+                    BeanUtils.copyProperties(e, resp2);
+                    resp2.setCategoryName(str);
+                    resp2.setImageCode(e.getImageName());
+                    LambdaQueryWrapper<AlgorithmJson> qw2 = new LambdaQueryWrapper<>();
+                    qw2.eq(AlgorithmJson::getAlgorithmAssessmentId, e.getAlgorithmAssessmentId());
+                    qw2.eq(AlgorithmJson::getJsonType, "1");
+                    List<AlgorithmJson> algorithmJsons = algorithmJsonMapper.selectList(qw2);
+                    if (!CollectionUtils.isEmpty(algorithmJsons)) {
+                        resp2.setAlgorithmJsonNames(algorithmJsons.stream().map(AlgorithmJson::getAlgorithmJsonName).collect(Collectors.toList()));
+                    }
                 }
-
                 return resp2;
             }).collect(Collectors.toList());
         }
