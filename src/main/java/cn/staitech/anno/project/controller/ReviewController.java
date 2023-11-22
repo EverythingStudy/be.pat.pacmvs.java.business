@@ -37,6 +37,7 @@ import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -114,9 +115,9 @@ public class ReviewController {
     			for (Map.Entry<String, Object> entry : jsonObjectPath.entrySet()) {
     			    //String slideIdKey = entry.getKey();
     			    Object value = entry.getValue();
-    			    JSONObject slideFilePath = (JSONObject) value;
-    			    if(slideFilePath.containsKey("path")){
-    			    	String filePath = slideFilePath.getString("path");
+    			    Map<String,Object>  slideFileMap =  (Map<String, Object>) value;
+    			    if(null != slideFileMap && slideFileMap.containsKey("path")){
+    			    	String filePath = (String) slideFileMap.get("path");
     			    	//大小计算
     			    	File file = new File(filePath);
     			        long fileSize = file.length();
