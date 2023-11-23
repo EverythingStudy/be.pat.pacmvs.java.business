@@ -352,7 +352,7 @@ public class MarkingServiceImpl implements MarkingService {
 		}
 		List<PointCount> pointCountList = updatePoint(markingBy.getLocation_type(), markingBy);
 		// 修改轮廓时，轮廓为空
-		if(req.getCategory_id() == null){
+		if(req.getCategory_id() == null && req.getDescription() == null){
 			if(req.getGeometry() != null){
 				if (req.getGeometry().isEmpty()) {
 					log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
