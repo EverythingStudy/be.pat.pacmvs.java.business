@@ -289,6 +289,7 @@ public class MarkingServiceImpl implements MarkingService {
 		return marking.getMarking_id();
 	}
 
+	@Async
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public String update(MarkingUpdateIn req) throws Exception {
