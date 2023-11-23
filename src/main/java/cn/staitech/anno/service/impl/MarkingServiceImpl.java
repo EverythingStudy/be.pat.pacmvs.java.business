@@ -319,15 +319,20 @@ public class MarkingServiceImpl implements MarkingService {
 		// 更新前数据
 		//BeanUtils.copyProperties(req, marking);
 		Marking marking = updaeTrans2Marking(req);
-		marking.setUpdate_by(req.getUpdate_by());
-		//加用户缓存
-		SysUser user = redisService.getCacheObject(CommonConstant.SYS_USER+req.getUpdate_by());
-		if(null == user){
-			user = userMapper.selectUserById(req.getUpdate_by());
-			redisService.setCacheObject(CommonConstant.SYS_USER+req.getUpdate_by(), user, CommonConstant.SYS_USER_CACHE_HOURS, TimeUnit.DAYS);
-		}
-		if (user != null) {
-			marking.setAnnotation_update_owner(user.getUserName());
+		if(null != req.getUpdate_by()){
+			marking.setUpdate_by(req.getUpdate_by());
+			//加用户缓存
+			SysUser user = redisService.getCacheObject(CommonConstant.SYS_USER+req.getUpdate_by());
+			if(null == user){
+				user = userMapper.selectUserById(req.getUpdate_by());
+				redisService.setCacheObject(CommonConstant.SYS_USER+req.getUpdate_by(), user, CommonConstant.SYS_USER_CACHE_HOURS, TimeUnit.DAYS);
+			}
+			if (user != null) {
+				marking.setAnnotation_update_owner(user.getUserName());
+			}
+		}else{
+			marking.setUpdate_by(SecurityUtils.getLoginUser().getSysUser().getUserId());
+			marking.setAnnotation_update_owner(SecurityUtils.getLoginUser().getSysUser().getUserName());
 		}
 		marking.setUpdate_time(new Date());
 		if (req.getArea() != null && !"".equals(req.getArea())) {

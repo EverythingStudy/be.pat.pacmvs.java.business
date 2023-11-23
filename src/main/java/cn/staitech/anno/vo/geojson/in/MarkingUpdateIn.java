@@ -13,7 +13,7 @@ public class MarkingUpdateIn {
     @ApiModelProperty(value = "标注id")
     private String marking_id;
     
-    @NotNull(message = "{viewAddIn.createBy.notNull}")
+    //@NotNull(message = "{viewAddIn.createBy.notNull}")
     @ApiModelProperty(value = "标注作者(绘制者)")
     private Long update_by;
 
