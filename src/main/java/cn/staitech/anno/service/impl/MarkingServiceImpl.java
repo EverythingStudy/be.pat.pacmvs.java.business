@@ -357,12 +357,13 @@ public class MarkingServiceImpl implements MarkingService {
 				if (req.getGeometry().isEmpty()) {
 					log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
 					throw new Exception("更新失败，轮廓数据不能为空");
-				}else{
-					// 将图形进行合并
-					String location = updateVerify(markingBy.getGeometry(),req.getGeometry(),req.getOperation());
-					JSONObject jsonObject = JSONObject.parseObject(location);
-					marking.setGeometry(jsonObject);
 				}
+//				else{
+//					// 将图形进行合并
+//					String location = updateVerify(markingBy.getGeometry(),req.getGeometry(),req.getOperation());
+//					JSONObject jsonObject = JSONObject.parseObject(location);
+//					marking.setGeometry(jsonObject);
+//				}
 			}
 			else {
 				log.info("标注数据异常:" + req + "------------------------------------------------->");
