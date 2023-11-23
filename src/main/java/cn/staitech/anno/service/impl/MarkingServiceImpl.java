@@ -257,7 +257,7 @@ public class MarkingServiceImpl implements MarkingService {
 		marking.setNumber(number);
 		marking.setProject_id(Long.valueOf(slideBy.getProjectId()));
 		//加image缓存
-		Image image = redisService.getCacheObject(CommonConstant.ANNO_IMAGE+slideBy.getImageId());
+		/*Image image = redisService.getCacheObject(CommonConstant.ANNO_IMAGE+slideBy.getImageId());
 		if(null == image){
 			image = imageMapper.selectById(slideBy.getImageId());
 			redisService.setCacheObject(CommonConstant.ANNO_IMAGE+slideBy.getImageId(), image, CommonConstant.IMAGE_CACHE_HOURS, TimeUnit.HOURS);
@@ -265,7 +265,7 @@ public class MarkingServiceImpl implements MarkingService {
 		if (image != null) {
 			marking.setImage_id(image.getImageId());
 			marking.setImage_url(image.getImageUrl());
-		}
+		}*/
 
 		// 添加数据库，添加后返回自增id
 		markingMapper.insert(marking);
