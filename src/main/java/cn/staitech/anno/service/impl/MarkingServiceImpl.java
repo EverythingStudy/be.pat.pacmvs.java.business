@@ -194,7 +194,7 @@ public class MarkingServiceImpl implements MarkingService {
 	}
 
 
-	@Async
+	//@Async
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public String insert(ViewAddIn req) throws Exception {
@@ -289,7 +289,7 @@ public class MarkingServiceImpl implements MarkingService {
 		return marking.getMarking_id();
 	}
 
-	@Async
+	//@Async
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public String update(MarkingUpdateIn req) throws Exception {
