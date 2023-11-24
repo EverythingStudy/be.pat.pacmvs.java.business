@@ -334,7 +334,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                 entry = zis.getNextEntry();
             }
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
             log.info("解压异常:{}", zipFile.getAbsolutePath());
             throw new Exception(MessageSource.M("ZIP_FILE_UNZIP_FAILURE"));
