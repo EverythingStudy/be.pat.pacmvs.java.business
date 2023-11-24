@@ -79,6 +79,14 @@ public class CommonConstant {
      * Viewer
      */
     public static final Double MICRON = 0.26;
+    
+    /**
+     * structure
+     */
+    public static final String STRUCTURE_RO = "RO";
+    public static final String STRUCTURE_ROA = "ROA";
+    public static final String STRUCTURE_ROE = "ROE";
+    
     /**
      * Statistic
      */
