@@ -21,12 +21,18 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import static cn.staitech.anno.constant.CommonConstant.GLIDE_LINE;
 
@@ -324,6 +330,10 @@ public class FileUploadServiceImpl implements FileUploadService {
                         throw new Exception(MessageSource.M("DISALLOW_NOT_PROJECT"));
                     }
 //                    markingService.zipExport(filesBy.getFilesPath(), chunk.getProjectId());
+                    boolean tag = zipCheck(filesBy.getFilesPath(), chunk.getProjectId());
+                    if(!tag){
+                    	throw new Exception("文件上限300M");
+                    }
                     asyncTask.zipExport(filesBy.getFilesPath(), chunk.getProjectId());
                     break;
                 case 5:
@@ -347,6 +357,42 @@ public class FileUploadServiceImpl implements FileUploadService {
             }
         }
         return "1";
+    }
+    
+    
+    public boolean zipCheck(String zipUrl, Long projectId) throws Exception  {
+    	boolean tag = true;
+    	File file1 = new File(zipUrl);
+    	//        try {
+    	//zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
+    	//必须指明读取的各式，不然会存在问题
+    	ZipFile zipFile = new ZipFile(file1, Charset.forName("gbk"));
+    	//按流的方式读取文件，输入到管道中
+    	InputStream in = new BufferedInputStream(java.nio.file.Files.newInputStream(file1.toPath()));
+    	//字节流转换为压缩文件输入流，通常用来读取压缩文件
+    	ZipInputStream zp = new ZipInputStream(in);
+    	//定义文件条目
+    	ZipEntry ze;
+    	Enumeration<? extends ZipEntry> zipEnum = zipFile.entries();
+    	// 循环压缩包中解压内容==>TODO 增加文件大小的校验
+    	while (zipEnum.hasMoreElements()) {
+    		// 获取下一个元素
+    		ze = zipEnum.nextElement();
+    		if (!ze.isDirectory()) {
+    			long size = ze.getSize();
+    			//大小计算
+    			double fileSizeInMB = (double) size / (1024 * 1024);
+    			if (fileSizeInMB >  CommonConstant.UPLOAD_FILE_LIMIT) {
+    				tag = false;
+    			}
+    		}
+    		zp.closeEntry();
+    	}
+    	//        } catch (Exception e) {
+    	//            throw new Exception("json文件解析失败");
+    	//        }
+    	//        return true;
+    	return tag;
     }
 
     public Long saveFiles(FileUploadVO fileUploadVO) throws Exception {
