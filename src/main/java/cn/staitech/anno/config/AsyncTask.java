@@ -1,5 +1,6 @@
 package cn.staitech.anno.config;
 
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.mapper.*;
@@ -10,6 +11,7 @@ import cn.staitech.anno.project.mapper.SlideMapperV1;
 import cn.staitech.anno.project.service.MarkingServiceV1;
 import cn.staitech.anno.project.service.SlideAttrService;
 import cn.staitech.anno.utils.GeometryUtil;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.geojson.Properties;
 import cn.staitech.anno.vo.slide.SlideRes;
 import cn.staitech.system.api.domain.SysUser;
@@ -95,7 +97,8 @@ public class AsyncTask {
 
     @SneakyThrows
     @Async
-    @Transactional
+    //TODO1 解析json过程中无法标注
+    //@Transactional
     public void zipExport(String zipUrl, Long projectId)  {
         File file1 = new File(zipUrl);
 //        try {
@@ -122,7 +125,7 @@ public class AsyncTask {
                     InputStream newBf = zipFile.getInputStream(ze);
                     parseJson(bf, newBf, slideResList);
                     bf.close();
-                }
+                    }
             }
             zp.closeEntry();
         }

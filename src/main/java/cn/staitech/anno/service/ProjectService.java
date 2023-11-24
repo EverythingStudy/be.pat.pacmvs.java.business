@@ -6,6 +6,7 @@ import cn.staitech.anno.vo.annotation.AnnotationsAddVO;
 import cn.staitech.anno.vo.image.ImageMessageVO;
 import cn.staitech.anno.vo.image.in.ImageAllVO;
 import cn.staitech.anno.vo.project.*;
+import cn.staitech.anno.vo.project.in.ProjectIdsVO;
 import cn.staitech.anno.vo.slide.SlideCategoryProcessFlagVO;
 import cn.staitech.anno.vo.statistic.StatisticProjectListOutVO;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -224,4 +225,6 @@ public interface ProjectService extends IService<Project> {
      */
     public ProjectListVO selectProjectById(Long projectId);
 
+
+    public Integer projectRemove(ProjectIdsVO request);
 }

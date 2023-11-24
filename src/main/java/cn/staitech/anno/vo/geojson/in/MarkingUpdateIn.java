@@ -12,7 +12,8 @@ public class MarkingUpdateIn {
     @NotNull(message = "{DescriptionUpdateVO.annotationId.isnull}")
     @ApiModelProperty(value = "标注id")
     private String marking_id;
-
+    
+    //@NotNull(message = "{viewAddIn.createBy.notNull}")
     @ApiModelProperty(value = "标注作者(绘制者)")
     private Long update_by;
 
@@ -31,7 +32,7 @@ public class MarkingUpdateIn {
     @ApiModelProperty(value = "描述")
     private String description;
 
-    @ApiModelProperty(value = "标注坐标")
+    @ApiModelProperty(value = "(新图形) 标注坐标")
     private JSONObject geometry;
 
     @ApiModelProperty(value = "测量轮廓类型(0:正常,表示有关系,默认为0")
@@ -66,5 +67,8 @@ public class MarkingUpdateIn {
 
     @ApiModelProperty(value = "中心")
     private String center_point;
+
+    @ApiModelProperty(value = "要执行的操作(UNION:相交,DIFFERENCE:相差,null)")
+    private String operation;
 
 }

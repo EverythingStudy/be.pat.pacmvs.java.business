@@ -7,6 +7,12 @@ package cn.staitech.anno.constant;
  */
 public class CommonConstant {
 
+	 /**
+     * system
+     */
+	
+	public static final String SYS_USER = "SYS_USER_";
+	public static final Long SYS_USER_CACHE_HOURS = 7L;
     /**
      * cache key
      */
@@ -56,10 +62,31 @@ public class CommonConstant {
     public static final String CLEAN = "clean";
     public static final String UNION = "UNION";
     public static final String DIFFERENCE = "DIFFERENCE";
+    public static final String ANNO_SLIDE = "ANNO_SLIDE_";
+    public static final Long SLIDE_CACHE_HOURS = 24L;
+    public static final String ANNO_IMAGE = "ANNO_IMAGE_";
+    public static final Long IMAGE_CACHE_HOURS = 24L;
+    public static final String ANNO_MARKING = "ANNO_MARKING_";
+    public static final Long MARKING_CACHE_HOURS = 24L;
+    
+    /**
+     * 上传下载限制
+     */
+    public static final double UPLOAD_FILE_LIMIT = 300;
+    public static final double DOWN_FILE_LIMIT = 300;
+    
     /**
      * Viewer
      */
     public static final Double MICRON = 0.26;
+    
+    /**
+     * structure
+     */
+    public static final String STRUCTURE_RO = "RO";
+    public static final String STRUCTURE_ROA = "ROA";
+    public static final String STRUCTURE_ROE = "ROE";
+    
     /**
      * Statistic
      */
