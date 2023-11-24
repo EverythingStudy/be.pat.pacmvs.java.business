@@ -10,6 +10,7 @@ import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
+import cn.staitech.common.security.annotation.Logical;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -94,7 +95,7 @@ public class ImageController extends BaseController {
     @ApiOperationSupport(author = "wangfeng")
     @Log(title = "删除切片", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.DELETE)
     @ApiOperation(value = "批量删除切片-物理删除")
-    @RequiresPermissions(value = {"section:ophthalmology:del", "section:ophthalmology:remove"})
+    @RequiresPermissions(value = {"section:ophthalmology:del", "section:ophthalmology:remove"}, logical = Logical.OR)
     @PostMapping("/deleteBatchIds")
     public R<List<Long>> deleteBatchIds(@Validated @RequestBody ImageBatchIdsVO request) throws InterruptedException {
         List<Long> data = imageService.deleteBatchIds(request);
