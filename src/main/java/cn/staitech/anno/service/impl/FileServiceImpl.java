@@ -174,9 +174,13 @@ public class FileServiceImpl implements FileService {
             }
         }
         if (categoryList.size() > 0) {
-            StringBuilder categoryNumber = new StringBuilder();
+            String categoryNumber = "";
             for (GeoLabel geoLabel : categoryList) {
-                categoryNumber.append(geoLabel.getLabel_code());
+                if(!"".equals(categoryNumber)){
+                    categoryNumber = categoryNumber + "-" +  geoLabel.getLabel_code();
+                }else {
+                    categoryNumber = categoryNumber + geoLabel.getLabel_code();
+                }
             }
             fileUrl += GLIDE_LINE + categoryNumber;
         }
