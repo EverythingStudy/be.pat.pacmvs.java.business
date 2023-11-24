@@ -115,7 +115,7 @@ public class AsyncTask {
             ZipEntry ze;
             Enumeration<? extends ZipEntry> zipEnum = zipFile.entries();
           // 循环压缩包中解压内容==>TODO 增加文件大小的校验
-            while (zipEnum.hasMoreElements()) {
+            /*while (zipEnum.hasMoreElements()) {
                 // 获取下一个元素
                 ze = zipEnum.nextElement();
                 if (!ze.isDirectory()) {
@@ -127,7 +127,7 @@ public class AsyncTask {
                     }
                 }
                 zp.closeEntry();
-            }
+            }*/
             // 循环压缩包中解压内容
             while (zipEnum.hasMoreElements()) {
                 // 获取下一个元素
