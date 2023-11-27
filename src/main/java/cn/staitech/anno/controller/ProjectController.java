@@ -70,8 +70,6 @@ public class ProjectController extends BaseController {
     private FileService fileService;
     @Resource
     private MarkingService markingService;
-    @Resource
-    private RecentlyVisitedService recentlyVisitedService;
 
     @ApiOperation(value = "项目编辑")
     @RequiresPermissions("special:project:edit")

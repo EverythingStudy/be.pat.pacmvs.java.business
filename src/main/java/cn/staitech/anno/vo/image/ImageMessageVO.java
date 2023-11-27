@@ -7,6 +7,9 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * @author wangf
+ */
 @Data
 public class ImageMessageVO extends BaseEntity {
 
@@ -153,14 +156,14 @@ public class ImageMessageVO extends BaseEntity {
      */
     @ApiModelProperty(value = "", hidden = true)
     private Integer processFlag;
-
-
     @ApiModelProperty(value = "", hidden = true)
     private String searchValue;
 
     @ApiModelProperty(value = "", hidden = true)
     private Long createBy;
-
+    @ApiModelProperty(value = "", hidden = true)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
     @ApiModelProperty(value = "", hidden = true)
     private Long updateBy;
 
@@ -171,12 +174,8 @@ public class ImageMessageVO extends BaseEntity {
     @ApiModelProperty(value = "", hidden = true)
     private String remark;
 
-    /**
-     * 是否添加
-     */
     @ApiModelProperty(value = "是否添加")
     private String exist;
-
 
     @ApiModelProperty(value = "图片（切片）编号")
     private String imageCode;

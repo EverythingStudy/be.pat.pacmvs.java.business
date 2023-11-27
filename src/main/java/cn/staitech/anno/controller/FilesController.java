@@ -65,7 +65,7 @@ public class FilesController extends BaseController {
             @ApiImplicitParam(name = "businessType", value = "businessType", required = true, dataType = "Integer")
     })
     @Log(title = "文件上传并处理下游业务逻辑", menu = "文件上传并处理下游业务逻辑", subMenu = "文件上传并处理下游业务逻辑", businessType = BusinessType.IMPORT)
-    //@RequiresPermissions(value = {"smartAnnoInfo:algorithm:batchUploadJson", "section:ophthalmology:uploadZip"})
+    @RequiresPermissions(value = {"smartAnnoInfo:algorithm:batchUploadJson", "section:ophthalmology:uploadZip"})
     @PostMapping("/uploadBusiness")
     public R<Files> uploadBusiness(
             @RequestParam("file") MultipartFile file,
@@ -88,7 +88,7 @@ public class FilesController extends BaseController {
             @ApiImplicitParam(name = "businessType", value = "businessType", required = true, dataType = "Integer")
     })
     @Log(title = "文件上传并处理下游业务逻辑(大文件)", menu = "文件上传并处理下游业务逻辑", subMenu = "文件上传并处理下游业务逻辑", businessType = BusinessType.IMPORT)
-    //@RequiresPermissions(value = {"smartAnnoInfo:algorithm:batchUploadJson", "section:ophthalmology:uploadZip"})
+    @RequiresPermissions(value = {"smartAnnoInfo:algorithm:batchUploadJson", "section:ophthalmology:uploadZip","scction:ophthalmology:query"})
     @PostMapping("/uploadBigFileBusiness")
     public R<String> uploadBigFileBusiness(
             @RequestParam("file") MultipartFile file, FileUploadVO fileUploadVO) throws Exception {

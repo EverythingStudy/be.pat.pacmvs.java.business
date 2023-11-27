@@ -65,7 +65,7 @@ public class ImageController extends BaseController {
             @ApiImplicitParam(name = "pageNum", value = "当前记录起始索引", dataTypeClass = Integer.class, paramType = "query", example = "1"),
             @ApiImplicitParam(name = "pageSize", value = "每页显示记录数", dataTypeClass = Integer.class, paramType = "query", example = "10")})
     @Log(title = "查询切片列表", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.QUERY)
-   // @RequiresPermissions("section:ophthalmology:query")
+    @RequiresPermissions({"section:ophthalmology:query","scction:ophthalmology:query"})
     @PostMapping("/eyeList")
     public R<PageMaster<ImageListOutVO>> eyeList(@Validated @RequestBody ImageListVO image) throws ExecutionException, InterruptedException {
         image.setBizType(7);
@@ -95,7 +95,7 @@ public class ImageController extends BaseController {
     @ApiOperationSupport(author = "wangfeng")
     @Log(title = "删除切片", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.DELETE)
     @ApiOperation(value = "批量删除切片-物理删除")
-    //@RequiresPermissions(value = {"section:ophthalmology:del", "section:ophthalmology:remove","projectConfig:spliceImgConfig:batchDelete"}, logical = Logical.OR)
+    @RequiresPermissions(value = {"section:ophthalmology:del", "section:ophthalmology:remove","projectConfig:spliceImgConfig:batchDelete"}, logical = Logical.OR)
     @PostMapping("/deleteBatchIds")
     public R<List<Long>> deleteBatchIds(@Validated @RequestBody ImageBatchIdsVO request) throws InterruptedException {
         List<Long> data = imageService.deleteBatchIds(request);
@@ -128,7 +128,7 @@ public class ImageController extends BaseController {
     @ApiOperationSupport(author = "wangfeng")
     @Log(title = "批量分专题", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.UPDATE)
     @ApiOperation(value = "单个图像添加专题")
-    //@RequiresPermissions(value = {"section:slices:edit", "section:forecast:edit", "section:ophthalmology:edit"}, logical = Logical.OR)
+    @RequiresPermissions(value = {"section:slices:edit", "section:forecast:edit", "section:ophthalmology:edit"}, logical = Logical.OR)
     @PostMapping("/update")
     public R update(@Validated @RequestBody ImageUpdateVO request) throws Exception {
         int result = imageService.updateById(request);
