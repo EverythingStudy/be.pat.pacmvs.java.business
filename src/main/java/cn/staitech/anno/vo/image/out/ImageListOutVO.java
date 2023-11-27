@@ -1,5 +1,6 @@
 package cn.staitech.anno.vo.image.out;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -27,6 +28,8 @@ public class ImageListOutVO {
     private String imagePath;
     @ApiModelProperty(value = "图像预览")
     private String thumbUrl;
+    @ApiModelProperty(value = "文件格式")
+    private String format;
     @ApiModelProperty(value = "宽度")
     private String width;
     @ApiModelProperty(value = "高度")
@@ -37,11 +40,9 @@ public class ImageListOutVO {
     private String globalSize;
     @ApiModelProperty(value = "原放大倍数")
     private Integer sourceLens;
-    @ApiModelProperty(value = "图片状态:0分片合并及生成缩略图处理中，,1合并且生成缩略图（可显示）,2文件以经传输（不可见）")
-    private Integer processFlag;
-    @ApiModelProperty(value = "文件状态:0处理中,1不可用,2可用")
-    private String processFlagName;
-    @ApiModelProperty(value = "文件状态:0处理中,1不可用,2可用")
+    @ApiModelProperty(value = "文件状态:0上传中、1上传失败、2解析中、3解析失败、4可用")
+    private Integer status;
+    @ApiModelProperty(value = "文件状态:0上传中、1上传失败、2解析中、3解析失败、4可用")
     private String fileStatus;
     @ApiModelProperty(value = "创建人id")
     private Long createBy;
@@ -59,10 +60,6 @@ public class ImageListOutVO {
     private Long topicId;
     @ApiModelProperty(value = "专题名称")
     private String topicName;
-    @ApiModelProperty(value = "可用状态:0不可用1可用")
-    private Integer status;
-    @ApiModelProperty(value = "逻辑删除状态:（0删除，1未删除）")
-    private Integer deleteFlag;
     @ApiModelProperty(value = "机构编号")
     private Long organizationId;
     @ApiModelProperty(value = "机构名称")
@@ -85,10 +82,6 @@ public class ImageListOutVO {
     private Long folderId;
     @ApiModelProperty(value = "创建人")
     private String nickName;
-
-    /**
-     * 眼科新添加字段
-     */
-    @ApiModelProperty(value = "文件夹名称")
+    @ApiModelProperty(value = "文件夹名称-眼科新添加字段")
     private String folderName;
 }

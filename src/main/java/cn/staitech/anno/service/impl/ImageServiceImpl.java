@@ -123,16 +123,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                     }
                 }
 
-                if (status == 0) {
-                    if (LanguageUtils.isEn()) {
-                        out.setProcessFlagName(Container.IMAGE_PROCESS_MAP_EN.get(in.getProcessFlag()));
-                    } else {
-                        out.setProcessFlagName(Container.IMAGE_PROCESS_MAP.get(in.getProcessFlag()));
-                    }
-                } else {
-                    out.setProcessFlagName("");
-                }
-
                 // 匹配机构名称
                 if (map.containsKey(in.getOrganizationId())) {
                     out.setOrganizationName(map.get(in.getOrganizationId()).toString());
@@ -242,13 +232,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                     if (bizType.equals(2)) {
                         out.setRoundName(MapConstant.getRoundName(in.getRoundId()));
                     }
-                }
-
-                // 不可用 可用 解析中
-                if (status == 0) {
-                    out.setProcessFlagName(Container.IMAGE_PROCESS_MAP.get(in.getProcessFlag()));
-                } else {
-                    out.setProcessFlagName("");
                 }
 
                 // 匹配机构名称
