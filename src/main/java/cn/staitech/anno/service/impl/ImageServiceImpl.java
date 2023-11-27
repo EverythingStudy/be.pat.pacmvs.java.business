@@ -380,16 +380,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     }
 
     /**
-     * 更改图像上传状态
-     *
-     * @param imageIdList 图像ID列表
-     * @return
-     */
-    public void updateProcessFlagByIdList(List imageIdList) {
-        imageMapper.updateProcessFlagByIdList(imageIdList);
-    }
-
-    /**
      * 关联切片与专题、组织ID，没有专题则新添加
      *
      * @param vo
