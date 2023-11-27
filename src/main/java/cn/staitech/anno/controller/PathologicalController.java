@@ -90,8 +90,8 @@ public class PathologicalController {
 			return R.fail(MessageSource.M("INDICATOR_ABSENT"));
 		}
 		//验证当前脏器下是否已经超过30个标签（颜色只有30种） 
-		int labelCount = pathologicalIndicatorCategoryService.selectLabelNumByStructureId(structureId);
-		if(labelCount > 30){
+		Integer labelCount = pathologicalIndicatorCategoryService.selectLabelNumByStructureId(structureId);
+		if(null != labelCount && labelCount > 30){
 			return R.fail(MessageSource.M("CATEGORY_NAME_EXIST"));
 		}
 		//验证结构是否已经存在 
