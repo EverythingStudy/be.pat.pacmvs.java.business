@@ -14,6 +14,7 @@ import cn.staitech.anno.service.SysOrganizationService;
 import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.image.ImageStatus;
 import cn.staitech.anno.vo.image.in.*;
 import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import cn.staitech.common.security.utils.SecurityUtils;
@@ -56,6 +57,24 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     private AsyncTask asyncTask;
     @Resource
     private SlidePredictionMapper slidePredictionMapper;
+
+    /**
+     * 切片状态列表 .
+     */
+    @Override
+    public List<ImageStatus> status() {
+        List<ImageStatus> list = new ArrayList<>();
+        if (LanguageUtils.isEn()) {
+            for (Map.Entry<Integer, String> entry : Container.IMAGE_STATUS_MAP_EN.entrySet()) {
+                list.add(new ImageStatus(entry.getKey(), entry.getValue()));
+            }
+        } else {
+            for (Map.Entry<Integer, String> entry : Container.IMAGE_STATUS_MAP.entrySet()) {
+                list.add(new ImageStatus(entry.getKey(), entry.getValue()));
+            }
+        }
+        return list;
+    }
 
     /**
      * 切片列表（原图像）
@@ -101,21 +120,18 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                 ImageListOutVO out = new ImageListOutVO();
                 BeanUtils.copyProperties(in, out);
                 out.setBusinessType(in.getBizType());
-
-                // 提取处理状态文本描述并赋值
+                // 提取处理状态文本描述并赋值 - 0上传中、1上传失败、2解析中、3解析失败、4可用
                 Integer status = in.getStatus();
 
                 if (LanguageUtils.isEn()) {
-                    String fileStatus = bizType == 7 ? Container.IMAGE_STATUS_MAP_7_EN.get(status) : Container.IMAGE_STATUS_MAP_EN.get(status);
-                    // 可用、不可用状态解析中
+                    String fileStatus = Container.IMAGE_STATUS_MAP_EN.get(status);
                     out.setFileStatus(fileStatus);
                     // 评审轮次
                     if (bizType.equals(2)) {
                         out.setRoundName(MapConstant.getRoundNameEn(in.getRoundId()));
                     }
                 } else {
-                    String fileStatus = bizType == 7 ? Container.IMAGE_STATUS_MAP_7.get(status) : Container.IMAGE_STATUS_MAP.get(status);
-                    // 可用、不可用状态解析中
+                    String fileStatus = Container.IMAGE_STATUS_MAP.get(status);
                     out.setFileStatus(fileStatus);
                     // 评审轮次
                     if (bizType.equals(2)) {
@@ -157,7 +173,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
 
     /**
-     * 项目管理-图像列表 TODO:
+     * 项目管理-图像列表
      *
      * @param vo
      * @return
@@ -176,8 +192,8 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
             image.setOrganizationId(sysUser.getOrganizationId());
         }
 
-        // 只查可用状态的
-        image.setStatus(1);
+        // 只查可用状态的 - 0上传中、1上传失败、2解析中、3解析失败、4可用
+        image.setStatus(4);
         // 业务类型 1 原始切片 2 预测切片
         Integer bizType = image.getBizType();
 

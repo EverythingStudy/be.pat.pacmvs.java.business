@@ -42,27 +42,6 @@ public class Container {
             .build();
 
     /**
-     * Image - 眼科图像库 - 切片状态：0-3，解析失败,4解析成功
-     */
-    public static final Map<Integer, String> IMAGE_STATUS_MAP_7 = new ImmutableMap.Builder<Integer, String>()
-            .put(0, "解析失败")
-            .put(1, "解析失败")
-            .put(2, "解析失败")
-            .put(3, "解析失败")
-            .put(4, "解析成功")
-            .build();
-
-    /**
-     * Image - 眼科图像库 - 切片状态(EN)：0-3，解析失败,4解析成功
-     */
-    public static final Map<Integer, String> IMAGE_STATUS_MAP_7_EN = new ImmutableMap.Builder<Integer, String>()
-            .put(0, "Unavailable")
-            .put(1, "Unavailable")
-            .put(2, "Unavailable")
-            .put(3, "Unavailable")
-            .put(4, "Available")
-            .build();
-    /**
      * 项目状态
      */
     public static final Map<Integer, String> PROJECT_STATUS = new ImmutableMap.Builder<Integer, String>()

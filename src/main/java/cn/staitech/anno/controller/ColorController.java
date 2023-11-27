@@ -38,11 +38,11 @@ public class ColorController {
      * 颜色类型列表 .
      */
     @ApiOperationSupport(author = "wangfeng")
-    @ApiOperation(value = "颜色列表", notes = "颜色列表 - 王峰")
-    @Log(title = "颜色列表", menu = "颜色列表", subMenu = "颜色列表", businessType = BusinessType.QUERY)
+    @ApiOperation(value = "颜色类型列表", notes = "颜色类型列表")
+    @Log(title = "颜色类型列表", menu = "颜色类型列表", subMenu = "颜色类型列表", businessType = BusinessType.QUERY)
     @GetMapping("/colorType")
     public R<Map<Integer, String>> colorType() {
-        Map<Integer, String> map = null;
+        Map<Integer, String> map;
         if (LanguageUtils.isEn()) {
             map = Container.COLOR_TYPE_EN;
         } else {

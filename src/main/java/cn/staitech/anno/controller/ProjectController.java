@@ -181,7 +181,7 @@ public class ProjectController extends BaseController {
     @Log(title = "项目状态列表", menu = "项目状态列表", subMenu = "项目状态列表", businessType = BusinessType.QUERY)
     @GetMapping("/projectStatus")
     public R<Map<Integer, String>> colorType() {
-        Map<Integer, String> map = null;
+        Map<Integer, String> map;
         if (LanguageUtils.isEn()) {
             map = Container.PROJECT_STATUS_EN;
         } else {
@@ -228,7 +228,6 @@ public class ProjectController extends BaseController {
         PageHelper.startPage(req.getPageNum(), req.getPageSize()).setReasonable(true);
         Project project = new Project();
         BeanUtils.copyProperties(req, project);
-        project.setProjectType(req.getProjectTypeId());
 
         // 机构层级
         if (req.getOrganizationId() == null || req.getOrganizationId() < 1) {
