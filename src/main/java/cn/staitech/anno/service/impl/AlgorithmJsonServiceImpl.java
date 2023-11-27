@@ -1,7 +1,9 @@
 package cn.staitech.anno.service.impl;
 
+import cn.staitech.anno.domain.Structure;
 import cn.staitech.anno.mapper.AlgorithmAssessmentMapper;
 import cn.staitech.anno.mapper.AlgorithmJsonMapper;
+import cn.staitech.anno.mapper.StructureMapper;
 import cn.staitech.anno.service.AlgorithmJsonService;
 import cn.staitech.anno.utils.GeometryUtil;
 import cn.staitech.anno.utils.MessageSource;
@@ -39,6 +41,9 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
 
     @Resource
     private AlgorithmJsonMapper algorithmJsonMapper;
+
+    @Resource
+    private StructureMapper structureMapper;
 
     @Resource
     private AlgorithmAssessmentMapper algorithmAssessmentMapper;
@@ -168,7 +173,21 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
                     List<Long> userList = featuresJson.stream().map(s -> ((JSONObject) s).getJSONObject("properties").getLong("annotation_owner")).collect(Collectors.toList());
                     userListBy.addAll(userList);
                     JSONArray labelNameJson = jsonObject.getJSONArray("label_info");
-                    labelInfo.addAll(labelNameJson);
+                    // 循环JSONArray获取label_info
+                    if (labelNameJson.size() > 0) {
+                        for (Object i : labelNameJson) {
+                            JSONObject labelInfos = JSONObject.parseObject(JSONObject.toJSONString(i));
+                            String labelCode = labelInfos.getString("label_code");
+                            // 根据主键查询详情
+                            Structure structure = structureMapper.selectById(labelCode);
+                            if (structure != null) {
+                                if (Objects.equals(structure.getType(), "RO")) {
+                                    // 查询结果
+                                    labelInfo.addAll(labelNameJson);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
