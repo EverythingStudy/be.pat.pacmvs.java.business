@@ -52,4 +52,8 @@ public class LabelListVO {
     private String speciesId;
     @ApiModelProperty(value = "脏器编号")
     private String organId;
+    @ApiModelProperty(value = "中文结构名称")
+    private String name;
+    @ApiModelProperty(value = "英文结构名称")
+    private String nameEn;
 }

@@ -128,4 +128,9 @@ public interface PathologicalIndicatorCategoryService {
      * 查询标签在标注中的使用数量
      */
     Integer selectLabelNum(Long categoryId);
+    
+    /**
+     * 查询标签所属脏器系统内已有标签数量
+     */
+    Integer selectLabelNumByStructureId(String structureId);
 }

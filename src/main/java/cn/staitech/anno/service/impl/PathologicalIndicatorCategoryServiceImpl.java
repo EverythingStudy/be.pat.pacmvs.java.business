@@ -4,7 +4,6 @@ package cn.staitech.anno.service.impl;
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
-import cn.staitech.anno.domain.Structure;
 import cn.staitech.anno.mapper.IndicatorMapper;
 import cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper;
 import cn.staitech.anno.project.domain.Project;
@@ -197,7 +196,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
     public List<LabelListVO> selectByIndicator(LabelVO labelVO) {
         List<LabelListVO> list = pathologicalIndicatorCategoryMapper.selectByIndicator(labelVO);
         for (LabelListVO listVO : list) {
-            try {
+        	/*try {
                 Structure structure = structureService.getOneStructure(listVO.getSpeciesId(), listVO.getOrganId(), listVO.getStructureId());
                 // 结构名称
                 if (structure == null) {
@@ -213,11 +212,14 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
                         listVO.setStructureName(structure.getName());
                     }
 
-                }
-            } catch (Exception e) {
+                }} catch (Exception e) {
                 log.error("{};;;{};;;;{}", listVO.getSpeciesId(), listVO.getOrganId(), listVO.getStructureId());
-            }
-
+            }*/
+        	if (LanguageUtils.isEn()) {
+        		listVO.setStructureName(listVO.getNameEn());
+        	}else{
+        		listVO.setStructureName(listVO.getName());
+        	}
         }
         return list;
     }
@@ -261,4 +263,9 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
     public Integer selectLabelNum(Long categoryId) {
         return pathologicalIndicatorCategoryMapper.selectLabelNum(categoryId);
     }
+
+	@Override
+	public Integer selectLabelNumByStructureId(String structureId) {
+		 return pathologicalIndicatorCategoryMapper.selectLabelNumByStructureId(structureId);
+	}
 }

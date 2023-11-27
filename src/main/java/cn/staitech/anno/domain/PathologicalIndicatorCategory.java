@@ -90,6 +90,12 @@ public class PathologicalIndicatorCategory implements Serializable {
      */
     @ApiModelProperty(hidden = true, value = "机构ID")
     private Long organizationId;
+    
+    /**
+     * 指标编码
+     */
+    @ApiModelProperty(hidden = true, value = "指标编码")
+    private String categoryCode;
 
     /**
      * 0:默认标注类型；1:unlable
@@ -126,5 +132,9 @@ public class PathologicalIndicatorCategory implements Serializable {
     @ApiModelProperty(hidden = true, value = "更新时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
+    
+    @TableField(exist = false)
+    @ApiModelProperty(value = "指标id(模糊查询)")
+    private String structureIds;
 }
 

@@ -18,6 +18,8 @@
         <result column="update_by" property="updateBy"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
+        <result column="category_code" property="categoryCode"/>
+        
     </resultMap>
 
 
@@ -47,6 +49,9 @@
         <result column="order_number" jdbcType="INTEGER" property="orderNumber"/>
         <result column="number" jdbcType="VARCHAR" property="number"/>
         <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="name_en" jdbcType="VARCHAR" property="nameEn"/>
+        
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -281,6 +286,9 @@
         <if test="structureId != null">
             AND structure_id = #{structureId,jdbcType=VARCHAR}
         </if>
+        <if test="structureIds != null  and categoryName != ''">
+            AND structure_id  like  concat(#{structureIds}, '%')  
+        </if>
     </select>
 
 
@@ -355,7 +363,7 @@
 
 
     <select id="selectByIndicator" parameterType="cn.staitech.anno.vo.annotation.LabelVO" resultMap="BaseResult">
-        select
+        <!-- select
         p.indicator_id,p.category_name,p.category_id,p.structure_id,p.rgb,p.hex,p.create_by,p.create_time,p.order_number,s.user_name,p.number,idc.species_id,idc.organ_id
         from tb_pathological_indicator_category as p
         left join tb_pathological_indicator as idc on p.indicator_id=idc.indicator_id
@@ -375,21 +383,117 @@
             </if>
             <if test="params != null">
                 <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
-                    <!-- 开始时间检索 -->
+                    开始时间检索
                     AND date_format(p.create_time,'%y%m%d') &gt;= date_format(#{createTimeParams.beginTime},'%y%m%d')
                 </if>
                 <if test="createTimeParams.endTime != null and createTimeParams.endTime != ''">
-                    <!-- 结束时间检索 -->
+                    结束时间检索
                     AND date_format(p.create_time,'%y%m%d') &lt;= date_format(#{createTimeParams.endTime},'%y%m%d')
                 </if>
             </if>
             and p.del_flag=0
-        </where>
+        </where> -->
+        SELECT
+			IFNULL( p2.`name`, '无关联' ) `name`,
+			IFNULL( p2.name_en, 'Unrelated' ) name_en,
+			p2.type,
+			CASE
+				p2.type 
+				WHEN 'RO' THEN
+				1 
+				WHEN 'ROE' THEN
+				2 
+				WHEN 'ROA' THEN
+				3 ELSE 4 
+			END type_number,
+			p1.indicator_id,
+			p1.category_name,
+			p1.category_id,
+			p1.structure_id,
+			p1.rgb,
+			p1.hex,
+			p1.create_by,
+			p1.create_time,
+			p1.order_number,
+			p1.user_name,
+			p1.number,
+			p1.species_id,
+			p1.organ_id,
+			p1.category_code 
+		FROM
+			(
+			SELECT
+				p.indicator_id,
+				p.category_name,
+				p.category_id,
+				p.structure_id,
+				p.rgb,
+				p.hex,
+				p.create_by,
+				p.create_time,
+				p.order_number,
+				s.user_name,
+				p.number,
+				idc.species_id,
+				idc.organ_id,
+				p.category_code 
+			FROM
+				tb_pathological_indicator_category AS p
+				LEFT JOIN tb_pathological_indicator AS idc ON p.indicator_id = idc.indicator_id
+				LEFT JOIN sys_user AS s ON p.create_by = s.user_id 
+				<where>
+		            <if test="categoryName != null and categoryName != ''">
+		                AND p.category_name like concat('%', #{categoryName}, '%')
+		            </if>
+		            <if test="structureId != null">
+		                AND p.structure_id =#{structureId}
+		            </if>
+		            <if test="indicatorId != null">
+		                AND p.indicator_id =#{indicatorId}
+		            </if>
+		            <if test="structureName != null and structureName != ''">
+		                AND p.structure_name like concat('%', #{structureName}, '%')
+		            </if>
+		            <if test="params != null">
+		                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
+		                    <!-- 开始时间检索 -->
+		                    AND date_format(p.create_time,'%y%m%d') &gt;= date_format(#{createTimeParams.beginTime},'%y%m%d')
+		                </if>
+		                <if test="createTimeParams.endTime != null and createTimeParams.endTime != ''">
+		                    <!-- 结束时间检索 -->
+		                    AND date_format(p.create_time,'%y%m%d') &lt;= date_format(#{createTimeParams.endTime},'%y%m%d')
+		                </if>
+		            </if>
+		            and p.del_flag=0
+        	</where>
+			) p1
+			LEFT JOIN tb_structure p2 ON p1.species_id = p2.species_id 
+			AND p1.organ_id = p2.organ_id 
+			AND p1.structure_id = p2.structure_id 
+	ORDER BY	p1.category_code,	type_number ASC
     </select>
 
     <select id="selectLabelNum" parameterType="java.lang.Long" resultType="java.lang.Integer">
         select count(*)
         from tb_special_annotation
         where category_id = #{categoryId}
+    </select>
+    
+    <select id="selectLabelNumByStructureId" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT
+			cc 
+		FROM
+			(
+			SELECT
+				organ_id,
+				count( 1 ) cc 
+			FROM
+				( SELECT t2.organ_id, t1.structure_id FROM tb_pathological_indicator_category t1 LEFT JOIN tb_structure t2 ON t1.structure_id = t2.structure_id ) p 
+			GROUP BY
+				organ_id 
+			ORDER BY
+				organ_id 
+			) m
+			RIGHT JOIN ( SELECT t2.organ_id FROM tb_pathological_indicator_category t1 LEFT JOIN tb_structure t2 ON t1.structure_id = t2.structure_id WHERE t2.structure_id = #{structureId} ) n ON m.organ_id = n.organ_id
     </select>
 </mapper>
