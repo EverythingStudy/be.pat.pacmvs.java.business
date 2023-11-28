@@ -143,5 +143,5 @@ public interface PathologicalIndicatorCategoryService {
      */
     Integer selectLabelNumByStructureId(String structureId);
     
-    void handlerCouponsUserStatusTimeOutToExpired() throws ParseException;
+    void handlerCouponsUserStatusTimeOutToExpired(Long categoryId) throws ParseException;
 }
