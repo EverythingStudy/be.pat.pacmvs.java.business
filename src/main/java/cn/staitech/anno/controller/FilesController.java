@@ -70,14 +70,23 @@ public class FilesController extends BaseController {
     public R<Files> uploadBusiness(
             @RequestParam("file") MultipartFile file,
             FileUploadVO fileUploadVO) throws Exception {
-        fileUploadVO.setMultipartFile(file);
+       /* fileUploadVO.setMultipartFile(file);
         Files files = fileUploadService.uploadAndProcessBusiness(fileUploadVO);
         if (files.getFileNameList() != null) {
             if (files.getFileNameList().size() > 0) {
                 return R.fail(files.getFileNameList() + MessageSource.M("JSON_MULTIPLE_LABElS"));
             }
         }
-        return R.ok();
+        return R.ok();*/
+    	  fileUploadVO.setMultipartFile(file);
+          String res = fileUploadService.mergeChunk(fileUploadVO);
+          if (Objects.equals(res, "1")) {
+              return R.ok();
+          } else if (Objects.equals(res, "0")) {
+              return R.fail(MessageSource.M("FILE_SLIDE_UPLOAD_FAILURE"));
+          } else {
+              return R.fail(res + MessageSource.M("JSON_MULTIPLE_LABElS"));
+          }
     }
 
 
