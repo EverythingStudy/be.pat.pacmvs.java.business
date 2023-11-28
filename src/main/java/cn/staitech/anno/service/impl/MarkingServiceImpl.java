@@ -94,7 +94,7 @@ public class MarkingServiceImpl implements MarkingService {
 	private static final int BATCH_SIZE = 5000;
 
 	private static final ExecutorService executor = ExecutorBuilder.create().setCorePoolSize(Runtime.getRuntime().availableProcessors() * 2 + 1).setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 4 + 1).setKeepAliveTime(0).build();
-	private static final ExecutorService annExecutor = ExecutorBuilder.create().setCorePoolSize(Runtime.getRuntime().availableProcessors() * 2 + 1).setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 4 + 1).setKeepAliveTime(0).build();
+	private static final ExecutorService annExecutor = ExecutorBuilder.create().setCorePoolSize(Runtime.getRuntime().availableProcessors() * 3 + 1).setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 6 + 1).setKeepAliveTime(0).build();
 
 	@Resource
 	private SlideMapperV1 slideMapperV1;
