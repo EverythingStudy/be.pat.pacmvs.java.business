@@ -336,10 +336,10 @@ public class FileUploadServiceImpl implements FileUploadService {
                         throw new Exception(MessageSource.M("DISALLOW_NOT_PROJECT"));
                     }
 //                    markingService.zipExport(filesBy.getFilesPath(), chunk.getProjectId());
-                    boolean tag = zipCheck(filesBy.getFilesPath(), chunk.getProjectId());
+                    /*boolean tag = zipCheck(filesBy.getFilesPath(), chunk.getProjectId());
                     if(!tag){
                     	throw new Exception("文件上限300M");
-                    }
+                    }*/
                     asyncTask.zipExport(filesBy.getFilesPath(), chunk.getProjectId());
                     break;
                 case 5:
