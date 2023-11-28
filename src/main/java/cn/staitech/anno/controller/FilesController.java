@@ -64,21 +64,21 @@ public class FilesController extends BaseController {
             @ApiImplicitParam(name = "file", value = "MultipartFile文件", required = true, dataType = "file"),
             @ApiImplicitParam(name = "businessType", value = "businessType", required = true, dataType = "Integer")
     })
-    @Log(title = "文件上传并处理下游业务逻辑", menu = "文件上传并处理下游业务逻辑", subMenu = "文件上传并处理下游业务逻辑", businessType = BusinessType.IMPORT)
+    //@Log(title = "文件上传并处理下游业务逻辑", menu = "文件上传并处理下游业务逻辑", subMenu = "文件上传并处理下游业务逻辑", businessType = BusinessType.IMPORT)
     @RequiresPermissions(value = {"smartAnnoInfo:algorithm:batchUploadJson", "section:ophthalmology:uploadZip"})
     @PostMapping("/uploadBusiness")
     public R<Files> uploadBusiness(
             @RequestParam("file") MultipartFile file,
             FileUploadVO fileUploadVO) throws Exception {
-       /* fileUploadVO.setMultipartFile(file);
+       fileUploadVO.setMultipartFile(file);
         Files files = fileUploadService.uploadAndProcessBusiness(fileUploadVO);
         if (files.getFileNameList() != null) {
             if (files.getFileNameList().size() > 0) {
                 return R.fail(files.getFileNameList() + MessageSource.M("JSON_MULTIPLE_LABElS"));
             }
         }
-        return R.ok();*/
-    	  fileUploadVO.setMultipartFile(file);
+        return R.ok();
+    	 /* fileUploadVO.setMultipartFile(file);
           String res = fileUploadService.mergeChunk(fileUploadVO);
           if (Objects.equals(res, "1")) {
               return R.ok();
@@ -86,7 +86,7 @@ public class FilesController extends BaseController {
               return R.fail(MessageSource.M("FILE_SLIDE_UPLOAD_FAILURE"));
           } else {
               return R.fail(res + MessageSource.M("JSON_MULTIPLE_LABElS"));
-          }
+          }*/
     }
 
 
