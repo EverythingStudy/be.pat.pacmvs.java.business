@@ -340,7 +340,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
             // 插入json文件返回数据
             String urlPath;
             try {
-                urlPath = markingService.slideJsonExport(e.getSlideId());
+                urlPath = markingService.slideJsonExport(e.getSlideId(),SecurityUtils.getLoginUser().getSysUser());
             } catch (Exception exception) {
                 log.error(exception.toString());
                 throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));

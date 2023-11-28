@@ -112,7 +112,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
             // 插入json文件返回数据
             String urlPath;
             try {
-                urlPath = markingService.slideJsonExport(e.getSlideId());
+                urlPath = markingService.slideLabelJsonExport(e.getSlideId(),SecurityUtils.getLoginUser().getSysUser());
             } catch (Exception exception) {
                 log.error(exception.toString());
                 throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
@@ -166,9 +166,8 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
             // 插入json文件返回数据
             String urlPath;
             try {
-                urlPath = markingService.slideJsonExport(e.getSlideId());
-            } catch (Exception exception) {
-                log.error(exception.toString());
+                urlPath = markingService.slideLabelJsonExport(e.getSlideId(),SecurityUtils.getLoginUser().getSysUser());
+            } catch (InterruptedException ex) {
                 throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
             }
             String s = StringUtils.substringAfterLast(urlPath, File.separator);

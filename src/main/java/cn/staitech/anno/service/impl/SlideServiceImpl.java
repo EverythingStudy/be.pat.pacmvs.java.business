@@ -482,7 +482,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
             Integer markingCount = markingMapper.selectCount(markingQueryWrapper);
             if (markingCount > 0) {
                 // 将文件生成在本地
-                String fileUrl = markingService.slideJsonExport(slide);
+                String fileUrl = markingService.slideJsonExport(slide,SecurityUtils.getLoginUser().getSysUser());
                 res.append(fileUrl).append("\r\n");
             }
         }
