@@ -58,4 +58,7 @@ public class LabelListVO {
     private String nameEn;
     @ApiModelProperty(value = "图层顺序")
     private String categoryCode;
+    @ApiModelProperty(value = "标注类别 1：RO 2:ROE 3:ROA")
+    private Integer typeNumber;
+    
 }

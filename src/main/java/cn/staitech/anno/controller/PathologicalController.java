@@ -146,8 +146,8 @@ public class PathologicalController {
 			category.setCategoryName(categoryName);
 			// 生成完整编码
 			category.setNumber(currentStructureId);
-//			category.setCreateBy(1L);
-//			category.setOrganizationId(1L);
+			//			category.setCreateBy(1L);
+			//			category.setOrganizationId(1L);
 			category.setCreateBy(sysUser.getCreateBy());
 			category.setOrganizationId(sysUser.getOrganizationId());
 			category.setCreateTime(currentDate);
@@ -231,7 +231,8 @@ public class PathologicalController {
 			return R.fail(MessageSource.M("INDICATOR_ABSENT"));
 		}
 
-
+		//确认下原来的structure_id信息
+		PathologicalIndicatorCategory sourcePic = pathologicalIndicatorCategoryService.selectByPrimaryKey(category.getCategoryId());
 		//验证结构是否已经存在  		BeanUtils.copyProperties(category, targetCategory);
 
 		PathologicalIndicatorCategory categoryS = new PathologicalIndicatorCategory();
@@ -260,8 +261,7 @@ public class PathologicalController {
 			//判断是否是自己的，如果非本身、不允许
 			boolean tag = true;
 			for(PathologicalIndicatorCategory categoryP:listR){
-				Long categoryPId = categoryP.getCategoryId();
-				if(!category.getCategoryId().equals(categoryPId)){
+				if(!sourcePic.getCategoryCode().equals(categoryP.getCategoryCode())){
 					tag = false;
 					break;
 				}
@@ -276,8 +276,8 @@ public class PathologicalController {
 		// 机构ID
 		category.setOrganizationId(sysUser.getOrganizationId());
 		category.setUpdateBy(sysUser.getUserId());
-//		category.setUpdateBy(1L);
-//		category.setOrganizationId(1L);
+		//		category.setUpdateBy(1L);
+		//		category.setOrganizationId(1L);
 		category.setUpdateTime(new Date());
 		// 生成完整编码
 		category.setNumber(category.getStructureId());
@@ -286,8 +286,7 @@ public class PathologicalController {
 		BeanUtils.copyProperties(category, targetCategory);
 		PathologicalIndicatorCategory targetCategoryRoe =  new PathologicalIndicatorCategory();
 		BeanUtils.copyProperties(category, targetCategoryRoe);
-		//确认下原来的structure_id信息
-		PathologicalIndicatorCategory sourcePic = pathologicalIndicatorCategoryService.selectByPrimaryKey(category.getCategoryId());
+
 		// 获取structureName
 		String structureName = structureService.getById(category.getStructureId()).getName();
 		// 生成categoryName
