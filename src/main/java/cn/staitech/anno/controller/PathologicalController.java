@@ -75,7 +75,7 @@ public class PathologicalController {
 	 * 结构指标ID	indicatorId
 	 */
 	@ApiOperation(value = "标签添加接口", notes = "wangfeng")
-	@RequiresPermissions("project:pathology:tabadd")
+	//@RequiresPermissions("project:pathology:tabadd")
 	@Log(title = "配置标签-新增标签", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.INSERT)
 	@PostMapping("/add")
 	public R<String> add(@Validated @RequestBody PathologicalIndicatorCategoryVO vo) {
@@ -96,6 +96,7 @@ public class PathologicalController {
 		}
 		//验证结构是否已经存在 
 		PathologicalIndicatorCategory categoryS = new PathologicalIndicatorCategory();
+		categoryS.setIndicatorId(indicatorId);
 		categoryS.setStructureId(structureId);
 
 		List<PathologicalIndicatorCategory> listS = pathologicalIndicatorCategoryService.selectIndicatorMessage(categoryS);
@@ -103,7 +104,7 @@ public class PathologicalController {
 			return R.fail(MessageSource.M("CATEGORY_NAME_EXIST"));
 		}
 		categoryS.setStructureId(null);
-		categoryS.setRgb(rgb);
+		categoryS.setHex(hex);
 		// 验证颜色值是否已经存在
 		List<PathologicalIndicatorCategory> listR = pathologicalIndicatorCategoryService.selectIndicatorMessage(categoryS);
 		if (listR.size() > 0) {
@@ -145,7 +146,10 @@ public class PathologicalController {
 			category.setCategoryName(categoryName);
 			// 生成完整编码
 			category.setNumber(currentStructureId);
+//			category.setCreateBy(1L);
+//			category.setOrganizationId(1L);
 			category.setCreateBy(sysUser.getCreateBy());
+			category.setOrganizationId(sysUser.getOrganizationId());
 			category.setCreateTime(currentDate);
 			category.setCategoryCode(categoryCode);
 			// 添加标注类别
@@ -213,7 +217,7 @@ public class PathologicalController {
 	 * 配置标签-编辑 .
 	 */
 	@ApiOperation(value = "标注类别修改接口", notes = "wangfeng")
-	@RequiresPermissions("project:pathology:tabedit")
+	//@RequiresPermissions("project:pathology:tabedit")
 	@Log(title = "配置标签-编辑", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.UPDATE)
 	@PutMapping("/edit")
 	public R<String> edit(@Validated @RequestBody PathologicalIndicatorCategory category) {
@@ -272,12 +276,16 @@ public class PathologicalController {
 		// 机构ID
 		category.setOrganizationId(sysUser.getOrganizationId());
 		category.setUpdateBy(sysUser.getUserId());
+//		category.setUpdateBy(1L);
+//		category.setOrganizationId(1L);
 		category.setUpdateTime(new Date());
 		// 生成完整编码
 		category.setNumber(category.getStructureId());
 
 		PathologicalIndicatorCategory targetCategory =  new PathologicalIndicatorCategory();
 		BeanUtils.copyProperties(category, targetCategory);
+		PathologicalIndicatorCategory targetCategoryRoe =  new PathologicalIndicatorCategory();
+		BeanUtils.copyProperties(category, targetCategoryRoe);
 		//确认下原来的structure_id信息
 		PathologicalIndicatorCategory sourcePic = pathologicalIndicatorCategoryService.selectByPrimaryKey(category.getCategoryId());
 		// 获取structureName
@@ -294,33 +302,43 @@ public class PathologicalController {
 		}*/
 
 		//修改标注类别信息
-		pathologicalIndicatorCategoryService.updateByPrimaryKeySelective(category);
+		String retStatus = pathologicalIndicatorCategoryService.updateByPrimaryKeySelective2(category);
 		//TODO 另外考核区域和标注区域同样处理，structureId、number、categoryName需要单独处理，修改时候需要用自己的categoryId和indicatorId
-		updateCategory(targetCategory,sourcePic,indicator);
+		if(retStatus.equals("1")){
+			updateCategory(targetCategory,targetCategoryRoe,sourcePic,indicator);
+		}
 		return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
 	}
 
-	private void updateCategory(PathologicalIndicatorCategory targetCategory,PathologicalIndicatorCategory sourcePic,Indicator indicator){
+	private void updateCategory(PathologicalIndicatorCategory targetCategory,PathologicalIndicatorCategory targetCategoryRoe,PathologicalIndicatorCategory sourcePic,Indicator indicator){
 		//根据原来的structureId查询原来的考核区域和标注区域数据，然后更新structure_id、number
 		String sourceStructureId = sourcePic.getStructureId();
+		//标注编码
+		String categoryCode = sourcePic.getCategoryCode();
 		//标注区域
 		String structureRoaId = sourceStructureId+CommonConstant.STRUCTURE_ROA;
-		updateSourceCategory(structureRoaId, targetCategory, indicator);
+		updateSourceCategory(structureRoaId, targetCategory, indicator,1,categoryCode);
 		//考核区域
 		String structureRoeId = sourceStructureId+CommonConstant.STRUCTURE_ROE;
-		updateSourceCategory(structureRoeId, targetCategory, indicator);
+		updateSourceCategory(structureRoeId, targetCategoryRoe, indicator,2,categoryCode);
 	}
 
-	private void updateSourceCategory(String hisStructureId,PathologicalIndicatorCategory targetCategory,Indicator indicator){
+	private void updateSourceCategory(String hisStructureId,PathologicalIndicatorCategory targetCategory,Indicator indicator,int type,String categoryCode){
 		PathologicalIndicatorCategory picRoaVo = new PathologicalIndicatorCategory();
 		picRoaVo.setStructureId(hisStructureId);
+		picRoaVo.setCategoryCode(categoryCode);
 		picRoaVo.setDelFlag(0);
 		List<PathologicalIndicatorCategory> picList = pathologicalIndicatorCategoryService.selectIndicatorMessage(picRoaVo);
 		if(CollectionUtils.isNotEmpty(picList)){
 			PathologicalIndicatorCategory picRoa = picList.get(0);
 			Long categoryId = picRoa.getCategoryId();
 			//标注区域
-			String newStructureId = targetCategory.getStructureId()+CommonConstant.STRUCTURE_ROA;
+			String newStructureId = targetCategory.getStructureId();
+			if(type == 1){
+				newStructureId =  newStructureId+CommonConstant.STRUCTURE_ROA;
+			}else{
+				newStructureId =  newStructureId+CommonConstant.STRUCTURE_ROE;
+			}
 			String newNum = newStructureId;
 
 			// 获取structureName
@@ -334,7 +352,7 @@ public class PathologicalController {
 			targetCategory.setCategoryId(categoryId);
 			targetCategory.setCategoryName(categoryName);
 			//修改标注类别信息
-			pathologicalIndicatorCategoryService.updateByPrimaryKeySelective(targetCategory);
+			pathologicalIndicatorCategoryService.updateByPrimaryKeySelective2(targetCategory);
 		}
 	}
 
