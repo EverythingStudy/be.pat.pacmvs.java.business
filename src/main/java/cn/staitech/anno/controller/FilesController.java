@@ -64,7 +64,7 @@ public class FilesController extends BaseController {
             @ApiImplicitParam(name = "file", value = "MultipartFile文件", required = true, dataType = "file"),
             @ApiImplicitParam(name = "businessType", value = "businessType", required = true, dataType = "Integer")
     })
-    //@Log(title = "文件上传并处理下游业务逻辑", menu = "文件上传并处理下游业务逻辑", subMenu = "文件上传并处理下游业务逻辑", businessType = BusinessType.IMPORT)
+    @Log(title = "文件上传并处理下游业务逻辑", menu = "文件上传并处理下游业务逻辑", subMenu = "文件上传并处理下游业务逻辑", businessType = BusinessType.IMPORT)
     @RequiresPermissions(value = {"smartAnnoInfo:algorithm:batchUploadJson", "section:ophthalmology:uploadZip"})
     @PostMapping("/uploadBusiness")
     public R<Files> uploadBusiness(
