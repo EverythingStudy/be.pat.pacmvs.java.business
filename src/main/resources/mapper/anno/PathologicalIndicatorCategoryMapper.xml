@@ -13,6 +13,7 @@
         <result column="number" property="number"/>
         <result column="order_number" property="orderNumber"/>
         <result column="anno_type" property="annoType"/>
+        <result column="organization_id" property="organizationId"/>
         <result column="del_flag" property="delFlag"/>
         <result column="create_by" property="createBy"/>
         <result column="update_by" property="updateBy"/>
@@ -51,13 +52,15 @@
         <result column="user_name" jdbcType="VARCHAR" property="userName"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="name_en" jdbcType="VARCHAR" property="nameEn"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="category_code" jdbcType="VARCHAR" property="categoryCode"/>
         
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         category_id
-        , indicator_id, category_name, structure_id, rgb, hex, color, number, order_number, anno_type, del_flag, create_by, update_by, create_time, update_time
+        , indicator_id, category_name, structure_id, rgb, hex, color, number, order_number, anno_type, del_flag, create_by, update_by, create_time, update_time,category_code,organization_id
     </sql>
 
     <!--  根据主键查询单条标注信息-->
@@ -137,6 +140,12 @@
             <if test="number != null">
                 number,
             </if>
+            <if test="categoryCode != null">
+                category_code,
+            </if>
+            <if test="organizationId != null">
+                organization_id,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="categoryId != null">
@@ -170,6 +179,12 @@
             <if test="number != null">
                 #{number,jdbcType=VARCHAR},
             </if>
+             <if test="categoryCode != null">
+                #{categoryCode,jdbcType=VARCHAR},
+            </if>
+            <if test="organizationId != null">
+                 #{organizationId,jdbcType=BIGINT},
+            </if>
         </trim>
     </insert>
     <!--  根据id更新数据-->
@@ -200,6 +215,9 @@
             </if>
             <if test="delFlag != null">
                 del_flag = #{delFlag,jdbcType=INTEGER},
+            </if>
+            <if test="organizationId != null">
+                organization_id = #{organizationId,jdbcType=BIGINT},
             </if>
         </set>
         <where>
@@ -283,6 +301,9 @@
         <if test="hex != null">
             AND hex = #{hex}
         </if>
+        <if test="categoryCode != null">
+            AND category_code = #{categoryCode}
+        </if>
         <if test="structureId != null">
             AND structure_id = #{structureId,jdbcType=VARCHAR}
         </if>
@@ -308,6 +329,9 @@
         </if>
         <if test="hex != null">
             AND hex = #{hex}
+        </if>
+        <if test="categoryCode != null">
+            AND category_code = #{categoryCode}
         </if>
         <if test="structureId != null">
             AND structure_id = #{structureId,jdbcType=VARCHAR}
@@ -451,6 +475,9 @@
 		            <if test="indicatorId != null">
 		                AND p.indicator_id =#{indicatorId}
 		            </if>
+		            <if test="categoryCode != null">
+           				AND p.category_code = #{categoryCode}
+        			</if>
 		            <if test="structureName != null and structureName != ''">
 		                AND p.structure_name like concat('%', #{structureName}, '%')
 		            </if>

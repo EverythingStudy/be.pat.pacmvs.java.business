@@ -6,6 +6,7 @@ import cn.staitech.anno.vo.annotation.LabelVO;
 import cn.staitech.anno.vo.statistic.StatisticCategoryListInVO;
 import cn.staitech.anno.vo.statistic.StatisticCategoryListOutVO;
 
+import java.text.ParseException;
 import java.util.List;
 
 public interface PathologicalIndicatorCategoryService {
@@ -24,6 +25,14 @@ public interface PathologicalIndicatorCategoryService {
      * @return 标签信息
      */
     String updateByPrimaryKeySelective(PathologicalIndicatorCategory Pathological);
+    
+    /**
+     * 修改标签信息(结构、标注、考核同步)
+     *
+     * @param Pathological 标签ID
+     * @return 标签信息
+     */
+    String updateByPrimaryKeySelective2(PathologicalIndicatorCategory Pathological);
 
     /**
      * 删除标签信息
@@ -133,4 +142,6 @@ public interface PathologicalIndicatorCategoryService {
      * 查询标签所属脏器系统内已有标签数量
      */
     Integer selectLabelNumByStructureId(String structureId);
+    
+    void handlerCouponsUserStatusTimeOutToExpired() throws ParseException;
 }
