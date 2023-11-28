@@ -78,7 +78,7 @@
         WHERE ex.examine_score_id = #{examineScoreId}
     </select>
 
-    <select id="selectQuestionProjectList" parameterType="long"
+    <select id="selectQuestionProjectList" parameterType="cn.staitech.anno.vo.examination.ExaminationInVO"
             resultType="cn.staitech.anno.vo.examination.SelectExaminationListVO">
         SELECT q.image_name,
                q.question_id,
@@ -87,7 +87,14 @@
                qp.question_project_id
         FROM tb_question_project_rel AS qp
                  LEFT JOIN tb_question_bank AS q ON qp.question_id = q.question_id
-        where qp.question_project_id = #{questionProjectId}
+        <where>
+            <if test="questionProjectId != null and questionProjectId != ''">
+                and qp.question_project_id = #{questionProjectId}
+            </if>
+            <if test="imageName != null and imageName != ''">
+                and q.image_name like concat('%', #{imageName}, '%')
+            </if>
+        </where>
     </select>
 
 
@@ -182,4 +189,28 @@
             #{examineScoreId, jdbcType=NUMERIC}
         </foreach>
     </select>
+
+    <!--人工评分-->
+    <update id="manualScoring" parameterType="cn.staitech.anno.domain.ExamineScore">
+        update tb_examine_score
+        <set>
+        <if test="examResults != null">
+            exam_results = #{examResults},
+        </if>
+        <if test="updateBy != null">
+            update_by = #{updateBy},
+        </if>
+        <if test="examReviewType != null">
+            exam_review_type = #{examReviewType},
+        </if>
+        <if test="examReviewUser != null">
+            exam_review_user = #{examReviewUser},
+        </if>
+        <if test="examReviewTime != null">
+            exam_review_time = #{examReviewTime},
+        </if>
+            update_time=sysdate()
+        </set>
+        where examine_score_id = #{examineScoreId}
+    </update>
 </mapper>

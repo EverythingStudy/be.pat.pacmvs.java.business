@@ -10,16 +10,14 @@ import cn.staitech.anno.utils.Column;
 import cn.staitech.anno.utils.ExcelTool;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.examination.SelectExaminationListVO;
-import cn.staitech.anno.vo.examine.ExamineScoreAddVO;
-import cn.staitech.anno.vo.examine.ExamineScoreBy;
-import cn.staitech.anno.vo.examine.ExamineScoreExportInsertVo;
-import cn.staitech.anno.vo.examine.ExamineScoreExportVO;
+import cn.staitech.anno.vo.examine.*;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -155,6 +153,31 @@ public class ExamineScoreController {
         }
         return list;
     }
+
+
+    /**
+     * 人工评分
+     * */
+    @ApiOperationSupport(author = "zmj")
+    @ApiOperation(value = "人工评分")
+    @PutMapping("/manualScoring")
+    public R<String> manualScoring(@RequestBody @Validated ExamineScoreUpdateVO examineScoreUpdateVO){
+        examineScoreService.manualScoring(examineScoreUpdateVO);
+        return R.ok();
+    }
+
+    /**
+     * 批量算法评分
+     * */
+    @ApiOperationSupport(author = "zmj")
+    @ApiOperation(value = "批量算法评分")
+    @PutMapping("/batchAlgorithm")
+    public R<String> BatchAlgorithm(@RequestBody ExamineScoreBathVO examineScoreBathVO){
+        examineScoreService.BatchAlgorithm(examineScoreBathVO);
+
+        return R.ok();
+    }
+
 
 
 }
