@@ -455,14 +455,13 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
                 JSONObject markingJsonObject = new JSONObject();
                 markingJsonObject.put("examine_score_id", examineScoreId);
                 markingJsonObject.put("user_id", examineScoreBy.getCreateBy());
-//                remoteLabelService.marking(markingJsonObject);
                 jsonObjectList.add(markingJsonObject);
             }
 
         }
-//        JSONObject jsonObjects=new JSONObject();
-//        jsonObjects.put("dataList",jsonObjectList);
-        remoteLabelService.marking(jsonObjectList);
+        if (CollectionUtil.isNotEmpty(jsonObjectList)){
+            remoteLabelService.marking(jsonObjectList);
+        }
         return 1;
     }
 }
