@@ -72,6 +72,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -93,8 +94,13 @@ public class MarkingServiceImpl implements MarkingService {
 	private static final WKTReader wktReader = new WKTReader(geometryFactory);
 	private static final int BATCH_SIZE = 5000;
 
-	private static final ExecutorService executor = ExecutorBuilder.create().setCorePoolSize(Runtime.getRuntime().availableProcessors() * 2 + 1).setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 4 + 1).setKeepAliveTime(0).build();
-	private static final ExecutorService annExecutor = ExecutorBuilder.create().setCorePoolSize(Runtime.getRuntime().availableProcessors() * 3 + 1).setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 6 + 1).setKeepAliveTime(0).build();
+	private static final ExecutorService executor = ExecutorBuilder.create().setCorePoolSize(Runtime.getRuntime().availableProcessors()).setMaxPoolSize(Runtime.getRuntime().availableProcessors() *2).setKeepAliveTime(0).build();
+	private static final ExecutorService annExecutor = ExecutorBuilder.create()
+			.setCorePoolSize(Runtime.getRuntime().availableProcessors())
+			.setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2)
+			.setKeepAliveTime(0)
+			.setWorkQueue(new LinkedBlockingQueue<Runnable>(4096))
+			.build();
 
 	@Resource
 	private SlideMapperV1 slideMapperV1;
@@ -277,17 +283,8 @@ public class MarkingServiceImpl implements MarkingService {
 		// 添加数据库，添加后返回自增id
 		markingMapper.insert(marking);
 
-		//增加缓存
-		redisService.setCacheObject(CommonConstant.ANNO_MARKING+marking.getMarking_id(), marking, CommonConstant.MARKING_CACHE_HOURS, TimeUnit.HOURS);
-		Properties properties = markingMapper.selectBy(marking.getMarking_id());
-		Features features = socketData(annotationId, req.getGeometry(), properties);
-		// 如果是点类型，返回点的总数并返回
-		List<PointCount> pointCountList = updatePoint(req.getLocation_type(), marking);
-		BroadcastVO broadcastVO = SendMessage.sendOneMessages(ADD_STATUS, features, pointCountList);
-		NioWebSocketHandler.sendAll(req.getSlide_id(), broadcastVO);
-
 		//TODO 多线程处理
-		annExecutor.submit(new AnnCountThread(1,marking.getSlide_id(), marking.getCreate_by(), marking.getCategory_id(),slideBy));
+		annExecutor.submit(new AnnCountThread(1,slideBy,marking));
 
 		// 更新切片表中最新状态
 		/* updateSLide(marking.getSlide_id());
@@ -301,11 +298,11 @@ public class MarkingServiceImpl implements MarkingService {
 	@Transactional(rollbackFor = Exception.class)
 	public String update(MarkingUpdateIn req) throws Exception {
 		// 查询标注表中信息==》先走缓存
-		Marking markingBy = redisService.getCacheObject(CommonConstant.ANNO_MARKING+req.getMarking_id());
-		if(null == markingBy){
-			markingBy = markingMapper.selectById(req.getMarking_id());
-			redisService.setCacheObject(CommonConstant.ANNO_MARKING+req.getMarking_id(), markingBy, CommonConstant.MARKING_CACHE_HOURS, TimeUnit.HOURS);
-		}
+//		Marking markingBy = redisService.getCacheObject(CommonConstant.ANNO_MARKING+req.getMarking_id());
+		Marking	markingBy = markingMapper.selectById(req.getMarking_id());
+//		if(null == markingBy){
+//			redisService.setCacheObject(CommonConstant.ANNO_MARKING+req.getMarking_id(), markingBy, CommonConstant.MARKING_CACHE_HOURS, TimeUnit.HOURS);
+//		}
 		Project project=projectMapperV1.selectById(markingBy.getProject_id());
 		//验证集项目中不能修改他人轮廓
 		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")){
@@ -399,7 +396,7 @@ public class MarkingServiceImpl implements MarkingService {
         }*/
 
 		//TODO 多线程处理
-		annExecutor.submit(new AnnCountThread(2,marking.getSlide_id(), marking.getCreate_by(), marking.getCategory_id(),slide));
+		annExecutor.submit(new AnnCountThread(2,slide,marking));
 
 		return markingBy.getMarking_id();
 	}
@@ -1168,47 +1165,64 @@ public class MarkingServiceImpl implements MarkingService {
 		}
 	}
 
+	
+   public void process(Integer type,Slide slide,Marking marking) throws Exception{
+	   
+	   Long slideId = marking.getSlide_id();
+	   String markIngId = marking.getMarking_id();
+	   String annotationId = marking.getAnnotation_id();
+	   Long createBy = marking.getCreate_by();
+	   Long categoryId = marking.getCategory_id();
+	   
+		//增加缓存
+		redisService.setCacheObject(CommonConstant.ANNO_MARKING+markIngId, marking, CommonConstant.MARKING_CACHE_HOURS, TimeUnit.HOURS);
+		Properties properties = markingMapper.selectBy(markIngId);
+		Features features = socketData(annotationId, marking.getGeometry(), properties);
+		// 如果是点类型，返回点的总数并返回
+		List<PointCount> pointCountList = updatePoint(marking.getLocation_type(), marking);
+		BroadcastVO broadcastVO = SendMessage.sendOneMessages(ADD_STATUS, features, pointCountList);
+		NioWebSocketHandler.sendAll(slideId, broadcastVO);
+		
+		// 判断切片状态是否是未开始
+		if (Objects.equals(slide.getStatus(), "1")) {
+			// 更新切片表中状态至切片中
+			slide.setStatus("2");
+			slideMapperV1.updateById(slide);
+		}
+
+		// 更新切片表中最新状态
+		updateSLide(slideId);
+		if(type == 2){
+			//修改
+			slideAttrService.removeAnnoUsers(slideId, Collections.singletonList(createBy));
+			slideAttrService.removeAnnoCategory(slideId, Collections.singletonList(categoryId));
+		}
+		slideAttrService.saveAnnoUsers(slideId, Collections.singletonList(createBy));
+		if (categoryId != null) {
+			slideAttrService.saveAnnoCategory(slideId, Collections.singletonList(categoryId));
+		} else {
+			slideAttrService.saveAnnoCategory(slideId, new ArrayList<>());
+		}
+   } 
 
 	class AnnCountThread implements Runnable {
 		// type 1:标注保存  2：标注修改
 		private final Integer type;
-		private final Long slideId;
-		private final Long createBy;
-		private final Long categoryId;
 		private final Slide slide;
+		private final Marking marking;
 
-		public AnnCountThread(Integer type,Long slideId, Long createBy, Long categoryId,Slide slide) {
+		
+
+		public AnnCountThread(Integer type,Slide slide,Marking marking) {
 			this.type = type;
-			this.slideId = slideId;
-			this.createBy = createBy;
-			this.categoryId = categoryId;
 			this.slide = slide;
+			this.marking = marking;
 		}
 
 		@Override
 		public void run() {
 			try {
-				// 判断切片状态是否是未开始
-				if (Objects.equals(slide.getStatus(), "1")) {
-					// 更新切片表中状态至切片中
-					slide.setStatus("2");
-					slideMapperV1.updateById(slide);
-				}
-
-				// 更新切片表中最新状态
-				updateSLide(slideId);
-				if(type == 2){
-					//修改
-					slideAttrService.removeAnnoUsers(slideId, Collections.singletonList(createBy));
-					slideAttrService.removeAnnoCategory(slideId, Collections.singletonList(categoryId));
-				}
-				slideAttrService.saveAnnoUsers(slideId, Collections.singletonList(createBy));
-				if (categoryId != null) {
-					slideAttrService.saveAnnoCategory(slideId, Collections.singletonList(categoryId));
-				} else {
-					slideAttrService.saveAnnoCategory(slideId, new ArrayList<>());
-				}
-
+				process(this.type,this.slide,this.marking);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
