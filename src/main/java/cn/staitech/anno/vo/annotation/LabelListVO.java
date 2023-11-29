@@ -60,5 +60,7 @@ public class LabelListVO {
     private String categoryCode;
     @ApiModelProperty(value = "标注类别 1：RO 2:ROE 3:ROA")
     private Integer typeNumber;
+    @ApiModelProperty(value = "标注类别 ")
+    private String type;
     
 }

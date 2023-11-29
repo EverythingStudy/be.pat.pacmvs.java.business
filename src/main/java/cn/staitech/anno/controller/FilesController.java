@@ -5,6 +5,7 @@ import cn.staitech.anno.service.FilesService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.files.Files;
+import cn.staitech.anno.vo.files.in.FileUploadNoVO;
 import cn.staitech.anno.vo.files.in.FileUploadVO;
 import cn.staitech.anno.vo.files.in.FilesListVO;
 import cn.staitech.common.core.domain.R;
@@ -17,6 +18,8 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -64,13 +67,15 @@ public class FilesController extends BaseController {
             @ApiImplicitParam(name = "file", value = "MultipartFile文件", required = true, dataType = "file"),
             @ApiImplicitParam(name = "businessType", value = "businessType", required = true, dataType = "Integer")
     })
-    //@Log(title = "文件上传并处理下游业务逻辑", menu = "文件上传并处理下游业务逻辑", subMenu = "文件上传并处理下游业务逻辑", businessType = BusinessType.IMPORT)
+    @Log(title = "文件上传并处理下游业务逻辑", menu = "文件上传并处理下游业务逻辑", subMenu = "文件上传并处理下游业务逻辑", businessType = BusinessType.IMPORT)
     @RequiresPermissions(value = {"smartAnnoInfo:algorithm:batchUploadJson", "section:ophthalmology:uploadZip"})
     @PostMapping("/uploadBusiness")
     public R<Files> uploadBusiness(
             @RequestParam("file") MultipartFile file,
-            FileUploadVO fileUploadVO) throws Exception {
-       fileUploadVO.setMultipartFile(file);
+            FileUploadNoVO fileUploadNoVO) throws Exception {
+    	FileUploadVO fileUploadVO = new FileUploadVO();
+    	 BeanUtils.copyProperties(fileUploadNoVO, fileUploadVO);
+         fileUploadVO.setMultipartFile(file);
         Files files = fileUploadService.uploadAndProcessBusiness(fileUploadVO);
         if (files.getFileNameList() != null) {
             if (files.getFileNameList().size() > 0) {

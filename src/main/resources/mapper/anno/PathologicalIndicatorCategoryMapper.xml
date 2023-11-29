@@ -50,6 +50,7 @@
         <result column="order_number" jdbcType="INTEGER" property="orderNumber"/>
         <result column="number" jdbcType="VARCHAR" property="number"/>
         <result column="type_number" jdbcType="INTEGER" property="typeNumber"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
         <result column="user_name" jdbcType="VARCHAR" property="userName"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="name_en" jdbcType="VARCHAR" property="nameEn"/>
