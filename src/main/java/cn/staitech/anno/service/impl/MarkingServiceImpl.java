@@ -376,11 +376,11 @@ public class MarkingServiceImpl implements MarkingService {
 				pointCountList = Stream.of(pointCountList, newPointCountList).flatMap(Collection::stream).collect(Collectors.toList());
 			}
 		}
-		Properties properties = markingMapper.selectBy(marking.getMarking_id());
+		/*Properties properties = markingMapper.selectBy(marking.getMarking_id());
 		Features features = socketData(markingBy.getAnnotation_id(), req.getGeometry(), properties);
 		BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features, pointCountList);
 		// 使用websocket发送数据
-		NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
+		NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);*/
 
 		/*// 更新切片表中数据
         updateSLide(slide.getSlideId());

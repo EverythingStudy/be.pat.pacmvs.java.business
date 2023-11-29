@@ -19,6 +19,7 @@ import cn.staitech.anno.vo.annotation.LabelListVO;
 import cn.staitech.anno.vo.annotation.LabelVO;
 import cn.staitech.anno.vo.indicator.IndicatorReviseVO;
 import cn.staitech.anno.vo.indicator.PathologicalIndicatorCategoryVO;
+import cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
@@ -184,9 +185,9 @@ public class PathologicalController {
 	@ApiOperation(value = "根据项目查询结构指标列表", notes = "gjt")
 	@Log(title = "配置标签-标签列表", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.QUERY)
 	@GetMapping("/selectList")
-	public R<List<PathologicalIndicatorCategory>> selectList(@RequestParam(value = "projectId") @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId) {
+	public R<List<PathologicalIndicatorCategoryOutVo>> selectList(@RequestParam(value = "projectId") @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId) {
 		// 获取病理指标下的标注类别
-		List<PathologicalIndicatorCategory> categoryList = pathologicalIndicatorCategoryService.selectprojectList(projectId);
+		List<PathologicalIndicatorCategoryOutVo> categoryList = pathologicalIndicatorCategoryService.selectprojectList(projectId);
 		return R.ok(categoryList);
 	}
 
@@ -194,9 +195,9 @@ public class PathologicalController {
 	@ApiOperation(value = "根据项目查询结构指标列表(不包含标注区域)", notes = "gjt")
 	@Log(title = "配置标签-标签列表", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.QUERY)
 	@GetMapping("/selectListFilter")
-	public R<List<PathologicalIndicatorCategory>> selectListFilter(@RequestParam(value = "projectId") @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId) {
+	public R<List<PathologicalIndicatorCategoryOutVo>> selectListFilter(@RequestParam(value = "projectId") @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId) {
 		//获取病理指标下的标注类别
-		List<PathologicalIndicatorCategory> categoryList = pathologicalIndicatorCategoryService.selectProjectListFilter(projectId);
+		List<PathologicalIndicatorCategoryOutVo> categoryList = pathologicalIndicatorCategoryService.selectProjectListFilter(projectId);
 		return R.ok(categoryList);
 	}
 

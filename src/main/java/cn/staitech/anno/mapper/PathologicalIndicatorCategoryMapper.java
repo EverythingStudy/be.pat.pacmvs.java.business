@@ -4,6 +4,7 @@ import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.vo.annotation.LabelListVO;
 import cn.staitech.anno.vo.annotation.LabelVO;
 import cn.staitech.anno.vo.geojson.GeoLabel;
+import cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo;
 import cn.staitech.anno.vo.statistic.StatisticCategoryListInVO;
 import cn.staitech.anno.vo.statistic.StatisticCategoryListOutVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -60,6 +61,8 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
      * @return
      */
     List<GeoLabel> selectIndicatorIdList(Long indicatorId);
+
+    List<PathologicalIndicatorCategoryOutVo> selectIndicatorList(Long indicatorId);
 
     GeoLabel selectGeoLabel(Long categoryId);
 
@@ -137,7 +140,7 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
      * @param projectId
      * @return
      */
-    List<PathologicalIndicatorCategory> selectProjectListFilter(Long indicatorId);
+    List<PathologicalIndicatorCategoryOutVo> selectProjectListFilter(Long indicatorId);
 
     /**
      * 查询标签在标注中的使用数量
