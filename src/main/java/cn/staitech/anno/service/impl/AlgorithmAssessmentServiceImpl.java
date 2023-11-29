@@ -436,8 +436,8 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
                         resp2.setAlgorithmJsonNames(algorithmJsons.stream().map(AlgorithmJson::getAlgorithmJsonName).collect(Collectors.toList()));
                     }
                     LambdaQueryWrapper<AlgorithmJson> qw1 = new LambdaQueryWrapper<>();
-                    qw2.eq(AlgorithmJson::getAlgorithmAssessmentId, e.getAlgorithmAssessmentId());
-                    qw2.eq(AlgorithmJson::getJsonType, "0");
+                    qw1.eq(AlgorithmJson::getAlgorithmAssessmentId, e.getAlgorithmAssessmentId());
+                    qw1.eq(AlgorithmJson::getJsonType, "0");
                     List<AlgorithmJson> algorithmNames = algorithmJsonMapper.selectList(qw1);
                     if (!CollectionUtils.isEmpty(algorithmNames)) {
                         String annotationJsonName = StringUtils.join(algorithmNames.stream().map(AlgorithmJson::getAlgorithmJsonName).collect(Collectors.toList()), ",");
