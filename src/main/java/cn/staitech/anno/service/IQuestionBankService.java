@@ -23,7 +23,7 @@ public interface IQuestionBankService extends IService<QuestionBank> {
 
     R createQuestion(CreateQuestionIn req);
 
-    R createBySlide(CreateBySlideIn req);
+    R createBySlide(CreateBySlideIn req) throws InterruptedException;
 
     PageResponse<GetQuestionListOut> getQuestionList(GetQuestionListIn req);
 
