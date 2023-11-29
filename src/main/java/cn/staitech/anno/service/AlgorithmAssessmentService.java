@@ -27,7 +27,7 @@ public interface AlgorithmAssessmentService extends IService<AlgorithmAssessment
 
     void export(AssessmentExportIn assessmentExportIn) throws Exception;
 
-    List<String> zipExport(String zipUrl, Long projectId, String fileUrl) throws Exception;
+    List<String> zipExport(String zipUrl, Long projectId, String fileUrl, String roundId) throws Exception;
 
     R getJsonInfo(GetJsonInfoIn req);
 }
