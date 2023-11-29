@@ -1,5 +1,6 @@
 package cn.staitech.anno.controller;
 
+import cn.hutool.json.JSONUtil;
 import cn.staitech.anno.service.FileUploadService;
 import cn.staitech.anno.service.FilesService;
 import cn.staitech.anno.utils.MessageSource;
@@ -75,6 +76,7 @@ public class FilesController extends BaseController {
             FileUploadNoVO fileUploadNoVO) throws Exception {
     	FileUploadVO fileUploadVO = new FileUploadVO();
     	 BeanUtils.copyProperties(fileUploadNoVO, fileUploadVO);
+    	 log.info("文件上传并处理：{}",JSONUtil.toJsonStr(fileUploadVO));
          fileUploadVO.setMultipartFile(file);
         Files files = fileUploadService.uploadAndProcessBusiness(fileUploadVO);
         if (files.getFileNameList() != null) {

@@ -1,12 +1,9 @@
 package cn.staitech.anno.vo.files.in;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 /**
  * @author: wangfeng
@@ -14,8 +11,7 @@ import java.io.Serializable;
  * @Description: 文件上传VO
  */
 @Data
-public class FileUploadVO implements Serializable {
-    @NotNull(message = "{FileUploadVO.businessType.notNull}")
+public class FileUploadVO{
     @ApiModelProperty(value = "业务类型(1原始切片，2预测图片，3切片信息表CSV，4:json压缩包(zip)")
     private Integer businessType;
 
@@ -25,7 +21,6 @@ public class FileUploadVO implements Serializable {
     @ApiModelProperty(value = "机构ID")
     private Long organizationId;
 
-    @NotBlank(message = "{FileUploadVO.fileName.notBlank}")
     @ApiModelProperty(value = "文件名称")
     private String fileName;
     /**
