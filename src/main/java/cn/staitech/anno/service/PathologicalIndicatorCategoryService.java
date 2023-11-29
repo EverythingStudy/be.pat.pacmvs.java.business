@@ -10,6 +10,7 @@ import cn.staitech.anno.vo.statistic.StatisticCategoryListOutVO;
 import java.text.ParseException;
 import java.util.List;
 
+
 public interface PathologicalIndicatorCategoryService {
     /**
      * 添加标签信息
@@ -144,5 +145,5 @@ public interface PathologicalIndicatorCategoryService {
      */
     Integer selectLabelNumByStructureId(String structureId);
     
-    void handlerCouponsUserStatusTimeOutToExpired(Long categoryId) throws ParseException;
+    void handlerCouponsUserStatusTimeOutToExpired(List<Long> list) throws ParseException;
 }

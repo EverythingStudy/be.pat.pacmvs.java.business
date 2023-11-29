@@ -279,11 +279,11 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 
 	
 	@Override
-	public void handlerCouponsUserStatusTimeOutToExpired(Long categoryIdParm) throws ParseException {
+	public void handlerCouponsUserStatusTimeOutToExpired(List<Long> dataList) throws ParseException {
 		QueryWrapper<PathologicalIndicatorCategory> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("del_flag", "0");
-		if(null != categoryIdParm){
-			queryWrapper.eq("category_id", categoryIdParm);
+		if(CollectionUtils.isNotEmpty(dataList)){
+			queryWrapper.in("category_id", dataList);
 		}
 		queryWrapper.isNull("category_code");
 		queryWrapper.orderByAsc("indicator_id","structure_id");
@@ -332,9 +332,6 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
         				resultMap.put(structureKey, parmMap);
         			}
         		}
-        		//统一添加cageoryCode 
-        		Snowflake snowflake = new Snowflake();
-        		String categoryCode = snowflake.nextIdStr();
         	}
         	//打印下处理的数据
         	for (Map.Entry<String, Map<Integer,Long>> entry : resultMap.entrySet()) {
@@ -344,10 +341,24 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
         		//处理数据
         		//Long indicatorId = Long.valueOf(isKey.split("_")[0]);
         		String structureId = isKey.split("_")[1];
+        		
+        		
+        		
+        		
         		//type 1:结构指标 2：考试 3：标注
         		if(parmValue.containsKey(1)){
         			PathologicalIndicatorCategory picVo = pathologicalIndicatorCategoryMapper.selectById(parmValue.get(1));
         			Indicator indicator = indicatorMapper.selectIndicatorById(picVo.getIndicatorId());
+        			
+        			//统一添加cageoryCode 
+            		Snowflake snowflake = new Snowflake();
+            		String categoryCode = snowflake.nextIdStr();
+            		
+            		PathologicalIndicatorCategory category2 = new PathologicalIndicatorCategory();
+            		category2.setCategoryCode(categoryCode);
+            		category2.setCategoryId(parmValue.get(1));
+            		pathologicalIndicatorCategoryMapper.updateById(category2);
+            		
         			//其他两个请参考结构指标
         			//其他两个有则修改，没有加添加
         			if(parmValue.containsKey(2)){
@@ -365,6 +376,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
         				picExamVo2.setCategoryName( indicator.getIndicatorName() + structureName);
         				picExamVo2.setStructureId(structureId+CommonConstant.STRUCTURE_ROE);
         				picExamVo2.setNumber(structureId+CommonConstant.STRUCTURE_ROE);
+        				picExamVo2.setCategoryCode(categoryCode);
         				//修改考试
         				pathologicalIndicatorCategoryMapper.updateById(picExamVo2);
         			}else{
@@ -381,6 +393,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
         				picExamVo2.setStructureId(structureId+CommonConstant.STRUCTURE_ROE);
         				picExamVo2.setNumber(structureId+CommonConstant.STRUCTURE_ROE);
         				picExamVo2.setCategoryId(null);
+        				picExamVo2.setCategoryCode(categoryCode);
         				//add考试
         				pathologicalIndicatorCategoryMapper.insertSelective(picExamVo2);
         			}
@@ -400,6 +413,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
         				picExamVo2.setCategoryName(indicator.getIndicatorName() + structureName);
         				picExamVo2.setStructureId(structureId+CommonConstant.STRUCTURE_ROA);
         				picExamVo2.setNumber(structureId+CommonConstant.STRUCTURE_ROA);
+        				picExamVo2.setCategoryCode(categoryCode);
         				//修改标注
         				pathologicalIndicatorCategoryMapper.updateById(picExamVo2);
         			}else{
@@ -416,6 +430,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
         				picExamVo2.setStructureId(structureId+CommonConstant.STRUCTURE_ROA);
         				picExamVo2.setNumber(structureId+CommonConstant.STRUCTURE_ROA);
         				picExamVo2.setCategoryId(null);
+        				picExamVo2.setCategoryCode(categoryCode);
 
         				//add标注
         				pathologicalIndicatorCategoryMapper.insertSelective(picExamVo2);
@@ -423,6 +438,15 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
         		}else{
         			//type 1:结构指标 2：考试 3：标注
         			if(parmValue.containsKey(3)){
+        				//统一添加cageoryCode 
+                		Snowflake snowflake = new Snowflake();
+                		String categoryCode = snowflake.nextIdStr();
+                		
+                		PathologicalIndicatorCategory category2 = new PathologicalIndicatorCategory();
+                		category2.setCategoryCode(categoryCode);
+                		category2.setCategoryId(parmValue.get(3));
+                		pathologicalIndicatorCategoryMapper.updateById(category2);
+                		
         				//其他两个请标注（结构指标+考试）
         				//结构指标肯定是添加
         				PathologicalIndicatorCategory picVo = pathologicalIndicatorCategoryMapper.selectById(parmValue.get(3));
@@ -440,6 +464,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
         				picJGVo.setCategoryName(indicator.getIndicatorName() + structureName);
         				picJGVo.setNumber(structureId);
         				picJGVo.setCategoryId(null);
+        				picJGVo.setCategoryCode(categoryCode);
         				pathologicalIndicatorCategoryMapper.insert(picJGVo);
 
         				//考试，有就修改，没有就添加
@@ -457,6 +482,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
             				picExamVo2.setCategoryName(indicator.getIndicatorName() + structureNameROE);
             				picExamVo2.setStructureId(structureId+CommonConstant.STRUCTURE_ROE);
             				picExamVo2.setNumber(structureId+CommonConstant.STRUCTURE_ROE);
+            				picExamVo2.setCategoryCode(categoryCode);
             				//修改考试
             				pathologicalIndicatorCategoryMapper.updateById(picExamVo2);
             			}else{
@@ -473,21 +499,33 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
             				picExamVo2.setStructureId(structureId+CommonConstant.STRUCTURE_ROE);
             				picExamVo2.setNumber(structureId+CommonConstant.STRUCTURE_ROE);
             				picExamVo2.setCategoryId(null);
+            				picExamVo2.setCategoryCode(categoryCode);
 
             				//add考试
             				pathologicalIndicatorCategoryMapper.insertSelective(picExamVo2);
             			}
         				
         			}else{
+        				//统一添加cageoryCode 
+                		Snowflake snowflake = new Snowflake();
+                		String categoryCode = snowflake.nextIdStr();
+                		
+                		PathologicalIndicatorCategory category2 = new PathologicalIndicatorCategory();
+                		category2.setCategoryCode(categoryCode);
+                		category2.setCategoryId(parmValue.get(2));
+                		pathologicalIndicatorCategoryMapper.updateById(category2);
+                		
+                		 //type 1:结构指标 2：考试 3：标注
         				//有考试 ==》其他两个请标注（结构指标+标注）
         				//结构指标肯定是添加
-        				PathologicalIndicatorCategory picVo = pathologicalIndicatorCategoryMapper.selectById(parmValue.get(3));
+        				PathologicalIndicatorCategory picVo = pathologicalIndicatorCategoryMapper.selectById(parmValue.get(2));
             			Indicator indicator = indicatorMapper.selectIndicatorById(picVo.getIndicatorId());
             			PathologicalIndicatorCategory picJGVo = new PathologicalIndicatorCategory();
         		        BeanUtils.copyProperties(picVo, picJGVo);
         		        picJGVo.setCategoryId(null);
         		        picJGVo.setStructureId(structureId);
         		        picJGVo.setCategoryId(null);
+        		        picJGVo.setCategoryCode(categoryCode);
 
         		        String structureName = "";
         				// 获取structureName
@@ -511,7 +549,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
         				picExamVo2.setStructureId(structureId+CommonConstant.STRUCTURE_ROA);
         				picExamVo2.setNumber(structureId+CommonConstant.STRUCTURE_ROA);
         				picExamVo2.setCategoryId(null);
-
+        				picExamVo2.setCategoryCode(categoryCode);
         				//add标注
         				pathologicalIndicatorCategoryMapper.insertSelective(picExamVo2);
         			}

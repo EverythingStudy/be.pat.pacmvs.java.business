@@ -462,7 +462,9 @@ public class PathologicalController {
 	
 	@PostMapping("/test")
 	public R test() throws ParseException {
-		pathologicalIndicatorCategoryService.handlerCouponsUserStatusTimeOutToExpired(1040L);
+		List<Long> dataList = new ArrayList<>();
+			//dataList.add(1638L);
+		pathologicalIndicatorCategoryService.handlerCouponsUserStatusTimeOutToExpired(dataList);
 		return R.ok();
 	}
 }
