@@ -113,7 +113,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
             // 插入json文件返回数据
             String urlPath;
             try {
-                urlPath = markingService.slideLabelJsonExport(e.getSlideId(),SecurityUtils.getLoginUser().getSysUser());
+                urlPath = markingService.slideLabelJsonExport(e.getSlideId(), SecurityUtils.getLoginUser().getSysUser());
             } catch (Exception exception) {
                 log.error(exception.toString());
                 throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
@@ -194,7 +194,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public R createBySlide(CreateBySlideIn req) {
+    public R createBySlide(CreateBySlideIn req) throws InterruptedException {
         log.info("根据切片生成考题接口开始：");
 
         List<CreateBySlideData> slideDataList = req.getSlideDataList();
@@ -202,18 +202,18 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
             R.ok();
         }
         List<QuestionBank> questionBanks = new ArrayList<>();
-        for(CreateBySlideData reqBy:req.getSlideDataList()){
+        for (CreateBySlideData reqBy : req.getSlideDataList()) {
 
             Slide slide = slideMapper.selectById(reqBy.getSlideId());
-            Image image = imageMapper.selectById(reqBy.getImageId());
+            Image image = imageMapper.selectById(slide.getImageId());
             String urlPath;
             try {
-                urlPath = markingService.slideJsonExport(reqBy.getSlideId(),SecurityUtils.getLoginUser().getSysUser());
+                urlPath = markingService.slideLabelJsonExport(reqBy.getSlideId(), SecurityUtils.getLoginUser().getSysUser());
             } catch (Exception ex) {
                 throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
             }
-            List<String> pathList = Arrays.asList(urlPath.split(","));
-            for(String path:pathList){
+            String[] pathList = urlPath.split(",");
+            for (String path : pathList) {
                 String jsoName = StringUtils.substringAfterLast(path, File.separator);
                 QuestionBank ret = new QuestionBank();
                 BeanUtils.copyProperties(reqBy, ret);
@@ -296,14 +296,14 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
 //        qw.eq(QuestionProjectRel::getQuestionId, req.getQuestionId());
         qw.eq(QuestionProjectRel::getDelFlag, CommonConstant.NUMBER_0);
         List<QuestionProjectRel> questionProjectRels = questionProjectRelMapper.selectList(qw);
-        List<Long> questionIdList=questionProjectRels.stream().map(QuestionProjectRel::getQuestionId).collect(Collectors.toList());
-       List<QuestionProjectRel> questionProjectRelList=new ArrayList<>();
-        for (Long question:req.getQuestionId()){
+        List<Long> questionIdList = questionProjectRels.stream().map(QuestionProjectRel::getQuestionId).collect(Collectors.toList());
+        List<QuestionProjectRel> questionProjectRelList = new ArrayList<>();
+        for (Long question : req.getQuestionId()) {
             //筛选出没有添加过的questionId
-            if (!questionIdList.contains(question)){
+            if (!questionIdList.contains(question)) {
                 QuestionProjectRel entity = new QuestionProjectRel();
                 entity.setQuestionId(question);
-                QuestionBank questionBank=questionBankMapper.selectById(question);
+                QuestionBank questionBank = questionBankMapper.selectById(question);
                 entity.setProjectId(req.getProjectId());
                 entity.setImageCode(questionBank.getImageCode());
                 entity.setJsonName(questionBank.getJsonName());
@@ -317,7 +317,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
 //                questionProjectRelMapper.insert(entity);
             }
         }
-        if (CollectionUtil.isNotEmpty(questionProjectRelList)){
+        if (CollectionUtil.isNotEmpty(questionProjectRelList)) {
             questionProjectRelMapper.examineInsert(questionProjectRelList);
         }
 

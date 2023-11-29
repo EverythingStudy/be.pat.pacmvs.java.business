@@ -282,6 +282,13 @@ public class MarkingServiceImpl implements MarkingService {
 
 		// 添加数据库，添加后返回自增id
 		markingMapper.insert(marking);
+		
+		Properties properties = markingMapper.selectBy(marking.getMarking_id());
+		Features features = socketData(annotationId, marking.getGeometry(), properties);
+		// 如果是点类型，返回点的总数并返回
+		List<PointCount> pointCountList = updatePoint(marking.getLocation_type(), marking);
+		BroadcastVO broadcastVO = SendMessage.sendOneMessages(ADD_STATUS, features, pointCountList);
+		NioWebSocketHandler.sendAll(req.getSlide_id(), broadcastVO);
 
 		//TODO 多线程处理
 		annExecutor.submit(new AnnCountThread(1,slideBy,marking));
@@ -376,11 +383,11 @@ public class MarkingServiceImpl implements MarkingService {
 				pointCountList = Stream.of(pointCountList, newPointCountList).flatMap(Collection::stream).collect(Collectors.toList());
 			}
 		}
-		/*Properties properties = markingMapper.selectBy(marking.getMarking_id());
+		Properties properties = markingMapper.selectBy(marking.getMarking_id());
 		Features features = socketData(markingBy.getAnnotation_id(), req.getGeometry(), properties);
 		BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features, pointCountList);
 		// 使用websocket发送数据
-		NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);*/
+		NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
 
 		/*// 更新切片表中数据
         updateSLide(slide.getSlideId());
@@ -1207,18 +1214,12 @@ public class MarkingServiceImpl implements MarkingService {
 
 	   Long slideId = marking.getSlide_id();
 	   String markIngId = marking.getMarking_id();
-	   String annotationId = marking.getAnnotation_id();
+	  // String annotationId = marking.getAnnotation_id();
 	   Long createBy = marking.getCreate_by();
 	   Long categoryId = marking.getCategory_id();
 
 		//增加缓存
 		redisService.setCacheObject(CommonConstant.ANNO_MARKING+markIngId, marking, CommonConstant.MARKING_CACHE_HOURS, TimeUnit.HOURS);
-		Properties properties = markingMapper.selectBy(markIngId);
-		Features features = socketData(annotationId, marking.getGeometry(), properties);
-		// 如果是点类型，返回点的总数并返回
-		List<PointCount> pointCountList = updatePoint(marking.getLocation_type(), marking);
-		BroadcastVO broadcastVO = SendMessage.sendOneMessages(ADD_STATUS, features, pointCountList);
-		NioWebSocketHandler.sendAll(slideId, broadcastVO);
 
 		// 判断切片状态是否是未开始
 		if (Objects.equals(slide.getStatus(), "1")) {

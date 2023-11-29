@@ -44,7 +44,7 @@ public class QuestionBankController {
     @ApiOperation(value = "生成考题-根据切片")
     @RequiresPermissions("smartAnno:project:slice:batchCreateExamination")
     @PostMapping("/createBySlide")
-    public R createBySlide(@Validated @RequestBody CreateBySlideIn req) {
+    public R createBySlide(@Validated @RequestBody CreateBySlideIn req) throws InterruptedException {
 
         return iQuestionBankService.createBySlide(req);
     }
