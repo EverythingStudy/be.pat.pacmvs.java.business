@@ -503,101 +503,6 @@ public class MarkingServiceImpl implements MarkingService {
 		return res;
 	}
 
-//	@Override
-//	public String slideJsonExport(Long slideId) throws Exception {
-//		if (!Optional.ofNullable(slideId).isPresent()) {
-//			try {
-//				throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
-//			} catch (Exception e) {
-//				throw new RuntimeException(e);
-//			}
-//		}
-//		Slide slideBy = slideMapperV1.selectById(slideId);
-//		if (!Optional.ofNullable(slideBy).isPresent()) {
-//			try {
-//				throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
-//			} catch (Exception e) {
-//				throw new RuntimeException(e);
-//			}
-//		}
-//
-//		String fileUrl = null;
-//		try {
-//			fileUrl = fileService.createFiles(slideId, FILE_SUFFIX_JSON);
-//		} catch (Exception e) {
-//			throw new RuntimeException(e);
-//		}
-//		// 标注数据
-//		List<Features> features = markingMapper.selectLists(slideId);
-//		features.forEach(i -> i.setGeometry(GeometryUtil.updateYAxle(i.getGeometry())));
-//
-//		// 查询项目详情
-//		JsonExport jsonExport = null;
-//		Project projectBy = projectMapperV1.selectById(slideBy.getProjectId());
-//		if (Objects.equals(projectBy.getProjectType(), "2")) {
-//			jsonExport = markingMapper.jsonExportSelect(slideId);
-//		} else {
-//			jsonExport = markingMapper.reviewJsonExportSelect(slideId);
-//		}
-//
-//		// 项目信息
-//		GeoProject project = new GeoProject();
-//		// 种属编码 + 结构编码 + 数据库项目id
-//		String projectId = jsonExport.getSpeciesId() + GLIDE_LINE + jsonExport.getOrganId() + GLIDE_LINE + jsonExport.getProjectId();
-//		project.setProject_id(projectId);
-//		project.setProject_name(jsonExport.getProjectName());
-//
-//		// 图像信息
-//		GeoImage image = new GeoImage();
-//		image.setImage_shape(jsonExport.getImageShape());
-//		image.setImage_type(jsonExport.getFormat());
-//		image.setImage_name(jsonExport.getImageName());
-//		image.setCreate_time(jsonExport.getCreateTime());
-//		// 获取切片中的geo_image_id,为空则使用以下规则进行生成（项目id + 十三位时间戳 + 两位随机数）
-//		String imageId = "";
-//		if (Objects.equals(slideBy.getGeoImageId(), "") || slideBy.getGeoImageId() == null) {
-//			imageId = jsonExport.getProjectId() + GLIDE_LINE + System.currentTimeMillis() + GLIDE_LINE + RandomUtils.RandomNumbers();
-//			Slide slides = new Slide();
-//			slides.setSlideId(slideId);
-//			slides.setGeoImageId(imageId);
-//			slideMapperV1.updateById(slides);
-//		} else {
-//			imageId = slideBy.getGeoImageId();
-//		}
-//		image.setImage_id(imageId);
-//		image.setImage_url(jsonExport.getImageUrl());
-//
-//		// 作者信息
-//		GeoAttribute attribute = new GeoAttribute();
-//		attribute.setAuthor(SecurityUtils.getLoginUser().getSysUser().getUserName());
-//		attribute.setDepartment(SecurityUtils.getLoginUser().getSysUser().getDept());
-//
-//		// 标签信息
-//		QueryWrapper<cn.staitech.anno.project.domain.Marking> markingQueryWrapper = new QueryWrapper<>();
-//		markingQueryWrapper.select("category_id").eq("slide_id", slideId).ne("category_id", 0).groupBy("category_id");
-//		List<cn.staitech.anno.project.domain.Marking> markingList = markingMapperV1.selectList(markingQueryWrapper);
-//		List<GeoLabel> categoryList = new ArrayList<>();
-//		if (markingList.size() > 0) {
-//			for (cn.staitech.anno.project.domain.Marking marking : markingList) {
-//				GeoLabel geoLabel = pathologicalIndicatorCategoryMapper.selectGeoLabel(marking.getCategoryId());
-//				categoryList.add(geoLabel);
-//			}
-//		}
-//
-//		// 构建geoJson数据
-//		GeoJson geoJson = new GeoJson();
-//		geoJson.setFeatures(features);
-//		geoJson.setImage(image);
-//		geoJson.setProject(project);
-//		geoJson.setAttribute(attribute);
-//		geoJson.setLabel_info(categoryList);
-//		String jsonString = JSON.toJSONString(geoJson, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue);
-//		// 写入文件
-//		exportJson(fileUrl, jsonString);
-//		//            return R.ok(fileUrl);
-//		//        });
-//		return fileUrl;
-//	}
 
 
 	class TaskGenerateJson implements Runnable {
@@ -753,7 +658,7 @@ public class MarkingServiceImpl implements MarkingService {
 		}
 		// 查询分组后得标签列表（RO）
 		// 根据RO标签获取唯一标识符号，并获取考核区域和标注区域得列表
-		// 查询时in
+		// 查询标注列表使用使用in查询出相应标注
 		List<cn.staitech.anno.domain.PathologicalIndicatorCategory> categoryLists = markingMapper.selectCategory(slideId);
 		// 循环标签列表
 		List<String> fileUrlList = new ArrayList<>();
@@ -782,6 +687,7 @@ public class MarkingServiceImpl implements MarkingService {
 			map.put("categoryIdList",categoryIdList);
 			List<Features> features = markingMapper.selectFilterCategoryLists(map);
 			ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
+			// 使用多线程更新标注y轴
 			CountDownLatch countDownLatch = new CountDownLatch(features.size());
 			ConcurrentLinkedQueue<Features> concurrentLinkedQueue = new ConcurrentLinkedQueue<>();
 			for (Features features1 : features) {
@@ -790,8 +696,6 @@ public class MarkingServiceImpl implements MarkingService {
 			}
 			countDownLatch.await();
 			cachedThreadPool.shutdown();
-
-			//        features.forEach(i -> i.setGeometry(GeometryUtil.updateYAxle(i.getGeometry())));
 
 			// 查询项目详情
 			JsonExport jsonExport = null;
