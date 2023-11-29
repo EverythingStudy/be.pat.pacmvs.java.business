@@ -20,11 +20,11 @@ import io.swagger.annotations.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.beans.BeanUtils;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -75,9 +75,7 @@ public class FilesController extends BaseController {
             @RequestParam("file") MultipartFile file,
             FileUploadNoVO fileUploadNoVO) throws Exception {
     	FileUploadVO fileUploadVO = new FileUploadVO();
-   	 	log.info("文件上传并处理1：{}",JSONUtil.toJsonStr(fileUploadNoVO));
     	 BeanUtils.copyProperties(fileUploadNoVO, fileUploadVO);
-    	 log.info("文件上传并处理2：{}",JSONUtil.toJsonStr(fileUploadVO));
          fileUploadVO.setMultipartFile(file);
         Files files = fileUploadService.uploadAndProcessBusiness(fileUploadVO);
         if (files.getFileNameList() != null) {
