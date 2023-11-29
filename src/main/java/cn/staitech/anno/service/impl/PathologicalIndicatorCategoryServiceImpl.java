@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
@@ -56,6 +57,8 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
     public int insertSelective(PathologicalIndicatorCategory pathologicalIndicatorCategory) {
         return pathologicalIndicatorCategoryMapper.insertSelective(pathologicalIndicatorCategory);
     }
+
+
 
     /**
      * 修改标签
@@ -231,13 +234,12 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
     }
 
     @Override
-    public List<PathologicalIndicatorCategory> selectprojectList(Long projectId) {
+    public List<PathologicalIndicatorCategoryOutVo> selectprojectList(Long projectId) {
         Project project = projectMapperv1.selectById(projectId);
         if (project != null) {
-            QueryWrapper<PathologicalIndicatorCategory> pathologicalIndicatorCategoryQueryWrapper = new QueryWrapper<>();
-            pathologicalIndicatorCategoryQueryWrapper.eq("indicator_id", project.getIndicatorId()).eq("del_flag","0").orderByDesc("order_number");
-            List<PathologicalIndicatorCategory> list = pathologicalIndicatorCategoryMapper.selectList(pathologicalIndicatorCategoryQueryWrapper);
-            for (PathologicalIndicatorCategory category : list) {
+
+            List<PathologicalIndicatorCategoryOutVo> list = pathologicalIndicatorCategoryMapper.selectIndicatorList(project.getIndicatorId());
+            for (PathologicalIndicatorCategoryOutVo category : list) {
                 // 处理标签集中英文
                 if (LanguageUtils.isEn()) {
                     Indicator indicator = indicatorMapper.selectIndicatorById(category.getIndicatorId());
@@ -254,7 +256,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
     }
 
     @Override
-    public List<PathologicalIndicatorCategory> selectProjectListFilter(Long projectId) {
+    public List<PathologicalIndicatorCategoryOutVo> selectProjectListFilter(Long projectId) {
         Project project = projectMapperv1.selectById(projectId);
         if (project != null) {
             return pathologicalIndicatorCategoryMapper.selectProjectListFilter(project.getIndicatorId());

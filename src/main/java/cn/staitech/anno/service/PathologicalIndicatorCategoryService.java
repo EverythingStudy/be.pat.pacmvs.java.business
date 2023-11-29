@@ -3,6 +3,7 @@ package cn.staitech.anno.service;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.vo.annotation.LabelListVO;
 import cn.staitech.anno.vo.annotation.LabelVO;
+import cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo;
 import cn.staitech.anno.vo.statistic.StatisticCategoryListInVO;
 import cn.staitech.anno.vo.statistic.StatisticCategoryListOutVO;
 
@@ -129,9 +130,9 @@ public interface PathologicalIndicatorCategoryService {
      *
      * @param projectId 项目id
      */
-    List<PathologicalIndicatorCategory> selectprojectList(Long projectId);
+    List<PathologicalIndicatorCategoryOutVo> selectprojectList(Long projectId);
 
-    List<PathologicalIndicatorCategory> selectProjectListFilter(Long projectId);
+    List<PathologicalIndicatorCategoryOutVo> selectProjectListFilter(Long projectId);
 
     /**
      * 查询标签在标注中的使用数量

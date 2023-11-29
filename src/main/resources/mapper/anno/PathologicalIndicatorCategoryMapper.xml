@@ -249,6 +249,16 @@
         WHERE indicator_id = #{indicatorId}
     </select>
 
+    <select id="selectIndicatorList" parameterType="java.lang.Long" resultType="cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo">
+        SELECT p.*,s.type
+        FROM tb_pathological_indicator_category as p
+        left join tb_structure as s on s.structure_id = p.structure_id
+        WHERE indicator_id = #{indicatorId}
+        AND p.del_flag = "0"
+        order by p.order_number desc
+    </select>
+
+
     <select id="selectGeoLabel" parameterType="java.lang.Long" resultMap="GeoLabelResult">
         SELECT category_name as label_name,
                rgb           as label_color,
@@ -379,11 +389,12 @@
     </select>
 
 
-    <select id="selectProjectListFilter" parameterType="java.lang.Long" resultMap="BaseResultMap">
-        SELECT i.*
+    <select id="selectProjectListFilter" parameterType="java.lang.Long" resultType="cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo">
+        SELECT i.*,s.type
         FROM tb_pathological_indicator_category AS i
                  LEFT JOIN tb_structure AS s ON s.structure_id = i.structure_id
         WHERE i.indicator_id = #{indicatorId}
+          AND i.del_flag = "0"
           AND s.type != "ROE"
     </select>
 
