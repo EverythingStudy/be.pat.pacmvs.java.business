@@ -90,7 +90,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
     private PathologicalIndicatorCategoryMapper pathologicalIndicatorCategoryMapper;
 
     @Override
-    public List<String> zipExport(String zipUrl, Long projectId, String fileUrl) throws Exception {
+    public List<String> zipExport(String zipUrl, Long projectId, String fileUrl, String roundId) throws Exception {
         StringBuilder sb;
         File file1 = new File(zipUrl);
         List<String> fileNameList = new ArrayList<>();
@@ -141,7 +141,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
                             if (imageName != null) {
                                 // 写入数据库
-                                writeAlgorithm(projectId, imageName, fileContent, fileUrl, fileNames);
+                                writeAlgorithm(projectId, imageName, fileContent, fileUrl, fileNames, roundId);
                             }
                             //这里是对读取的文件内容进行处理
                             ddlList.put(ze.getName(), sb.toString());
@@ -224,7 +224,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
     }
 
-    public void writeAlgorithm(Long projectId, String imageName, String fileContent, String filePath, String fileNames) throws Exception {
+    public void writeAlgorithm(Long projectId, String imageName, String fileContent, String filePath, String fileNames, String roundId) throws Exception {
         QueryWrapper<AlgorithmAssessment> algorithmAssessmentQueryWrapper = new QueryWrapper<>();
         algorithmAssessmentQueryWrapper.eq("project_id", projectId).eq("del_flag", "0");
         // 查询算法考核列表，获取算法考核列表
@@ -240,18 +240,19 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
                 // 写入文件
                 exportJson(fileUrl, fileContent);
                 // 写入文件后更新算法json表中数据
-                algorithmJsonMapper.insert(setAlgorithmJson(algorithmAssessment, fileUrl, fileNames));
+                algorithmJsonMapper.insert(setAlgorithmJson(algorithmAssessment, fileUrl, fileNames, roundId));
             }
         }
     }
 
 
-    public AlgorithmJson setAlgorithmJson(AlgorithmAssessment algorithmAssessment, String fileUrl, String fileName) {
+    public AlgorithmJson setAlgorithmJson(AlgorithmAssessment algorithmAssessment, String fileUrl, String fileName, String roundId) {
         AlgorithmJson algorithmJson = new AlgorithmJson();
         algorithmJson.setAlgorithmAssessmentId(algorithmAssessment.getAlgorithmAssessmentId());
         algorithmJson.setSlideId(algorithmAssessment.getSlideId());
         algorithmJson.setAlgorithmJsonUrl(fileUrl);
         algorithmJson.setJsonType("1");
+        algorithmJson.setRoundId(roundId);
         algorithmJson.setAlgorithmJsonName(fileName);
         algorithmJson.setCreateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
         algorithmJson.setCreateTime(new Date());
@@ -340,16 +341,16 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
             // 插入json文件返回数据
             String urlPath;
             try {
-                urlPath = markingService.slideLabelJsonExport(e.getSlideId(),SecurityUtils.getLoginUser().getSysUser());
+                urlPath = markingService.slideJsonExport(e.getSlideId(), SecurityUtils.getLoginUser().getSysUser());
             } catch (Exception exception) {
                 log.error(exception.toString());
                 throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
             }
             List<String> urlPaths = new ArrayList<>();
-            if(urlPath != null && !"".equals(urlPath)){
+            if (urlPath != null && !"".equals(urlPath)) {
                 List<String> urlPathList = Arrays.asList(urlPath.split(","));
-                if(urlPathList.size() > 0){
-                    for(String i:urlPathList){
+                if (urlPathList.size() > 0) {
+                    for (String i : urlPathList) {
                         String s = StringUtils.substringAfterLast(i, File.separator);
                         urlPaths.add(s);
                     }
@@ -365,27 +366,19 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
             return resp;
         }).collect(Collectors.toList());
         //批量插入考核算法
-        List<AlgorithmJson> collect=new ArrayList<>();
+        List<AlgorithmJson> collect = new ArrayList<>();
         for (AlgorithmAssessment e : algorithmAssessments) {
             baseMapper.insert(e);
-            // 将字符串进行分割
-            if(e.getAnnotationJsonUrl() != null && !"".equals(e.getAnnotationJsonUrl())){
-                List<String> urlPathList = Arrays.asList(e.getAnnotationJsonUrl().split(","));
-                if(urlPathList.size() > 0){
-                    for(String i:urlPathList){
-                        String s = StringUtils.substringAfterLast(i, File.separator);
-                        AlgorithmJson resp = new AlgorithmJson();
-                        resp.setAlgorithmAssessmentId(e.getAlgorithmAssessmentId());
-                        resp.setSlideId(e.getSlideId());
-                        resp.setAlgorithmJsonName(s);
-                        resp.setAlgorithmJsonUrl(i);
-                        resp.setCreateBy(SecurityUtils.getUserId());
-                        resp.setCreateTime(new Date());
-                        resp.setJsonType("0");
-                        collect.add(resp);
-                    }
-                }
-            }
+            String s = StringUtils.substringAfterLast(e.getAnnotationJsonUrl(), File.separator);
+            AlgorithmJson resp = new AlgorithmJson();
+            resp.setAlgorithmAssessmentId(e.getAlgorithmAssessmentId());
+            resp.setSlideId(e.getSlideId());
+            resp.setAlgorithmJsonName(s);
+            resp.setAlgorithmJsonUrl(e.getAnnotationJsonUrl());
+            resp.setCreateBy(SecurityUtils.getUserId());
+            resp.setCreateTime(new Date());
+            resp.setJsonType("0");
+            collect.add(resp);
         }
         //批量插入json表
         algorithmJsonService.saveBatch(collect);
@@ -421,7 +414,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
             collect = algorithmAssessments.stream().map(e -> {
                 GetAssessmentListOut resp2 = new GetAssessmentListOut();
-                if(e.getCategoryIds() != null){
+                if (e.getCategoryIds() != null) {
                     resp2.setCategoryIds(e.getCategoryIds().split(","));
                     String str = pathologicalIndicatorCategoryMapper.selectCategoryById(e.getCategoryIds().split(","));
 

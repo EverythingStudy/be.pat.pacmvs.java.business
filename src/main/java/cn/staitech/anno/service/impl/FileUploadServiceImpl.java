@@ -253,8 +253,12 @@ public class FileUploadServiceImpl implements FileUploadService {
                         dir.mkdirs();
                     }
                 }
+                List<String> folderList = Arrays.asList(fileUrl.split(File.separator));
+                String fileNames = folderList.get(folderList.size() - 1);
+                List<String> urlPathList = Arrays.asList(fileNames.split("_"));
+                String roundId = urlPathList.get(1).substring(1);
                 // 解析zip压缩包
-                List<String> fileNameList = algorithmAssessmentService.zipExport(files.getFilesPath(), fileUploadVO.getProjectId(), fileUrl);
+                List<String> fileNameList = algorithmAssessmentService.zipExport(files.getFilesPath(), fileUploadVO.getProjectId(), fileUrl,roundId);
                 files.setFileNameList(fileNameList);
                 break;
             case 6:
@@ -354,7 +358,12 @@ public class FileUploadServiceImpl implements FileUploadService {
                         // 获取文件路径
                         fileUrl = basePath + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()) + uploadPath + File.separator + getFileUrl(chunk);
                     }
-                    List<String> fileNameList = algorithmAssessmentService.zipExport(filesBy.getFilesPath(), chunk.getProjectId(), fileUrl);
+                    // 获取轮次id
+                    List<String> folderList = Arrays.asList(fileUrl.split(File.separator));
+                    String fileName = folderList.get(folderList.size() - 1);
+                    List<String> urlPathList = Arrays.asList(fileName.split("_"));
+                    String roundId = urlPathList.get(1).substring(1);
+                    List<String> fileNameList = algorithmAssessmentService.zipExport(filesBy.getFilesPath(), chunk.getProjectId(), fileUrl, roundId);
                     return fileNameList.toString();
                 case 6:
                     // 解析文件

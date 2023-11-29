@@ -33,6 +33,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -142,6 +143,55 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         return R.ok();
     }
 
+//    @Transactional(rollbackFor = Exception.class)
+//    @Override
+//    public R createBySlide(CreateBySlideIn req) {
+//        log.info("根据切片生成考题接口开始：");
+//
+//        List<CreateBySlideData> slideDataList = req.getSlideDataList();
+//        if (CollectionUtils.isEmpty(slideDataList)) {
+//            R.ok();
+//        }
+//
+//        List<QuestionBank> questionBanks = req.getSlideDataList().stream().map(e -> {
+//            Slide slide = slideMapper.selectById(e.getSlideId());
+//            Image image = imageMapper.selectById(slide.getImageId());
+//            QuestionBank ret = new QuestionBank();
+//            BeanUtils.copyProperties(e, ret);
+//            BeanUtils.copyProperties(image, ret);
+//            ret.setCreateBy(SecurityUtils.getUserId());
+//            ret.setCreateTime(new Date());
+//            ret.setUpdateBy(null);
+//            ret.setUpdateTime(null);
+//
+//            // 插入json文件返回数据
+//            String urlPath;
+//            try {
+//                urlPath = markingService.slideJsonExport(e.getSlideId(),SecurityUtils.getLoginUser().getSysUser());
+//            } catch (Exception ex) {
+//                throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
+//            }
+//            String s = StringUtils.substringAfterLast(urlPath, File.separator);
+//
+//            String s1 = urlPath;
+//            ret.setJsonName(s);
+//            ret.setGeojsonUrl(s1);
+//            ret.setProjectId(e.getProjectId());
+//            ret.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+//            return ret;
+//        }).collect(Collectors.toList());
+//
+//        List<Long> questionBankList = new ArrayList<>();
+//        for (QuestionBank questionBank : questionBanks) {
+//            baseMapper.insert(questionBank);
+//            questionBankList.add(questionBank.getQuestionId());
+//        }
+//        JSONObject markingJsonObject = new JSONObject();
+//        markingJsonObject.put("question_id", questionBankList);
+//        remoteLabelService.Standard(markingJsonObject);
+//        return R.ok();
+//    }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public R createBySlide(CreateBySlideIn req) {
@@ -151,35 +201,34 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         if (CollectionUtils.isEmpty(slideDataList)) {
             R.ok();
         }
+        List<QuestionBank> questionBanks = new ArrayList<>();
+        for(CreateBySlideData reqBy:req.getSlideDataList()){
 
-        List<QuestionBank> questionBanks = req.getSlideDataList().stream().map(e -> {
-            Slide slide = slideMapper.selectById(e.getSlideId());
-            Image image = imageMapper.selectById(slide.getImageId());
-            QuestionBank ret = new QuestionBank();
-            BeanUtils.copyProperties(e, ret);
-            BeanUtils.copyProperties(image, ret);
-            ret.setCreateBy(SecurityUtils.getUserId());
-            ret.setCreateTime(new Date());
-            ret.setUpdateBy(null);
-            ret.setUpdateTime(null);
-
-            // 插入json文件返回数据
+            Slide slide = slideMapper.selectById(reqBy.getSlideId());
+            Image image = imageMapper.selectById(reqBy.getImageId());
             String urlPath;
             try {
-                urlPath = markingService.slideJsonExport(e.getSlideId(),SecurityUtils.getLoginUser().getSysUser());
+                urlPath = markingService.slideJsonExport(reqBy.getSlideId(),SecurityUtils.getLoginUser().getSysUser());
             } catch (Exception ex) {
                 throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
             }
-            String s = StringUtils.substringAfterLast(urlPath, File.separator);
-
-            String s1 = urlPath;
-            ret.setJsonName(s);
-            ret.setGeojsonUrl(s1);
-            ret.setProjectId(e.getProjectId());
-            ret.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-            return ret;
-        }).collect(Collectors.toList());
-
+            List<String> pathList = Arrays.asList(urlPath.split(","));
+            for(String path:pathList){
+                String jsoName = StringUtils.substringAfterLast(path, File.separator);
+                QuestionBank ret = new QuestionBank();
+                BeanUtils.copyProperties(reqBy, ret);
+                BeanUtils.copyProperties(image, ret);
+                ret.setCreateBy(SecurityUtils.getUserId());
+                ret.setCreateTime(new Date());
+                ret.setUpdateBy(null);
+                ret.setUpdateTime(null);
+                ret.setJsonName(jsoName);
+                ret.setGeojsonUrl(path);
+                ret.setProjectId(reqBy.getProjectId());
+                ret.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+                questionBanks.add(ret);
+            }
+        }
         List<Long> questionBankList = new ArrayList<>();
         for (QuestionBank questionBank : questionBanks) {
             baseMapper.insert(questionBank);

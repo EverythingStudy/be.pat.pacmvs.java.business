@@ -35,6 +35,12 @@ public class AssessmentResults implements Serializable {
     /**
      * 考核算法主键
      */
+    @ApiModelProperty(value = "轮次id")
+    private String roundId;
+
+    /**
+     * 考核算法主键
+     */
     @ApiModelProperty(value = "考核算法主键")
     private Long algorithmAssessmentId;
 
