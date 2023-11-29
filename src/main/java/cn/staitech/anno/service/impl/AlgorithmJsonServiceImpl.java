@@ -1,7 +1,11 @@
 package cn.staitech.anno.service.impl;
 
+import cn.staitech.anno.domain.PathologicalIndicatorCategory;
+import cn.staitech.anno.domain.Structure;
 import cn.staitech.anno.mapper.AlgorithmAssessmentMapper;
 import cn.staitech.anno.mapper.AlgorithmJsonMapper;
+import cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper;
+import cn.staitech.anno.mapper.StructureMapper;
 import cn.staitech.anno.service.AlgorithmJsonService;
 import cn.staitech.anno.utils.GeometryUtil;
 import cn.staitech.anno.utils.MessageSource;
@@ -41,7 +45,13 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
     private AlgorithmJsonMapper algorithmJsonMapper;
 
     @Resource
+    private StructureMapper structureMapper;
+
+    @Resource
     private AlgorithmAssessmentMapper algorithmAssessmentMapper;
+
+    @Resource
+    private PathologicalIndicatorCategoryMapper categoryMapper;
 
     @Resource
     private RemoteLabelService remoteLabelService;
@@ -123,6 +133,25 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
                 }
             }
         }
+        List<String> labelList = new ArrayList<>();
+        // 判断传入列表不为空
+        if (selectGeoJson.getLabelList().size() > 0) {
+            // 根据labelCode查询标签详情
+            for(String labelCode:selectGeoJson.getLabelList()){
+                QueryWrapper<PathologicalIndicatorCategory> queryWrapper = new QueryWrapper<>();
+                queryWrapper.eq("structure_id", labelCode);
+                PathologicalIndicatorCategory pathologicalIndicatorCategory = categoryMapper.selectOne(queryWrapper);
+
+                if(pathologicalIndicatorCategory != null){
+                    QueryWrapper<PathologicalIndicatorCategory> categoryQueryWrapper = new QueryWrapper<>();
+                    categoryQueryWrapper.eq("category_code", pathologicalIndicatorCategory.getCategoryCode());
+                    List<PathologicalIndicatorCategory> pathologicalIndicatorCategoryList = categoryMapper.selectList(categoryQueryWrapper);
+                    for(PathologicalIndicatorCategory pathologicalIndicatorCategory1:pathologicalIndicatorCategoryList){
+                        labelList.add(pathologicalIndicatorCategory1.getStructureId());
+                    }
+                }
+            }
+        }
         QueryWrapper<AlgorithmJson> algorithmJsonQueryWrapper = new QueryWrapper<>();
         algorithmJsonQueryWrapper.in("algorithm_json_id", algorithmJsonList);
         // 查询选中的json列表
@@ -137,8 +166,8 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
                 JSONObject jsonObject = getGeoJson(algorithmJson.getAlgorithmJsonUrl());
                 if (jsonObject.size() > 0) {
                     JSONArray featuresJson = jsonObject.getJSONArray("features");
-                    if (selectGeoJson.getLabelList().size() > 0) {
-                        featuresJson = featuresJson.stream().filter(s -> selectGeoJson.getLabelList().contains(((JSONObject) s).getJSONObject("properties").getString("label_code"))).collect(Collectors.toCollection(JSONArray::new));
+                    if (labelList.size() > 0) {
+                        featuresJson = featuresJson.stream().filter(s -> labelList.contains(((JSONObject) s).getJSONObject("properties").getString("label_code"))).collect(Collectors.toCollection(JSONArray::new));
                     }
                     features.addAll(updateYs(featuresJson));
                 }
@@ -175,10 +204,26 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
         // 对结果进行去重
         List<Long> userLists = userListBy.stream().filter(s -> s != 0).distinct().collect(Collectors.toList());
         JSONArray labelInfoList = labelInfo.stream().distinct().collect(Collectors.toCollection(JSONArray::new));
+        JSONArray labelInfoLists = new JSONArray();
+        // 对标注区域和考核区域进行筛选,只选择code为RO的标签
+        if (labelInfoList.size() > 0) {
+            for (Object i : labelInfoList) {
+                JSONObject labelInfos = JSONObject.parseObject(JSONObject.toJSONString(i));
+                String labelCode = labelInfos.getString("label_code");
+                // 根据主键查询详情
+                Structure structure = structureMapper.selectById(labelCode);
+                if (structure != null) {
+                    if (Objects.equals(structure.getType(), "RO")) {
+                        // 查询结果
+                        labelInfoLists.add(labelInfos);
+                    }
+                }
+            }
+        }
         // 封装数据
         SelectGeoJsonList selectGeoJsonList = new SelectGeoJsonList();
         selectGeoJsonList.setUserList(userLists);
-        selectGeoJsonList.setLabelInfoList(labelInfoList);
+        selectGeoJsonList.setLabelInfoList(labelInfoLists);
         return selectGeoJsonList;
     }
 

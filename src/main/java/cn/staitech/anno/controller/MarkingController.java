@@ -13,6 +13,7 @@ import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
+import cn.staitech.common.security.utils.SecurityUtils;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
@@ -139,7 +140,7 @@ public class MarkingController {
     @ApiOperation(value = "json导出", hidden = true)
     @GetMapping("/jsonExport")
     public R<String> getWebsocketPort(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId) throws Exception {
-        return R.ok(markingService.slideJsonExport(slideId));
+        return R.ok(markingService.slideJsonExport(slideId, SecurityUtils.getLoginUser().getSysUser()));
     }
 
     @Log(title = "标注测量excel导出", businessType = BusinessType.EXPORT)

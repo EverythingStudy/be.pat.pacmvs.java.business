@@ -276,7 +276,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
                         try {
                             params.put("slideId", slideId);
                             List<ReviewVO> reviewVOS = getBaseMapper().exportReview(params);
-                            String path = fileService.createFiles(slideId, ".csv");
+                            String path = fileService.createFiles(slideId, ".csv",null);
                             File file = new File(path);
                             CsvWriter writer = CsvUtil.getWriter(file, CharsetUtil.CHARSET_UTF_8);
                             String[] header = new String[]{"项目名称", "评审内容", "评审轮次", "专题编号", "组别", "切片编号", "分值", "详情", "评审人", "评审时间"};

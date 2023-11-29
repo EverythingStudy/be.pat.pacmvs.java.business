@@ -2,6 +2,7 @@ package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.image.ImageStatus;
 import cn.staitech.anno.vo.image.in.*;
 import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -16,6 +17,12 @@ import java.util.concurrent.ExecutionException;
  * @date 2023/06/01
  */
 public interface ImageService extends IService<Image> {
+
+    /**
+     * 切片状态列表
+     * @return
+     */
+    List<ImageStatus> status();
 
     /**
      * 运维组图像列表

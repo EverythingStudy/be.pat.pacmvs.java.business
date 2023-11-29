@@ -19,56 +19,28 @@ public class Container {
      */
     public static final ConcurrentHashMap<String, ConcurrentHashSet<Integer>> FILE_MAP = new ConcurrentHashMap<>();
 
-
     /**
-     * Image - 图片处理过程状态 不可用原因共三种：0上传失败，1解析中,2解析失败
-     */
-    public static final Map<Integer, String> IMAGE_PROCESS_MAP = new ImmutableMap.Builder<Integer, String>()
-            .put(0, "上传失败")
-            .put(1, "解析中")
-            .put(2, "解析失败")
-            .build();
-
-    /**
-     * Image - 图片处理过程状态 不可用原因共三种：0上传失败，1解析中,2解析失败
-     */
-    public static final Map<Integer, String> IMAGE_PROCESS_MAP_EN = new ImmutableMap.Builder<Integer, String>()
-            .put(0, "UPLOAD FAILED")
-            .put(1, "IN ANALYSIS")
-            .put(2, "ANALYSIS FAILED")
-            .build();
-
-    /**
-     * Image - 可用状态：0不可用1可用
+     * Image - 原始切片 - 切片状态：0上传中、1上传失败、2解析中、3解析失败、4可用
      */
     public static final Map<Integer, String> IMAGE_STATUS_MAP = new ImmutableMap.Builder<Integer, String>()
-            .put(0, "不可用")
-            .put(1, "可用")
+            .put(0, "上传中")
+            .put(1, "上传失败")
+            .put(2, "解析中")
+            .put(3, "解析失败")
+            .put(4, "可用")
             .build();
 
     /**
-     * Image - EN - 可用状态：0不可用1可用
+     * Image - 原始切片 - 切片状态（EN）：0上传中、1上传失败、2解析中、3解析失败、4可用
      */
     public static final Map<Integer, String> IMAGE_STATUS_MAP_EN = new ImmutableMap.Builder<Integer, String>()
-            .put(0, "Unavailable")
-            .put(1, "Available")
+            .put(0, "上传中en")
+            .put(1, "上传失败en")
+            .put(2, "解析中en")
+            .put(3, "Unavailable")
+            .put(4, "Available")
             .build();
 
-    /**
-     * Image - 可用状态：0不可用1可用
-     */
-    public static final Map<Integer, String> IMAGE_STATUS_MAP_7 = new ImmutableMap.Builder<Integer, String>()
-            .put(0, "解析失败")
-            .put(1, "解析成功")
-            .build();
-
-    /**
-     * Image - EN - 可用状态：0不可用1可用
-     */
-    public static final Map<Integer, String> IMAGE_STATUS_MAP_7_EN = new ImmutableMap.Builder<Integer, String>()
-            .put(0, "Unavailable")
-            .put(1, "Available")
-            .build();
     /**
      * 项目状态
      */
@@ -155,14 +127,6 @@ public class Container {
             .put(17, "Ki67")
             .put(20, "Other")
             .put(21, "Argyrophilic staining")
-            .build();
-
-    /**
-     * Image - 图片删除状态：0逻辑删除，1未逻辑删除
-     */
-    public static final Map<Integer, String> IMAGE_DELETE_FLAG_MAP = new ImmutableMap.Builder<Integer, String>()
-            .put(0, "已删除")
-            .put(1, "未删除")
             .build();
 
     /**

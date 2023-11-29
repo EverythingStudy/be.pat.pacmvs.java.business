@@ -398,6 +398,20 @@
         WHERE s.slide_id = #{slideId}
     </select>
 
+
+    <select id="selectCategory" parameterType="long"
+            resultType="cn.staitech.anno.domain.PathologicalIndicatorCategory">
+        SELECT p.category_id,
+               p.structure_id,
+               p.category_code
+        FROM tb_marking AS m
+                 LEFT JOIN tb_pathological_indicator_category AS p ON p.category_id = m.category_id
+                 left join tb_structure as s on s.structure_id = p.structure_id
+        WHERE m.slide_id = #{slideId}
+          AND s.type = "RO"
+        GROUP BY p.category_id;
+    </select>
+
     <select id="reviewJsonExportSelect" parameterType="long" resultMap="jsonExportResult">
         SELECT t.topic_name,
                p.project_id,
@@ -423,6 +437,21 @@
         <include refid="selectList"/>
         where slide_id = #{slideId}
     </select>
+
+
+
+    <select id="selectFilterCategoryLists" parameterType="map" resultMap="featuresResult">
+        <include refid="selectList"/>
+        where slide_id = #{slideId}
+        <if test="categoryIdList != null and categoryIdList.size() >0 ">
+                and c.category_id in
+                <foreach item="categoryId" collection="categoryIdList" separator="," open="(" close=")" index="">
+                    #{categoryId, jdbcType=NUMERIC}
+                </foreach>
+        </if>
+    </select>
+
+
 
     <select id="selectListCount" parameterType="long" resultType="int">
         SELECT count(*) * 1

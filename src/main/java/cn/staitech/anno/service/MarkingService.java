@@ -98,7 +98,7 @@ public interface MarkingService {
      * @param slideId
      * @return
      */
-    String slideJsonExport(Long slideId) throws Exception;
+//    String slideJsonExport(Long slideId) throws Exception;
 
 
     /**
@@ -107,7 +107,9 @@ public interface MarkingService {
      * @param slideId
      * @return
      */
-    String slideJsonExportExt(Long slideId, SysUser sysUser) throws Exception;
+    String slideJsonExport(Long slideId, SysUser sysUser) throws Exception;
+
+    String slideLabelJsonExport(Long slideId, SysUser sysUser) throws InterruptedException;
 
     /**
      * 导入zip压缩包

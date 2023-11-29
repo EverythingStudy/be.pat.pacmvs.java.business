@@ -1,5 +1,6 @@
 package cn.staitech.anno.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.*;
 import cn.staitech.anno.mapper.*;
@@ -74,6 +75,9 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
     @Resource
     private ExamineScoreMapper examineScoreMapper;
 
+    @Resource
+    private QuestionBankMapper questionBankMapper;
+
     /**
      * 生成考题
      *
@@ -108,7 +112,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
             // 插入json文件返回数据
             String urlPath;
             try {
-                urlPath = markingService.slideJsonExport(e.getSlideId());
+                urlPath = markingService.slideLabelJsonExport(e.getSlideId(),SecurityUtils.getLoginUser().getSysUser());
             } catch (Exception exception) {
                 log.error(exception.toString());
                 throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
@@ -162,9 +166,8 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
             // 插入json文件返回数据
             String urlPath;
             try {
-                urlPath = markingService.slideJsonExport(e.getSlideId());
-            } catch (Exception exception) {
-                log.error(exception.toString());
+                urlPath = markingService.slideJsonExport(e.getSlideId(),SecurityUtils.getLoginUser().getSysUser());
+            } catch (Exception ex) {
                 throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
             }
             String s = StringUtils.substringAfterLast(urlPath, File.separator);
@@ -238,22 +241,47 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
     @Override
     public R confirmSelection(ConfirmSelectionIn req) {
         log.info("考核选片-确认选择接口开始：");
+
         LambdaQueryWrapper<QuestionProjectRel> qw = new LambdaQueryWrapper<>();
         qw.eq(QuestionProjectRel::getProjectId, req.getProjectId());
-        qw.eq(QuestionProjectRel::getQuestionId, req.getQuestionId());
+//        qw.eq(QuestionProjectRel::getQuestionId, req.getQuestionId());
         qw.eq(QuestionProjectRel::getDelFlag, CommonConstant.NUMBER_0);
         List<QuestionProjectRel> questionProjectRels = questionProjectRelMapper.selectList(qw);
-
-        if (!CollectionUtils.isEmpty(questionProjectRels)) {
-            return R.fail(MessageSource.M("PROHIBIT_REPETITION"));
+        List<Long> questionIdList=questionProjectRels.stream().map(QuestionProjectRel::getQuestionId).collect(Collectors.toList());
+       List<QuestionProjectRel> questionProjectRelList=new ArrayList<>();
+        for (Long question:req.getQuestionId()){
+            //筛选出没有添加过的questionId
+            if (!questionIdList.contains(question)){
+                QuestionProjectRel entity = new QuestionProjectRel();
+                entity.setQuestionId(question);
+                QuestionBank questionBank=questionBankMapper.selectById(question);
+                entity.setProjectId(req.getProjectId());
+                entity.setImageCode(questionBank.getImageCode());
+                entity.setJsonName(questionBank.getJsonName());
+                entity.setImageName(questionBank.getImageName());
+//                entity.setCreateBy(27L);
+                entity.setCreateBy(SecurityUtils.getUserId());
+                entity.setCreateName(SecurityUtils.getUsername());
+//                entity.setCreateName("zmj");
+//                entity.setCreateTime(new Date());
+                questionProjectRelList.add(entity);
+//                questionProjectRelMapper.insert(entity);
+            }
+        }
+        if (CollectionUtil.isNotEmpty(questionProjectRelList)){
+            questionProjectRelMapper.examineInsert(questionProjectRelList);
         }
 
-        QuestionProjectRel entity = new QuestionProjectRel();
-        BeanUtils.copyProperties(req, entity);
-        entity.setCreateBy(SecurityUtils.getUserId());
-        entity.setCreateName(SecurityUtils.getUsername());
-        entity.setCreateTime(new Date());
-        questionProjectRelMapper.insert(entity);
+//        if (!CollectionUtils.isEmpty(questionProjectRels)) {
+//            return R.fail(MessageSource.M("PROHIBIT_REPETITION"));
+//        }
+
+
+//        BeanUtils.copyProperties(req, entity);
+//        entity.setCreateBy(SecurityUtils.getUserId());
+//        entity.setCreateName(SecurityUtils.getUsername());
+//        entity.setCreateTime(new Date());
+//        questionProjectRelMapper.insert(entity);
 
         return R.ok();
 

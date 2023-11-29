@@ -1,30 +1,20 @@
-package cn.staitech.anno.domain;
+package cn.staitech.anno.vo.pathologicalIndicatorCategory;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
-import lombok.experimental.Accessors;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 标注类别
- */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@TableName("tb_pathological_indicator_category")
-public class PathologicalIndicatorCategory implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class PathologicalIndicatorCategoryOutVo {
 
     /**
      * 标注类别ID
@@ -90,7 +80,7 @@ public class PathologicalIndicatorCategory implements Serializable {
      */
     @ApiModelProperty(hidden = true, value = "机构ID")
     private Long organizationId;
-    
+
     /**
      * 指标编码
      */
@@ -132,9 +122,12 @@ public class PathologicalIndicatorCategory implements Serializable {
     @ApiModelProperty(hidden = true, value = "更新时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
-    
+
     @TableField(exist = false)
     @ApiModelProperty(value = "指标id(模糊查询)")
     private String structureIds;
-}
 
+
+    @ApiModelProperty(value = "类型")
+    private String type;
+}

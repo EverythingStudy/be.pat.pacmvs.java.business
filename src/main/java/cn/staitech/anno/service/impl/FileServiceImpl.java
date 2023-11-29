@@ -134,7 +134,7 @@ public class FileServiceImpl implements FileService {
      * @throws Exception
      */
     @Override
-    public String createFiles(Long slideId, String suffix) throws Exception {
+    public String createFiles(Long slideId, String suffix, String structureId) throws Exception {
         // 查询项目表中信息，判断项目是什么类型
         Slide slide = slideMapper.selectById(slideId);
         SlideFileName slideFileName = null;
@@ -162,27 +162,32 @@ public class FileServiceImpl implements FileService {
         if (slideFileName.getSlideType() != null) {
             fileUrl += GLIDE_LINE + slideFileName.getSlideType();
         }
-        // 根据切片查询标注表中所使用的标签
-        QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
-        markingQueryWrapper.select("category_id").eq("slide_id", slideId).ne("category_id", 0).groupBy("category_id");
-        List<Marking> markingList = markingMapperV1.selectList(markingQueryWrapper);
-        List<GeoLabel> categoryList = new ArrayList<>();
-        if (markingList.size() > 0) {
-            for (cn.staitech.anno.project.domain.Marking marking : markingList) {
-                GeoLabel geoLabel = pathologicalIndicatorCategoryMapper.selectGeoLabel(marking.getCategoryId());
-                categoryList.add(geoLabel);
-            }
-        }
-        if (categoryList.size() > 0) {
-            String categoryNumber = "";
-            for (GeoLabel geoLabel : categoryList) {
-                if(!"".equals(categoryNumber)){
-                    categoryNumber = categoryNumber + "-" +  geoLabel.getLabel_code();
-                }else {
-                    categoryNumber = categoryNumber + geoLabel.getLabel_code();
+        // 若传入标签不为空，则使用传入标签
+        if(structureId != null && !"".equals(structureId)){
+            fileUrl += GLIDE_LINE + structureId;
+        }else{
+            // 根据切片查询标注表中所使用的标签
+            QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
+            markingQueryWrapper.select("category_id").eq("slide_id", slideId).ne("category_id", 0).groupBy("category_id");
+            List<Marking> markingList = markingMapperV1.selectList(markingQueryWrapper);
+            List<GeoLabel> categoryList = new ArrayList<>();
+            if (markingList.size() > 0) {
+                for (cn.staitech.anno.project.domain.Marking marking : markingList) {
+                    GeoLabel geoLabel = pathologicalIndicatorCategoryMapper.selectGeoLabel(marking.getCategoryId());
+                    categoryList.add(geoLabel);
                 }
             }
-            fileUrl += GLIDE_LINE + categoryNumber;
+            if (categoryList.size() > 0) {
+                String categoryNumber = "";
+                for (GeoLabel geoLabel : categoryList) {
+                    if(!"".equals(categoryNumber)){
+                        categoryNumber = categoryNumber + "-" +  geoLabel.getLabel_code();
+                    }else {
+                        categoryNumber = categoryNumber + geoLabel.getLabel_code();
+                    }
+                }
+                fileUrl += GLIDE_LINE + categoryNumber;
+            }
         }
         fileUrl += GLIDE_LINE + System.currentTimeMillis() + suffix;
         createFile(fileUrl);

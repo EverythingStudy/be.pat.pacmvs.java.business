@@ -43,7 +43,7 @@ public interface SlideMapper extends BaseMapper<Slide> {
     /**
      * 根据切片生成文件目录
      *
-     * @param params
+     * @param slideId
      * @return
      */
     SlideFileName slideReviewFileName(Long slideId);
@@ -199,9 +199,6 @@ public interface SlideMapper extends BaseMapper<Slide> {
      */
     List<Map<String, Object>> queryVisceraLesionRpt(@Param("params") Map params);
 
-
-    //-------------------------------
-
     /**
      * 切片报表分页查询
      *
@@ -219,11 +216,6 @@ public interface SlideMapper extends BaseMapper<Slide> {
      * @return
      */
     SlideSelectBy pageImageCsvListVOBy(Long slideId);
-
-//    /**
-//     * 查询专题编号
-//     * */
-//    List<TopicIdName>topicList(Long organizationId);
 
     /**
      * 眼科选择图片查询

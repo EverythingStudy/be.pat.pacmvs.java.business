@@ -59,8 +59,6 @@ public class ImageListVO extends Pager implements Serializable {
     private String resolutionY;
     @ApiModelProperty(value = "原放大倍数", hidden = true)
     private Integer sourceLens;
-    @ApiModelProperty(value = "图片状态:0分片合并及生成缩略图处理中，,1合并且生成缩略图（可显示）,2文件以经传输（不可见）", hidden = true)
-    private Integer processFlag;
     @ApiModelProperty(value = "", hidden = true)
     private String searchValue;
     @ApiModelProperty(value = "创建人", hidden = true)
@@ -85,10 +83,8 @@ public class ImageListVO extends Pager implements Serializable {
     private Long topicId;
     @ApiModelProperty(value = "专题名称")
     private String topicName;
-    @ApiModelProperty(value = "是否可用:0不可用1可用")
+    @ApiModelProperty(value = "0上传中、1上传失败、2解析中、3解析失败、4可用")
     private Integer status;
-    @ApiModelProperty(value = "逻辑删除状态:（0删除，1未删除）")
-    private Integer deleteFlag;
     @ApiModelProperty(value = "创建时间-查询入参")
     private Map<String, Object> createTimeParams;
     @ApiModelProperty(value = "机构编号")

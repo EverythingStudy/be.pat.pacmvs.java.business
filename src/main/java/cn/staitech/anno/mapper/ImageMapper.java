@@ -99,11 +99,4 @@ public interface ImageMapper extends BaseMapper<Image> {
      */
     int deleteById(Long imageId);
 
-    /**
-     * 更改图像上传状态
-     *
-     * @param imageIdList 图像ID列表
-     * @return
-     */
-    void updateProcessFlagByIdList(@Param("imageIdList") List imageIdList);
 }

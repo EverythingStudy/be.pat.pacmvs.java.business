@@ -87,7 +87,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         if (!SecurityUtils.isAdmin(SecurityUtils.getLoginUser().getSysUser().getUserId())) {
             queryWrapper.eq("organization_id", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         }
-
+        queryWrapper.ne("format",".zip").ne("format","zip");
         queryWrapper.orderByDesc("files_id");
 
         //  查询图像列表
@@ -188,13 +188,8 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                             image.setCreateBy(createBy);
                             image.setCreateTime(new Date());
 
-                            // 是否可用0不可用1可用',
-                            image.setStatus(1);
-                            // 逻辑删除状态（0删除，1未删除）
-                            image.setProcessFlag(1);
-                            // 逻辑删除状态（0删除，1未删除）
-                            image.setDeleteFlag(1);
-
+                            // 0上传中、1上传失败、2解析中、3解析失败、4可用
+                            image.setStatus(4);
                             image = imageTransfer(image);
 
                             imageMapper.insert(image);
@@ -246,13 +241,8 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                                     image.setTopicName(topicName);
                                     image.setCreateBy(createBy);
                                     image.setCreateTime(new Date());
-                                    // 是否可用0不可用1可用',
-                                    image.setStatus(1);
-                                    // 逻辑删除状态（0删除，1未删除）
-                                    image.setProcessFlag(1);
-                                    // 逻辑删除状态（0删除，1未删除）
-                                    image.setDeleteFlag(1);
-
+                                    // 0上传中、1上传失败、2解析中、3解析失败、4可用
+                                    image.setStatus(4);
                                     image = imageTransfer(image);
 
                                     imageMapper.insert(image);

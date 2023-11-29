@@ -9,7 +9,10 @@ import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.SlidePredictionService;
 import cn.staitech.anno.service.SlideService;
-import cn.staitech.anno.utils.*;
+import cn.staitech.anno.utils.LanguageUtils;
+import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.utils.ProjectUtils;
 import cn.staitech.anno.vo.examination.ExaminationListVO;
 import cn.staitech.anno.vo.eyeslide.*;
 import cn.staitech.anno.vo.image.out.ImageListOutVO;
@@ -98,6 +101,14 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
 
     @Resource
     private SlidePredictionService slidePredictionService;
+
+    /**
+     * 检验是否是纯数字
+     */
+    public static boolean isNumeric(String str) {
+        Pattern pattern = Pattern.compile("[0-9]*");
+        return pattern.matcher(str).matches();
+    }
 
     /**
      * 查询单条切片详情
@@ -290,7 +301,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         return slideMapper.updateBatchByCondition(slideList);
     }
 
-
     /**
      * 查询组内切片报表摘要
      *
@@ -456,7 +466,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         return R.ok(pageMaster);
     }
 
-
     @Override
     public void jsonExport(List<Long> slideList, Long projectId, Integer status) throws Exception {
         StringBuilder res = new StringBuilder();
@@ -473,7 +482,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
             Integer markingCount = markingMapper.selectCount(markingQueryWrapper);
             if (markingCount > 0) {
                 // 将文件生成在本地
-                String fileUrl = markingService.slideJsonExport(slide);
+                String fileUrl = markingService.slideJsonExport(slide,SecurityUtils.getLoginUser().getSysUser());
                 res.append(fileUrl).append("\r\n");
             }
         }
@@ -494,9 +503,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         }
     }
 
-
-    // ==================================================
-
     /**
      * 添加标注切片
      *
@@ -511,11 +517,9 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         Long reviewRoundId = addSlideVO.getReviewRoundId() != null ? addSlideVO.getReviewRoundId() : 0;
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 
-        Image imageQuery = new Image();
-        QueryWrapper queryWrapper = new QueryWrapper<>(imageQuery);
-        // 只查可用的图片
-        queryWrapper.eq("status", 1);
-        queryWrapper.eq("delete_flag", 1);
+        QueryWrapper<Image> queryWrapper = new QueryWrapper<>();
+        // 只查可用的图片 - 0上传中、1上传失败、2解析中、3解析失败、4可用
+        queryWrapper.eq("status", 4);
         queryWrapper.in(CollectionUtils.isNotEmpty(topicIds), "topic_id", topicIds);
         List<Image> imageList = imageMapper.selectList(queryWrapper);
 
@@ -560,11 +564,9 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
 
         List<Long> imageIds = addSlideIdsVO.getImageIds();
 
-        Image imageQuery = new Image();
-        QueryWrapper queryWrapper = new QueryWrapper<>(imageQuery);
-        // 只查可用的图片
-        queryWrapper.eq("status", 1);
-        queryWrapper.eq("delete_flag", 1);
+        QueryWrapper<Image> queryWrapper = new QueryWrapper<>();
+        // 只查可用的图片 - 0上传中、1上传失败、2解析中、3解析失败、4可用
+        queryWrapper.eq("status", 4);
         queryWrapper.in(CollectionUtils.isNotEmpty(imageIds), "image_id", imageIds);
         List<Image> imageList = imageMapper.selectList(queryWrapper);
 
@@ -620,7 +622,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         return slideIds.size() - count.get();
     }
 
-
     @Override
     public List<ImageCsvListVO> pageSlides(ImageCsvGetVO request) {
 
@@ -634,7 +635,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         List<ImageCsvListVO> list = slideMapper.pageImageCsvListVOList1(request);
         return list;
     }
-
 
     @Override
     public PageMaster<ImageCsvListVO> pageReviewRoundSSlides(ImageCsvGetPagerVO request) {
@@ -771,7 +771,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
      */
     @Override
     public PageMaster<ImageListOutVO> eyeImage(EyeSlideIn eyeSlideIn) {
-        if (!SysUser.isAdmin(SecurityUtils.getUserId())){
+        if (!SysUser.isAdmin(SecurityUtils.getUserId())) {
             eyeSlideIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         }
 
@@ -805,7 +805,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         pageMaster.setTotal(projectSlideOutList.size());
         return pageMaster;
     }
-
 
     /**
      * 眼科-查询要添加的数据
@@ -963,15 +962,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
     }
 
     /**
-     * 检验是否是纯数字
-     */
-    public static boolean isNumeric(String str) {
-        Pattern pattern = Pattern.compile("[0-9]*");
-        return pattern.matcher(str).matches();
-    }
-
-
-    /**
      * 眼科——查询图片错误原因
      */
     @Override
@@ -1004,16 +994,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         slideAirepostVO.setSlideId(slideId);
         slideAirepostVO.setPredictionImageId(slide.getPredictionImageId());
         return slideAirepostVO;
-
-/*        if (slide.getPredictionImageId() > 0 && slide.getAiCheck() == 2) {
-            Image image = imageMapper.selectById(slide.getPredictionImageId());
-            SlideAirepostVO slideAirepostVO = new SlideAirepostVO();
-            BeanUtil.copyProperties(image, slideAirepostVO);
-            slideAirepostVO.setSlideId(slideId);
-            slideAirepostVO.setPredictionImageId(slide.getPredictionImageId());
-            return slideAirepostVO;
-        }
-        return null;*/
     }
 
     /**
@@ -1023,6 +1003,4 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
     public Slide selectFolderMent(Long slideId) {
         return slideMapper.selectFolderMent(slideId);
     }
-
-
 }

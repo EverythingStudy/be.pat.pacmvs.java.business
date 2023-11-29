@@ -340,34 +340,52 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
             // 插入json文件返回数据
             String urlPath;
             try {
-                urlPath = markingService.slideJsonExport(e.getSlideId());
+                urlPath = markingService.slideLabelJsonExport(e.getSlideId(),SecurityUtils.getLoginUser().getSysUser());
             } catch (Exception exception) {
                 log.error(exception.toString());
                 throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
             }
-            String s = StringUtils.substringAfterLast(urlPath, File.separator);
-            resp.setAnnotationJsonName(s);
+            List<String> urlPaths = new ArrayList<>();
+            if(urlPath != null && !"".equals(urlPath)){
+                List<String> urlPathList = Arrays.asList(urlPath.split(","));
+                if(urlPathList.size() > 0){
+                    for(String i:urlPathList){
+                        String s = StringUtils.substringAfterLast(i, File.separator);
+                        urlPaths.add(s);
+                    }
+                }
+            }
+            String urlPathJoin = StringUtils.join(urlPaths, ",");
+            resp.setAnnotationJsonName(urlPathJoin);
             resp.setAnnotationJsonUrl(urlPath);
             //设置标注类别
             String slideAttrs = slideAttrMapper.selectCategoryIds(e.getSlideId());
             resp.setCategoryIds(slideAttrs);
             qw.add(slide);
             return resp;
-
         }).collect(Collectors.toList());
         //批量插入考核算法
         List<AlgorithmJson> collect=new ArrayList<>();
         for (AlgorithmAssessment e : algorithmAssessments) {
             baseMapper.insert(e);
-            AlgorithmJson resp = new AlgorithmJson();
-            resp.setAlgorithmAssessmentId(e.getAlgorithmAssessmentId());
-            resp.setSlideId(e.getSlideId());
-            resp.setAlgorithmJsonName(e.getAnnotationJsonName());
-            resp.setAlgorithmJsonUrl(e.getAnnotationJsonUrl());
-            resp.setCreateBy(SecurityUtils.getUserId());
-            resp.setCreateTime(new Date());
-            resp.setJsonType("0");
-            collect.add(resp);
+            // 将字符串进行分割
+            if(e.getAnnotationJsonUrl() != null && !"".equals(e.getAnnotationJsonUrl())){
+                List<String> urlPathList = Arrays.asList(e.getAnnotationJsonUrl().split(","));
+                if(urlPathList.size() > 0){
+                    for(String i:urlPathList){
+                        String s = StringUtils.substringAfterLast(i, File.separator);
+                        AlgorithmJson resp = new AlgorithmJson();
+                        resp.setAlgorithmAssessmentId(e.getAlgorithmAssessmentId());
+                        resp.setSlideId(e.getSlideId());
+                        resp.setAlgorithmJsonName(s);
+                        resp.setAlgorithmJsonUrl(i);
+                        resp.setCreateBy(SecurityUtils.getUserId());
+                        resp.setCreateTime(new Date());
+                        resp.setJsonType("0");
+                        collect.add(resp);
+                    }
+                }
+            }
         }
         //批量插入json表
         algorithmJsonService.saveBatch(collect);
@@ -416,6 +434,14 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
                     List<AlgorithmJson> algorithmJsons = algorithmJsonMapper.selectList(qw2);
                     if (!CollectionUtils.isEmpty(algorithmJsons)) {
                         resp2.setAlgorithmJsonNames(algorithmJsons.stream().map(AlgorithmJson::getAlgorithmJsonName).collect(Collectors.toList()));
+                    }
+                    LambdaQueryWrapper<AlgorithmJson> qw1 = new LambdaQueryWrapper<>();
+                    qw1.eq(AlgorithmJson::getAlgorithmAssessmentId, e.getAlgorithmAssessmentId());
+                    qw1.eq(AlgorithmJson::getJsonType, "0");
+                    List<AlgorithmJson> algorithmNames = algorithmJsonMapper.selectList(qw1);
+                    if (!CollectionUtils.isEmpty(algorithmNames)) {
+                        String annotationJsonName = StringUtils.join(algorithmNames.stream().map(AlgorithmJson::getAlgorithmJsonName).collect(Collectors.toList()), ",");
+                        resp2.setAnnotationJsonName(annotationJsonName);
                     }
                 }
                 return resp2;

@@ -1,10 +1,12 @@
 package cn.staitech.anno.controller;
 
+import cn.hutool.json.JSONUtil;
 import cn.staitech.anno.service.FileUploadService;
 import cn.staitech.anno.service.FilesService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.files.Files;
+import cn.staitech.anno.vo.files.in.FileUploadNoVO;
 import cn.staitech.anno.vo.files.in.FileUploadVO;
 import cn.staitech.anno.vo.files.in.FilesListVO;
 import cn.staitech.common.core.domain.R;
@@ -17,10 +19,12 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.beans.BeanUtils;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -65,12 +69,14 @@ public class FilesController extends BaseController {
             @ApiImplicitParam(name = "businessType", value = "businessType", required = true, dataType = "Integer")
     })
     @Log(title = "文件上传并处理下游业务逻辑", menu = "文件上传并处理下游业务逻辑", subMenu = "文件上传并处理下游业务逻辑", businessType = BusinessType.IMPORT)
-    //@RequiresPermissions(value = {"smartAnnoInfo:algorithm:batchUploadJson", "section:ophthalmology:uploadZip"})
+    @RequiresPermissions(value = {"smartAnnoInfo:algorithm:batchUploadJson", "section:ophthalmology:uploadZip"})
     @PostMapping("/uploadBusiness")
     public R<Files> uploadBusiness(
             @RequestParam("file") MultipartFile file,
-            FileUploadVO fileUploadVO) throws Exception {
-        fileUploadVO.setMultipartFile(file);
+            FileUploadNoVO fileUploadNoVO) throws Exception {
+    	FileUploadVO fileUploadVO = new FileUploadVO();
+    	 BeanUtils.copyProperties(fileUploadNoVO, fileUploadVO);
+         fileUploadVO.setMultipartFile(file);
         Files files = fileUploadService.uploadAndProcessBusiness(fileUploadVO);
         if (files.getFileNameList() != null) {
             if (files.getFileNameList().size() > 0) {
@@ -78,6 +84,15 @@ public class FilesController extends BaseController {
             }
         }
         return R.ok();
+    	 /* fileUploadVO.setMultipartFile(file);
+          String res = fileUploadService.mergeChunk(fileUploadVO);
+          if (Objects.equals(res, "1")) {
+              return R.ok();
+          } else if (Objects.equals(res, "0")) {
+              return R.fail(MessageSource.M("FILE_SLIDE_UPLOAD_FAILURE"));
+          } else {
+              return R.fail(res + MessageSource.M("JSON_MULTIPLE_LABElS"));
+          }*/
     }
 
 
@@ -88,7 +103,7 @@ public class FilesController extends BaseController {
             @ApiImplicitParam(name = "businessType", value = "businessType", required = true, dataType = "Integer")
     })
     @Log(title = "文件上传并处理下游业务逻辑(大文件)", menu = "文件上传并处理下游业务逻辑", subMenu = "文件上传并处理下游业务逻辑", businessType = BusinessType.IMPORT)
-    //@RequiresPermissions(value = {"smartAnnoInfo:algorithm:batchUploadJson", "section:ophthalmology:uploadZip"})
+    @RequiresPermissions(value = {"smartAnnoInfo:algorithm:batchUploadJson", "section:ophthalmology:uploadZip","scction:ophthalmology:query"})
     @PostMapping("/uploadBigFileBusiness")
     public R<String> uploadBigFileBusiness(
             @RequestParam("file") MultipartFile file, FileUploadVO fileUploadVO) throws Exception {

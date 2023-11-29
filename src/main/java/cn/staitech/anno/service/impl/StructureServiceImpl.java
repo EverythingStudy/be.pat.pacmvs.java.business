@@ -1,5 +1,6 @@
 package cn.staitech.anno.service.impl;
 
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Structure;
 import cn.staitech.anno.mapper.StructureMapper;
 import cn.staitech.anno.service.StructureService;
@@ -49,6 +50,7 @@ class StructureServiceImpl extends ServiceImpl<StructureMapper, Structure> imple
         Structure structure = new Structure();
         structure.setSpeciesId(speciesId);
         structure.setOrganId(organId);
+        structure.setType(CommonConstant.STRUCTURE_RO);
         List<Structure> list = structureMapper.selectList(structure);
         if (list.size() == 0) {
             Structure obj = new Structure();

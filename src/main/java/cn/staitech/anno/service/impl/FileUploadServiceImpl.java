@@ -228,6 +228,12 @@ public class FileUploadServiceImpl implements FileUploadService {
                 if (!Optional.ofNullable(fileUploadVO.getProjectId()).isPresent()) {
                     throw new Exception(MessageSource.M("DISALLOW_NOT_PROJECT"));
                 }
+                //增加大小校验
+                boolean tag = zipCheck(files.getFilesPath(), fileUploadVO.getProjectId());
+                if(!tag){
+                	throw new Exception("文件上限300M");
+                }
+                
                 asyncTask.zipExport(files.getFilesPath(), fileUploadVO.getProjectId());
                 break;
 
