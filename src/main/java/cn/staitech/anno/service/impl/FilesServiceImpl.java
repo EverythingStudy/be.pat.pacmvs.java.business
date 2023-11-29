@@ -87,7 +87,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         if (!SecurityUtils.isAdmin(SecurityUtils.getLoginUser().getSysUser().getUserId())) {
             queryWrapper.eq("organization_id", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         }
-        queryWrapper.ne("format",".zip");
+        queryWrapper.ne("format",".zip").ne("format","zip");
         queryWrapper.orderByDesc("files_id");
 
         //  查询图像列表
