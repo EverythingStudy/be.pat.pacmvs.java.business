@@ -3,10 +3,12 @@ package cn.staitech.anno.service.impl;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Structure;
 import cn.staitech.anno.mapper.StructureMapper;
+import cn.staitech.anno.project.domain.Slide;
 import cn.staitech.anno.service.StructureService;
 import cn.staitech.common.security.utils.SecurityUtils;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -83,9 +85,7 @@ class StructureServiceImpl extends ServiceImpl<StructureMapper, Structure> imple
 	public List<Structure> getListByStructureId(String structureId) {
 		Structure structure = new Structure();
 		structure.setStructureId(structureId);
-
-		QueryWrapper<Structure> queryWrapper = new QueryWrapper<>(structure);
-		List<Structure> list = structureMapper.selectList(queryWrapper);
+		List<Structure> list =  structureMapper.selectList(structure);
 		return list;
 	}
 }
