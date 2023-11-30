@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -82,67 +83,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
      * @param req
      * @return
      */
-//    @Transactional(rollbackFor = Exception.class)
-//    @Override
-//    public R createQuestion(CreateQuestionIn req) {
-//        log.info("生成考题接口开始：");
-//        //通过项目id查询切片
-//        LambdaQueryWrapper<Slide> qw = new LambdaQueryWrapper<>();
-//        qw.eq(Slide::getProjectId, req.getProjectId());
-//        qw.eq(Slide::getIsDelete, 0);
-//        List<Slide> slides = slideMapper.selectList(qw);
-//        //生成json文件
-//        if (CollectionUtils.isEmpty(slides)) {
-//            return R.ok();
-//        }
-//
-//        List<QuestionBank> resp = slides.stream().map(e -> {
-////            if(Objects.equals(e.getStatus(), "3")){
-//                Image image = imageMapper.selectById(e.getImageId());
-//                QuestionBank ret = new QuestionBank();
-//                BeanUtils.copyProperties(e, ret);
-////            ret.setCreateBy(SecurityUtils.getUserId());
-//                ret.setCreateBy(1L);
-//                ret.setCreateTime(new Date());
-//                ret.setImageCode(image.getImageCode());
-//                ret.setImageName(image.getImageName());
-//                ret.setSize(image.getSize());
-////            ret.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-//                ret.setOrganizationId(1L);
-//
-//                // 插入json文件返回数据
-//                String urlPath;
-//                try {
-//                    urlPath = markingService.slideLabelJsonExport(e.getSlideId(), SecurityUtils.getLoginUser().getSysUser());
-//                } catch (Exception exception) {
-//                    log.error(exception.toString());
-//                    throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
-//                }
-//                String s = StringUtils.substringAfterLast(urlPath, File.separator);
-//                // String s1 = StringUtils.substringBeforeLast(urlPath, File.separator);
-//                String s1 = urlPath;
-//                ret.setJsonName(s);
-//                ret.setGeojsonUrl(s1);
-//                return ret;
-////            }
-//        }).collect(Collectors.toList());
-//        //插入题库表
-//        QuestionBankServiceImpl bean = SpringUtils.getBean(QuestionBankServiceImpl.class);
-//        List<Long> questionBankList = new ArrayList<>();
-//        for (QuestionBank questionBank : resp) {
-//            baseMapper.insert(questionBank);
-//            questionBankList.add(questionBank.getQuestionId());
-//        }
-//
-//        JSONObject markingJsonObject = new JSONObject();
-//        markingJsonObject.put("question_id", questionBankList);
-//        remoteLabelService.Standard(markingJsonObject);
-//        cn.staitech.anno.domain.Project project = new cn.staitech.anno.domain.Project();
-//        project.setProjectId(req.getProjectId());
-//        project.setIfCreateQuestions("1");
-//        projectMapper.updateById(project);
-//        return R.ok();
-//    }
+    @SneakyThrows
     @Transactional(rollbackFor = Exception.class)
     @Override
     public R createQuestion(CreateQuestionIn req) {
@@ -175,14 +116,12 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                     String jsonName = StringUtils.substringAfterLast(path, File.separator);
                     QuestionBank ret = new QuestionBank();
                     BeanUtils.copyProperties(s, ret);
-//                    ret.setCreateBy(SecurityUtils.getUserId());
-                    ret.setCreateBy(1L);
+                    ret.setCreateBy(SecurityUtils.getUserId());
                     ret.setCreateTime(new Date());
                     ret.setImageCode(image.getImageCode());
                     ret.setImageName(image.getImageName());
                     ret.setSize(image.getSize());
-//                    ret.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-                    ret.setOrganizationId(1L);
+                    ret.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
                     ret.setJsonName(jsonName);
                     ret.setGeojsonUrl(path);
                     resp.add(ret);
@@ -206,56 +145,6 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         projectMapper.updateById(project);
         return R.ok();
     }
-
-
-//    @Transactional(rollbackFor = Exception.class)
-//    @Override
-//    public R createBySlide(CreateBySlideIn req) {
-//        log.info("根据切片生成考题接口开始：");
-//
-//        List<CreateBySlideData> slideDataList = req.getSlideDataList();
-//        if (CollectionUtils.isEmpty(slideDataList)) {
-//            R.ok();
-//        }
-//
-//        List<QuestionBank> questionBanks = req.getSlideDataList().stream().map(e -> {
-//            Slide slide = slideMapper.selectById(e.getSlideId());
-//            Image image = imageMapper.selectById(slide.getImageId());
-//            QuestionBank ret = new QuestionBank();
-//            BeanUtils.copyProperties(e, ret);
-//            BeanUtils.copyProperties(image, ret);
-//            ret.setCreateBy(SecurityUtils.getUserId());
-//            ret.setCreateTime(new Date());
-//            ret.setUpdateBy(null);
-//            ret.setUpdateTime(null);
-//
-//            // 插入json文件返回数据
-//            String urlPath;
-//            try {
-//                urlPath = markingService.slideJsonExport(e.getSlideId(),SecurityUtils.getLoginUser().getSysUser());
-//            } catch (Exception ex) {
-//                throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
-//            }
-//            String s = StringUtils.substringAfterLast(urlPath, File.separator);
-//
-//            String s1 = urlPath;
-//            ret.setJsonName(s);
-//            ret.setGeojsonUrl(s1);
-//            ret.setProjectId(e.getProjectId());
-//            ret.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-//            return ret;
-//        }).collect(Collectors.toList());
-//
-//        List<Long> questionBankList = new ArrayList<>();
-//        for (QuestionBank questionBank : questionBanks) {
-//            baseMapper.insert(questionBank);
-//            questionBankList.add(questionBank.getQuestionId());
-//        }
-//        JSONObject markingJsonObject = new JSONObject();
-//        markingJsonObject.put("question_id", questionBankList);
-//        remoteLabelService.Standard(markingJsonObject);
-//        return R.ok();
-//    }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
