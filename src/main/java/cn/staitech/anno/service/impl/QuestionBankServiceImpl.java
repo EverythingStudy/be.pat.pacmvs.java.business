@@ -111,34 +111,39 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                     log.error(exception.toString());
                     throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
                 }
-                String[] pathList = urlPath.split(",");
-                for (String path : pathList) {
-                    String jsonName = StringUtils.substringAfterLast(path, File.separator);
-                    QuestionBank ret = new QuestionBank();
-                    BeanUtils.copyProperties(s, ret);
-                    ret.setCreateBy(SecurityUtils.getUserId());
-                    ret.setCreateTime(new Date());
-                    ret.setImageCode(image.getImageCode());
-                    ret.setImageName(image.getImageName());
-                    ret.setSize(image.getSize());
-                    ret.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-                    ret.setJsonName(jsonName);
-                    ret.setGeojsonUrl(path);
-                    resp.add(ret);
+                if(urlPath == null && "".equals(urlPath)){
+                    String[] pathList = urlPath.split(",");
+                    for (String path : pathList) {
+                        String jsonName = StringUtils.substringAfterLast(path, File.separator);
+                        QuestionBank ret = new QuestionBank();
+                        BeanUtils.copyProperties(s, ret);
+                        ret.setCreateBy(SecurityUtils.getUserId());
+                        ret.setCreateTime(new Date());
+                        ret.setImageCode(image.getImageCode());
+                        ret.setImageName(image.getImageName());
+                        ret.setSize(image.getSize());
+                        ret.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+                        ret.setJsonName(jsonName);
+                        ret.setGeojsonUrl(path);
+                        resp.add(ret);
+                    }
                 }
             }
         }
         //插入题库表
-        QuestionBankServiceImpl bean = SpringUtils.getBean(QuestionBankServiceImpl.class);
-        List<Long> questionBankList = new ArrayList<>();
-        for (QuestionBank questionBank : resp) {
-            baseMapper.insert(questionBank);
-            questionBankList.add(questionBank.getQuestionId());
-        }
+        if(resp.size() > 0){
+            QuestionBankServiceImpl bean = SpringUtils.getBean(QuestionBankServiceImpl.class);
+            List<Long> questionBankList = new ArrayList<>();
+            for (QuestionBank questionBank : resp) {
+                baseMapper.insert(questionBank);
+                questionBankList.add(questionBank.getQuestionId());
+            }
 
-        JSONObject markingJsonObject = new JSONObject();
-        markingJsonObject.put("question_id", questionBankList);
-        remoteLabelService.Standard(markingJsonObject);
+            JSONObject markingJsonObject = new JSONObject();
+            markingJsonObject.put("question_id", questionBankList);
+            remoteLabelService.Standard(markingJsonObject);
+
+        }
         cn.staitech.anno.domain.Project project = new cn.staitech.anno.domain.Project();
         project.setProjectId(req.getProjectId());
         project.setIfCreateQuestions("1");
@@ -166,32 +171,36 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                 } catch (Exception ex) {
                     throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
                 }
-                String[] pathList = urlPath.split(",");
-                for (String path : pathList) {
-                    String jsoName = StringUtils.substringAfterLast(path, File.separator);
-                    QuestionBank ret = new QuestionBank();
-                    BeanUtils.copyProperties(reqBy, ret);
-                    BeanUtils.copyProperties(image, ret);
-                    ret.setCreateBy(SecurityUtils.getUserId());
-                    ret.setCreateTime(new Date());
-                    ret.setUpdateBy(null);
-                    ret.setUpdateTime(null);
-                    ret.setJsonName(jsoName);
-                    ret.setGeojsonUrl(path);
-                    ret.setProjectId(reqBy.getProjectId());
-                    ret.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-                    questionBanks.add(ret);
+                if(urlPath == null && "".equals(urlPath)){
+                    String[] pathList = urlPath.split(",");
+                    for (String path : pathList) {
+                        String jsoName = StringUtils.substringAfterLast(path, File.separator);
+                        QuestionBank ret = new QuestionBank();
+                        BeanUtils.copyProperties(reqBy, ret);
+                        BeanUtils.copyProperties(image, ret);
+                        ret.setCreateBy(SecurityUtils.getUserId());
+                        ret.setCreateTime(new Date());
+                        ret.setUpdateBy(null);
+                        ret.setUpdateTime(null);
+                        ret.setJsonName(jsoName);
+                        ret.setGeojsonUrl(path);
+                        ret.setProjectId(reqBy.getProjectId());
+                        ret.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+                        questionBanks.add(ret);
+                    }
                 }
             }
         }
-        List<Long> questionBankList = new ArrayList<>();
-        for (QuestionBank questionBank : questionBanks) {
-            baseMapper.insert(questionBank);
-            questionBankList.add(questionBank.getQuestionId());
+        if(questionBanks.size() > 0){
+            List<Long> questionBankList = new ArrayList<>();
+            for (QuestionBank questionBank : questionBanks) {
+                baseMapper.insert(questionBank);
+                questionBankList.add(questionBank.getQuestionId());
+            }
+            JSONObject markingJsonObject = new JSONObject();
+            markingJsonObject.put("question_id", questionBankList);
+            remoteLabelService.Standard(markingJsonObject);
         }
-        JSONObject markingJsonObject = new JSONObject();
-        markingJsonObject.put("question_id", questionBankList);
-        remoteLabelService.Standard(markingJsonObject);
         return R.ok();
     }
 
