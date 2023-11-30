@@ -4,11 +4,15 @@ import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Structure;
 import cn.staitech.anno.mapper.StructureMapper;
 import cn.staitech.anno.service.StructureService;
+import cn.staitech.common.security.utils.SecurityUtils;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +55,14 @@ class StructureServiceImpl extends ServiceImpl<StructureMapper, Structure> imple
         structure.setSpeciesId(speciesId);
         structure.setOrganId(organId);
         structure.setType(CommonConstant.STRUCTURE_RO);
+        Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+        boolean containsValue = Arrays.asList(CommonConstant.ORGANIZATION_ID).contains(organizationId);
+        if(containsValue){
+        	//只有结构标签
+        	structure.setStructureType(2);
+        }else{
+        	structure.setStructureType(1);
+        }
         List<Structure> list = structureMapper.selectList(structure);
         if (list.size() == 0) {
             Structure obj = new Structure();

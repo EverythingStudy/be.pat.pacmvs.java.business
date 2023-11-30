@@ -43,6 +43,7 @@ import javax.annotation.Resource;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -113,6 +114,9 @@ public class PathologicalController {
 		if (listR.size() > 0) {
 			return R.fail(MessageSource.M("CATEGORY_NAME_EXIST"));
 		}
+		//查看当前结构是否只要结构编码
+		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+		boolean containsValue = Arrays.asList(CommonConstant.ORGANIZATION_ID).contains(organizationId);
 
 		//标注区域
 		String structureRoaId = structureId+CommonConstant.STRUCTURE_ROA;
@@ -120,8 +124,10 @@ public class PathologicalController {
 		String structureRoeId = structureId+CommonConstant.STRUCTURE_ROE;
 		List<String> structureIdList = new ArrayList<String>();
 		structureIdList.add(vo.getStructureId());
-		structureIdList.add(structureRoaId);
-		structureIdList.add(structureRoeId);
+		if(!containsValue){
+			structureIdList.add(structureRoaId);
+			structureIdList.add(structureRoeId);
+		}
 		Date currentDate = DateUtil.date();
 		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 		Snowflake snowflake = new Snowflake();
@@ -306,8 +312,11 @@ public class PathologicalController {
 
 		//修改标注类别信息
 		String retStatus = pathologicalIndicatorCategoryService.updateByPrimaryKeySelective2(category);
+		//查看当前结构是否只要结构编码
+		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+		boolean containsValue = Arrays.asList(CommonConstant.ORGANIZATION_ID).contains(organizationId);
 		//TODO 另外考核区域和标注区域同样处理，structureId、number、categoryName需要单独处理，修改时候需要用自己的categoryId和indicatorId
-		if(retStatus.equals("1")){
+		if(!containsValue && retStatus.equals("1")){
 			updateCategory(targetCategory,targetCategoryRoe,sourcePic,indicator);
 		}
 		return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
@@ -461,11 +470,11 @@ public class PathologicalController {
 			return CommonConstant.NUMBER_1;
 		}
 	}
-	
+
 	@PostMapping("/test")
 	public R test() throws ParseException {
 		List<Long> dataList = new ArrayList<>();
-			//dataList.add(1638L);
+		//dataList.add(1638L);
 		pathologicalIndicatorCategoryService.handlerCouponsUserStatusTimeOutToExpired(dataList);
 		return R.ok();
 	}
