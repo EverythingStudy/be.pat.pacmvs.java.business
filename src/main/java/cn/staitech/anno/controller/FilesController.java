@@ -1,6 +1,5 @@
 package cn.staitech.anno.controller;
 
-import cn.hutool.json.JSONUtil;
 import cn.staitech.anno.service.FileUploadService;
 import cn.staitech.anno.service.FilesService;
 import cn.staitech.anno.utils.MessageSource;
@@ -19,12 +18,11 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-
+import org.springframework.beans.BeanUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.beans.BeanUtils;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -51,7 +49,7 @@ public class FilesController extends BaseController {
      * 上传文件-仅用于上传
      */
     @ApiOperationSupport(author = "wangfeng")
-    @RequiresPermissions(value = {"smartAnno:project:upload","smartAnnoInfo:algorithm:batchUploadJson", "section:ophthalmology:uploadZip"}, logical = Logical.OR)
+    @RequiresPermissions(value = {"smartAnno:project:upload", "smartAnnoInfo:algorithm:batchUploadJson", "section:ophthalmology:uploadZip"}, logical = Logical.OR)
     @ApiOperation(value = "文件上传", notes = "文件列表 - 王峰")
     @Log(title = "文件上传", menu = "文件上传", subMenu = "文件上传", businessType = BusinessType.IMPORT)
     @PostMapping("/upload")
@@ -74,9 +72,15 @@ public class FilesController extends BaseController {
     public R<Files> uploadBusiness(
             @RequestParam("file") MultipartFile file,
             FileUploadNoVO fileUploadNoVO) throws Exception {
-    	FileUploadVO fileUploadVO = new FileUploadVO();
-    	 BeanUtils.copyProperties(fileUploadNoVO, fileUploadVO);
-         fileUploadVO.setMultipartFile(file);
+        FileUploadVO fileUploadVO = new FileUploadVO();
+        BeanUtils.copyProperties(fileUploadNoVO, fileUploadVO);
+
+        // 业务校验
+        if (checkBusiness(fileUploadVO)) {
+            return R.fail(MessageSource.M("ONLY_ZIP_FILE"));
+        }
+
+        fileUploadVO.setMultipartFile(file);
         Files files = fileUploadService.uploadAndProcessBusiness(fileUploadVO);
         if (files.getFileNameList() != null) {
             if (files.getFileNameList().size() > 0) {
@@ -103,10 +107,16 @@ public class FilesController extends BaseController {
             @ApiImplicitParam(name = "businessType", value = "businessType", required = true, dataType = "Integer")
     })
     @Log(title = "文件上传并处理下游业务逻辑(大文件)", menu = "文件上传并处理下游业务逻辑", subMenu = "文件上传并处理下游业务逻辑", businessType = BusinessType.IMPORT)
-    @RequiresPermissions(value = {"smartAnnoInfo:algorithm:batchUploadJson", "section:ophthalmology:uploadZip","scction:ophthalmology:query"})
+    @RequiresPermissions(value = {"smartAnnoInfo:algorithm:batchUploadJson", "section:ophthalmology:uploadZip", "scction:ophthalmology:query"})
     @PostMapping("/uploadBigFileBusiness")
     public R<String> uploadBigFileBusiness(
             @RequestParam("file") MultipartFile file, FileUploadVO fileUploadVO) throws Exception {
+
+        // 业务校验
+        if (checkBusiness(fileUploadVO)) {
+            return R.fail(MessageSource.M("ONLY_ZIP_FILE"));
+        }
+
         fileUploadVO.setMultipartFile(file);
         String res = fileUploadService.mergeChunk(fileUploadVO);
         if (Objects.equals(res, "1")) {
@@ -181,5 +191,25 @@ public class FilesController extends BaseController {
             return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
         return R.fail(MessageSource.M("OPERATE_ERROR"));
+    }
+
+
+    /**
+     * 校验
+     * 业务6,只接收ZIP文件
+     *
+     * @param fileUploadVO
+     * @return
+     */
+    public Boolean checkBusiness(FileUploadVO fileUploadVO) {
+        // 单独校验
+        if (fileUploadVO.getBusinessType() == 6) {
+            String fileName = fileUploadVO.getFileName();
+            String fileExt = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+            if (!"zip".equals(fileExt)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
