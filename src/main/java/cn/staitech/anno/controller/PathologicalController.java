@@ -2,6 +2,7 @@ package cn.staitech.anno.controller;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Snowflake;
+import cn.hutool.json.JSONUtil;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
@@ -123,6 +124,9 @@ public class PathologicalController {
 		structureIdList.add(structureRoeId);
 		Date currentDate = DateUtil.date();
 		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+		if(null != sysUser){
+			log.info("当前登录用户1：{}",JSONUtil.toJsonStr(sysUser));
+		}
 		Snowflake snowflake = new Snowflake();
 		String categoryCode = snowflake.nextIdStr();
 		for(int i=0;i<structureIdList.size();i++){
@@ -155,6 +159,8 @@ public class PathologicalController {
 			category.setCreateTime(currentDate);
 			category.setCategoryCode(categoryCode);
 			// 添加标注类别
+			log.info("当前登录用户2：{}",JSONUtil.toJsonStr(category));
+
 			pathologicalIndicatorCategoryService.insertSelective(category);
 			IndicatorReviseVO indicatorReviseVO = IndicatorReviseVO.builder().indicatorId(indicatorId.intValue()).build();
 			// 更新病理表数据
@@ -357,7 +363,7 @@ public class PathologicalController {
 		}
 	}
 
-	/**
+	/**	
 	 * 配置标签-删除 .
 	 */
 	@ApiOperation(value = "标签删除接口", notes = "ZMJ")
