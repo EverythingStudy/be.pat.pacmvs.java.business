@@ -52,9 +52,4 @@ public class Structure {
     @ApiModelProperty(value = "RO：结构类型  ROA:标注区域 ROE:考核区域", required = true)
     private String type;
     
-    /**
-     * 结构指标种类 1：默认结构、标注、考核 2：只有结构标签
-     */
-    @ApiModelProperty(value = "结构指标种类 1：默认结构、标注、考核 2：只有结构标签")
-    private Integer structureType;
 }

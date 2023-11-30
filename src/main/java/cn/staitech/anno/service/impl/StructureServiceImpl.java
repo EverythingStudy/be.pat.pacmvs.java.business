@@ -55,14 +55,6 @@ class StructureServiceImpl extends ServiceImpl<StructureMapper, Structure> imple
         structure.setSpeciesId(speciesId);
         structure.setOrganId(organId);
         structure.setType(CommonConstant.STRUCTURE_RO);
-        Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-        boolean containsValue = Arrays.asList(CommonConstant.ORGANIZATION_ID).contains(organizationId);
-        if(containsValue){
-        	//只有结构标签
-        	structure.setStructureType(2);
-        }else{
-        	structure.setStructureType(1);
-        }
         List<Structure> list = structureMapper.selectList(structure);
         if (list.size() == 0) {
             Structure obj = new Structure();
@@ -86,4 +78,14 @@ class StructureServiceImpl extends ServiceImpl<StructureMapper, Structure> imple
         Structure structureResp = structureMapper.selectOne(queryWrapper);
         return structureResp;
     }
+
+	@Override
+	public List<Structure> getListByStructureId(String structureId) {
+		Structure structure = new Structure();
+		structure.setStructureId(structureId);
+
+		QueryWrapper<Structure> queryWrapper = new QueryWrapper<>(structure);
+		List<Structure> list = structureMapper.selectList(queryWrapper);
+		return list;
+	}
 }

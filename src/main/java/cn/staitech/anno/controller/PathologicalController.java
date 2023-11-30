@@ -115,17 +115,21 @@ public class PathologicalController {
 			return R.fail(MessageSource.M("CATEGORY_NAME_EXIST"));
 		}
 		//查看当前结构是否只要结构编码
-		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-		boolean containsValue = Arrays.asList(CommonConstant.ORGANIZATION_ID).contains(organizationId);
+		//		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+		//		boolean containsValue = Arrays.asList(CommonConstant.ORGANIZATION_ID).contains(organizationId);
 
-		//标注区域
-		String structureRoaId = structureId+CommonConstant.STRUCTURE_ROA;
-		//考核区域
-		String structureRoeId = structureId+CommonConstant.STRUCTURE_ROE;
 		List<String> structureIdList = new ArrayList<String>();
 		structureIdList.add(vo.getStructureId());
-		if(!containsValue){
+		//标注区域
+		String structureRoaId = structureId+CommonConstant.STRUCTURE_ROA;
+		List<Structure>  roaList = structureService.getListByStructureId(structureRoaId);
+		if(CollectionUtils.isNotEmpty(roaList)){
 			structureIdList.add(structureRoaId);
+		}
+		//考核区域
+		String structureRoeId = structureId+CommonConstant.STRUCTURE_ROE;
+		List<Structure>  roeList = structureService.getListByStructureId(structureRoeId);
+		if(CollectionUtils.isNotEmpty(roeList)){
 			structureIdList.add(structureRoeId);
 		}
 		Date currentDate = DateUtil.date();
@@ -470,6 +474,8 @@ public class PathologicalController {
 			return CommonConstant.NUMBER_1;
 		}
 	}
+	
+	
 
 	@PostMapping("/test")
 	public R test() throws ParseException {
