@@ -25,4 +25,8 @@ public class UpdateOperationIn {
     @ApiModelProperty(value = "要执行的操作(UNION:相交,DIFFERENCE:相差,null)")
     private String operation;
 
+    @NotNull(message = "校验不可为空")
+    @ApiModelProperty(value = "校验")
+    private Boolean check;
+
 }

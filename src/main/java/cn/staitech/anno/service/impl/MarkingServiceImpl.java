@@ -285,7 +285,7 @@ public class MarkingServiceImpl implements MarkingService {
 		markingMapper.insert(marking);
 		
 		Properties properties = markingMapper.selectBy(marking.getMarking_id());
-		Features features = socketData(annotationId, marking.getGeometry(), properties);
+		Features features = MarkingUtils.socketData(annotationId, marking.getGeometry(), properties);
 		// 如果是点类型，返回点的总数并返回
 		List<PointCount> pointCountList = updatePoint(marking.getLocation_type(), marking);
 		BroadcastVO broadcastVO = SendMessage.sendOneMessages(ADD_STATUS, features, pointCountList);
@@ -303,6 +303,21 @@ public class MarkingServiceImpl implements MarkingService {
 
 
 	@Override
+	public double operationCheck(UpdateOperationIn req) throws Exception {
+		Marking	markingBy = markingMapper.selectById(req.getMarking_id());
+		// 查询数据是否存在
+		if (!Optional.ofNullable(markingBy).isPresent()) {
+			throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
+		}
+		Project project=projectMapperV1.selectById(markingBy.getProject_id());
+		//验证集项目中不能修改他人轮廓
+		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")){
+			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
+		}
+		return MarkingUtils.updateOperationVerify(markingBy.getGeometry(),req.getGeometry(),req.getOperation());
+	}
+
+	@Override
 	public JSONObject updateOperation(UpdateOperationIn req) throws Exception {
 		Marking	markingBy = markingMapper.selectById(req.getMarking_id());
 		// 查询数据是否存在
@@ -314,20 +329,18 @@ public class MarkingServiceImpl implements MarkingService {
 		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")){
 			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
 		}
-		String location = updateVerify(markingBy.getGeometry(),req.getGeometry(),req.getOperation());
-		JSONObject jsonObject = JSONObject.parseObject(location);
+		String location = MarkingUtils.updateVerify(markingBy.getGeometry(),req.getGeometry(),req.getOperation(),req.getCheck());
+		JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(location));
 		cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
 		marking.setGeometry(jsonObject);
 		marking.setMarkingId(req.getMarking_id());
 		marking.setUpdateBy(SecurityUtils.getUserId());
 		marking.setUpdateTime(new Date());
-		marking.setSlideId(markingBy.getSlide_id());
 		markingMapperV1.updateById(marking);
 		// 更新后查询数据并返回
 		Properties properties = markingMapper.selectBy(req.getMarking_id());
-		Features features = socketData(markingBy.getAnnotation_id(), marking.getGeometry(), properties);
-		// 如果是点类型，返回点的总数并返回
-		BroadcastVO broadcastVO = SendMessage.sendOneMessages(ADD_STATUS, features);
+		Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), marking.getGeometry(), properties);
+		BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features);
 		NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
 		return jsonObject;
 	}
@@ -416,7 +429,7 @@ public class MarkingServiceImpl implements MarkingService {
 			}
 		}
 		Properties properties = markingMapper.selectBy(marking.getMarking_id());
-		Features features = socketData(markingBy.getAnnotation_id(), req.getGeometry(), properties);
+		Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), req.getGeometry(), properties);
 		BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features, pointCountList);
 		// 使用websocket发送数据
 		NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
@@ -442,74 +455,6 @@ public class MarkingServiceImpl implements MarkingService {
 
 
 
-
-	public static String updateVerify(JSONObject oldLocations, JSONObject newLocations, String operation) throws Exception {
-
-		String oldLocation = WktUtil.jsonToWkt(oldLocations);
-
-		String newLocation = WktUtil.jsonToWkt(newLocations);
-
-		// WKT输出器，将Geometry对象写出为WKT文本
-		WKTWriter wktWriter = new WKTWriter();
-
-		String data = newLocation;
-
-		// 校验是否有要执行的操作  相交或者相差
-		if (StringUtils.isNotBlank(operation)) {
-			Geometry geometry1;
-			try {
-				geometry1 = wktReader.read(oldLocation);
-			} catch (Exception e) {
-				throw new Exception("新图形不符合规则");
-			}
-			Geometry geometry2;
-			try {
-				geometry2 = wktReader.read(newLocation);
-			} catch (Exception e) {
-				throw new Exception( "原图形不符合规则");
-			}
-			OverlayOp op = new OverlayOp(geometry1, geometry2);
-			int code = 0;
-			// 如果操作为相交
-			if ("UNION".equals(operation)) {
-				code = OverlayOp.UNION;
-
-				// 操作为相差
-			} else if ("DIFFERENCE".equals(operation)) {
-				code = OverlayOp.DIFFERENCE;
-
-				// 校验旧图形在新图形中(新图形不能将旧图形完全覆盖)
-				if (geometry1.within(geometry2)) {
-					// throw new AnnoException(AnnotationResponseConstant.UPDATE_ANNO_ERROR);
-					throw new Exception( "修改失败,请检查后输入");// 修改失败,请检查后输入
-				}
-				// 校验标注不能过小，不能小于1000.0
-				//                if (geometry2.within(geometry1) && geometry2.getArea() < insideMaxArea) {
-				//                    throw new AnnoException(AnnotationResponseConstant.UPDATE_ANNO_ERROR + geometry2.getArea());
-				//                }
-			}
-			Geometry g;
-
-			try {
-				// code=OverlayOp.UNION;相交  或者  code=OverlayOp.DIFFERENCE;相差
-				// 将code转换成Geometry对象
-				g = op.getResultGeometry(code);
-				// 获取geometry类型
-				String geometryType = g.getGeometryType();
-				// 判断新图形是否为复杂多边型(比如大标注嵌套小标注
-				if ("MultiPolygon".equals(geometryType)) {
-					// throw new AnnoException(AnnotationResponseConstant.NEW_GRAPHICS_MARK_NOT_RULES);
-					throw new AnnoException( "新图形不符合规则");// 新图形不符合规则
-				}
-			} catch (Exception e) {
-				throw new AnnoException("新图形不符合规则");
-			}
-			data = wktWriter.write(g);
-		}
-		return data;
-	}
-
-
 	@Override
 	public int updatePointCount(Marking marking) {
 		return markingMapper.updatePointCount(marking);
@@ -530,7 +475,7 @@ public class MarkingServiceImpl implements MarkingService {
 			throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
 		}
 		Properties properties = markingMapper.selectBy(markingId);
-		Features features = socketData(markingBy.getAnnotation_id(), markingBy.getGeometry(), properties);
+		Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), markingBy.getGeometry(), properties);
 		List<PointCount> pointCountList = updatePoint(markingBy.getLocation_type(), markingBy);
 		BroadcastVO broadcastVO = SendMessage.sendOneMessages(DELETE_STATUS, features, pointCountList);
 		NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
@@ -1103,15 +1048,6 @@ public class MarkingServiceImpl implements MarkingService {
 	 * @param properties
 	 * @return
 	 */
-	public Features socketData(String annotationId, JSONObject geometry, Properties properties) {
-		Features features = new Features();
-		features.setGeometry(geometry);
-		features.setId(annotationId);
-		features.setType("Feature");
-		JSONObject jsonObject = (JSONObject) JSON.toJSON(properties);
-		features.setProperties(jsonObject);
-		return features;
-	}
 
 	/**
 	 * 统计不同类型点的数量

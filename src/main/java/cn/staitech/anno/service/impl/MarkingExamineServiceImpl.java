@@ -10,12 +10,11 @@ import cn.staitech.anno.mapper.QuestionProjectRelMapper;
 import cn.staitech.anno.mapper.StructureMapper;
 import cn.staitech.anno.netty.websocket.NioWebSocketHandler;
 import cn.staitech.anno.service.MarkingExamineService;
-import cn.staitech.anno.utils.GeometryUtil;
-import cn.staitech.anno.utils.MessageSource;
-import cn.staitech.anno.utils.SendMessage;
+import cn.staitech.anno.utils.*;
 import cn.staitech.anno.vo.annotation.BroadcastVO;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.Properties;
+import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.marking.MarkingExamineInsertVO;
 import cn.staitech.anno.vo.marking.MarkingExamineUpdateVO;
 import cn.staitech.common.core.utils.bean.BeanUtils;
@@ -55,8 +54,6 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
     @Resource
     private QuestionProjectRelMapper questionProjectRelMapper;
 
-    @Resource
-    private MarkingServiceImpl markingServiceImpl;
     @Resource
     private StructureMapper structureMapper;
 
@@ -149,7 +146,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         // 添加数据库，添加后返回自增id
         markingExamineMapper.insert(markingExamine);
         Properties properties = markingExamineMapper.selectBy(markingExamine.getMarkingExamineId());
-        Features features = markingServiceImpl.socketData("", req.getGeometry(), properties);
+        Features features = MarkingUtils.socketData("", req.getGeometry(), properties);
         BroadcastVO broadcastVO = SendMessage.sendOneMessages(ADD_STATUS, features);
         String questionProjectId = req.getQuestion_project_id() + GLIDE_LINE + SecurityUtils.getLoginUser().getSysUser().getUserId();
         NioWebSocketHandler.sendQuestionProject(questionProjectId, broadcastVO);
@@ -167,7 +164,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
         Properties properties = markingExamineMapper.selectBy(markingExamineId);
-        Features features = markingServiceImpl.socketData("", markingExamineBy.getGeometry(), properties);
+        Features features = MarkingUtils.socketData("", markingExamineBy.getGeometry(), properties);
         BroadcastVO broadcastVO = SendMessage.sendOneMessages(DELETE_STATUS, features);
         String questionProjectId = markingExamineBy.getQuestionProjectId() + GLIDE_LINE + SecurityUtils.getLoginUser().getSysUser().getUserId();
         NioWebSocketHandler.sendQuestionProject(questionProjectId, broadcastVO);
@@ -204,12 +201,46 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         markingExamine.setCategoryId(req.getCategory_id());
         markingExamineMapper.updateById(markingExamine);
         Properties properties = markingExamineMapper.selectBy(markingExamine.getMarkingExamineId());
-        Features features = markingServiceImpl.socketData("", req.getGeometry(), properties);
+        Features features = MarkingUtils.socketData("", req.getGeometry(), properties);
         BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features);
         // 使用websocket发送数据
         String questionProjectId = markingExamineBy.getQuestionProjectId() + GLIDE_LINE + SecurityUtils.getLoginUser().getSysUser().getUserId();
         NioWebSocketHandler.sendQuestionProject(questionProjectId, broadcastVO);
         return markingExamine.getMarkingExamineId();
+    }
+
+
+    @Override
+    public JSONObject updateOperation(UpdateOperationIn req) throws Exception {
+        MarkingExamine markingExamineBy = markingExamineMapper.selectById((req.getMarking_id()));
+        if (!Optional.ofNullable(markingExamineBy).isPresent()) {
+            throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
+        }
+        String location = MarkingUtils.updateVerify(markingExamineBy.getGeometry(),req.getGeometry(),req.getOperation(),req.getCheck());
+        JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(location));
+        MarkingExamine markingExamine = new MarkingExamine();
+        markingExamine.setGeometry(jsonObject);
+        markingExamine.setMarkingExamineId(Long.valueOf(req.getMarking_id()));
+        markingExamine.setUpdateBy(SecurityUtils.getUserId());
+        markingExamine.setUpdateTime(new Date());
+        markingExamineMapper.updateById(markingExamine);
+        // 更新后查询数据并返回
+        Properties properties = markingExamineMapper.selectBy(Long.valueOf(req.getMarking_id()));
+        Features features = MarkingUtils.socketData("", markingExamine.getGeometry(), properties);
+        BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features);
+        String questionProjectId = markingExamineBy.getQuestionProjectId() + GLIDE_LINE + SecurityUtils.getLoginUser().getSysUser().getUserId();
+        NioWebSocketHandler.sendQuestionProject(questionProjectId, broadcastVO);
+        return markingExamine.getGeometry();
+    }
+
+    @Override
+    public double operationCheck(UpdateOperationIn req) throws Exception {
+        MarkingExamine markingExamineBy = markingExamineMapper.selectById(req.getMarking_id());
+        // 查询数据是否存在
+        if (!Optional.ofNullable(markingExamineBy).isPresent()) {
+            throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
+        }
+        return MarkingUtils.updateOperationVerify(markingExamineBy.getGeometry(),req.getGeometry(),req.getOperation());
     }
 
     public JSONObject getAnnotation(String fileUrl) {

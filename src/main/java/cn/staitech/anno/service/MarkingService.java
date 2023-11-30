@@ -29,6 +29,8 @@ public interface MarkingService {
 
     List<Features> selectListBy(Long slideId) throws Exception;
 
+    double operationCheck(UpdateOperationIn req) throws Exception;
+
 
     /**
      * 根据专题查看当前专题下所有的切片

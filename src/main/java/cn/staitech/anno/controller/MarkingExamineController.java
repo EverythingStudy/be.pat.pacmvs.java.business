@@ -3,10 +3,12 @@ package cn.staitech.anno.controller;
 import cn.staitech.anno.service.MarkingExamineService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.geojson.Features;
+import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.marking.MarkingExamineInsertVO;
 import cn.staitech.anno.vo.marking.MarkingExamineUpdateVO;
 import cn.staitech.common.core.domain.R;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
@@ -67,6 +69,26 @@ public class MarkingExamineController {
     public R<Long> update(@Validated @RequestBody MarkingExamineUpdateVO req) throws Exception {
         markingExamineService.update(req);
         return R.ok(req.getMarking_id(), MessageSource.M("OPERATE_SUCCEED"));
+    }
+
+
+
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "合并、裁剪轮廓")
+    @PutMapping("/updateOperation")
+    public R<JSONObject> updateOperation(@Validated @RequestBody UpdateOperationIn req) throws Exception {
+        JSONObject geoJson = markingExamineService.updateOperation(req);
+        return R.ok(geoJson, MessageSource.M("OPERATE_SUCCEED"));
+    }
+
+
+
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "合并、裁剪轮廓校验")
+    @PutMapping("/operationCheck")
+    public R<Double> operationCheck(@Validated @RequestBody UpdateOperationIn req) throws Exception {
+        double percentage = markingExamineService.operationCheck(req);
+        return R.ok(percentage, MessageSource.M("OPERATE_SUCCEED"));
     }
 }
 

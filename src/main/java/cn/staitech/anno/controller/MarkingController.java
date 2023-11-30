@@ -134,6 +134,14 @@ public class MarkingController {
     }
 
     @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "合并、裁剪轮廓校验")
+    @PutMapping("/intelligentAnno/operationCheck")
+    public R<Double> operationCheck(@Validated @RequestBody UpdateOperationIn req) throws Exception {
+        double percentage = markingService.operationCheck(req);
+        return R.ok(percentage, MessageSource.M("OPERATE_SUCCEED"));
+    }
+
+    @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "websocket接口")
     @GetMapping("/getWebsocketPort")
     public R<String> getWebsocketPort() {
