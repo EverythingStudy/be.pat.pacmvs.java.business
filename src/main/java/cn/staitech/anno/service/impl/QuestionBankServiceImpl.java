@@ -111,7 +111,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                     log.error(exception.toString());
                     throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
                 }
-                if(urlPath == null && "".equals(urlPath)){
+                if(urlPath != null && !"".equals(urlPath)){
                     String[] pathList = urlPath.split(",");
                     for (String path : pathList) {
                         String jsonName = StringUtils.substringAfterLast(path, File.separator);
@@ -171,7 +171,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                 } catch (Exception ex) {
                     throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
                 }
-                if(urlPath == null && "".equals(urlPath)){
+                if(urlPath != null && !"".equals(urlPath)){
                     String[] pathList = urlPath.split(",");
                     for (String path : pathList) {
                         String jsoName = StringUtils.substringAfterLast(path, File.separator);
