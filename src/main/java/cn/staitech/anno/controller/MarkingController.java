@@ -7,6 +7,7 @@ import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
+import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.slide.SlideSelectBy;
 import cn.staitech.common.core.domain.PageResponse;
@@ -14,6 +15,7 @@ import cn.staitech.common.core.domain.R;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.utils.SecurityUtils;
+import com.alibaba.fastjson.JSONObject;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
@@ -121,6 +123,14 @@ public class MarkingController {
     public R<String> update(@Validated @RequestBody MarkingUpdateIn req) throws Exception {
         markingService.update(req);
         return R.ok(req.getMarking_id(), MessageSource.M("OPERATE_SUCCEED"));
+    }
+
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "合并、裁剪轮廓")
+    @PutMapping("/intelligentAnno/updateOperation")
+    public R<JSONObject> updateOperation(@Validated @RequestBody UpdateOperationIn req) throws Exception {
+        JSONObject geoJson = markingService.updateOperation(req);
+        return R.ok(geoJson, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     @ApiOperationSupport(author = "gjt")

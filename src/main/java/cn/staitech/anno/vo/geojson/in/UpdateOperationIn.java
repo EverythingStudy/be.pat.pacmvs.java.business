@@ -1,0 +1,28 @@
+package cn.staitech.anno.vo.geojson.in;
+
+import com.alibaba.fastjson.JSONObject;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+@Data
+public class UpdateOperationIn {
+
+    @NotNull(message = "{DescriptionUpdateVO.annotationId.isnull}")
+    @ApiModelProperty(value = "标注id")
+    private String marking_id;
+
+    //@NotNull(message = "{viewAddIn.createBy.notNull}")
+    @ApiModelProperty(value = "标注作者(绘制者)")
+    private Long update_by;
+
+    @ApiModelProperty(value = "(新图形) 标注坐标")
+    private JSONObject geometry;
+
+    @NotBlank(message = "操作不可为空")
+    @ApiModelProperty(value = "要执行的操作(UNION:相交,DIFFERENCE:相差,null)")
+    private String operation;
+
+}

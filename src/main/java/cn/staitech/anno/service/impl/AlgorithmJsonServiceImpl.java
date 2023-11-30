@@ -113,6 +113,7 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
         markingJsonObject.put("annotation_json_url", algorithmAssessment.getAnnotationJsonUrl());
         markingJsonObject.put("algorithm_json_url", algorithmJsonBy.getAlgorithmJsonUrl());
         markingJsonObject.put("slide_id", algorithmJsonBy.getSlideId());
+        markingJsonObject.put("round_id", algorithmJsonBy.getRoundId());
         markingJsonObject.put("json_name", algorithmJsonBy.getAlgorithmJsonName());
         markingJsonObject.put("create_by", SecurityUtils.getLoginUser().getSysUser().getUserId());
         markingJsonObject.put("algorithm_assessment_id", algorithmJsonBy.getAlgorithmAssessmentId());

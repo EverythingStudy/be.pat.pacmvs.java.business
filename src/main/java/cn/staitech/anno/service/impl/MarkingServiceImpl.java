@@ -27,6 +27,7 @@ import cn.staitech.anno.vo.annotation.BroadcastVO;
 import cn.staitech.anno.vo.geojson.Properties;
 import cn.staitech.anno.vo.geojson.*;
 import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
+import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
@@ -300,6 +301,37 @@ public class MarkingServiceImpl implements MarkingService {
 		return marking.getMarking_id();
 	}
 
+
+	@Override
+	public JSONObject updateOperation(UpdateOperationIn req) throws Exception {
+		Marking	markingBy = markingMapper.selectById(req.getMarking_id());
+		// 查询数据是否存在
+		if (!Optional.ofNullable(markingBy).isPresent()) {
+			throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
+		}
+		Project project=projectMapperV1.selectById(markingBy.getProject_id());
+		//验证集项目中不能修改他人轮廓
+		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")){
+			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
+		}
+		String location = updateVerify(markingBy.getGeometry(),req.getGeometry(),req.getOperation());
+		JSONObject jsonObject = JSONObject.parseObject(location);
+		cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
+		marking.setGeometry(jsonObject);
+		marking.setMarkingId(req.getMarking_id());
+		marking.setUpdateBy(SecurityUtils.getUserId());
+		marking.setUpdateTime(new Date());
+		marking.setSlideId(markingBy.getSlide_id());
+		markingMapperV1.updateById(marking);
+		// 更新后查询数据并返回
+		Properties properties = markingMapper.selectBy(req.getMarking_id());
+		Features features = socketData(markingBy.getAnnotation_id(), marking.getGeometry(), properties);
+		// 如果是点类型，返回点的总数并返回
+		BroadcastVO broadcastVO = SendMessage.sendOneMessages(ADD_STATUS, features);
+		NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
+		return jsonObject;
+	}
+
 	//@Async
 	@Override
 	@Transactional(rollbackFor = Exception.class)
@@ -310,13 +342,13 @@ public class MarkingServiceImpl implements MarkingService {
 //		if(null == markingBy){
 //			redisService.setCacheObject(CommonConstant.ANNO_MARKING+req.getMarking_id(), markingBy, CommonConstant.MARKING_CACHE_HOURS, TimeUnit.HOURS);
 //		}
+		if (!Optional.ofNullable(markingBy).isPresent()) {
+			throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
+		}
 		Project project=projectMapperV1.selectById(markingBy.getProject_id());
 		//验证集项目中不能修改他人轮廓
 		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")){
 			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
-		}
-		if (!Optional.ofNullable(markingBy).isPresent()) {
-			throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
 		}
 		// 查询切片表中信息==》先走缓存
 		Slide slide = redisService.getCacheObject(CommonConstant.ANNO_SLIDE+markingBy.getSlide_id());
