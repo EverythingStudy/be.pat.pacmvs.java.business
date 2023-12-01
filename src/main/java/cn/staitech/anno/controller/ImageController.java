@@ -60,7 +60,7 @@ public class ImageController extends BaseController {
             @ApiImplicitParam(name = "pageNum", value = "当前记录起始索引", dataTypeClass = Integer.class, paramType = "query", example = "1"),
             @ApiImplicitParam(name = "pageSize", value = "每页显示记录数", dataTypeClass = Integer.class, paramType = "query", example = "10")})
     @Log(title = "查询切片列表", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.QUERY)
-    @RequiresPermissions("section:slices:query")
+    // @RequiresPermissions("section:slices:query")
     @PostMapping("/list")
     public R<PageMaster<ImageListOutVO>> list(@Validated @RequestBody ImageListVO image) throws ExecutionException, InterruptedException {
         image.setBizType(1);

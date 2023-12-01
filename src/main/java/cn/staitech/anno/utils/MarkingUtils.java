@@ -1,0 +1,191 @@
+package cn.staitech.anno.utils;
+
+import cn.staitech.anno.vo.geojson.Features;
+import cn.staitech.anno.vo.geojson.Properties;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.io.WKTReader;
+import com.vividsolutions.jts.io.WKTWriter;
+import com.vividsolutions.jts.operation.overlay.OverlayOp;
+import org.apache.commons.lang3.StringUtils;
+
+public class MarkingUtils {
+    private static final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), 4326);
+    private static final WKTReader wktReader = new WKTReader(geometryFactory);
+
+
+    public static double updateOperationVerify(JSONObject oldLocations, JSONObject newLocations, String operation) throws Exception {
+//        try {
+        String oldLocation = WktUtil.jsonToWkt(oldLocations);
+
+        String newLocation = WktUtil.jsonToWkt(newLocations);
+
+        double percentage = 0;
+
+        // 校验是否有要执行的操作  相交或者相差
+        if (StringUtils.isNotBlank(operation)) {
+            Geometry geometry1;
+            try {
+                geometry1 = wktReader.read(oldLocation);
+            } catch (Exception e) {
+                throw new Exception("图形不符合规则");
+            }
+            Geometry geometry2;
+            try {
+                geometry2 = wktReader.read(newLocation);
+            } catch (Exception e) {
+                throw new Exception("图形不符合规则");
+            }
+            OverlayOp op = new OverlayOp(geometry1, geometry2);
+            int code = 0;
+            // 如果操作为相交
+            String geometryType = geometry2.getGeometryType();
+            // 判断新增图形是否为混合类型
+            if (!"GeometryCollection".equals(geometryType)) {
+                // 判断是否自相交
+                try {
+                    geometry2.union(geometry2);
+                } catch (Exception e) {
+                    throw new Exception("图形不符合规则");
+                }
+            }
+            // 判断新增图形是否为多聚体
+            if ("MultiPolygon".equals(geometryType)) {
+                throw new Exception("图形不符合规则");
+            }
+            if ("UNION".equals(operation)) {
+                code = OverlayOp.UNION;
+                // 操作为相差
+            } else if ("DIFFERENCE".equals(operation)) {
+                code = OverlayOp.DIFFERENCE;
+                // 校验旧图形在新图形中(新图形不能将旧图形完全覆盖)
+                if (geometry1.within(geometry2)) {
+                    throw new Exception("图形不符合规则");
+                }
+                Geometry geometryIntersection = geometry1.intersection(geometry2);
+                // 判断图形是否有交集
+                if (geometryIntersection.isEmpty()) {
+                    throw new Exception("图形不符合规则");
+                }
+
+            }
+            percentage = geometry2.getArea() / geometry1.getArea();
+        }
+        return percentage;
+
+//        } catch (Exception e) {
+//            throw new Exception("图形不符合规则");
+//        }
+
+    }
+
+
+    public static String updateVerify(JSONObject oldLocations, JSONObject newLocations, String operation, boolean check) throws Exception {
+//        try {
+
+        String oldLocation = WktUtil.jsonToWkt(oldLocations);
+        String newLocation = WktUtil.jsonToWkt(newLocations);
+        // WKT输出器，将Geometry对象写出为WKT文本
+        WKTWriter wktWriter = new WKTWriter();
+        String data = newLocation;
+        // 校验是否有要执行的操作  相交或者相差
+        if (StringUtils.isNotBlank(operation)) {
+            Geometry geometry1;
+            try {
+                geometry1 = wktReader.read(oldLocation);
+            } catch (Exception e) {
+                throw new Exception("图形不符合规则");
+            }
+            Geometry geometry2;
+            try {
+                geometry2 = wktReader.read(newLocation);
+            } catch (Exception e) {
+                throw new Exception("图形不符合规则");
+            }
+            if (check) {
+                String geometryType = geometry2.getGeometryType();
+                // 判断新增图形是否为混合类型
+                if (!"GeometryCollection".equals(geometryType)) {
+                    // 判断是否自相交
+                    try {
+                        geometry2.union(geometry2);
+                    } catch (Exception e) {
+                        throw new Exception("图形不符合规则");
+                    }
+                }
+                // 判断新增图形是否为多聚体
+                if ("MultiPolygon".equals(geometryType)) {
+                    throw new Exception("图形不符合规则");
+                }
+            }
+            OverlayOp op = new OverlayOp(geometry1, geometry2);
+            int code = 0;
+            // 取出交集图形
+            if (check) {
+                Geometry geometryIntersection = geometry1.intersection(geometry2);
+                // 判断图形是否有交集
+                if (geometryIntersection.isEmpty()) {
+                    throw new Exception("图形不符合规则");
+                }
+            }
+            // 如果操作为相交
+            if ("UNION".equals(operation)) {
+                code = OverlayOp.UNION;
+
+                // 操作为相差
+            } else if ("DIFFERENCE".equals(operation)) {
+                code = OverlayOp.DIFFERENCE;
+                if (check) {
+                    // 校验旧图形在新图形中(新图形不能将旧图形完全覆盖)
+                    if (geometry1.within(geometry2)) {
+                        // throw new AnnoException(AnnotationResponseConstant.UPDATE_ANNO_ERROR);
+                        throw new Exception("图形不符合规则");// 修改失败,请检查后输入
+                    }
+                    // 校验标注不能过小，不能小于1000.0
+//                        if (geometry2.within(geometry1) && geometry2.getArea() < insideMaxArea) {
+//                            throw new AnnoException(AnnotationResponseConstant.UPDATE_ANNO_ERROR + geometry2.getArea());
+//                        }
+                }
+
+            }
+            Geometry g;
+            try {
+                // code=OverlayOp.UNION;相交  或者  code=OverlayOp.DIFFERENCE;相差
+                // 将code转换成Geometry对象
+                g = op.getResultGeometry(code);
+                // 获取geometry类型
+                String geometryType = g.getGeometryType();
+                // 判断新图形是否为复杂多边型(比如大标注嵌套小标注
+                if ("MultiPolygon".equals(geometryType)) {
+                    // throw new AnnoException(AnnotationResponseConstant.NEW_GRAPHICS_MARK_NOT_RULES);
+                    throw new Exception("图形不符合规则");// 新图形不符合规则
+                }
+            } catch (Exception e) {
+                throw new Exception("图形不符合规则");
+            }
+            data = wktWriter.write(g);
+        }
+        return data;
+
+//        } catch (Exception e) {
+//            throw new Exception("图形不符合规则");
+//        }
+
+    }
+
+
+    public static Features socketData(String annotationId, JSONObject geometry, Properties properties) {
+        Features features = new Features();
+        features.setGeometry(geometry);
+        features.setId(annotationId);
+        features.setType("Feature");
+        JSONObject jsonObject = (JSONObject) JSON.toJSON(properties);
+        features.setProperties(jsonObject);
+        return features;
+    }
+
+
+}

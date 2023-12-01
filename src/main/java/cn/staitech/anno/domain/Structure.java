@@ -51,4 +51,5 @@ public class Structure {
     
     @ApiModelProperty(value = "RO：结构类型  ROA:标注区域 ROE:考核区域", required = true)
     private String type;
+    
 }
