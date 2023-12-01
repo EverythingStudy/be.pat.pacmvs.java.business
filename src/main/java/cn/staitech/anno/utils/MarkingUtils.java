@@ -3,6 +3,7 @@ package cn.staitech.anno.utils;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.Properties;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -11,6 +12,10 @@ import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.io.WKTWriter;
 import com.vividsolutions.jts.operation.overlay.OverlayOp;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class MarkingUtils {
     private static final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), 4326);
@@ -174,6 +179,51 @@ public class MarkingUtils {
 //            throw new Exception("图形不符合规则");
 //        }
 
+    }
+
+    public static JSONObject updatePolygonPoint(JSONObject geometry) {
+        List<Double> xList = new ArrayList<>();
+        List<Double> yList = new ArrayList<>();
+        List<Object> lists = new ArrayList<>();
+        JSONArray coordinatesJsonArray1 = geometry.getJSONArray("coordinates");
+        String type = geometry.getString("type");
+        if (Objects.equals(type, "Polygon")) {
+            List<Object> list1 = new ArrayList<>();
+            for (Object i1 : coordinatesJsonArray1) {
+                JSONArray jsonArray1 = JSONArray.parseArray(i1.toString());
+                // 定义一个变量
+                Double x = null;
+                Double y = null;
+                for (Object i2 : jsonArray1) {
+                    JSONArray jsonArray2 = JSONArray.parseArray(i2.toString());
+                    List<Double> list = JSONObject.parseArray(jsonArray2.toJSONString(), Double.class);
+                    List<Double> newList = new ArrayList<>();
+                    double newX = 0;
+                    double newY = 0;
+                    if(x != null){
+                        // 取出绝对值
+                        newX = Math.abs(x - list.get(0));
+                    }
+                    xList.add(list.get(0));
+                    yList.add(list.get(1));
+                    if(y != null){
+                        newY = Math.abs(y - list.get(1));
+                    }
+                    if(newX < 100 && newY < 100) {
+                        newList.add(list.get(0));
+                        newList.add(list.get(1));
+                        list1.add(newList);
+                        x = list.get(0);
+                        y = list.get(1);
+                    }
+                }
+            }
+            lists.add(list1);
+        }
+        JSONObject geometryJson = new JSONObject();
+        geometryJson.put("type", type);
+        geometryJson.put("coordinates", lists);
+        return geometryJson;
     }
 
 
