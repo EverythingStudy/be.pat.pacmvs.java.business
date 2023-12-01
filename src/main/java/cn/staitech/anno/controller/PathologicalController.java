@@ -317,10 +317,10 @@ public class PathologicalController {
 		//修改标注类别信息
 		String retStatus = pathologicalIndicatorCategoryService.updateByPrimaryKeySelective2(category);
 		//查看当前结构是否只要结构编码
-		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-		boolean containsValue = Arrays.asList(CommonConstant.ORGANIZATION_ID).contains(organizationId);
+//		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+//		boolean containsValue = Arrays.asList(CommonConstant.ORGANIZATION_ID).contains(organizationId);
 		//TODO 另外考核区域和标注区域同样处理，structureId、number、categoryName需要单独处理，修改时候需要用自己的categoryId和indicatorId
-		if(!containsValue && retStatus.equals("1")){
+		if(retStatus.equals("1")){
 			updateCategory(targetCategory,targetCategoryRoe,sourcePic,indicator);
 		}
 		return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
@@ -333,10 +333,16 @@ public class PathologicalController {
 		String categoryCode = sourcePic.getCategoryCode();
 		//标注区域
 		String structureRoaId = sourceStructureId+CommonConstant.STRUCTURE_ROA;
-		updateSourceCategory(structureRoaId, targetCategory, indicator,1,categoryCode);
+		List<Structure>  roaList = structureService.getListByStructureId(structureRoaId);
+		if(CollectionUtils.isNotEmpty(roaList)){
+			updateSourceCategory(structureRoaId, targetCategory, indicator,1,categoryCode);
+		}
 		//考核区域
 		String structureRoeId = sourceStructureId+CommonConstant.STRUCTURE_ROE;
-		updateSourceCategory(structureRoeId, targetCategoryRoe, indicator,2,categoryCode);
+		List<Structure>  roeList = structureService.getListByStructureId(structureRoeId);
+		if(CollectionUtils.isNotEmpty(roeList)){
+			updateSourceCategory(structureRoeId, targetCategoryRoe, indicator,2,categoryCode);
+		}
 	}
 
 	private void updateSourceCategory(String hisStructureId,PathologicalIndicatorCategory targetCategory,Indicator indicator,int type,String categoryCode){
@@ -480,7 +486,7 @@ public class PathologicalController {
 	@PostMapping("/test")
 	public R test() throws ParseException {
 		List<Long> dataList = new ArrayList<>();
-		//dataList.add(1638L);
+//		dataList.add(1638L);
 		pathologicalIndicatorCategoryService.handlerCouponsUserStatusTimeOutToExpired(dataList);
 		return R.ok();
 	}
