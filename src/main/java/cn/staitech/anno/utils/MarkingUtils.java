@@ -37,7 +37,7 @@ public class MarkingUtils {
             try {
                 geometry2 = wktReader.read(newLocation);
             } catch (Exception e) {
-                throw new Exception("图形不符合规则");
+                throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
             }
             OverlayOp op = new OverlayOp(geometry1, geometry2);
             int code = 0;
@@ -49,12 +49,12 @@ public class MarkingUtils {
                 try {
                     geometry2.union(geometry2);
                 } catch (Exception e) {
-                    throw new Exception("图形不符合规则");
+                    throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
                 }
             }
             // 判断新增图形是否为多聚体
             if ("MultiPolygon".equals(geometryType)) {
-                throw new Exception("图形不符合规则");
+                throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
             }
             if ("UNION".equals(operation)) {
                 code = OverlayOp.UNION;
@@ -63,12 +63,12 @@ public class MarkingUtils {
                 code = OverlayOp.DIFFERENCE;
                 // 校验旧图形在新图形中(新图形不能将旧图形完全覆盖)
                 if (geometry1.within(geometry2)) {
-                    throw new Exception("图形不符合规则");
+                    throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
                 }
                 Geometry geometryIntersection = geometry1.intersection(geometry2);
                 // 判断图形是否有交集
                 if (geometryIntersection.isEmpty()) {
-                    throw new Exception("图形不符合规则");
+                    throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
                 }
 
             }
@@ -97,13 +97,13 @@ public class MarkingUtils {
             try {
                 geometry1 = wktReader.read(oldLocation);
             } catch (Exception e) {
-                throw new Exception("图形不符合规则");
+                throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
             }
             Geometry geometry2;
             try {
                 geometry2 = wktReader.read(newLocation);
             } catch (Exception e) {
-                throw new Exception("图形不符合规则");
+                throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
             }
             if (check) {
                 String geometryType = geometry2.getGeometryType();
@@ -113,12 +113,12 @@ public class MarkingUtils {
                     try {
                         geometry2.union(geometry2);
                     } catch (Exception e) {
-                        throw new Exception("图形不符合规则");
+                        throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
                     }
                 }
                 // 判断新增图形是否为多聚体
                 if ("MultiPolygon".equals(geometryType)) {
-                    throw new Exception("图形不符合规则");
+                    throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
                 }
             }
             OverlayOp op = new OverlayOp(geometry1, geometry2);
@@ -128,7 +128,7 @@ public class MarkingUtils {
                 Geometry geometryIntersection = geometry1.intersection(geometry2);
                 // 判断图形是否有交集
                 if (geometryIntersection.isEmpty()) {
-                    throw new Exception("图形不符合规则");
+                    throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
                 }
             }
             // 如果操作为相交
@@ -142,7 +142,7 @@ public class MarkingUtils {
                     // 校验旧图形在新图形中(新图形不能将旧图形完全覆盖)
                     if (geometry1.within(geometry2)) {
                         // throw new AnnoException(AnnotationResponseConstant.UPDATE_ANNO_ERROR);
-                        throw new Exception("图形不符合规则");// 修改失败,请检查后输入
+                        throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));// 修改失败,请检查后输入
                     }
                     // 校验标注不能过小，不能小于1000.0
 //                        if (geometry2.within(geometry1) && geometry2.getArea() < insideMaxArea) {
@@ -161,10 +161,10 @@ public class MarkingUtils {
                 // 判断新图形是否为复杂多边型(比如大标注嵌套小标注
                 if ("MultiPolygon".equals(geometryType)) {
                     // throw new AnnoException(AnnotationResponseConstant.NEW_GRAPHICS_MARK_NOT_RULES);
-                    throw new Exception("图形不符合规则");// 新图形不符合规则
+                    throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));// 新图形不符合规则
                 }
             } catch (Exception e) {
-                throw new Exception("图形不符合规则");
+                throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
             }
             data = wktWriter.write(g);
         }
