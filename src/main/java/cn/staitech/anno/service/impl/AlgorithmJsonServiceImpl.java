@@ -214,7 +214,7 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
                 // 根据主键查询详情
                 Structure structure = structureMapper.selectById(labelCode);
                 if (structure != null) {
-                    if (Objects.equals(structure.getType(), "RO")) {
+                    if (!Objects.equals(structure.getType(), "ROE")) {
                         // 查询结果
                         labelInfoLists.add(labelInfos);
                     }
