@@ -365,7 +365,10 @@ public class FileUploadServiceImpl implements FileUploadService {
                     List<String> folderList = Arrays.asList(fileUrl.split(File.separator));
                     String fileName = folderList.get(folderList.size() - 1);
                     List<String> urlPathList = Arrays.asList(fileName.split("_"));
-                    String roundId = urlPathList.get(1).substring(1);
+                    String roundId = null;
+                    if(urlPathList.size() > 1){
+                        roundId = urlPathList.get(1).substring(1);
+                    }
                     List<String> fileNameList = algorithmAssessmentService.zipExport(filesBy.getFilesPath(), chunk.getProjectId(), fileUrl, roundId);
                     return fileNameList.toString();
                 case 6:

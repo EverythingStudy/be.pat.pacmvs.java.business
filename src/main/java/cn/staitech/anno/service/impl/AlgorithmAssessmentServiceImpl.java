@@ -228,7 +228,6 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         QueryWrapper<AlgorithmAssessment> algorithmAssessmentQueryWrapper = new QueryWrapper<>();
         algorithmAssessmentQueryWrapper.eq("project_id", projectId).eq("del_flag", "0");
         // 查询算法考核列表，获取算法考核列表
-        algorithmAssessmentQueryWrapper.eq("project_id", projectId).eq("del_flag", "0");
         List<AlgorithmAssessment> algorithmAssessments = algorithmAssessmentMapper.selectList(algorithmAssessmentQueryWrapper);
         for (AlgorithmAssessment algorithmAssessment : algorithmAssessments) {
             // 判断图片名称是否与json文件中图片名称是否一致
