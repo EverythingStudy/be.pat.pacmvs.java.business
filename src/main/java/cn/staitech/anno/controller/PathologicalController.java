@@ -105,14 +105,14 @@ public class PathologicalController {
 
 		List<PathologicalIndicatorCategory> listS = pathologicalIndicatorCategoryService.selectIndicatorMessage(categoryS);
 		if (listS.size() > 0) {
-			return R.fail(MessageSource.M("CATEGORY_NAME_EXIST"));
+			return R.fail(MessageSource.M("CATEGORY_NAME_CHECK_EXIST"));
 		}
 		categoryS.setStructureId(null);
 		categoryS.setHex(hex);
 		// 验证颜色值是否已经存在
 		List<PathologicalIndicatorCategory> listR = pathologicalIndicatorCategoryService.selectIndicatorMessage(categoryS);
 		if (listR.size() > 0) {
-			return R.fail(MessageSource.M("CATEGORY_NAME_EXIST"));
+			return R.fail(MessageSource.M("COLOR_NAME_CHECK_EXIST"));
 		}
 		//查看当前结构是否只要结构编码
 		//		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
@@ -264,7 +264,7 @@ public class PathologicalController {
 				}
 			}
 			if(!tag){
-				return R.fail(MessageSource.M("CATEGORY_NAME_EXIST"));
+				return R.fail(MessageSource.M("CATEGORY_NAME_CHECK_EXIST"));
 			}
 		}
 		categoryS.setStructureId(null);
@@ -281,7 +281,7 @@ public class PathologicalController {
 				}
 			}
 			if(!tag){
-				return R.fail(MessageSource.M("CATEGORY_NAME_EXIST"));
+				return R.fail(MessageSource.M("COLOR_NAME_CHECK_EXIST"));
 			}
 		}
 
