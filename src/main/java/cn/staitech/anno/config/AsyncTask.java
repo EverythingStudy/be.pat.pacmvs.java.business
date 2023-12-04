@@ -95,7 +95,7 @@ public class AsyncTask {
 
     @SneakyThrows
     @Async
-    @Transactional
+//    @Transactional
     public void zipExport(String zipUrl, Long projectId) {
         File file1 = new File(zipUrl);
 //        try {
