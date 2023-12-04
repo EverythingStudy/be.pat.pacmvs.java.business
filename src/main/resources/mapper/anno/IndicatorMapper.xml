@@ -118,7 +118,8 @@
             </if>
             <if test="organId != null and organId != ''">
                 <!-- 脏器编码 -->
-                AND i.organ_id like concat('%', #{organId}, '%')
+                <!-- AND i.organ_id like concat('%', #{organId}, '%') -->
+                AND i.organ_id = #{organId}
             </if>
             <if test="organizationId != null and organizationId != ''">
                 <!-- 机构ID -->

@@ -86,6 +86,9 @@ public class CommonConstant {
     public static final String STRUCTURE_RO = "RO";
     public static final String STRUCTURE_ROA = "ROA";
     public static final String STRUCTURE_ROE = "ROE";
+    public static final Integer STRUCTURE_ROA_GROUP_NUMBER = 1;
+    public static final Integer STRUCTURE_ROE_GROUP_NUMBER = 2;
+    public static final Integer STRUCTURE_RO_GROUP_NUMBER = 3;
     //5L：天津血研所
     public static final Long[] ORGANIZATION_ID = {5L};
 

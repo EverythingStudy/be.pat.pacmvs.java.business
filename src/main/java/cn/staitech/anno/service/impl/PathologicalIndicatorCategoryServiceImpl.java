@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 
 import cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -299,37 +300,41 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 				//type 1:结构指标 2：考试 3：标注
 				Integer type = -1;
 				if(structureId.contains("ROA")||structureId.contains("ROE")){
-					structureFather = structureId.substring(0, 6);
-					if(structureId.contains("ROE")){
-						//ROE:考核区域
-						type = 2;
-					}else if(structureId.contains("ROA")){
-						//ROA:标注区域
-						type = 3;
-					} 
+					if(StringUtils.isNotEmpty(structureId) && structureId.length() > 6){
+						structureFather = structureId.substring(0, 6);
+						if(structureId.contains("ROE")){
+							//ROE:考核区域
+							type = 2;
+						}else if(structureId.contains("ROA")){
+							//ROA:标注区域
+							type = 3;
+						} 
+					}
 				}else{
 					//结构指标
 					structureFather = structureId;
 					type = 1;
 				}
-				String structureKey = indicatorId+"_"+structureFather;
-				//存入resultMap
-				if(resultMap.isEmpty()){
-					Map<Integer,Long> parmMap = new HashMap<>();
-					parmMap.put(type, categoryId);
-					resultMap.put(structureKey, parmMap);
-				}else{
-					//判断是否包括key
-					if(resultMap.containsKey(structureKey)){
-						//取出原来的数据
-						Map<Integer,Long> sourceMap = resultMap.get(structureKey);
-						sourceMap.put(type, categoryId);
-						resultMap.put(structureKey, sourceMap);
-					}else{
-						//直接存
+				if (StringUtils.isNotEmpty(structureFather)){
+					String structureKey = indicatorId+"_"+structureFather;
+					//存入resultMap
+					if(resultMap.isEmpty()){
 						Map<Integer,Long> parmMap = new HashMap<>();
 						parmMap.put(type, categoryId);
 						resultMap.put(structureKey, parmMap);
+					}else{
+						//判断是否包括key
+						if(resultMap.containsKey(structureKey)){
+							//取出原来的数据
+							Map<Integer,Long> sourceMap = resultMap.get(structureKey);
+							sourceMap.put(type, categoryId);
+							resultMap.put(structureKey, sourceMap);
+						}else{
+							//直接存
+							Map<Integer,Long> parmMap = new HashMap<>();
+							parmMap.put(type, categoryId);
+							resultMap.put(structureKey, parmMap);
+						}
 					}
 				}
 			}
@@ -340,51 +345,33 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 				Map<Integer,Long> parmValue = entry.getValue();
 				//处理数据
 				//Long indicatorId = Long.valueOf(isKey.split("_")[0]);
-				String structureId = isKey.split("_")[1];
+				if(isKey.split("_").length == 2){
+					String structureId = isKey.split("_")[1];
 
 
 
 
-				//type 1:结构指标 2：考试 3：标注
-				if(parmValue.containsKey(1)){
-					PathologicalIndicatorCategory picVo = pathologicalIndicatorCategoryMapper.selectById(parmValue.get(1));
-					Indicator indicator = indicatorMapper.selectIndicatorById(picVo.getIndicatorId());
-					if(null != indicator){
-						//统一添加cageoryCode 
-						Snowflake snowflake = new Snowflake();
-						String categoryCode = snowflake.nextIdStr();
+					//type 1:结构指标 2：考试 3：标注
+					if(parmValue.containsKey(1)){
+						PathologicalIndicatorCategory picVo = pathologicalIndicatorCategoryMapper.selectById(parmValue.get(1));
+						Indicator indicator = indicatorMapper.selectIndicatorById(picVo.getIndicatorId());
+						if(null != indicator){
+							//统一添加cageoryCode 
+							Snowflake snowflake = new Snowflake();
+							String categoryCode = snowflake.nextIdStr();
 
-						PathologicalIndicatorCategory category2 = new PathologicalIndicatorCategory();
-						category2.setCategoryCode(categoryCode);
-						category2.setCategoryId(parmValue.get(1));
-						pathologicalIndicatorCategoryMapper.updateById(category2);
-
-						//其他两个请参考结构指标
-						//其他两个有则修改，没有加添加
-						String structureROEId = structureId+CommonConstant.STRUCTURE_ROE;
-						if(parmValue.containsKey(2)){
-							//考试修改
-							//PathologicalIndicatorCategory picExamVo = pathologicalIndicatorCategoryMapper.selectById(parmValue.get(2));
-							PathologicalIndicatorCategory picExamVo2 = new PathologicalIndicatorCategory();
-							BeanUtils.copyProperties(picVo, picExamVo2);
-							String structureName = "";
-							// 获取structureName
-							Structure structure = structureService.getOneStructure(indicator.getSpeciesId(), indicator.getOrganId(), structureROEId);
-							if (structure != null) {
-								structureName = structure.getName();
-							}
-							picExamVo2.setCategoryId(parmValue.get(2));
-							picExamVo2.setCategoryName( indicator.getIndicatorName() + structureName);
-							picExamVo2.setStructureId(structureROEId);
-							picExamVo2.setNumber(structureROEId);
-							picExamVo2.setCategoryCode(categoryCode);
-							//修改考试
-							pathologicalIndicatorCategoryMapper.updateById(picExamVo2);
-						}else{
-							//先确认structure表是否存在structureROEId
-							List<Structure>  roeList = structureService.getListByStructureId(structureROEId);
-							if(CollectionUtils.isNotEmpty(roeList)){
-								//考试添加
+							PathologicalIndicatorCategory category2 = new PathologicalIndicatorCategory();
+							category2.setCategoryCode(categoryCode);
+							category2.setCategoryId(parmValue.get(1));
+							category2.setGroupNumber(CommonConstant.STRUCTURE_RO_GROUP_NUMBER);
+							pathologicalIndicatorCategoryMapper.updateById(category2);
+							
+							//其他两个请参考结构指标
+							//其他两个有则修改，没有加添加
+							String structureROEId = structureId+CommonConstant.STRUCTURE_ROE;
+							if(parmValue.containsKey(2)){
+								//考试修改
+								//PathologicalIndicatorCategory picExamVo = pathologicalIndicatorCategoryMapper.selectById(parmValue.get(2));
 								PathologicalIndicatorCategory picExamVo2 = new PathologicalIndicatorCategory();
 								BeanUtils.copyProperties(picVo, picExamVo2);
 								String structureName = "";
@@ -393,40 +380,42 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 								if (structure != null) {
 									structureName = structure.getName();
 								}
+								picExamVo2.setCategoryId(parmValue.get(2));
 								picExamVo2.setCategoryName( indicator.getIndicatorName() + structureName);
 								picExamVo2.setStructureId(structureROEId);
 								picExamVo2.setNumber(structureROEId);
-								picExamVo2.setCategoryId(null);
 								picExamVo2.setCategoryCode(categoryCode);
-								//add考试
-								pathologicalIndicatorCategoryMapper.insertSelective(picExamVo2);
+								picExamVo2.setGroupNumber(CommonConstant.STRUCTURE_ROE_GROUP_NUMBER);
+								//修改考试
+								pathologicalIndicatorCategoryMapper.updateById(picExamVo2);
+							}else{
+								//先确认structure表是否存在structureROEId
+								List<Structure>  roeList = structureService.getListByStructureId(structureROEId);
+								if(CollectionUtils.isNotEmpty(roeList)){
+									//考试添加
+									PathologicalIndicatorCategory picExamVo2 = new PathologicalIndicatorCategory();
+									BeanUtils.copyProperties(picVo, picExamVo2);
+									String structureName = "";
+									// 获取structureName
+									Structure structure = structureService.getOneStructure(indicator.getSpeciesId(), indicator.getOrganId(), structureROEId);
+									if (structure != null) {
+										structureName = structure.getName();
+									}
+									picExamVo2.setCategoryName( indicator.getIndicatorName() + structureName);
+									picExamVo2.setStructureId(structureROEId);
+									picExamVo2.setNumber(structureROEId);
+									picExamVo2.setCategoryId(null);
+									picExamVo2.setCategoryCode(categoryCode);
+									picExamVo2.setGroupNumber(CommonConstant.STRUCTURE_ROE_GROUP_NUMBER);
+									//add考试
+									pathologicalIndicatorCategoryMapper.insertSelective(picExamVo2);
+								}
 							}
-						}
 
-						//type 1:结构指标 2：考试 3：标注
-						String structureROAId = structureId+CommonConstant.STRUCTURE_ROA;
-						if(parmValue.containsKey(3)){
-							//标注修改
-							PathologicalIndicatorCategory picExamVo2 = new PathologicalIndicatorCategory();
-							BeanUtils.copyProperties(picVo, picExamVo2);
-							String structureName = "";
-							// 获取structureName
-							Structure structure = structureService.getOneStructure(indicator.getSpeciesId(), indicator.getOrganId(), structureROAId);
-							if (structure != null) {
-								structureName = structure.getName();
-							}
-							picExamVo2.setCategoryId(parmValue.get(3));
-							picExamVo2.setCategoryName(indicator.getIndicatorName() + structureName);
-							picExamVo2.setStructureId(structureROAId);
-							picExamVo2.setNumber(structureROAId);
-							picExamVo2.setCategoryCode(categoryCode);
-							//修改标注
-							pathologicalIndicatorCategoryMapper.updateById(picExamVo2);
-						}else{
-							//先确认structure表是否存在structureROEId
-							List<Structure>  roaList = structureService.getListByStructureId(structureROAId);
-							if(CollectionUtils.isNotEmpty(roaList)){
-								//标注添加
+							//type 1:结构指标 2：考试 3：标注
+							String structureROAId = structureId+CommonConstant.STRUCTURE_ROA;
+							if(parmValue.containsKey(3)){
+								//标注修改
 								PathologicalIndicatorCategory picExamVo2 = new PathologicalIndicatorCategory();
 								BeanUtils.copyProperties(picVo, picExamVo2);
 								String structureName = "";
@@ -435,74 +424,79 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 								if (structure != null) {
 									structureName = structure.getName();
 								}
-								picExamVo2.setCategoryName( indicator.getIndicatorName() + structureName);
+								picExamVo2.setCategoryId(parmValue.get(3));
+								picExamVo2.setCategoryName(indicator.getIndicatorName() + structureName);
 								picExamVo2.setStructureId(structureROAId);
 								picExamVo2.setNumber(structureROAId);
-								picExamVo2.setCategoryId(null);
 								picExamVo2.setCategoryCode(categoryCode);
-
-								//add标注
-								pathologicalIndicatorCategoryMapper.insertSelective(picExamVo2);
-							}
-						}
-					}
-				}else{
-					//type 1:结构指标 2：考试 3：标注
-					if(parmValue.containsKey(3)){
-						//统一添加cageoryCode 
-						Snowflake snowflake = new Snowflake();
-						String categoryCode = snowflake.nextIdStr();
-
-						PathologicalIndicatorCategory category2 = new PathologicalIndicatorCategory();
-						category2.setCategoryCode(categoryCode);
-						category2.setCategoryId(parmValue.get(3));
-						pathologicalIndicatorCategoryMapper.updateById(category2);
-
-						//其他两个请标注（结构指标+考试）
-						//结构指标肯定是添加
-						PathologicalIndicatorCategory picVo = pathologicalIndicatorCategoryMapper.selectById(parmValue.get(3));
-						Indicator indicator = indicatorMapper.selectIndicatorById(picVo.getIndicatorId());
-						if(null != indicator){
-							PathologicalIndicatorCategory picJGVo = new PathologicalIndicatorCategory();
-							BeanUtils.copyProperties(picVo, picJGVo);
-							picJGVo.setCategoryId(null);
-							picJGVo.setStructureId(structureId);
-							String structureName = "";
-							// 获取structureName
-							Structure structure = structureService.getOneStructure(indicator.getSpeciesId(), indicator.getOrganId(), structureId);
-							if (structure != null) {
-								structureName = structure.getName();
-							}
-							picJGVo.setCategoryName(indicator.getIndicatorName() + structureName);
-							picJGVo.setNumber(structureId);
-							picJGVo.setCategoryId(null);
-							picJGVo.setCategoryCode(categoryCode);
-							pathologicalIndicatorCategoryMapper.insert(picJGVo);
-
-							String structureROEId = structureId+CommonConstant.STRUCTURE_ROE;
-							//考试，有就修改，没有就添加
-							if(parmValue.containsKey(2)){
-								//考试修改
-								PathologicalIndicatorCategory picExamVo2 = new PathologicalIndicatorCategory();
-								BeanUtils.copyProperties(picVo, picExamVo2);
-								String structureNameROE = "";
-								// 获取structureName
-								Structure structure2 = structureService.getOneStructure(indicator.getSpeciesId(), indicator.getOrganId(), structureROEId);
-								if (structure2 != null) {
-									structureNameROE = structure2.getName();
-								}
-								picExamVo2.setCategoryId(parmValue.get(2));
-								picExamVo2.setCategoryName(indicator.getIndicatorName() + structureNameROE);
-								picExamVo2.setStructureId(structureROEId);
-								picExamVo2.setNumber(structureROEId);
-								picExamVo2.setCategoryCode(categoryCode);
-								//修改考试
+								picExamVo2.setGroupNumber(CommonConstant.STRUCTURE_ROA_GROUP_NUMBER);
+								//修改标注
 								pathologicalIndicatorCategoryMapper.updateById(picExamVo2);
 							}else{
-								//考试添加
 								//先确认structure表是否存在structureROEId
-								List<Structure>  roeList = structureService.getListByStructureId(structureROEId);
-								if(CollectionUtils.isNotEmpty(roeList)){
+								List<Structure>  roaList = structureService.getListByStructureId(structureROAId);
+								if(CollectionUtils.isNotEmpty(roaList)){
+									//标注添加
+									PathologicalIndicatorCategory picExamVo2 = new PathologicalIndicatorCategory();
+									BeanUtils.copyProperties(picVo, picExamVo2);
+									String structureName = "";
+									// 获取structureName
+									Structure structure = structureService.getOneStructure(indicator.getSpeciesId(), indicator.getOrganId(), structureROAId);
+									if (structure != null) {
+										structureName = structure.getName();
+									}
+									picExamVo2.setCategoryName( indicator.getIndicatorName() + structureName);
+									picExamVo2.setStructureId(structureROAId);
+									picExamVo2.setNumber(structureROAId);
+									picExamVo2.setCategoryId(null);
+									picExamVo2.setCategoryCode(categoryCode);
+									picExamVo2.setGroupNumber(CommonConstant.STRUCTURE_ROA_GROUP_NUMBER);
+
+									//add标注
+									pathologicalIndicatorCategoryMapper.insertSelective(picExamVo2);
+								}
+							}
+						}
+					}else{
+						//type 1:结构指标 2：考试 3：标注
+						if(parmValue.containsKey(3)){
+							//统一添加cageoryCode 
+							Snowflake snowflake = new Snowflake();
+							String categoryCode = snowflake.nextIdStr();
+
+							PathologicalIndicatorCategory category2 = new PathologicalIndicatorCategory();
+							category2.setCategoryCode(categoryCode);
+							category2.setCategoryId(parmValue.get(3));
+							category2.setGroupNumber(CommonConstant.STRUCTURE_ROA_GROUP_NUMBER);
+							pathologicalIndicatorCategoryMapper.updateById(category2);
+
+							//其他两个请标注（结构指标+考试）
+							//结构指标肯定是添加
+							PathologicalIndicatorCategory picVo = pathologicalIndicatorCategoryMapper.selectById(parmValue.get(3));
+							Indicator indicator = indicatorMapper.selectIndicatorById(picVo.getIndicatorId());
+							if(null != indicator){
+								PathologicalIndicatorCategory picJGVo = new PathologicalIndicatorCategory();
+								BeanUtils.copyProperties(picVo, picJGVo);
+								picJGVo.setCategoryId(null);
+								picJGVo.setStructureId(structureId);
+								String structureName = "";
+								// 获取structureName
+								Structure structure = structureService.getOneStructure(indicator.getSpeciesId(), indicator.getOrganId(), structureId);
+								if (structure != null) {
+									structureName = structure.getName();
+								}
+								picJGVo.setCategoryName(indicator.getIndicatorName() + structureName);
+								picJGVo.setNumber(structureId);
+								picJGVo.setCategoryId(null);
+								picJGVo.setCategoryCode(categoryCode);
+								picJGVo.setGroupNumber(CommonConstant.STRUCTURE_RO_GROUP_NUMBER);
+
+								pathologicalIndicatorCategoryMapper.insert(picJGVo);
+
+								String structureROEId = structureId+CommonConstant.STRUCTURE_ROE;
+								//考试，有就修改，没有就添加
+								if(parmValue.containsKey(2)){
+									//考试修改
 									PathologicalIndicatorCategory picExamVo2 = new PathologicalIndicatorCategory();
 									BeanUtils.copyProperties(picVo, picExamVo2);
 									String structureNameROE = "";
@@ -511,68 +505,97 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 									if (structure2 != null) {
 										structureNameROE = structure2.getName();
 									}
-									picExamVo2.setCategoryName( indicator.getIndicatorName() + structureNameROE);
+									picExamVo2.setCategoryId(parmValue.get(2));
+									picExamVo2.setCategoryName(indicator.getIndicatorName() + structureNameROE);
 									picExamVo2.setStructureId(structureROEId);
 									picExamVo2.setNumber(structureROEId);
+									picExamVo2.setCategoryCode(categoryCode);
+									picExamVo2.setGroupNumber(CommonConstant.STRUCTURE_ROE_GROUP_NUMBER);
+
+									//修改考试
+									pathologicalIndicatorCategoryMapper.updateById(picExamVo2);
+								}else{
+									//考试添加
+									//先确认structure表是否存在structureROEId
+									List<Structure>  roeList = structureService.getListByStructureId(structureROEId);
+									if(CollectionUtils.isNotEmpty(roeList)){
+										PathologicalIndicatorCategory picExamVo2 = new PathologicalIndicatorCategory();
+										BeanUtils.copyProperties(picVo, picExamVo2);
+										String structureNameROE = "";
+										// 获取structureName
+										Structure structure2 = structureService.getOneStructure(indicator.getSpeciesId(), indicator.getOrganId(), structureROEId);
+										if (structure2 != null) {
+											structureNameROE = structure2.getName();
+										}
+										picExamVo2.setCategoryName( indicator.getIndicatorName() + structureNameROE);
+										picExamVo2.setStructureId(structureROEId);
+										picExamVo2.setNumber(structureROEId);
+										picExamVo2.setCategoryId(null);
+										picExamVo2.setCategoryCode(categoryCode);
+										picExamVo2.setGroupNumber(CommonConstant.STRUCTURE_ROE_GROUP_NUMBER);
+
+
+										//add考试
+										pathologicalIndicatorCategoryMapper.insertSelective(picExamVo2);
+									}
+								}
+							}
+						}else{
+							//统一添加cageoryCode 
+							Snowflake snowflake = new Snowflake();
+							String categoryCode = snowflake.nextIdStr();
+
+							PathologicalIndicatorCategory category2 = new PathologicalIndicatorCategory();
+							category2.setCategoryCode(categoryCode);
+							category2.setCategoryId(parmValue.get(2));
+							category2.setGroupNumber(CommonConstant.STRUCTURE_ROE_GROUP_NUMBER);
+
+							pathologicalIndicatorCategoryMapper.updateById(category2);
+
+							//type 1:结构指标 2：考试 3：标注
+							//有考试 ==》其他两个请标注（结构指标+标注）
+							//结构指标肯定是添加
+							PathologicalIndicatorCategory picVo = pathologicalIndicatorCategoryMapper.selectById(parmValue.get(2));
+							Indicator indicator = indicatorMapper.selectIndicatorById(picVo.getIndicatorId());
+							if(null != indicator){
+								PathologicalIndicatorCategory picJGVo = new PathologicalIndicatorCategory();
+								BeanUtils.copyProperties(picVo, picJGVo);
+								picJGVo.setCategoryId(null);
+								picJGVo.setStructureId(structureId);
+								picJGVo.setCategoryId(null);
+								picJGVo.setCategoryCode(categoryCode);
+
+								String structureName = "";
+								// 获取structureName
+								Structure structure = structureService.getOneStructure(indicator.getSpeciesId(), indicator.getOrganId(), structureId);
+								if (structure != null) {
+									structureName = structure.getName();
+								}
+								picJGVo.setCategoryName(indicator.getIndicatorName() + structureName);
+								picJGVo.setNumber(structureId);
+								picJGVo.setGroupNumber(CommonConstant.STRUCTURE_RO_GROUP_NUMBER);
+								pathologicalIndicatorCategoryMapper.insert(picJGVo);
+								//标注先确定是否存在这个标签，如果有就添加
+								String structureRoaId = structureId+CommonConstant.STRUCTURE_ROA;
+								List<Structure>  roaList = structureService.getListByStructureId(structureRoaId);
+								if(CollectionUtils.isNotEmpty(roaList)){
+									PathologicalIndicatorCategory picExamVo2 = new PathologicalIndicatorCategory();
+									BeanUtils.copyProperties(picVo, picExamVo2);
+									String structureNameROA = "";
+									// 获取structureName
+									Structure structure2 = structureService.getOneStructure(indicator.getSpeciesId(), indicator.getOrganId(), structureRoaId);
+									if (structure2 != null) {
+										structureNameROA = structure2.getName();
+									}
+									picExamVo2.setCategoryName(indicator.getIndicatorName() + structureNameROA);
+									picExamVo2.setStructureId(structureRoaId);
+									picExamVo2.setNumber(structureRoaId);
 									picExamVo2.setCategoryId(null);
 									picExamVo2.setCategoryCode(categoryCode);
-
-									//add考试
+									picExamVo2.setGroupNumber(CommonConstant.STRUCTURE_ROA_GROUP_NUMBER);
+									//add标注
 									pathologicalIndicatorCategoryMapper.insertSelective(picExamVo2);
 								}
-							}
-						}
-					}else{
-						//统一添加cageoryCode 
-						Snowflake snowflake = new Snowflake();
-						String categoryCode = snowflake.nextIdStr();
-
-						PathologicalIndicatorCategory category2 = new PathologicalIndicatorCategory();
-						category2.setCategoryCode(categoryCode);
-						category2.setCategoryId(parmValue.get(2));
-						pathologicalIndicatorCategoryMapper.updateById(category2);
-
-						//type 1:结构指标 2：考试 3：标注
-						//有考试 ==》其他两个请标注（结构指标+标注）
-						//结构指标肯定是添加
-						PathologicalIndicatorCategory picVo = pathologicalIndicatorCategoryMapper.selectById(parmValue.get(2));
-						Indicator indicator = indicatorMapper.selectIndicatorById(picVo.getIndicatorId());
-						if(null != indicator){
-							PathologicalIndicatorCategory picJGVo = new PathologicalIndicatorCategory();
-							BeanUtils.copyProperties(picVo, picJGVo);
-							picJGVo.setCategoryId(null);
-							picJGVo.setStructureId(structureId);
-							picJGVo.setCategoryId(null);
-							picJGVo.setCategoryCode(categoryCode);
-
-							String structureName = "";
-							// 获取structureName
-							Structure structure = structureService.getOneStructure(indicator.getSpeciesId(), indicator.getOrganId(), structureId);
-							if (structure != null) {
-								structureName = structure.getName();
-							}
-							picJGVo.setCategoryName(indicator.getIndicatorName() + structureName);
-							picJGVo.setNumber(structureId);
-							pathologicalIndicatorCategoryMapper.insert(picJGVo);
-							//标注先确定是否存在这个标签，如果有就添加
-							String structureRoaId = structureId+CommonConstant.STRUCTURE_ROA;
-							List<Structure>  roaList = structureService.getListByStructureId(structureRoaId);
-							if(CollectionUtils.isNotEmpty(roaList)){
-								PathologicalIndicatorCategory picExamVo2 = new PathologicalIndicatorCategory();
-								BeanUtils.copyProperties(picVo, picExamVo2);
-								String structureNameROA = "";
-								// 获取structureName
-								Structure structure2 = structureService.getOneStructure(indicator.getSpeciesId(), indicator.getOrganId(), structureRoaId);
-								if (structure2 != null) {
-									structureNameROA = structure2.getName();
-								}
-								picExamVo2.setCategoryName(indicator.getIndicatorName() + structureNameROA);
-								picExamVo2.setStructureId(structureRoaId);
-								picExamVo2.setNumber(structureRoaId);
-								picExamVo2.setCategoryId(null);
-								picExamVo2.setCategoryCode(categoryCode);
-								//add标注
-								pathologicalIndicatorCategoryMapper.insertSelective(picExamVo2);
 							}
 						}
 					}

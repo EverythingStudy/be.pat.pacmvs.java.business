@@ -62,5 +62,7 @@ public class LabelListVO {
     private Integer typeNumber;
     @ApiModelProperty(value = "标注类别 ")
     private String type;
+    @ApiModelProperty(value = "组内排序 1:标注区域 2：考核区域 3：结构标签")
+    private Integer groupNumber;
     
 }
