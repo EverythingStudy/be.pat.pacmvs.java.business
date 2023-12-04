@@ -70,12 +70,15 @@ public class MarkingUtils {
                 if (geometry1.within(geometry2)) {
                     throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
                 }
-                Geometry geometryIntersection = geometry1.intersection(geometry2);
-                // 判断图形是否有交集
-                if (geometryIntersection.isEmpty()) {
+                try{
+                    Geometry geometryIntersection = geometry1.intersection(geometry2);
+                    // 判断图形是否有交集
+                    if (geometryIntersection.isEmpty()) {
+                        throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
+                    }
+                } catch (Exception e){
                     throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
                 }
-
             }
             percentage = geometry2.getArea() / geometry1.getArea();
         }

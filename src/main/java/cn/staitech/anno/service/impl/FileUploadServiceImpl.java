@@ -123,7 +123,7 @@ public class FileUploadServiceImpl implements FileUploadService {
      * @throws IOException
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     public Files uploadAndProcessBusiness(FileUploadVO fileUploadVO) throws Exception {
 
         Files files = new Files();
