@@ -165,8 +165,15 @@ public class PathologicalController {
 			category.setOrganizationId(sysUser.getOrganizationId());
 			category.setCreateTime(currentDate);
 			category.setCategoryCode(categoryCode);
-			// 添加标注类别
-
+			if(currentStructureId.endsWith("ROA")){
+				//标注区域
+				category.setGroupNumber(CommonConstant.STRUCTURE_ROA_GROUP_NUMBER);
+			}else if(currentStructureId.endsWith("ROE")){
+				//考核区域
+				category.setGroupNumber(CommonConstant.STRUCTURE_ROE_GROUP_NUMBER);
+			}else{
+				category.setGroupNumber(CommonConstant.STRUCTURE_RO_GROUP_NUMBER);
+			}
 			pathologicalIndicatorCategoryService.insertSelective(category);
 			IndicatorReviseVO indicatorReviseVO = IndicatorReviseVO.builder().indicatorId(indicatorId.intValue()).build();
 			// 更新病理表数据
@@ -317,8 +324,8 @@ public class PathologicalController {
 		//修改标注类别信息
 		String retStatus = pathologicalIndicatorCategoryService.updateByPrimaryKeySelective2(category);
 		//查看当前结构是否只要结构编码
-//		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-//		boolean containsValue = Arrays.asList(CommonConstant.ORGANIZATION_ID).contains(organizationId);
+		//		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+		//		boolean containsValue = Arrays.asList(CommonConstant.ORGANIZATION_ID).contains(organizationId);
 		//TODO 另外考核区域和标注区域同样处理，structureId、number、categoryName需要单独处理，修改时候需要用自己的categoryId和indicatorId
 		if(retStatus.equals("1")){
 			updateCategory(targetCategory,targetCategoryRoe,sourcePic,indicator);
@@ -480,13 +487,13 @@ public class PathologicalController {
 			return CommonConstant.NUMBER_1;
 		}
 	}
-	
-	
+
+
 
 	@PostMapping("/test")
 	public R test() throws ParseException {
 		List<Long> dataList = new ArrayList<>();
-//		dataList.add(1638L);
+		//		dataList.add(1638L);
 		pathologicalIndicatorCategoryService.handlerCouponsUserStatusTimeOutToExpired(dataList);
 		return R.ok();
 	}

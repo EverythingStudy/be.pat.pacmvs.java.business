@@ -357,6 +357,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 						PathologicalIndicatorCategory category2 = new PathologicalIndicatorCategory();
 						category2.setCategoryCode(categoryCode);
 						category2.setCategoryId(parmValue.get(1));
+						category2.setGroupNumber(CommonConstant.STRUCTURE_RO_GROUP_NUMBER);
 						pathologicalIndicatorCategoryMapper.updateById(category2);
 
 						//其他两个请参考结构指标
@@ -378,6 +379,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 							picExamVo2.setStructureId(structureROEId);
 							picExamVo2.setNumber(structureROEId);
 							picExamVo2.setCategoryCode(categoryCode);
+							picExamVo2.setGroupNumber(CommonConstant.STRUCTURE_ROE_GROUP_NUMBER);
 							//修改考试
 							pathologicalIndicatorCategoryMapper.updateById(picExamVo2);
 						}else{
@@ -398,6 +400,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 								picExamVo2.setNumber(structureROEId);
 								picExamVo2.setCategoryId(null);
 								picExamVo2.setCategoryCode(categoryCode);
+								picExamVo2.setGroupNumber(CommonConstant.STRUCTURE_ROE_GROUP_NUMBER);
 								//add考试
 								pathologicalIndicatorCategoryMapper.insertSelective(picExamVo2);
 							}
@@ -420,6 +423,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 							picExamVo2.setStructureId(structureROAId);
 							picExamVo2.setNumber(structureROAId);
 							picExamVo2.setCategoryCode(categoryCode);
+							picExamVo2.setGroupNumber(CommonConstant.STRUCTURE_ROA_GROUP_NUMBER);
 							//修改标注
 							pathologicalIndicatorCategoryMapper.updateById(picExamVo2);
 						}else{
@@ -440,6 +444,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 								picExamVo2.setNumber(structureROAId);
 								picExamVo2.setCategoryId(null);
 								picExamVo2.setCategoryCode(categoryCode);
+								picExamVo2.setGroupNumber(CommonConstant.STRUCTURE_ROA_GROUP_NUMBER);
 
 								//add标注
 								pathologicalIndicatorCategoryMapper.insertSelective(picExamVo2);
@@ -456,6 +461,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 						PathologicalIndicatorCategory category2 = new PathologicalIndicatorCategory();
 						category2.setCategoryCode(categoryCode);
 						category2.setCategoryId(parmValue.get(3));
+						category2.setGroupNumber(CommonConstant.STRUCTURE_ROA_GROUP_NUMBER);
 						pathologicalIndicatorCategoryMapper.updateById(category2);
 
 						//其他两个请标注（结构指标+考试）
@@ -477,6 +483,8 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 							picJGVo.setNumber(structureId);
 							picJGVo.setCategoryId(null);
 							picJGVo.setCategoryCode(categoryCode);
+							picJGVo.setGroupNumber(CommonConstant.STRUCTURE_RO_GROUP_NUMBER);
+
 							pathologicalIndicatorCategoryMapper.insert(picJGVo);
 
 							String structureROEId = structureId+CommonConstant.STRUCTURE_ROE;
@@ -496,6 +504,8 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 								picExamVo2.setStructureId(structureROEId);
 								picExamVo2.setNumber(structureROEId);
 								picExamVo2.setCategoryCode(categoryCode);
+								picExamVo2.setGroupNumber(CommonConstant.STRUCTURE_ROE_GROUP_NUMBER);
+
 								//修改考试
 								pathologicalIndicatorCategoryMapper.updateById(picExamVo2);
 							}else{
@@ -516,6 +526,8 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 									picExamVo2.setNumber(structureROEId);
 									picExamVo2.setCategoryId(null);
 									picExamVo2.setCategoryCode(categoryCode);
+									picExamVo2.setGroupNumber(CommonConstant.STRUCTURE_ROE_GROUP_NUMBER);
+
 
 									//add考试
 									pathologicalIndicatorCategoryMapper.insertSelective(picExamVo2);
@@ -530,6 +542,8 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 						PathologicalIndicatorCategory category2 = new PathologicalIndicatorCategory();
 						category2.setCategoryCode(categoryCode);
 						category2.setCategoryId(parmValue.get(2));
+						category2.setGroupNumber(CommonConstant.STRUCTURE_ROE_GROUP_NUMBER);
+
 						pathologicalIndicatorCategoryMapper.updateById(category2);
 
 						//type 1:结构指标 2：考试 3：标注
@@ -553,6 +567,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 							}
 							picJGVo.setCategoryName(indicator.getIndicatorName() + structureName);
 							picJGVo.setNumber(structureId);
+							picJGVo.setGroupNumber(CommonConstant.STRUCTURE_RO_GROUP_NUMBER);
 							pathologicalIndicatorCategoryMapper.insert(picJGVo);
 							//标注先确定是否存在这个标签，如果有就添加
 							String structureRoaId = structureId+CommonConstant.STRUCTURE_ROA;
@@ -571,6 +586,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 								picExamVo2.setNumber(structureRoaId);
 								picExamVo2.setCategoryId(null);
 								picExamVo2.setCategoryCode(categoryCode);
+								picExamVo2.setGroupNumber(CommonConstant.STRUCTURE_ROA_GROUP_NUMBER);
 								//add标注
 								pathologicalIndicatorCategoryMapper.insertSelective(picExamVo2);
 							}

@@ -77,6 +77,9 @@ public class PathologicalIndicatorCategory implements Serializable {
      */
     @ApiModelProperty(hidden = true, value = "标签编号")
     private String number;
+    
+    @ApiModelProperty(hidden = true, value = "组内标签顺序")
+    private Integer groupNumber;
 
     /**
      * 图层顺序
