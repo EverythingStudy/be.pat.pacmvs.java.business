@@ -29,6 +29,7 @@ import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -42,6 +43,7 @@ import io.swagger.annotations.ApiParam;
  * @author wanglibei
  * @since 2023-12-05
  */
+@Api(value = "viewer", tags = "viewer页面-测量")
 @RestController
 @RequestMapping("/markMeasure")
 public class MarkMeasureController {
