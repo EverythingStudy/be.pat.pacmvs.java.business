@@ -408,7 +408,7 @@
                  LEFT JOIN tb_pathological_indicator_category AS p ON p.category_id = m.category_id
                  left join tb_structure as s on s.structure_id = p.structure_id
         WHERE m.slide_id = #{slideId}
-          AND s.type != "ROA"
+          AND s.type = "RO"
         GROUP BY p.category_id;
     </select>
 

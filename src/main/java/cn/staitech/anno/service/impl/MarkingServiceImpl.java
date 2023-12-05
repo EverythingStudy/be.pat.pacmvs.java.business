@@ -647,9 +647,7 @@ public class MarkingServiceImpl implements MarkingService {
 		// 循环标签列表
 		List<String> fileUrlList = new ArrayList<>();
 
-
 		for(PathologicalIndicatorCategory category:categoryLists){
-
 			String fileUrl = null;
 			try {
 				fileUrl = fileService.createFiles(slideId, FILE_SUFFIX_JSON,category.getStructureId());
@@ -666,85 +664,97 @@ public class MarkingServiceImpl implements MarkingService {
 					categoryIdList.add(indicatorCategory.getCategoryId());
 				}
 			}
-			Map<String,Object> map = new HashMap<>();
-			map.put("slideId",slideId);
-			map.put("categoryIdList",categoryIdList);
-			List<Features> features = markingMapper.selectFilterCategoryLists(map);
-			ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
-			// 使用多线程更新标注y轴
-			CountDownLatch countDownLatch = new CountDownLatch(features.size());
-			ConcurrentLinkedQueue<Features> concurrentLinkedQueue = new ConcurrentLinkedQueue<>();
-			for (Features features1 : features) {
-				cachedThreadPool.submit(new TaskGenerateJson(countDownLatch, features1, concurrentLinkedQueue));
+			// 查询标注路轮廓为ROE（标注考核）的标签
+			Map<String,Object> categoryMap = new HashMap<>();
+			categoryMap.put("categoryCode",category.getCategoryCode());
+			categoryMap.put("organizationId",sysUser.getOrganizationId());
+			PathologicalIndicatorCategory pathologicalIndicatorCategory = pathologicalIndicatorCategoryMapper.selectRoe(categoryMap);
+			if(pathologicalIndicatorCategory != null){
+				// 查询标注表中数据
+				QueryWrapper<cn.staitech.anno.project.domain.Marking> markingQueryWrapper = new QueryWrapper<>();
+				markingQueryWrapper.eq("category_id",pathologicalIndicatorCategory.getCategoryId());
+				int markingCountRes = markingMapperV1.selectCount(markingQueryWrapper);
+				// 考核区域标签的数据大于0才可生成考题
+				if(markingCountRes > 0){
+					Map<String,Object> map = new HashMap<>();
+					map.put("slideId",slideId);
+					map.put("categoryIdList",categoryIdList);
+					List<Features> features = markingMapper.selectFilterCategoryLists(map);
+					ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
+					// 使用多线程更新标注y轴
+					CountDownLatch countDownLatch = new CountDownLatch(features.size());
+					ConcurrentLinkedQueue<Features> concurrentLinkedQueue = new ConcurrentLinkedQueue<>();
+					for (Features features1 : features) {
+						cachedThreadPool.submit(new TaskGenerateJson(countDownLatch, features1, concurrentLinkedQueue));
 
-			}
-			countDownLatch.await();
-			cachedThreadPool.shutdown();
+					}
+					countDownLatch.await();
+					cachedThreadPool.shutdown();
+					// 查询项目详情
+					JsonExport jsonExport = null;
+					Project projectBy = projectMapperV1.selectById(slideBy.getProjectId());
+					if (Objects.equals(projectBy.getProjectType(), "2")) {
+						jsonExport = markingMapper.jsonExportSelect(slideId);
+					} else {
+						jsonExport = markingMapper.reviewJsonExportSelect(slideId);
+					}
+					// 项目信息
+					GeoProject project = new GeoProject();
+					// 种属编码 + 结构编码 + 数据库项目id
+					String projectId = jsonExport.getSpeciesId() + GLIDE_LINE + jsonExport.getOrganId() + GLIDE_LINE + jsonExport.getProjectId();
+					project.setProject_id(projectId);
+					project.setProject_name(jsonExport.getProjectName());
 
-			// 查询项目详情
-			JsonExport jsonExport = null;
-			Project projectBy = projectMapperV1.selectById(slideBy.getProjectId());
-			if (Objects.equals(projectBy.getProjectType(), "2")) {
-				jsonExport = markingMapper.jsonExportSelect(slideId);
-			} else {
-				jsonExport = markingMapper.reviewJsonExportSelect(slideId);
-			}
+					// 图像信息
+					GeoImage image = new GeoImage();
+					image.setImage_shape(jsonExport.getImageShape());
+					image.setImage_type(jsonExport.getFormat());
+					image.setImage_name(jsonExport.getImageName());
+					image.setCreate_time(jsonExport.getCreateTime());
+					// 获取切片中的geo_image_id,为空则使用以下规则进行生成（项目id + 十三位时间戳 + 两位随机数）
+					String imageId = "";
+					if (Objects.equals(slideBy.getGeoImageId(), "") || slideBy.getGeoImageId() == null) {
+						imageId = jsonExport.getProjectId() + GLIDE_LINE + System.currentTimeMillis() + GLIDE_LINE + RandomUtils.RandomNumbers();
+						Slide slides = new Slide();
+						slides.setSlideId(slideId);
+						slides.setGeoImageId(imageId);
+						slideMapperV1.updateById(slides);
+					} else {
+						imageId = slideBy.getGeoImageId();
+					}
+					image.setImage_id(imageId);
+					image.setImage_url(jsonExport.getImageUrl());
 
-			// 项目信息
-			GeoProject project = new GeoProject();
-			// 种属编码 + 结构编码 + 数据库项目id
-			String projectId = jsonExport.getSpeciesId() + GLIDE_LINE + jsonExport.getOrganId() + GLIDE_LINE + jsonExport.getProjectId();
-			project.setProject_id(projectId);
-			project.setProject_name(jsonExport.getProjectName());
-
-			// 图像信息
-			GeoImage image = new GeoImage();
-			image.setImage_shape(jsonExport.getImageShape());
-			image.setImage_type(jsonExport.getFormat());
-			image.setImage_name(jsonExport.getImageName());
-			image.setCreate_time(jsonExport.getCreateTime());
-			// 获取切片中的geo_image_id,为空则使用以下规则进行生成（项目id + 十三位时间戳 + 两位随机数）
-			String imageId = "";
-			if (Objects.equals(slideBy.getGeoImageId(), "") || slideBy.getGeoImageId() == null) {
-				imageId = jsonExport.getProjectId() + GLIDE_LINE + System.currentTimeMillis() + GLIDE_LINE + RandomUtils.RandomNumbers();
-				Slide slides = new Slide();
-				slides.setSlideId(slideId);
-				slides.setGeoImageId(imageId);
-				slideMapperV1.updateById(slides);
-			} else {
-				imageId = slideBy.getGeoImageId();
-			}
-			image.setImage_id(imageId);
-			image.setImage_url(jsonExport.getImageUrl());
-
-			// 作者信息
-			GeoAttribute attribute = new GeoAttribute();
-			attribute.setAuthor(sysUser.getUserName());
-			attribute.setDepartment(sysUser.getDept());
+					// 作者信息
+					GeoAttribute attribute = new GeoAttribute();
+					attribute.setAuthor(sysUser.getUserName());
+					attribute.setDepartment(sysUser.getDept());
 
 //			// 标签信息
-			List<GeoLabel> categoryList = new ArrayList<>();
-			for(PathologicalIndicatorCategory i:categories){
-				GeoLabel geoLabel = new GeoLabel();
-				geoLabel.setLabel_code(i.getStructureId());
-				geoLabel.setLabel_color(i.getRgb());
-				geoLabel.setLabel_name(i.getCategoryName());
-				categoryList.add(geoLabel);
-			}
-			//
-			// 构建geoJson数据
-			GeoJson geoJson = new GeoJson();
+					List<GeoLabel> categoryList = new ArrayList<>();
+					for(PathologicalIndicatorCategory i:categories){
+						GeoLabel geoLabel = new GeoLabel();
+						geoLabel.setLabel_code(i.getStructureId());
+						geoLabel.setLabel_color(i.getRgb());
+						geoLabel.setLabel_name(i.getCategoryName());
+						categoryList.add(geoLabel);
+					}
+					//
+					// 构建geoJson数据
+					GeoJson geoJson = new GeoJson();
 
-			List<Features> featuresList = new ArrayList<>(concurrentLinkedQueue);
-			geoJson.setFeatures(featuresList);
-			geoJson.setImage(image);
-			geoJson.setProject(project);
-			geoJson.setAttribute(attribute);
-			geoJson.setLabel_info(categoryList);
-			String jsonString = JSON.toJSONString(geoJson, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue);
-			// 写入文件
-			exportJson(fileUrl, jsonString);
-			fileUrlList.add(fileUrl);
+					List<Features> featuresList = new ArrayList<>(concurrentLinkedQueue);
+					geoJson.setFeatures(featuresList);
+					geoJson.setImage(image);
+					geoJson.setProject(project);
+					geoJson.setAttribute(attribute);
+					geoJson.setLabel_info(categoryList);
+					String jsonString = JSON.toJSONString(geoJson, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue);
+					// 写入文件
+					exportJson(fileUrl, jsonString);
+					fileUrlList.add(fileUrl);
+				}
+			}
 		}
 		return fileUrlList.stream().map(String::valueOf).collect(Collectors.joining(","));
 	}
