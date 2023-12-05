@@ -124,7 +124,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void csvExportReviewCurrent(Long projectId, List<Long> slideIds) throws Exception {
+    public void csvExportReviewCurrent(Long projectId, Long slideId) throws Exception {
         String projectName = "";
         ServletOutputStream out = null;
         InputStream inputStream = null;
@@ -133,7 +133,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
         try {
             Map params = new HashMap(16);
             params.put("projectId", projectId);
-            params.put("slideIds", slideIds);
+            params.put("slideId", slideId);
             List<ReviewVO> reviewVOS = getBaseMapper().exportReview(params);
             if (reviewVOS != null && !reviewVOS.isEmpty()) {
                 CsvWriter writer = CsvUtil.getWriter(file, CharsetUtil.CHARSET_UTF_8);
