@@ -137,7 +137,8 @@ public class AsyncTask {
                     if (size > 0) {
                         InputStream bf = zipFile.getInputStream(ze);
                         InputStream newBf = zipFile.getInputStream(ze);
-                        parseJson(bf, newBf, slideResList);
+                        InputStream newBfs = zipFile.getInputStream(ze);
+                        parseJson(bf, newBf, slideResList,newBfs);
                         bf.close();
                     }
                 }
@@ -157,7 +158,7 @@ public class AsyncTask {
      * @param slideResList 切片集合
      * @throws Exception
      */
-    public void parseJson(InputStream fileUrl, InputStream newBf, List<SlideRes> slideResList) throws Exception {
+    public void parseJson(InputStream fileUrl, InputStream newBf, List<SlideRes> slideResList,InputStream newBfs) throws Exception {
         JsonFactory f = new MappingJsonFactory();
         JsonParser jp = f.createParser(fileUrl);
         JsonToken current;
@@ -179,21 +180,28 @@ public class AsyncTask {
             }
         }
         // 校验切片名称
-        fileNameContrast(imageName, slideResList, newBf);
+        fileNameContrast(imageName, slideResList, newBf,newBfs);
 
     }
 
 
-    public void fileNameContrast(String imageName, List<SlideRes> slideResList, InputStream newBf) throws Exception {
+    public void fileNameContrast(String imageName, List<SlideRes> slideResList, InputStream newBf,InputStream newBfs) throws Exception {
         List<cn.staitech.anno.project.domain.Marking> markingList = new ArrayList<>();
         if (imageName != null) {
             for (SlideRes slide : slideResList) {
                 // 判断名称切片名称是否相同
 
                 if (Objects.equals(slide.getImageName(), imageName)) {
-                    // 删除当前切片中所有标注
+                    JsonFactory fs = new MappingJsonFactory();
+                    JsonParser jps = fs.createParser(newBfs);
+                    JSONObject jsonObject=JSONObject.parseObject(jps.readValueAsTree().toString());
+                    // 删除当前切片中(json中用户的)所有标注
                     QueryWrapper<Marking> markingQueryWrapperBy = new QueryWrapper<>();
                     markingQueryWrapperBy.eq("slide_id", slide.getSlideId());
+                    //获取json中用户信息
+                    String name=jsonObject.getJSONObject("attribute").getString("author");
+                    markingQueryWrapperBy.eq("annotation_owner", name);
+                    //删除slideId下author的所有标注
                     markingMapperV1.delete(markingQueryWrapperBy);
                     // 查询切片详情
                     Slide slideBy = slideMapperV1.selectById(slide.getSlideId());
