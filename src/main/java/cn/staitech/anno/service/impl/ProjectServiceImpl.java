@@ -1,12 +1,15 @@
 package cn.staitech.anno.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.RecentlyVisited;
+import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.SlideAnnotationResult;
 import cn.staitech.anno.mapper.ProjectMapper;
 import cn.staitech.anno.mapper.RecentlyVisitedMapper;
+import cn.staitech.anno.mapper.SlideMapper;
 import cn.staitech.anno.service.ProjectService;
 import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
@@ -18,6 +21,7 @@ import cn.staitech.anno.vo.project.in.ProjectIdsVO;
 import cn.staitech.anno.vo.slide.SlideCategoryProcessFlagVO;
 import cn.staitech.anno.vo.statistic.StatisticProjectListOutVO;
 import cn.staitech.common.security.utils.SecurityUtils;
+import com.alibaba.nacos.client.config.utils.ContentUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
@@ -39,6 +43,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     private ProjectMapper projectMapper;
     @Resource
     private RecentlyVisitedMapper recentlyVisitedMapper;
+
+    @Resource
+    private SlideMapper slideMapper;
 
     /**
      * 根据主键查询项目详情
@@ -379,10 +386,15 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         List<Long> idList = request.getProjectIds();
         AtomicInteger processCount = new AtomicInteger(0);
         for (Long projectId : idList) {
+            List<Slide> slideList=slideMapper.getProjectInformation(projectId);
+            //判断是否有关联的slide
+            if (CollectionUtil.isNotEmpty(slideList)){
+                return -1;
+            }
             Project project = new Project();
             project.setProjectId(projectId);
             // 只能删除项目状态是未启动的项目。
-            project.setStatus(1);
+//            project.setStatus(1);
             QueryWrapper queryWrapper = new QueryWrapper<>(project);
 
             Project delProject = getOne(queryWrapper);
