@@ -21,7 +21,7 @@ public interface ReviewService extends IService<Review> {
 
     void exportReview(Long projectId, Long slideId) throws Exception;
 
-    void csvExportReviewCurrent(Long projectId, List<Long> slideIds) throws Exception;
+    void csvExportReviewCurrent(Long projectId,Long slideId) throws Exception;
 
     DownTask csvExportReview(Long projectId, List<Long> slideIds) throws Exception;
 

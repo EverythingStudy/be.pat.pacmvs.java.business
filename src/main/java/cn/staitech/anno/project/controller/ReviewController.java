@@ -95,11 +95,11 @@ public class ReviewController {
     @GetMapping("/downReview")
     public void csvExportReviewCurrent(@RequestParam(value = "slideId", required = false) @ApiParam(name = "slideId", value = "切片id") Long slideId,
                                        @RequestParam(value = "projectId", required = true) @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId) throws Exception {
-        List<Long> list = new ArrayList<>();
-        if (slideId != null) {
-            list.add(slideId);
-        }
-        reviewService.csvExportReviewCurrent(projectId, list);
+//        List<Long> list = new ArrayList<>();
+//        if (slideId != null) {
+//            list.add(slideId);
+//        }
+        reviewService.csvExportReviewCurrent(projectId, slideId);
     }
 
     @ApiOperation(value = "下载任务状态查询")
