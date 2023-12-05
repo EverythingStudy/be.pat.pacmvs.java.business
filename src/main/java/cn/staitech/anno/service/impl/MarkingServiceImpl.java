@@ -95,7 +95,7 @@ public class MarkingServiceImpl implements MarkingService {
 	private static final WKTReader wktReader = new WKTReader(geometryFactory);
 	private static final int BATCH_SIZE = 5000;
 
-	private static final ExecutorService executor = ExecutorBuilder.create().setCorePoolSize(Runtime.getRuntime().availableProcessors()).setMaxPoolSize(Runtime.getRuntime().availableProcessors() *2).setKeepAliveTime(0).build();
+	private static final ExecutorService executor = ExecutorBuilder.create().setCorePoolSize(Runtime.getRuntime().availableProcessors()).setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2).setKeepAliveTime(0).build();
 	private static final ExecutorService annExecutor = ExecutorBuilder.create()
 			.setCorePoolSize(Runtime.getRuntime().availableProcessors())
 			.setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2)
@@ -176,10 +176,10 @@ public class MarkingServiceImpl implements MarkingService {
 
 	@Override
 	public List<Features> selectListBy(Long slideId) throws Exception {
-		Slide slideBy = redisService.getCacheObject(CommonConstant.ANNO_SLIDE+slideId);
-		if(null == slideBy){
+		Slide slideBy = redisService.getCacheObject(CommonConstant.ANNO_SLIDE + slideId);
+		if (null == slideBy) {
 			slideBy = slideMapperV1.selectById(slideId);
-			redisService.setCacheObject(CommonConstant.ANNO_SLIDE+slideId, slideBy, CommonConstant.SLIDE_CACHE_HOURS, TimeUnit.HOURS);
+			redisService.setCacheObject(CommonConstant.ANNO_SLIDE + slideId, slideBy, CommonConstant.SLIDE_CACHE_HOURS, TimeUnit.HOURS);
 		}
 		if (!Optional.ofNullable(slideBy).isPresent()) {
 			throw new Exception(MessageSource.M("SLIDE_ABNORMAL_NO_INFORMATION"));
@@ -213,17 +213,17 @@ public class MarkingServiceImpl implements MarkingService {
 	@Transactional(rollbackFor = Exception.class)
 	public String insert(ViewAddIn req) throws Exception {
 		//TODO  imageId projectId 前端出入可进一步优化
-		if(req.getGeometry() != null){
+		if (req.getGeometry() != null) {
 			if (req.getGeometry().isEmpty()) {
 				log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
 				return "更新失败，轮廓数据不能为空";
 			}
 		}
 		//加slide缓存
-		cn.staitech.anno.project.domain.Slide slideBy = redisService.getCacheObject(CommonConstant.ANNO_SLIDE+req.getSlide_id());
-		if(null == slideBy){
+		cn.staitech.anno.project.domain.Slide slideBy = redisService.getCacheObject(CommonConstant.ANNO_SLIDE + req.getSlide_id());
+		if (null == slideBy) {
 			slideBy = slideMapperV1.selectById(req.getSlide_id());
-			redisService.setCacheObject(CommonConstant.ANNO_SLIDE+req.getSlide_id(), slideBy, CommonConstant.SLIDE_CACHE_HOURS, TimeUnit.HOURS);
+			redisService.setCacheObject(CommonConstant.ANNO_SLIDE + req.getSlide_id(), slideBy, CommonConstant.SLIDE_CACHE_HOURS, TimeUnit.HOURS);
 		}
 		if (slideBy == null) {
 			return MessageSource.M("NO_SLIDE_DATA");
@@ -249,10 +249,10 @@ public class MarkingServiceImpl implements MarkingService {
 		marking.setOrganization_id(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
 		marking.setCreate_time(new Date());
 		//加用户缓存
-		SysUser user = redisService.getCacheObject(CommonConstant.SYS_USER+req.getCreate_by());
-		if(null == user){
+		SysUser user = redisService.getCacheObject(CommonConstant.SYS_USER + req.getCreate_by());
+		if (null == user) {
 			user = userMapper.selectUserById(req.getCreate_by());
-			redisService.setCacheObject(CommonConstant.SYS_USER+req.getCreate_by(), user, CommonConstant.SYS_USER_CACHE_HOURS, TimeUnit.DAYS);
+			redisService.setCacheObject(CommonConstant.SYS_USER + req.getCreate_by(), user, CommonConstant.SYS_USER_CACHE_HOURS, TimeUnit.DAYS);
 		}
 		if (user != null) {
 			marking.setAnnotation_owner(user.getUserName());
@@ -283,7 +283,7 @@ public class MarkingServiceImpl implements MarkingService {
 
 		// 添加数据库，添加后返回自增id
 		markingMapper.insert(marking);
-		
+
 		Properties properties = markingMapper.selectBy(marking.getMarking_id());
 		Features features = MarkingUtils.socketData(annotationId, marking.getGeometry(), properties);
 		// 如果是点类型，返回点的总数并返回
@@ -292,7 +292,7 @@ public class MarkingServiceImpl implements MarkingService {
 		NioWebSocketHandler.sendAll(req.getSlide_id(), broadcastVO);
 
 		//TODO 多线程处理
-		annExecutor.submit(new AnnCountThread(1,slideBy,marking));
+		annExecutor.submit(new AnnCountThread(1, slideBy, marking));
 
 		// 更新切片表中最新状态
 		/* updateSLide(marking.getSlide_id());
@@ -304,32 +304,32 @@ public class MarkingServiceImpl implements MarkingService {
 
 	@Override
 	public double operationCheck(UpdateOperationIn req) throws Exception {
-		Marking	markingBy = markingMapper.selectById(req.getMarking_id());
+		Marking markingBy = markingMapper.selectById(req.getMarking_id());
 		// 查询数据是否存在
 		if (!Optional.ofNullable(markingBy).isPresent()) {
 			throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
 		}
-		Project project=projectMapperV1.selectById(markingBy.getProject_id());
+		Project project = projectMapperV1.selectById(markingBy.getProject_id());
 		//验证集项目中不能修改他人轮廓
-		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")){
+		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
 			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
 		}
-		return MarkingUtils.updateOperationVerify(markingBy.getGeometry(),req.getGeometry(),req.getOperation());
+		return MarkingUtils.updateOperationVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation());
 	}
 
 	@Override
 	public JSONObject updateOperation(UpdateOperationIn req) throws Exception {
-		Marking	markingBy = markingMapper.selectById(req.getMarking_id());
+		Marking markingBy = markingMapper.selectById(req.getMarking_id());
 		// 查询数据是否存在
 		if (!Optional.ofNullable(markingBy).isPresent()) {
 			throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
 		}
-		Project project=projectMapperV1.selectById(markingBy.getProject_id());
+		Project project = projectMapperV1.selectById(markingBy.getProject_id());
 		//验证集项目中不能修改他人轮廓
-		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")){
+		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
 			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
 		}
-		String location = MarkingUtils.updateVerify(markingBy.getGeometry(),req.getGeometry(),req.getOperation(),req.getCheck());
+		String location = MarkingUtils.updateVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation(), req.getCheck());
 		JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(location));
 		cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
 		marking.setGeometry(jsonObject);
@@ -351,23 +351,23 @@ public class MarkingServiceImpl implements MarkingService {
 	public String update(MarkingUpdateIn req) throws Exception {
 		// 查询标注表中信息==》先走缓存
 //		Marking markingBy = redisService.getCacheObject(CommonConstant.ANNO_MARKING+req.getMarking_id());
-		Marking	markingBy = markingMapper.selectById(req.getMarking_id());
+		Marking markingBy = markingMapper.selectById(req.getMarking_id());
 //		if(null == markingBy){
 //			redisService.setCacheObject(CommonConstant.ANNO_MARKING+req.getMarking_id(), markingBy, CommonConstant.MARKING_CACHE_HOURS, TimeUnit.HOURS);
 //		}
 		if (!Optional.ofNullable(markingBy).isPresent()) {
 			throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
 		}
-		Project project=projectMapperV1.selectById(markingBy.getProject_id());
+		Project project = projectMapperV1.selectById(markingBy.getProject_id());
 		//验证集项目中不能修改他人轮廓
-		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")){
+		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
 			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
 		}
 		// 查询切片表中信息==》先走缓存
-		Slide slide = redisService.getCacheObject(CommonConstant.ANNO_SLIDE+markingBy.getSlide_id());
-		if(null == slide){
+		Slide slide = redisService.getCacheObject(CommonConstant.ANNO_SLIDE + markingBy.getSlide_id());
+		if (null == slide) {
 			slide = slideMapperV1.selectById(markingBy.getSlide_id());
-			redisService.setCacheObject(CommonConstant.ANNO_SLIDE+markingBy.getSlide_id(), slide, CommonConstant.SLIDE_CACHE_HOURS, TimeUnit.HOURS);
+			redisService.setCacheObject(CommonConstant.ANNO_SLIDE + markingBy.getSlide_id(), slide, CommonConstant.SLIDE_CACHE_HOURS, TimeUnit.HOURS);
 		}
 		if (!Optional.ofNullable(slide).isPresent()) {
 			throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
@@ -375,18 +375,18 @@ public class MarkingServiceImpl implements MarkingService {
 		// 更新前数据
 		//BeanUtils.copyProperties(req, marking);
 		Marking marking = updaeTrans2Marking(req);
-		if(null != req.getUpdate_by()){
+		if (null != req.getUpdate_by()) {
 			marking.setUpdate_by(req.getUpdate_by());
 			//加用户缓存
-			SysUser user = redisService.getCacheObject(CommonConstant.SYS_USER+req.getUpdate_by());
-			if(null == user){
+			SysUser user = redisService.getCacheObject(CommonConstant.SYS_USER + req.getUpdate_by());
+			if (null == user) {
 				user = userMapper.selectUserById(req.getUpdate_by());
-				redisService.setCacheObject(CommonConstant.SYS_USER+req.getUpdate_by(), user, CommonConstant.SYS_USER_CACHE_HOURS, TimeUnit.DAYS);
+				redisService.setCacheObject(CommonConstant.SYS_USER + req.getUpdate_by(), user, CommonConstant.SYS_USER_CACHE_HOURS, TimeUnit.DAYS);
 			}
 			if (user != null) {
 				marking.setAnnotation_update_owner(user.getUserName());
 			}
-		}else{
+		} else {
 			marking.setUpdate_by(SecurityUtils.getLoginUser().getSysUser().getUserId());
 			marking.setAnnotation_update_owner(SecurityUtils.getLoginUser().getSysUser().getUserName());
 		}
@@ -401,8 +401,8 @@ public class MarkingServiceImpl implements MarkingService {
 		}
 		List<PointCount> pointCountList = updatePoint(markingBy.getLocation_type(), markingBy);
 		// 修改轮廓时，轮廓为空
-		if(req.getCategory_id() == null && req.getDescription() == null){
-			if(req.getGeometry() != null){
+		if (req.getCategory_id() == null && req.getDescription() == null) {
+			if (req.getGeometry() != null) {
 				if (req.getGeometry().isEmpty()) {
 					log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
 					throw new Exception("更新失败，轮廓数据不能为空");
@@ -413,8 +413,7 @@ public class MarkingServiceImpl implements MarkingService {
 //					JSONObject jsonObject = JSONObject.parseObject(location);
 //					marking.setGeometry(jsonObject);
 //				}
-			}
-			else {
+			} else {
 				log.info("标注数据异常:" + req + "------------------------------------------------->");
 				throw new Exception("修改标注数据异常，更新失败");
 			}
@@ -448,11 +447,10 @@ public class MarkingServiceImpl implements MarkingService {
         }*/
 
 		//TODO 多线程处理
-		annExecutor.submit(new AnnCountThread(2,slide,marking));
+		annExecutor.submit(new AnnCountThread(2, slide, marking));
 
 		return markingBy.getMarking_id();
 	}
-
 
 
 	@Override
@@ -486,7 +484,6 @@ public class MarkingServiceImpl implements MarkingService {
 		slideAttrService.removeAnnoCategory(slide.getSlideId(), Collections.singletonList(markingBy.getCategory_id()));
 		return res;
 	}
-
 
 
 	class TaskGenerateJson implements Runnable {
@@ -530,7 +527,7 @@ public class MarkingServiceImpl implements MarkingService {
 		}
 		String fileUrl = null;
 		try {
-			fileUrl = fileService.createFiles(slideId, FILE_SUFFIX_JSON,null);
+			fileUrl = fileService.createFiles(slideId, FILE_SUFFIX_JSON, null);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -618,6 +615,7 @@ public class MarkingServiceImpl implements MarkingService {
 
 	/**
 	 * 根据标签生成多个json文件
+	 *
 	 * @param slideId
 	 * @param sysUser
 	 * @return
@@ -647,108 +645,116 @@ public class MarkingServiceImpl implements MarkingService {
 		// 循环标签列表
 		List<String> fileUrlList = new ArrayList<>();
 
+		for (PathologicalIndicatorCategory category : categoryLists) {
+			// 查询标注路轮廓为ROE（标注考核）的标签
+			Map<String, Object> categoryMap = new HashMap<>();
+			categoryMap.put("categoryCode", category.getCategoryCode());
+			categoryMap.put("organizationId", sysUser.getOrganizationId());
+			PathologicalIndicatorCategory pathologicalIndicatorCategory = pathologicalIndicatorCategoryMapper.selectRoe(categoryMap);
+			if (pathologicalIndicatorCategory != null) {
+				String fileUrl = null;
+				try {
+					fileUrl = fileService.createFiles(slideId, FILE_SUFFIX_JSON, category.getStructureId());
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+				QueryWrapper<PathologicalIndicatorCategory> pathologicalIndicatorCategoryQueryWrapper = new QueryWrapper<>();
+				pathologicalIndicatorCategoryQueryWrapper.eq("category_code", category.getCategoryCode());
+				// 根据categoryCode唯一标识查询一组类别数据
+				List<PathologicalIndicatorCategory> categories = pathologicalIndicatorCategoryMapper.selectList(pathologicalIndicatorCategoryQueryWrapper);
+				List<Long> categoryIdList = new ArrayList<>();
+				if (categories.size() > 0) {
+					for (PathologicalIndicatorCategory indicatorCategory : categories) {
+						categoryIdList.add(indicatorCategory.getCategoryId());
+					}
+				}
+				// 查询标注表中数据
+				QueryWrapper<cn.staitech.anno.project.domain.Marking> markingQueryWrapper = new QueryWrapper<>();
+				markingQueryWrapper.eq("category_id", pathologicalIndicatorCategory.getCategoryId()).eq("slide_id",slideId);
+				int markingCountRes = markingMapperV1.selectCount(markingQueryWrapper);
+				// 考核区域标签的数据大于0才可生成考题
+				if (markingCountRes > 0) {
+					Map<String, Object> map = new HashMap<>();
+					map.put("slideId", slideId);
+					map.put("categoryIdList", categoryIdList);
+					List<Features> features = markingMapper.selectFilterCategoryLists(map);
+					ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
+					// 使用多线程更新标注y轴
+					CountDownLatch countDownLatch = new CountDownLatch(features.size());
+					ConcurrentLinkedQueue<Features> concurrentLinkedQueue = new ConcurrentLinkedQueue<>();
+					for (Features features1 : features) {
+						cachedThreadPool.submit(new TaskGenerateJson(countDownLatch, features1, concurrentLinkedQueue));
 
-		for(PathologicalIndicatorCategory category:categoryLists){
+					}
+					countDownLatch.await();
+					cachedThreadPool.shutdown();
+					// 查询项目详情
+					JsonExport jsonExport = null;
+					Project projectBy = projectMapperV1.selectById(slideBy.getProjectId());
+					if (Objects.equals(projectBy.getProjectType(), "2")) {
+						jsonExport = markingMapper.jsonExportSelect(slideId);
+					} else {
+						jsonExport = markingMapper.reviewJsonExportSelect(slideId);
+					}
+					// 项目信息
+					GeoProject project = new GeoProject();
+					// 种属编码 + 结构编码 + 数据库项目id
+					String projectId = jsonExport.getSpeciesId() + GLIDE_LINE + jsonExport.getOrganId() + GLIDE_LINE + jsonExport.getProjectId();
+					project.setProject_id(projectId);
+					project.setProject_name(jsonExport.getProjectName());
 
-			String fileUrl = null;
-			try {
-				fileUrl = fileService.createFiles(slideId, FILE_SUFFIX_JSON,category.getStructureId());
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-			QueryWrapper<PathologicalIndicatorCategory> pathologicalIndicatorCategoryQueryWrapper = new QueryWrapper<>();
-			pathologicalIndicatorCategoryQueryWrapper.eq("category_code",category.getCategoryCode());
-			// 根据categoryCode唯一标识查询一组类别数据
-			List<PathologicalIndicatorCategory> categories = pathologicalIndicatorCategoryMapper.selectList(pathologicalIndicatorCategoryQueryWrapper);
-			List<Long> categoryIdList = new ArrayList<>();
-			if(categories.size() > 0){
-				for(PathologicalIndicatorCategory indicatorCategory:categories){
-					categoryIdList.add(indicatorCategory.getCategoryId());
+					// 图像信息
+					GeoImage image = new GeoImage();
+					image.setImage_shape(jsonExport.getImageShape());
+					image.setImage_type(jsonExport.getFormat());
+					image.setImage_name(jsonExport.getImageName());
+					image.setCreate_time(jsonExport.getCreateTime());
+					// 获取切片中的geo_image_id,为空则使用以下规则进行生成（项目id + 十三位时间戳 + 两位随机数）
+					String imageId = "";
+					if (Objects.equals(slideBy.getGeoImageId(), "") || slideBy.getGeoImageId() == null) {
+						imageId = jsonExport.getProjectId() + GLIDE_LINE + System.currentTimeMillis() + GLIDE_LINE + RandomUtils.RandomNumbers();
+						Slide slides = new Slide();
+						slides.setSlideId(slideId);
+						slides.setGeoImageId(imageId);
+						slideMapperV1.updateById(slides);
+					} else {
+						imageId = slideBy.getGeoImageId();
+					}
+					image.setImage_id(imageId);
+					image.setImage_url(jsonExport.getImageUrl());
+
+					// 作者信息
+					GeoAttribute attribute = new GeoAttribute();
+					attribute.setAuthor(sysUser.getUserName());
+					attribute.setDepartment(sysUser.getDept());
+//			// 标签信息
+					List<GeoLabel> categoryList = new ArrayList<>();
+					for (PathologicalIndicatorCategory i : categories) {
+						GeoLabel geoLabel = new GeoLabel();
+						geoLabel.setLabel_code(i.getStructureId());
+						geoLabel.setLabel_color(i.getRgb());
+						geoLabel.setLabel_name(i.getCategoryName());
+						categoryList.add(geoLabel);
+					}
+					//
+					// 构建geoJson数据
+					GeoJson geoJson = new GeoJson();
+
+					List<Features> featuresList = new ArrayList<>(concurrentLinkedQueue);
+					geoJson.setFeatures(featuresList);
+					geoJson.setImage(image);
+					geoJson.setProject(project);
+					geoJson.setAttribute(attribute);
+					geoJson.setLabel_info(categoryList);
+					String jsonString = JSON.toJSONString(geoJson, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue);
+					// 写入文件
+					exportJson(fileUrl, jsonString);
+					fileUrlList.add(fileUrl);
 				}
 			}
-			Map<String,Object> map = new HashMap<>();
-			map.put("slideId",slideId);
-			map.put("categoryIdList",categoryIdList);
-			List<Features> features = markingMapper.selectFilterCategoryLists(map);
-			ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
-			// 使用多线程更新标注y轴
-			CountDownLatch countDownLatch = new CountDownLatch(features.size());
-			ConcurrentLinkedQueue<Features> concurrentLinkedQueue = new ConcurrentLinkedQueue<>();
-			for (Features features1 : features) {
-				cachedThreadPool.submit(new TaskGenerateJson(countDownLatch, features1, concurrentLinkedQueue));
-
-			}
-			countDownLatch.await();
-			cachedThreadPool.shutdown();
-
-			// 查询项目详情
-			JsonExport jsonExport = null;
-			Project projectBy = projectMapperV1.selectById(slideBy.getProjectId());
-			if (Objects.equals(projectBy.getProjectType(), "2")) {
-				jsonExport = markingMapper.jsonExportSelect(slideId);
-			} else {
-				jsonExport = markingMapper.reviewJsonExportSelect(slideId);
-			}
-
-			// 项目信息
-			GeoProject project = new GeoProject();
-			// 种属编码 + 结构编码 + 数据库项目id
-			String projectId = jsonExport.getSpeciesId() + GLIDE_LINE + jsonExport.getOrganId() + GLIDE_LINE + jsonExport.getProjectId();
-			project.setProject_id(projectId);
-			project.setProject_name(jsonExport.getProjectName());
-
-			// 图像信息
-			GeoImage image = new GeoImage();
-			image.setImage_shape(jsonExport.getImageShape());
-			image.setImage_type(jsonExport.getFormat());
-			image.setImage_name(jsonExport.getImageName());
-			image.setCreate_time(jsonExport.getCreateTime());
-			// 获取切片中的geo_image_id,为空则使用以下规则进行生成（项目id + 十三位时间戳 + 两位随机数）
-			String imageId = "";
-			if (Objects.equals(slideBy.getGeoImageId(), "") || slideBy.getGeoImageId() == null) {
-				imageId = jsonExport.getProjectId() + GLIDE_LINE + System.currentTimeMillis() + GLIDE_LINE + RandomUtils.RandomNumbers();
-				Slide slides = new Slide();
-				slides.setSlideId(slideId);
-				slides.setGeoImageId(imageId);
-				slideMapperV1.updateById(slides);
-			} else {
-				imageId = slideBy.getGeoImageId();
-			}
-			image.setImage_id(imageId);
-			image.setImage_url(jsonExport.getImageUrl());
-
-			// 作者信息
-			GeoAttribute attribute = new GeoAttribute();
-			attribute.setAuthor(sysUser.getUserName());
-			attribute.setDepartment(sysUser.getDept());
-
-//			// 标签信息
-			List<GeoLabel> categoryList = new ArrayList<>();
-			for(PathologicalIndicatorCategory i:categories){
-				GeoLabel geoLabel = new GeoLabel();
-				geoLabel.setLabel_code(i.getStructureId());
-				geoLabel.setLabel_color(i.getRgb());
-				geoLabel.setLabel_name(i.getCategoryName());
-				categoryList.add(geoLabel);
-			}
-			//
-			// 构建geoJson数据
-			GeoJson geoJson = new GeoJson();
-
-			List<Features> featuresList = new ArrayList<>(concurrentLinkedQueue);
-			geoJson.setFeatures(featuresList);
-			geoJson.setImage(image);
-			geoJson.setProject(project);
-			geoJson.setAttribute(attribute);
-			geoJson.setLabel_info(categoryList);
-			String jsonString = JSON.toJSONString(geoJson, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue);
-			// 写入文件
-			exportJson(fileUrl, jsonString);
-			fileUrlList.add(fileUrl);
 		}
 		return fileUrlList.stream().map(String::valueOf).collect(Collectors.joining(","));
 	}
-
 
 
 	@Override
@@ -991,10 +997,10 @@ public class MarkingServiceImpl implements MarkingService {
 		DownTask task = DownTask.builder().code(snowflake.nextIdStr()).status(Constants.DOWN_STATE_RUNNING).createTime(new Date()).updateTime(new Date()).updateBy(userId).createBy(userId).build();
 		downTaskMapper.insert(task);
 		//在标注类项目，切片列表页面，批量导出JSON时，去掉未交付的图片，不允许随时导出未交付的json
-		if (Objects.equals(projectBy.getProjectType(), "1") && CollectionUtil.isNotEmpty(slideIds)){
-			List<Long>slideIdList=slideIds.stream().filter(e->{
+		if (Objects.equals(projectBy.getProjectType(), "1") && CollectionUtil.isNotEmpty(slideIds)) {
+			List<Long> slideIdList = slideIds.stream().filter(e -> {
 				Slide slideBy = slideMapperV1.selectById(e);
-				if (Objects.equals(slideBy.getStatus(), "7")){
+				if (Objects.equals(slideBy.getStatus(), "7")) {
 					return true;
 				}
 				return false;
@@ -1003,7 +1009,7 @@ public class MarkingServiceImpl implements MarkingService {
 			// 查询所有的切片
 			executor.submit(new TaskThread(task, projectId, projectBy.getProjectName(), slideIdList, SecurityUtils.getLoginUser().getSysUser()));
 
-		}else{
+		} else {
 			// 执行任务
 			// 查询所有的切片
 			executor.submit(new TaskThread(task, projectId, projectBy.getProjectName(), slideIds, SecurityUtils.getLoginUser().getSysUser()));
@@ -1126,18 +1132,18 @@ public class MarkingServiceImpl implements MarkingService {
 				if (slideIds == null || slideIds.isEmpty()) {
 					QueryWrapper<Slide> queryWrapper = Wrappers.query();
 					queryWrapper.eq("project_id", projectId);
-					queryWrapper.select("slide_id","status");
+					queryWrapper.select("slide_id", "status");
 					List<Slide> slideList = slideMapperV1.selectList(queryWrapper);
 
 					slideIds = new ArrayList<>();
 					// 在标注类项目，切片列表页面，批量导出JSON时，去掉未交付的图片，不允许随时导出未交付的json
-					Project project=projectMapperV1.selectById(projectId);
-					if (Objects.equals(project.getProjectType(), "1") && CollectionUtil.isNotEmpty(slideList)){
-						List<Slide> slideLists = slideList.stream().filter(s-> Objects.equals(s.getStatus(), "7")).collect(Collectors.toList());
+					Project project = projectMapperV1.selectById(projectId);
+					if (Objects.equals(project.getProjectType(), "1") && CollectionUtil.isNotEmpty(slideList)) {
+						List<Slide> slideLists = slideList.stream().filter(s -> Objects.equals(s.getStatus(), "7")).collect(Collectors.toList());
 						slideLists.forEach(slide -> {
 							slideIds.add(slide.getSlideId());
 						});
-					}else{
+					} else {
 						slideList.forEach(slide -> {
 							slideIds.add(slide.getSlideId());
 						});
@@ -1178,16 +1184,16 @@ public class MarkingServiceImpl implements MarkingService {
 	}
 
 
-   public void process(Integer type,Slide slide,Marking marking) throws Exception{
+	public void process(Integer type, Slide slide, Marking marking) throws Exception {
 
-	   Long slideId = marking.getSlide_id();
-	   String markIngId = marking.getMarking_id();
-	  // String annotationId = marking.getAnnotation_id();
-	   Long createBy = marking.getCreate_by();
-	   Long categoryId = marking.getCategory_id();
+		Long slideId = marking.getSlide_id();
+		String markIngId = marking.getMarking_id();
+		// String annotationId = marking.getAnnotation_id();
+		Long createBy = marking.getCreate_by();
+		Long categoryId = marking.getCategory_id();
 
 		//增加缓存
-		redisService.setCacheObject(CommonConstant.ANNO_MARKING+markIngId, marking, CommonConstant.MARKING_CACHE_HOURS, TimeUnit.HOURS);
+		redisService.setCacheObject(CommonConstant.ANNO_MARKING + markIngId, marking, CommonConstant.MARKING_CACHE_HOURS, TimeUnit.HOURS);
 
 		// 判断切片状态是否是未开始
 		if (Objects.equals(slide.getStatus(), "1")) {
@@ -1198,7 +1204,7 @@ public class MarkingServiceImpl implements MarkingService {
 
 		// 更新切片表中最新状态
 		updateSLide(slideId);
-		if(type == 2){
+		if (type == 2) {
 			//修改
 			slideAttrService.removeAnnoUsers(slideId, Collections.singletonList(createBy));
 			slideAttrService.removeAnnoCategory(slideId, Collections.singletonList(categoryId));
@@ -1209,7 +1215,7 @@ public class MarkingServiceImpl implements MarkingService {
 		} else {
 			slideAttrService.saveAnnoCategory(slideId, new ArrayList<>());
 		}
-   }
+	}
 
 	class AnnCountThread implements Runnable {
 		// type 1:标注保存  2：标注修改
@@ -1218,8 +1224,7 @@ public class MarkingServiceImpl implements MarkingService {
 		private final Marking marking;
 
 
-
-		public AnnCountThread(Integer type,Slide slide,Marking marking) {
+		public AnnCountThread(Integer type, Slide slide, Marking marking) {
 			this.type = type;
 			this.slide = slide;
 			this.marking = marking;
@@ -1228,7 +1233,7 @@ public class MarkingServiceImpl implements MarkingService {
 		@Override
 		public void run() {
 			try {
-				process(this.type,this.slide,this.marking);
+				process(this.type, this.slide, this.marking);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1236,129 +1241,128 @@ public class MarkingServiceImpl implements MarkingService {
 	}
 
 
-	private Marking trans2Marking(ViewAddIn view){
+	private Marking trans2Marking(ViewAddIn view) {
 		Marking marking = new Marking();
 		marking.setSlide_id(view.getSlide_id());
-		if(null != view.getCreate_by()){
+		if (null != view.getCreate_by()) {
 			marking.setCreate_by(view.getCreate_by());
 		}
-		if(StringUtils.isNotEmpty(view.getArea())){
+		if (StringUtils.isNotEmpty(view.getArea())) {
 			marking.setArea(view.getArea());
 		}
-		if(StringUtils.isNotEmpty(view.getPerimeter())){
+		if (StringUtils.isNotEmpty(view.getPerimeter())) {
 			marking.setPerimeter(view.getPerimeter());
 		}
-		if(null != view.getCategory_id()){
+		if (null != view.getCategory_id()) {
 			marking.setCategory_id(view.getCategory_id());
 		}
-		if(StringUtils.isNotEmpty(view.getLocation_type())){
+		if (StringUtils.isNotEmpty(view.getLocation_type())) {
 			marking.setLocation_type(view.getLocation_type());
 		}
-		if(StringUtils.isNotEmpty(view.getDescription())){
+		if (StringUtils.isNotEmpty(view.getDescription())) {
 			marking.setDescription(view.getDescription());
 		}
 
-		if(null != view.getGeometry()){
+		if (null != view.getGeometry()) {
 			marking.setGeometry(view.getGeometry());
 		}
-		if(null != view.getMeasure_type()){
+		if (null != view.getMeasure_type()) {
 			marking.setMeasure_type(view.getMeasure_type());
 		}
 
-		if(StringUtils.isNotEmpty(view.getMeasure_relation())){
+		if (StringUtils.isNotEmpty(view.getMeasure_relation())) {
 			marking.setMeasure_relation(view.getMeasure_relation());
 		}
-		if(StringUtils.isNotEmpty(view.getMeasure_name())){
+		if (StringUtils.isNotEmpty(view.getMeasure_name())) {
 			marking.setMeasure_name(view.getMeasure_name());
 		}
-		if(null != view.getMeasure_number()){
+		if (null != view.getMeasure_number()) {
 			marking.setMeasure_number(view.getMeasure_number());
 		}
-		if(StringUtils.isNotEmpty(view.getRadius())){
+		if (StringUtils.isNotEmpty(view.getRadius())) {
 			marking.setRadius(view.getRadius());
 		}
 
-		if(null != view.getMean_distance()){
+		if (null != view.getMean_distance()) {
 			marking.setMean_distance(view.getMean_distance());
 		}
-		if(null != view.getMax_distance()){
+		if (null != view.getMax_distance()) {
 			marking.setMax_distance(view.getMax_distance());
 		}
-		if(null != view.getMin_distance()){
+		if (null != view.getMin_distance()) {
 			marking.setMin_distance(view.getMin_distance());
 		}
-		if(StringUtils.isNotEmpty(view.getInner_angle())){
+		if (StringUtils.isNotEmpty(view.getInner_angle())) {
 			marking.setInner_angle(view.getInner_angle());
 		}
-		if(StringUtils.isNotEmpty(view.getExterior_angle())){
+		if (StringUtils.isNotEmpty(view.getExterior_angle())) {
 			marking.setExterior_angle(view.getExterior_angle());
 		}
-		if(StringUtils.isNotEmpty(view.getCenter_point())){
+		if (StringUtils.isNotEmpty(view.getCenter_point())) {
 			marking.setCenter_point(view.getCenter_point());
 		}
 		return marking;
 	}
 
 
-
-	private Marking updaeTrans2Marking(MarkingUpdateIn view){
+	private Marking updaeTrans2Marking(MarkingUpdateIn view) {
 		Marking marking = new Marking();
 		marking.setMarking_id(view.getMarking_id());
-		if(null != view.getUpdate_by()){
+		if (null != view.getUpdate_by()) {
 			marking.setUpdate_by(view.getUpdate_by());
 		}
-		if(StringUtils.isNotEmpty(view.getArea())){
+		if (StringUtils.isNotEmpty(view.getArea())) {
 			marking.setArea(view.getArea());
 		}
-		if(StringUtils.isNotEmpty(view.getPerimeter())){
+		if (StringUtils.isNotEmpty(view.getPerimeter())) {
 			marking.setPerimeter(view.getPerimeter());
 		}
-		if(null != view.getCategory_id()){
+		if (null != view.getCategory_id()) {
 			marking.setCategory_id(view.getCategory_id());
 		}
-		if(StringUtils.isNotEmpty(view.getLocation_type())){
+		if (StringUtils.isNotEmpty(view.getLocation_type())) {
 			marking.setLocation_type(view.getLocation_type());
 		}
-		if(StringUtils.isNotEmpty(view.getDescription())){
+		if (StringUtils.isNotEmpty(view.getDescription())) {
 			marking.setDescription(view.getDescription());
 		}
 
-		if(null != view.getGeometry()){
+		if (null != view.getGeometry()) {
 			marking.setGeometry(view.getGeometry());
 		}
-		if(null != view.getMeasure_type()){
+		if (null != view.getMeasure_type()) {
 			marking.setMeasure_type(view.getMeasure_type().intValue());
 		}
 
-		if(StringUtils.isNotEmpty(view.getMeasure_relation())){
+		if (StringUtils.isNotEmpty(view.getMeasure_relation())) {
 			marking.setMeasure_relation(view.getMeasure_relation());
 		}
-		if(StringUtils.isNotEmpty(view.getMeasure_name())){
+		if (StringUtils.isNotEmpty(view.getMeasure_name())) {
 			marking.setMeasure_name(view.getMeasure_name());
 		}
-		if(null != view.getMeasure_number()){
+		if (null != view.getMeasure_number()) {
 			marking.setMeasure_number(view.getMeasure_number().intValue());
 		}
-		if(StringUtils.isNotEmpty(view.getRadius())){
+		if (StringUtils.isNotEmpty(view.getRadius())) {
 			marking.setRadius(view.getRadius());
 		}
 
-		if(null != view.getMean_distance()){
+		if (null != view.getMean_distance()) {
 			marking.setMean_distance(view.getMean_distance());
 		}
-		if(null != view.getMax_distance()){
+		if (null != view.getMax_distance()) {
 			marking.setMax_distance(view.getMax_distance());
 		}
-		if(null != view.getMin_distance()){
+		if (null != view.getMin_distance()) {
 			marking.setMin_distance(view.getMin_distance());
 		}
-		if(StringUtils.isNotEmpty(view.getInner_angle())){
+		if (StringUtils.isNotEmpty(view.getInner_angle())) {
 			marking.setInner_angle(view.getInner_angle());
 		}
-		if(StringUtils.isNotEmpty(view.getExterior_angle())){
+		if (StringUtils.isNotEmpty(view.getExterior_angle())) {
 			marking.setExterior_angle(view.getExterior_angle());
 		}
-		if(StringUtils.isNotEmpty(view.getCenter_point())){
+		if (StringUtils.isNotEmpty(view.getCenter_point())) {
 			marking.setCenter_point(view.getCenter_point());
 		}
 		return marking;

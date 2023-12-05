@@ -21,14 +21,13 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static cn.staitech.anno.aspect.LogFileAspect.response;
 
 /**
  * @author gjt
@@ -121,7 +120,7 @@ public class ExamineScoreController {
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "导出标注数据")
     @PostMapping("/export")
-    public void export(@RequestBody ExamineScoreExportInsertVo examineScoreExportInsertVo
+    public void export(@RequestBody ExamineScoreExportInsertVo examineScoreExportInsertVo, HttpServletResponse response
     ) throws Exception {
         // 查询考核评分列表
         List<ExamineScoreExportVO> examineScoreList = examineScoreService.selectLists(examineScoreExportInsertVo.getExamineScoreIdList());
