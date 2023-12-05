@@ -1,0 +1,130 @@
+package cn.staitech.anno.controller;
+
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
+
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.alibaba.fastjson.JSONObject;
+
+import cn.staitech.anno.service.MarkMeasureService;
+import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.vo.geojson.Features;
+import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
+import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
+import cn.staitech.anno.vo.geojson.in.ViewAddIn;
+import cn.staitech.anno.vo.marking.MarkingSelectListVO;
+import cn.staitech.common.core.domain.PageResponse;
+import cn.staitech.common.core.domain.R;
+import cn.staitech.common.log.annotation.Log;
+import cn.staitech.common.log.enums.BusinessType;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
+/**
+ * <p>
+ * 标注测量表 前端控制器
+ * </p>
+ *
+ * @author wanglibei
+ * @since 2023-12-05
+ */
+@RestController
+@RequestMapping("/markMeasure")
+public class MarkMeasureController {
+
+    @Resource
+    private MarkMeasureService markMeasureService;
+
+    
+    @ApiOperation(value = "获取测量列表")
+    @GetMapping("/list")
+    public R<PageResponse<MarkingSelectListVO>> list(
+            @NotNull(message = "{ReviewRoundController.list.isnull}") @RequestParam("pageNum") @ApiParam(name = "pageNum", value = "分页参数", required = true) Integer pageNum,
+            @NotNull(message = "{ReviewRoundController.list.isnull}") @RequestParam("pageSize") @ApiParam(name = "pageSize", value = "分页参数", required = true) Integer pageSize,
+            @RequestParam(value = "measureFullName", required = false) @ApiParam(name = "measureFullName", value = "标注名称", required = true) String measureFullName,
+            @RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) throws Exception {
+        if (!Optional.ofNullable(slideId).isPresent()) {
+            return R.fail(MessageSource.M("ARGUMENT_INVALID"));
+        }
+        return R.ok(markMeasureService.list(slideId,pageNum,pageSize,measureFullName));
+    }
+
+
+    
+    @ApiOperation(value = "获取GeoJson数据")
+    @GetMapping("/getDataList")
+    public R<List<Features>> getDataList(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) throws Exception {
+        if (!Optional.ofNullable(slideId).isPresent()) {
+            return R.fail(MessageSource.M("ARGUMENT_INVALID"));
+        }
+        return R.ok(markMeasureService.selectListBy(slideId));
+    }
+
+
+    
+    @ApiOperation(value = "添加测量")
+    @PostMapping("/add")
+    public R<String> add(@Validated @RequestBody ViewAddIn req) throws Exception {
+        String markingId = markMeasureService.insert(req);
+        return R.ok(markingId, MessageSource.M("OPERATE_SUCCEED"));
+    }
+
+    
+    @ApiOperation(value = "删除测量")
+    @ApiImplicitParams({@ApiImplicitParam(name = "markingId", value = "标注id", required = true, dataType = "Long", paramType = "query")})
+    @DeleteMapping("/del")
+    public R<String> del(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) String marking_id) throws Exception {
+        markMeasureService.delete(marking_id);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+    }
+
+    
+    @ApiOperation(value = "更新测量")
+    @PutMapping("/update")
+    public R<String> update(@Validated @RequestBody MarkingUpdateIn req) throws Exception {
+        markMeasureService.update(req);
+        return R.ok(req.getMarking_id(), MessageSource.M("OPERATE_SUCCEED"));
+    }
+
+    
+    @ApiOperation(value = "合并、裁剪轮廓")
+    @PutMapping("/updateOperation")
+    public R<JSONObject> updateOperation(@Validated @RequestBody UpdateOperationIn req) throws Exception {
+        JSONObject geoJson = markMeasureService.updateOperation(req);
+        return R.ok(geoJson, MessageSource.M("OPERATE_SUCCEED"));
+    }
+
+    
+    @ApiOperation(value = "合并、裁剪轮廓校验")
+    @PutMapping("/operationCheck")
+    public R<Double> operationCheck(@Validated @RequestBody UpdateOperationIn req) throws Exception {
+        double percentage = markMeasureService.operationCheck(req);
+        return R.ok(percentage, MessageSource.M("OPERATE_SUCCEED"));
+    }
+
+
+    @Log(title = "标注测量excel导出", businessType = BusinessType.EXPORT)
+    @ApiOperation(value = "标注测量excel导出")
+    @GetMapping("/export")
+    public void export(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) throws Exception {
+        markMeasureService.execlExport(slideId);
+    }
+
+    
+
+}
+
