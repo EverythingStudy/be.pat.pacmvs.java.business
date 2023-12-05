@@ -670,7 +670,7 @@ public class MarkingServiceImpl implements MarkingService {
                 }
                 // 查询标注表中数据
                 QueryWrapper<cn.staitech.anno.project.domain.Marking> markingQueryWrapper = new QueryWrapper<>();
-                markingQueryWrapper.eq("category_id", pathologicalIndicatorCategory.getCategoryId());
+                markingQueryWrapper.eq("category_id", pathologicalIndicatorCategory.getCategoryId()).eq("slide_id",slideId);
                 int markingCountRes = markingMapperV1.selectCount(markingQueryWrapper);
                 // 考核区域标签的数据大于0才可生成考题
                 if (markingCountRes > 0) {
