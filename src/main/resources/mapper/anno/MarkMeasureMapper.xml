@@ -180,7 +180,7 @@
                t.annotation_update_owner,
                t.update_time,
                t.update_by,
-               t.image_id,
+           --    t.image_id,
                t.project_id
 --                t.image_url
         FROM tb_mark_measure AS t
@@ -259,8 +259,8 @@
                        c.category_name,
                        "measure_full_name",
                        CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name),
-                       "image_id",
-                       t.image_id,
+                      -- "image_id",
+                     --  t.image_id,
                        "update_by",
                        t.update_by,
                        "annotation_update_owner",

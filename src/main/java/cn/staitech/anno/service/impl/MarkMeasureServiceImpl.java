@@ -42,6 +42,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.thread.ExecutorBuilder;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.mapper.ImageMapper;
@@ -216,7 +217,9 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 		}
 
 		MarkMeasure marking = trans2Marking(req);
-
+		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+//		SysUser sysUser = userMapper.selectUserById(1L);
+		
 		// 获取规定的geoJson Id
 		String annotationId = CustomizationIdUtils.getSdId();
 		marking.setAnnotation_id(annotationId);
@@ -231,7 +234,7 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 		// 若未传入标注作者,使用当前登录用户为标注作者==>必传Create_by 无默认
 		marking.setCreate_by(req.getCreate_by());
 		marking.setAnnotation_type("Measure");
-		marking.setOrganization_id(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+		marking.setOrganization_id(sysUser.getOrganizationId());
 		marking.setCreate_time(new Date());
 		//加用户缓存
 		SysUser user = redisService.getCacheObject(CommonConstant.SYS_USER+req.getCreate_by());
@@ -255,7 +258,10 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 		}
 		marking.setNumber(number);
 		marking.setProject_id(Long.valueOf(slideBy.getProjectId()));
-
+		
+		Snowflake snowflake = new Snowflake();
+		String markMeasureId = snowflake.nextIdStr();
+		marking.setMark_measure_id(markMeasureId);
 		// 添加数据库，添加后返回自增id
 		markMeasureMapper.insert(marking);
 		
@@ -303,12 +309,15 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")){
 			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
 		}
+		
+		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+//		SysUser sysUser = userMapper.selectUserById(1L);
 		String location = MarkingUtils.updateVerify(markingBy.getGeometry(),req.getGeometry(),req.getOperation(),req.getCheck());
 		JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(location));
 		MarkMeasure marking = new MarkMeasure();
 		marking.setGeometry(jsonObject);
 		marking.setMark_measure_id(req.getMarking_id());
-		marking.setUpdate_by(SecurityUtils.getUserId());
+		marking.setUpdate_by(sysUser.getUserId());
 		marking.setUpdate_time(new Date());
 		//markingMapperV1.updateById(marking);
 		markMeasureMapper.updateById(marking);
@@ -330,10 +339,15 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 			throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
 		}
 		Project project=projectMapperV1.selectById(markingBy.getProject_id());
+		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+//		SysUser sysUser = userMapper.selectUserById(1L);
 		//验证集项目中不能修改他人轮廓
-		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")){
+		if (!Objects.equals(markingBy.getCreate_by(), sysUser.getUserId()) && Objects.equals(project.getProjectType(), "3")){
 			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
 		}
+		
+
+		
 		// 查询切片表中信息==》先走缓存
 		Slide slide = redisService.getCacheObject(CommonConstant.ANNO_SLIDE+markingBy.getSlide_id());
 		if(null == slide){
@@ -357,8 +371,8 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 				marking.setAnnotation_update_owner(user.getUserName());
 			}
 		}else{
-			marking.setUpdate_by(SecurityUtils.getLoginUser().getSysUser().getUserId());
-			marking.setAnnotation_update_owner(SecurityUtils.getLoginUser().getSysUser().getUserName());
+			marking.setUpdate_by(sysUser.getUserId());
+			marking.setAnnotation_update_owner(sysUser.getUserName());
 		}
 		marking.setUpdate_time(new Date());
 		if (req.getArea() != null && !"".equals(req.getArea())) {
