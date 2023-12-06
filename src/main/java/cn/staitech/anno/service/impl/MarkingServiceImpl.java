@@ -1009,7 +1009,7 @@ public class MarkingServiceImpl implements MarkingService {
 	}
 
 	@Override
-	public void execlExport(Long slideId) throws Exception {
+	public void execlExport(Long slideId, HttpServletResponse response) throws Exception {
 		// 构造表头的每个列头 定义表头
 		List<Map<String, String>> titleList = getTitleList(CommonConstant.MEASURE_COLHEAD_KEY, CommonConstant.MEASURE_COLHEAD_VALUE);
 		// 查询当前切片不为点类型的标注数据

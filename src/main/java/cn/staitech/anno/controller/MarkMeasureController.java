@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.validation.annotation.Validated;
@@ -122,8 +123,8 @@ public class MarkMeasureController {
     @Log(title = "标注测量excel导出", businessType = BusinessType.EXPORT)
     @ApiOperation(value = "标注测量excel导出")
     @GetMapping("/export")
-    public void export(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) throws Exception {
-        markMeasureService.execlExport(slideId);
+    public void export(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId, HttpServletResponse response) throws Exception {
+        markMeasureService.execlExport(slideId,response);
     }
 
     

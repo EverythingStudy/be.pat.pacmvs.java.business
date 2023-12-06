@@ -130,7 +130,7 @@ public interface MarkingService {
     /**
      * 导出execl
      */
-    void execlExport(Long slideId) throws Exception;
+    void execlExport(Long slideId, HttpServletResponse response) throws Exception;
 
     DownTask projectJsonExport(Long projectId, List<Long> slideIds) throws Exception;
 

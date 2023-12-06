@@ -2,6 +2,8 @@ package cn.staitech.anno.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -78,7 +80,7 @@ public interface MarkMeasureService extends IService<MarkMeasure> {
     /**
      * 导出execl
      */
-    void execlExport(Long slideId) throws Exception;
+    void execlExport(Long slideId, HttpServletResponse response) throws Exception;
 
 
 

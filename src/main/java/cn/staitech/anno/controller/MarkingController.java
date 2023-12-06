@@ -25,6 +25,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
@@ -164,8 +165,8 @@ public class MarkingController {
     @Log(title = "标注测量excel导出", businessType = BusinessType.EXPORT)
     @ApiOperation(value = "标注测量excel导出")
     @GetMapping("/export")
-    public void export(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) throws Exception {
-        markingService.execlExport(slideId);
+    public void export(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId, HttpServletResponse response) throws Exception {
+        markingService.execlExport(slideId,response);
     }
 
     @ApiOperationSupport(author = "gjt")
