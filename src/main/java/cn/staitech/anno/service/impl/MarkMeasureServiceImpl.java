@@ -45,6 +45,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.thread.ExecutorBuilder;
 import cn.staitech.anno.constant.CommonConstant;
+import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.mapper.ImageMapper;
 import cn.staitech.anno.mapper.MarkMeasureMapper;
 import cn.staitech.anno.mapper.MarkingMapper;
@@ -222,13 +223,24 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 		
 		// 获取规定的geoJson Id
 		String annotationId = CustomizationIdUtils.getSdId();
+		Image image = getImageById(slideBy.getImageId().longValue());
 		marking.setAnnotation_id(annotationId);
 		if (req.getArea() != null) {
-			Double area = new Double(req.getArea()) * MICRON;
+			Double area = 0.0;
+			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
+				area = new Double(req.getArea()) * Double.valueOf(image.getResolutionX()) * Double.valueOf(image.getResolutionX());
+			}else{
+				area = new Double(req.getArea()) * MICRON;
+			}
 			marking.setArea(String.valueOf(area));
 		}
 		if (req.getPerimeter() != null) {
-			Double perimeter = new Double(req.getPerimeter()) * MICRON;
+			Double perimeter = 0.0;
+			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
+				perimeter = new Double(req.getPerimeter()) * Double.valueOf(image.getResolutionX());
+			}else{
+				perimeter = new Double(req.getPerimeter()) * MICRON;
+			}
 			marking.setPerimeter(String.valueOf(perimeter));
 		}
 		// 若未传入标注作者,使用当前登录用户为标注作者==>必传Create_by 无默认
@@ -375,12 +387,31 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 			marking.setAnnotation_update_owner(sysUser.getUserName());
 		}
 		marking.setUpdate_time(new Date());
-		if (req.getArea() != null && !"".equals(req.getArea())) {
+		/*if (req.getArea() != null && !"".equals(req.getArea())) {
 			Double area = new Double(req.getArea()) * MICRON;
 			marking.setArea(String.valueOf(area));
 		}
 		if (req.getPerimeter() != null && !"".equals(req.getPerimeter())) {
 			Double perimeter = new Double(req.getPerimeter()) * MICRON;
+			marking.setPerimeter(String.valueOf(perimeter));
+		}*/
+		Image image = getImageById(slide.getImageId().longValue());
+		if (req.getArea() != null) {
+			Double area = 0.0;
+			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
+				area = new Double(req.getArea()) * Double.valueOf(image.getResolutionX()) * Double.valueOf(image.getResolutionX());
+			}else{
+				area = new Double(req.getArea()) * MICRON;
+			}
+			marking.setArea(String.valueOf(area));
+		}
+		if (req.getPerimeter() != null) {
+			Double perimeter = 0.0;
+			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
+				perimeter = new Double(req.getPerimeter()) * Double.valueOf(image.getResolutionX());
+			}else{
+				perimeter = new Double(req.getPerimeter()) * MICRON;
+			}
 			marking.setPerimeter(String.valueOf(perimeter));
 		}
 		List<PointCount> pointCountList = updatePoint(markingBy.getLocation_type(), markingBy);
@@ -836,6 +867,15 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 			marking.setCenter_point(view.getCenter_point());
 		}
 		return marking;
+	}
+	
+	public Image getImageById(Long imageId){
+		Image image = redisService.getCacheObject(CommonConstant.ANNO_IMAGE+imageId);
+		if(null == image){
+			image = imageMapper.selectById(imageId);
+			redisService.setCacheObject(CommonConstant.ANNO_IMAGE+imageId, image, CommonConstant.IMAGE_CACHE_HOURS, TimeUnit.HOURS);
+		}
+		return image;
 	}
 
 }
