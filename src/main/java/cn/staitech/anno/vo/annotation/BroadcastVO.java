@@ -12,6 +12,8 @@ public class BroadcastVO {
     private String type;
 
     private Long slideId;
+    
+    private String annotation_type;
 
     private Features data;
 
