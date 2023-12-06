@@ -694,7 +694,7 @@ public class MarkingServiceImpl implements MarkingService {
 			// 查询标注路轮廓为ROE（标注考核）的标签
 			Map<String, Object> categoryMap = new HashMap<>();
 			categoryMap.put("categoryCode", category.getCategoryCode());
-			categoryMap.put("organizationId", sysUser.getOrganizationId());
+//			categoryMap.put("organizationId", sysUser.getOrganizationId());
 			PathologicalIndicatorCategory pathologicalIndicatorCategory = pathologicalIndicatorCategoryMapper.selectRoe(categoryMap);
 			if (pathologicalIndicatorCategory != null) {
 				String fileUrl = null;
