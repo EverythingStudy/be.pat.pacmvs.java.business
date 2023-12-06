@@ -288,7 +288,9 @@ public class MarkingServiceImpl implements MarkingService {
         Features features = MarkingUtils.socketData(annotationId, marking.getGeometry(), properties);
         // 如果是点类型，返回点的总数并返回
         List<PointCount> pointCountList = updatePoint(marking.getLocation_type(), marking);
-        BroadcastVO broadcastVO = SendMessage.sendOneMessages(ADD_STATUS, features, pointCountList);
+//        BroadcastVO broadcastVO = SendMessage.sendOneMessages(ADD_STATUS, features, pointCountList);
+		BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW,ADD_STATUS, features, pointCountList);
+
         NioWebSocketHandler.sendAll(req.getSlide_id(), broadcastVO);
 
         //TODO 多线程处理
@@ -340,7 +342,8 @@ public class MarkingServiceImpl implements MarkingService {
         // 更新后查询数据并返回
         Properties properties = markingMapper.selectBy(req.getMarking_id());
         Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), marking.getGeometry(), properties);
-        BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features);
+//        BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features);
+        BroadcastVO broadcastVO = SendMessage.sendOneMessagesByAnnoType(CommonConstant.ANNO_TYPE_DRAW,UPDATE_STATUS, features);
         NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
         return jsonObject;
     }
@@ -429,7 +432,9 @@ public class MarkingServiceImpl implements MarkingService {
         }
         Properties properties = markingMapper.selectBy(marking.getMarking_id());
         Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), req.getGeometry(), properties);
-        BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features, pointCountList);
+       // BroadcastVO broadcastVO = SendMessage.sendOneMessages2(UPDATE_STATUS, features, pointCountList);
+		BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW,UPDATE_STATUS, features, pointCountList);
+
         // 使用websocket发送数据
         NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
 
@@ -475,7 +480,9 @@ public class MarkingServiceImpl implements MarkingService {
         Properties properties = markingMapper.selectBy(markingId);
         Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), markingBy.getGeometry(), properties);
         List<PointCount> pointCountList = updatePoint(markingBy.getLocation_type(), markingBy);
-        BroadcastVO broadcastVO = SendMessage.sendOneMessages(DELETE_STATUS, features, pointCountList);
+//        BroadcastVO broadcastVO = SendMessage.sendOneMessages(DELETE_STATUS, features, pointCountList);
+		BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW,DELETE_STATUS, features, pointCountList);
+
         NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
         int res = markingMapper.delete(markingId);
         updateSLide(slide.getSlideId());
@@ -1024,7 +1031,8 @@ public class MarkingServiceImpl implements MarkingService {
         QueryWrapper<cn.staitech.anno.project.domain.Marking> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("slide_id", slideId);
         markingMapperV1.delete(queryWrapper);
-        BroadcastVO broadcastVO = SendMessage.sendOneMessages(CLEAN, new Features());
+       // BroadcastVO broadcastVO = SendMessage.sendOneMessages(CLEAN, new Features());
+        BroadcastVO broadcastVO = SendMessage.sendOneMessagesByAnnoType(CommonConstant.ANNO_TYPE_DRAW,CLEAN, new Features());
         NioWebSocketHandler.sendAll(slideId, broadcastVO);
     }
 

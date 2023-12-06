@@ -68,6 +68,11 @@ public class CommonConstant {
     public static final Long IMAGE_CACHE_HOURS = 24L;
     public static final String ANNO_MARKING = "ANNO_MARKING_";
     public static final Long MARKING_CACHE_HOURS = 24L;
+    public static final String ANNO_TYPE_DRAW = "Draw";
+    public static final String ANNO_TYPE_AI = "AI";
+    public static final String ANNO_TYPE_MEASURE = "Measure";
+
+
     
     /**
      * 上传下载限制

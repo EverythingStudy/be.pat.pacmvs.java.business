@@ -268,7 +268,7 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 		Properties properties = markMeasureMapper.selectBy(marking.getMark_measure_id());
 		Features features = MarkingUtils.socketData(annotationId, marking.getGeometry(), properties);
 		// 如果是点类型，返回点的总数并返回
-		BroadcastVO broadcastVO = SendMessage.sendOneMessages(ADD_STATUS, features);
+		BroadcastVO broadcastVO = SendMessage.sendOneMessagesByAnnoType(CommonConstant.ANNO_TYPE_MEASURE,ADD_STATUS, features);
 
 		NioWebSocketHandler.sendAll(req.getSlide_id(), broadcastVO);
 
@@ -324,7 +324,7 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 		// 更新后查询数据并返回
 		Properties properties = markMeasureMapper.selectBy(req.getMarking_id());
 		Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), marking.getGeometry(), properties);
-		BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features);
+		BroadcastVO broadcastVO = SendMessage.sendOneMessagesByAnnoType(CommonConstant.ANNO_TYPE_MEASURE,UPDATE_STATUS, features);
 		NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
 		return jsonObject;
 	}
@@ -408,8 +408,8 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 		}
 		Properties properties = markMeasureMapper.selectBy(marking.getMark_measure_id());
 		Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), req.getGeometry(), properties);
-		BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features, pointCountList);
-//		BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features);
+		BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_MEASURE,UPDATE_STATUS, features, pointCountList);
+//		BroadcastVO broadcastVO = SendMessage.sendOneMessages1(UPDATE_STATUS, features);
 
 		// 使用websocket发送数据
 		NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
@@ -437,7 +437,7 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 		Properties properties = markMeasureMapper.selectBy(markingId);
 		Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), markingBy.getGeometry(), properties);
 		List<PointCount> pointCountList = updatePoint(markingBy.getLocation_type(), markingBy);
-		BroadcastVO broadcastVO = SendMessage.sendOneMessages(DELETE_STATUS, features, pointCountList);
+		BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_MEASURE,DELETE_STATUS, features, pointCountList);
 		NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
 		int res = markMeasureMapper.delete(markingId);
 		updateSLide(slide.getSlideId());
