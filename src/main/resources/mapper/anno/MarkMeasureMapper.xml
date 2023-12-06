@@ -57,7 +57,7 @@
         <result property="area" column="area"/>
         <result property="perimeter" column="perimeter"/>
         <result property="measure_full_name" column="measure_full_name"/>
-        <result property="mean_distance" column="mean_distance "/>
+        <result property="mean_distance" column="mean_distance"/>
         <result property="max_distance" column="max_distance"/>
         <result property="min_distance" column="min_distance"/>
         <result property="inner_angle" column="inner_angle"/>
