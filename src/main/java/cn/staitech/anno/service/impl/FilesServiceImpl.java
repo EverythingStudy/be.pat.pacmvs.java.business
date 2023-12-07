@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -304,19 +305,20 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         String zipFileNameNoExt = zipUrl.substring(zipUrl.lastIndexOf(File.separator) + 1, zipUrl.lastIndexOf("."));
         // 目标路径根目录
         String destDirRoot = zipUrl.substring(0, zipUrl.lastIndexOf(File.separator) + 1) + zipFileNameNoExt;
-
         byte[] buffer = new byte[1024];
-        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))) {
+        log.info("unZip开始解压文件: {} {}", zipFile.getAbsolutePath(), zipFile.length());
+
+        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile), Charset.forName("GBK"))) {
             ZipEntry entry = zis.getNextEntry();
             while (entry != null) {
                 // 处理ZIP重复不覆盖逻辑
                 String entryName = entry.getName();
-                // TODO--------------
+
                 String entryNamePath = entry.getName().substring(entry.getName().indexOf("/"), entryName.length());
                 String filePath = destDirRoot + entryNamePath;
 
                 // String filePath = destDirRoot + entryName;
-                log.info("destDirRoot: {} , zipFileNameNoExt: {} entryName：{} filePath {}", destDirRoot, zipFileNameNoExt, entryName, filePath);
+                // log.info("destDirRoot: {} , zipFileNameNoExt: {} entryName：{} filePath {}", destDirRoot, zipFileNameNoExt, entryName, filePath);
 
                 File file = new File(filePath);
 

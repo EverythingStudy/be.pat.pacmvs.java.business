@@ -70,7 +70,7 @@
         left join tb_pathological_indicator i on p.indicator_id = i.indicator_id
         left join tb_product_series ps on p.product_series_id = ps.product_series_id
         <where>
-            p.status != '1'
+            p.status != '1' AND p.project_type in ('1','3')
             <if test="params.userId!= null">
                 AND m.user_id = #{params.userId}
             </if>
@@ -84,6 +84,7 @@
                 AND p.product_series_id = #{params.productSeriesId}
             </if>
             <if test="params.organizationId != null">
+                <!-- 组织机构ID -->
                 AND p.organization_id = #{params.organizationId}
             </if>
             <if test="params.speciesId!= null">
