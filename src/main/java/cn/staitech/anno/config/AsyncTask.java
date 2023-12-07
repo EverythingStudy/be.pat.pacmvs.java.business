@@ -1,9 +1,11 @@
 package cn.staitech.anno.config;
 
-import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
-import cn.staitech.anno.mapper.*;
+import cn.staitech.anno.mapper.ImageMapper;
+import cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper;
+import cn.staitech.anno.mapper.SlideMapper;
+import cn.staitech.anno.mapper.SysUserMapper;
 import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.project.domain.Slide;
 import cn.staitech.anno.project.mapper.MarkingMapperV1;
@@ -11,7 +13,6 @@ import cn.staitech.anno.project.mapper.SlideMapperV1;
 import cn.staitech.anno.project.service.MarkingServiceV1;
 import cn.staitech.anno.project.service.SlideAttrService;
 import cn.staitech.anno.utils.GeometryUtil;
-import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.geojson.Properties;
 import cn.staitech.anno.vo.slide.SlideRes;
 import cn.staitech.system.api.domain.SysUser;
@@ -26,7 +27,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.BufferedInputStream;
@@ -99,7 +99,7 @@ public class AsyncTask {
     @Async
     //TODO1 解析json过程中无法标注
     //@Transactional
-    public void zipExport(String zipUrl, Long projectId)  {
+    public void zipExport(String zipUrl, Long projectId) {
         File file1 = new File(zipUrl);
 //        try {
         // 查询切片列表
@@ -114,6 +114,20 @@ public class AsyncTask {
         //定义文件条目
         ZipEntry ze;
         Enumeration<? extends ZipEntry> zipEnum = zipFile.entries();
+        // 循环压缩包中解压内容==>TODO 增加文件大小的校验
+            /*while (zipEnum.hasMoreElements()) {
+                // 获取下一个元素
+                ze = zipEnum.nextElement();
+                if (!ze.isDirectory()) {
+                    long size = ze.getSize();
+                    //大小计算
+      		        double fileSizeInMB = (double) size / (1024 * 1024);
+                    if (fileSizeInMB >  CommonConstant.UPLOAD_FILE_LIMIT) {
+                    	throw new Exception(MessageSource.M("FILE_DOWNLOAD_ERROR"));
+                    }
+                }
+                zp.closeEntry();
+            }*/
         // 循环压缩包中解压内容
         while (zipEnum.hasMoreElements()) {
             // 获取下一个元素
@@ -123,27 +137,10 @@ public class AsyncTask {
                 if (size > 0) {
                     InputStream bf = zipFile.getInputStream(ze);
                     InputStream newBf = zipFile.getInputStream(ze);
-                    parseJson(bf, newBf, slideResList);
+                    InputStream newBfs = zipFile.getInputStream(ze);
+                    parseJson(bf, newBf, slideResList, newBfs);
                     bf.close();
-                    }
                 }
-                zp.closeEntry();
-            }*/
-            // 循环压缩包中解压内容
-            while (zipEnum.hasMoreElements()) {
-                // 获取下一个元素
-                ze = zipEnum.nextElement();
-                if (!ze.isDirectory()) {
-                    long size = ze.getSize();
-                    if (size > 0) {
-                        InputStream bf = zipFile.getInputStream(ze);
-                        InputStream newBf = zipFile.getInputStream(ze);
-                        InputStream newBfs = zipFile.getInputStream(ze);
-                        parseJson(bf, newBf, slideResList,newBfs);
-                        bf.close();
-                    }
-                }
-                zp.closeEntry();
             }
             zp.closeEntry();
         }
@@ -161,7 +158,7 @@ public class AsyncTask {
      * @param slideResList 切片集合
      * @throws Exception
      */
-    public void parseJson(InputStream fileUrl, InputStream newBf, List<SlideRes> slideResList,InputStream newBfs) throws Exception {
+    public void parseJson(InputStream fileUrl, InputStream newBf, List<SlideRes> slideResList, InputStream newBfs) throws Exception {
         JsonFactory f = new MappingJsonFactory();
         JsonParser jp = f.createParser(fileUrl);
         JsonToken current;
@@ -183,25 +180,26 @@ public class AsyncTask {
             }
         }
         // 校验切片名称
-        fileNameContrast(imageName, slideResList, newBf,newBfs);
+        fileNameContrast(imageName, slideResList, newBf, newBfs);
 
     }
 
 
-    public void fileNameContrast(String imageName, List<SlideRes> slideResList, InputStream newBf,InputStream newBfs) throws Exception {
+    public void fileNameContrast(String imageName, List<SlideRes> slideResList, InputStream newBf, InputStream newBfs) throws Exception {
         List<cn.staitech.anno.project.domain.Marking> markingList = new ArrayList<>();
         if (imageName != null) {
             for (SlideRes slide : slideResList) {
                 // 判断名称切片名称是否相同
+
                 if (Objects.equals(slide.getImageName(), imageName)) {
                     JsonFactory fs = new MappingJsonFactory();
                     JsonParser jps = fs.createParser(newBfs);
-                    JSONObject jsonObject=JSONObject.parseObject(jps.readValueAsTree().toString());
+                    JSONObject jsonObject = JSONObject.parseObject(jps.readValueAsTree().toString());
                     // 删除当前切片中(json中用户的)所有标注
                     QueryWrapper<Marking> markingQueryWrapperBy = new QueryWrapper<>();
                     markingQueryWrapperBy.eq("slide_id", slide.getSlideId());
                     //获取json中用户信息
-                    String name=jsonObject.getJSONObject("attribute").getString("author");
+                    String name = jsonObject.getJSONObject("attribute").getString("author");
                     markingQueryWrapperBy.eq("annotation_owner", name);
                     //删除slideId下author的所有标注
                     markingMapperV1.delete(markingQueryWrapperBy);
@@ -334,20 +332,6 @@ public class AsyncTask {
         map.put("marking", marking);
         return map;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }
