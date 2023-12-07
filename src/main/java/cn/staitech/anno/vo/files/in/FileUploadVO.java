@@ -5,6 +5,8 @@ import org.springframework.web.multipart.MultipartFile;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * @author: wangfeng
  * @create: 2023-09-15 17:14:35
@@ -66,6 +68,8 @@ public class FileUploadVO{
      * 分块大小
      */
     private Long filesId;
+
+    @NotNull
     @ApiModelProperty(value = "uuid")
     private String uuid;
 

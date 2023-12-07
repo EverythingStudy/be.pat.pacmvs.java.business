@@ -15,18 +15,13 @@ import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.util.*;
@@ -44,7 +39,6 @@ import static cn.staitech.anno.constant.CommonConstant.GLIDE_LINE;
 @Slf4j
 @Service
 public class FileUploadServiceImpl implements FileUploadService {
-
     @Resource
     private TopicService topicService;
     @Resource
@@ -230,10 +224,10 @@ public class FileUploadServiceImpl implements FileUploadService {
                 }
                 //增加大小校验
                 boolean tag = zipCheck(files.getFilesPath(), fileUploadVO.getProjectId());
-                if(!tag){
-                	throw new Exception(MessageSource.M("FILE_LIMIT"));
+                if (!tag) {
+                    throw new Exception(MessageSource.M("FILE_LIMIT"));
                 }
-                
+
                 asyncTask.zipExport(files.getFilesPath(), fileUploadVO.getProjectId());
                 break;
 
@@ -257,11 +251,11 @@ public class FileUploadServiceImpl implements FileUploadService {
                 String fileNames = folderList.get(folderList.size() - 1);
                 List<String> urlPathList = Arrays.asList(fileNames.split("_"));
                 String roundId = null;
-                if(urlPathList.size() > 1){
+                if (urlPathList.size() > 1) {
                     roundId = urlPathList.get(1).substring(1);
                 }
                 // 解析zip压缩包
-                List<String> fileNameList = algorithmAssessmentService.zipExport(files.getFilesPath(), fileUploadVO.getProjectId(), fileUrl,roundId);
+                List<String> fileNameList = algorithmAssessmentService.zipExport(files.getFilesPath(), fileUploadVO.getProjectId(), fileUrl, roundId);
                 files.setFileNameList(fileNameList);
                 break;
             case 6:
@@ -274,6 +268,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     @Override
     public String mergeChunk(FileUploadVO chunk) throws Exception {
+        log.info("chunk:{} {}", chunk.getUuid(), chunk.getFileName());
         // 查询文件是否存在
         QueryWrapper<Files> filesQueryWrapper = new QueryWrapper<>();
         filesQueryWrapper.eq("files_code", chunk.getUuid());
@@ -322,11 +317,14 @@ public class FileUploadServiceImpl implements FileUploadService {
         } catch (IOException e) {
             return "0";
         }
-        // 删除map中当前元素
-        Container.FILE_MAP.get(chunk.getUuid()).remove(chunk.getChunk());
+        // 删除SET中当前元素
 
-        // map为空时,代表文件上传完成,根据业务类型执行不同业务
-        if (Container.FILE_MAP.get(chunk.getUuid()) != null && Container.FILE_MAP.get(chunk.getUuid()).isEmpty()) {
+        if (Container.FILE_MAP.containsKey(chunk.getUuid()) && StringUtils.isNotEmpty(chunk.getUuid())) {
+            Container.FILE_MAP.get(chunk.getUuid()).remove(chunk.getChunk());
+        }
+
+        // 删除ConcurrentHashMap中对应ConcurrentHashSet - map为空时,代表文件上传完成,根据业务类型执行不同业务
+        if (Container.FILE_MAP.containsKey(chunk.getUuid()) && Container.FILE_MAP.get(chunk.getUuid()).isEmpty()) {
             // map中删除当前文件信息
             Container.FILE_MAP.remove(chunk.getUuid());
 
@@ -344,8 +342,8 @@ public class FileUploadServiceImpl implements FileUploadService {
                     }
 //                    markingService.zipExport(filesBy.getFilesPath(), chunk.getProjectId());
                     boolean tag = zipCheck(filesBy.getFilesPath(), chunk.getProjectId());
-                    if(!tag){
-                    	throw new Exception(MessageSource.M("FILE_LIMIT"));
+                    if (!tag) {
+                        throw new Exception(MessageSource.M("FILE_LIMIT"));
                     }
                     asyncTask.zipExport(filesBy.getFilesPath(), chunk.getProjectId());
                     break;
@@ -366,55 +364,56 @@ public class FileUploadServiceImpl implements FileUploadService {
                     String fileName = folderList.get(folderList.size() - 1);
                     List<String> urlPathList = Arrays.asList(fileName.split("_"));
                     String roundId = null;
-                    if(urlPathList.size() > 1){
+                    if (urlPathList.size() > 1) {
                         roundId = urlPathList.get(1).substring(1);
                     }
                     List<String> fileNameList = algorithmAssessmentService.zipExport(filesBy.getFilesPath(), chunk.getProjectId(), fileUrl, roundId);
                     return fileNameList.toString();
                 case 6:
                     // 解析文件
-                    filesService.process(filesBy);
+                    // filesService.process(filesBy);
+                    filesService.submitTask(filesBy);
                     break;
             }
         }
         return "1";
     }
-    
-    
-    public boolean zipCheck(String zipUrl, Long projectId) throws Exception  {
-    	boolean tag = true;
-    	File file1 = new File(zipUrl);
-    	//        try {
-    	//zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
-    	//必须指明读取的各式，不然会存在问题
-    	ZipFile zipFile = new ZipFile(file1, Charset.forName("gbk"));
-    	//按流的方式读取文件，输入到管道中
-    	InputStream in = new BufferedInputStream(java.nio.file.Files.newInputStream(file1.toPath()));
-    	//字节流转换为压缩文件输入流，通常用来读取压缩文件
-    	ZipInputStream zp = new ZipInputStream(in);
-    	//定义文件条目
-    	ZipEntry ze;
-    	Enumeration<? extends ZipEntry> zipEnum = zipFile.entries();
-    	// 循环压缩包中解压内容==>TODO 增加文件大小的校验
-    	while (zipEnum.hasMoreElements()) {
-    		// 获取下一个元素
-    		ze = zipEnum.nextElement();
-    		if (!ze.isDirectory()) {
-    			long size = ze.getSize();
-    			//大小计算
-    			double fileSizeInMB = (double) size / (1024 * 1024);
-    			if (fileSizeInMB >  CommonConstant.UPLOAD_FILE_LIMIT) {
-    				tag = false;
-    				break;
-    			}
-    		}
-    		zp.closeEntry();
-    	}
-    	//        } catch (Exception e) {
-    	//            throw new Exception("json文件解析失败");
-    	//        }
-    	//        return true;
-    	return tag;
+
+
+    public boolean zipCheck(String zipUrl, Long projectId) throws Exception {
+        boolean tag = true;
+        File file1 = new File(zipUrl);
+        //        try {
+        //zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
+        //必须指明读取的各式，不然会存在问题
+        ZipFile zipFile = new ZipFile(file1, Charset.forName("gbk"));
+        //按流的方式读取文件，输入到管道中
+        InputStream in = new BufferedInputStream(java.nio.file.Files.newInputStream(file1.toPath()));
+        //字节流转换为压缩文件输入流，通常用来读取压缩文件
+        ZipInputStream zp = new ZipInputStream(in);
+        //定义文件条目
+        ZipEntry ze;
+        Enumeration<? extends ZipEntry> zipEnum = zipFile.entries();
+        // 循环压缩包中解压内容==>TODO 增加文件大小的校验
+        while (zipEnum.hasMoreElements()) {
+            // 获取下一个元素
+            ze = zipEnum.nextElement();
+            if (!ze.isDirectory()) {
+                long size = ze.getSize();
+                //大小计算
+                double fileSizeInMB = (double) size / (1024 * 1024);
+                if (fileSizeInMB > CommonConstant.UPLOAD_FILE_LIMIT) {
+                    tag = false;
+                    break;
+                }
+            }
+            zp.closeEntry();
+        }
+        //        } catch (Exception e) {
+        //            throw new Exception("json文件解析失败");
+        //        }
+        //        return true;
+        return tag;
     }
 
     public Long saveFiles(FileUploadVO fileUploadVO) throws Exception {
@@ -518,6 +517,5 @@ public class FileUploadServiceImpl implements FileUploadService {
         // 创建二级目录
         return filePath;
     }
-
 
 }

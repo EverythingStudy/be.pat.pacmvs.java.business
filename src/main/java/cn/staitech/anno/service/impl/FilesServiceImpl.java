@@ -37,7 +37,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -51,6 +51,19 @@ import java.util.zip.ZipInputStream;
 @Service
 public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         implements FilesService {
+    private static final ExecutorService executorService = new ThreadPoolExecutor(
+            Runtime.getRuntime().availableProcessors(),
+            Runtime.getRuntime().availableProcessors() * 2,
+            // 空闲线程等待工作的超时时间
+            0,
+            TimeUnit.MILLISECONDS,
+            new LinkedBlockingQueue<Runnable>(4096),
+            new ThreadFactory() {
+                public Thread newThread(Runnable r) {
+                    return new Thread(r, "FilesServiceImpl-thread-" + r.hashCode());
+                }
+            },
+            new ThreadPoolExecutor.DiscardOldestPolicy());
     @Resource
     private FilesMapper filesMapper;
     @Resource
@@ -87,7 +100,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         if (!SecurityUtils.isAdmin(SecurityUtils.getLoginUser().getSysUser().getUserId())) {
             queryWrapper.eq("organization_id", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         }
-        queryWrapper.ne("format",".zip").ne("format","zip");
+        queryWrapper.ne("format", ".zip").ne("format", "zip");
         queryWrapper.orderByDesc("files_id");
 
         //  查询图像列表
@@ -373,6 +386,36 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
             image.setBizType(7);
         }
         return image;
+    }
+
+
+    /**
+     * 异步
+     *
+     * @param files
+     * @return
+     */
+    @Override
+    public void submitTask(Files files) {
+        executorService.submit(new ProcessRunnable(files));
+    }
+
+    class ProcessRunnable implements Runnable {
+
+        private final Files files;
+
+        ProcessRunnable(Files files) {
+            this.files = files;
+        }
+
+        @Override
+        public void run() {
+            try {
+                process(files);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }
 
