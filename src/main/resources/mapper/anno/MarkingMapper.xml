@@ -354,7 +354,7 @@
                        t.annotation_update_owner,
                        "project_id",
                        t.project_id
---                    ,
+                   --                    ,
 --                        "image_url",
 --                        t.image_url
                    ) AS properties
@@ -448,10 +448,10 @@
         <include refid="selectList"/>
         where slide_id = #{slideId}
         <if test="categoryIdList != null and categoryIdList.size() >0 ">
-                and c.category_id in
-                <foreach item="categoryId" collection="categoryIdList" separator="," open="(" close=")" index="">
-                    #{categoryId, jdbcType=NUMERIC}
-                </foreach>
+            and c.category_id in
+            <foreach item="categoryId" collection="categoryIdList" separator="," open="(" close=")" index="">
+                #{categoryId, jdbcType=NUMERIC}
+            </foreach>
         </if>
     </select>
 
