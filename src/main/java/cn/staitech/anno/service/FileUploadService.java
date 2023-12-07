@@ -19,6 +19,4 @@ public interface FileUploadService {
     Files uploadAndProcessBusiness(FileUploadVO vo) throws Exception;
 
     String mergeChunk(FileUploadVO fileUploadVO) throws Exception;
-
-
 }

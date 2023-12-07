@@ -72,9 +72,9 @@
     <select id="selectRoe" parameterType="map" resultMap="BaseResultMap">
         select *
         from tb_pathological_indicator_category as p
-                 left join tb_structure as s on p.structure_id = s.structure_id
+        left join tb_structure as s on p.structure_id = s.structure_id
         where p.category_code = #{categoryCode,jdbcType=BIGINT}
-          and s.type = "ROE"
+        and s.type = "ROE"
     </select>
 
     <!--  根据主键查询单条标注信息-->
@@ -306,6 +306,7 @@
                  LEFT JOIN tb_project AS p ON p.indicator_id = pic.indicator_id
         WHERE p.project_id = #{projectId}
           AND pic.number = #{number}
+          and pic.del_flag = '0'
     </select>
 
     <select id="selectCategoryById" resultType="java.lang.String">

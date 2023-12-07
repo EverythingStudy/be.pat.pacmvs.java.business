@@ -163,7 +163,8 @@
                t.annotation_owner,
                c.rgb                                                             as label_color,
                c.category_name                                                   as label_name,
-               CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) as measure_full_name,
+               <!-- CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) as measure_full_name, -->
+               c.category_name as measure_full_name,
                t.annotation_owner,
                t.annotation_update_owner,
                t.update_time,
@@ -227,7 +228,8 @@
                        "label_name",
                        c.category_name,
                        "measure_full_name",
-                       CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name)
+                      <!--  CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) -->
+                      c.category_name
                    ) AS properties
         FROM tb_marking AS t
                  LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
@@ -245,37 +247,38 @@
     <select id="selectUnionList" parameterType="map" resultMap="markingSelectListVoResult">
         SELECT *
         FROM (SELECT t.marking_id,
-        t.create_time,
-        t.measure_name,
-        t.category_id,
-        0                                                                 AS point_count,
-        t.slide_id,
-        t.perimeter,
-        t.area,
-        t.mean_distance,
-        t.max_distance,
-        t.min_distance,
-        t.radius,
-        t.inner_angle,
-        t.exterior_angle,
-        CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) AS measure_full_name,
-        c.category_name
-        FROM tb_marking AS t
-        LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
-        WHERE t.measure_name != "P"
-        AND t.slide_id = #{slideId}
-        UNION ALL
-        SELECT
-        max ( t.marking_id ) AS marking_id, max ( t.create_time ) AS create_time, t.measure_name, t.category_id, sum ( 1 ) AS point_count, t.slide_id, max ( t.perimeter ) AS perimeter, max ( t.area ) AS area, max ( t.mean_distance ) AS mean_distance, max ( t.max_distance ) AS max_distance, max ( t.min_distance ) AS min_distance, max ( t.radius ) AS radius, max ( t.inner_angle ) AS inner_angle, max ( t.exterior_angle ) AS exterior_angle, CONCAT_WS( "_", t.measure_name, c.category_name ) AS measure_full_name, c.category_name
-        FROM
-        tb_marking AS t
-        LEFT JOIN tb_pathological_indicator_category AS c
-        ON t.category_id = c.category_id
-        WHERE
-        measure_name = "P"
-        AND slide_id = #{slideId}
-        GROUP BY
-        t.category_id) AS al
+                     t.create_time,
+                     t.measure_name,
+                     t.category_id,
+                     0                                                                 AS point_count,
+                     t.slide_id,
+                     t.perimeter,
+                     t.area,
+                     t.mean_distance,
+                     t.max_distance,
+                     t.min_distance,
+                     t.radius,
+                     t.inner_angle,
+                     t.exterior_angle,
+                    <!--  CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) AS measure_full_name, -->
+                    c.category_name as measure_full_name,
+                     c.category_name
+              FROM tb_marking AS t
+                       LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
+              WHERE t.measure_name != "P"
+            AND t.slide_id = #{slideId}
+              UNION ALL
+              SELECT
+                  max ( t.marking_id ) AS marking_id, max ( t.create_time ) AS create_time, t.measure_name, t.category_id, sum ( 1 ) AS point_count, t.slide_id, max ( t.perimeter ) AS perimeter, max ( t.area ) AS area, max ( t.mean_distance ) AS mean_distance, max ( t.max_distance ) AS max_distance, max ( t.min_distance ) AS min_distance, max ( t.radius ) AS radius, max ( t.inner_angle ) AS inner_angle, max ( t.exterior_angle ) AS exterior_angle, CONCAT_WS( "_", t.measure_name, c.category_name ) AS measure_full_name, c.category_name
+              FROM
+                  tb_marking AS t
+                  LEFT JOIN tb_pathological_indicator_category AS c
+              ON t.category_id = c.category_id
+              WHERE
+                  measure_name = "P"
+                AND slide_id = #{slideId}
+              GROUP BY
+                  t.category_id) AS al
         <if test="measureFullName != null and measureFullName != ''">
             WHERE al.measure_full_name LIKE #{measureFullName}
         </if>
@@ -341,7 +344,8 @@
                        "label_name",
                        c.category_name,
                        "measure_full_name",
-                       CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name),
+                       <!-- CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name), -->
+                       c.category_name,
                        "image_id",
                        t.image_id,
                        "update_by",
@@ -460,7 +464,7 @@
         where slide_id = #{slideId}
         AND location_type != "Point"
         <if test="measureFullName != null and measureFullName != ''">
-            and CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) LIKE concat('%', #{measureFullName}, '%')
+             and CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) LIKE concat('%', #{measureFullName}, '%')
         </if>
     </select>
 
@@ -470,7 +474,7 @@
         where slide_id = #{slideId}
         AND location_type != "Point"
         <if test="measureFullName != null and measureFullName != ''">
-            and CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) LIKE concat('%', #{measureFullName}, '%')
+           and CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) LIKE concat('%', #{measureFullName}, '%')
         </if>
         ORDER BY marking_id DESC
         limit #{pageNum},#{pageSize}
@@ -480,7 +484,7 @@
         <include refid="selectPoint"/>
         where slide_id = #{slideId}
         <if test="measureFullName != null and measureFullName != ''">
-            AND CONCAT_WS("_", t.measure_name, t1.category_name) LIKE concat('%', #{measureFullName}, '%')
+           AND CONCAT_WS("_", t.measure_name, t1.category_name) LIKE concat('%', #{measureFullName}, '%')
         </if>
         AND location_type = "Point"
     </select>

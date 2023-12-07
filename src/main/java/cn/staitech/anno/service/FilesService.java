@@ -25,4 +25,5 @@ public interface FilesService extends IService<Files> {
      */
     void process(Files files) throws Exception;
 
+    void submitTask(Files files);
 }
