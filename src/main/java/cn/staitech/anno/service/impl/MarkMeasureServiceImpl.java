@@ -329,7 +329,7 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 		
 		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 //		SysUser sysUser = userMapper.selectUserById(1L);
-		Marking markingBys = MarkingUtils.updateVerify(markingBy.getGeometry(),req.getGeometry(),req.getOperation(),req.getCheck(), Double.parseDouble(req.getResolution()));
+		Marking markingBys = MarkingUtils.updateVerify(markingBy.getGeometry(),req.getGeometry(),req.getOperation(),req.getCheck(), req.getResolutions());
 		JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(markingBys.getMarkingId()));
 		MarkMeasure marking = new MarkMeasure();
 		marking.setGeometry(jsonObject);
