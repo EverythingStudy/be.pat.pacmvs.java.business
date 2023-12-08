@@ -204,19 +204,19 @@ public class AsyncTask {
 //                    //删除slideId下author的所有标注
 //                    markingMapperV1.delete(markingQueryWrapperBy);
 
-                    JsonFactory fss = new MappingJsonFactory();
-                    JsonParser jpss = fss.createParser(newBfs);
+                    JsonFactory jfs = new MappingJsonFactory();
+                    JsonParser jpr = jfs.createParser(newBfs);
                     Set<String> annotationIdList=new HashSet<>();
                     JsonToken currents;
-                    currents = jpss.nextToken();
-                    while (jpss.nextToken() != JsonToken.END_OBJECT) {
-                        String fieldName = jpss.getCurrentName();
+                    currents = jpr.nextToken();
+                    while (jpr.nextToken() != JsonToken.END_OBJECT) {
+                        String fieldName = jpr.getCurrentName();
                         // move from field name to field value
-                        currents = jpss.nextToken();
+                        currents = jpr.nextToken();
                         if ("features".equals(fieldName)) {
                             if (currents == JsonToken.START_ARRAY) {
-                                while (jpss.nextToken() != JsonToken.END_ARRAY) {
-                                    String node = jpss.readValueAsTree().toString();
+                                while (jpr.nextToken() != JsonToken.END_ARRAY) {
+                                    String node = jpr.readValueAsTree().toString();
                                     JSONObject featureObject = JSONObject.parseObject(node);
                                     // 获取属性和自定义字段
                                     JSONObject properties = featureObject.getJSONObject("properties");
@@ -225,7 +225,7 @@ public class AsyncTask {
                                 }
                             }
                         } else {
-                            jpss.skipChildren();
+                            jpr.skipChildren();
                         }
                     }
                     for(String user:annotationIdList){
