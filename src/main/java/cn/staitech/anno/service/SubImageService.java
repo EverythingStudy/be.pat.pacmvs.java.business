@@ -5,7 +5,7 @@ import cn.staitech.anno.vo.organization.SysOrganizationAuthorization;
 import cn.staitech.anno.vo.slide.SubImageVO;
 import cn.staitech.anno.vo.specialsliceimage.SpecialSliceSelectVO;
 import cn.staitech.anno.vo.specialsliceimage.SpecialSliceVo;
-import cn.staitech.anno.vo.subimage.SubImage;
+import cn.staitech.anno.domain.SubImage;
 import cn.staitech.common.core.domain.R;
 import com.baomidou.mybatisplus.extension.service.IService;
 

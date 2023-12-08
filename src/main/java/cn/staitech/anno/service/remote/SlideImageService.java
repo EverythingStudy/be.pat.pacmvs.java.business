@@ -1,5 +1,6 @@
 package cn.staitech.anno.service.remote;
 
+import cn.staitech.anno.vo.predictionInfo.in.PredictionInfoVO;
 import cn.staitech.anno.vo.special.SpecialImage;
 import cn.staitech.anno.vo.specialimageanno.AlgorithmCutImageVO;
 import cn.staitech.common.core.constant.SecurityConstants;
@@ -18,7 +19,7 @@ import java.util.List;
  * @Description:切图处理
  * @date 2023年8月7日
  */
-@FeignClient(contextId = "SlideImageService", value = "staitech-openslide")
+@FeignClient(contextId = "slideImageService", value = "staitech-openslide")
 public interface SlideImageService {
 
     @PostMapping("/slideNotice/slideImage")
@@ -26,5 +27,8 @@ public interface SlideImageService {
 
     @PostMapping("/slideNotice/batchAddSpecialImage")
     R batchAddSpecialImage(List<SpecialImage> list, @RequestHeader(SecurityConstants.FROM_SOURCE) String source);
+    
+    @PostMapping("/predictionImage/uploadImage")
+    R uploadImage(@RequestBody PredictionInfoVO predictionInfoVO,@RequestHeader (SecurityConstants.FROM_SOURCE) String source);
 
 }

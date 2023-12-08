@@ -49,7 +49,7 @@ public class ProjectController {
     public R<PageMaster<ProjectVO>> page(@RequestBody ProjectIn in) throws Exception {
         handleAuth(in);
 
-        //20231111wd_机构层级
+        // 机构层级
         if(in.getOrganizationId()==null || in.getOrganizationId()<1 ){
             if (!SysUser.isAdmin(SecurityUtils.getUserId())) {
                 in.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());

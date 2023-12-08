@@ -2,9 +2,12 @@ package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.mapper.SysUserMapper;
 import cn.staitech.anno.service.SysUserService;
+import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 /**
@@ -27,5 +30,19 @@ public class SysUserServiceImpl implements SysUserService {
     @Override
     public SysUser selectUserById(Long userId) {
         return userMapper.selectUserById(userId);
+    }
+
+
+    /**
+     * 根据机构id查询用户列表
+     * */
+    @Override
+    public List<SysUser> userList(){
+        SysUser sysUser=new SysUser();
+        Long organizationId=SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+        if (!SysUser.isAdmin(SecurityUtils.getUserId())){
+            sysUser.setOrganizationId(organizationId);
+        }
+        return userMapper.userList(sysUser);
     }
 }

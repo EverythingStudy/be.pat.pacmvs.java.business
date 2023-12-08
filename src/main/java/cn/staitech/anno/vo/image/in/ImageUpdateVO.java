@@ -13,7 +13,10 @@ public class ImageUpdateVO {
     @ApiModelProperty(value = "切片编号-图像ID", required = true)
     private Long imageId;
     @Size(min = 1, max = 100, message = "{ImageTopicVO.imageName.length}")
-    @ApiModelProperty(value = "文件名称-切片编号")
+    @ApiModelProperty(value = "文件名称-无扩展名-切片编号")
+    private String fileName;
+    @Size(min = 1, max = 100, message = "{ImageTopicVO.imageName.length}")
+    @ApiModelProperty(value = "文件名称-带扩展名")
     private String imageName;
     @ApiModelProperty(value = "机构编号")
     private Long organizationId;

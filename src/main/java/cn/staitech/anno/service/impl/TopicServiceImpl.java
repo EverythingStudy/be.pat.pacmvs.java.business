@@ -12,6 +12,8 @@ import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
  * @create: 2023-06-02 14:06:14
  * @Description: 切片（原图片）专题
  */
+@Slf4j
 @Service
 public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements TopicService {
 
@@ -81,6 +84,7 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         Topic topic = Topic.builder()
                 .topicName(topicName)
                 .projectTypeId(projectTypeId)
+                .organizationId(sysUser.getOrganizationId())
                 .build();
 
         QueryWrapper queryWrap = new QueryWrapper(topic);
@@ -97,10 +101,13 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
             topic.setUpdateTime(time);
             topic.setOrganizationId(sysUser.getOrganizationId());
             topic.setDelFlag(1);
-            this.baseMapper.insert(topic);
+            try {
+                this.baseMapper.insert(topic);
+            } catch (DuplicateKeyException e) {
+                log.info("添加专题-主键冲突 {}", e);
+                return this.baseMapper.selectOne(queryWrap);
+            }
         }
-
         return topic;
     }
-
 }

@@ -37,6 +37,8 @@ public interface MarkingMapper extends BaseMapper<Marking> {
      */
     List<Features> selectLists(Long slideId);
 
+    List<Features> selectFilterCategoryLists(Map<String,Object> map);
+
 
     /**
      * 与前端交互使用的列表
@@ -59,6 +61,8 @@ public interface MarkingMapper extends BaseMapper<Marking> {
     JsonExport jsonExportSelect(Long slide);
 
     JsonExport reviewJsonExportSelect(Long slideId);
+
+    List<cn.staitech.anno.domain.PathologicalIndicatorCategory> selectCategory(Long slideId);
 
     /**
      * 根据专题查看当前专题下所有的切片

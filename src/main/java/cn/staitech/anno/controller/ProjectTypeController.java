@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 /**
  * 项目类型
@@ -41,7 +42,8 @@ public class ProjectTypeController extends BaseController {
     @GetMapping("/list")
     public R<List<ProjectType>> list() throws ExecutionException, InterruptedException {
         List<ProjectType> list = projectTypeService.list();
-        return R.ok(list);
+        List<ProjectType> snapList = list.stream().filter(person -> !"7".equals(person.getProjectTypeId())).collect(Collectors.toList());
+        return R.ok(snapList);
     }
 
 }

@@ -1,18 +1,26 @@
 package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.staitech.anno.constant.CommonConstant;
+import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.*;
 import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.service.MarkingService;
+import cn.staitech.anno.service.SlidePredictionService;
 import cn.staitech.anno.service.SlideService;
+import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.utils.ProjectUtils;
 import cn.staitech.anno.vo.examination.ExaminationListVO;
+import cn.staitech.anno.vo.eyeslide.*;
+import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetPagerVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
 import cn.staitech.anno.vo.marking.Marking;
+import cn.staitech.anno.vo.project.ProjectDelVO;
 import cn.staitech.anno.vo.project.ProjectExt;
 import cn.staitech.anno.vo.project.ProjectListOutVO;
 import cn.staitech.anno.vo.project.ProjectStatisticsVO;
@@ -43,11 +51,10 @@ import javax.annotation.Resource;
 import java.io.BufferedOutputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static cn.staitech.anno.aspect.LogFileAspect.response;
 
@@ -91,6 +98,17 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
 
     @Resource
     private ImageMapper imageMapper;
+
+    @Resource
+    private SlidePredictionService slidePredictionService;
+
+    /**
+     * 检验是否是纯数字
+     */
+    public static boolean isNumeric(String str) {
+        Pattern pattern = Pattern.compile("[0-9]*");
+        return pattern.matcher(str).matches();
+    }
 
     /**
      * 查询单条切片详情
@@ -283,7 +301,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         return slideMapper.updateBatchByCondition(slideList);
     }
 
-
     /**
      * 查询组内切片报表摘要
      *
@@ -449,7 +466,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         return R.ok(pageMaster);
     }
 
-
     @Override
     public void jsonExport(List<Long> slideList, Long projectId, Integer status) throws Exception {
         StringBuilder res = new StringBuilder();
@@ -466,7 +482,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
             Integer markingCount = markingMapper.selectCount(markingQueryWrapper);
             if (markingCount > 0) {
                 // 将文件生成在本地
-                String fileUrl = markingService.slideJsonExport(slide);
+                String fileUrl = markingService.slideJsonExport(slide,SecurityUtils.getLoginUser().getSysUser());
                 res.append(fileUrl).append("\r\n");
             }
         }
@@ -487,9 +503,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         }
     }
 
-
-    // ==================================================
-
     /**
      * 添加标注切片
      *
@@ -504,11 +517,9 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         Long reviewRoundId = addSlideVO.getReviewRoundId() != null ? addSlideVO.getReviewRoundId() : 0;
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 
-        Image imageQuery = new Image();
-        QueryWrapper queryWrapper = new QueryWrapper<>(imageQuery);
-        // 只查可用的图片
-        queryWrapper.eq("status", 1);
-        queryWrapper.eq("delete_flag", 1);
+        QueryWrapper<Image> queryWrapper = new QueryWrapper<>();
+        // 只查可用的图片 - 0上传中、1上传失败、2解析中、3解析失败、4可用
+        queryWrapper.eq("status", 4);
         queryWrapper.in(CollectionUtils.isNotEmpty(topicIds), "topic_id", topicIds);
         List<Image> imageList = imageMapper.selectList(queryWrapper);
 
@@ -553,11 +564,9 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
 
         List<Long> imageIds = addSlideIdsVO.getImageIds();
 
-        Image imageQuery = new Image();
-        QueryWrapper queryWrapper = new QueryWrapper<>(imageQuery);
-        // 只查可用的图片
-        queryWrapper.eq("status", 1);
-        queryWrapper.eq("delete_flag", 1);
+        QueryWrapper<Image> queryWrapper = new QueryWrapper<>();
+        // 只查可用的图片 - 0上传中、1上传失败、2解析中、3解析失败、4可用
+        queryWrapper.eq("status", 4);
         queryWrapper.in(CollectionUtils.isNotEmpty(imageIds), "image_id", imageIds);
         List<Image> imageList = imageMapper.selectList(queryWrapper);
 
@@ -613,7 +622,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         return slideIds.size() - count.get();
     }
 
-
     @Override
     public List<ImageCsvListVO> pageSlides(ImageCsvGetVO request) {
 
@@ -627,7 +635,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         List<ImageCsvListVO> list = slideMapper.pageImageCsvListVOList1(request);
         return list;
     }
-
 
     @Override
     public PageMaster<ImageCsvListVO> pageReviewRoundSSlides(ImageCsvGetPagerVO request) {
@@ -688,5 +695,312 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         }
     }
 
+    /**
+     * 删除项目切片
+     */
+    @Override
+    public R deleteProjectImage(ProjectSlideDel projectSlideDel) {
+        if (CollectionUtils.isNotEmpty(projectSlideDel.getSlideIdList())) {
+            for (Long slideId : projectSlideDel.getSlideIdList()) {
+                //切片表删除（物理删）
+                slideMapper.deleteProjectImage(slideId);
+                //删除文件夹下的图片（物理删除）
+                slideMapper.eyeDeleteImage(slideId);
+            }
+        }
+        return R.ok();
+    }
 
+    /**
+     * 眼科项目图片
+     */
+    @Override
+    public PageMaster<EyeProjectSlideOut> eyeProjectSlide(EyeProjectSlideIn request) {
+        EyeProjectSlideOut eyeProjectSlideOut = new EyeProjectSlideOut();
+        //查询校验通过的文件和图片
+        eyeProjectSlideOut.setEyeMent("0");
+        eyeProjectSlideOut.setImageName(request.getImageName());
+        eyeProjectSlideOut.setFolderName(request.getFolderName());
+        eyeProjectSlideOut.setProjectId(request.getProjectId());
+        List<EyeProjectSlideOut> listVOList = slideMapper.eyeProjectSlide(eyeProjectSlideOut);
+        //查询校验不通过的文件
+        eyeProjectSlideOut.setEyeMent("1");
+        List<EyeProjectSlideOut> listVOS = slideMapper.eyeProjectFolder(eyeProjectSlideOut);
+        for (EyeProjectSlideOut slideOut : listVOS) {
+            if (LanguageUtils.isEn()) {
+                slideOut.setReason(Container.EYE_PROMPT_MAP_EN.get(Integer.valueOf(slideOut.getPrompt())));
+            } else {
+                slideOut.setReason(Container.EYE_PROMPT_MAP.get(Integer.valueOf(slideOut.getPrompt())));
+            }
+        }
+        listVOList.addAll(listVOS);
+        //排序（按照文件夹名称A-Z升序排列，相同名称按照切片名称升序排列）
+        listVOList.sort(Comparator.comparing(EyeProjectSlideOut::getFolderName));
+
+        //分页
+        ProjectDelVO projectDelVO = ProjectUtils.paging(request);
+        int pageSize = projectDelVO.getPageSize();
+        int pageNum = projectDelVO.getPageNum();
+        boolean flag1 = projectDelVO.getFlag();
+        List<EyeProjectSlideOut> result = projectDelVO.getResult();
+        for (int i = pageNum * pageSize; i < pageNum * pageSize + pageSize; i++) {
+            if (i < listVOList.size()) {
+                result.add(listVOList.get(i));
+            }
+        }
+        PageMaster<EyeProjectSlideOut> pageMaster = new PageMaster<>(result);
+        if (flag1) {
+            pageNum++;
+        }
+        pageMaster.setPageNum(pageNum);
+        pageMaster.setPageSize(pageSize);
+        pageMaster.setTotal(listVOList.size());
+        return pageMaster;
+    }
+
+    /**
+     * 眼科-查询是否有算法结果
+     */
+    @Override
+    public int algorithmResult(Long projectId) {
+        return slideMapper.algorithmResult(projectId);
+    }
+
+    /**
+     * 眼科选择图片查询
+     */
+    @Override
+    public PageMaster<ImageListOutVO> eyeImage(EyeSlideIn eyeSlideIn) {
+        if (!SysUser.isAdmin(SecurityUtils.getUserId())) {
+            eyeSlideIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        }
+
+        List<ImageListOutVO> imageListOutVOS = slideMapper.eyeSlideList(eyeSlideIn);
+        List<ImageListOutVO> projectSlideOutList = new ArrayList<>();
+        //去重
+        List<Slide> slideFolder = slideMapper.addedFolder(eyeSlideIn.getProjectId());
+        List<Long> keyList = slideFolder.stream().map(e -> e.getFolderId()).collect(Collectors.toList());
+        for (ImageListOutVO projectSlideOut : imageListOutVOS) {
+            if (!keyList.contains(projectSlideOut.getFolderId())) {
+                projectSlideOutList.add(projectSlideOut);
+            }
+        }
+        //分页
+        ProjectDelVO projectDelVO = ProjectUtils.pagingEye(eyeSlideIn);
+        int pageSize = projectDelVO.getPageSize();
+        int pageNum = projectDelVO.getPageNum();
+        boolean flag1 = projectDelVO.getFlag();
+        List<ImageListOutVO> result = projectDelVO.getResults();
+        for (int i = pageNum * pageSize; i < pageNum * pageSize + pageSize; i++) {
+            if (i < projectSlideOutList.size()) {
+                result.add(projectSlideOutList.get(i));
+            }
+        }
+        PageMaster<ImageListOutVO> pageMaster = new PageMaster<>(result);
+        if (flag1) {
+            pageNum++;
+        }
+        pageMaster.setPageNum(pageNum);
+        pageMaster.setPageSize(pageSize);
+        pageMaster.setTotal(projectSlideOutList.size());
+        return pageMaster;
+    }
+
+    /**
+     * 眼科-查询要添加的数据
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public R eyeFolder(EyeSaveSlide eyeSaveSlide) {
+        if (eyeSaveSlide.getFolderName() == null && eyeSaveSlide.getParams() == null && eyeSaveSlide.getTopicName() == null && eyeSaveSlide.getCreateBy() == null) {
+            return R.ok();
+        }
+        eyeSaveSlide.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        List<ProjectSlideOut> projectSlideOutLists = slideMapper.eyeFolder(eyeSaveSlide);
+        List<ProjectSlideOut> projectSlideOutList = new ArrayList<>();
+        //去重
+        List<Slide> slideFolder = slideMapper.addedFolder(eyeSaveSlide.getProjectId());
+        List<Long> keyList = slideFolder.stream().map(e -> e.getFolderId()).collect(Collectors.toList());
+        for (ProjectSlideOut projectSlideOut : projectSlideOutLists) {
+            if (!keyList.contains(projectSlideOut.getFolderId())) {
+                projectSlideOutList.add(projectSlideOut);
+            }
+        }
+
+        Project project = projectMapper.selectPrimKey(eyeSaveSlide.getProjectId());
+        switch (project.getModelId().intValue()) {
+            case 1:
+                for (ProjectSlideOut projectSlideOut : projectSlideOutList) {
+                    Long folderId = projectSlideOut.getFolderId();
+                    List<Image> imageList = slideMapper.eyeFolderSlide(folderId);
+                    if (imageList.size() < 5) {
+                        List<SlidePrediction> predictions = new ArrayList<>();
+                        Slide slide = Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(SecurityUtils.getUserId()).folderId(folderId).prompt("1").eyeMent("1").build();
+                        //存储文件夹id
+                        slideMapper.eyeInsertSlide(slide);
+                        for (Image image : imageList) {
+                            SlidePrediction slidePrediction = SlidePrediction.builder().createBy(SecurityUtils.getUserId()).aiAnalyzed(0).delFlag("0").mainImage("2").createTime(DateUtil.date())
+                                    .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).delFlag("0").build();
+                            predictions.add(slidePrediction);
+                        }
+                        //存储碎片信息
+                        //slideMapper.eyeInsert(predictions);
+                        slidePredictionService.saveBatch(predictions);
+
+                    } else {
+                        Slide slide = Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(SecurityUtils.getUserId()).folderId(folderId).build();
+                        //存储文件夹id
+                        slideMapper.eyeInsertSlide(slide);
+                        List<SlidePrediction> predictions = new ArrayList<>();
+                        int testNum = 0;
+                        //
+                        Map<Long, String> imageIdList = new HashMap<>();
+                        List<String> imageName = new ArrayList<>();
+                        for (Image image : imageList) {
+                            imageIdList.put(image.getImageId(), image.getImageName());
+                            imageName.add(image.getImageName());
+                            if (isNumeric(image.getImageName())) {
+                                SlidePrediction slidePrediction = SlidePrediction.builder().createBy(SecurityUtils.getUserId()).aiAnalyzed(0).delFlag("0").mainImage("2").createTime(DateUtil.date())
+                                        .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
+                                predictions.add(slidePrediction);
+
+                            } else {
+                                SlidePrediction slidePrediction = SlidePrediction.builder().createBy(SecurityUtils.getUserId()).aiAnalyzed(0)
+                                        .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).delFlag("0").mainImage("2").createTime(DateUtil.date()).imageId(image.getImageId()).build();
+                                predictions.add(slidePrediction);
+                                testNum = 1;
+                            }
+                        }
+                        //存储碎片信息
+                        if (predictions.size() > 0) {
+                            //slideMapper.eyeInsert(predictions);
+                            slidePredictionService.saveBatch(predictions);
+                        }
+                        if (testNum == 1) {
+                            Slide slides = Slide.builder().slideId(slide.getSlideId()).prompt("2").eyeMent("1").build();
+                            slideMapper.eyeUpdateFolder(slides);
+                        } else {
+                            //获取最小的图片名称
+                            String minImageName = Collections.min(imageName);
+                            for (Long key : imageIdList.keySet()) {
+                                if (imageIdList.get(key).equals(minImageName)) {
+                                    SlidePrediction slidePrediction = SlidePrediction.builder().slideId(slide.getSlideId()).imageId(key).mainImage("1").build();
+                                    slideMapper.eyeUpdateMainImage(slidePrediction);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return R.ok();
+            case 2:
+                for (ProjectSlideOut projectSlideOut : projectSlideOutList) {
+                    Long folderId = projectSlideOut.getFolderId();
+                    List<Image> imageList = slideMapper.eyeFolderSlide(folderId);
+                    if (imageList.size() < 7) {
+                        List<SlidePrediction> predictions = new ArrayList<>();
+                        Slide slide = Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(SecurityUtils.getUserId()).folderId(folderId).prompt("3").eyeMent("1").build();
+                        //存储文件夹id
+                        slideMapper.eyeInsertSlide(slide);
+                        for (Image image : imageList) {
+                            SlidePrediction slidePrediction = SlidePrediction.builder().createBy(SecurityUtils.getUserId()).aiAnalyzed(0).delFlag("0").mainImage("2").createTime(DateUtil.date())
+                                    .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).delFlag("0").build();
+                            predictions.add(slidePrediction);
+                        }
+                        //存储碎片信息
+                        //slideMapper.eyeInsert(predictions);
+                        slidePredictionService.saveBatch(predictions);
+
+                    } else {
+                        Slide slide = Slide.builder().projectId(eyeSaveSlide.getProjectId()).createBy(SecurityUtils.getUserId()).folderId(folderId).build();
+                        //存储文件夹id
+                        slideMapper.eyeInsertSlide(slide);
+                        List<SlidePrediction> predictions = new ArrayList<>();
+                        int testNum = 0;
+                        //
+                        Map<Long, String> imageIdList = new HashMap<>();
+                        List<String> imageName = new ArrayList<>();
+                        for (Image image : imageList) {
+                            imageIdList.put(image.getImageId(), image.getImageName());
+                            imageName.add(image.getImageName());
+                            if (isNumeric(image.getImageName())) {
+                                SlidePrediction slidePrediction = SlidePrediction.builder().createBy(SecurityUtils.getUserId()).aiAnalyzed(0).delFlag("0").mainImage("2").createTime(DateUtil.date())
+                                        .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).imageId(image.getImageId()).build();
+                                predictions.add(slidePrediction);
+
+                            } else {
+                                SlidePrediction slidePrediction = SlidePrediction.builder().createBy(SecurityUtils.getUserId()).aiAnalyzed(0)
+                                        .organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).slideId(slide.getSlideId()).delFlag("0").mainImage("2").createTime(DateUtil.date()).imageId(image.getImageId()).build();
+                                predictions.add(slidePrediction);
+                                testNum = 1;
+                            }
+                        }
+                        //存储碎片信息
+                        if (predictions.size() > 0) {
+                            //slideMapper.eyeInsert(predictions);
+                            slidePredictionService.saveBatch(predictions);
+                        }
+                        if (testNum == 1) {
+                            Slide slides = Slide.builder().slideId(slide.getSlideId()).prompt("2").eyeMent("1").build();
+                            slideMapper.eyeUpdateFolder(slides);
+                        } else {
+                            //获取最小的图片名称
+                            String minImageName = Collections.min(imageName);
+                            for (Long key : imageIdList.keySet()) {
+                                if (imageIdList.get(key).equals(minImageName)) {
+                                    SlidePrediction slidePrediction = SlidePrediction.builder().slideId(slide.getSlideId()).imageId(key).mainImage("1").build();
+                                    slideMapper.eyeUpdateMainImage(slidePrediction);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return R.ok();
+        }
+        return R.fail(MessageSource.M("EYE_DATA_ERROR"));
+    }
+
+    /**
+     * 眼科——查询图片错误原因
+     */
+    @Override
+    public EyeErrorReasonOut errorReason(Long slideId) {
+        EyeErrorReasonOut errorReason = slideMapper.errorReason(slideId);
+        errorReason.setReason(Container.EYE_PROMPT_MAP.get(Integer.valueOf(errorReason.getPrompt())));
+
+        return errorReason;
+    }
+
+
+    /**
+     * 眼科-更新审核状态
+     */
+    @Override
+    public int updateMent(Slide slide) {
+        return slideMapper.updateMent(slide);
+    }
+
+    /**
+     * 拼接图像-单个切片详细信息 .
+     * 宽高、文件名、缩略图、宽高是 最大画布的:拼图的三倍宽高
+     */
+    @Override
+    public SlideAirepostVO selectSlideAirepostVOById(Long slideId) {
+        Slide slide = slideMapper.selectById(slideId);
+        Image image = imageMapper.selectById(slide.getPredictionImageId());
+        SlideAirepostVO slideAirepostVO = new SlideAirepostVO();
+        BeanUtil.copyProperties(image, slideAirepostVO);
+        slideAirepostVO.setSlideId(slideId);
+        slideAirepostVO.setPredictionImageId(slide.getPredictionImageId());
+        return slideAirepostVO;
+    }
+
+    /**
+     * 眼科-查新文件夹状态
+     */
+    @Override
+    public Slide selectFolderMent(Long slideId) {
+        return slideMapper.selectFolderMent(slideId);
+    }
 }

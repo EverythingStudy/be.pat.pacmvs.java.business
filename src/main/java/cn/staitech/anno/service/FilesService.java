@@ -15,4 +15,15 @@ import java.util.concurrent.ExecutionException;
  */
 public interface FilesService extends IService<Files> {
     PageMaster<Files> selectList(FilesListVO filesListVO) throws ExecutionException, InterruptedException;
+
+
+    /**
+     * 解压压缩包并解析
+     *
+     * @param files
+     * @throws Exception
+     */
+    void process(Files files) throws Exception;
+
+    void submitTask(Files files);
 }

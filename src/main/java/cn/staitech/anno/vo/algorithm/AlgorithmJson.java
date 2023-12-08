@@ -87,5 +87,10 @@ public class AlgorithmJson implements Serializable {
      */
     private String jsonType;
 
+    /**
+     * 轮次id
+     */
+    private String roundId;
+
 
 }

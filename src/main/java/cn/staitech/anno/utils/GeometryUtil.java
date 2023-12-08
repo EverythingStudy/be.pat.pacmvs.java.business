@@ -38,8 +38,8 @@ public class GeometryUtil {
         JSONArray coordinatesJsonArray1 = geometry.getJSONArray("coordinates");
         String type = geometry.getString("type");
         if (Objects.equals(type, "Polygon")) {
-            List<Object> list1 = new ArrayList<>();
             for (Object i1 : coordinatesJsonArray1) {
+                List<Object> list1 = new ArrayList<>();
                 JSONArray jsonArray1 = JSONArray.parseArray(i1.toString());
                 for (Object i2 : jsonArray1) {
                     JSONArray jsonArray2 = JSONArray.parseArray(i2.toString());
@@ -49,8 +49,8 @@ public class GeometryUtil {
                     newList.add(opposite(list.get(1)));
                     list1.add(newList);
                 }
+                lists.add(list1);
             }
-            lists.add(list1);
         } else if (Objects.equals(type, "LineString")) {
             for (Object i1 : coordinatesJsonArray1) {
                 JSONArray jsonArray2 = JSONArray.parseArray(i1.toString());

@@ -17,7 +17,7 @@ import cn.staitech.anno.vo.special.SpecialAnnotation;
 import cn.staitech.anno.vo.special.SpecialImage;
 import cn.staitech.anno.vo.specialsliceimage.SpecialSliceSelectVO;
 import cn.staitech.anno.vo.specialsliceimage.SpecialSliceVo;
-import cn.staitech.anno.vo.subimage.SubImage;
+import cn.staitech.anno.domain.SubImage;
 import cn.staitech.common.core.constant.CacheConstants;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.StringUtils;

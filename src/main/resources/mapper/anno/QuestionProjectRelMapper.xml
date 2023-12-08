@@ -67,4 +67,27 @@
         from tb_project_marks_rel
         where project_id = #{projectId} limit 1
     </select>
+
+    <!--批量添加考核选片-->
+    <insert id="examineInsert">
+        insert into tb_question_project_rel (question_id,
+        project_id,
+        image_code,
+        json_name,
+        image_name,
+        create_by,
+        create_name,
+        create_time
+        )values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.questionId},
+            #{item.projectId},
+            #{item.imageCode},
+            #{item.jsonName},
+            #{item.imageName},
+            #{item.createBy},
+            #{item.createName},
+            sysdate())
+        </foreach>
+    </insert>
 </mapper>

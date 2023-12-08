@@ -4,14 +4,23 @@ import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.vo.annotation.LabelListVO;
 import cn.staitech.anno.vo.annotation.LabelVO;
 import cn.staitech.anno.vo.geojson.GeoLabel;
+import cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo;
 import cn.staitech.anno.vo.statistic.StatisticCategoryListInVO;
 import cn.staitech.anno.vo.statistic.StatisticCategoryListOutVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PathologicalIndicatorCategoryMapper extends BaseMapper<PathologicalIndicatorCategory> {
+
+    /**
+     * 根据code查询出当前一组数据的roe标签
+     * @param map
+     * @return
+     */
+    PathologicalIndicatorCategory selectRoe(Map<String,Object> map);
 
     /**
      * 根据主键删除信息
@@ -60,6 +69,8 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
      * @return
      */
     List<GeoLabel> selectIndicatorIdList(Long indicatorId);
+
+    List<PathologicalIndicatorCategoryOutVo> selectIndicatorList(Long indicatorId);
 
     GeoLabel selectGeoLabel(Long categoryId);
 
@@ -137,12 +148,18 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
      * @param projectId
      * @return
      */
-    List<PathologicalIndicatorCategory> selectProjectListFilter(Long indicatorId);
+    List<PathologicalIndicatorCategoryOutVo> selectProjectListFilter(Long indicatorId);
 
     /**
      * 查询标签在标注中的使用数量
      */
     Integer selectLabelNum(Long categoryId);
+
+    /**
+     * 查询标签所属脏器系统内已有标签数量
+     */
+
+    Integer selectLabelNumByStructureId(String structureId);
 
     /**
      * 根据项目和结构编码查询详情数据

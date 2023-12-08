@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -53,7 +54,12 @@ public class OtherServiceImpl implements OtherService {
                 JSONObject markingJsonObject = new JSONObject();
                 markingJsonObject.put("examine_score_id", examineScoreId);
                 markingJsonObject.put("user_id", examineScoreBy.getCreateBy());
-                remoteLabelService.marking(markingJsonObject);
+                List<JSONObject> jsonObjects=new ArrayList<>();
+                jsonObjects.add(markingJsonObject);
+//                JSONObject jsonObjectList=new JSONObject();
+//                jsonObjectList.put("dataList",jsonObjects);
+//                remoteLabelService.marking(markingJsonObject);
+                remoteLabelService.marking(jsonObjects);
             }
         }
     }

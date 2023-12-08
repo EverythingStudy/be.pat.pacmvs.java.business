@@ -7,12 +7,15 @@ import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
+import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.slide.SlideSelectBy;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
+import cn.staitech.common.security.utils.SecurityUtils;
+import com.alibaba.fastjson.JSONObject;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +25,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
@@ -122,6 +126,35 @@ public class MarkingController {
         return R.ok(req.getMarking_id(), MessageSource.M("OPERATE_SUCCEED"));
     }
 
+    /**
+     * TODO:
+     * 2
+     * @param req
+     * @return
+     * @throws Exception
+     */
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "合并、裁剪轮廓")
+    @PutMapping("/intelligentAnno/updateOperation")
+    public R<JSONObject> updateOperation(@Validated @RequestBody UpdateOperationIn req) throws Exception {
+        JSONObject geoJson = markingService.updateOperation(req);
+        return R.ok(geoJson, MessageSource.M("OPERATE_SUCCEED"));
+    }
+
+    /**
+     * 1
+     * @param req
+     * @return
+     * @throws Exception
+     */
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "合并、裁剪轮廓校验")
+    @PutMapping("/intelligentAnno/operationCheck")
+    public R<Double> operationCheck(@Validated @RequestBody UpdateOperationIn req) throws Exception {
+        double percentage = markingService.operationCheck(req);
+        return R.ok(percentage, MessageSource.M("OPERATE_SUCCEED"));
+    }
+
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "websocket接口")
     @GetMapping("/getWebsocketPort")
@@ -139,14 +172,14 @@ public class MarkingController {
     @ApiOperation(value = "json导出", hidden = true)
     @GetMapping("/jsonExport")
     public R<String> getWebsocketPort(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId) throws Exception {
-        return R.ok(markingService.slideJsonExport(slideId));
+        return R.ok(markingService.slideJsonExport(slideId, SecurityUtils.getLoginUser().getSysUser()));
     }
 
     @Log(title = "标注测量excel导出", businessType = BusinessType.EXPORT)
     @ApiOperation(value = "标注测量excel导出")
     @GetMapping("/export")
-    public void export(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) throws Exception {
-        markingService.execlExport(slideId);
+    public void export(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId, HttpServletResponse response) throws Exception {
+        markingService.execlExport(slideId,response);
     }
 
     @ApiOperationSupport(author = "gjt")

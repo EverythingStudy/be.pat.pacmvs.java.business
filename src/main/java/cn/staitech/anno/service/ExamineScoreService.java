@@ -2,10 +2,7 @@ package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.ExamineScore;
 import cn.staitech.anno.vo.examination.SelectExaminationListVO;
-import cn.staitech.anno.vo.examine.ExamineScoreAddVO;
-import cn.staitech.anno.vo.examine.ExamineScoreBy;
-import cn.staitech.anno.vo.examine.ExamineScoreExportInsertVo;
-import cn.staitech.anno.vo.examine.ExamineScoreExportVO;
+import cn.staitech.anno.vo.examine.*;
 import cn.staitech.common.core.domain.PageResponse;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -39,5 +36,14 @@ public interface ExamineScoreService extends IService<ExamineScore> {
 
     void updatePersonalFit(Long examineScoreId);
 
+    /**
+     * 人工评分
+     * */
+    int manualScoring(ExamineScoreUpdateVO examineScoreUpdateVO);
+
+    /**
+     * 批量算法评分
+     * */
+    int BatchAlgorithm(ExamineScoreBathVO examineScoreBathVO);
 
 }

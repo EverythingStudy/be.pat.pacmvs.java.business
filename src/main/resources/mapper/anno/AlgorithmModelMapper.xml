@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.AlgorithmModelMapper">
+  <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.AlgorithmModel">
+    <id column="model_id" jdbcType="BIGINT" property="modelId" />
+    <result column="model_name" jdbcType="VARCHAR" property="modelName" />
+    <result column="model_name_en" jdbcType="VARCHAR" property="modelNameEn" />
+    <result column="tissue_id" jdbcType="BIGINT" property="tissueId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    model_id, model_name, model_name_en
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="cn.staitech.anno.domain.AlgorithmModel" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from aipre_algorithm_model
+    <where>
+      <if test="tissueId != null and tissueId != ''">
+        AND tissue_id = #{tissueId}
+      </if>
+    </where>
+  </select>
+
+
+
+</mapper>

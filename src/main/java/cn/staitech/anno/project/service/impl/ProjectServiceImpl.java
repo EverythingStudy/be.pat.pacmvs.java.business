@@ -22,7 +22,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapperV1, Project>
         implements ProjectService {
 
     @Override
-    public List<ProjectVO> queryProject(ProjectIn params) throws Exception {
+    public List<ProjectVO> queryProject(ProjectIn params) {
         return getBaseMapper().queryProject(params);
     }
 

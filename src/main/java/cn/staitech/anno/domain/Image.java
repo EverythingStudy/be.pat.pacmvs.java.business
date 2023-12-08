@@ -29,6 +29,9 @@ public class Image extends BaseEntity {
     @TableId(value = "image_id", type = IdType.AUTO)
     @ApiModelProperty(value = "图像id", hidden = true)
     private Long imageId;
+    @TableField(value = "file_name")
+    @ApiModelProperty(value = "无扩展名文件名称")
+    private String fileName;
     @TableField(value = "image_name")
     @ApiModelProperty(value = "图像名称-文件名称（文件名）", hidden = true)
     private String imageName;
@@ -89,12 +92,8 @@ public class Image extends BaseEntity {
     @TableField(value = "source_lens")
     @ApiModelProperty(value = "原放大倍数", hidden = true)
     private Integer sourceLens;
-    @TableField(value = "process_flag")
-    @ApiModelProperty(value = "图片状态(0分片合并及生成缩略图处理中，,1合并且生成缩略图（可显示）,2文件以经传输（不可见）)", hidden = true)
-    private Integer processFlag;
-
     @TableField(value = "create_by")
-    @ApiModelProperty(value = "", hidden = true)
+    @ApiModelProperty(value = "创建人", hidden = true)
     private Long createBy;
     @TableField(value = "create_time")
     @ApiModelProperty(value = "上传时间 - 创建时间", hidden = true)
@@ -107,39 +106,17 @@ public class Image extends BaseEntity {
     @ApiModelProperty(value = "", hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
-
-
-    /**
-     * 无扩展名文件名称
-     */
-    @TableField(value = "file_name")
-    @ApiModelProperty(value = "无扩展名文件名称")
-    private String fileName;
-
-
-    /**
-     * 1024缩略图路径（用于缓存、标注缩略图时需要）
-     */
     @TableField(value = "cache_url")
     @ApiModelProperty(value = "1024缩略图路径（用于缓存、标注缩略图时需要）")
     private String cacheUrl;
 
-
-    /**
-     * 原图缩到cache图的倍数
-     */
     @TableField(value = "multiple")
     @ApiModelProperty(value = "原图缩到cache图的倍数")
     private String multiple;
 
-
-    /**
-     * 所在主机ID
-     */
     @TableField(value = "host_id")
     @ApiModelProperty(value = "所在主机ID")
     private Byte hostId;
-
 
     @TableField(exist = false)
     @ApiModelProperty(value = "", hidden = true)
@@ -154,12 +131,8 @@ public class Image extends BaseEntity {
     @ApiModelProperty(value = "所属专题-专题名称")
     private String topicName;
     @TableField(value = "status")
-    @ApiModelProperty(value = "是否可用状态:0不可用1可用")
+    @ApiModelProperty(value = "文件状态:0上传中、1上传失败、2解析中、3解析失败、4可用")
     private Integer status;
-    @TableField(value = "delete_flag")
-    @ApiModelProperty(value = "逻辑删除状态:（0删除，1未删除）", hidden = true)
-    private Integer deleteFlag;
-
     @ApiModelProperty(value = "机构编号")
     @TableField(value = "organization_id")
     private Long organizationId;
@@ -178,22 +151,26 @@ public class Image extends BaseEntity {
     @ApiModelProperty(value = "轮次名称")
     @TableField(exist = false)
     private String roundName;
-    @ApiModelProperty(value = "业务类型:1原始切片（默认）、2预测切片")
+    @ApiModelProperty(value = "业务类型:1原始切片（默认）、2预测切片、7拼接图像或单张图像（单张图像folder_id=0）")
     private Integer bizType;
-    @ApiModelProperty(value = "业务类型名称:1原始切片（默认）、2预测切片")
+    @ApiModelProperty(value = "业务类型:1原始切片（默认）、2预测切片、7拼接图像或单张图像（单张图像folder_id=0）")
     @TableField(exist = false)
     private String businessTypeName;
     @ApiModelProperty(value = "图像来源、上传方式(1前端上传，2目录选片，3TCP客户端上传)")
     private Integer source;
-
     @TableField(exist = false)
     @ApiModelProperty(value = "", hidden = true)
     private String searchValue;
-
     @ApiModelProperty(value = "项目编号")
     @TableField(exist = false)
     private Long projectId;
     @ApiModelProperty(value = "reviewRoundId")
     @TableField(exist = false)
     private Long reviewRoundId;
+    @ApiModelProperty(value = "文件夹编号")
+    @TableField(value = "folder_id")
+    private Long folderId;
+    @ApiModelProperty(value = "创建人")
+    @TableField(exist = false)
+    private String nickName;
 }

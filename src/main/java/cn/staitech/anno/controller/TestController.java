@@ -152,6 +152,11 @@ public class TestController {
         return R.ok(null, "测试多语言#ABC");
     }
 
+    @GetMapping("/sTest")
+    public R structure() {
+        return R.ok(null, "测试是否构建");
+    }
+
 
     //Object转Map
 //    public static Map<String, Object> objectToMap(Object object){

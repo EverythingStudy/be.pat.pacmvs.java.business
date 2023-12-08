@@ -299,4 +299,14 @@
             #{userId}
         </foreach>
     </delete>
+
+    <select id="userList" parameterType="cn.staitech.system.api.domain.SysUser" resultMap="SysUserResult">
+        select user_id,user_name,nick_name from sys_user
+           <where>
+               <if test="organizationId != null and organizationId != ''">
+                   AND organization_id = #{organizationId}
+               </if>
+               and del_flag=0
+           </where>
+    </select>
 </mapper>

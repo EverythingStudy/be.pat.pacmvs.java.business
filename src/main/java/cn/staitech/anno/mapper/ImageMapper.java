@@ -1,7 +1,6 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.Image;
-import cn.staitech.anno.vo.image.in.ImageBatchIdsVO;
 import cn.staitech.anno.vo.image.in.ImageListVO;
 import cn.staitech.anno.vo.image.in.ImageTopicBatchIdsVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -100,27 +99,4 @@ public interface ImageMapper extends BaseMapper<Image> {
      */
     int deleteById(Long imageId);
 
-    /**
-     * 标注图像逻辑删除
-     *
-     * @param imageId
-     * @return
-     */
-    int updateDeleteFlagById(Long imageId);
-
-    /**
-     * 标注图像批量逻辑删除
-     *
-     * @param imageIdList
-     * @return
-     */
-    int updateDeleteFlagBatchIds(ImageBatchIdsVO imageIdList);
-
-    /**
-     * 更改图像上传状态
-     *
-     * @param imageIdList 图像ID列表
-     * @return
-     */
-    void updateProcessFlagByIdList(@Param("imageIdList") List imageIdList);
 }

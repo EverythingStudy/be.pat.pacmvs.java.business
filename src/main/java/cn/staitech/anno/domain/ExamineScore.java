@@ -117,6 +117,26 @@ public class ExamineScore implements Serializable {
      */
     @ApiModelProperty(value = "考试结果(1通过、2未通过)")
     private String examResults;
+    
+    /**
+     * 考试审核 默认0：待审核 为1：算法审核，2：系统用户审核
+     */
+    @ApiModelProperty(value = "考试审核 默认0：待审核 为1：算法审核，2：系统用户审核")
+    private String examReviewType;
+    
+    /**
+     * 审核者
+     */
+    @ApiModelProperty(value = "审核者")
+    private Long examReviewUser;
+
+    /**
+     * 审核时间
+     */
+    @ApiModelProperty(value = "审核时间")
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private String examReviewTime;
 
     /**
      * 操作状态（0：开始考试，考试完成）

@@ -7,6 +7,12 @@ package cn.staitech.anno.constant;
  */
 public class CommonConstant {
 
+	 /**
+     * system
+     */
+	
+	public static final String SYS_USER = "SYS_USER_";
+	public static final Long SYS_USER_CACHE_HOURS = 7L;
     /**
      * cache key
      */
@@ -16,6 +22,7 @@ public class CommonConstant {
     public static final String NUMBER_0 = "0";
     public static final String NUMBER_1 = "1";
     public static final String GLIDE_LINE = "_";
+    public static final String FILE_SUFFIX = ".";
     public static final String FILE_SUFFIX_DOCX = ".docx";
     public static final String FILE_SUFFIX_JSON = ".json";
     public static final String FILE_SUFFIX_TXT = ".txt";
@@ -55,10 +62,42 @@ public class CommonConstant {
     public static final String CLEAN = "clean";
     public static final String UNION = "UNION";
     public static final String DIFFERENCE = "DIFFERENCE";
+    public static final String ANNO_SLIDE = "ANNO_SLIDE_";
+    public static final Long SLIDE_CACHE_HOURS = 24L;
+    public static final String ANNO_IMAGE = "ANNO_IMAGE_";
+    public static final Long IMAGE_CACHE_HOURS = 24L;
+    public static final String ANNO_MARKING = "ANNO_MARKING_";
+    public static final Long MARKING_CACHE_HOURS = 24L;
+    public static final String ANNO_TYPE_DRAW = "Draw";
+    public static final String ANNO_TYPE_AI = "AI";
+    public static final String ANNO_TYPE_MEASURE = "Measure";
+
+
+    
+    /**
+     * 上传下载限制
+     */
+    public static final double UPLOAD_FILE_LIMIT = 300;
+    public static final double DOWN_FILE_LIMIT = 300;
+    
     /**
      * Viewer
      */
     public static final Double MICRON = 0.26;
+    
+    /**
+     * structure
+     */
+    public static final String STRUCTURE_RO = "RO";
+    public static final String STRUCTURE_ROA = "ROA";
+    public static final String STRUCTURE_ROE = "ROE";
+    public static final Integer STRUCTURE_ROA_GROUP_NUMBER = 1;
+    public static final Integer STRUCTURE_ROE_GROUP_NUMBER = 2;
+    public static final Integer STRUCTURE_RO_GROUP_NUMBER = 3;
+    //5L：天津血研所
+    public static final Long[] ORGANIZATION_ID = {5L};
+
+    
     /**
      * Statistic
      */

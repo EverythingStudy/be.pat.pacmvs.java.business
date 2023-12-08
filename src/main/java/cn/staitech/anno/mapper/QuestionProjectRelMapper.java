@@ -26,4 +26,9 @@ public interface QuestionProjectRelMapper extends BaseMapper<QuestionProjectRel>
     int countShouldMarks(Long projectId);
 
     Long selectShouldMarks(Long projectId);
+
+    /**
+     * 批量添加考核选片
+     * */
+    int examineInsert(List<QuestionProjectRel> questionProjectRelList);
 }

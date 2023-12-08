@@ -3,6 +3,7 @@ package cn.staitech.anno.service;
 import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
+import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
@@ -10,6 +11,7 @@ import cn.staitech.anno.vo.marking.PointCount;
 import cn.staitech.anno.vo.slide.SlideRes;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.system.api.domain.SysUser;
+import com.alibaba.fastjson.JSONObject;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -26,6 +28,8 @@ public interface MarkingService {
 
 
     List<Features> selectListBy(Long slideId) throws Exception;
+
+    double operationCheck(UpdateOperationIn req) throws Exception;
 
 
     /**
@@ -76,6 +80,8 @@ public interface MarkingService {
      */
     String update(MarkingUpdateIn marking) throws Exception;
 
+    JSONObject updateOperation(UpdateOperationIn req) throws Exception;
+
     /**
      * 更新标注点数
      *
@@ -98,7 +104,7 @@ public interface MarkingService {
      * @param slideId
      * @return
      */
-    String slideJsonExport(Long slideId) throws Exception;
+//    String slideJsonExport(Long slideId) throws Exception;
 
 
     /**
@@ -107,7 +113,9 @@ public interface MarkingService {
      * @param slideId
      * @return
      */
-    String slideJsonExportExt(Long slideId, SysUser sysUser) throws Exception;
+    String slideJsonExport(Long slideId, SysUser sysUser) throws Exception;
+
+    String slideLabelJsonExport(Long slideId, SysUser sysUser) throws InterruptedException;
 
     /**
      * 导入zip压缩包
@@ -122,7 +130,7 @@ public interface MarkingService {
     /**
      * 导出execl
      */
-    void execlExport(Long slideId) throws Exception;
+    void execlExport(Long slideId, HttpServletResponse response) throws Exception;
 
     DownTask projectJsonExport(Long projectId, List<Long> slideIds) throws Exception;
 

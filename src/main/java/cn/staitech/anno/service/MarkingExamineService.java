@@ -2,9 +2,11 @@ package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.MarkingExamine;
 import cn.staitech.anno.vo.geojson.Features;
+import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.marking.MarkingExamineInsertVO;
 import cn.staitech.anno.vo.marking.MarkingExamineUpdateVO;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -42,6 +44,13 @@ public interface MarkingExamineService extends IService<MarkingExamine> {
      */
     Long update(MarkingExamineUpdateVO marking) throws Exception;
 
+    /**
+     * 合并、裁剪轮廓
+     */
+    JSONObject updateOperation(UpdateOperationIn req) throws Exception;
+
+
+    double operationCheck(UpdateOperationIn req) throws Exception;
 
     /**
      * 删除标注

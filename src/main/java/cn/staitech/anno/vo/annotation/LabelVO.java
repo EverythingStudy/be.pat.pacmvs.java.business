@@ -22,6 +22,8 @@ public class LabelVO {
     private String structureId;
     @ApiModelProperty(value = "结构名称")
     private String structureName;
+    @ApiModelProperty(value = "结构code")
+    private String categoryCode;
     @ApiModelProperty(value = "机构ID")
     private Long organizationId;
     @ApiModelProperty("请求参数（开始和结束时间）")

@@ -163,7 +163,8 @@
                t.annotation_owner,
                c.rgb                                                             as label_color,
                c.category_name                                                   as label_name,
-               CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) as measure_full_name,
+               <!-- CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) as measure_full_name, -->
+               c.category_name as measure_full_name,
                t.annotation_owner,
                t.annotation_update_owner,
                t.update_time,
@@ -227,7 +228,8 @@
                        "label_name",
                        c.category_name,
                        "measure_full_name",
-                       CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name)
+                      <!--  CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) -->
+                      c.category_name
                    ) AS properties
         FROM tb_marking AS t
                  LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
@@ -258,7 +260,8 @@
                      t.radius,
                      t.inner_angle,
                      t.exterior_angle,
-                     CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) AS measure_full_name,
+                    <!--  CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) AS measure_full_name, -->
+                    c.category_name as measure_full_name,
                      c.category_name
               FROM tb_marking AS t
                        LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
@@ -341,7 +344,8 @@
                        "label_name",
                        c.category_name,
                        "measure_full_name",
-                       CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name),
+                       <!-- CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name), -->
+                       c.category_name,
                        "image_id",
                        t.image_id,
                        "update_by",
@@ -350,7 +354,7 @@
                        t.annotation_update_owner,
                        "project_id",
                        t.project_id
---                    ,
+                   --                    ,
 --                        "image_url",
 --                        t.image_url
                    ) AS properties
@@ -398,6 +402,20 @@
         WHERE s.slide_id = #{slideId}
     </select>
 
+
+    <select id="selectCategory" parameterType="long"
+            resultType="cn.staitech.anno.domain.PathologicalIndicatorCategory">
+        SELECT p.category_id,
+               p.structure_id,
+               p.category_code
+        FROM tb_marking AS m
+                 LEFT JOIN tb_pathological_indicator_category AS p ON p.category_id = m.category_id
+                 left join tb_structure as s on s.structure_id = p.structure_id
+        WHERE m.slide_id = #{slideId}
+          AND s.type = "RO"
+        GROUP BY p.category_id;
+    </select>
+
     <select id="reviewJsonExportSelect" parameterType="long" resultMap="jsonExportResult">
         SELECT t.topic_name,
                p.project_id,
@@ -424,6 +442,21 @@
         where slide_id = #{slideId}
     </select>
 
+
+
+    <select id="selectFilterCategoryLists" parameterType="map" resultMap="featuresResult">
+        <include refid="selectList"/>
+        where slide_id = #{slideId}
+        <if test="categoryIdList != null and categoryIdList.size() >0 ">
+            and c.category_id in
+            <foreach item="categoryId" collection="categoryIdList" separator="," open="(" close=")" index="">
+                #{categoryId, jdbcType=NUMERIC}
+            </foreach>
+        </if>
+    </select>
+
+
+
     <select id="selectListCount" parameterType="long" resultType="int">
         SELECT count(*) * 1
         FROM tb_marking AS t
@@ -431,7 +464,7 @@
         where slide_id = #{slideId}
         AND location_type != "Point"
         <if test="measureFullName != null and measureFullName != ''">
-            and CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) LIKE concat('%', #{measureFullName}, '%')
+             and CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) LIKE concat('%', #{measureFullName}, '%')
         </if>
     </select>
 
@@ -441,7 +474,7 @@
         where slide_id = #{slideId}
         AND location_type != "Point"
         <if test="measureFullName != null and measureFullName != ''">
-            and CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) LIKE concat('%', #{measureFullName}, '%')
+           and CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) LIKE concat('%', #{measureFullName}, '%')
         </if>
         ORDER BY marking_id DESC
         limit #{pageNum},#{pageSize}
@@ -451,7 +484,7 @@
         <include refid="selectPoint"/>
         where slide_id = #{slideId}
         <if test="measureFullName != null and measureFullName != ''">
-            AND CONCAT_WS("_", t.measure_name, t1.category_name) LIKE concat('%', #{measureFullName}, '%')
+           AND CONCAT_WS("_", t.measure_name, t1.category_name) LIKE concat('%', #{measureFullName}, '%')
         </if>
         AND location_type = "Point"
     </select>

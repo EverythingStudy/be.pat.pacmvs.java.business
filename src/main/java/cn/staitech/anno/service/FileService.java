@@ -9,7 +9,7 @@ public interface FileService {
 
     String upload(MultipartFile file) throws Exception;
 
-    String createFiles(Long slideId, String suffix) throws Exception;
+    String createFiles(Long slideId, String suffix, String structureId) throws Exception;
 
     String createExamineScoreFiles(Long slideId, String suffix, Long questionProjectId, Long createBy) throws Exception;
 

@@ -1,6 +1,7 @@
 package cn.staitech.anno.vo.image.in;
 
 import cn.staitech.anno.domain.Pager;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,6 +17,8 @@ import java.util.Map;
 public class ImageListVO extends Pager implements Serializable {
     @ApiModelProperty(value = "图像ID", hidden = true)
     private Long imageId;
+    @ApiModelProperty(value = "无扩展名文件名称")
+    private String fileName;
     @ApiModelProperty(value = "图像名称/文件名称（文件名）")
     private String imageName;
     @ApiModelProperty(value = "图像url地址", hidden = true)
@@ -56,18 +59,16 @@ public class ImageListVO extends Pager implements Serializable {
     private String resolutionY;
     @ApiModelProperty(value = "原放大倍数", hidden = true)
     private Integer sourceLens;
-    @ApiModelProperty(value = "图片状态:0分片合并及生成缩略图处理中，,1合并且生成缩略图（可显示）,2文件以经传输（不可见）", hidden = true)
-    private Integer processFlag;
     @ApiModelProperty(value = "", hidden = true)
     private String searchValue;
-    @ApiModelProperty(value = "", hidden = true)
+    @ApiModelProperty(value = "创建人", hidden = true)
     private Long createBy;
     @ApiModelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
-    @ApiModelProperty(value = "", hidden = true)
+    @ApiModelProperty(value = "修改人", hidden = true)
     private Long updateBy;
-    @ApiModelProperty(value = "", hidden = true)
+    @ApiModelProperty(value = "修改时间", hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
     @ApiModelProperty(value = "切片编号")
@@ -82,10 +83,8 @@ public class ImageListVO extends Pager implements Serializable {
     private Long topicId;
     @ApiModelProperty(value = "专题名称")
     private String topicName;
-    @ApiModelProperty(value = "是否可用:0不可用1可用")
+    @ApiModelProperty(value = "0上传中、1上传失败、2解析中、3解析失败、4可用")
     private Integer status;
-    @ApiModelProperty(value = "逻辑删除状态:（0删除，1未删除）")
-    private Integer deleteFlag;
     @ApiModelProperty(value = "创建时间-查询入参")
     private Map<String, Object> createTimeParams;
     @ApiModelProperty(value = "机构编号")
@@ -98,4 +97,10 @@ public class ImageListVO extends Pager implements Serializable {
     private Integer bizType;
     @ApiModelProperty(value = "图像来源(1前端上传，2目录选片，3TCP客户端上传)", hidden = true)
     private Integer source;
+    @ApiModelProperty(value = "文件夹ID")
+    private Long folderId;
+    @ApiModelProperty(value = "创建人")
+    @TableField(exist = false)
+    private String nickName;
+
 }

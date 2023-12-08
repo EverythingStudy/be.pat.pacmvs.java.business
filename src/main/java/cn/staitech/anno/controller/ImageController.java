@@ -2,22 +2,22 @@ package cn.staitech.anno.controller;
 
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.service.ImageService;
-import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.image.ImageStatus;
 import cn.staitech.anno.vo.image.in.*;
 import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
+import cn.staitech.common.security.annotation.Logical;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,8 +39,17 @@ public class ImageController extends BaseController {
     @Resource
     private ImageService imageService;
 
-    @Resource
-    private SlideService slideService;
+    /**
+     * 切片状态列表 .
+     */
+    @ApiOperationSupport(author = "wangfeng")
+    @ApiOperation(value = "切片状态列表", notes = "切片状态列表")
+    @Log(title = "切片状态列表", menu = "切片状态列表", subMenu = "切片状态列表", businessType = BusinessType.QUERY)
+    @PostMapping("/status")
+    public R<List<ImageStatus>> status() {
+        return R.ok(imageService.status());
+    }
+
 
     /**
      * 切片列表 - 原始切片 .
@@ -51,12 +60,32 @@ public class ImageController extends BaseController {
             @ApiImplicitParam(name = "pageNum", value = "当前记录起始索引", dataTypeClass = Integer.class, paramType = "query", example = "1"),
             @ApiImplicitParam(name = "pageSize", value = "每页显示记录数", dataTypeClass = Integer.class, paramType = "query", example = "10")})
     @Log(title = "查询切片列表", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.QUERY)
+    // @RequiresPermissions("section:slices:query")
     @PostMapping("/list")
     public R<PageMaster<ImageListOutVO>> list(@Validated @RequestBody ImageListVO image) throws ExecutionException, InterruptedException {
         image.setBizType(1);
         PageMaster<ImageListOutVO> page = imageService.selectList(image);
         return R.ok(page);
     }
+
+
+    /**
+     * 切片列表 - 原始切片 .
+     */
+    @ApiOperationSupport(author = "wangfeng")
+    @ApiOperation(value = "切片列表", notes = "切片列表 - 王峰")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pageNum", value = "当前记录起始索引", dataTypeClass = Integer.class, paramType = "query", example = "1"),
+            @ApiImplicitParam(name = "pageSize", value = "每页显示记录数", dataTypeClass = Integer.class, paramType = "query", example = "10")})
+    @Log(title = "查询切片列表", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.QUERY)
+    // @RequiresPermissions({"section:ophthalmology:query", "scction:ophthalmology:query", "algorithmDetectionInfo:slice",})
+    @PostMapping("/eyeList")
+    public R<PageMaster<ImageListOutVO>> eyeList(@Validated @RequestBody ImageListVO image) throws ExecutionException, InterruptedException {
+        image.setBizType(7);
+        PageMaster<ImageListOutVO> page = imageService.selectList(image);
+        return R.ok(page);
+    }
+
 
     /**
      * 单个切片详细信息 .
@@ -72,31 +101,14 @@ public class ImageController extends BaseController {
     }
 
     /**
-     * 删除单个切片 .
-     */
-    @SneakyThrows
-    @RequiresPermissions("section:slices:remove")
-    @ApiOperationSupport(author = "wangfeng")
-    @Log(title = "删除", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.DELETE)
-    @ApiOperation(value = "删除单个切片(物理删除)")
-    @GetMapping("/deleteById/{imageId}")
-    @Transactional(rollbackFor = Exception.class)
-    public R deleteById(@PathVariable("imageId") @ApiParam(value = "图像ID") Long imageId) {
-        if (imageService.deleteById(imageId)) {
-            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
-        }
-        return R.fail(MessageSource.M("IMAGE_USING_FORBID_DELETE"));
-    }
-
-
-    /**
      * 删除（根据ID 批量删除）
      *
      * @param request 主键ID列表(不能为 null 以及 empty)
      */
     @ApiOperationSupport(author = "wangfeng")
     @Log(title = "删除切片", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.DELETE)
-    @ApiOperation(value = "逻辑批量删除切片")
+    @ApiOperation(value = "批量删除切片-物理删除")
+    @RequiresPermissions(value = {"section:ophthalmology:del", "section:ophthalmology:remove", "projectConfig:spliceImgConfig:batchDelete"}, logical = Logical.OR)
     @PostMapping("/deleteBatchIds")
     public R<List<Long>> deleteBatchIds(@Validated @RequestBody ImageBatchIdsVO request) throws InterruptedException {
         List<Long> data = imageService.deleteBatchIds(request);
@@ -129,6 +141,7 @@ public class ImageController extends BaseController {
     @ApiOperationSupport(author = "wangfeng")
     @Log(title = "批量分专题", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.UPDATE)
     @ApiOperation(value = "单个图像添加专题")
+    @RequiresPermissions(value = {"section:slices:edit", "section:forecast:edit", "section:ophthalmology:edit"}, logical = Logical.OR)
     @PostMapping("/update")
     public R update(@Validated @RequestBody ImageUpdateVO request) throws Exception {
         int result = imageService.updateById(request);

@@ -33,7 +33,7 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
     @Resource
     private MarkingMapperV1 markingMapperV1;
 
-    @Transactional(rollbackFor = Exception.class)
+    //@Transactional(rollbackFor = Exception.class)
     @Override
     public Boolean saveAnnoUsers(Long slideId, List<Long> userIds) {
         List<SlideAttr> slideAttrs = queryAttr(slideId, USER, userIds);
@@ -54,7 +54,7 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
         return true;
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    //@Transactional(rollbackFor = Exception.class)
     @Override
     public Boolean saveAnnoCategory(Long slideId, List<Long> categoryIds) {
         List<SlideAttr> slideAttrs = queryAttr(slideId, CATEGORY, categoryIds);

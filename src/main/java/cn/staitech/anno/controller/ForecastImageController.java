@@ -4,7 +4,6 @@ import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
-import cn.staitech.anno.vo.image.in.ImageBatchIdsVO;
 import cn.staitech.anno.vo.image.in.ImageListVO;
 import cn.staitech.anno.vo.image.in.ImageTopicBatchIdsVO;
 import cn.staitech.anno.vo.image.in.ImageUpdateVO;
@@ -13,17 +12,16 @@ import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
+import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -49,6 +47,7 @@ public class ForecastImageController extends BaseController {
             @ApiImplicitParam(name = "pageNum", value = "当前记录起始索引", dataTypeClass = Integer.class, paramType = "query", example = "1"),
             @ApiImplicitParam(name = "pageSize", value = "每页显示记录数", dataTypeClass = Integer.class, paramType = "query", example = "10")})
     @Log(title = "查询切片列表", menu = "切片管理", subMenu = "预测图片", businessType = BusinessType.QUERY)
+    @RequiresPermissions("section:forecast:query")
     @PostMapping("/list")
     public R<PageMaster<ImageListOutVO>> list(@Validated @RequestBody ImageListVO image) throws ExecutionException, InterruptedException {
         image.setBizType(2);
@@ -67,43 +66,6 @@ public class ForecastImageController extends BaseController {
     public R<Image> selectById(@PathVariable("imageId") @ApiParam(value = "图像ID") Long imageId) {
         Image image = imageService.selectById(imageId);
         return R.ok(image);
-    }
-
-    /**
-     * 删除单个切片 .
-     */
-    @SneakyThrows
-    @ApiOperationSupport(author = "wangfeng")
-    @Log(title = "删除", menu = "切片管理", subMenu = "预测图片", businessType = BusinessType.DELETE)
-    @ApiOperation(value = "逻辑删除单个切片")
-    @GetMapping("/deleteById/{imageId}")
-    @Transactional(rollbackFor = Exception.class)
-    public R deleteById(@PathVariable("imageId") @ApiParam(value = "图像ID") Long imageId) {
-        if (imageService.deleteById(imageId)) {
-            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
-        }
-        return R.fail(MessageSource.M("IMAGE_USING_FORBID_DELETE"));
-    }
-
-
-    /**
-     * 删除（根据ID 批量删除）
-     *
-     * @param request 主键ID列表(不能为 null 以及 empty)
-     */
-    @ApiOperationSupport(author = "wangfeng")
-    @Log(title = "删除切片", menu = "切片管理", subMenu = "预测图片", businessType = BusinessType.DELETE)
-    @ApiOperation(value = "逻辑批量删除切片")
-    @PostMapping("/deleteBatchIds")
-    public R<List<Long>> deleteBatchIds(@Validated @RequestBody ImageBatchIdsVO request) throws InterruptedException {
-        List<Long> data = null;
-        try {
-            data = imageService.deleteBatchIds(request);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } finally {
-            return R.ok(data, MessageSource.M("OPERATE_SUCCEED"));
-        }
     }
 
     /**
