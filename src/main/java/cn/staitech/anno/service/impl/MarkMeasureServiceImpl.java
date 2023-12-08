@@ -32,6 +32,7 @@ import java.util.stream.Stream;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import cn.staitech.anno.project.domain.Marking;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -87,7 +88,6 @@ import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.markMeasure.MarkMeasure;
-import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.PointCount;
 import cn.staitech.common.core.domain.PageResponse;
@@ -329,10 +329,12 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 		
 		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 //		SysUser sysUser = userMapper.selectUserById(1L);
-		String location = MarkingUtils.updateVerify(markingBy.getGeometry(),req.getGeometry(),req.getOperation(),req.getCheck());
-		JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(location));
+		Marking markingBys = MarkingUtils.updateVerify(markingBy.getGeometry(),req.getGeometry(),req.getOperation(),req.getCheck(), Double.parseDouble(req.getResolution()));
+		JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(markingBys.getMarkingId()));
 		MarkMeasure marking = new MarkMeasure();
 		marking.setGeometry(jsonObject);
+		marking.setArea(markingBys.getArea());
+		marking.setPerimeter(markingBys.getPerimeter());
 		marking.setMark_measure_id(req.getMarking_id());
 		marking.setUpdate_by(sysUser.getUserId());
 		marking.setUpdate_time(new Date());

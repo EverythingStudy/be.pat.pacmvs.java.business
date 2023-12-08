@@ -1,5 +1,6 @@
 package cn.staitech.anno.utils;
 
+import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.Properties;
 import com.alibaba.fastjson.JSON;
@@ -110,8 +111,9 @@ public class MarkingUtils {
      * @return
      * @throws Exception
      */
-    public static String updateVerify(JSONObject oldLocations, JSONObject newLocations, String operation, boolean check) throws Exception {
+    public static Marking updateVerify(JSONObject oldLocations, JSONObject newLocations, String operation, boolean check,double resolution) throws Exception {
 //        try {
+        Marking marking = new Marking();
 
         String oldLocation = WktUtil.jsonToWkt(oldLocations);
         String newLocation = WktUtil.jsonToWkt(newLocations);
@@ -200,10 +202,16 @@ public class MarkingUtils {
                 throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
             }
             data = wktWriter.write(geometry);
+            marking.setMarkingId(data);
+            if(resolution != 0){
+                String area= String.valueOf(geometry.getArea() * resolution * resolution);
+                marking.setArea(area);
+                String per = String.valueOf(geometry.getLength() * resolution);
+                marking.setPerimeter(per);
+            }
+
         }
-
-
-        return data;
+        return marking;
 
 //        } catch (Exception e) {
 //            throw new Exception("图形不符合规则");
@@ -277,7 +285,7 @@ public class MarkingUtils {
         int distLength = 0;
         for (int i = 0; i < coordinates.length; i++) {
 /*
-            if (Math.abs(coordinates[i].x) > 50000 || Math.abs(coordinates[i].y) > 50000) {
+            if (Math.abs(coordinates[i].x) > 500000 || Math.abs(coordinates[i].y) > 500000) {
                 log.info("{} {}", i, coordinates[i]);
                 continue;
             }
