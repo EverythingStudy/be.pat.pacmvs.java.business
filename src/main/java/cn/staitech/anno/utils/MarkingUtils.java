@@ -271,19 +271,37 @@ public class MarkingUtils {
      */
     public static Geometry removePolygonPoint(Coordinate[] coordinates) {
         int length = coordinates.length;
+        log.info("length: {} -------------------------", length);
+
         Coordinate[] tmpCoordinates = new Coordinate[length];
         int distLength = 0;
         for (int i = 0; i < coordinates.length; i++) {
+/*
             if (Math.abs(coordinates[i].x) > 50000 || Math.abs(coordinates[i].y) > 50000) {
                 log.info("{} {}", i, coordinates[i]);
                 continue;
             }
+*/
+            double distince;
+            if (i == length - 1) {
+                distince = coordinates[i].distance(coordinates[0]);
+            } else {
+                distince = coordinates[i].distance(coordinates[i + 1]);
+            }
+
+            if (distince > 50000) {
+                log.info("{} {} {} -------------------------", i, coordinates[i], distince);
+                continue;
+            }
+
             tmpCoordinates[distLength] = coordinates[i];
             distLength++;
         }
 
         Coordinate[] distCoordinates = new Coordinate[distLength];
         System.arraycopy(tmpCoordinates, 0, distCoordinates, 0, distLength);
+
+        log.info("distCoordinates.length: {} -------------------------", distCoordinates.length);
 
         GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), 4326);
         return geometryFactory.createPolygon(distCoordinates);
