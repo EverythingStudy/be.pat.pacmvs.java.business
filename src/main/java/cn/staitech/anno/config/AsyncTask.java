@@ -199,8 +199,8 @@ public class AsyncTask {
                     QueryWrapper<Marking> markingQueryWrapperBy = new QueryWrapper<>();
                     markingQueryWrapperBy.eq("slide_id", slide.getSlideId());
                     //获取json中用户信息
-                    String name = jsonObject.getJSONObject("attribute").getString("author");
-                    markingQueryWrapperBy.eq("annotation_owner", name);
+//                    String name = jsonObject.getJSONObject("attribute").getString("author");
+//                    markingQueryWrapperBy.eq("annotation_owner", name);
                     //删除slideId下author的所有标注
                     markingMapperV1.delete(markingQueryWrapperBy);
                     // 查询切片详情
