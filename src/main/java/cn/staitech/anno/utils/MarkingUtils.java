@@ -187,9 +187,9 @@ public class MarkingUtils {
                 // 获取geometry类型
                 String geometryType = geometry.getGeometryType();
                 // TODO：校验飞点 后续可写多种校验策略放入线程池中
-                if ("Polygon".equals(geometryType)) {
+/*                if ("Polygon".equals(geometryType)) {
                     geometry = removePolygonPoint(geometry.getCoordinates());
-                }
+                }*/
 
                 // 判断新图形是否为复杂多边型(比如大标注嵌套小标注
                 if ("MultiPolygon".equals(geometryType)) {
@@ -275,6 +275,7 @@ public class MarkingUtils {
         int distLength = 0;
         for (int i = 0; i < coordinates.length; i++) {
             if (Math.abs(coordinates[i].x) > 50000 || Math.abs(coordinates[i].y) > 50000) {
+                log.info("{} {}", i, coordinates[i]);
                 continue;
             }
             tmpCoordinates[distLength] = coordinates[i];
