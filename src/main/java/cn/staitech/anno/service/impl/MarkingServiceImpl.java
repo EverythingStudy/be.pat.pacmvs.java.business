@@ -362,11 +362,9 @@ public class MarkingServiceImpl implements MarkingService {
 		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
 			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
 		}
-		// 校验 TODO:
+		// 合并 - 校验飞点 TODO: MarkingUtils.updatePolygonPoint(jsonObject);
 		String location = MarkingUtils.updateVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation(), req.getCheck());
 		JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(location));
-		// 校验飞点
-		// MarkingUtils.updatePolygonPoint(jsonObject);
 
 		cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
 		marking.setGeometry(jsonObject);

@@ -5,24 +5,28 @@ import cn.staitech.anno.vo.geojson.Properties;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
 import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.io.WKTWriter;
 import com.vividsolutions.jts.operation.overlay.OverlayOp;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 public class MarkingUtils {
     private static final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), 4326);
     private static final WKTReader wktReader = new WKTReader(geometryFactory);
 
     /**
      * 判断小轮廓防止失误裁剪
+     *
      * @param oldLocations
      * @param newLocations
      * @param operation
@@ -77,13 +81,13 @@ public class MarkingUtils {
                 if (geometry1.within(geometry2)) {
                     throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
                 }
-                try{
+                try {
                     Geometry geometryIntersection = geometry1.intersection(geometry2);
                     // 判断图形是否有交集
                     if (geometryIntersection.isEmpty()) {
                         throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
                     }
-                } catch (Exception e){
+                } catch (Exception e) {
                     throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
                 }
             }
@@ -99,11 +103,10 @@ public class MarkingUtils {
 
 
     /**
-     *
      * @param oldLocations
      * @param newLocations
      * @param operation
-     * @param check true 校验，false校验
+     * @param check        true 校验，false校验
      * @return
      * @throws Exception
      */
@@ -175,13 +178,19 @@ public class MarkingUtils {
                 }
 
             }
-            Geometry g;
+            // 返回结果
+            Geometry geometry;
             try {
                 // code=OverlayOp.UNION;相交  或者  code=OverlayOp.DIFFERENCE;相差
                 // 将code转换成Geometry对象
-                g = op.getResultGeometry(code);
+                geometry = op.getResultGeometry(code);
                 // 获取geometry类型
-                String geometryType = g.getGeometryType();
+                String geometryType = geometry.getGeometryType();
+                // TODO：校验飞点 后续可写多种校验策略放入线程池中
+                if ("Polygon".equals(geometryType)) {
+                    geometry = removePolygonPoint(geometry.getCoordinates());
+                }
+
                 // 判断新图形是否为复杂多边型(比如大标注嵌套小标注
                 if ("MultiPolygon".equals(geometryType)) {
                     // throw new AnnoException(AnnotationResponseConstant.NEW_GRAPHICS_MARK_NOT_RULES);
@@ -190,7 +199,7 @@ public class MarkingUtils {
             } catch (Exception e) {
                 throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
             }
-            data = wktWriter.write(g);
+            data = wktWriter.write(geometry);
         }
 
 
@@ -202,6 +211,12 @@ public class MarkingUtils {
 
     }
 
+    /**
+     * 剔除不规则点：
+     *
+     * @param geometry
+     * @return
+     */
     public static JSONObject updatePolygonPoint(JSONObject geometry) {
         List<Double> xList = new ArrayList<>();
         List<Double> yList = new ArrayList<>();
@@ -221,16 +236,16 @@ public class MarkingUtils {
                     List<Double> newList = new ArrayList<>();
                     double newX = 0;
                     double newY = 0;
-                    if(x != null){
+                    if (x != null) {
                         // 取出绝对值
                         newX = Math.abs(x - list.get(0));
                     }
                     xList.add(list.get(0));
                     yList.add(list.get(1));
-                    if(y != null){
+                    if (y != null) {
                         newY = Math.abs(y - list.get(1));
                     }
-                    if(newX < 100 && newY < 100) {
+                    if (newX < 100 && newY < 100) {
                         newList.add(list.get(0));
                         newList.add(list.get(1));
                         list1.add(newList);
@@ -245,6 +260,31 @@ public class MarkingUtils {
         geometryJson.put("type", type);
         geometryJson.put("coordinates", lists);
         return geometryJson;
+    }
+
+    /**
+     * 剔除不规则点：剔除数值明显过大或过小的值，暂定踢除x,y中绝对值大于50000的点
+     * 例如点存在科学记数法 (47713.255571202826, -6.989704038477149E14, NaN)
+     *
+     * @param coordinates Coordinate数组
+     * @return
+     */
+    public static Geometry removePolygonPoint(Coordinate[] coordinates) {
+        int length = coordinates.length;
+        Coordinate[] tmpCoordinates = new Coordinate[length];
+        int distLength = 0;
+        for (int i = 0; i < coordinates.length; i++) {
+            if (Math.abs(coordinates[i].x) > 50000 || Math.abs(coordinates[i].y) > 50000) {
+                continue;
+            }
+            tmpCoordinates[distLength] = coordinates[i];
+            distLength++;
+        }
+
+        Coordinate[] distCoordinates = new Coordinate[distLength];
+        System.arraycopy(tmpCoordinates, 0, distCoordinates, 0, distLength);
+
+        return geometryFactory.createPolygon(distCoordinates);
     }
 
 
