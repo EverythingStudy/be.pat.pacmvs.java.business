@@ -427,7 +427,20 @@
                 <serverAddr>192.168.52.114:8848</serverAddr>
             </properties>
         </profile>
-
+        <profile>
+            <!--184预生产环境-->
+            <id>preprodsaas</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <activatedProperties>preprodsaas</activatedProperties>
+                <nacosNamespace>b9d9d54e-4660-4a29-837f-019909d49028</nacosNamespace>
+                <nacosAddress>http://192.168.180.131:8848</nacosAddress>
+                <nacosGroup>DEFAULT_GROUP</nacosGroup>
+                <serverAddr>192.168.180.131:8848</serverAddr>
+            </properties>
+        </profile>
         <!-- 以下为兔眼版本配置 -->
         <profile>
             <!--开发环境-->
