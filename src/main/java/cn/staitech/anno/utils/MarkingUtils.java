@@ -111,7 +111,7 @@ public class MarkingUtils {
      * @return
      * @throws Exception
      */
-    public static Marking updateVerify(JSONObject oldLocations, JSONObject newLocations, String operation, boolean check,double resolution) throws Exception {
+    public static Marking updateVerify(JSONObject oldLocations, JSONObject newLocations, String operation, boolean check,String resolution) throws Exception {
 //        try {
         Marking marking = new Marking();
 
@@ -203,10 +203,11 @@ public class MarkingUtils {
             }
             data = wktWriter.write(geometry);
             marking.setMarkingId(data);
-            if(resolution != 0){
-                String area= String.valueOf(geometry.getArea() * resolution * resolution);
+            if(resolution != null){
+                double resolutions = Double.parseDouble(resolution);
+                String area= String.valueOf(geometry.getArea() * resolutions * resolutions);
                 marking.setArea(area);
-                String per = String.valueOf(geometry.getLength() * resolution);
+                String per = String.valueOf(geometry.getLength() * resolutions);
                 marking.setPerimeter(per);
             }
 
