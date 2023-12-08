@@ -206,7 +206,7 @@ public class AsyncTask {
 
                     JsonFactory jfs = new MappingJsonFactory();
                     JsonParser jpr = jfs.createParser(newBfs);
-                    Set<String> annotationIdList=new HashSet<>();
+                    Set<String> userIdList=new HashSet<>();
                     JsonToken currents;
                     currents = jpr.nextToken();
                     while (jpr.nextToken() != JsonToken.END_OBJECT) {
@@ -221,14 +221,14 @@ public class AsyncTask {
                                     // 获取属性和自定义字段
                                     JSONObject properties = featureObject.getJSONObject("properties");
                                     cn.staitech.anno.vo.geojson.Properties properties1 = JSONObject.toJavaObject(JSONObject.parseObject(JSONObject.toJSONString(properties)), Properties.class);
-                                    annotationIdList.add(properties1.getAnnotation_owner());
+                                    userIdList.add(properties1.getAnnotation_owner());
                                 }
                             }
                         } else {
                             jpr.skipChildren();
                         }
                     }
-                    for(String user:annotationIdList){
+                    for(String user:userIdList){
                         QueryWrapper<Marking> markingQueryWrapperBy = new QueryWrapper<>();
                         markingQueryWrapperBy.eq("create_by", user);
                          markingQueryWrapperBy.eq("slide_id", slide.getSlideId());
