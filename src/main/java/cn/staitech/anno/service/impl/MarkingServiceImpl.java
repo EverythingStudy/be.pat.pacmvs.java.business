@@ -243,25 +243,27 @@ public class MarkingServiceImpl implements MarkingService {
             Double perimeter = new Double(req.getPerimeter()) * MICRON;
             marking.setPerimeter(String.valueOf(perimeter));
         }*/
-		Image image = getImageById(slideBy.getImageId().longValue());
-		if (req.getArea() != null) {
-			Double area = 0.0;
-			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
-				area = new Double(req.getArea()) * Double.valueOf(image.getResolutionX()) * Double.valueOf(image.getResolutionX());
-			}else{
-				area = new Double(req.getArea()) * MICRON;
-			}
-			marking.setArea(String.valueOf(area));
-		}
-		if (req.getPerimeter() != null) {
-			Double perimeter = 0.0;
-			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
-				perimeter = new Double(req.getPerimeter()) * Double.valueOf(image.getResolutionX());
-			}else{
-				perimeter = new Double(req.getPerimeter()) * MICRON;
-			}
-			marking.setPerimeter(String.valueOf(perimeter));
-		}
+//		Image image = getImageById(slideBy.getImageId().longValue());
+//		if (req.getArea() != null) {
+//			Double area = 0.0;
+//			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
+//				area = new Double(req.getArea()) * Double.valueOf(image.getResolutionX()) * Double.valueOf(image.getResolutionX());
+//			}else{
+//				area = new Double(req.getArea()) * MICRON;
+//			}
+//			marking.setArea(String.valueOf(area));
+//		}
+//		if (req.getPerimeter() != null) {
+//			Double perimeter = 0.0;
+//			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
+//				perimeter = new Double(req.getPerimeter()) * Double.valueOf(image.getResolutionX());
+//			}else{
+//				perimeter = new Double(req.getPerimeter()) * MICRON;
+//			}
+//			marking.setPerimeter(String.valueOf(perimeter));
+//		}
+		marking.setArea(req.getArea());
+		marking.setPerimeter(req.getPerimeter());
 		// 若未传入标注作者,使用当前登录用户为标注作者==>必传Create_by 无默认
 		marking.setCreate_by(req.getCreate_by());
 		marking.setAnnotation_type("Draw");
@@ -362,14 +364,14 @@ public class MarkingServiceImpl implements MarkingService {
 		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
 			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
 		}
-		// 校验 TODO:
-		String location = MarkingUtils.updateVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation(), req.getCheck());
-		JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(location));
-		// 校验飞点
-		// MarkingUtils.updatePolygonPoint(jsonObject);
+		// 合并 - 校验飞点 TODO: MarkingUtils.updatePolygonPoint(jsonObject);
+		cn.staitech.anno.project.domain.Marking markingBys = MarkingUtils.updateVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation(), req.getCheck(), req.getResolution());
+		JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(markingBys.getMarkingId()));
 
 		cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
 		marking.setGeometry(jsonObject);
+		marking.setArea(markingBys.getArea());
+		marking.setPerimeter(markingBys.getPerimeter());
 		marking.setMarkingId(req.getMarking_id());
 		marking.setUpdateBy(SecurityUtils.getUserId());
 		marking.setUpdateTime(new Date());
@@ -437,25 +439,27 @@ public class MarkingServiceImpl implements MarkingService {
 			Double perimeter = new Double(req.getPerimeter()) * MICRON;
 			marking.setPerimeter(String.valueOf(perimeter));
 		}*/
-		Image image = getImageById(slide.getImageId().longValue());
-		if (req.getArea() != null) {
-			Double area = 0.0;
-			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
-				area = new Double(req.getArea()) * Double.valueOf(image.getResolutionX()) * Double.valueOf(image.getResolutionX());
-			}else{
-				area = new Double(req.getArea()) * MICRON;
-			}
-			marking.setArea(String.valueOf(area));
-		}
-		if (req.getPerimeter() != null) {
-			Double perimeter = 0.0;
-			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
-				perimeter = new Double(req.getPerimeter()) * Double.valueOf(image.getResolutionX());
-			}else{
-				perimeter = new Double(req.getPerimeter()) * MICRON;
-			}
-			marking.setPerimeter(String.valueOf(perimeter));
-		}
+//		Image image = getImageById(slide.getImageId().longValue());
+//		if (req.getArea() != null) {
+//			Double area = 0.0;
+//			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
+//				area = new Double(req.getArea()) * Double.valueOf(image.getResolutionX()) * Double.valueOf(image.getResolutionX());
+//			}else{
+//				area = new Double(req.getArea()) * MICRON;
+//			}
+//			marking.setArea(String.valueOf(area));
+//		}
+//		if (req.getPerimeter() != null) {
+//			Double perimeter = 0.0;
+//			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
+//				perimeter = new Double(req.getPerimeter()) * Double.valueOf(image.getResolutionX());
+//			}else{
+//				perimeter = new Double(req.getPerimeter()) * MICRON;
+//			}
+//			marking.setPerimeter(String.valueOf(perimeter));
+//		}
+		marking.setArea(req.getArea());
+		marking.setPerimeter(req.getPerimeter());
 		List<PointCount> pointCountList = updatePoint(markingBy.getLocation_type(), markingBy);
 		// 修改轮廓时，轮廓为空
 		if (req.getCategory_id() == null && req.getDescription() == null) {

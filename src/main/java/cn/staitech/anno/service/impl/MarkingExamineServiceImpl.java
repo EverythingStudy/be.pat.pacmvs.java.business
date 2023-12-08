@@ -1,14 +1,12 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.domain.MarkingExamine;
-import cn.staitech.anno.domain.QuestionBank;
-import cn.staitech.anno.domain.QuestionProjectRel;
-import cn.staitech.anno.domain.Structure;
+import cn.staitech.anno.domain.*;
 import cn.staitech.anno.mapper.MarkingExamineMapper;
 import cn.staitech.anno.mapper.QuestionBankMapper;
 import cn.staitech.anno.mapper.QuestionProjectRelMapper;
 import cn.staitech.anno.mapper.StructureMapper;
 import cn.staitech.anno.netty.websocket.NioWebSocketHandler;
+import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.service.MarkingExamineService;
 import cn.staitech.anno.utils.*;
 import cn.staitech.anno.vo.annotation.BroadcastVO;
@@ -129,14 +127,16 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         MarkingExamine markingExamine = new MarkingExamine();
         BeanUtils.copyProperties(req, markingExamine);
 
-        if (req.getArea() != null) {
-            Double area = new Double(req.getArea()) * MICRON;
-            markingExamine.setArea(String.valueOf(area));
-        }
-        if (req.getPerimeter() != null) {
-            Double perimeter = new Double(req.getPerimeter()) * MICRON;
-            markingExamine.setPerimeter(String.valueOf(perimeter));
-        }
+//        if (req.getArea() != null) {
+//            Double area = new Double(req.getArea()) * MICRON * MICRON;
+//            markingExamine.setArea(String.valueOf(area));
+//        }
+//        if (req.getPerimeter() != null) {
+//            Double perimeter = new Double(req.getPerimeter()) * MICRON;
+//            markingExamine.setPerimeter(String.valueOf(perimeter));
+//        }
+        markingExamine.setPerimeter(req.getArea());
+        markingExamine.setPerimeter(req.getPerimeter());
         markingExamine.setQuestionProjectId(req.getQuestion_project_id());
         markingExamine.setCreateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
         markingExamine.setAnnotationOwner(SecurityUtils.getLoginUser().getSysUser().getUserName());
@@ -186,14 +186,16 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         MarkingExamine markingExamine = new MarkingExamine();
         BeanUtils.copyProperties(req, markingExamine);
         markingExamine.setUpdateTime(new Date());
-        if (req.getArea() != null) {
-            Double area = new Double(req.getArea()) * MICRON;
-            markingExamine.setArea(String.valueOf(area));
-        }
-        if (req.getPerimeter() != null) {
-            Double perimeter = new Double(req.getPerimeter()) * MICRON;
-            markingExamine.setPerimeter(String.valueOf(perimeter));
-        }
+//        if (req.getArea() != null) {
+//            Double area = new Double(req.getArea()) * MICRON;
+//            markingExamine.setArea(String.valueOf(area));
+//        }
+//        if (req.getPerimeter() != null) {
+//            Double perimeter = new Double(req.getPerimeter()) * MICRON;
+//            markingExamine.setPerimeter(String.valueOf(perimeter));
+//        }
+        markingExamine.setArea(req.getArea());
+        markingExamine.setPerimeter(req.getPerimeter());
         markingExamine.setMarkingExamineId(req.getMarking_id());
         markingExamine.setUpdateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
         markingExamine.setAnnotationOwner(SecurityUtils.getLoginUser().getSysUser().getUserName());
@@ -216,10 +218,12 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         if (!Optional.ofNullable(markingExamineBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
-        String location = MarkingUtils.updateVerify(markingExamineBy.getGeometry(),req.getGeometry(),req.getOperation(),req.getCheck());
-        JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(location));
+        Marking marking = MarkingUtils.updateVerify(markingExamineBy.getGeometry(),req.getGeometry(),req.getOperation(),req.getCheck(), req.getResolution());
+        JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(marking.getMarkingId()));
         MarkingExamine markingExamine = new MarkingExamine();
         markingExamine.setGeometry(jsonObject);
+        markingExamine.setArea(marking.getArea());
+        markingExamine.setPerimeter(marking.getPerimeter());
         markingExamine.setMarkingExamineId(Long.valueOf(req.getMarking_id()));
         markingExamine.setUpdateBy(SecurityUtils.getUserId());
         markingExamine.setUpdateTime(new Date());
