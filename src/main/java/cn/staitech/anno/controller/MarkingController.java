@@ -126,6 +126,13 @@ public class MarkingController {
         return R.ok(req.getMarking_id(), MessageSource.M("OPERATE_SUCCEED"));
     }
 
+    /**
+     * TODO:
+     * 2
+     * @param req
+     * @return
+     * @throws Exception
+     */
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "合并、裁剪轮廓")
     @PutMapping("/intelligentAnno/updateOperation")
@@ -134,6 +141,12 @@ public class MarkingController {
         return R.ok(geoJson, MessageSource.M("OPERATE_SUCCEED"));
     }
 
+    /**
+     * 1
+     * @param req
+     * @return
+     * @throws Exception
+     */
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "合并、裁剪轮廓校验")
     @PutMapping("/intelligentAnno/operationCheck")

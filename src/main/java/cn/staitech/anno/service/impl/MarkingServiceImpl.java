@@ -323,6 +323,12 @@ public class MarkingServiceImpl implements MarkingService {
 	}
 
 
+	/**
+	 * 首次校验：校验轮廓是否需要二次校验
+	 * @param req
+	 * @return
+	 * @throws Exception
+	 */
 	@Override
 	public double operationCheck(UpdateOperationIn req) throws Exception {
 		Marking markingBy = markingMapper.selectById(req.getMarking_id());
@@ -331,13 +337,19 @@ public class MarkingServiceImpl implements MarkingService {
 			throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
 		}
 		Project project = projectMapperV1.selectById(markingBy.getProject_id());
-		//验证集项目中不能修改他人轮廓
+		// 验证集项目中不能修改他人轮廓
 		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
 			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
 		}
 		return MarkingUtils.updateOperationVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation());
 	}
 
+	/**
+	 * 	二次校验
+	 * @param req
+	 * @return
+	 * @throws Exception
+	 */
 	@Override
 	public JSONObject updateOperation(UpdateOperationIn req) throws Exception {
 		Marking markingBy = markingMapper.selectById(req.getMarking_id());
@@ -346,12 +358,16 @@ public class MarkingServiceImpl implements MarkingService {
 			throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
 		}
 		Project project = projectMapperV1.selectById(markingBy.getProject_id());
-		//验证集项目中不能修改他人轮廓
+		// 验证集项目中不能修改他人轮廓
 		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
 			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
 		}
+		// 校验 TODO:
 		String location = MarkingUtils.updateVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation(), req.getCheck());
 		JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(location));
+		// 校验飞点
+		// MarkingUtils.updatePolygonPoint(jsonObject);
+
 		cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
 		marking.setGeometry(jsonObject);
 		marking.setMarkingId(req.getMarking_id());
@@ -361,7 +377,7 @@ public class MarkingServiceImpl implements MarkingService {
 		// 更新后查询数据并返回
 		Properties properties = markingMapper.selectBy(req.getMarking_id());
 		Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), marking.getGeometry(), properties);
-		//        BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features);
+		// BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features);
 		BroadcastVO broadcastVO = SendMessage.sendOneMessagesByAnnoType(CommonConstant.ANNO_TYPE_DRAW,UPDATE_STATUS, features);
 		NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
 		return jsonObject;
