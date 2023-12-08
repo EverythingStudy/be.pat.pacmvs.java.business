@@ -91,6 +91,7 @@ import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.PointCount;
 import cn.staitech.common.core.domain.PageResponse;
+import cn.staitech.common.core.utils.uuid.IdUtils;
 import cn.staitech.common.redis.service.RedisService;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -272,8 +273,9 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 		marking.setNumber(number);
 		marking.setProject_id(Long.valueOf(slideBy.getProjectId()));
 		
-		Snowflake snowflake = new Snowflake();
-		String markMeasureId = snowflake.nextIdStr();
+//		Snowflake snowflake = new Snowflake();
+//		String markMeasureId = snowflake.nextIdStr();
+		String markMeasureId = IdUtils.randomUUID().replace("-", "");
 		marking.setMark_measure_id(markMeasureId);
 		// 添加数据库，添加后返回自增id
 		markMeasureMapper.insert(marking);

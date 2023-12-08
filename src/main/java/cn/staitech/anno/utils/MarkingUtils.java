@@ -21,7 +21,14 @@ public class MarkingUtils {
     private static final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), 4326);
     private static final WKTReader wktReader = new WKTReader(geometryFactory);
 
-
+    /**
+     * 判断小轮廓防止失误裁剪
+     * @param oldLocations
+     * @param newLocations
+     * @param operation
+     * @return
+     * @throws Exception
+     */
     public static double updateOperationVerify(JSONObject oldLocations, JSONObject newLocations, String operation) throws Exception {
 //        try {
         String oldLocation = WktUtil.jsonToWkt(oldLocations);
@@ -91,6 +98,15 @@ public class MarkingUtils {
     }
 
 
+    /**
+     *
+     * @param oldLocations
+     * @param newLocations
+     * @param operation
+     * @param check true 校验，false校验
+     * @return
+     * @throws Exception
+     */
     public static String updateVerify(JSONObject oldLocations, JSONObject newLocations, String operation, boolean check) throws Exception {
 //        try {
 
@@ -176,6 +192,8 @@ public class MarkingUtils {
             }
             data = wktWriter.write(g);
         }
+
+
         return data;
 
 //        } catch (Exception e) {
