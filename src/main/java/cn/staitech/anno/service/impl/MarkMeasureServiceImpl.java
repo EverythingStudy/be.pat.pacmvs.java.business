@@ -283,7 +283,9 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 		Properties properties = markMeasureMapper.selectBy(marking.getMark_measure_id());
 		Features features = MarkingUtils.socketData(annotationId, marking.getGeometry(), properties);
 		// 如果是点类型，返回点的总数并返回
-		BroadcastVO broadcastVO = SendMessage.sendOneMessagesByAnnoType(CommonConstant.ANNO_TYPE_MEASURE,ADD_STATUS, features);
+		List<PointCount> pointCountList = updatePoint(marking.getLocation_type(), marking);
+//		BroadcastVO broadcastVO = SendMessage.sendOneMessagesByAnnoType(CommonConstant.ANNO_TYPE_MEASURE,ADD_STATUS, features);
+		BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_MEASURE,ADD_STATUS, features, pointCountList);
 
 		NioWebSocketHandler.sendAll(req.getSlide_id(), broadcastVO);
 
