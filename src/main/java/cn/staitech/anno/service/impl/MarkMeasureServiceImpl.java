@@ -225,26 +225,28 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 		
 		// 获取规定的geoJson Id
 		String annotationId = CustomizationIdUtils.getSdId();
-		Image image = getImageById(slideBy.getImageId().longValue());
-		marking.setAnnotation_id(annotationId);
-		if (req.getArea() != null) {
-			Double area = 0.0;
-			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
-				area = new Double(req.getArea()) * Double.valueOf(image.getResolutionX()) * Double.valueOf(image.getResolutionX());
-			}else{
-				area = new Double(req.getArea()) * MICRON;
-			}
-			marking.setArea(String.valueOf(area));
-		}
-		if (req.getPerimeter() != null) {
-			Double perimeter = 0.0;
-			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
-				perimeter = new Double(req.getPerimeter()) * Double.valueOf(image.getResolutionX());
-			}else{
-				perimeter = new Double(req.getPerimeter()) * MICRON;
-			}
-			marking.setPerimeter(String.valueOf(perimeter));
-		}
+//		Image image = getImageById(slideBy.getImageId().longValue());
+//		marking.setAnnotation_id(annotationId);
+//		if (req.getArea() != null) {
+//			Double area = 0.0;
+//			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
+//				area = new Double(req.getArea()) * Double.valueOf(image.getResolutionX()) * Double.valueOf(image.getResolutionX());
+//			}else{
+//				area = new Double(req.getArea()) * MICRON;
+//			}
+//			marking.setArea(String.valueOf(area));
+//		}
+//		if (req.getPerimeter() != null) {
+//			Double perimeter = 0.0;
+//			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
+//				perimeter = new Double(req.getPerimeter()) * Double.valueOf(image.getResolutionX());
+//			}else{
+//				perimeter = new Double(req.getPerimeter()) * MICRON;
+//			}
+//			marking.setPerimeter(String.valueOf(perimeter));
+//		}
+		marking.setPerimeter(req.getPerimeter());
+		marking.setArea(req.getArea());
 		// 若未传入标注作者,使用当前登录用户为标注作者==>必传Create_by 无默认
 		marking.setCreate_by(req.getCreate_by());
 		marking.setAnnotation_type("Measure");
@@ -402,25 +404,27 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 			Double perimeter = new Double(req.getPerimeter()) * MICRON;
 			marking.setPerimeter(String.valueOf(perimeter));
 		}*/
-		Image image = getImageById(slide.getImageId().longValue());
-		if (req.getArea() != null) {
-			Double area = 0.0;
-			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
-				area = new Double(req.getArea()) * Double.valueOf(image.getResolutionX()) * Double.valueOf(image.getResolutionX());
-			}else{
-				area = new Double(req.getArea()) * MICRON;
-			}
-			marking.setArea(String.valueOf(area));
-		}
-		if (req.getPerimeter() != null) {
-			Double perimeter = 0.0;
-			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
-				perimeter = new Double(req.getPerimeter()) * Double.valueOf(image.getResolutionX());
-			}else{
-				perimeter = new Double(req.getPerimeter()) * MICRON;
-			}
-			marking.setPerimeter(String.valueOf(perimeter));
-		}
+//		Image image = getImageById(slide.getImageId().longValue());
+//		if (req.getArea() != null) {
+//			Double area = 0.0;
+//			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
+//				area = new Double(req.getArea()) * Double.valueOf(image.getResolutionX()) * Double.valueOf(image.getResolutionX());
+//			}else{
+//				area = new Double(req.getArea()) * MICRON;
+//			}
+//			marking.setArea(String.valueOf(area));
+//		}
+//		if (req.getPerimeter() != null) {
+//			Double perimeter = 0.0;
+//			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
+//				perimeter = new Double(req.getPerimeter()) * Double.valueOf(image.getResolutionX());
+//			}else{
+//				perimeter = new Double(req.getPerimeter()) * MICRON;
+//			}
+//			marking.setPerimeter(String.valueOf(perimeter));
+//		}
+		marking.setPerimeter(req.getPerimeter());
+		marking.setArea(req.getArea());
 		List<PointCount> pointCountList = updatePoint(markingBy.getLocation_type(), markingBy);
 		// 修改轮廓时，轮廓为空
 		if(req.getCategory_id() == null && req.getDescription() == null){
