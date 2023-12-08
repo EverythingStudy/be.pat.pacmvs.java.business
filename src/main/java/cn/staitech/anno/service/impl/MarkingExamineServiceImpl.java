@@ -214,7 +214,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         if (!Optional.ofNullable(markingExamineBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
-        Marking marking = MarkingUtils.updateVerify(markingExamineBy.getGeometry(),req.getGeometry(),req.getOperation(),req.getCheck(), req.getResolutions());
+        Marking marking = MarkingUtils.updateVerify(markingExamineBy.getGeometry(),req.getGeometry(),req.getOperation(),req.getCheck(), req.getResolution());
         JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(marking.getMarkingId()));
         MarkingExamine markingExamine = new MarkingExamine();
         markingExamine.setGeometry(jsonObject);
