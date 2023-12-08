@@ -479,9 +479,9 @@
             <properties>
                 <activatedProperties>eyetest</activatedProperties>
                 <nacosNamespace>eyetest</nacosNamespace>
-                <nacosAddress>http://172.31.2.201:8848</nacosAddress>
+                <nacosAddress>http://192.168.160.105:8848</nacosAddress>
                 <nacosGroup>DEFAULT_GROUP</nacosGroup>
-                <serverAddr>172.31.2.201:8848</serverAddr>
+                <serverAddr>192.168.160.105:8848</serverAddr>
             </properties>
         </profile>
     </profiles>
