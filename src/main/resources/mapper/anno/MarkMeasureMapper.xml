@@ -175,7 +175,8 @@
                t.annotation_owner,
                c.rgb                                                             as label_color,
                c.category_name                                                   as label_name,
-               CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) as measure_full_name,
+               <!-- CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) as measure_full_name, -->
+               CONCAT(t.measure_name, t.number) as measure_full_name,
                t.annotation_owner,
                t.annotation_update_owner,
                t.update_time,
@@ -258,7 +259,8 @@
                        "label_name",
                        c.category_name,
                        "measure_full_name",
-                       CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name),
+                       CONCAT(t.measure_name, t.number),
+                      -- CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name),
                       -- "image_id",
                      --  t.image_id,
                        "update_by",
@@ -372,7 +374,8 @@
                        "label_name",
                        c.category_name,
                        "measure_full_name",
-                       CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name)
+                       -- CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name)
+                       CONCAT(t.measure_name, t.number)
                    ) AS properties
         FROM tb_mark_measure AS t
                  LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
