@@ -206,9 +206,11 @@ public class AsyncTask {
 
                     JsonFactory jfs = new MappingJsonFactory();
                     JsonParser jpr = jfs.createParser(newBfs);
+                    //存放标注者id
                     Set<String> userIdList=new HashSet<>();
                     JsonToken currents;
                     currents = jpr.nextToken();
+                    //循环获取json中用户信息
                     while (jpr.nextToken() != JsonToken.END_OBJECT) {
                         String fieldName = jpr.getCurrentName();
                         // move from field name to field value
@@ -228,6 +230,7 @@ public class AsyncTask {
                             jpr.skipChildren();
                         }
                     }
+                    //删除json中标注者的标注数据
                     for(String user:userIdList){
                         QueryWrapper<Marking> markingQueryWrapperBy = new QueryWrapper<>();
                         markingQueryWrapperBy.eq("create_by", user);
