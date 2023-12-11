@@ -455,8 +455,8 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 
 		// 使用websocket发送数据
 		NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
-
-		annExecutor.submit(new AnnCountThread(2,slide,marking));
+		MarkMeasure	markingNew = markMeasureMapper.selectById(req.getMarking_id());
+		annExecutor.submit(new AnnCountThread(2,slide,markingNew));
 
 		return markingBy.getMark_measure_id();
 	}
