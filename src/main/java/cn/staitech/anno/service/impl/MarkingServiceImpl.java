@@ -510,7 +510,8 @@ public class MarkingServiceImpl implements MarkingService {
         }*/
 
 		//TODO 多线程处理
-		annExecutor.submit(new AnnCountThread(2, slide, marking));
+		Marking markingNew = markingMapper.selectById(req.getMarking_id());
+		annExecutor.submit(new AnnCountThread(2, slide, markingNew));
 
 		return markingBy.getMarking_id();
 	}
