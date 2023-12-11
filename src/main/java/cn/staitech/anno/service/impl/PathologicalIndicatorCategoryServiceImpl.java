@@ -287,6 +287,8 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 			queryWrapper.in("category_id", dataList);
 		}
 		queryWrapper.isNull("category_code");
+		//structure_id 为空
+		queryWrapper.isNotNull("structure_id");
 		queryWrapper.orderByAsc("indicator_id","structure_id");
 		List<PathologicalIndicatorCategory> list = pathologicalIndicatorCategoryMapper.selectList(queryWrapper);
 		if(CollectionUtils.isNotEmpty(list)){
