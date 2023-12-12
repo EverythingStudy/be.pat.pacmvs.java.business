@@ -24,17 +24,20 @@ class ProductSeriesServiceImpl extends ServiceImpl<ProductSeriesMapper, ProductS
 
     @Override
     public Map<Integer, String> selectMap() {
-        List<ProductSeries> list = productSeriesMapper.selectList();
-        Map<Integer, String> map = list.stream()
-                .collect(Collectors.toMap(ProductSeries::getProductSeriesId, ProductSeries::getName));
-        return map;
+        return select(false);
     }
 
     @Override
     public Map<Integer, String> selectMapEn() {
+        return select(true);
+    }
+
+    public Map<Integer, String> select(boolean en) {
         List<ProductSeries> list = productSeriesMapper.selectList();
-        Map<Integer, String> map = list.stream()
-                .collect(Collectors.toMap(ProductSeries::getProductSeriesId, ProductSeries::getNameEn));
-        return map;
+        if (en) {
+            return list.stream().collect(Collectors.toMap(ProductSeries::getProductSeriesId, ProductSeries::getNameEn));
+        } else {
+            return list.stream().collect(Collectors.toMap(ProductSeries::getProductSeriesId, ProductSeries::getName));
+        }
     }
 }

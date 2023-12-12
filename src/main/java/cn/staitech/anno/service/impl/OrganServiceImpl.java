@@ -55,9 +55,9 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
     public Map<String, String> select(boolean en) {
         List<Organ> list = organMapper.selectList();
         if (en) {
-            return list.stream().collect(Collectors.toMap(item -> item.getSpeciesCode().toString().concat(item.getOrganId().toString()), Organ::getName));
-        } else {
             return list.stream().collect(Collectors.toMap(item -> item.getSpeciesCode().toString().concat(item.getOrganId().toString()), Organ::getNameEn));
+        } else {
+            return list.stream().collect(Collectors.toMap(item -> item.getSpeciesCode().toString().concat(item.getOrganId().toString()), Organ::getName));
         }
     }
 

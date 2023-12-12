@@ -1,6 +1,7 @@
 package cn.staitech.anno.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
@@ -41,10 +42,15 @@ public class ProductSeries {
     @NotNull(message = "{ProductSeries.name.isnull}")
     private String nameEn;
 
-
     /**
      * 种属id
      */
     @ApiModelProperty(value = "种属id", required = true)
     private String speciesId;
+    /**
+     * 机构ID
+     */
+    @ApiModelProperty(value = "机构ID")
+    @TableField("organization_id")
+    private Long organizationId;
 }
