@@ -1,11 +1,14 @@
 package cn.staitech.anno.controller;
 
 import cn.staitech.anno.domain.Organ;
+import cn.staitech.anno.domain.Species;
 import cn.staitech.anno.service.OrganService;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
+import cn.staitech.common.security.utils.SecurityUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -40,7 +43,10 @@ public class OrganController extends BaseController {
     @Log(title = "查询脏器列表", menu = "脏器", subMenu = "脏器", businessType = BusinessType.QUERY)
     @GetMapping("/list")
     public R<List<Organ>> list() throws ExecutionException, InterruptedException {
-        List<Organ> list = organService.list();
+        LambdaQueryWrapper<Organ> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Organ::getOrganizationId, SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+
+        List<Organ> list = organService.list(queryWrapper);
         return R.ok(list);
     }
 }

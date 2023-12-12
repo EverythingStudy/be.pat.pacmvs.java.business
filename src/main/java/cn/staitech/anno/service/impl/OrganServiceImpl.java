@@ -26,18 +26,12 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
 
     @Override
     public Map<String, String> selectMap() {
-        List<Organ> list = organMapper.selectList();
-        Map<String, String> map = list.stream()
-                .collect(Collectors.toMap(item -> item.getSpeciesCode().toString().concat(item.getOrganId().toString()), Organ::getName));
-        return map;
+        return select(false);
     }
 
     @Override
     public Map<String, String> selectMapEn() {
-        List<Organ> list = organMapper.selectList();
-        Map<String, String> map = list.stream()
-                .collect(Collectors.toMap(item -> item.getSpeciesCode().toString().concat(item.getOrganId().toString()), Organ::getNameEn));
-        return map;
+        return select(true);
     }
 
     /**
@@ -56,6 +50,15 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
             }
         }
         return list;
+    }
+
+    public Map<String, String> select(boolean en) {
+        List<Organ> list = organMapper.selectList();
+        if (en) {
+            return list.stream().collect(Collectors.toMap(item -> item.getSpeciesCode().toString().concat(item.getOrganId().toString()), Organ::getName));
+        } else {
+            return list.stream().collect(Collectors.toMap(item -> item.getSpeciesCode().toString().concat(item.getOrganId().toString()), Organ::getNameEn));
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package cn.staitech.anno.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
@@ -42,4 +43,11 @@ public class Organ {
      */
     @ApiModelProperty(value = "种属编码", required = true)
     private String speciesCode;
+
+    /**
+     * 机构ID
+     */
+    @ApiModelProperty(value = "机构ID")
+    @TableField("organization_id")
+    private Long organizationId;
 }
