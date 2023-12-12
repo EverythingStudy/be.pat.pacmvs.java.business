@@ -153,14 +153,11 @@ public class PathologicalController {
 				structureName = structure.getName();
 			}
 
-
 			// 生成categoryName
 			String categoryName = indicator.getIndicatorName() + structureName;
 			category.setCategoryName(categoryName);
 			// 生成完整编码
 			category.setNumber(currentStructureId);
-			//			category.setCreateBy(1L);
-			//			category.setOrganizationId(1L);
 			category.setCreateBy(sysUser.getUserId());
 			category.setOrganizationId(sysUser.getOrganizationId());
 			category.setCreateTime(currentDate);
