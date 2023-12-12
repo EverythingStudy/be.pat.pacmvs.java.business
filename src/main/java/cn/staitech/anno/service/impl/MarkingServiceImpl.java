@@ -217,6 +217,8 @@ public class MarkingServiceImpl implements MarkingService {
 			if (req.getGeometry().isEmpty()) {
 				log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
 				return "更新失败，轮廓数据不能为空";
+			}else{
+				MarkingUtils.addVerify(req.getGeometry());
 			}
 		}
 		//加slide缓存
@@ -367,6 +369,8 @@ public class MarkingServiceImpl implements MarkingService {
 		// 合并 - 校验飞点 TODO: MarkingUtils.updatePolygonPoint(jsonObject);
 		cn.staitech.anno.project.domain.Marking markingBys = MarkingUtils.updateVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation(), req.getCheck(), req.getResolution());
 		JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(markingBys.getMarkingId()));
+		// 校验合并后的图形是否正常
+		MarkingUtils.updatePoint(jsonObject);
 
 		cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
 		marking.setGeometry(jsonObject);
