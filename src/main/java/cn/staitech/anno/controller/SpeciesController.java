@@ -7,6 +7,8 @@ import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
+import cn.staitech.common.security.utils.SecurityUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -41,7 +43,10 @@ public class SpeciesController extends BaseController {
     @Log(title = "种属列表", menu = "种属", subMenu = "种属列表", businessType = BusinessType.QUERY)
     @GetMapping("/list")
     public R<List<Species>> list() throws ExecutionException, InterruptedException {
-        List<Species> list = speciesService.list();
+        LambdaQueryWrapper<Species> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Species::getOrganizationId, SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        
+        List<Species> list = speciesService.list(queryWrapper);
         return R.ok(list, MessageSource.M("OPERATE_SUCCEED"));
     }
 

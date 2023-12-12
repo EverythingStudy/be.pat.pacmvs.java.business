@@ -15,9 +15,9 @@ import java.util.Map;
 public class SysOrganizationAuthorization extends BaseEntity {
 
     /**
-     * 机构id
+     * 机构ID
      */
-    @ApiModelProperty(value = "机构id")
+    @ApiModelProperty(value = "机构ID")
     private Long organizationId;
 
     /**

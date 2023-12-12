@@ -20,7 +20,7 @@ public interface SysUserService {
     public SysUser selectUserById(Long userId);
 
     /**
-     * 根据机构id查询用户列表
+     * 根据机构ID查询用户列表
      * */
     List<SysUser> userList();
 }

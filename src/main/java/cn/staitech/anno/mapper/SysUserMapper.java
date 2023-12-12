@@ -126,7 +126,7 @@ public interface SysUserMapper {
     public SysUser checkEmailUnique(String email);
 
     /**
-     * 根据机构id查询用户列表
+     * 根据机构ID查询用户列表
      * */
     List<SysUser> userList(SysUser sysUser);
 }

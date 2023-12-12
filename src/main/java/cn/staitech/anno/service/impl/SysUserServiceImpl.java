@@ -34,7 +34,7 @@ public class SysUserServiceImpl implements SysUserService {
 
 
     /**
-     * 根据机构id查询用户列表
+     * 根据机构ID查询用户列表
      * */
     @Override
     public List<SysUser> userList(){

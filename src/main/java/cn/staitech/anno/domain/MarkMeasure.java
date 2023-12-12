@@ -118,7 +118,7 @@ public class MarkMeasure implements Serializable {
     @ApiModelProperty(value = "标注更新者")
     private String annotationUpdateOwner;
 
-    @ApiModelProperty(value = "机构id")
+    @ApiModelProperty(value = "机构ID")
     private Long organizationId;
     
     @ApiModelProperty(value = "标注类型(AI表示AI算出的标注，Draw表示前端绘制的标注，Measure表示测量工具数据)")

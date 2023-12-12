@@ -13,9 +13,9 @@ import java.io.Serializable;
 public class OrganizationIdName implements Serializable {
 
     /**
-     * 机构id
+     * 机构ID
      */
-    @ApiModelProperty(value = "机构id")
+    @ApiModelProperty(value = "机构ID")
     private Long organizationId;
 
 

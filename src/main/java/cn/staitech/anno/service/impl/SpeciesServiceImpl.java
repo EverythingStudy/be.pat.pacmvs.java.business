@@ -25,20 +25,21 @@ class SpeciesServiceImpl extends ServiceImpl<SpeciesMapper, Species> implements 
 
     @Override
     public Map<String, String> selectMap() {
-
-        List<Species> list = speciesMapper.selectList();
-        Map<String, String> map = list.stream()
-                .collect(Collectors.toMap(Species::getSpeciesId, Species::getName));
-        return map;
+        return select(false);
     }
 
     @Override
     public Map<String, String> selectMapEn() {
+        return select(true);
+    }
 
+    public Map<String, String> select(boolean en) {
         List<Species> list = speciesMapper.selectList();
-        Map<String, String> map = list.stream()
-                .collect(Collectors.toMap(Species::getSpeciesId, Species::getNameEn));
-        return map;
+        if (en) {
+            return list.stream().collect(Collectors.toMap(Species::getSpeciesId, Species::getNameEn));
+        } else {
+            return list.stream().collect(Collectors.toMap(Species::getSpeciesId, Species::getName));
+        }
     }
 
 }

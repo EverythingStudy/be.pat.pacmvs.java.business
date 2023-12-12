@@ -26,7 +26,7 @@ public class GetQuestionListIn extends PageRequest {
     @ApiModelProperty(value = "机构名称")
     private String organizationName;
 
-    @ApiModelProperty(value = "机构id", hidden = true)
+    @ApiModelProperty(value = "机构ID", hidden = true)
     private Long organizationId;
 
 

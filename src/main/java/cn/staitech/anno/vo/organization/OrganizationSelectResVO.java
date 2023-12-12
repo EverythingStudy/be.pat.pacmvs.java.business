@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 public class OrganizationSelectResVO {
 
-    @ApiModelProperty(value = "机构id")
+    @ApiModelProperty(value = "机构ID")
     private Long organizationId;
 
     @ApiModelProperty(value = "机构名称")

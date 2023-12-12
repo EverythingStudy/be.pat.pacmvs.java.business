@@ -150,7 +150,7 @@ public class Marking implements Serializable {
      */
     private String imageUrl;
     /**
-     * 机构id
+     * 机构ID
      */
     private Long organizationId;
 

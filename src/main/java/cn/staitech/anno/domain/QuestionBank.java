@@ -70,7 +70,7 @@ public class QuestionBank implements Serializable {
     @TableField("topic_id")
     private Long topicId;
 
-    @ApiModelProperty(value = "机构id")
+    @ApiModelProperty(value = "机构ID")
     @TableField("organization_id")
     private Long organizationId;
 
