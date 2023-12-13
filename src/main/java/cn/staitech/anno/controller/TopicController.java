@@ -45,7 +45,6 @@ public class TopicController {
         QueryWrapper<Topic> qw = new QueryWrapper();
         qw.eq(!SysUser.isAdmin(SecurityUtils.getUserId()),"organization_id", organizationId)
                 .eq("project_type_id", projectTypeId)
-                .eq("del_flag", 1)
                 .orderByDesc("topic_id");
         List<Topic> list = topicService.list(qw);
         return R.ok(list);
@@ -74,7 +73,6 @@ public class TopicController {
                 .topicName(req.getTopicName().trim().toString())
                 .createBy(uid)
                 .updateBy(uid)
-                .delFlag(1)
                 .createTime(time)
                 .updateTime(time)
                 .build();
