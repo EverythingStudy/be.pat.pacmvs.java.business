@@ -116,11 +116,7 @@ public class Slide implements Serializable {
      */
     @ApiModelProperty("AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败")
     private Integer aiAnalyzed;
-    /**
-     * 人工诊断状态：0未诊断，1已诊断
-     */
-    @ApiModelProperty("人工诊断状态：0未诊断，1已诊断")
-    private Integer diagnosis;
+
     /**
      * geojson文件地址
      */
@@ -180,7 +176,6 @@ public class Slide implements Serializable {
                 && (this.getIsDelete() == null ? other.getIsDelete() == null : this.getIsDelete().equals(other.getIsDelete()))
                 && (this.getAiCheck() == null ? other.getAiCheck() == null : this.getAiCheck().equals(other.getAiCheck()))
                 && (this.getAiAnalyzed() == null ? other.getAiAnalyzed() == null : this.getAiAnalyzed().equals(other.getAiAnalyzed()))
-                && (this.getDiagnosis() == null ? other.getDiagnosis() == null : this.getDiagnosis().equals(other.getDiagnosis()))
                 && (this.getGeojsonUrl() == null ? other.getGeojsonUrl() == null : this.getGeojsonUrl().equals(other.getGeojsonUrl()));
     }
 
@@ -205,7 +200,6 @@ public class Slide implements Serializable {
         result = prime * result + ((getIsDelete() == null) ? 0 : getIsDelete().hashCode());
         result = prime * result + ((getAiCheck() == null) ? 0 : getAiCheck().hashCode());
         result = prime * result + ((getAiAnalyzed() == null) ? 0 : getAiAnalyzed().hashCode());
-        result = prime * result + ((getDiagnosis() == null) ? 0 : getDiagnosis().hashCode());
         result = prime * result + ((getGeojsonUrl() == null) ? 0 : getGeojsonUrl().hashCode());
         return result;
     }
@@ -233,7 +227,6 @@ public class Slide implements Serializable {
         sb.append(", isDelete=").append(isDelete);
         sb.append(", aiCheck=").append(aiCheck);
         sb.append(", aiAnalyzed=").append(aiAnalyzed);
-        sb.append(", diagnosis=").append(diagnosis);
         sb.append(", geojsonUrl=").append(geojsonUrl);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

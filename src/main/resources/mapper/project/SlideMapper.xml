@@ -21,7 +21,6 @@
         <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
         <result property="aiCheck" column="ai_check" jdbcType="SMALLINT"/>
         <result property="aiAnalyzed" column="ai_analyzed" jdbcType="SMALLINT"/>
-        <result property="diagnosis" column="diagnosis" jdbcType="SMALLINT"/>
         <result property="geojsonUrl" column="geojson_url" jdbcType="VARCHAR"/>
     </resultMap>
 
@@ -130,7 +129,6 @@
         m.source_lens,
         m.image_path,
         s.slide_id,
-        s.diagnosis,
         s.ai_analyzed,
         s.ai_check,
         case when r.review_count >2 then '2' else '1' end as review_status,
