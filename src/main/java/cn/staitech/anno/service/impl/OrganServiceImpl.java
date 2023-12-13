@@ -1,5 +1,6 @@
 package cn.staitech.anno.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -13,14 +14,21 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import cn.hutool.core.date.DateUtil;
+import cn.staitech.anno.config.MapConstant;
+import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.Organ;
+import cn.staitech.anno.domain.Structure;
 import cn.staitech.anno.mapper.OrganMapper;
+import cn.staitech.anno.service.IndicatorService;
 import cn.staitech.anno.service.OrganService;
+import cn.staitech.anno.service.StructureService;
 import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.organ.InsertOrganVO;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.bean.BeanUtils;
+import cn.staitech.common.security.utils.SecurityUtils;
 
 
 /**
@@ -33,7 +41,14 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
 
     @Resource
     OrganMapper organMapper;
+    
+    @Resource
+    private StructureService structureService;
+    
+    @Resource
+    private IndicatorService indicatorService;
 
+    
     @Override
     public Map<String, String> selectMap() {
         return select(false);
@@ -96,9 +111,92 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
 		BeanUtils.copyProperties(req, organ);
 		int insertStatus = organMapper.insert(organ);
 		if (insertStatus > 0) {
+			//1、tb_structure添加A-I 结构标签+ROA+ROE
+			addStructure(organ);
+			//2、tb_pathological_indicator增加一条记录
+			addIndicator(organ);
+			//3、刷新初始话的数据  
+			MapConstant.ORGAN_MAP = selectMap();
+			MapConstant.ORGAN_MAP_EN = selectMapEn();
+			MapConstant.STRUCTURE_MAP = structureService.selectMap();
+			MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
 			return R.ok(organ, MessageSource.M("INSERT_SUCCESS"));
 		}
 		return R.fail(MessageSource.M("INSERT_FAILURE"));
+	}
+	
+	private void addIndicator(Organ organ){
+		Indicator indicator = new Indicator();
+		indicator.setIndicatorName(organ.getName());
+		indicator.setIndicatorNameEn(organ.getName());
+		indicator.setSpeciesId(organ.getSpeciesCode());
+		indicator.setOrganId(organ.getOrganId());
+		indicator.setNumber(organ.getSpeciesCode().concat(organ.getOrganId()));
+		indicator.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+		indicator.setDelFlag(0);
+		indicator.setCreateBy(SecurityUtils.getUserId());
+		indicator.setCreateTime(DateUtil.date());
+		indicatorService.insertIndicator(indicator);
+	}
+	private void addStructure(Organ organ){
+		List<Structure> list = new ArrayList<Structure>();
+		
+		List<String> structureCodeList = new ArrayList<String>();
+		
+		structureCodeList.add("A");
+		structureCodeList.add("B");
+		structureCodeList.add("C");
+		structureCodeList.add("D");
+		structureCodeList.add("E");
+		structureCodeList.add("F");
+		structureCodeList.add("G");
+		structureCodeList.add("H");
+		structureCodeList.add("I");
+		
+		//原始Structure编码规则： 种属：1+脏器编码+(F01-F09)
+		String structureId = organ.getSpeciesCode()+organ.getOrganId();
+		for(int j=1;j<10;j++){
+			String structureCode = "F0"+j;
+			for(int i=0;i<3;i++){
+				Structure structure = new Structure();
+				structure.setSpeciesId(organ.getSpeciesCode());
+				structure.setOrganId(organ.getOrganId());
+				structure.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+
+				structureId = structureId+structureCode;
+				String perStructureCode = structureCodeList.get(j-1);
+				String name = "";
+				String nameEn = "";
+				String type = "";
+				if(i==0){
+					//结构编码
+					name = perStructureCode;
+					nameEn = name;
+					type = "RO";
+				}else if(i==1){
+					//结构编码+标注
+					structureId = structureId+"ROA";
+					name = perStructureCode+"标注区域";
+					nameEn = perStructureCode+" ROA";
+					type = "ROA";
+				}else if(i==2){
+					//结构编码+考核
+					structureId = structureId+"ROE";
+					name = perStructureCode+"考核区域";
+					nameEn = perStructureCode+" ROE";
+					type = "ROE";
+				}
+				structure.setStructureId(structureId);
+				structure.setName(name);
+				structure.setNameEn(nameEn);
+				structure.setType(type);
+				list.add(structure);
+				structureId = organ.getSpeciesCode()+organ.getOrganId();
+			}
+		}
+		//保存处理
+		structureService.saveBatch(list);
+		
 	}
 
 }
