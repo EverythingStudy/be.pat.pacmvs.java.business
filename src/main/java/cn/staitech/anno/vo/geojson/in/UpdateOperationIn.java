@@ -29,4 +29,7 @@ public class UpdateOperationIn {
     @ApiModelProperty(value = "校验")
     private Boolean check;
 
+    @ApiModelProperty(value = "分辨率")
+    private String resolution;
+
 }
