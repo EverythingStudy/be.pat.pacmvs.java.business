@@ -21,6 +21,8 @@
         <result property="height" column="height"/>
         <result property="centerX" column="center_x"/>
         <result property="centerY" column="center_y"/>
+        <result property="initCenterX" column="init_center_x"/>
+        <result property="initCenterY" column="init_center_y"/>
         <result property="rotation" column="rotation"/>
         <result property="level" column="level"/>
         <result property="primary" column="primary"/>
@@ -47,6 +49,8 @@
                a.height,
                a.center_x,
                a.center_y,
+               a.init_center_x,
+               a.init_center_y,
                a.rotation,
                a.level,
                a.`primary`,

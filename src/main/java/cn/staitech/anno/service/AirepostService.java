@@ -12,13 +12,6 @@ import java.util.List;
  * @date 2023-11-10
  */
 public interface AirepostService extends IService<Airepost> {
-    /**
-     * 查询Airepost
-     *
-     * @param reportUuid Airepost主键
-     * @return Airepost
-     */
-    Airepost selectAirepostByReportUuid(Long reportUuid);
 
     /**
      * 查询Airepost列表
@@ -29,34 +22,10 @@ public interface AirepostService extends IService<Airepost> {
     List<Airepost> selectAirepostList(Airepost airepost);
 
     /**
-     * 新增Airepost
+     * 重置
      *
      * @param airepost Airepost
-     * @return 结果
+     * @return Airepost集合
      */
-    int insertAirepost(Airepost airepost);
-
-    /**
-     * 修改Airepost
-     *
-     * @param airepost Airepost
-     * @return 结果
-     */
-    int updateAirepost(Airepost airepost);
-
-    /**
-     * 批量删除Airepost
-     *
-     * @param reportUuids 需要删除的Airepost主键集合
-     * @return 结果
-     */
-    int deleteAirepostByReportUuids(Long[] reportUuids);
-
-    /**
-     * 删除Airepost信息
-     *
-     * @param reportUuid Airepost主键
-     * @return 结果
-     */
-    int deleteAirepostByReportUuid(Long reportUuid);
+    boolean reset(Airepost airepost);
 }

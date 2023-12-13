@@ -60,6 +60,10 @@ public class Airepost {
     private Integer centerX;
     @ApiModelProperty(value = "中心点y")
     private Integer centerY;
+    @ApiModelProperty(value = "init中心点x")
+    private Integer initCenterX;
+    @ApiModelProperty(value = "init中心点y")
+    private Integer initCenterY;
     @ApiModelProperty(value = "旋转角度（默认0）")
     private Integer rotation;
     @ApiModelProperty(value = "层级:解析不出的给0）")

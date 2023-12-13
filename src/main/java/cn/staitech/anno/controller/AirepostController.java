@@ -35,8 +35,9 @@ public class AirepostController {
     private AirepostService airepostService;
 
     /**
-     * 查询Airepost列表
+     * 列表查询
      */
+    @Log(title = "拼接Viewer-列表", businessType = BusinessType.QUERY)
     @PostMapping("/list")
     public R<List<Airepost>> list(@RequestBody SlideIdVO request) {
         Airepost airepost = new Airepost();
@@ -46,9 +47,9 @@ public class AirepostController {
     }
 
     /**
-     * 批量修改Airepost
+     * 批量修改
      */
-    @Log(title = "Airepost", businessType = BusinessType.UPDATE)
+    @Log(title = "拼接Viewer-修改", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     public R<String> edit(@RequestBody AirepostList request) {
         List<Airepost> list = request.getAirepostLists();
@@ -56,6 +57,20 @@ public class AirepostController {
             airepostService.updateBatchById(list);
         }
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+    }
+
+    /**
+     * 重置
+     */
+    @Log(title = "拼接Viewer-重置", businessType = BusinessType.UPDATE)
+    @PostMapping("/reset")
+    public R<String> reset(@RequestBody SlideIdVO request) {
+        Airepost airepost = new Airepost();
+        airepost.setSlideId(request.getSlideId());
+        if (airepostService.reset(airepost)) {
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+        }
+        return R.fail(MessageSource.M("OPERATE_ERROR"));
     }
 
 }
