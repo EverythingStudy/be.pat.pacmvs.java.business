@@ -14,7 +14,7 @@ import java.util.List;
 public interface IndicatorMapper {
 
 
-    public Long addIndicatorsName(InsertProjectVO req);
+    Long addIndicatorsName(InsertProjectVO req);
 
     /**
      * 查询单个指标信息
@@ -22,7 +22,7 @@ public interface IndicatorMapper {
      * @param indicatorId 指标ID
      * @return 指标信息
      */
-    public Indicator selectIndicatorById(Long indicatorId);
+    Indicator selectIndicatorById(Long indicatorId);
 
 
     /**
@@ -31,7 +31,7 @@ public interface IndicatorMapper {
      * @param indicator 指标信息
      * @return 公告集合
      */
-    public List<Indicator> selectIndicatorList(Indicator indicator);
+    List<Indicator> selectIndicatorList(Indicator indicator);
 
 
     /**
@@ -40,7 +40,7 @@ public interface IndicatorMapper {
      * @param indicator 指标信息
      * @return 结果
      */
-    public int insertIndicator(Indicator indicator);
+    int insertIndicator(Indicator indicator);
 
     /**
      * 修改
@@ -48,7 +48,7 @@ public interface IndicatorMapper {
      * @param indicator 指标信息
      * @return 结果
      */
-    public int updateIndicator(IndicatorReviseVO indicator);
+    int updateIndicator(IndicatorReviseVO indicator);
 
     /**
      * 删除
@@ -56,7 +56,7 @@ public interface IndicatorMapper {
      * @param indicatorId 指标id
      * @return 结果
      */
-    public int delIndicator(Long indicatorId);
+    int delIndicator(Long indicatorId);
 
     /**
      * 查询指标列表
@@ -64,7 +64,7 @@ public interface IndicatorMapper {
      * @param projectIdList 项目ID数组
      * @return 结果
      */
-    public List<StatisticIndicatorListOutVO> selectIndicatorStatisticList(StatisticIndicatorListInVO projectIdList);
+    List<StatisticIndicatorListOutVO> selectIndicatorStatisticList(StatisticIndicatorListInVO projectIdList);
 
     /**
      * 查询指标列表
@@ -72,7 +72,7 @@ public interface IndicatorMapper {
      * @param indicator
      * @return 结果
      */
-    public List<Indicator> selectIndicator(Indicator indicator);
+    List<Indicator> selectIndicator(Indicator indicator);
 
     /**
      * 根据病理id和名字查询信息
@@ -80,19 +80,19 @@ public interface IndicatorMapper {
      * @param indicator
      * @return 结果
      */
-    public List<Indicator> selectIndicatorName(IndicatorGetVO indicator);
+    List<Indicator> selectIndicatorName(IndicatorGetVO indicator);
 
     /**
      * 查询所有的病理数量
      */
-    public Integer selectIndicatorNum();
+    Integer selectIndicatorNum();
 
     // 2.0 新修改====================================
 
     /**
      * 查询指标在项目表中的记录数量
      */
-    public Integer selectIndicatorCountInProject(Long indicatorId);
+    Integer selectIndicatorCountInProject(Long indicatorId);
 
 
     /**
@@ -102,5 +102,5 @@ public interface IndicatorMapper {
      * @return 结果
      */
 
-    public List<Indicator> selectIndicatorInformation(Indicator indicator);
+    List<Indicator> selectIndicatorInformation(Indicator indicator);
 }

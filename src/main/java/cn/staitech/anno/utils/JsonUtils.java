@@ -191,7 +191,7 @@ public class JsonUtils {
             //jsonString = JsonFormatTool.formatJson2(jsonString);
 
             // 将格式化后的字符串写入文件
-            Writer write = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+            Writer write = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
             write.write(jsonString);
             write.flush();
             write.close();

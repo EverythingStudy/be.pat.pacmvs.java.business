@@ -11,21 +11,21 @@ import java.util.List;
  * @author staitech
  */
 public interface ProjectMemberService {
-    public List<ProjectMember> selectByProjectId(Long projectId);
+    List<ProjectMember> selectByProjectId(Long projectId);
 
-    public List<ProjectMember> selectByUserId(Long UserId);
+    List<ProjectMember> selectByUserId(Long UserId);
 
-    public int save(ProjectMember record);
+    int save(ProjectMember record);
 
-    public int saveSelective(ProjectMember record);
+    int saveSelective(ProjectMember record);
 
-    public int deleteByPrimaryKey(Integer imageId);
+    int deleteByPrimaryKey(Integer imageId);
 
-    public int updateByPrimaryKeySelective(ProjectMember record);
+    int updateByPrimaryKeySelective(ProjectMember record);
 
-    public int updateByPrimaryKey(ProjectMember record);
+    int updateByPrimaryKey(ProjectMember record);
 
-    public int delete(ProjectMember record);
+    int delete(ProjectMember record);
 
     int update(ProjectMember projectMember);
 

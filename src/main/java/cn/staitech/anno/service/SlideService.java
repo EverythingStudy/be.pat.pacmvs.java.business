@@ -206,7 +206,7 @@ public interface SlideService extends IService<Slide> {
      */
     List<ImageCsvListVO> pageSlides(ImageCsvGetVO imageCsvGetVO);
 
-    public List<ImageCsvListVO> pageSlides1(ImageCsvGetVO request);
+    List<ImageCsvListVO> pageSlides1(ImageCsvGetVO request);
 
     /**
      * 查询评审项目切片列表

@@ -206,9 +206,7 @@ public class FilesController extends BaseController {
         if (fileUploadVO.getBusinessType() == 6) {
             String fileName = fileUploadVO.getFileName();
             String fileExt = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
-            if (!"zip".equals(fileExt)) {
-                return true;
-            }
+            return !"zip".equals(fileExt);
         }
         return false;
     }

@@ -28,7 +28,7 @@ public interface SubImageService extends IService<SubImage> {
 
     void selectExpireSpecialSlice(SpecialSliceSelectVO sisv);
 
-    public Map<String, String> getDictInfo(String dictType);
+    Map<String, String> getDictInfo(String dictType);
 
 
     void logOutSpecial(String userName);

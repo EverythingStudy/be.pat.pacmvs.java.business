@@ -49,10 +49,10 @@ public class FileUploadServiceImpl implements FileUploadService {
     private FilesProcessService filesProcessService;
     @Resource
     private AlgorithmAssessmentService algorithmAssessmentService;
-    private String basePath = "/home/pat_saas";
-    private String zipPath = "/Upload/json/zip";
+    private final String basePath = "/home/pat_saas";
+    private final String zipPath = "/Upload/json/zip";
 
-    private String uploadPath = File.separator + "Upload";
+    private final String uploadPath = File.separator + "Upload";
 
 
     /**
@@ -176,7 +176,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             List<Files> filesList = filesService.list(filesQueryWrapper);
             if (filesList.size() > 0) {
                 String pathPre = path.substring(0, path.lastIndexOf(CommonConstant.FILE_SUFFIX));
-                String pathEnd = path.substring(path.lastIndexOf(CommonConstant.FILE_SUFFIX), path.length());
+                String pathEnd = path.substring(path.lastIndexOf(CommonConstant.FILE_SUFFIX));
                 int index = filesList.size();
                 path = pathPre + "(" + index + ")" + pathEnd;
                 filesName = filesName.substring(0, filesName.lastIndexOf(CommonConstant.FILE_SUFFIX)) + "(" + index + ")" + suffixName;
@@ -448,7 +448,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 List<Files> filesList = filesService.list(filesQueryWrapper);
                 if (filesList.size() > 0) {
                     String pathPre = path.substring(0, path.lastIndexOf(CommonConstant.FILE_SUFFIX));
-                    String pathEnd = path.substring(path.lastIndexOf(CommonConstant.FILE_SUFFIX), path.length());
+                    String pathEnd = path.substring(path.lastIndexOf(CommonConstant.FILE_SUFFIX));
                     int index = filesList.size();
                     path = pathPre + "(" + index + ")" + pathEnd;
                     filesName = filesName.substring(0, filesName.lastIndexOf(CommonConstant.FILE_SUFFIX)) + "(" + index + ")" + suffixName;

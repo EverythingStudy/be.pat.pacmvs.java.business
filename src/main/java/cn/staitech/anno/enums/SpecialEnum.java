@@ -19,8 +19,8 @@ public enum SpecialEnum {
      */
     DEL_FLAG_2(2L, "删除");
 
-    private Long value;
-    private String label;
+    private final Long value;
+    private final String label;
 
     SpecialEnum(Long value, String label) {
         this.label = label;

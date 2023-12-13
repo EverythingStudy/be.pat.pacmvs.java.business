@@ -206,30 +206,29 @@ public class Slide implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", slideId=").append(slideId);
-        sb.append(", projectId=").append(projectId);
-        sb.append(", imageId=").append(imageId);
-        sb.append(", humanAnnotationTotal=").append(humanAnnotationTotal);
-        sb.append(", algorithmAnnotationTotal=").append(algorithmAnnotationTotal);
-        sb.append(", examinationSlideTotal=").append(examinationSlideTotal);
-        sb.append(", processFlag=").append(processFlag);
-        sb.append(", examinationFlag=").append(examinationFlag);
-        sb.append(", createBy=").append(createBy);
-        sb.append(", createTime=").append(createTime);
-        sb.append(", updateBy=").append(updateBy);
-        sb.append(", updateTime=").append(updateTime);
-        sb.append(", description=").append(description);
-        sb.append(", groupId=").append(groupId);
-        sb.append(", isDelete=").append(isDelete);
-        sb.append(", aiCheck=").append(aiCheck);
-        sb.append(", aiAnalyzed=").append(aiAnalyzed);
-        sb.append(", geojsonUrl=").append(geojsonUrl);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
+        String sb = getClass().getSimpleName() +
+                " [" +
+                "Hash = " + hashCode() +
+                ", slideId=" + slideId +
+                ", projectId=" + projectId +
+                ", imageId=" + imageId +
+                ", humanAnnotationTotal=" + humanAnnotationTotal +
+                ", algorithmAnnotationTotal=" + algorithmAnnotationTotal +
+                ", examinationSlideTotal=" + examinationSlideTotal +
+                ", processFlag=" + processFlag +
+                ", examinationFlag=" + examinationFlag +
+                ", createBy=" + createBy +
+                ", createTime=" + createTime +
+                ", updateBy=" + updateBy +
+                ", updateTime=" + updateTime +
+                ", description=" + description +
+                ", groupId=" + groupId +
+                ", isDelete=" + isDelete +
+                ", aiCheck=" + aiCheck +
+                ", aiAnalyzed=" + aiAnalyzed +
+                ", geojsonUrl=" + geojsonUrl +
+                ", serialVersionUID=" + serialVersionUID +
+                "]";
+        return sb;
     }
 }

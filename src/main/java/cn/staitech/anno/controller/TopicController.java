@@ -70,7 +70,7 @@ public class TopicController {
         Long uid = SecurityUtils.getUserId();
         String time = DateUtils.getCurrentHHmmssString("yyyy-MM-dd HH:mm:ss");
         Topic topic = Topic.builder()
-                .topicName(req.getTopicName().trim().toString())
+                .topicName(req.getTopicName().trim())
                 .createBy(uid)
                 .updateBy(uid)
                 .createTime(time)

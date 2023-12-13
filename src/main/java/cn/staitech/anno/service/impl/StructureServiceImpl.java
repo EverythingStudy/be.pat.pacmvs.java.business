@@ -46,8 +46,8 @@ class StructureServiceImpl extends ServiceImpl<StructureMapper, Structure> imple
             Structure obj = new Structure();
             obj.setName("无关联");
             obj.setNameEn("Unrelated");
-            obj.setSpeciesId(speciesId.toString());
-            obj.setStructureId(organId.toString());
+            obj.setSpeciesId(speciesId);
+            obj.setStructureId(organId);
             list.add(obj);
         }
         return list;

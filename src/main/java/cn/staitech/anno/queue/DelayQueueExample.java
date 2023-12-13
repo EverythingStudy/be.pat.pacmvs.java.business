@@ -39,8 +39,8 @@ public class DelayQueueExample {
 }
 
 class DelayedElement implements Delayed {
-    private Long examineScoreId;
-    private long expireTime;
+    private final Long examineScoreId;
+    private final long expireTime;
 
     public DelayedElement(Long examineScoreId, long delay, TimeUnit timeUnit) {
         this.examineScoreId = examineScoreId;

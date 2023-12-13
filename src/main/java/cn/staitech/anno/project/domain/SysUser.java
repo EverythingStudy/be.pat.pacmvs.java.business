@@ -170,33 +170,32 @@ public class SysUser implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", userId=").append(userId);
-        sb.append(", userCode=").append(userCode);
-        sb.append(", roleId=").append(roleId);
-        sb.append(", organizationId=").append(organizationId);
-        sb.append(", userName=").append(userName);
-        sb.append(", nickName=").append(nickName);
-        sb.append(", userType=").append(userType);
-        sb.append(", dept=").append(dept);
-        sb.append(", email=").append(email);
-        sb.append(", phonenumber=").append(phonenumber);
-        sb.append(", sex=").append(sex);
-        sb.append(", password=").append(password);
-        sb.append(", status=").append(status);
-        sb.append(", delFlag=").append(delFlag);
-        sb.append(", loginStatus=").append(loginStatus);
-        sb.append(", loginIp=").append(loginIp);
-        sb.append(", loginDate=").append(loginDate);
-        sb.append(", createBy=").append(createBy);
-        sb.append(", createTime=").append(createTime);
-        sb.append(", updateBy=").append(updateBy);
-        sb.append(", updateTime=").append(updateTime);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
+        String sb = getClass().getSimpleName() +
+                " [" +
+                "Hash = " + hashCode() +
+                ", userId=" + userId +
+                ", userCode=" + userCode +
+                ", roleId=" + roleId +
+                ", organizationId=" + organizationId +
+                ", userName=" + userName +
+                ", nickName=" + nickName +
+                ", userType=" + userType +
+                ", dept=" + dept +
+                ", email=" + email +
+                ", phonenumber=" + phonenumber +
+                ", sex=" + sex +
+                ", password=" + password +
+                ", status=" + status +
+                ", delFlag=" + delFlag +
+                ", loginStatus=" + loginStatus +
+                ", loginIp=" + loginIp +
+                ", loginDate=" + loginDate +
+                ", createBy=" + createBy +
+                ", createTime=" + createTime +
+                ", updateBy=" + updateBy +
+                ", updateTime=" + updateTime +
+                ", serialVersionUID=" + serialVersionUID +
+                "]";
+        return sb;
     }
 }

@@ -330,10 +330,7 @@ public class SlideController extends BaseController {
         slide.setReviewRoundId(reviewRoundId);
         QueryWrapper<Slide> queryWrapper = new QueryWrapper<>(slide);
 
-        if (slideService.remove(queryWrapper)) {
-            return true;
-        }
-        return false;
+        return slideService.remove(queryWrapper);
     }
 
     /**

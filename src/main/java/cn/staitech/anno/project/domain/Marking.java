@@ -243,45 +243,44 @@ public class Marking implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", markingId=").append(markingId);
-        sb.append(", annotationId=").append(annotationId);
-        sb.append(", area=").append(area);
-        sb.append(", perimeter=").append(perimeter);
-        sb.append(", description=").append(description);
-        sb.append(", categoryId=").append(categoryId);
-        sb.append(", number=").append(number);
-        sb.append(", measureType=").append(measureType);
-        sb.append(", measureRelation=").append(measureRelation);
-        sb.append(", measureName=").append(measureName);
-        sb.append(", measureNumber=").append(measureNumber);
-        sb.append(", radius=").append(radius);
-        sb.append(", meanDistance=").append(meanDistance);
-        sb.append(", maxDistance=").append(maxDistance);
-        sb.append(", minDistance=").append(minDistance);
-        sb.append(", innerAngle=").append(innerAngle);
-        sb.append(", exteriorAngle=").append(exteriorAngle);
-        sb.append(", createBy=").append(createBy);
-        sb.append(", createTime=").append(createTime);
-        sb.append(", annotationType=").append(annotationType);
-        sb.append(", locationType=").append(locationType);
-        sb.append(", slideId=").append(slideId);
-        sb.append(", centerPoint=").append(centerPoint);
-        sb.append(", pointCount=").append(pointCount);
-        sb.append(", geometry=").append(geometry);
-        sb.append(", updateBy=").append(updateBy);
-        sb.append(", updateTime=").append(updateTime);
-        sb.append(", annotationOwner=").append(annotationOwner);
-        sb.append(", annotationUpdateOwner=").append(annotationUpdateOwner);
-        sb.append(", projectId=").append(projectId);
-        sb.append(", imageId=").append(imageId);
-        sb.append(", imageUrl=").append(imageUrl);
-        sb.append(", organizationId=").append(organizationId);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
+        String sb = getClass().getSimpleName() +
+                " [" +
+                "Hash = " + hashCode() +
+                ", markingId=" + markingId +
+                ", annotationId=" + annotationId +
+                ", area=" + area +
+                ", perimeter=" + perimeter +
+                ", description=" + description +
+                ", categoryId=" + categoryId +
+                ", number=" + number +
+                ", measureType=" + measureType +
+                ", measureRelation=" + measureRelation +
+                ", measureName=" + measureName +
+                ", measureNumber=" + measureNumber +
+                ", radius=" + radius +
+                ", meanDistance=" + meanDistance +
+                ", maxDistance=" + maxDistance +
+                ", minDistance=" + minDistance +
+                ", innerAngle=" + innerAngle +
+                ", exteriorAngle=" + exteriorAngle +
+                ", createBy=" + createBy +
+                ", createTime=" + createTime +
+                ", annotationType=" + annotationType +
+                ", locationType=" + locationType +
+                ", slideId=" + slideId +
+                ", centerPoint=" + centerPoint +
+                ", pointCount=" + pointCount +
+                ", geometry=" + geometry +
+                ", updateBy=" + updateBy +
+                ", updateTime=" + updateTime +
+                ", annotationOwner=" + annotationOwner +
+                ", annotationUpdateOwner=" + annotationUpdateOwner +
+                ", projectId=" + projectId +
+                ", imageId=" + imageId +
+                ", imageUrl=" + imageUrl +
+                ", organizationId=" + organizationId +
+                ", serialVersionUID=" + serialVersionUID +
+                "]";
+        return sb;
     }
 }

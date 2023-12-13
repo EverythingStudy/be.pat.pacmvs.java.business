@@ -14,8 +14,8 @@ public class ChannelSupervise {
 
     public static final ConcurrentMap<Channel, Long> CHANNEL_MAP = new ConcurrentHashMap<>();
     public static final ConcurrentMap<Channel, String> QUESTION_CHANNEL_MAP = new ConcurrentHashMap<>();
-    private static ChannelGroup GlobalGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
-    private static ConcurrentMap<String, ChannelId> ChannelMap = new ConcurrentHashMap();
+    private static final ChannelGroup GlobalGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+    private static final ConcurrentMap<String, ChannelId> ChannelMap = new ConcurrentHashMap();
 
     public static void addChannel(Channel channel) {
         GlobalGroup.add(channel);

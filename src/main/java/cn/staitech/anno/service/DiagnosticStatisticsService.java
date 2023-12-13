@@ -16,5 +16,5 @@ public interface DiagnosticStatisticsService {
      * @return
      * @throws Exception
      */
-    public String createRpt(ReportRecordAddVO recordAddVO) throws Exception;
+    String createRpt(ReportRecordAddVO recordAddVO) throws Exception;
 }

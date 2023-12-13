@@ -184,10 +184,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                 throw new Exception(MessageSource.M("SERIAL_NO") + slideId + MessageSource.M("SUBMITTED_FOR_REVIEW"));
             }
         }
-        if (count > 0) {
-            return true;
-        }
-        return false;
+        return count > 0;
     }
 
     /**

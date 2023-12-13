@@ -31,8 +31,8 @@ public enum SysDictTypeEnum {
      */
     sysvisceraorganization(6, "sys_viscera_organization");
 
-    private int value;
-    private String label;
+    private final int value;
+    private final String label;
 
     SysDictTypeEnum(int value, String label) {
         this.label = label;

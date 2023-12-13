@@ -323,11 +323,7 @@ public class ProjectExtServiceImpl extends ServiceImpl<ProjectMapper, Project> i
             projectExt.setViscusCode(req.getViscusCode());
         }
         List<ProjectExt> projectExts = projectExtMapper.selectByProject(projectExt);
-        if (CollectionUtils.isEmpty(projectExts)) {
-            return true;
-        } else {
-            return false;
-        }
+        return CollectionUtils.isEmpty(projectExts);
 
     }
 

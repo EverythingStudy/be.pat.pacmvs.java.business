@@ -109,20 +109,19 @@ public class DownTask implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", downTaskId=").append(downTaskId);
-        sb.append(", path=").append(path);
-        sb.append(", code=").append(code);
-        sb.append(", status=").append(status);
-        sb.append(", createBy=").append(createBy);
-        sb.append(", createTime=").append(createTime);
-        sb.append(", updateBy=").append(updateBy);
-        sb.append(", updateTime=").append(updateTime);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
+        String sb = getClass().getSimpleName() +
+                " [" +
+                "Hash = " + hashCode() +
+                ", downTaskId=" + downTaskId +
+                ", path=" + path +
+                ", code=" + code +
+                ", status=" + status +
+                ", createBy=" + createBy +
+                ", createTime=" + createTime +
+                ", updateBy=" + updateBy +
+                ", updateTime=" + updateTime +
+                ", serialVersionUID=" + serialVersionUID +
+                "]";
+        return sb;
     }
 }

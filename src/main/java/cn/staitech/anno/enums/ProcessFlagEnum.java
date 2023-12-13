@@ -13,8 +13,8 @@ public enum ProcessFlagEnum {
     STATUS_INFO_1(1, "1标注中"),
     STATUS_INFO_2(2, "2标注完成"),
     STATUS_INFO_3(3, "3已提交复核");
-    private int value;
-    private String label;
+    private final int value;
+    private final String label;
 
     ProcessFlagEnum(int value, String label) {
         this.label = label;

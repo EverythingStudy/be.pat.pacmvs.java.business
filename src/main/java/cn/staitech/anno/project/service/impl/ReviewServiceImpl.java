@@ -63,7 +63,7 @@ import java.util.concurrent.ExecutorService;
 public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
         implements ReviewService {
 
-    private static ExecutorService executor = ExecutorBuilder.create()
+    private static final ExecutorService executor = ExecutorBuilder.create()
             .setCorePoolSize(1)
             .setMaxPoolSize(1)
             .setKeepAliveTime(0)
@@ -241,8 +241,8 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
 
     public class TaskThread implements Runnable {
         public Logger logger = LoggerFactory.getLogger(TaskThread.class);
-        private DownTask downTask;
-        private Long projectId;
+        private final DownTask downTask;
+        private final Long projectId;
         private List<Long> slideIds;
 
         public TaskThread(DownTask downTask, Long projectId, List<Long> slideIds) {

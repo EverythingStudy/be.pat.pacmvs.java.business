@@ -53,7 +53,7 @@ public interface SpecialMenuMapper {
      *
      * @return 菜单列表
      */
-    public List<SpecialMenu> selectMenuTreeAll();
+    List<SpecialMenu> selectMenuTreeAll();
 
     /**
      * 根据用户ID查询菜单
@@ -61,7 +61,7 @@ public interface SpecialMenuMapper {
      * @param userId 用户ID
      * @return 菜单列表
      */
-    public List<SpecialMenu> selectMenuTreeByUserId(@Param("userId") Long userId, @Param("specialId") Long specialId);
+    List<SpecialMenu> selectMenuTreeByUserId(@Param("userId") Long userId, @Param("specialId") Long specialId);
 
     /**
      * 根据菜单ID查询信息

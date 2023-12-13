@@ -151,7 +151,7 @@ public class TreeTool {
      * @return
      */
     public static boolean hasChild(List<Column> list, Column node) {
-        return getChildList(list, node).size() > 0 ? true : false;
+        return getChildList(list, node).size() > 0;
     }
 
     /**
@@ -165,7 +165,7 @@ public class TreeTool {
         List<Column> nodeList = new ArrayList<Column>();
         Iterator<Column> it = list.iterator();
         while (it.hasNext()) {
-            Column n = (Column) it.next();
+            Column n = it.next();
             if (n.getPid() != null && n.getPid().equals(node.getId())) {
                 nodeList.add(n);
             }

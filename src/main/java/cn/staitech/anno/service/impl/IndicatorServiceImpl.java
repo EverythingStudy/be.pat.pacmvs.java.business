@@ -70,12 +70,12 @@ public class IndicatorServiceImpl implements IndicatorService {
                 // 种属
                 obj.setSpeciesName(MapConstant.getSpeciesNameEn(obj.getSpeciesId()));
                 // 脏器
-                obj.setOrganName(MapConstant.getOrganEn(obj.getSpeciesId().toString().concat(obj.getOrganId().toString())));
+                obj.setOrganName(MapConstant.getOrganEn(obj.getSpeciesId().concat(obj.getOrganId())));
             } else {
                 // 种属
                 obj.setSpeciesName(MapConstant.getSpeciesName(obj.getSpeciesId()));
                 // 脏器
-                obj.setOrganName(MapConstant.getOrgan(obj.getSpeciesId().toString().concat(obj.getOrganId().toString())));
+                obj.setOrganName(MapConstant.getOrgan(obj.getSpeciesId().concat(obj.getOrganId())));
             }
             // 查询总数
             obj.setAnnotationCategoryTotal(pathologicalIndicatorCategoryService.selectCategoryNumber(obj.getIndicatorId()));

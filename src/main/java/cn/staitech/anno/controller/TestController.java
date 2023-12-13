@@ -40,9 +40,9 @@ public class TestController {
      * 输出名称
      */
     private static final String FILE_NAME = "output_dict.txt";
-    private static List<String> typeLists = Arrays.asList("java.lang.Integer", "java.lang.Double", "java.lang.Float", "java.lang.Long", "java.lang.Short", "java.lang.Byte", "java.lang.Boolean", "java.lang.Char", "java.lang.String", "int", "double", "long", "short", "byte", "boolean", "char", "float");
-    private static int LENGTH = 5000;
-    private static Random random = new Random();
+    private static final List<String> typeLists = Arrays.asList("java.lang.Integer", "java.lang.Double", "java.lang.Float", "java.lang.Long", "java.lang.Short", "java.lang.Byte", "java.lang.Boolean", "java.lang.Char", "java.lang.String", "int", "double", "long", "short", "byte", "boolean", "char", "float");
+    private static final int LENGTH = 5000;
+    private static final Random random = new Random();
     @Resource
     PythonOpenSlideService pythonOpenSlideService;
     @Resource
@@ -378,11 +378,7 @@ public class TestController {
     public boolean delHash(String slideId) {
         Long res = redissonClient.getKeys().delete(slideId);
         System.out.println(res + ">>>>");
-        if (res > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return res > 0;
     }
 
     @GetMapping("/strFile")

@@ -75,9 +75,9 @@ public class IndicatorController extends BaseController {
 			return R.fail(MessageSource.M("INDICATOR_EXIST"));
 		}
 
-		indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().toString().concat(req.getOrganId().toString())));
-		indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().toString().concat(req.getOrganId().toString())));
-		indicator.setNumber(indicator.getSpeciesId().toString().concat(indicator.getOrganId().toString()));
+		indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
+		indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
+		indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
 		indicator.setCreateBy(sysUser.getUserId());
 		//20231107wd结构指标关联机构
 		indicator.setOrganizationId(sysUser.getOrganizationId());
@@ -149,7 +149,6 @@ public class IndicatorController extends BaseController {
 		//删除标注类别
 		PathologicalIndicatorCategory Pathological = PathologicalIndicatorCategory.builder().indicatorId(indicatorGetVO.getIndicatorId().longValue()).delFlag(1).build();
 		pathologicalService.updateByPrimaryKeySelective(Pathological);
-		;
 		//删除病理指标
 		indicatorService.delIndicator(indicatorGetVO.getIndicatorId().longValue());
 		return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
@@ -180,9 +179,9 @@ public class IndicatorController extends BaseController {
 			return R.fail(MessageSource.M("INDICATOR_EXIST"));
 		}
 
-		indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().toString().concat(req.getOrganId().toString())));
-		indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().toString().concat(req.getOrganId().toString())));
-		indicator.setNumber(indicator.getSpeciesId().toString().concat(indicator.getOrganId().toString()));
+		indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
+		indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
+		indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
 		indicator.setCreateBy(sysUser.getUserId());
 
 		// 修改病理指标
@@ -248,17 +247,17 @@ public class IndicatorController extends BaseController {
 			return R.fail(MessageSource.M("INDICATOR_EXIST"));
 		}
 
-		String indicatorName = MapConstant.getOrgan(req.getSpeciesId().toString().concat(req.getOrganId().toString())); 
+		String indicatorName = MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId()));
 		if(StringUtils.isEmpty(indicatorName)){
 			indicatorName =  req.getOrganName();
 		}
 		indicator.setIndicatorName(indicatorName);
-		String indicatorNameEn = MapConstant.getOrganEn(req.getSpeciesId().toString().concat(req.getOrganId().toString()));
+		String indicatorNameEn = MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId()));
 		if(StringUtils.isEmpty(indicatorNameEn)){
 			indicatorNameEn =  req.getOrganName();
 		}
 		indicator.setIndicatorNameEn(indicatorNameEn);
-		indicator.setNumber(indicator.getSpeciesId().toString().concat(indicator.getOrganId().toString()));
+		indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
 		indicator.setCreateBy(sysUser.getUserId());
 		//20231107wd结构指标关联机构
 		indicator.setOrganizationId(sysUser.getOrganizationId());

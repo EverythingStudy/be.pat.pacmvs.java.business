@@ -171,7 +171,7 @@ public class ViewerServiceImpl implements ViewerService {
             // 判断是否还有元素
             while (zipEnum.hasMoreElements()) {
                 // 返回下一对象
-                ze = (ZipEntry) zipEnum.nextElement();
+                ze = zipEnum.nextElement();
                 String fileNames = ze.getName();
                 if (!fileNames.contains(".")) {
                     throw new Exception(MessageSource.M("JSON_FILE_NOT_HAS"));

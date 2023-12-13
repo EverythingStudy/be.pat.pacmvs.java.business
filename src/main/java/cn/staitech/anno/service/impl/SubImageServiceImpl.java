@@ -296,7 +296,7 @@ public class SubImageServiceImpl extends ServiceImpl<SubImageMapper, SubImage> i
                 Long[] idArray = idsList.toArray(new Long[idsList.size()]);
                 record.setSpecialImageIds(idArray);
                 specialImageMapper.updateByPrimaryKeySelective(record);
-                log.info("用户：" + userName + " 专题数据是放id:" + idsList.toString());
+                log.info("用户：" + userName + " 专题数据是放id:" + idsList);
             }
         }
 

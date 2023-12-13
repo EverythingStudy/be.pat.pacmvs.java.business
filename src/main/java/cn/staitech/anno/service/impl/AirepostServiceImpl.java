@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
  */
 @Service
 public class AirepostServiceImpl extends ServiceImpl<AirepostMapper, Airepost> implements AirepostService {
-    @Autowired
+    @Resource
     private AirepostMapper airepostMapper;
 
     /**
@@ -45,7 +46,7 @@ public class AirepostServiceImpl extends ServiceImpl<AirepostMapper, Airepost> i
             // 处理图像URL:/home/pat_saas/C001/Slides/image/info/cropped/tgt/1.png => http://localhost:8080/file/statics/C001/Slides/thumbnail/20230928/75/0.jpg
             String jsonAddr = obj.getJsonAddr();
             obj.setAiImageUrl(jsonAddr.replace("/home/pat_saas/", "/file/statics/"));
-            obj.setFileName(jsonAddr.substring(jsonAddr.lastIndexOf(File.separator) + 1, jsonAddr.length()));
+            obj.setFileName(jsonAddr.substring(jsonAddr.lastIndexOf(File.separator) + 1));
         }
         return list;
     }
