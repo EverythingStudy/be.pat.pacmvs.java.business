@@ -50,13 +50,6 @@ public interface SpecialService extends IService<Special> {
      */
     List<SpecialStatisticsListVO> specialStatistics(SpecialStatisticsQueryVO special);
 
-    /**
-     * 添加专题信息
-     *
-     * @param special 专题
-     * @return List
-     */
-    int insert(SpecialInsertVo special);
 
     /**
      * 更新专题信息

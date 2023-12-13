@@ -21,9 +21,6 @@ public class ImageCsvListVO extends ImageCsv implements Serializable {
     @ApiModelProperty(value = "预测缩略图url")
     private String predictionThumbUrl;
 
-//    @ApiModelProperty(value = "是否是主图（默认为2，1是，2否）")
-//    private String mainImage;
-    
     @ApiModelProperty(value = "AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败")
     private Integer aiAnalyzed;
 
@@ -32,10 +29,5 @@ public class ImageCsvListVO extends ImageCsv implements Serializable {
     
     @ApiModelProperty(value = "文件夹url")
     private String folderUrl;
-    
-    
-    @Override
-    public String toString() {
-        return "ImageCsvListVO{} " + super.toString();
-    }
+
 }

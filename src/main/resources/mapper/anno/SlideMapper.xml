@@ -21,7 +21,6 @@
         <result column="is_delete" jdbcType="INTEGER" property="isDelete"/>
         <result column="ai_check" jdbcType="SMALLINT" property="aiCheck"/>
         <result column="ai_analyzed" jdbcType="SMALLINT" property="aiAnalyzed"/>
-        <result column="diagnosis" jdbcType="SMALLINT" property="diagnosis"/>
         <result column="geojson_url" jdbcType="VARCHAR" property="geojsonUrl"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="status" jdbcType="VARCHAR" property="status"/>
@@ -72,7 +71,6 @@
         is_delete,
         ai_check,
         ai_analyzed,
-        diagnosis,
         geojson_url,
         remark,
         `status`,
@@ -481,7 +479,6 @@
             resultType="cn.staitech.anno.vo.slide.SlideReportVO">
         select m.*,
         s.slide_id,
-        s.diagnosis,
         s.ai_analyzed,
         s.ai_check,
         case when g.gender = 0 then '雌' else '雄' end as gender
@@ -495,9 +492,6 @@
             </if>
             <if test="params.aiCheck != null and params.aiCheck != ''">
                 AND s.ai_check = #{params.aiCheck}
-            </if>
-            <if test="params.diagnosis != null and params.diagnosis != ''">
-                AND s.diagnosis = #{params.diagnosis}
             </if>
             <if test="params.groupId != null and params.groupId != ''">
                 AND s.group_id = #{params.groupId}
@@ -537,7 +531,6 @@
         sum(case when s.ai_check = 1 then 1 end) as negative_total,
         sum(case when s.ai_check = 2 then 1 end) as positive_total,
         sum(case when s.ai_analyzed = 2 then 1 end) as finish_total,
-        sum(case when s.diagnosis = 1 then 1 end) as diagnosis_total,
         sum(case when s.ai_analyzed = 1 or s.ai_analyzed = 3 then 1 end) as analysis_total
         from tb_project p
         left join (select * from tb_slide where is_delete = 0) s on p.project_id = s.project_id
@@ -567,7 +560,6 @@
             resultType="cn.staitech.anno.vo.slide.SlideReportVO">
         select m.*,
         s.slide_id,
-        s.diagnosis,
         s.ai_analyzed,
         s.ai_check,
         p.project_name,
@@ -585,9 +577,6 @@
             </if>
             <if test="params.aiCheck != null and params.aiCheck != ''">
                 AND s.ai_check = #{params.aiCheck}
-            </if>
-            <if test="params.diagnosis != null and params.diagnosis != ''">
-                AND s.diagnosis = #{params.diagnosis}
             </if>
             <if test="params.groupId != null and params.groupId != ''">
                 AND s.group_id = #{params.groupId}
@@ -633,7 +622,6 @@
             resultType="cn.staitech.anno.vo.imagecsv.ImageCsvListVO">
         select s.slide_id,
         s.review_round_id,
-        s.diagnosis,
         s.status,
         s.description,
         s.ai_analyzed,
@@ -733,7 +721,6 @@
             resultType="cn.staitech.anno.vo.imagecsv.ImageCsvListVO">
         select s.slide_id,
         s.review_round_id,
-        s.diagnosis,
         s.status,
         s.remark,
         s.ai_analyzed,
@@ -822,7 +809,6 @@
         s.description,
         s.ai_analyzed,
         s.remark,
-        s.diagnosis,
         s.status,
         s.ai_check,
         s.group_name,

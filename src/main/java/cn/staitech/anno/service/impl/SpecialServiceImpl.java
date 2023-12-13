@@ -1,40 +1,32 @@
 package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.util.NumberUtil;
-import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.enums.SpecialEnum;
-import cn.staitech.anno.mapper.*;
-import cn.staitech.anno.service.SpecialMenuService;
-import cn.staitech.anno.service.SpecialRoleService;
+import cn.staitech.anno.mapper.ProjectMapper;
+import cn.staitech.anno.mapper.SpecialMapper;
+import cn.staitech.anno.mapper.SpecialReclaimMapper;
+import cn.staitech.anno.mapper.SubImageMapper;
 import cn.staitech.anno.service.SpecialService;
-import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.TimeUtils;
 import cn.staitech.anno.vo.special.*;
 import cn.staitech.common.core.exception.ServiceException;
-import cn.staitech.common.core.exception.auth.NotLoginException;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
-import cn.staitech.system.api.domain.SysUser;
-import cn.staitech.system.api.model.LoginUser;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
-import static cn.staitech.anno.constant.CommonConstant.*;
 import static cn.staitech.anno.enums.SpecialEnum.DEL_FLAG_1;
-import static cn.staitech.common.core.constant.SysRoleConstant.SPECIAL;
-import static cn.staitech.common.core.utils.SysRoleUtil.getSort;
 
 /**
  * @author gjt.
@@ -43,8 +35,6 @@ import static cn.staitech.common.core.utils.SysRoleUtil.getSort;
 @Service
 @Slf4j
 public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> implements SpecialService {
-    @Resource
-    private SpecialMenuService specialMenuService;
     @Resource
     private SpecialMapper specialMapper;
 
@@ -56,17 +46,6 @@ public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> impl
 
     @Resource
     private ProjectMapper projectMapper;
-
-    @Resource
-    private SpecialRoleService specialRoleService;
-
-    @Resource
-    private SpecialRoleMapper specialRoleMapper;
-
-    @Resource
-    private SpecialRoleUserMapper specialRoleUserMapper;
-    @Autowired
-    private RedisTemplate redisTemplate;
 
     /**
      * 查询专题阅片下的专题列表
@@ -224,83 +203,6 @@ public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> impl
     }
 
     /**
-     * 添加专题信息
-     *
-     * @param req 专题信息
-     * @return List
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int insert(SpecialInsertVo req) {
-        Special special = new Special();
-        special.setSpecialNumber(req.getSpecialNumber());
-        // 查询编号是否存在
-        Special specialNumber = specialMapper.selectSpecialNumber(special);
-        if (specialNumber != null) {
-            throw new ServiceException("当前专题编号已存在,禁止重复添加");
-        }
-        Special specials = new Special();
-        specials.setSpecialName(req.getSpecialName());
-        Special specialName = specialMapper.selectSpecialNumber(specials);
-        if (specialName != null) {
-            throw new ServiceException("当前专题名称已存在,禁止重复添加");
-        }
-        special.setSpecialName(req.getSpecialName());
-        BeanUtils.copyProperties(req, special);
-        special.setCreateBy(SecurityUtils.getUserId());
-        special.setUpdateBy(SecurityUtils.getUserId());
-        int result = specialMapper.insert(special);
-        if (result > 0) {
-            // 专题添加成功后,专题用户表中添加专题负责人
-            insertSpecialRole(special.getSpecialId());
-            //刷新用户权限
-            flushPrivileges();
-            // 创建默认的分组
-            //  insertGroup(special.getSpecialId());
-        }
-        return result;
-    }
-
-    /**
-     * 创建专题后刷新权限
-     *
-     * @param
-     */
-    private void flushPrivileges() {
-        String token = SecurityUtils.getToken();
-        Long userId = SecurityUtils.getUserId();
-        if (token == null) {
-            throw new NotLoginException("未提供token");
-        }
-        LoginUser loginUser = SecurityUtils.getLoginUser();
-        if (loginUser == null) {
-            throw new NotLoginException("无效的token");
-        }
-        List<cn.staitech.system.api.domain.SpecialRole> specialRoles = new ArrayList<>();
-        List<SpecialRoleUser> specialRoleUsers = specialRoleService.querySpecialRoleListByUserId(userId);
-
-        specialRoleUsers.forEach(s -> {
-            Set permsList = new HashSet<>();
-            List<SpecialMenu> specialRolePerms = specialMenuService.querySpecialRolePermsByRoleId(s.getRoleId());
-
-            // 管理员拥有所有权限
-            if (SysUser.isAdmin(userId)) {
-                permsList.add("*:*:*");
-            } else {
-                for (SpecialMenu role : specialRolePerms) {
-                    permsList.add(role.getPerms());
-                }
-            }
-            cn.staitech.system.api.domain.SpecialRole specialRole = cn.staitech.system.api.domain.SpecialRole.builder().specialId(s.getSpecialId()).roleId(s.getRoleId()).specialPermissions(permsList).build();
-            specialRoles.add(specialRole);
-        });
-
-        loginUser.setSpecialRoleList(specialRoles);
-        String userKey = CommonConstant.LOGIN_TOKEN_KEY + loginUser.getToken();
-        redisTemplate.opsForValue().set(userKey, loginUser, 240L, TimeUnit.MINUTES);
-    }
-
-    /**
      * 更新专题信息
      *
      * @param req 专题信息
@@ -395,55 +297,4 @@ public class SpecialServiceImpl extends ServiceImpl<SpecialMapper, Special> impl
         return specialMapper.updateStatus(special);
     }
 
-    /**
-     * 添加默认角色
-     *
-     * @param specialId
-     */
-    public void insertSpecialRole(Long specialId) {
-        for (String i : SPECIAL_ROLE_TYPE) {
-            SpecialRole specialRole = SpecialRole.builder().specialId(specialId).roleName(i).createBy(SecurityUtils.getUserId()).build();
-
-            // 设置角色编号
-            List<SpecialRole> specialRoleList = specialRoleMapper.selectRoleListBySpecialId(specialId);
-            if (specialRoleList.size() == 0) {
-                specialRole.setRoleSort(SPECIAL);
-            } else {
-                String roleSortLatest = specialRoleList.get(specialRoleList.size() - 1).getRoleSort();
-                String roleSort = getSort(roleSortLatest);
-                specialRole.setRoleSort(roleSort);
-            }
-
-            //添加角色表中
-            if (i.equals(MessageSource.M("RESPONSIBLE_ROLE"))) {
-                specialRole.setRoleKey(RESP);
-                specialRole.setMenuIds(RESPONSIBLE_MENU);
-            }
-            if (i.equals(MessageSource.M("ANNOTATOR_ROLE"))) {
-                specialRole.setRoleKey(ANNO);
-                specialRole.setMenuIds(ANNOTATOR_MENU);
-            }
-            if (i.equals(MessageSource.M("READER_ROLE"))) {
-                specialRole.setRoleKey(READ);
-                specialRole.setMenuIds(READER_MENU);
-            }
-
-            specialRoleMapper.insertRole(specialRole);
-
-            // 添加角色权限
-            specialRoleService.insertRoleMenu(specialRole);
-
-            // 创建者设置为专题负责人
-            if (i.equals(MessageSource.M("RESPONSIBLE_ROLE"))) {
-                // 添加到专题角色用户表中
-                SpecialRoleUser specialRoleUser = new SpecialRoleUser();
-                specialRoleUser.setRoleId(specialRole.getRoleId());
-                specialRoleUser.setSpecialId(specialId);
-                specialRoleUser.setUserId(SecurityUtils.getUserId());
-                specialRoleUser.setUpdateBy(SecurityUtils.getUserId());
-                specialRoleUser.setCreateBy(SecurityUtils.getUserId());
-                specialRoleUserMapper.insert(specialRoleUser);
-            }
-        }
-    }
 }
