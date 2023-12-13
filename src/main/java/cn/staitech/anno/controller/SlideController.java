@@ -12,7 +12,6 @@ import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetPagerVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
-import cn.staitech.anno.vo.project.ProjectStatisticsVO;
 import cn.staitech.anno.vo.slide.*;
 import cn.staitech.anno.vo.topic.GetTopicListVO;
 import cn.staitech.anno.vo.topic.TopicIdName;
@@ -165,30 +164,6 @@ public class SlideController extends BaseController {
     @PostMapping("/pageSlideWithSubImage")
     public R<PageMaster<SlideReportVO>> pageSlideWithSubImage(@RequestBody Map params) {
         return slideService.pageSlideWithSubImage(params);
-    }
-
-    /**
-     * 项目统计列表
-     *
-     * @param params
-     * @return
-     */
-    @ApiOperation(value = "项目内切片统计")
-    @PostMapping("/pageSlideStatisticsByProject")
-    public R<PageMaster<ProjectStatisticsVO>> pageSlideStatisticsByProject(@RequestBody Map params) {
-        return slideService.pageSlideStatisticsByProject(params);
-    }
-
-    /**
-     * 切片统计列表
-     *
-     * @param params
-     * @return
-     */
-    @ApiOperation(value = "切片统计报表分页查询")
-    @PostMapping("/pageSlideStatistics")
-    public R<PageMaster<SlideReportVO>> pageSlideStatistics(@RequestBody Map params) {
-        return slideService.pageSlideStatistics(params);
     }
 
     @ApiOperation(value = "切片导出json")
@@ -351,7 +326,7 @@ public class SlideController extends BaseController {
     @ApiOperationSupport(author = "zmj")
     @PostMapping("/folderList")
     public R<PageMaster<ImageListOutVO>> folderList(@RequestBody @Validated EyeSlideIn eyeSlideIn) {
-        if (eyeSlideIn.getFolderName()==null && eyeSlideIn.getTopicName()==null && eyeSlideIn.getParams()==null && eyeSlideIn.getCreateBy()==null){
+        if (eyeSlideIn.getFolderName() == null && eyeSlideIn.getTopicName() == null && eyeSlideIn.getParams() == null && eyeSlideIn.getCreateBy() == null) {
             return R.ok();
         }
         PageMaster<ImageListOutVO> eyeImage = slideService.eyeImage(eyeSlideIn);
@@ -375,7 +350,7 @@ public class SlideController extends BaseController {
      */
     @Log(title = "删除图片", menu = "项目管理", subMenu = "项目详情", businessType = BusinessType.DELETE)
     @ApiOperation(value = "拼接图象类项目---项目图片删除")
-    @RequiresPermissions(value = {"projectConfig:spliceImgConfig:delete","projectConfig:spliceImgConfig:batchDelete"},logical = Logical.OR)
+    @RequiresPermissions(value = {"projectConfig:spliceImgConfig:delete", "projectConfig:spliceImgConfig:batchDelete"}, logical = Logical.OR)
     @ApiOperationSupport(author = "zmj")
     @PostMapping("/projectPictureDel")
     public R projectPictureDel(@RequestBody @Validated ProjectSlideDel projectSlideDel) {
@@ -430,7 +405,5 @@ public class SlideController extends BaseController {
     public R<SlideAirepostVO> selectById(@PathVariable("slideId") @ApiParam(value = "切片ID") Long slideId) {
         return R.ok(slideService.selectSlideAirepostVOById(slideId));
     }
-
-
 }
 

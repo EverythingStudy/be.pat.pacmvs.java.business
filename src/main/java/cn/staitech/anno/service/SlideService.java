@@ -154,23 +154,6 @@ public interface SlideService extends IService<Slide> {
      */
     R<PageMaster<SlideReportVO>> pageSlideWithSubImage(Map params);
 
-
-    /**
-     * 项目内切片统计
-     *
-     * @param params
-     * @return
-     */
-    R<PageMaster<ProjectStatisticsVO>> pageSlideStatisticsByProject(Map params);
-
-    /**
-     * 切片统计
-     *
-     * @param params
-     * @return
-     */
-    R<PageMaster<SlideReportVO>> pageSlideStatistics(Map params);
-
     void jsonExport(List<Long> slideList, Long projectId, Integer status) throws Exception;
 
 
