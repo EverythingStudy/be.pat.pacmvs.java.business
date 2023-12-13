@@ -139,8 +139,20 @@ DROP TABLE tb_special_role_menu;
 /**
 删除废弃表- tb_special_role_user
 **/
-
 DROP TABLE tb_special_role_user;
+
+
+/**
+删除废弃表- 旧专题相关tb_special_xxxxx
+**/
+DROP TABLE tb_special_annotation;
+DROP TABLE tb_special_diagnosis;
+DROP TABLE tb_special_image;
+DROP TABLE tb_special_menu;
+DROP TABLE tb_special_reclaim;
+DROP TABLE tb_special_role;
+DROP TABLE tb_special;
+
 
 /**
 删除切片表tb_slide人工诊断状态

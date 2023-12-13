@@ -60,9 +60,9 @@ public class FilePathController {
 
     }
 
-    public static void main(String[] args) {
+/*    public static void main(String[] args) {
         String fourNumber = StatisticListUtils.getFourNumberNoSlide(12L);
         String replace = "/home/pat_saas/slides".replace("/home/pat_saas", "/home/pat_saas/" + fourNumber);
         System.out.println(replace);
-    }
+    }*/
 }

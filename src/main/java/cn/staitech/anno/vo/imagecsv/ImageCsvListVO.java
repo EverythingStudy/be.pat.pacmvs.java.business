@@ -11,7 +11,6 @@ import java.io.Serializable;
  * @create: 2023-09-20 17:46:52
  * @Description:
  */
-
 @Data
 public class ImageCsvListVO extends ImageCsv implements Serializable {
 	
@@ -29,5 +28,4 @@ public class ImageCsvListVO extends ImageCsv implements Serializable {
     
     @ApiModelProperty(value = "文件夹url")
     private String folderUrl;
-
 }
