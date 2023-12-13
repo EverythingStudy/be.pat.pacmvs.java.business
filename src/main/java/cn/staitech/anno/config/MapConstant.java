@@ -216,7 +216,29 @@ public class MapConstant {
         }
         return "";
     }
+    
+    /**
+     * 结构数据刷新
+     *
+     * @param structure
+     * @return
+     */
+    public  void refreshStructure() {
+    	STRUCTURE_MAP = structureService.selectMap();
+        STRUCTURE_MAP_EN = structureService.selectMapEn();
+    }
 
+    /**
+     * 脏器数据刷新
+     *
+     * @param ORGAN_MAP
+     * @return
+     */
+    public  void refreshOrgan() {
+    	ORGAN_MAP = organService.selectMap();
+        ORGAN_MAP_EN = organService.selectMapEn();
+    }
+    
     @PostConstruct
     public void init() {
         // 分组

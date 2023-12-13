@@ -2,6 +2,7 @@ package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.indicator.IndicatorAddVO;
 import cn.staitech.anno.vo.indicator.IndicatorGetVO;
 import cn.staitech.anno.vo.indicator.IndicatorReviseVO;
 import cn.staitech.anno.vo.statistic.StatisticIndicatorListInVO;
@@ -106,5 +107,7 @@ public interface IndicatorService {
      * @return 结果
      */
     public List<Indicator> selectIndicatorInformation(Indicator indicator);
+    
+    public int saveCheck(IndicatorAddVO req);
 
 }

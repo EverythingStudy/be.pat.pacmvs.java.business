@@ -1,25 +1,32 @@
 package cn.staitech.anno.controller;
 
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import javax.annotation.Resource;
+
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+
 import cn.staitech.anno.domain.Species;
 import cn.staitech.anno.service.SpeciesService;
 import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.vo.Species.InsertSpeciesVO;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.annotation.Resource;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * 轮次
@@ -48,6 +55,14 @@ public class SpeciesController extends BaseController {
         
         List<Species> list = speciesService.list(queryWrapper);
         return R.ok(list, MessageSource.M("OPERATE_SUCCEED"));
+    }
+    
+    @Log(title = "种属增加", businessType = BusinessType.INSERT)
+    @ApiOperation(value = "种属增加")
+    @PostMapping("/add")
+    public R<Species> add(@RequestBody @Validated InsertSpeciesVO req) {
+    	R<Species> r = speciesService.add(req);
+    	return r;
     }
 
 }
