@@ -210,9 +210,9 @@ public class MarkingUtils {
                 // 获取geometry类型
                 String geometryType = geometry.getGeometryType();
                 // TODO：校验飞点 后续可写多种校验策略放入线程池中
-                if ("Polygon".equals(geometryType)) {
-                    geometry = removePolygonPoint(geometry.getCoordinates());
-                }
+//                if ("Polygon".equals(geometryType)) {
+//                    geometry = removePolygonPoint(geometry.getCoordinates());
+//                }
                 // 判断合并后图形是否为复杂多边型(比如大标注嵌套小标注)
                 if (!"Polygon".equals(geometryType)) {
                     // throw new AnnoException(AnnotationResponseConstant.NEW_GRAPHICS_MARK_NOT_RULES);
