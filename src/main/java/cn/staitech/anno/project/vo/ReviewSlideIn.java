@@ -29,5 +29,9 @@ public class ReviewSlideIn {
     private String imageCode;
     @ApiModelProperty("移走原因")
     private String removeReason;
+    @ApiModelProperty("评审人")
+    private Long createBy;
+    @ApiModelProperty("自评审状态：1未评审，2已评审")
+    private String selfReviewStatus;
 
 }

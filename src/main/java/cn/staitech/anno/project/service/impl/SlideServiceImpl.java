@@ -9,10 +9,15 @@ import cn.staitech.anno.project.service.SlideService;
 import cn.staitech.anno.project.vo.*;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.common.security.utils.SecurityUtils;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,8 +87,21 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
 
     @Override
     public PageMaster<ReviewSlideVO> pageReviewSlide(Page page, ReviewSlideIn params) {
-        getBaseMapper().pageReviewSlide(page, params);
+    	Long[] roleIds = SecurityUtils.getLoginUser().getSysUser().getRoleIds();
+    	//判断是否是项目管理员（22：项目管理所有权限）
+    	boolean isProjectAmin = Arrays.stream(roleIds).anyMatch(num -> num == 22L);
+    	if(!isProjectAmin){
+    		params.setCreateBy(SecurityUtils.getUserId());
+    	}
+    	getBaseMapper().pageReviewSlide(page, params);
         List<ReviewSlideVO> list = page.getRecords();
+        if(CollectionUtils.isNotEmpty(list)){
+        	for(ReviewSlideVO vo : list){
+        		if(StringUtils.isEmpty(vo.getSelfReviewStatus())){
+        			vo.setSelfReviewStatus("1");
+        		}
+        	}
+        }
         PageMaster<ReviewSlideVO> pageMaster = PageMaster.of(list);
         pageMaster.setTotal(page.getTotal());
         return pageMaster;
