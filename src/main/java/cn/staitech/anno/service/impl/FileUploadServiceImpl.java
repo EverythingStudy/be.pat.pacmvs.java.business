@@ -157,7 +157,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 
 
         // ZIP重复上传重命名逻辑
-        if (businessType == 6) {
+/*        if (businessType == 6) {
             if (Objects.equals(fileUploadVO.getTopicName(), "")) {
                 throw new Exception(MessageSource.M("ARGUMENT_INVALID_NOT_FIND_TOPIC"));
             }
@@ -185,7 +185,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 fileName = filesName;
             }
 
-        }
+        }*/
 
 
         // (真实存入)拷贝+
