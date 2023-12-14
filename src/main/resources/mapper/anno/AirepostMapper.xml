@@ -28,6 +28,7 @@
         <result property="initLevel" column="init_level"/>
         <result property="primary" column="primary"/>
         <result property="visible" column="visible"/>
+        <result property="initVisible" column="init_visible"/>
         <result property="slideId" column="slide_id"/>
         <result property="fileName" column="file_name"/>
     </resultMap>
@@ -57,6 +58,7 @@
                a.init_level,
                a.`primary`,
                a.visible,
+               a.init_visible,
                s.slide_id,
                i.file_name
         from aipre_airepost a

@@ -53,6 +53,7 @@ public class AirepostServiceImpl extends ServiceImpl<AirepostMapper, Airepost> i
             obj.setCenterY(obj.getInitCenterY());
             obj.setRotation(0);
             obj.setLevel(obj.getInitLevel());
+            obj.setVisible(obj.getInitVisible());
         }
         return updateBatchById(list);
     }
