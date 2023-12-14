@@ -11,6 +11,7 @@ import cn.staitech.anno.project.vo.*;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.domain.SysRole;
 import cn.staitech.system.api.model.LoginUser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -363,10 +364,17 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
     
     @Override
     public boolean isProjectAmin(LoginUser user){
+    	 boolean isProjectAmin = false;
     	Long userId = user.getUserid();
-    	 List<Long> roleList = sysUserMapper.getRoleListByUserId(userId);
+    	 List<SysRole> roleList = sysUserMapper.getRoleListByUserId(userId);
+    	 List<Long> roleIdList = new ArrayList<>();
     	 //判断是否是项目管理员（22：项目管理所有权限）
-    	 boolean isProjectAmin = roleList.contains(22L);
+    	 if(CollectionUtils.isNotEmpty(roleList)){
+    		 for(SysRole role:roleList){
+    			 roleIdList.add(role.getRoleId());
+    		 }
+    		 isProjectAmin = roleIdList.contains(22L);
+    	 }
     	 return isProjectAmin;
     } 
 }
