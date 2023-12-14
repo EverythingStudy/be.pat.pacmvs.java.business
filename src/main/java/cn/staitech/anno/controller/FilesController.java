@@ -88,15 +88,6 @@ public class FilesController extends BaseController {
             }
         }
         return R.ok();
-    	 /* fileUploadVO.setMultipartFile(file);
-          String res = fileUploadService.mergeChunk(fileUploadVO);
-          if (Objects.equals(res, "1")) {
-              return R.ok();
-          } else if (Objects.equals(res, "0")) {
-              return R.fail(MessageSource.M("FILE_SLIDE_UPLOAD_FAILURE"));
-          } else {
-              return R.fail(res + MessageSource.M("JSON_MULTIPLE_LABElS"));
-          }*/
     }
 
 

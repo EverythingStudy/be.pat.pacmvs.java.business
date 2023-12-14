@@ -371,7 +371,6 @@ public class FileUploadServiceImpl implements FileUploadService {
                     return fileNameList.toString();
                 case 6:
                     // 解析文件
-                    // filesService.process(filesBy);
                     filesService.submitTask(filesBy);
                     break;
             }
@@ -441,7 +440,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 // 定义文件夹名称
                 path = basePath + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()) + "/Slides" + File.separator + topicName + File.separator + fileUploadVO.getFileName();
                 // 重复文件重命名规则
-                QueryWrapper<Files> filesQueryWrapper = new QueryWrapper<>();
+/*                QueryWrapper<Files> filesQueryWrapper = new QueryWrapper<>();
                 filesQueryWrapper.eq("topic_id", topicId);
                 filesQueryWrapper.likeRight("files_name", filesName.substring(0, filesName.lastIndexOf(".")));
 
@@ -452,7 +451,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                     int index = filesList.size();
                     path = pathPre + "(" + index + ")" + pathEnd;
                     filesName = filesName.substring(0, filesName.lastIndexOf(CommonConstant.FILE_SUFFIX)) + "(" + index + ")" + suffixName;
-                }
+                }*/
                 break;
         }
         // 创建文件
