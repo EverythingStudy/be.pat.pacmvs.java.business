@@ -97,6 +97,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
     	if(!isProjectAmin){
     		params.setCreateBy(SecurityUtils.getUserId());
     	}
+    	params.setCurrentUser(SecurityUtils.getUserId());
     	getBaseMapper().pageReviewSlide(page, params);
         List<ReviewSlideVO> list = page.getRecords();
         if(CollectionUtils.isNotEmpty(list)){
