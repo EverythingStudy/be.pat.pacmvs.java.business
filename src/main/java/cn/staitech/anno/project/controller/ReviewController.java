@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author mugw
@@ -83,6 +84,8 @@ public class ReviewController {
     @ApiOperation(value = "viewer按切片id查询评审列表")
     @GetMapping("/queryReview")
     public R<List<Review>> queryReview(@RequestParam("slideId") @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId) {
+    	Set<String> roles = SecurityUtils.getLoginUser().getRoles();
+    	   System.out.println("roles=====>:"+roles);
     	//判断是否是项目管理员（22：项目管理所有权限）
     	boolean isProjectAmin = slideService.isProjectAmin(SecurityUtils.getLoginUser());
     	List<Review> list = new ArrayList<>();
