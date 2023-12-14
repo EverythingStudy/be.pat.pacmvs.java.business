@@ -13,50 +13,10 @@ import java.util.List;
  */
 public interface AirepostMapper extends BaseMapper<Airepost> {
     /**
-     * 查询Airepost
-     *
-     * @param reportUuid Airepost主键
-     * @return Airepost
-     */
-    Airepost selectAirepostByReportUuid(Long reportUuid);
-
-    /**
      * 查询Airepost列表
      *
      * @param airepost Airepost
      * @return Airepost集合
      */
     List<Airepost> selectAirepostList(Airepost airepost);
-
-    /**
-     * 新增Airepost
-     *
-     * @param airepost Airepost
-     * @return 结果
-     */
-    int insertAirepost(Airepost airepost);
-
-    /**
-     * 修改Airepost
-     *
-     * @param airepost Airepost
-     * @return 结果
-     */
-    int updateAirepost(Airepost airepost);
-
-    /**
-     * 删除Airepost
-     *
-     * @param reportUuid Airepost主键
-     * @return 结果
-     */
-    int deleteAirepostByReportUuid(Long reportUuid);
-
-    /**
-     * 批量删除Airepost
-     *
-     * @param reportUuids 需要删除的数据主键集合
-     * @return 结果
-     */
-    int deleteAirepostByReportUuids(Long[] reportUuids);
 }

@@ -25,6 +25,7 @@
         <result property="initCenterY" column="init_center_y"/>
         <result property="rotation" column="rotation"/>
         <result property="level" column="level"/>
+        <result property="initLevel" column="init_level"/>
         <result property="primary" column="primary"/>
         <result property="visible" column="visible"/>
         <result property="slideId" column="slide_id"/>
@@ -53,6 +54,7 @@
                a.init_center_y,
                a.rotation,
                a.level,
+               a.init_level,
                a.`primary`,
                a.visible,
                s.slide_id,
@@ -107,177 +109,4 @@
         </where>
         ORDER BY a.level ASC
     </select>
-
-    <select id="selectAirepostByReportUuid" parameterType="Long" resultMap="AirepostResult">
-        <include refid="selectAirepostVo"/>
-        where a.report_uuid = #{reportUuid}
-    </select>
-
-    <insert id="insertAirepost" parameterType="cn.staitech.anno.domain.Airepost" useGeneratedKeys="true"
-            keyProperty="reportUuid">
-        insert into aipre_airepost
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="aiStatus != null">
-                ai_status,
-            </if>
-            <if test="aiReportJson != null">
-                ai_report_json,
-            </if>
-            <if test="imageUuidId != null and imageUuidId != ''">
-                image_uuid_id,
-            </if>
-            <if test="projectId != null and projectId != ''">
-                project_id,
-            </if>
-            <if test="startTime != null">
-                start_time,
-            </if>
-            <if test="endTime != null">
-                end_time,
-            </if>
-            <if test="wasteTime != null">
-                waste_time,
-            </if>
-            <if test="msg != null and msg != ''">
-                msg,
-            </if>
-            <if test="jsonAddr != null and jsonAddr != ''">
-                json_addr,
-            </if>
-            <if test="taskId != null and taskId != ''">
-                task_id,
-            </if>
-            <if test="graphicsCardModel != null">
-                graphics_card_model,
-            </if>
-            <if test="serverModel != null">
-                server_model,
-            </if>
-            <if test="visible != null">
-                visible,
-            </if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="aiStatus != null">
-                #{aiStatus},
-            </if>
-            <if test="aiReportJson != null">
-                #{aiReportJson},
-            </if>
-            <if test="imageUuidId != null and imageUuidId != ''">
-                #{imageUuidId},
-            </if>
-            <if test="projectId != null and projectId != ''">
-                #{projectId},
-            </if>
-            <if test="startTime != null">
-                #{startTime},
-            </if>
-            <if test="endTime != null">
-                #{endTime},
-            </if>
-            <if test="wasteTime != null">
-                #{wasteTime},
-            </if>
-            <if test="msg != null and msg != ''">
-                #{msg},
-            </if>
-            <if test="jsonAddr != null and jsonAddr != ''">
-                #{jsonAddr},
-            </if>
-            <if test="taskId != null and taskId != ''">
-                #{taskId},
-            </if>
-            <if test="graphicsCardModel != null">
-                #{graphicsCardModel},
-            </if>
-            <if test="serverModel != null">
-                #{serverModel},
-            </if>
-            <if test="visible != null">
-                #{visible},
-            </if>
-        </trim>
-    </insert>
-
-    <update id="updateAirepost" parameterType="cn.staitech.anno.domain.Airepost">
-        update aipre_airepost
-        <trim prefix="SET" suffixOverrides=",">
-            <if test="aiStatus != null">
-                ai_status = #{aiStatus},
-            </if>
-            <if test="aiReportJson != null">
-                ai_report_json = #{aiReportJson},
-            </if>
-            <if test="imageUuidId != null and imageUuidId != ''">
-                image_uuid_id = #{imageUuidId},
-            </if>
-            <if test="projectId != null and projectId != ''">
-                project_id = #{projectId},
-            </if>
-            <if test="startTime != null">
-                start_time = #{startTime},
-            </if>
-            <if test="endTime != null">
-                end_time = #{endTime},
-            </if>
-            <if test="wasteTime != null">
-                waste_time = #{wasteTime},
-            </if>
-            <if test="msg != null and msg != ''">
-                msg = #{msg},
-            </if>
-            <if test="jsonAddr != null and jsonAddr != ''">
-                json_addr = #{jsonAddr},
-            </if>
-            <if test="taskId != null and taskId != ''">
-                task_id = #{taskId},
-            </if>
-            <if test="graphicsCardModel != null">
-                graphics_card_model = #{graphicsCardModel},
-            </if>
-            <if test="serverModel != null">
-                server_model = #{serverModel},
-            </if>
-
-            <if test="width != null">
-                width= #{width},
-            </if>
-            <if test="height != null">
-                height= #{height},
-            </if>
-            <if test="centerX != null">
-                center_x= #{centerX},
-            </if>
-            <if test="centerY != null">
-                center_y= #{centerY},
-            </if>
-            <if test="rotation != null">
-                rotation= #{rotation},
-            </if>
-            <if test="level != null">
-                level= #{level},
-            </if>
-            <if test="primary != null">
-                primary= #{primary},
-            </if>
-            <if test="visible != null">
-                visible= #{visible},
-            </if>
-        </trim>
-        where report_uuid = #{reportUuid}
-    </update>
-
-    <delete id="deleteAirepostByReportUuid" parameterType="Long">
-        delete
-        from aipre_airepost
-        where report_uuid = #{reportUuid}
-    </delete>
-
-    <delete id="deleteAirepostByReportUuids" parameterType="String">
-        delete from aipre_airepost where report_uuid in
-        <foreach item="reportUuid" collection="array" open="(" separator="," close=")">
-            #{reportUuid}
-        </foreach>
-    </delete>
 </mapper>

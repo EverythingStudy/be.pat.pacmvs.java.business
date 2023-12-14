@@ -11,7 +11,7 @@ import java.io.File;
 import java.util.List;
 
 /**
- * AirepostService业务层处理
+ * 业务层处理：AI预测-算法项目-眼科拼接Viewer-View图像
  *
  * @author wangfeng
  * @date 2023-11-10
@@ -31,9 +31,9 @@ public class AirepostServiceImpl extends ServiceImpl<AirepostMapper, Airepost> i
     public List<Airepost> selectAirepostList(Airepost airepost) {
         List<Airepost> list = airepostMapper.selectAirepostList(airepost);
         for (Airepost obj : list) {
-            // 处理图像URL:/home/pat_saas/C001/Slides/image/info/cropped/tgt/1.png => http://localhost:8080/file/statics/C001/Slides/thumbnail/20230928/75/0.jpg
             String jsonAddr = obj.getJsonAddr();
-            obj.setAiImageUrl(jsonAddr.replace("/home/pat_saas/", "/file/statics/"));
+            // 处理图像URL:{/home/pat_saas}/C001/Slides/image/info/cropped/tgt/1.png => {/file/statics}/C001/Slides/thumbnail/20230928/75/0.jpg
+            obj.setAiImageUrl(jsonAddr.replace("/home/pat_saas", "/file/statics"));
             obj.setFileName(jsonAddr.substring(jsonAddr.lastIndexOf(File.separator) + 1));
         }
         return list;
@@ -52,6 +52,7 @@ public class AirepostServiceImpl extends ServiceImpl<AirepostMapper, Airepost> i
             obj.setCenterX(obj.getInitCenterX());
             obj.setCenterY(obj.getInitCenterY());
             obj.setRotation(0);
+            obj.setLevel(obj.getInitLevel());
         }
         return updateBatchById(list);
     }
