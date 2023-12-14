@@ -133,7 +133,7 @@
         s.ai_check,
         case when r.review_count >2 then '2' else '1' end as review_status,
         r.score,
-        r.self_review_status,
+        t2.self_review_status,
         s.image_id,
         s.group_name,
         s.gender,
@@ -167,12 +167,13 @@
         left join tb_image m on m.image_id = s.image_id
         <choose>
             <when test="params.createBy != null">
-        	 	 left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score,t.self_review_status  from tb_review t where t.create_by =  #{params.createBy} group by t.slide_id) r on s.slide_id = r.slide_id
+        	 	 left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score  from tb_review t where t.create_by =  #{params.createBy} group by t.slide_id) r on s.slide_id = r.slide_id
         	</when>
         	<otherwise>
-        		 left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score,t.self_review_status from tb_review t  group by t.slide_id) r on s.slide_id = r.slide_id
+        		 left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score from tb_review t  group by t.slide_id) r on s.slide_id = r.slide_id
              </otherwise>
         </choose>
+         LEFT JOIN  tb_review t2  ON s.slide_id = t2.slide_id and t2.create_by = #{params.currentUser}
         <where>
             <if test="params.imageCode != null ">
                 AND m.image_name like CONCAT('%',#{params.imageCode},'%')
