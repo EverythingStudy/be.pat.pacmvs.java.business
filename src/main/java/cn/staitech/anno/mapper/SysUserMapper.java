@@ -1,5 +1,6 @@
 package cn.staitech.anno.mapper;
 
+import cn.staitech.system.api.domain.SysRole;
 import cn.staitech.system.api.domain.SysUser;
 import org.apache.ibatis.annotations.Param;
 
@@ -135,5 +136,5 @@ public interface SysUserMapper {
     /**
      * 根据用户ID查询用户角色列表
      */
-    List<Long> getRoleListByUserId(Long userId);
+    List<SysRole> getRoleListByUserId(Long userId);
 }

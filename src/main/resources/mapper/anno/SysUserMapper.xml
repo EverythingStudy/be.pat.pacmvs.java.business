@@ -310,7 +310,7 @@
            </where>
     </select>
     
-    <select id="getRoleListByUserId"  parameterType="Long" resultType="java.util.List">
+    <select id="getRoleListByUserId"  parameterType="Long" resultType="cn.staitech.system.api.domain.SysRole">
     	select role_id from sys_user_role where user_id = #{userId}
     </select>
 </mapper>
