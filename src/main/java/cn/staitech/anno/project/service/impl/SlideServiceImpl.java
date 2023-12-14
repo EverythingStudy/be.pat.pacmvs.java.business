@@ -12,7 +12,6 @@ import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.model.LoginUser;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -92,7 +91,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
 
     @Override
     public PageMaster<ReviewSlideVO> pageReviewSlide(Page page, ReviewSlideIn params) {
-    	
     	//判断是否是项目管理员（22：项目管理所有权限）
     	boolean isProjectAmin = isProjectAmin(SecurityUtils.getLoginUser());
     	if(!isProjectAmin){
