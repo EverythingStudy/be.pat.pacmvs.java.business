@@ -1,6 +1,7 @@
 package cn.staitech.anno.project.controller;
 
 import cn.hutool.core.io.IoUtil;
+import cn.hutool.json.JSONUtil;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.mapper.SlideMapper;
@@ -86,6 +87,7 @@ public class ReviewController {
     public R<List<Review>> queryReview(@RequestParam("slideId") @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId) {
     	Set<String> roles = SecurityUtils.getLoginUser().getRoles();
     	   System.out.println("roles=====>:"+roles);
+    	   log.info("当前登录用户信息：{}",JSONUtil.toJsonStr(SecurityUtils.getLoginUser()));
     	//判断是否是项目管理员（22：项目管理所有权限）
     	boolean isProjectAmin = slideService.isProjectAmin(SecurityUtils.getLoginUser());
     	List<Review> list = new ArrayList<>();
