@@ -25,6 +25,7 @@
         <result property="projectName" column="project_name" jdbcType="VARCHAR"/>
         <result property="roundId" column="round_id" jdbcType="BIGINT"/>
         <result property="roundName" column="round_name" jdbcType="VARCHAR"/>
+        <result property="selfReviewStatus" column="self_review_status" jdbcType="VARCHAR"/>
     </resultMap>
     <select id="exportReview" parameterType="Map" resultType="cn.staitech.anno.project.vo.ReviewVO">
         select r.score,r.details,r.create_name,r.create_time,p.project_name,i.image_name as image_code,rr.review_content

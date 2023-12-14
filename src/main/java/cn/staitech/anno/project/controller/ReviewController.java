@@ -15,6 +15,7 @@ import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.reviewround.ReviewRoundOutVO;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.annotation.RequiresPermissions;
+import cn.staitech.common.security.utils.SecurityUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -37,6 +38,7 @@ import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,7 +83,15 @@ public class ReviewController {
     @ApiOperation(value = "viewer按切片id查询评审列表")
     @GetMapping("/queryReview")
     public R<List<Review>> queryReview(@RequestParam("slideId") @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId) {
-        return R.ok(reviewService.list(Wrappers.query(Review.builder().slideId(slideId).build())));
+    	//判断是否是项目管理员（22：项目管理所有权限）
+    	boolean isProjectAmin = slideService.isProjectAmin(SecurityUtils.getLoginUser());
+    	List<Review> list = new ArrayList<>();
+    	if(isProjectAmin){
+    		list = reviewService.list(Wrappers.query(Review.builder().slideId(slideId).build()));
+    	}else{
+    		list = reviewService.list(Wrappers.query(Review.builder().slideId(slideId).createBy(SecurityUtils.getUserId()).build()));
+    	}
+    	return R.ok(list);
     }
 
     @RequiresPermissions("smartReview:project:export")

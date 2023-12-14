@@ -208,6 +208,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
         review.setUpdateBy(SecurityUtils.getUserId());
         review.setScore(req.getScore());
         review.setDetails(req.getDetails());
+        review.setSelfReviewStatus("2");
         return reviewMapper.insert(review);
     }
 

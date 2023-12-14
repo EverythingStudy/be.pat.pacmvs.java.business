@@ -58,6 +58,8 @@ public interface SysUserMapper {
      * @return 结果
      */
     int insertUser(SysUser user);
+    
+    
 
     /**
      * 修改用户信息
@@ -129,4 +131,9 @@ public interface SysUserMapper {
      * 根据机构ID查询用户列表
      * */
     List<SysUser> userList(SysUser sysUser);
+    
+    /**
+     * 根据用户ID查询用户角色列表
+     */
+    List<Long> getRoleListByUserId(Long userId);
 }
