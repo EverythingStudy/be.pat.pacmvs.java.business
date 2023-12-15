@@ -400,7 +400,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
     		isProjectAmin = roleIdList.contains(22L);
     	}*/
     	//项目创建者就是项目管理员（不根据系统角色去判断）
-    	cn.staitech.anno.domain.Project project = projectService.getById(projectId);
+    	cn.staitech.anno.domain.Project project = projectService.selectPrimKey(projectId);
     	if(userId.equals(project.getCreateBy())){
     		isProjectAmin = true;
     	}
