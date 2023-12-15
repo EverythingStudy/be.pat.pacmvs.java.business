@@ -117,6 +117,20 @@ ALTER TABLE `tb_product_series`
 ALTER TABLE `tb_structure`
     ADD COLUMN `organization_id` bigint NULL COMMENT '机构ID' AFTER `type`;
 
+/**
+眼科AI-图像拼接-重置-添加3个字段
+ */
+ALTER TABLE `aipre_airepost`
+    ADD COLUMN `init_level` int DEFAULT NULL COMMENT '初始层级' AFTER `level`,
+    ADD COLUMN  `init_center_x` double DEFAULT NULL COMMENT '初始中心点x坐标' AFTER `modelName`,
+    ADD COLUMN `init_center_y` double DEFAULT NULL COMMENT '初始中心点y坐标' AFTER `init_center_x`;
+
+
+/*
+* 评审表增加单审状态
+*/
+ALTER TABLE tb_review ADD COLUMN review_status char(1) DEFAULT '2' COMMENT '单审状态 默认1：未审 2：已审';
+
 
 /**
 **第三部分：此次发版脏器、品系、结构相关表机构ID数据更新；测试、生产环境一定要慎重、仔细执行；执行前一定要先备份！！！
@@ -195,7 +209,3 @@ WHERE species_id in(
     WHERE organization_id = 2
 );
 
-/*
-* 评审表增加单审状态
-*/
-ALTER TABLE tb_review ADD COLUMN review_status char(1) DEFAULT '2' COMMENT '单审状态 默认1：未审 2：已审';
