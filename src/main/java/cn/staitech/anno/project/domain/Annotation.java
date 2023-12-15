@@ -176,34 +176,33 @@ public class Annotation implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", annotationId=").append(annotationId);
-        sb.append(", measure=").append(measure);
-        sb.append(", perimeter=").append(perimeter);
-        sb.append(", annotationType=").append(annotationType);
-        sb.append(", description=").append(description);
-        sb.append(", attribute=").append(attribute);
-        sb.append(", locationType=").append(locationType);
-        sb.append(", location=").append(location);
-        sb.append(", projectId=").append(projectId);
-        sb.append(", imageId=").append(imageId);
-        sb.append(", slideId=").append(slideId);
-        sb.append(", tileId=").append(tileId);
-        sb.append(", examinationFlag=").append(examinationFlag);
-        sb.append(", createBy=").append(createBy);
-        sb.append(", createTime=").append(createTime);
-        sb.append(", updateBy=").append(updateBy);
-        sb.append(", updateTime=").append(updateTime);
-        sb.append(", categoryId=").append(categoryId);
-        sb.append(", x=").append(x);
-        sb.append(", y=").append(y);
-        sb.append(", annoType=").append(annoType);
-        sb.append(", createCategoryId=").append(createCategoryId);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
+        String sb = getClass().getSimpleName() +
+                " [" +
+                "Hash = " + hashCode() +
+                ", annotationId=" + annotationId +
+                ", measure=" + measure +
+                ", perimeter=" + perimeter +
+                ", annotationType=" + annotationType +
+                ", description=" + description +
+                ", attribute=" + attribute +
+                ", locationType=" + locationType +
+                ", location=" + location +
+                ", projectId=" + projectId +
+                ", imageId=" + imageId +
+                ", slideId=" + slideId +
+                ", tileId=" + tileId +
+                ", examinationFlag=" + examinationFlag +
+                ", createBy=" + createBy +
+                ", createTime=" + createTime +
+                ", updateBy=" + updateBy +
+                ", updateTime=" + updateTime +
+                ", categoryId=" + categoryId +
+                ", x=" + x +
+                ", y=" + y +
+                ", annoType=" + annoType +
+                ", createCategoryId=" + createCategoryId +
+                ", serialVersionUID=" + serialVersionUID +
+                "]";
+        return sb;
     }
 }

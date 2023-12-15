@@ -1,25 +1,33 @@
 package cn.staitech.anno.service.impl;
 
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.domain.Indicator;
+import cn.staitech.anno.domain.Organ;
+import cn.staitech.anno.domain.Species;
 import cn.staitech.anno.mapper.IndicatorMapper;
+import cn.staitech.anno.mapper.OrganMapper;
+import cn.staitech.anno.mapper.SpeciesMapper;
 import cn.staitech.anno.service.IndicatorService;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
 import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.indicator.IndicatorAddVO;
 import cn.staitech.anno.vo.indicator.IndicatorGetVO;
 import cn.staitech.anno.vo.indicator.IndicatorReviseVO;
 import cn.staitech.anno.vo.statistic.StatisticIndicatorListInVO;
 import cn.staitech.anno.vo.statistic.StatisticIndicatorListOutVO;
 import cn.staitech.common.security.utils.SecurityUtils;
-import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.util.List;
-
-import static cn.staitech.common.security.utils.SecurityUtils.isAdmin;
 
 /**
  * @author wangf
@@ -31,6 +39,12 @@ public class IndicatorServiceImpl implements IndicatorService {
     private IndicatorMapper indicatorMapper;
     @Resource
     private PathologicalIndicatorCategoryService pathologicalIndicatorCategoryService;
+    
+    @Resource
+    private OrganMapper organMapper;
+	
+	@Resource
+	private SpeciesMapper speciesMapper;
 
     /**
      * 添加病例指标
@@ -56,12 +70,12 @@ public class IndicatorServiceImpl implements IndicatorService {
                 // 种属
                 obj.setSpeciesName(MapConstant.getSpeciesNameEn(obj.getSpeciesId()));
                 // 脏器
-                obj.setOrganName(MapConstant.getOrganEn(obj.getSpeciesId().toString().concat(obj.getOrganId().toString())));
+                obj.setOrganName(MapConstant.getOrganEn(obj.getSpeciesId().concat(obj.getOrganId())));
             } else {
                 // 种属
                 obj.setSpeciesName(MapConstant.getSpeciesName(obj.getSpeciesId()));
                 // 脏器
-                obj.setOrganName(MapConstant.getOrgan(obj.getSpeciesId().toString().concat(obj.getOrganId().toString())));
+                obj.setOrganName(MapConstant.getOrgan(obj.getSpeciesId().concat(obj.getOrganId())));
             }
             // 查询总数
             obj.setAnnotationCategoryTotal(pathologicalIndicatorCategoryService.selectCategoryNumber(obj.getIndicatorId()));
@@ -197,4 +211,39 @@ public class IndicatorServiceImpl implements IndicatorService {
         }
         return list;
     }
+
+	@Override
+	public int saveCheck(IndicatorAddVO req) {
+		int checkTag = 0;
+		//种属编号 重复校验
+		QueryWrapper<Species> querySpeciesIdWrapper = new QueryWrapper<>();
+		querySpeciesIdWrapper.eq("species_id", req.getSpeciesId());
+		List<Species> speciesIdWrapperList = speciesMapper.selectList(querySpeciesIdWrapper);
+		if(CollectionUtils.isNotEmpty(speciesIdWrapperList)){
+			 checkTag = 1;
+		}
+		//种属名称 重复校验
+		QueryWrapper<Species> queryNameWrapper = new QueryWrapper<>();
+		queryNameWrapper.eq("name", req.getSpeciesName());
+		List<Species> nameList = speciesMapper.selectList(queryNameWrapper);
+		if(CollectionUtils.isNotEmpty(nameList)){
+			 checkTag = 2;
+		}
+		//脏器编号 重复校验
+
+		QueryWrapper<Organ> queryOrganIdWrapper = new QueryWrapper<>();
+		queryOrganIdWrapper.eq("organ_id", req.getOrganId());
+		List<Organ> organWrapperList = organMapper.selectList(queryOrganIdWrapper);
+		if(CollectionUtils.isNotEmpty(organWrapperList)){
+			 checkTag = 3;
+		}
+		//脏器名称 重复校验
+		QueryWrapper<Organ> queryOrganNameWrapper = new QueryWrapper<>();
+		queryOrganNameWrapper.eq("name", req.getOrganName());
+		List<Organ> organNameList = organMapper.selectList(queryOrganNameWrapper);
+		if(CollectionUtils.isNotEmpty(organNameList)){
+			 checkTag = 4;
+		}
+		return checkTag;
+	}
 }

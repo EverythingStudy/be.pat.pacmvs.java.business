@@ -139,7 +139,7 @@ public interface AnnotationService {
      * @param annotation 查询条件
      * @return
      */
-    public List<Annotation> selectByCondition(Annotation annotation);
+    List<Annotation> selectByCondition(Annotation annotation);
 
 
     /**
@@ -148,7 +148,7 @@ public interface AnnotationService {
      * @param annotation 标注
      * @return 结果
      */
-    public int deleteAnnotationByProjectIdAndUserId(Annotation annotation);
+    int deleteAnnotationByProjectIdAndUserId(Annotation annotation);
 
     /**
      * 切片id查询unable以外标注 .
@@ -156,7 +156,7 @@ public interface AnnotationService {
      * @param slideId 切片id
      * @return 结果
      */
-    public Integer selectAnnotationCount(Long slideId);
+    Integer selectAnnotationCount(Long slideId);
 
     /**
      * 通过项目ID，用户ID，查询标注 .
@@ -164,7 +164,7 @@ public interface AnnotationService {
      * @param annotation 标注
      * @return 结果
      */
-    public List<Annotation> selectAnnotationByProjectIdAndUserId(Annotation annotation);
+    List<Annotation> selectAnnotationByProjectIdAndUserId(Annotation annotation);
 
     /**
      * 通过切片id查询所有标注 .
@@ -172,7 +172,7 @@ public interface AnnotationService {
      * @param slideId 切片id
      * @return 结果
      */
-    public List<Annotation> selectSlideBy(Long slideId);
+    List<Annotation> selectSlideBy(Long slideId);
 
     /**
      * 查询当前用户在项目中的权限 .

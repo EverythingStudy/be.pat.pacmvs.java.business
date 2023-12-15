@@ -4,7 +4,6 @@ import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.SlidePrediction;
 import cn.staitech.anno.project.domain.Review;
-import cn.staitech.anno.vo.diagnosis.SpecialDiagnosisAddVo;
 import cn.staitech.anno.vo.examination.ExaminationListVO;
 import cn.staitech.anno.vo.eyeslide.*;
 import cn.staitech.anno.vo.image.out.ImageListOutVO;
@@ -151,14 +150,6 @@ public interface SlideMapper extends BaseMapper<Slide> {
     int updateBatchByCondition(@Param("slideList") List<Slide> slideList);
 
     /**
-     * 根据项目、分组及图像更新切片诊断状态
-     *
-     * @param diagnosisList
-     * @return
-     */
-    int updateBatchBySpecialDiagnosis(@Param("diagnosisList") List<SpecialDiagnosisAddVo> diagnosisList);
-
-    /**
      * 查询组内切片报表摘要
      *
      * @param params
@@ -190,15 +181,6 @@ public interface SlideMapper extends BaseMapper<Slide> {
      * @return
      */
     IPage<SlideReportVO> pageSlideStatistics(@Param("page") Page page, @Param("params") Map params);
-
-    /**
-     * 脏器病变报告查询
-     *
-     * @param params
-     * @return
-     */
-    List<Map<String, Object>> queryVisceraLesionRpt(@Param("params") Map params);
-
     /**
      * 切片报表分页查询
      *

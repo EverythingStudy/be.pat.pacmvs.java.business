@@ -175,7 +175,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
                 parseJson = ParseJsonUtil.parseJson(getJsonInfoDataIn.getAlgorithmJsonUrl(), 0);
             } catch (IOException e) {
                 e.printStackTrace();
-                log.info(MessageSource.M("JSON_FILE_PARSE_FAILURE") + e.toString());
+                log.info(MessageSource.M("JSON_FILE_PARSE_FAILURE") + e);
                 return R.fail(MessageSource.M("JSON_FILE_PARSE_FAILURE"));
             }
             int labels = parseJson.getLabels();

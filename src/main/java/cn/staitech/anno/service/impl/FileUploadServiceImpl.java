@@ -49,10 +49,10 @@ public class FileUploadServiceImpl implements FileUploadService {
     private FilesProcessService filesProcessService;
     @Resource
     private AlgorithmAssessmentService algorithmAssessmentService;
-    private String basePath = "/home/pat_saas";
-    private String zipPath = "/Upload/json/zip";
+    private final String basePath = "/home/pat_saas";
+    private final String zipPath = "/Upload/json/zip";
 
-    private String uploadPath = File.separator + "Upload";
+    private final String uploadPath = File.separator + "Upload";
 
 
     /**
@@ -157,7 +157,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 
 
         // ZIP重复上传重命名逻辑
-        if (businessType == 6) {
+/*        if (businessType == 6) {
             if (Objects.equals(fileUploadVO.getTopicName(), "")) {
                 throw new Exception(MessageSource.M("ARGUMENT_INVALID_NOT_FIND_TOPIC"));
             }
@@ -176,7 +176,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             List<Files> filesList = filesService.list(filesQueryWrapper);
             if (filesList.size() > 0) {
                 String pathPre = path.substring(0, path.lastIndexOf(CommonConstant.FILE_SUFFIX));
-                String pathEnd = path.substring(path.lastIndexOf(CommonConstant.FILE_SUFFIX), path.length());
+                String pathEnd = path.substring(path.lastIndexOf(CommonConstant.FILE_SUFFIX));
                 int index = filesList.size();
                 path = pathPre + "(" + index + ")" + pathEnd;
                 filesName = filesName.substring(0, filesName.lastIndexOf(CommonConstant.FILE_SUFFIX)) + "(" + index + ")" + suffixName;
@@ -185,7 +185,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 fileName = filesName;
             }
 
-        }
+        }*/
 
 
         // (真实存入)拷贝+
@@ -260,7 +260,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 break;
             case 6:
                 // 解析文件
-                filesService.process(files);
+                filesService.submitTask(files);
                 break;
         }
         return files;
@@ -340,7 +340,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                     if (!Optional.ofNullable(chunk.getProjectId()).isPresent()) {
                         throw new Exception(MessageSource.M("DISALLOW_NOT_PROJECT"));
                     }
-//                    markingService.zipExport(filesBy.getFilesPath(), chunk.getProjectId());
+                    // markingService.zipExport(filesBy.getFilesPath(), chunk.getProjectId());
                     boolean tag = zipCheck(filesBy.getFilesPath(), chunk.getProjectId());
                     if (!tag) {
                         throw new Exception(MessageSource.M("FILE_LIMIT"));
@@ -371,7 +371,6 @@ public class FileUploadServiceImpl implements FileUploadService {
                     return fileNameList.toString();
                 case 6:
                     // 解析文件
-                    // filesService.process(filesBy);
                     filesService.submitTask(filesBy);
                     break;
             }
@@ -441,18 +440,18 @@ public class FileUploadServiceImpl implements FileUploadService {
                 // 定义文件夹名称
                 path = basePath + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()) + "/Slides" + File.separator + topicName + File.separator + fileUploadVO.getFileName();
                 // 重复文件重命名规则
-                QueryWrapper<Files> filesQueryWrapper = new QueryWrapper<>();
+/*                QueryWrapper<Files> filesQueryWrapper = new QueryWrapper<>();
                 filesQueryWrapper.eq("topic_id", topicId);
                 filesQueryWrapper.likeRight("files_name", filesName.substring(0, filesName.lastIndexOf(".")));
 
                 List<Files> filesList = filesService.list(filesQueryWrapper);
                 if (filesList.size() > 0) {
                     String pathPre = path.substring(0, path.lastIndexOf(CommonConstant.FILE_SUFFIX));
-                    String pathEnd = path.substring(path.lastIndexOf(CommonConstant.FILE_SUFFIX), path.length());
+                    String pathEnd = path.substring(path.lastIndexOf(CommonConstant.FILE_SUFFIX));
                     int index = filesList.size();
                     path = pathPre + "(" + index + ")" + pathEnd;
                     filesName = filesName.substring(0, filesName.lastIndexOf(CommonConstant.FILE_SUFFIX)) + "(" + index + ")" + suffixName;
-                }
+                }*/
                 break;
         }
         // 创建文件

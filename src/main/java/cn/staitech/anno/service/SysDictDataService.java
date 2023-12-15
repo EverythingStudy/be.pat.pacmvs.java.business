@@ -16,13 +16,13 @@ import java.util.Map;
  */
 public interface SysDictDataService {
 
-    public List<SysDictData> getSysDictDataListByParm(Map<String, Object> map);
+    List<SysDictData> getSysDictDataListByParm(Map<String, Object> map);
 
-    public SysDictData getMaxDictSortByParm(Map<String, Object> map);
+    SysDictData getMaxDictSortByParm(Map<String, Object> map);
 
-    public String saveSysDictDataByParm(String dictValueCn, String dictValueEn, String dictType, String filter);
+    String saveSysDictDataByParm(String dictValueCn, String dictValueEn, String dictType, String filter);
 
-    public ProjectExt getProjectExt(long projectId);
+    ProjectExt getProjectExt(long projectId);
 
-    public List<SysDictDataVo> getSysDictDataVoListByParm(Map<String, Object> map);
+    List<SysDictDataVo> getSysDictDataVoListByParm(Map<String, Object> map);
 }

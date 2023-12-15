@@ -17,10 +17,10 @@ public interface SysUserService {
      * @param userId 用户ID
      * @return 用户对象信息
      */
-    public SysUser selectUserById(Long userId);
+    SysUser selectUserById(Long userId);
 
     /**
-     * 根据机构id查询用户列表
+     * 根据机构ID查询用户列表
      * */
     List<SysUser> userList();
 }

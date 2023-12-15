@@ -4,9 +4,11 @@ import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.ExamineScore;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.ProjectMember;
-import cn.staitech.anno.domain.ProjectPo;
 import cn.staitech.anno.mapper.ExamineScoreMapper;
-import cn.staitech.anno.service.*;
+import cn.staitech.anno.service.FileService;
+import cn.staitech.anno.service.MarkingService;
+import cn.staitech.anno.service.ProjectMemberService;
+import cn.staitech.anno.service.ProjectService;
 import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
@@ -15,19 +17,13 @@ import cn.staitech.anno.vo.project.InsertProjectVO;
 import cn.staitech.anno.vo.project.ProjectListVO;
 import cn.staitech.anno.vo.project.UpdateProjectStatusVO;
 import cn.staitech.anno.vo.project.UpdateProjectVO;
-import cn.staitech.anno.vo.project.in.OperateProjectIn;
 import cn.staitech.anno.vo.project.in.ProjectIdsVO;
 import cn.staitech.anno.vo.project.in.ProjectListQueryIn;
-import cn.staitech.anno.vo.project.out.ProjectInfoOut;
-import cn.staitech.anno.vo.project.out.ProjectListQueryOut;
-import cn.staitech.anno.vo.projectgroup.ProjectGroup;
-import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.annotation.RequiresPermissions;
-import cn.staitech.common.security.annotation.RequiresSpecialPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -45,7 +41,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 
 /**
@@ -65,113 +64,9 @@ public class ProjectController extends BaseController {
     @Resource
     private ProjectMemberService projectMemberService;
     @Resource
-    private ProjectExtService projectExtService;
-    @Resource
     private FileService fileService;
     @Resource
     private MarkingService markingService;
-
-    @ApiOperation(value = "项目编辑")
-    @RequiresPermissions("special:project:edit")
-    @PostMapping("/operateProject")
-    @Log(title = "项目配置-编辑", menu = "专题管理", subMenu = "专题创建", businessType = BusinessType.OTHER)
-    public R operateProject(@Validated @RequestBody OperateProjectIn req) {
-        return projectExtService.operateProject(req);
-
-    }
-
-    @ApiOperation(value = "查询项目详情接口")
-    @RequiresPermissions("special:project:details")
-    @GetMapping(value = "/{projectId}")
-    @Log(title = "项目配置-详情", menu = "专题管理", subMenu = "专题创建", businessType = BusinessType.QUERY)
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "projectId", value = "项目id", dataTypeClass = Long.class, paramType = "query", example = "1")})
-    public R<ProjectInfoOut> getProjectById(@RequestParam("projectId") Long projectId) {
-        ProjectInfoOut resp = projectExtService.getProjectById(projectId);
-        return R.ok(resp);
-    }
-
-    @ApiOperation(value = "根据用户id查询项目列表（包含下级分组）接口")
-    @GetMapping("/queryProjectWithGroupByUserId")
-    @Log(title = "智能阅片", menu = "智能阅片", subMenu = "切片列表", businessType = BusinessType.QUERY)
-    public R queryProjectWithGroupByUserId() {
-        try {
-            return projectExtService.queryProjectWithGroupByUserId(SecurityUtils.getUserId());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return R.fail(e.getMessage());
-        }
-    }
-
-    @ApiOperation(value = "根据用户id查询项目列表")
-    @GetMapping("/queryProjectByUserId")
-    @Log(title = "智能阅片", menu = "智能阅片", subMenu = "切片列表", businessType = BusinessType.QUERY)
-    public R<List<ProjectPo>> queryProjectByUserId(@RequestParam(required = false, name = "specialId") Long specialId,
-                                                   @RequestParam(required = false, name = "projectName") String projectName) {
-        try {
-            return projectExtService.queryProjectByUserId(SecurityUtils.getUserId(), projectName, specialId);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return R.fail(e.getMessage());
-        }
-    }
-
-    @ApiOperation(value = "根据项目id查询分组列表")
-    @GetMapping("/queryGroupByProjectId")
-    @Log(title = "智能阅片", menu = "智能阅片", subMenu = "切片列表", businessType = BusinessType.QUERY)
-    public R queryGroupByProjectId(@RequestParam(required = false, name = "projectId") Long projectId,
-                                   @RequestParam(required = false, name = "groupName") String groupName) {
-        try {
-            return projectExtService.queryGroupByProjectId(projectId, groupName, null);
-        } catch (Exception e) {
-            return R.fail(e.getMessage());
-        }
-    }
-
-
-    @ApiOperation(value = "根据项目id查询分组列表(按需求定制)")
-    @GetMapping("/queryGroupByProjectIdCustom")
-    @Log(title = "智能阅片", menu = "智能阅片", subMenu = "切片列表", businessType = BusinessType.QUERY)
-    public R queryGroupByProjectIdCustom(@RequestParam(required = false, name = "projectId") Long projectId, @RequestParam(required = false, name = "reasons") Long reasons,
-                                         @RequestParam(required = false, name = "groupName") String groupName) {
-        try {
-            if (reasons == null) {
-                // 添加移走原因,'1给药结束安乐死、2恢复期结束安乐死'
-                ProjectGroup pg1 = new ProjectGroup();
-                pg1.setProjectId(projectId);
-                pg1.setGroupName(MessageSource.M("REMOVE_REASON_1"));
-                pg1.setGroupId(1L);
-                ProjectGroup pg2 = new ProjectGroup();
-                pg2.setProjectId(projectId);
-                pg2.setGroupName(MessageSource.M("REMOVE_REASON_2"));
-                pg2.setGroupId(2L);
-                List<ProjectGroup> temp = new ArrayList<>();
-                temp.add(pg1);
-                temp.add(pg2);
-                return R.ok(temp);
-            } else {
-                return projectExtService.queryGroupByProjectId(projectId, groupName, reasons);
-            }
-        } catch (Exception e) {
-            return R.fail(e.getMessage());
-        }
-    }
-
-    /**
-     * 项目列表
-     *
-     * @param req
-     * @return
-     */
-    @ApiOperation(value = "获得智能阅片下项目列表")
-    @RequiresSpecialPermissions("read-special:project:list")
-    @PostMapping("/getProjectList")
-    public R<PageResponse<ProjectListQueryOut>> getViewImageProjectList(@RequestBody @Validated ProjectListQueryIn req) {
-        PageResponse<ProjectListQueryOut> resp = projectExtService.getProjectList(req);
-        return R.ok(resp);
-    }
-
-    // 以下为新版：------------------------------------------------------------------
 
     /**
      * 项目状态列表 .

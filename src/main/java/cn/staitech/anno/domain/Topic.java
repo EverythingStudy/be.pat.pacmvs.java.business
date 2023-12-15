@@ -74,11 +74,4 @@ public class Topic implements Serializable {
     @TableField(value = "update_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private String updateTime;
-
-    /**
-     * 删除标志(0:正常,1:删除) .
-     */
-    @TableField(value = "del_flag")
-    private Integer delFlag;
-
 }

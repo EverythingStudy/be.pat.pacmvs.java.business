@@ -92,6 +92,7 @@ public class ReviewRoundController {
             for (ReviewRound reviewRound : reviewRoundList) {
                 if (vo.getRoundId().equals(reviewRound.getRoundId()) && vo.getGroupId().equals(vo.getGroupId()) && vo.getTopicId().equals(reviewRound.getTopicId())) {
                     flag = false;
+                    break;
                 }
             }
             if (flag) {

@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
         // 返回错误信息：失败代码、失败信息、具体代码、具体信息
         int code = status.value();
         String msg = status.getReasonPhrase();
-        log.error(new StringBuilder(code).append(msg).toString());
+        log.error(msg);
         return R.fail(code, msg);
     }
 

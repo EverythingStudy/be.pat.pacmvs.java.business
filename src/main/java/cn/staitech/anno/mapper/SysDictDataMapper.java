@@ -21,11 +21,11 @@ public interface SysDictDataMapper {
 
     int updateByPrimaryKey(SysDictData record);
 
-    public List<SysDictData> getSysDictDataListByParm(Map<String, Object> map);
+    List<SysDictData> getSysDictDataListByParm(Map<String, Object> map);
 
-    public SysDictData getMaxDictSortByParm(Map<String, Object> map);
+    SysDictData getMaxDictSortByParm(Map<String, Object> map);
 
-    public List<SysDictDataVo> getSysDictDataVoListByParm(Map<String, Object> map);
+    List<SysDictDataVo> getSysDictDataVoListByParm(Map<String, Object> map);
 
-    public SysDictData getLabelNameByParm(SysDictTagVo sysDictTagVo);
+    SysDictData getLabelNameByParm(SysDictTagVo sysDictTagVo);
 }

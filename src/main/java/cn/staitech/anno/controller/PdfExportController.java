@@ -49,9 +49,9 @@ public class PdfExportController {
     @Resource
     private ExaminationService reviewService;
 
-    private String baseDir = "/home/pat_saas";
+    private final String baseDir = "/home/pat_saas";
 
-    private String pdfFileUrl = "/Data/pdfFile/";
+    private final String pdfFileUrl = "/Data/pdfFile/";
 
     public File pdfAddress() {
         Date date = new Date();

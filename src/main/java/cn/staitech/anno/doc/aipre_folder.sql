@@ -27,7 +27,7 @@ CREATE TABLE `aipre_folder`  (
   `folder_size` bigint NULL DEFAULT NULL COMMENT '文件大小',
   `folder_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '文件夹url地址',
   `files_id` bigint NULL DEFAULT NULL COMMENT '压缩包id',
-  `organization_id` bigint NULL DEFAULT NULL COMMENT '机构id',
+  `organization_id` bigint NULL DEFAULT NULL COMMENT '机构ID',
   `create_by` bigint NULL DEFAULT NULL COMMENT '创建者id',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   `update_by` bigint NULL DEFAULT NULL COMMENT '更新者id',

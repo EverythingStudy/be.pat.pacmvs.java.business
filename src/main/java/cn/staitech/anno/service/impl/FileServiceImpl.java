@@ -86,7 +86,7 @@ public class FileServiceImpl implements FileService {
         try {
             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(dest + File.separator + filename));
             BufferedInputStream bis = null;
-            byte bytes[] = new byte[1024 * 1024];
+            byte[] bytes = new byte[1024 * 1024];
             int len = -1;
 
             bis = new BufferedInputStream(new FileInputStream(files));

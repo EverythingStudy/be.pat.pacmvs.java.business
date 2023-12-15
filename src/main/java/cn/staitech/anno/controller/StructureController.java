@@ -8,6 +8,8 @@ import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
+import cn.staitech.common.security.utils.SecurityUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,7 +47,9 @@ public class StructureController extends BaseController {
     @Log(title = "结构列表", menu = "结构", subMenu = "结构列表", businessType = BusinessType.QUERY)
     @GetMapping("/list")
     public R<List<Structure>> list() throws ExecutionException, InterruptedException {
-        List<Structure> list = structureService.list();
+        LambdaQueryWrapper<Structure> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Structure::getOrganizationId, SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        List<Structure> list = structureService.list(queryWrapper);
         return R.ok(list);
     }
 

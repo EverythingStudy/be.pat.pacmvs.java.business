@@ -253,10 +253,7 @@ public class ExcelTool<T> {
                 num++;
             }
         }
-        if (maxRow == num) {
-            return true;
-        }
-        return false;
+        return maxRow == num;
     }
 
     /**
@@ -322,33 +319,30 @@ public class ExcelTool<T> {
         this.styleHead.setVerticalAlignment(VerticalAlignment.CENTER);
         this.styleHead.setRightBorderColor(IndexedColors.BLACK.getIndex());
         this.styleHead.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-        switch (styleFlag) {
-            case 1:
-                this.styleBody = this.workbook.createCellStyle();
-                // 左右居中ALIGN_CENTER
-                this.styleBody.setAlignment(HorizontalAlignment.LEFT);
-                // 上下居中
-                this.styleBody.setVerticalAlignment(VerticalAlignment.CENTER);
-                this.styleBody.setRightBorderColor(IndexedColors.BLACK.getIndex());
-                this.styleBody.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-                // 边框的大小
-                this.styleBody.setBorderRight(BorderStyle.THIN);
-                // 边框的大小
-                this.styleBody.setBorderBottom(BorderStyle.THIN);
-                break;
-            default:
-                this.styleBody = this.workbook.createCellStyle();
-                // 左右居中ALIGN_CENTER
-                this.styleBody.setAlignment(HorizontalAlignment.CENTER);
-                // 上下居中
-                this.styleBody.setVerticalAlignment(VerticalAlignment.CENTER);
-                this.styleBody.setRightBorderColor(IndexedColors.BLACK.getIndex());
-                this.styleBody.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-                // 边框的大小
-                this.styleBody.setBorderRight(BorderStyle.THIN);
-                // 边框的大小
-                this.styleBody.setBorderBottom(BorderStyle.THIN);
-                break;
+        if (styleFlag == 1) {
+            this.styleBody = this.workbook.createCellStyle();
+            // 左右居中ALIGN_CENTER
+            this.styleBody.setAlignment(HorizontalAlignment.LEFT);
+            // 上下居中
+            this.styleBody.setVerticalAlignment(VerticalAlignment.CENTER);
+            this.styleBody.setRightBorderColor(IndexedColors.BLACK.getIndex());
+            this.styleBody.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+            // 边框的大小
+            this.styleBody.setBorderRight(BorderStyle.THIN);
+            // 边框的大小
+            this.styleBody.setBorderBottom(BorderStyle.THIN);
+        } else {
+            this.styleBody = this.workbook.createCellStyle();
+            // 左右居中ALIGN_CENTER
+            this.styleBody.setAlignment(HorizontalAlignment.CENTER);
+            // 上下居中
+            this.styleBody.setVerticalAlignment(VerticalAlignment.CENTER);
+            this.styleBody.setRightBorderColor(IndexedColors.BLACK.getIndex());
+            this.styleBody.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+            // 边框的大小
+            this.styleBody.setBorderRight(BorderStyle.THIN);
+            // 边框的大小
+            this.styleBody.setBorderBottom(BorderStyle.THIN);
         }
     }
 

@@ -1,6 +1,7 @@
 package cn.staitech.anno.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
@@ -51,5 +52,11 @@ public class Structure {
     
     @ApiModelProperty(value = "RO：结构类型  ROA:标注区域 ROE:考核区域", required = true)
     private String type;
-    
+
+    /**
+     * 机构ID
+     */
+    @ApiModelProperty(value = "机构ID")
+    @TableField("organization_id")
+    private Long organizationId;
 }

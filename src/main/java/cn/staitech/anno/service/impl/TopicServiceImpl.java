@@ -51,8 +51,7 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     public PageMaster<Topic> pagelist(TopicQueryIn req) {
         Page<Topic> page = new Page<>(req.getPageNum(), req.getPageSize());
         QueryWrapper<Topic> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("del_flag", 1);
-        queryWrapper.eq("project_type_id", req.getProjectTypeId());
+         queryWrapper.eq("project_type_id", req.getProjectTypeId());
         if (req.getTopicName() != null && req.getTopicName() != "" && req.getTopicName() != "null") {
             queryWrapper.like("topic_name", req.getTopicName());
         }
@@ -100,7 +99,6 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
             topic.setCreateTime(time);
             topic.setUpdateTime(time);
             topic.setOrganizationId(sysUser.getOrganizationId());
-            topic.setDelFlag(1);
             try {
                 this.baseMapper.insert(topic);
             } catch (DuplicateKeyException e) {

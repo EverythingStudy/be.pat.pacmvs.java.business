@@ -21,7 +21,6 @@
         <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
         <result property="aiCheck" column="ai_check" jdbcType="SMALLINT"/>
         <result property="aiAnalyzed" column="ai_analyzed" jdbcType="SMALLINT"/>
-        <result property="diagnosis" column="diagnosis" jdbcType="SMALLINT"/>
         <result property="geojsonUrl" column="geojson_url" jdbcType="VARCHAR"/>
     </resultMap>
 
@@ -130,11 +129,11 @@
         m.source_lens,
         m.image_path,
         s.slide_id,
-        s.diagnosis,
         s.ai_analyzed,
         s.ai_check,
         case when r.review_count >2 then '2' else '1' end as review_status,
         r.score,
+        t2.self_review_status,
         s.image_id,
         s.group_name,
         s.gender,
@@ -166,8 +165,15 @@
         s.host_id
         from tb_slide s
         left join tb_image m on m.image_id = s.image_id
-        left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score from
-        tb_review t group by t.slide_id) r on s.slide_id = r.slide_id
+        <choose>
+            <when test="params.createBy != null">
+        	 	 left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score  from tb_review t where t.create_by =  #{params.createBy} group by t.slide_id) r on s.slide_id = r.slide_id
+        	</when>
+        	<otherwise>
+        		 left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score from tb_review t  group by t.slide_id) r on s.slide_id = r.slide_id
+             </otherwise>
+        </choose>
+         LEFT JOIN  tb_review t2  ON s.slide_id = t2.slide_id and t2.create_by = #{params.currentUser}
         <where>
             <if test="params.imageCode != null ">
                 AND m.image_name like CONCAT('%',#{params.imageCode},'%')
@@ -180,6 +186,13 @@
             </if>
             <if test="params.score != null ">
                 AND r.score like CONCAT('%',#{params.score},'%')
+            </if>
+            	<!-- 自评审状态：1未评审，2已评审 -->
+            <if test="params.selfReviewStatus != null and params.selfReviewStatus != ''  and  params.selfReviewStatus == 1">
+                AND t2.self_review_status is null
+            </if>
+            <if test="params.selfReviewStatus != null and params.selfReviewStatus != ''  and  params.selfReviewStatus == 2">
+                AND t2.self_review_status is not null
             </if>
             <if test="params.removeReason != null ">
                 AND s.remove_reason like CONCAT('%',#{params.removeReason},'%')

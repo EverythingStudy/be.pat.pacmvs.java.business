@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -22,7 +23,7 @@ public class CompressUtils {
      * @throws IOException IOException
      */
     public static String compress(String str) throws IOException {
-        return new String(compressData(str, GZIP_ENCODE_UTF_8), GZIP_ENCODE_ISO_8859_1);
+        return new String(compressData(str, GZIP_ENCODE_UTF_8), StandardCharsets.ISO_8859_1);
     }
 //    public static byte[] compress(String str) throws IOException {
 //        return compressData(str, GZIP_ENCODE_UTF_8);
@@ -37,13 +38,8 @@ public class CompressUtils {
      */
     public static String decompressToStr(String byteStr, String s) {
         byte[] bytes;
-        try {
-            bytes = byteStr.getBytes(GZIP_ENCODE_ISO_8859_1);
-            return decompressDataToStr(bytes, GZIP_ENCODE_UTF_8);
-        } catch (UnsupportedEncodingException e) {
-            System.out.println("解压缩数据转码失败：" + e.getMessage());
-        }
-        return null;
+        bytes = byteStr.getBytes(StandardCharsets.ISO_8859_1);
+        return decompressDataToStr(bytes, GZIP_ENCODE_UTF_8);
     }
 
     /**
@@ -77,7 +73,7 @@ public class CompressUtils {
             return null;
         }
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try (GZIPOutputStream gzip = new GZIPOutputStream(out);) {
+        try (GZIPOutputStream gzip = new GZIPOutputStream(out)) {
             gzip.write(str.getBytes(encoding));
         } catch (IOException e) {
             System.out.println("压缩数据失败：" + e.getMessage());

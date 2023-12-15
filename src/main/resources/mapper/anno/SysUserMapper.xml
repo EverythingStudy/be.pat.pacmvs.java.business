@@ -309,4 +309,8 @@
                and del_flag=0
            </where>
     </select>
+    
+    <select id="getRoleListByUserId"  parameterType="Long" resultType="cn.staitech.system.api.domain.SysRole">
+    	select role_id from sys_user_role where user_id = #{userId}
+    </select>
 </mapper>

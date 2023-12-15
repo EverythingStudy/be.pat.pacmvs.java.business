@@ -129,7 +129,7 @@ public class MarkingServiceImpl implements MarkingService {
 	private MarkingMapperV1 markingMapperV1;
 	@Resource
 	private DownTaskService downTaskService;
-	@Autowired
+	@Resource
 	private RedisService redisService;
 
 	@Override
@@ -559,9 +559,9 @@ public class MarkingServiceImpl implements MarkingService {
 	class TaskGenerateJson implements Runnable {
 
 
-		private CountDownLatch countDownLatch;
-		private Features features;
-		private ConcurrentLinkedQueue<Features> concurrentLinkedQueue;
+		private final CountDownLatch countDownLatch;
+		private final Features features;
+		private final ConcurrentLinkedQueue<Features> concurrentLinkedQueue;
 
 		public TaskGenerateJson(CountDownLatch countDownLatch, Features features, ConcurrentLinkedQueue<Features> concurrentLinkedQueue) {
 			this.countDownLatch = countDownLatch;
@@ -1070,10 +1070,7 @@ public class MarkingServiceImpl implements MarkingService {
 		if (Objects.equals(projectBy.getProjectType(), "1") && CollectionUtil.isNotEmpty(slideIds)) {
 			List<Long> slideIdList = slideIds.stream().filter(e -> {
 				Slide slideBy = slideMapperV1.selectById(e);
-				if (Objects.equals(slideBy.getStatus(), "7")) {
-					return true;
-				}
-				return false;
+				return Objects.equals(slideBy.getStatus(), "7");
 			}).collect(Collectors.toList());
 			// 执行任务
 			// 查询所有的切片
@@ -1186,7 +1183,7 @@ public class MarkingServiceImpl implements MarkingService {
 		private final Long projectId;
 		private final String projectName;
 		private List<Long> slideIds;
-		private SysUser sysUser;
+		private final SysUser sysUser;
 
 		public TaskThread(DownTask downTask, Long projectId, String projectName, List<Long> slideIds, SysUser sysUser) {
 			this.downTask = downTask;

@@ -15,7 +15,7 @@ public interface ImageVisitedMapper {
     /**
      * 查询最近访问下的图像信息
      *
-     * @param recentlyVisitedId 机构id
+     * @param recentlyVisitedId 机构ID
      * @return list
      */
     List<ImageVisited> selectList(Long recentlyVisitedId);

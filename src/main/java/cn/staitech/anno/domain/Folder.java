@@ -36,7 +36,7 @@ public class Folder implements Serializable {
     private Long filesId;
 
     /**
-     * 机构id
+     * 机构ID
      */
     private Long organizationId;
 

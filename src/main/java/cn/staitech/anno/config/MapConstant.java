@@ -216,7 +216,7 @@ public class MapConstant {
         }
         return "";
     }
-
+    
     @PostConstruct
     public void init() {
         // 分组
@@ -246,5 +246,7 @@ public class MapConstant {
         STRUCTURE_MAP = structureService.selectMap();
         STRUCTURE_MAP_EN = structureService.selectMapEn();
     }
+    
+  
 
 }

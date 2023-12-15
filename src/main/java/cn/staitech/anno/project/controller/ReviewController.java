@@ -1,7 +1,9 @@
 package cn.staitech.anno.project.controller;
 
 import cn.hutool.core.io.IoUtil;
+import cn.hutool.json.JSONUtil;
 import cn.staitech.anno.constant.CommonConstant;
+import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.mapper.SlideMapper;
 import cn.staitech.anno.project.domain.DownTask;
@@ -10,16 +12,22 @@ import cn.staitech.anno.project.service.DownTaskService;
 import cn.staitech.anno.project.service.ReviewService;
 import cn.staitech.anno.project.service.SlideService;
 import cn.staitech.anno.project.vo.*;
+import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.reviewround.ReviewRoundOutVO;
 import cn.staitech.common.core.domain.R;
+import cn.staitech.common.log.annotation.Log;
+import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.annotation.RequiresPermissions;
+import cn.staitech.common.security.utils.SecurityUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -37,9 +45,11 @@ import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author mugw
@@ -81,7 +91,16 @@ public class ReviewController {
     @ApiOperation(value = "viewer按切片id查询评审列表")
     @GetMapping("/queryReview")
     public R<List<Review>> queryReview(@RequestParam("slideId") @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId) {
-        return R.ok(reviewService.list(Wrappers.query(Review.builder().slideId(slideId).build())));
+    	//判断是否是项目管理员（22：项目管理所有权限）
+    	cn.staitech.anno.project.domain.Slide slide = slideService.getById(slideId);
+    	boolean isProjectAmin = slideService.isProjectAmin(SecurityUtils.getLoginUser(),slide.getProjectId().longValue());
+    	List<Review> list = new ArrayList<>();
+    	if(isProjectAmin){
+    		list = reviewService.list(Wrappers.query(Review.builder().slideId(slideId).build()));
+    	}else{
+    		list = reviewService.list(Wrappers.query(Review.builder().slideId(slideId).createBy(SecurityUtils.getUserId()).build()));
+    	}
+    	return R.ok(list);
     }
 
     @RequiresPermissions("smartReview:project:export")
@@ -175,5 +194,21 @@ public class ReviewController {
                                                         ReviewSlideIn in) {
         Page page = new Page(pageNum, pageSize);
         return R.ok(slideService.pageReviewSlide(page, in));
+    }
+    
+    /**
+     * 单审状态列表 .
+     */
+    @ApiOperation(value = "单审状态列表", notes = "单审状态列表")
+    @Log(title = "单审状态列表", menu = "单审状态列表", subMenu = "单审状态列表", businessType = BusinessType.QUERY)
+    @GetMapping("/selfReviewStatus")
+    public R<Map<Integer, String>> selfReviewStatus() {
+        Map<Integer, String> map;
+        if (LanguageUtils.isEn()) {
+            map = Container.SELF_REVIEW_STATUS_EN;
+        } else {
+            map = Container.SELF_REVIEW_STATUS;
+        }
+        return R.ok(map);
     }
 }

@@ -132,21 +132,20 @@ public class Opt implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", optId=").append(optId);
-        sb.append(", slideId=").append(slideId);
-        sb.append(", optName=").append(optName);
-        sb.append(", optCode=").append(optCode);
-        sb.append(", delFlag=").append(delFlag);
-        sb.append(", createBy=").append(createBy);
-        sb.append(", createTime=").append(createTime);
-        sb.append(", updateBy=").append(updateBy);
-        sb.append(", updateTime=").append(updateTime);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
+        String sb = getClass().getSimpleName() +
+                " [" +
+                "Hash = " + hashCode() +
+                ", optId=" + optId +
+                ", slideId=" + slideId +
+                ", optName=" + optName +
+                ", optCode=" + optCode +
+                ", delFlag=" + delFlag +
+                ", createBy=" + createBy +
+                ", createTime=" + createTime +
+                ", updateBy=" + updateBy +
+                ", updateTime=" + updateTime +
+                ", serialVersionUID=" + serialVersionUID +
+                "]";
+        return sb;
     }
 }
