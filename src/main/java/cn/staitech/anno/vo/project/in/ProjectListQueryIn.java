@@ -47,9 +47,6 @@ public class ProjectListQueryIn extends Pager implements Serializable {
     @ApiModelProperty(value = "项目类型ID")
     private String projectType;
 
-//    @ApiModelProperty(value = "创建者id")
-//    private Long createBy;
-
     @ApiModelProperty(value = "描述")
     private String description;
 

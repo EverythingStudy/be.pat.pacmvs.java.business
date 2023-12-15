@@ -26,7 +26,6 @@ import cn.hutool.core.io.IoUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import cn.staitech.anno.mapper.SysUserMapper;
-import cn.staitech.anno.mapper.MarkingMapper;
 import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.project.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.project.domain.Review;
@@ -77,9 +76,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
 
     @Resource
     private ProjectService projectService;
-
-    @Resource
-    private MarkingMapper markingMapper;
 
     public void reviewHandle(List<Long> slideIds) {
         QueryWrapper<Review> queryWrapper = Wrappers.query();
