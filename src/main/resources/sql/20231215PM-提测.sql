@@ -195,3 +195,7 @@ WHERE species_id in(
     WHERE organization_id = 2
 );
 
+/*
+* 评审表增加单审状态
+*/
+ALTER TABLE tb_review ADD COLUMN review_status char(1) DEFAULT '2' COMMENT '单审状态 默认1：未审 2：已审';
