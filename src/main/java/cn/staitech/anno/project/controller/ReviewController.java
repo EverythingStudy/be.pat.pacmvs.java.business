@@ -85,9 +85,9 @@ public class ReviewController {
     @ApiOperation(value = "viewer按切片id查询评审列表")
     @GetMapping("/queryReview")
     public R<List<Review>> queryReview(@RequestParam("slideId") @ApiParam(name = "slideId", value = "切片id", required = true) Long slideId) {
-    	Set<String> roles = SecurityUtils.getLoginUser().getRoles();
     	//判断是否是项目管理员（22：项目管理所有权限）
-    	boolean isProjectAmin = slideService.isProjectAmin(SecurityUtils.getLoginUser());
+    	cn.staitech.anno.project.domain.Slide slide = slideService.getById(slideId);
+    	boolean isProjectAmin = slideService.isProjectAmin(SecurityUtils.getLoginUser(),slide.getProjectId().longValue());
     	List<Review> list = new ArrayList<>();
     	if(isProjectAmin){
     		list = reviewService.list(Wrappers.query(Review.builder().slideId(slideId).build()));
