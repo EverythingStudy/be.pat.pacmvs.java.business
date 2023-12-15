@@ -26,6 +26,7 @@ import cn.hutool.core.io.IoUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import cn.staitech.anno.mapper.SysUserMapper;
+import cn.staitech.anno.mapper.MarkingMapper;
 import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.project.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.project.domain.Review;
@@ -73,9 +74,12 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
     
     @Resource
     private SysUserMapper sysUserMapper;
-    
+
     @Resource
     private ProjectService projectService;
+
+    @Resource
+    private MarkingMapper markingMapper;
 
     public void reviewHandle(List<Long> slideIds) {
         QueryWrapper<Review> queryWrapper = Wrappers.query();
@@ -96,8 +100,14 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         Map<Long, SlideVO> map = new HashMap<>();
         if (list != null && !list.isEmpty()) {
             list.forEach(slideVO -> {
-                slideIds.add(slideVO.getSlideId());
-                map.put(slideVO.getSlideId(), slideVO);
+                Marking marking=Marking.builder().projectId(params.getProjectId().longValue()).slideId(slideVO.getSlideId()).categoryId(params.getAnnoCategory()).build();
+               List<Marking> markings=markingMapperV1.markingList(marking);
+               if (CollectionUtils.isNotEmpty(markings)){
+                   slideIds.add(slideVO.getSlideId());
+                   map.put(slideVO.getSlideId(), slideVO);
+               }
+//                slideIds.add(slideVO.getSlideId());
+//                map.put(slideVO.getSlideId(), slideVO);
             });
             List<Marking> annotationList = queryAnnotation(slideIds, params);
             handleAnnoList(annotationList, map);
@@ -304,9 +314,9 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         if (slideIds != null) {
             queryWrapper.in("slide_id", slideIds);
         }
-        if (params.getAnnoCategory() != null) {
-            queryWrapper.eq("category_id", params.getAnnoCategory());
-        }
+//        if (params.getAnnoCategory() != null) {
+//            queryWrapper.eq("category_id", params.getAnnoCategory());
+//        }
         if (params.getAnnoUser() != null) {
             queryWrapper.eq("create_by", params.getAnnoUser());
         }

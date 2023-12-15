@@ -284,6 +284,9 @@
             <if test="projectType != null">
                 AND p.project_type = #{projectType}
             </if>
+            <if test="userName != null">
+                AND u.user_name like concat('%', #{userName}, '%')
+            </if>
             <!-- 眼科针对已启动项目查询 -->
             <if test="projectTypeArray != null and projectTypeArray.length > 0">
                 AND p.`status` &lt;&gt; 1
