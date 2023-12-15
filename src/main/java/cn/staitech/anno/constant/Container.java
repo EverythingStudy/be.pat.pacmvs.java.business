@@ -61,6 +61,23 @@ public class Container {
             .put(4, "Done")
             .build();
 
+    
+    /**
+     * 单审状态
+     */
+    public static final Map<Integer, String> SELF_REVIEW_STATUS = new ImmutableMap.Builder<Integer, String>()
+            .put(1, "未审")
+            .put(2, "已审")
+            .build();
+
+    /**
+     *  单审状态 - EN
+     */
+    public static final Map<Integer, String> SELF_REVIEW_STATUS_EN = new ImmutableMap.Builder<Integer, String>()
+    		.put(1, "Unreviewed")
+            .put(2, "Reviewed")
+            .build();
+    
     /**
      * 颜色类型
      */
