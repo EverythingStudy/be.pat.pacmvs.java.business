@@ -10,6 +10,8 @@ import cn.staitech.anno.mapper.SpeciesMapper;
 import cn.staitech.anno.service.IndicatorService;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
 import cn.staitech.anno.service.ProjectService;
+import cn.staitech.anno.service.StructureService;
+import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.indicator.*;
@@ -33,7 +35,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static cn.staitech.common.security.utils.SecurityUtils.isAdmin;
 
@@ -53,9 +57,12 @@ public class IndicatorController extends BaseController {
 	private ProjectService projectService;
 	@Resource
 	private PathologicalIndicatorCategoryService pathologicalService;
-	
+
 	@Resource
 	private OrganMapper organMapper;
+
+	@Resource
+	private StructureService structureService;
 
 	/**
 	 * 添加结构指标 2.0SAAS .
@@ -73,7 +80,7 @@ public class IndicatorController extends BaseController {
 
 		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 		Long organizationId = sysUser.getOrganizationId();
-//		Long organizationId = 1L;
+		//		Long organizationId = 1L;
 		Indicator indicator = new Indicator();
 		indicator.setSpeciesId(req.getSpeciesId());
 		indicator.setOrganId(req.getOrganId());
@@ -112,6 +119,11 @@ public class IndicatorController extends BaseController {
 			organ.setSpeciesCode(req.getSpeciesId());
 			organ.setOrganizationId(organizationId);
 			organMapper.insert(organ);
+
+			MapConstant.ORGAN_MAP = selectMap();
+			MapConstant.ORGAN_MAP_EN = selectMapEn();
+			MapConstant.STRUCTURE_MAP = structureService.selectMap();
+			MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
 		}
 
 		if(indicatorType == 0){
@@ -123,7 +135,7 @@ public class IndicatorController extends BaseController {
 		}
 		indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
 		indicator.setCreateBy(sysUser.getUserId());
-//		indicator.setCreateBy(1L);
+		//		indicator.setCreateBy(1L);
 		//20231107wd结构指标关联机构
 		indicator.setOrganizationId(organizationId);
 		indicator.setIndicatorType(indicatorType);
@@ -231,8 +243,8 @@ public class IndicatorController extends BaseController {
 		if (!indicatorList.isEmpty()) {
 			return R.fail(MessageSource.M("INDICATOR_EXIST"));
 		}
-		
-		
+
+
 		if(indicatorType == 1){
 			//校验脏器名称是否已经重复
 			QueryWrapper<Organ> queryNameWrapper = new QueryWrapper<>();
@@ -283,10 +295,15 @@ public class IndicatorController extends BaseController {
 			organ.setSpeciesCode(req.getSpeciesId());
 			organ.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
 			organMapper.insert(organ);
+			
+			MapConstant.ORGAN_MAP = selectMap();
+			MapConstant.ORGAN_MAP_EN = selectMapEn();
+			MapConstant.STRUCTURE_MAP = structureService.selectMap();
+			MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
 		}
 
-//		indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
-//		indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
+		//		indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
+		//		indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
 		if(indicatorType == 0){
 			indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
 			indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
@@ -377,5 +394,22 @@ public class IndicatorController extends BaseController {
 		//添加结构指标
 		indicatorService.insertIndicator(indicator);
 		return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+	}
+
+	public Map<String, String> selectMap() {
+		return select(false);
+	}
+
+	public Map<String, String> selectMapEn() {
+		return select(true);
+	}
+
+	public Map<String, String> select(boolean en) {
+		List<Organ> list = organMapper.selectList();
+		if (en) {
+			return list.stream().collect(Collectors.toMap(item -> item.getSpeciesCode().concat(item.getOrganId()), Organ::getNameEn));
+		} else {
+			return list.stream().collect(Collectors.toMap(item -> item.getSpeciesCode().concat(item.getOrganId()), Organ::getName));
+		}
 	}
 }
