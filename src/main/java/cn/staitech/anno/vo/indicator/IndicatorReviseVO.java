@@ -37,6 +37,8 @@ public class IndicatorReviseVO {
     private Integer indicatorType;
     @ApiModelProperty(value = "脏器名称")
     private String organName;
+    @ApiModelProperty(value = "number")
+    private String number;
     
     
 }

@@ -206,6 +206,16 @@
             <if test="updateBy != null and updateBy != ''">
                 update_by = #{updateBy},
             </if>
+            <if test="number != null">
+                number = #{number},
+            </if>
+            <if test="speciesId != null and speciesId != ''">
+                species_id = #{speciesId},
+            </if>
+             <if test="organId != null and organId != ''">
+                organ_id = #{organId},
+            </if>
+            
             annotation_category_total = (select count(*)from tb_pathological_indicator_category where
             indicator_id=#{indicatorId} and del_flag=0),
             project_total =(select count(*) from tb_project where indicator_id=#{indicatorId} and del_flag=0),
@@ -254,6 +264,9 @@
             </if>
             <if test="organizationId !=null and organizationId !=0">
                 and organization_id = #{organizationId}
+            </if>
+            <if test="delFlag !=null">
+                and del_flag = #{delFlag}
             </if>
         </where>
     </select>
