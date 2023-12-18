@@ -54,6 +54,9 @@ public class IndicatorController extends BaseController {
 	@Resource
 	private PathologicalIndicatorCategoryService pathologicalService;
 	
+	@Resource
+	private OrganMapper organMapper;
+
 	/**
 	 * 添加结构指标 2.0SAAS .
 	 */
@@ -62,8 +65,14 @@ public class IndicatorController extends BaseController {
 	@Log(title = "添加结构指标", menu = "结构指标", subMenu = "结构指标", businessType = BusinessType.INSERT)
 	@PostMapping("/add")
 	public R<String> add(@Validated @RequestBody IndicatorAddVO req) {
+		//标签类型 0:下拉筛选标签；1:自定义标签
+		Integer indicatorType = req.getIndicatorType();
+		if(null == indicatorType){
+			indicatorType = 0;
+		}
+
 		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-		
+
 		Indicator indicator = new Indicator();
 		indicator.setSpeciesId(req.getSpeciesId());
 		indicator.setOrganId(req.getOrganId());
@@ -74,9 +83,43 @@ public class IndicatorController extends BaseController {
 		if (!indicatorList.isEmpty()) {
 			return R.fail(MessageSource.M("INDICATOR_EXIST"));
 		}
+		if(indicatorType == 1){
+			//校验脏器名称是否已经重复
+			QueryWrapper<Organ> queryNameWrapper = new QueryWrapper<>();
+			queryNameWrapper.eq("name", req.getOrganName());
+			queryNameWrapper.eq("organization_id", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+			List<Organ> nameList = organMapper.selectList(queryNameWrapper);
+			if(CollectionUtils.isNotEmpty(nameList)){
+				return R.fail(MessageSource.M("InsertOrganVO.NAME.EXIST"));
+			}
 
-		indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
-		indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
+
+			//校验脏器编码 是否已经重复
+			QueryWrapper<Organ> queryOrganIdWrapper = new QueryWrapper<>();
+			queryOrganIdWrapper.eq("organ_id", req.getOrganId());
+			queryOrganIdWrapper.eq("organization_id", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+
+			List<Organ> organWrapperList = organMapper.selectList(queryOrganIdWrapper);
+			if(CollectionUtils.isNotEmpty(organWrapperList)){
+				return R.fail(MessageSource.M("InsertOrganVO.ORGANID.EXIST"));
+			}
+
+			Organ organ = new Organ();
+			organ.setName(req.getOrganName());
+			organ.setNameEn(req.getOrganName());
+			organ.setOrganId(req.getOrganId());
+			organ.setSpeciesCode(req.getSpeciesId());
+			organ.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+			organMapper.insert(organ);
+		}
+
+		if(indicatorType == 0){
+			indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
+			indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
+		}else{
+			indicator.setIndicatorName(req.getOrganName());
+			indicator.setIndicatorNameEn(req.getOrganName());
+		}
 		indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
 		indicator.setCreateBy(sysUser.getUserId());
 		//20231107wd结构指标关联机构
@@ -168,6 +211,13 @@ public class IndicatorController extends BaseController {
 			return R.fail(MessageSource.M("ALREADY_BOUND"));
 		}
 
+		//标签类型 0:下拉筛选标签；1:自定义标签
+		Integer indicatorType = req.getIndicatorType();
+		if(null == indicatorType){
+			indicatorType = 0;
+		}
+
+
 		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 		Indicator indicator = new Indicator();
 		indicator.setSpeciesId(req.getSpeciesId());
@@ -178,9 +228,69 @@ public class IndicatorController extends BaseController {
 		if (!indicatorList.isEmpty()) {
 			return R.fail(MessageSource.M("INDICATOR_EXIST"));
 		}
+		
+		
+		if(indicatorType == 1){
+			//校验脏器名称是否已经重复
+			QueryWrapper<Organ> queryNameWrapper = new QueryWrapper<>();
+			queryNameWrapper.eq("name", req.getOrganName());
+			queryNameWrapper.eq("species_code", req.getSpeciesId());
+			queryNameWrapper.eq("organization_id", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+			List<Organ> nameList = organMapper.selectList(queryNameWrapper);
+			if(CollectionUtils.isNotEmpty(nameList)){
+				boolean nameCheck = true;
+				for(Organ organ: nameList){
+					String organ_id = organ.getOrganId();
+					if(!organ_id.equals(req.getOrganId())){
+						nameCheck = false;
+						break;
+					}
+				}
+				if(!nameCheck){
+					return R.fail(MessageSource.M("InsertOrganVO.NAME.EXIST"));
+				}
+			}
 
-		indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
-		indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
+
+			//校验脏器编码 是否已经重复
+			QueryWrapper<Organ> queryOrganIdWrapper = new QueryWrapper<>();
+			queryOrganIdWrapper.eq("organ_id", req.getOrganId());
+			queryNameWrapper.eq("species_code", req.getSpeciesId());
+			queryOrganIdWrapper.eq("organization_id", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+
+			List<Organ> organWrapperList = organMapper.selectList(queryOrganIdWrapper);
+			if(CollectionUtils.isNotEmpty(organWrapperList)){
+				boolean idCheck = true;
+				for(Organ organ: organWrapperList){
+					String organ_name = organ.getName();
+					if(!organ_name.equals(req.getOrganName())){
+						idCheck = false;
+						break;
+					}
+				}
+				if(!idCheck){
+					return R.fail(MessageSource.M("InsertOrganVO.ORGANID.EXIST"));
+				}
+			}
+
+			Organ organ = new Organ();
+			organ.setName(req.getOrganName());
+			organ.setNameEn(req.getOrganName());
+			organ.setOrganId(req.getOrganId());
+			organ.setSpeciesCode(req.getSpeciesId());
+			organ.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+			organMapper.insert(organ);
+		}
+
+//		indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
+//		indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
+		if(indicatorType == 0){
+			indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
+			indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
+		}else{
+			indicator.setIndicatorName(req.getOrganName());
+			indicator.setIndicatorNameEn(req.getOrganName());
+		}
 		indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
 		indicator.setCreateBy(sysUser.getUserId());
 

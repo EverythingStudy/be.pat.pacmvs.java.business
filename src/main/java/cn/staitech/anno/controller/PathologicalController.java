@@ -7,6 +7,7 @@ import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.Structure;
+import cn.staitech.anno.mapper.StructureMapper;
 import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.project.service.MarkingServiceV1;
 import cn.staitech.anno.service.IndicatorService;
@@ -67,6 +68,7 @@ public class PathologicalController {
 
 	@Resource
 	private StructureService structureService;
+	
 
 	/**
 	 * 配置标签-新增标签.
@@ -83,26 +85,28 @@ public class PathologicalController {
 	@Log(title = "配置标签-新增标签", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.INSERT)
 	@PostMapping("/add")
 	public R<String> add(@Validated @RequestBody PathologicalIndicatorCategoryVO vo) {
+		//标签类型 0:下拉筛选标签；1:自定义标签
+		Integer categoryType = vo.getCategoryType();
+		if(null == categoryType){
+			categoryType = 0;
+		}
 		String rgb = vo.getRgb();
 		String hex = vo.getHex();
 		Long indicatorId = vo.getIndicatorId();
 		Integer orderNumber = vo.getOrderNumber(); 
 		String structureId = vo.getStructureId();
+		
 		// 查询Indicator信息
 		Indicator indicator = indicatorService.selectIndicatorsById(indicatorId);
 		if (indicator == null) {
 			return R.fail(MessageSource.M("INDICATOR_ABSENT"));
 		}
-		//验证当前脏器下是否已经超过30个标签（颜色只有30种） 
-		/*Integer labelCount = pathologicalIndicatorCategoryService.selectLabelNumByStructureId(structureId);
-		if(null != labelCount && labelCount > 30){
-			return R.fail(MessageSource.M("CATEGORY_NAME_EXIST"));
-		}*/
+		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
 		//验证结构是否已经存在 
 		PathologicalIndicatorCategory categoryS = new PathologicalIndicatorCategory();
 		categoryS.setIndicatorId(indicatorId);
 		categoryS.setStructureId(structureId);
-
+		categoryS.setOrganizationId(organizationId);
 		List<PathologicalIndicatorCategory> listS = pathologicalIndicatorCategoryService.selectIndicatorMessage(categoryS);
 		if (listS.size() > 0) {
 			return R.fail(MessageSource.M("CATEGORY_NAME_CHECK_EXIST"));
@@ -114,10 +118,63 @@ public class PathologicalController {
 		if (listR.size() > 0) {
 			return R.fail(MessageSource.M("COLOR_NAME_CHECK_EXIST"));
 		}
-		//查看当前结构是否只要结构编码
-		//		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-		//		boolean containsValue = Arrays.asList(CommonConstant.ORGANIZATION_ID).contains(organizationId);
-
+		
+		if(categoryType == 1){
+			String structureName = vo.getStructureName();
+			//校验structureId、structureName 是否已经存在
+			String speciesId = indicator.getSpeciesId();
+			String organId = indicator.getOrganId();
+			
+			QueryWrapper<Structure> queryWrapper = new QueryWrapper<>();
+			queryWrapper.eq("species_id", speciesId);
+			queryWrapper.eq("organ_id", organId);
+			queryWrapper.eq("structure_id",structureId);
+			queryWrapper.eq("organization_id", organizationId);
+			List<Structure>  sIdList = structureService.list(queryWrapper);
+			if(CollectionUtils.isNotEmpty(sIdList)){
+				return R.fail("STRUCTUREID EXIST");
+			}
+			queryWrapper.eq("structure_id",null);
+			queryWrapper.eq("name",structureName);
+			List<Structure>  sNameList = structureService.list(queryWrapper);
+			if(CollectionUtils.isNotEmpty(sNameList)){
+				return R.fail("STRUCTURENAME EXIST");
+			}
+			//structure表保存结构信息
+			List<Structure> structureNewList = new ArrayList<>();
+			for(int j=0;j<3;j++){
+				Structure structure = new Structure();
+				String structureIdNew = structureId;
+				String structureNameNew = structureName;
+				String structureNameEnNew =structureName ;
+				String type = CommonConstant.STRUCTURE_RO;
+				if(j==1){
+					// ROA:标注区域
+					structureIdNew = structureId+CommonConstant.STRUCTURE_ROA;
+					structureNameNew = structureId+" 标注区域";
+					structureNameEnNew = structureId+CommonConstant.STRUCTURE_ROA;
+					type = CommonConstant.STRUCTURE_ROA;
+				}else if(j==21){
+					// ROE:考核区域
+					structureIdNew = structureId+CommonConstant.STRUCTURE_ROE;
+					structureNameNew = structureId+" 考核区域";
+					structureNameEnNew = structureId+CommonConstant.STRUCTURE_ROE;
+					type = CommonConstant.STRUCTURE_ROE;
+				}
+				structure.setStructureId(structureIdNew);
+				structure.setName(structureNameNew);
+				structure.setNameEn(structureNameEnNew);
+				structure.setSpeciesId(speciesId);
+				structure.setOrganId(organId);
+				//RO：结构类型  ROA:标注区域 ROE:考核区域
+				structure.setType(type);
+				structure.setOrganizationId(organizationId);
+				structureNewList.add(structure);
+			}
+			//保存结构（3条）
+			structureService.saveBatch(structureNewList);
+		}
+		
 		List<String> structureIdList = new ArrayList<String>();
 		structureIdList.add(vo.getStructureId());
 		//标注区域
@@ -144,7 +201,6 @@ public class PathologicalController {
 			category.setHex(hex);
 			category.setIndicatorId(indicatorId);
 			category.setOrderNumber(orderNumber);
-			//BeanUtils.copyProperties(vo, category);
 
 			String structureName = "";
 			// 获取structureName
@@ -239,6 +295,12 @@ public class PathologicalController {
 	@Log(title = "配置标签-编辑", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.UPDATE)
 	@PutMapping("/edit")
 	public R<String> edit(@Validated @RequestBody PathologicalIndicatorCategory category) {
+		String structureId = category.getStructureId();
+		//标签类型 0:下拉筛选标签；1:自定义标签
+		Integer categoryType = category.getCategoryType();
+		if(null == categoryType){
+			categoryType = 0;
+		}
 		if (category.getCategoryId() == null || category.getIndicatorId() == null) {
 			return R.fail(MessageSource.M("MISSING_REQUIRED_VALUE"));
 		}
@@ -252,10 +314,11 @@ public class PathologicalController {
 		//确认下原来的structure_id信息
 		PathologicalIndicatorCategory sourcePic = pathologicalIndicatorCategoryService.selectByPrimaryKey(category.getCategoryId());
 		//验证结构是否已经存在  		BeanUtils.copyProperties(category, targetCategory);
-
+		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
 		PathologicalIndicatorCategory categoryS = new PathologicalIndicatorCategory();
 		categoryS.setStructureId(category.getStructureId());
 		categoryS.setIndicatorId(category.getIndicatorId());
+		categoryS.setOrganizationId(organizationId);
 		List<PathologicalIndicatorCategory> listS = pathologicalIndicatorCategoryService.selectIndicatorMessage(categoryS);
 		if (listS.size() > 0) {
 			//判断是否是自己的，如果非本身、不允许
@@ -288,6 +351,62 @@ public class PathologicalController {
 				return R.fail(MessageSource.M("COLOR_NAME_CHECK_EXIST"));
 			}
 		}
+		
+		if(categoryType == 1){
+			String structureName = category.getStructureName();
+			//校验structureId、structureName 是否已经存在
+			String speciesId = indicator.getSpeciesId();
+			String organId = indicator.getOrganId();
+
+			QueryWrapper<Structure> queryWrapper = new QueryWrapper<>();
+			queryWrapper.eq("species_id", speciesId);
+			queryWrapper.eq("organ_id", organId);
+			queryWrapper.eq("structure_id",structureId);
+			queryWrapper.eq("organization_id", organizationId);
+			List<Structure>  sIdList = structureService.list(queryWrapper);
+			if(CollectionUtils.isNotEmpty(sIdList)){
+				return R.fail("STRUCTUREID EXIST");
+			}
+			queryWrapper.eq("structure_id",null);
+			queryWrapper.eq("name",structureName);
+			List<Structure>  sNameList = structureService.list(queryWrapper);
+			if(CollectionUtils.isNotEmpty(sNameList)){
+				return R.fail("STRUCTURENAME EXIST");
+			}
+			//structure表保存结构信息
+			List<Structure> structureNewList = new ArrayList<>();
+			for(int j=0;j<3;j++){
+				Structure structure = new Structure();
+				String structureIdNew = structureId;
+				String structureNameNew = structureName;
+				String structureNameEnNew =structureName ;
+				String type = CommonConstant.STRUCTURE_RO;
+				if(j==1){
+					// ROA:标注区域
+					structureIdNew = structureId+CommonConstant.STRUCTURE_ROA;
+					structureNameNew = structureId+" 标注区域";
+					structureNameEnNew = structureId+CommonConstant.STRUCTURE_ROA;
+					type = CommonConstant.STRUCTURE_ROA;
+				}else if(j==21){
+					// ROE:考核区域
+					structureIdNew = structureId+CommonConstant.STRUCTURE_ROE;
+					structureNameNew = structureId+" 考核区域";
+					structureNameEnNew = structureId+CommonConstant.STRUCTURE_ROE;
+					type = CommonConstant.STRUCTURE_ROE;
+				}
+				structure.setStructureId(structureIdNew);
+				structure.setName(structureNameNew);
+				structure.setNameEn(structureNameEnNew);
+				structure.setSpeciesId(speciesId);
+				structure.setOrganId(organId);
+				//RO：结构类型  ROA:标注区域 ROE:考核区域
+				structure.setType(type);
+				structure.setOrganizationId(organizationId);
+				structureNewList.add(structure);
+			}
+			//保存结构（3条）
+			structureService.saveBatch(structureNewList);
+		}
 
 
 		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
@@ -319,7 +438,7 @@ public class PathologicalController {
 		}*/
 
 		category.setGroupNumber(CommonConstant.STRUCTURE_RO_GROUP_NUMBER);
-		
+
 		//修改标注类别信息
 		String retStatus = pathologicalIndicatorCategoryService.updateByPrimaryKeySelective2(category);
 		//查看当前结构是否只要结构编码

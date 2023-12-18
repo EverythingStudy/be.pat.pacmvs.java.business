@@ -203,7 +203,8 @@ public class Project extends BaseEntity {
     @TableField(exist = false)
     @ApiModelProperty(value = "项目参与人")
     private Long partUserId;
-
+    
+    @TableField(exist = false)
     @ApiModelProperty(value = "创建者名称")
     private String userName;
 }

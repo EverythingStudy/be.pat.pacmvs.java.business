@@ -88,7 +88,7 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
     
 	@Override
 	public R<Organ> add(InsertOrganVO req) {
-		//校验种属名称是否已经重复
+		//校验脏器名称是否已经重复
 		QueryWrapper<Organ> queryNameWrapper = new QueryWrapper<>();
 		queryNameWrapper.eq("name", req.getName());
 		List<Organ> nameList = organMapper.selectList(queryNameWrapper);
@@ -96,7 +96,7 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
 			return R.fail(MessageSource.M("InsertOrganVO.NAME.EXIST"));
 		}
 
-		//校验种属编码 是否已经重复
+		//校验脏器编码 是否已经重复
 		QueryWrapper<Organ> queryOrganIdWrapper = new QueryWrapper<>();
 		queryOrganIdWrapper.eq("organ_id", req.getOrganId());
 		List<Organ> organWrapperList = organMapper.selectList(queryOrganIdWrapper);
@@ -109,10 +109,11 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
 			organ.setNameEn(req.getName());
 		}
 		BeanUtils.copyProperties(req, organ);
+		organ.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
 		int insertStatus = organMapper.insert(organ);
 		if (insertStatus > 0) {
 			//1、tb_structure添加A-I 结构标签+ROA+ROE
-			addStructure(organ);
+			// addStructure(organ);
 			//2、tb_pathological_indicator增加一条记录
 			addIndicator(organ);
 			//3、刷新初始话的数据  
@@ -140,9 +141,9 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
 	}
 	private void addStructure(Organ organ){
 		List<Structure> list = new ArrayList<Structure>();
-		
-		List<String> structureCodeList = new ArrayList<String>();
-		
+
+		/*List<String> structureCodeList = new ArrayList<String>();
+
 		structureCodeList.add("A");
 		structureCodeList.add("B");
 		structureCodeList.add("C");
@@ -152,7 +153,7 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
 		structureCodeList.add("G");
 		structureCodeList.add("H");
 		structureCodeList.add("I");
-		
+
 		//原始Structure编码规则： 种属：1+脏器编码+(F01-F09)
 		String structureId = organ.getSpeciesCode()+organ.getOrganId();
 		for(int j=1;j<10;j++){
@@ -193,10 +194,46 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
 				list.add(structure);
 				structureId = organ.getSpeciesCode()+organ.getOrganId();
 			}
-		}
+		}*/
 		//保存处理
+		//原始Structure编码规则： 种属：1+脏器编码+(F01-F09)
+		String structureId = organ.getSpeciesCode()+organ.getOrganId();
+		for(int i=0;i<3;i++){
+			Structure structure = new Structure();
+			structure.setSpeciesId(organ.getSpeciesCode());
+			structure.setOrganId(organ.getOrganId());
+			structure.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+
+			String name = "";
+			String nameEn = "";
+			String type = "";
+			if(i==0){
+				//结构编码
+				name = structureId;
+				nameEn = name;
+				type = "RO";
+			}else if(i==1){
+				//结构编码+标注
+				structureId = structureId+"ROA";
+				name = structureId+"标注区域";
+				nameEn = structureId+" ROA";
+				type = "ROA";
+			}else if(i==2){
+				//结构编码+考核
+				structureId = structureId+"ROE";
+				name = structureId+"考核区域";
+				nameEn = structureId+" ROE";
+				type = "ROE";
+			}
+			structure.setStructureId(structureId);
+			structure.setName(name);
+			structure.setNameEn(nameEn);
+			structure.setType(type);
+			list.add(structure);
+			structureId = organ.getSpeciesCode()+organ.getOrganId();
+		}
 		structureService.saveBatch(list);
-		
+
 	}
 
 }

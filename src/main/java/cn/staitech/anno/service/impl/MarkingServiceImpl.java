@@ -990,7 +990,7 @@ public class MarkingServiceImpl implements MarkingService {
 		if (!Objects.equals(properties1.getLabel_code(), "") && properties1.getLabel_code() != null) {
 			Long categoryId = categoryMap.get(properties1.getLabel_code());
 			if (categoryId == null) {
-				PathologicalIndicatorCategory pathologicalIndicatorCategory = pathologicalIndicatorCategoryMapper.selectProjectAndNumber(Long.valueOf(slideBy.getProjectId()), properties1.getLabel_code());
+				PathologicalIndicatorCategory pathologicalIndicatorCategory = pathologicalIndicatorCategoryMapper.selectProjectAndNumber(Long.valueOf(slideBy.getProjectId()), properties1.getLabel_code(),SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
 				if (pathologicalIndicatorCategory != null) {
 					marking.setCategoryId(pathologicalIndicatorCategory.getCategoryId());
 					categoryMap.put(properties1.getLabel_code(), pathologicalIndicatorCategory.getCategoryId());

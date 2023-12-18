@@ -15,6 +15,7 @@ import cn.staitech.anno.project.service.SlideAttrService;
 import cn.staitech.anno.utils.GeometryUtil;
 import cn.staitech.anno.vo.geojson.Properties;
 import cn.staitech.anno.vo.slide.SlideRes;
+import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -324,7 +325,7 @@ public class AsyncTask {
         if (!Objects.equals(properties1.getLabel_code(), "") && properties1.getLabel_code() != null) {
             Long categoryId = categoryMap.get(properties1.getLabel_code());
             if (categoryId == null) {
-                PathologicalIndicatorCategory pathologicalIndicatorCategory = pathologicalIndicatorCategoryMapper.selectProjectAndNumber(Long.valueOf(slideBy.getProjectId()), properties1.getLabel_code());
+                PathologicalIndicatorCategory pathologicalIndicatorCategory = pathologicalIndicatorCategoryMapper.selectProjectAndNumber(Long.valueOf(slideBy.getProjectId()), properties1.getLabel_code(),SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
                 if (pathologicalIndicatorCategory != null) {
                     marking.setCategoryId(pathologicalIndicatorCategory.getCategoryId());
                     categoryMap.put(properties1.getLabel_code(), pathologicalIndicatorCategory.getCategoryId());
