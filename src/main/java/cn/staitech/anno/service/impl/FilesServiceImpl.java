@@ -43,7 +43,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -165,18 +164,8 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
 
             if (zipFileSrc.isDirectory()) {
                 File[] fileArray = zipFileSrc.listFiles();
-                AtomicInteger dirCount = new AtomicInteger(0);
-                AtomicInteger fileCount = new AtomicInteger(0);
                 for (File file : fileArray) {
-                    if (file.isDirectory()) {
-                        dirCount.getAndIncrement();
-                    } else {
-                        fileCount.getAndIncrement();
-                    }
-                }
-                // 只有根目录，根目录下为图像
-                if (dirCount.get() == 0) {
-                    for (File file : fileArray) {
+                    if (file.isFile()) {
                         // INSERT INTO tb_image
                         if (file.isFile()) {
                             // 源文件名 FCPM21-016-CAR20231213D001N1A1234567E01P02
@@ -195,7 +184,6 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                             String md5 = md5(file);
                             log.info("md5 {}", md5);
                             // MD5 相同则不移动新的文件 - 直接删除，不同则添加
-
 
 
                             // 解析目标文件夹名称
@@ -244,63 +232,6 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                             image = imageTransfer(image);
 
                             imageMapper.insert(image);
-
-                        }
-                    }
-
-
-                } else if (dirCount.get() > 0) {
-                    for (File file : fileArray) {
-                        if (file.isDirectory()) {
-                            // INSERT INTO aipre_folder
-                            Folder subFolder = new Folder();
-
-                            subFolder.setFolderName(file.getName());
-                            subFolder.setFolderUrl(file.getAbsolutePath());
-                            subFolder.setFilesId(filesId);
-                            subFolder.setOrganizationId(organizationId);
-                            subFolder.setCreateBy(createBy);
-                            subFolder.setCreateTime(new Date());
-                            subFolder.setDeleteFlag("1");
-
-                            folderMapper.insert(subFolder);
-                            Long subFolderId = subFolder.getFolderId();
-
-                            Long folderSize = 0L;
-
-                            File[] subFileArray = file.listFiles();
-                            for (File subfile : subFileArray) {
-                                // INSERT INTO tb_image
-                                if (subfile.isFile()) {
-                                    String absolutePath = subfile.getAbsolutePath();
-                                    // 判断文件格式，非jpg,png排除
-                                    String fileExt = absolutePath.substring(absolutePath.lastIndexOf('.') + 1).toLowerCase();
-                                    if (!Container.IMAGE_EXT_SET.contains(fileExt)) {
-                                        continue;
-                                    }
-
-                                    Image image = new Image();
-                                    image.setFileName(subfile.getName().substring(0, subfile.getName().lastIndexOf(CommonConstant.FILE_SUFFIX)));
-                                    image.setImageName(subfile.getName());
-                                    image.setImagePath(absolutePath);
-                                    image.setImageUrl(absolutePath);
-                                    image.setFolderId(subFolderId);
-                                    image.setOrganizationId(organizationId);
-                                    image.setTopicId(topicId);
-                                    image.setTopicName(topicName);
-                                    image.setCreateBy(createBy);
-                                    image.setCreateTime(new Date());
-                                    // 0上传中、1上传失败、2解析中、3解析失败、4可用
-                                    image.setStatus(4);
-                                    image = imageTransfer(image);
-
-                                    imageMapper.insert(image);
-
-                                    folderSize = folderSize + Long.valueOf(image.getSize());
-                                }
-                            }
-                            subFolder.setFolderSize(folderSize);
-                            folderMapper.updateByPrimaryKey(subFolder);
                         }
                     }
                 }

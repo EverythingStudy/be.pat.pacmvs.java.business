@@ -71,12 +71,11 @@ public class AirepostController {
     @ApiOperation(value = "AI预测-算法项目-眼科拼接Viewer-重置", notes = "AI预测-算法项目-眼科拼接Viewer-列表")
     @Log(title = "眼科拼接Viewer-重置", menu = "AI预测", subMenu = "算法项目", businessType = BusinessType.UPDATE)
     @PostMapping("/reset")
-    public R<List<Airepost>> reset(@RequestBody SlideIdVO request) {
+    public R<String> reset(@RequestBody SlideIdVO request) {
         Airepost airepost = new Airepost();
         airepost.setSlideId(request.getSlideId());
         if (airepostService.reset(airepost)) {
-            List<Airepost> list = airepostService.selectAirepostList(airepost);
-            return R.ok(list, MessageSource.M("OPERATE_SUCCEED"));
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
         return R.fail(MessageSource.M("OPERATE_ERROR"));
     }
