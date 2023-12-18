@@ -20,7 +20,7 @@ public class Folder implements Serializable {
     /**
      * 文件夹id
      */
-    @TableId(value = "folder_id", type = IdType.NONE)
+    @TableId(value = "folder_id", type = IdType.AUTO)
     private Long folderId;
     /**
      * 文件夹名称

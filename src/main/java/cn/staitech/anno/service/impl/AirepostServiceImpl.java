@@ -4,6 +4,7 @@ import cn.staitech.anno.domain.Airepost;
 import cn.staitech.anno.mapper.AirepostMapper;
 import cn.staitech.anno.service.AirepostService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -16,6 +17,7 @@ import java.util.List;
  * @author wangfeng
  * @date 2023-11-10
  */
+@Slf4j
 @Service
 public class AirepostServiceImpl extends ServiceImpl<AirepostMapper, Airepost> implements AirepostService {
     @Resource
@@ -53,8 +55,9 @@ public class AirepostServiceImpl extends ServiceImpl<AirepostMapper, Airepost> i
             obj.setCenterY(obj.getInitCenterY());
             obj.setLevel(obj.getInitLevel());
             obj.setRotation(0);
-            // obj.setVisible(true);
+            obj.setVisible(true);
         }
+        log.info("Airepost list:{}", list);
         return updateBatchById(list);
     }
 }
