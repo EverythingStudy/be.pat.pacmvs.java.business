@@ -32,6 +32,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -248,8 +249,8 @@ public class IndicatorController extends BaseController {
 		}
 
 
-		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-		Long organizationId = sysUser.getOrganizationId();
+				SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+				Long organizationId = sysUser.getOrganizationId();
 //		Long organizationId = 1L;
 		Indicator indicator = new Indicator();
 		indicator.setSpeciesId(req.getSpeciesId());
@@ -258,7 +259,7 @@ public class IndicatorController extends BaseController {
 		// 查询结构指标是否存在
 		List<Indicator> indicatorList = indicatorService.selectIndicator(indicator);
 		if (!indicatorList.isEmpty()) {
-//			return R.fail(MessageSource.M("INDICATOR_EXIST"));
+			//			return R.fail(MessageSource.M("INDICATOR_EXIST"));
 			boolean idCheck = true;
 			for(Indicator indicatorP: indicatorList){
 				String organ_id = indicatorP.getOrganId();
@@ -270,7 +271,7 @@ public class IndicatorController extends BaseController {
 			if(!idCheck){
 				return R.fail(MessageSource.M("InsertOrganVO.ORGANID.EXIST"));
 			}
-		
+
 		}
 
 
@@ -298,7 +299,7 @@ public class IndicatorController extends BaseController {
 
 			//校验脏器编码 是否已经重复
 			QueryWrapper<Organ> queryOrganIdWrapper = new QueryWrapper<>();
-//			queryOrganIdWrapper.eq("organ_id", req.getOrganId());
+			//			queryOrganIdWrapper.eq("organ_id", req.getOrganId());
 			queryOrganIdWrapper.eq("name", req.getOrganName());
 			queryOrganIdWrapper.eq("species_code", req.getSpeciesId());
 			queryOrganIdWrapper.eq("organization_id", organizationId);
@@ -315,54 +316,60 @@ public class IndicatorController extends BaseController {
 				}
 				if(!idCheck){
 					return R.fail(MessageSource.M("InsertOrganVO.ORGANID.EXIST"));
+					//				}
 				}
 			}
+				Organ organ = new Organ();
+				organ.setName(req.getOrganName());
+				organ.setOrganId(req.getOrganId());
+				organ.setSpeciesCode(req.getSpeciesId());
+				organ.setOrganizationId(organizationId);
+				//先查询是否有这个脏器
+				QueryWrapper<Organ> queryOrganEditWrapper = new QueryWrapper<>();
+				queryOrganEditWrapper.eq("organ_id", req.getOrganId());
+				//			queryOrganEditWrapper.eq("name", req.getOrganName());
+				queryOrganEditWrapper.eq("species_code", req.getSpeciesId());
+				queryOrganEditWrapper.eq("organization_id", organizationId);
+				List<Organ> organEditWrapperList = organMapper.selectList(queryOrganEditWrapper);
+				if(CollectionUtils.isNotEmpty(organEditWrapperList)){
+					Organ o1 = organEditWrapperList.get(0);
+					UpdateWrapper<Organ> updateWrapper = new UpdateWrapper();
+					updateWrapper.eq("organ_id", o1.getOrganId());
+					updateWrapper.eq("species_code", o1.getSpeciesCode());
+					updateWrapper.eq("organization_id", organizationId);
+					updateWrapper.set("name", req.getOrganName());
+					organMapper.update(null, updateWrapper);
+				}else{
+					organ.setNameEn(req.getOrganName());
+					organMapper.insert(organ);
+				}
 
-			Organ organ = new Organ();
-			organ.setName(req.getOrganName());
-			organ.setOrganId(req.getOrganId());
-			organ.setSpeciesCode(req.getSpeciesId());
-			organ.setOrganizationId(organizationId);
-			//先查询是否有这个脏器
-			QueryWrapper<Organ> queryOrganEditWrapper = new QueryWrapper<>();
-			queryOrganEditWrapper.eq("organ_id", req.getOrganId());
-			queryOrganEditWrapper.eq("name", req.getOrganName());
-			queryOrganEditWrapper.eq("species_code", req.getSpeciesId());
-			queryOrganEditWrapper.eq("organization_id", organizationId);
-			List<Organ> organEditWrapperList = organMapper.selectList(queryOrganEditWrapper);
-			if(CollectionUtils.isNotEmpty(organEditWrapperList)){
-				
-			}else{
-				organ.setNameEn(req.getOrganName());
-				organMapper.insert(organ);
+
+				MapConstant.ORGAN_MAP = selectMap();
+				MapConstant.ORGAN_MAP_EN = selectMapEn();
+				MapConstant.STRUCTURE_MAP = structureService.selectMap();
+				MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
 			}
-			
-			
-			MapConstant.ORGAN_MAP = selectMap();
-			MapConstant.ORGAN_MAP_EN = selectMapEn();
-			MapConstant.STRUCTURE_MAP = structureService.selectMap();
-			MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
-		}
-
-		//		indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
-		//		indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
-		if(indicatorType == 0){
-			indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
-			indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
-		}else{
-			indicator.setIndicatorName(req.getOrganName());
-			indicator.setIndicatorNameEn(req.getOrganName());
-		}
-		indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
-		indicator.setCreateBy(sysUser.getUserId());
-//		indicator.setCreateBy(1L);
 		
-		req.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
-		// 修改病理指标
-		indicatorService.updateIndicator(req);
-		return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
-	}
+			//		indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
+			//		indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
+			if(indicatorType == 0){
+				indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
+				indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
+			}else{
+				indicator.setIndicatorName(req.getOrganName());
+				indicator.setIndicatorNameEn(req.getOrganName());
+			}
+			indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
+					indicator.setCreateBy(sysUser.getUserId());
+			//		indicator.setCreateBy(1L);
 
+			req.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
+			// 修改病理指标
+			indicatorService.updateIndicator(req);
+			return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+		
+	}
 
 	@ApiOperation(value = "病理指标查重接口", notes = "ZMJ")
 	@GetMapping("/check")
