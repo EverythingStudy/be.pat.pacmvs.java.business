@@ -167,85 +167,78 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                 for (File file : fileArray) {
                     if (file.isFile()) {
                         // INSERT INTO tb_image
-                        if (file.isFile()) {
-                            // 源文件名 FCPM21-016-CAR20231213D001N1A1234567E01P02
-                            String fileName = file.getName();
+                        // 源文件名 FCPM21-016-CAR20231213D001N1A1234567E01P02
+                        String fileName = file.getName();
 
-                            // 判断文件格式，非jpg,png排除
-                            String fileExt = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
-                            if (!Container.IMAGE_EXT_SET.contains(fileExt)) {
-                                continue;
-                            }
-
-                            // 源文件绝对路径
-                            String sourcePath = file.getAbsolutePath();
-
-                            // TODO:判断MD5
-                            String md5 = md5(file);
-                            log.info("md5 {}", md5);
-                            // MD5 相同则不移动新的文件 - 直接删除，不同则添加
-
-
-                            // 解析目标文件夹名称
-                            int index = fileName.lastIndexOf("P");
-                            String folderName = fileName.substring(0, index);
-                            log.info("fileName {},length {},index {},folderName {},fileName {}", fileName, fileName.length(), index, folderName, fileName);
-
-                            // 目标文件件路径
-                            File destDir = new File(destDirRootPath, folderName);
-                            if (!destDir.exists()) {
-                                destDir.mkdirs();
-                            }
-
-                            // INSERT INTO aipre_folder
-                            Folder folder = new Folder();
-                            folder.setFolderName(folderName);
-                            folder.setFolderUrl(destDir.getAbsolutePath());
-                            folder.setFilesId(filesId);
-                            folder.setOrganizationId(organizationId);
-                            folder.setCreateBy(createBy);
-                            // 检查MySQL中是否有该文件夹记录 有读出-无添加
-                            folder = folderService.selectOne(folder);
-                            Long folderId = folder.getFolderId();
-
-
-                            // 目标文件路径
-                            Path destPath = Paths.get(destDirRootPath, folderName, fileName);
-                            // 移动文件 - StandardCopyOption.REPLACE_EXISTING选项表示如果目标文件已经存在，则覆盖原文件。
-                            java.nio.file.Files.move(Paths.get(sourcePath), destPath, StandardCopyOption.REPLACE_EXISTING);
-
-                            Image image = new Image();
-                            image.setFormat(fileExt);
-                            image.setFileName(fileName.substring(0, fileName.lastIndexOf(CommonConstant.FILE_SUFFIX)));
-                            image.setImageName(fileName);
-                            image.setImagePath(sourcePath);
-                            image.setImageUrl(sourcePath);
-                            image.setFolderId(folderId);
-                            image.setOrganizationId(organizationId);
-                            image.setTopicId(topicId);
-                            image.setTopicName(topicName);
-                            image.setCreateBy(createBy);
-                            image.setCreateTime(new Date());
-
-                            // 0上传中、1上传失败、2解析中、3解析失败、4可用
-                            image.setStatus(4);
-                            image = imageTransfer(image);
-
-                            imageMapper.insert(image);
+                        // 判断文件格式，非jpg,png排除
+                        String fileExt = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+                        if (!Container.IMAGE_EXT_SET.contains(fileExt)) {
+                            continue;
                         }
+
+                        // 源文件绝对路径
+                        String sourcePath = file.getAbsolutePath();
+
+                        // TODO:判断MD5
+                        String md5 = md5(file);
+                        log.info("md5 {}", md5);
+                        // MD5 相同则不移动新的文件 - 直接删除，不同则添加
+
+
+                        // 解析目标文件夹名称
+                        int index = fileName.lastIndexOf("P");
+                        String folderName = fileName.substring(0, index);
+
+                        log.info("sourcePath {} fileName {},length {},index {},folderName {},fileName {}", sourcePath, fileName, fileName.length(), index, folderName, fileName);
+
+                        // 目标文件件路径
+                        File destDir = new File(destDirRootPath, folderName);
+                        if (!destDir.exists()) {
+                            destDir.mkdirs();
+                        }
+
+                        // INSERT INTO aipre_folder
+                        Folder folder = new Folder();
+                        folder.setFolderName(folderName);
+                        folder.setFolderUrl(destDir.getAbsolutePath());
+                        folder.setFilesId(filesId);
+                        folder.setOrganizationId(organizationId);
+                        folder.setCreateBy(createBy);
+                        // 检查MySQL中是否有该文件夹记录 有读出-无添加
+                        folder = folderService.selectOne(folder);
+                        Long folderId = folder.getFolderId();
+
+                        // 目标文件路径
+                        Path destPath = Paths.get(destDirRootPath, folderName, fileName);
+                        // 移动文件 - StandardCopyOption.REPLACE_EXISTING选项表示如果目标文件已经存在，则覆盖原文件。
+                        java.nio.file.Files.move(Paths.get(sourcePath), destPath, StandardCopyOption.REPLACE_EXISTING);
+
+                        Image image = new Image();
+                        image.setFormat(fileExt);
+                        image.setFileName(fileName.substring(0, fileName.lastIndexOf(CommonConstant.FILE_SUFFIX)));
+                        image.setImageName(fileName);
+                        image.setImagePath(destPath.toString());
+                        image.setImageUrl(destPath.toString());
+                        image.setFolderId(folderId);
+                        image.setOrganizationId(organizationId);
+                        image.setTopicId(topicId);
+                        image.setTopicName(topicName);
+                        image.setCreateBy(createBy);
+                        image.setCreateTime(new Date());
+                        // 0上传中、1上传失败、2解析中、3解析失败、4可用
+                        image.setStatus(4);
+                        image = imageTransfer(image);
+                        imageMapper.insert(image);
                     }
                 }
             }
 
             // 删除ZIP文件
             File zipFile = new File(zipFilePath);
-            if (zipFile.exists()) {
-                boolean delete = zipFile.delete();
-                if (delete) {
-                    log.info("压缩文件删除成功:{}", zipFile.getAbsolutePath());
-                } else {
-                    log.info("压缩文件删除失败:{}", zipFile.getAbsolutePath());
-                }
+            if (zipFile.exists() && zipFile.delete()) {
+                log.info("压缩文件删除成功:{}", zipFile.getAbsolutePath());
+            } else {
+                log.info("压缩文件删除失败:{}", zipFile.getAbsolutePath());
             }
 
         } else {

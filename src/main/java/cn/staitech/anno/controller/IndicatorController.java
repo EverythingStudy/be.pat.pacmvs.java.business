@@ -264,7 +264,7 @@ public class IndicatorController extends BaseController {
 
 		if(indicatorType == 1){
 			//校验脏器名称是否已经重复
-			QueryWrapper<Organ> queryNameWrapper = new QueryWrapper<>();
+			/*QueryWrapper<Organ> queryNameWrapper = new QueryWrapper<>();
 			queryNameWrapper.eq("name", req.getOrganName());
 			queryNameWrapper.eq("species_code", req.getSpeciesId());
 			queryNameWrapper.eq("organization_id", organizationId);
@@ -281,21 +281,22 @@ public class IndicatorController extends BaseController {
 				if(!nameCheck){
 					return R.fail(MessageSource.M("InsertOrganVO.NAME.EXIST"));
 				}
-			}
+			}*/
 
 
 			//校验脏器编码 是否已经重复
 			QueryWrapper<Organ> queryOrganIdWrapper = new QueryWrapper<>();
-			queryOrganIdWrapper.eq("organ_id", req.getOrganId());
-			queryNameWrapper.eq("species_code", req.getSpeciesId());
+//			queryOrganIdWrapper.eq("organ_id", req.getOrganId());
+			queryOrganIdWrapper.eq("name", req.getOrganName());
+			queryOrganIdWrapper.eq("species_code", req.getSpeciesId());
 			queryOrganIdWrapper.eq("organization_id", organizationId);
 
 			List<Organ> organWrapperList = organMapper.selectList(queryOrganIdWrapper);
 			if(CollectionUtils.isNotEmpty(organWrapperList)){
 				boolean idCheck = true;
 				for(Organ organ: organWrapperList){
-					String organ_name = organ.getName();
-					if(!organ_name.equals(req.getOrganName())){
+					String organ_id = organ.getOrganId();
+					if(!organ_id.equals(req.getOrganId())){
 						idCheck = false;
 						break;
 					}

@@ -131,7 +131,8 @@
         s.slide_id,
         s.ai_analyzed,
         s.ai_check,
-        case when r.review_count >2 then '2' else '1' end as review_status,
+        <!-- case when r.review_count >2 then '2' else '1' end as review_status, -->
+        case when r3.review_count >2 then '2' else '1' end as review_status,
         r.score,
         t2.self_review_status,
         s.image_id,
@@ -173,6 +174,7 @@
         		 left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score from tb_review t  group by t.slide_id) r on s.slide_id = r.slide_id
              </otherwise>
         </choose>
+         left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score from tb_review t3  group by t3.slide_id) r3 on s.slide_id = r3.slide_id
          LEFT JOIN  tb_review t2  ON s.slide_id = t2.slide_id and t2.create_by = #{params.currentUser}
         <where>
             <if test="params.imageCode != null ">

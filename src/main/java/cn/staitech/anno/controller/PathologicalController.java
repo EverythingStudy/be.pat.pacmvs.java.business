@@ -373,19 +373,33 @@ public class PathologicalController {
 
 			QueryWrapper<Structure> queryWrapper = new QueryWrapper<>();
 			queryWrapper.eq("species_id", speciesId);
-			queryWrapper.eq("organ_id", organId);
+			queryWrapper.eq("name",structureName);
 			queryWrapper.eq("structure_id",structureId);
 			queryWrapper.eq("organization_id", organizationId);
 			List<Structure>  sIdList = structureService.list(queryWrapper);
 			if(CollectionUtils.isNotEmpty(sIdList)){
-				return R.fail("STRUCTUREID EXIST");
+//				return R.fail("STRUCTUREID EXIST");
+
+				boolean idCheck = true;
+				for(Structure structure: sIdList){
+					String structure_id = structure.getStructureId();
+					if(!structure_id.equals(category.getStructureId())){
+//						if(!structure_name.equals(category.getStructureName())){
+						idCheck = false;
+						break;
+					}
+				}
+				if(!idCheck){
+					return R.fail("STRUCTUREID EXIST");
+				}
 			}
-			queryWrapper.eq("structure_id",null);
+			/*queryWrapper.eq("structure_id",null);
 			queryWrapper.eq("name",structureName);
+			queryWrapper.eq("organ_id", organId);
 			List<Structure>  sNameList = structureService.list(queryWrapper);
 			if(CollectionUtils.isNotEmpty(sNameList)){
 				return R.fail("STRUCTURENAME EXIST");
-			}
+			}*/
 			//structure表保存结构信息
 			List<Structure> structureNewList = new ArrayList<>();
 			for(int j=0;j<3;j++){
