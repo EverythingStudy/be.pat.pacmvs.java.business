@@ -72,11 +72,12 @@ public class IndicatorController extends BaseController {
 		}
 
 		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-
+		Long organizationId = sysUser.getOrganizationId();
+//		Long organizationId = 1L;
 		Indicator indicator = new Indicator();
 		indicator.setSpeciesId(req.getSpeciesId());
 		indicator.setOrganId(req.getOrganId());
-		indicator.setOrganizationId(sysUser.getOrganizationId());
+		indicator.setOrganizationId(organizationId);
 
 		// 查询结构指标是否存在
 		List<Indicator> indicatorList = indicatorService.selectIndicator(indicator);
@@ -87,7 +88,7 @@ public class IndicatorController extends BaseController {
 			//校验脏器名称是否已经重复
 			QueryWrapper<Organ> queryNameWrapper = new QueryWrapper<>();
 			queryNameWrapper.eq("name", req.getOrganName());
-			queryNameWrapper.eq("organization_id", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+			queryNameWrapper.eq("organization_id", organizationId);
 			List<Organ> nameList = organMapper.selectList(queryNameWrapper);
 			if(CollectionUtils.isNotEmpty(nameList)){
 				return R.fail(MessageSource.M("InsertOrganVO.NAME.EXIST"));
@@ -97,7 +98,7 @@ public class IndicatorController extends BaseController {
 			//校验脏器编码 是否已经重复
 			QueryWrapper<Organ> queryOrganIdWrapper = new QueryWrapper<>();
 			queryOrganIdWrapper.eq("organ_id", req.getOrganId());
-			queryOrganIdWrapper.eq("organization_id", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+			queryOrganIdWrapper.eq("organization_id", organizationId);
 
 			List<Organ> organWrapperList = organMapper.selectList(queryOrganIdWrapper);
 			if(CollectionUtils.isNotEmpty(organWrapperList)){
@@ -109,7 +110,7 @@ public class IndicatorController extends BaseController {
 			organ.setNameEn(req.getOrganName());
 			organ.setOrganId(req.getOrganId());
 			organ.setSpeciesCode(req.getSpeciesId());
-			organ.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+			organ.setOrganizationId(organizationId);
 			organMapper.insert(organ);
 		}
 
@@ -122,8 +123,10 @@ public class IndicatorController extends BaseController {
 		}
 		indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
 		indicator.setCreateBy(sysUser.getUserId());
+//		indicator.setCreateBy(1L);
 		//20231107wd结构指标关联机构
-		indicator.setOrganizationId(sysUser.getOrganizationId());
+		indicator.setOrganizationId(organizationId);
+		indicator.setIndicatorType(indicatorType);
 		//添加结构指标
 		indicatorService.insertIndicator(indicator);
 		return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
