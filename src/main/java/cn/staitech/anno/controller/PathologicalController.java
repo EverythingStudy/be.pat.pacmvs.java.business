@@ -2,6 +2,7 @@ package cn.staitech.anno.controller;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Snowflake;
+import cn.hutool.db.sql.Wrapper;
 import cn.hutool.json.JSONUtil;
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.constant.CommonConstant;
@@ -32,6 +33,7 @@ import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -374,17 +376,15 @@ public class PathologicalController {
 			QueryWrapper<Structure> queryWrapper = new QueryWrapper<>();
 			queryWrapper.eq("species_id", speciesId);
 			queryWrapper.eq("name",structureName);
-			queryWrapper.eq("structure_id",structureId);
+//			queryWrapper.eq("structure_id",structureId);
 			queryWrapper.eq("organization_id", organizationId);
 			List<Structure>  sIdList = structureService.list(queryWrapper);
 			if(CollectionUtils.isNotEmpty(sIdList)){
-//				return R.fail("STRUCTUREID EXIST");
-
 				boolean idCheck = true;
 				for(Structure structure: sIdList){
 					String structure_id = structure.getStructureId();
 					if(!structure_id.equals(category.getStructureId())){
-//						if(!structure_name.equals(category.getStructureName())){
+//					if(!structure_name.equals(category.getStructureName())){
 						idCheck = false;
 						break;
 					}
@@ -403,7 +403,8 @@ public class PathologicalController {
 			//structure表保存结构信息
 			List<Structure> structureNewList = new ArrayList<>();
 			for(int j=0;j<3;j++){
-				Structure structure = new Structure();
+		        UpdateWrapper<Structure> updateWrapper=new UpdateWrapper<>();
+//				Structure structure = new Structure();
 				String structureIdNew = structureId;
 				String structureNameNew = structureName;
 				String structureNameEnNew =structureName ;
@@ -421,18 +422,29 @@ public class PathologicalController {
 					structureNameEnNew = structureId+CommonConstant.STRUCTURE_ROE;
 					type = CommonConstant.STRUCTURE_ROE;
 				}
-				structure.setStructureId(structureIdNew);
-				structure.setName(structureNameNew);
-				structure.setNameEn(structureNameEnNew);
-				structure.setSpeciesId(speciesId);
-				structure.setOrganId(organId);
+				updateWrapper.eq("organ_id", indicator.getOrganId());
+				updateWrapper.eq("structure_id", category.getStructureId());
+				updateWrapper.eq("species_id", indicator.getSpeciesId());
+				updateWrapper.eq("organization_id", organizationId);
+
+
+				Structure st = new Structure();
+				st.setName(structureNameNew);
+				st.setNameEn(structureNameEnNew);
+
+//				structure.setStructureId(structureIdNew);
+//				structure.setName(structureNameNew);
+//				structure.setNameEn(structureNameEnNew);
+//				structure.setSpeciesId(speciesId);
+//				structure.setOrganId(organId);
 				//RO：结构类型  ROA:标注区域 ROE:考核区域
-				structure.setType(type);
-				structure.setOrganizationId(organizationId);
-				structureNewList.add(structure);
+//				structure.setType(type);
+//				structure.setOrganizationId(organizationId);
+//				structureNewList.add(structure);
+				structureService.update(st, updateWrapper);
 			}
 			//保存结构（3条）
-			structureService.saveBatch(structureNewList);
+//			structureService.saveBatch(structureNewList);
 			
 			MapConstant.ORGAN_MAP = selectMap();
 			MapConstant.ORGAN_MAP_EN = selectMapEn();
