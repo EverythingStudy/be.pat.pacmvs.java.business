@@ -114,11 +114,26 @@ public class IndicatorController extends BaseController {
 
 			Organ organ = new Organ();
 			organ.setName(req.getOrganName());
-			organ.setNameEn(req.getOrganName());
+//			organ.setNameEn(req.getOrganName());
 			organ.setOrganId(req.getOrganId());
 			organ.setSpeciesCode(req.getSpeciesId());
 			organ.setOrganizationId(organizationId);
-			organMapper.insert(organ);
+//			organMapper.insert(organ);
+			
+			//先查询是否有这个脏器
+			QueryWrapper<Organ> queryOrganEditWrapper = new QueryWrapper<>();
+			queryOrganEditWrapper.eq("organ_id", req.getOrganId());
+			queryOrganEditWrapper.eq("name", req.getOrganName());
+			queryOrganEditWrapper.eq("species_code", req.getSpeciesId());
+			queryOrganEditWrapper.eq("organization_id", organizationId);
+			List<Organ> organEditWrapperList = organMapper.selectList(queryOrganEditWrapper);
+			if(CollectionUtils.isNotEmpty(organEditWrapperList)){
+				
+			}else{
+				organ.setNameEn(req.getOrganName());
+				organMapper.insert(organ);
+			}
+			
 
 			MapConstant.ORGAN_MAP = selectMap();
 			MapConstant.ORGAN_MAP_EN = selectMapEn();
@@ -234,6 +249,7 @@ public class IndicatorController extends BaseController {
 
 
 		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+		Long organizationId = sysUser.getOrganizationId();
 		Indicator indicator = new Indicator();
 		indicator.setSpeciesId(req.getSpeciesId());
 		indicator.setOrganId(req.getOrganId());
@@ -250,7 +266,7 @@ public class IndicatorController extends BaseController {
 			QueryWrapper<Organ> queryNameWrapper = new QueryWrapper<>();
 			queryNameWrapper.eq("name", req.getOrganName());
 			queryNameWrapper.eq("species_code", req.getSpeciesId());
-			queryNameWrapper.eq("organization_id", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+			queryNameWrapper.eq("organization_id", organizationId);
 			List<Organ> nameList = organMapper.selectList(queryNameWrapper);
 			if(CollectionUtils.isNotEmpty(nameList)){
 				boolean nameCheck = true;
@@ -271,7 +287,7 @@ public class IndicatorController extends BaseController {
 			QueryWrapper<Organ> queryOrganIdWrapper = new QueryWrapper<>();
 			queryOrganIdWrapper.eq("organ_id", req.getOrganId());
 			queryNameWrapper.eq("species_code", req.getSpeciesId());
-			queryOrganIdWrapper.eq("organization_id", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+			queryOrganIdWrapper.eq("organization_id", organizationId);
 
 			List<Organ> organWrapperList = organMapper.selectList(queryOrganIdWrapper);
 			if(CollectionUtils.isNotEmpty(organWrapperList)){
@@ -290,11 +306,23 @@ public class IndicatorController extends BaseController {
 
 			Organ organ = new Organ();
 			organ.setName(req.getOrganName());
-			organ.setNameEn(req.getOrganName());
 			organ.setOrganId(req.getOrganId());
 			organ.setSpeciesCode(req.getSpeciesId());
-			organ.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-			organMapper.insert(organ);
+			organ.setOrganizationId(organizationId);
+			//先查询是否有这个脏器
+			QueryWrapper<Organ> queryOrganEditWrapper = new QueryWrapper<>();
+			queryOrganEditWrapper.eq("organ_id", req.getOrganId());
+			queryOrganEditWrapper.eq("name", req.getOrganName());
+			queryOrganEditWrapper.eq("species_code", req.getSpeciesId());
+			queryOrganEditWrapper.eq("organization_id", organizationId);
+			List<Organ> organEditWrapperList = organMapper.selectList(queryOrganEditWrapper);
+			if(CollectionUtils.isNotEmpty(organEditWrapperList)){
+				
+			}else{
+				organ.setNameEn(req.getOrganName());
+				organMapper.insert(organ);
+			}
+			
 			
 			MapConstant.ORGAN_MAP = selectMap();
 			MapConstant.ORGAN_MAP_EN = selectMapEn();
@@ -348,10 +376,10 @@ public class IndicatorController extends BaseController {
 	}
 
 
-	@SneakyThrows
-	@ApiOperation(value = "添加结构指标-New")
-	@Log(title = "添加结构指标", menu = "结构指标", subMenu = "结构指标", businessType = BusinessType.INSERT)
-	@PostMapping("/save")
+//	@SneakyThrows
+//	@ApiOperation(value = "添加结构指标-New")
+//	@Log(title = "添加结构指标", menu = "结构指标", subMenu = "结构指标", businessType = BusinessType.INSERT)
+//	@PostMapping("/save")
 	public R<String> save(@Validated @RequestBody IndicatorAddVO req) {
 		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 		int saveCheck = indicatorService.saveCheck(req);
