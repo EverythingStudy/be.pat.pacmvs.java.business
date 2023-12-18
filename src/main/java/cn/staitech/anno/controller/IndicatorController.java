@@ -231,8 +231,8 @@ public class IndicatorController extends BaseController {
 	/**
 	 * 病理指标修改接口 .
 	 */
-	@ApiOperation(value = "病理指标修改接口", notes = "ZMJ")
-	@Log(title = "病理指标修改接口", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.UPDATE)
+//	@ApiOperation(value = "病理指标修改接口", notes = "ZMJ")
+//	@Log(title = "病理指标修改接口", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.UPDATE)
 	@PutMapping("/edit")
 	public R<Integer> edit(@Validated @RequestBody IndicatorReviseVO req) {
 		// 和项目绑定的不能修改
@@ -250,6 +250,7 @@ public class IndicatorController extends BaseController {
 
 		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 		Long organizationId = sysUser.getOrganizationId();
+//		Long organizationId = 1L;
 		Indicator indicator = new Indicator();
 		indicator.setSpeciesId(req.getSpeciesId());
 		indicator.setOrganId(req.getOrganId());
@@ -341,7 +342,9 @@ public class IndicatorController extends BaseController {
 		}
 		indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
 		indicator.setCreateBy(sysUser.getUserId());
-
+//		indicator.setCreateBy(1L);
+		
+		req.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
 		// 修改病理指标
 		indicatorService.updateIndicator(req);
 		return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
