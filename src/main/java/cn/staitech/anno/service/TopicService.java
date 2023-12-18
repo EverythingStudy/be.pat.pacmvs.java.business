@@ -35,7 +35,7 @@ public interface TopicService extends IService<Topic> {
 
 
     /**
-     * 获取单个Topic，有则查询，无则添加
+     * 获取单个Topic，有则获取，无则添加
      *
      * @param topicName
      * @return

@@ -51,7 +51,7 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     public PageMaster<Topic> pagelist(TopicQueryIn req) {
         Page<Topic> page = new Page<>(req.getPageNum(), req.getPageSize());
         QueryWrapper<Topic> queryWrapper = new QueryWrapper<>();
-         queryWrapper.eq("project_type_id", req.getProjectTypeId());
+        queryWrapper.eq("project_type_id", req.getProjectTypeId());
         if (req.getTopicName() != null && req.getTopicName() != "" && req.getTopicName() != "null") {
             queryWrapper.like("topic_name", req.getTopicName());
         }
@@ -77,8 +77,6 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
      */
     public Topic selectOne(String topicName, Integer projectTypeId) throws Exception {
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-        Long userId = sysUser.getUserId();
-        String time = DateUtils.getCurrentHHmmssString("yyyy-MM-dd HH:mm:ss");
 
         Topic topic = Topic.builder()
                 .topicName(topicName)
@@ -93,13 +91,17 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         if (qTopic != null) {
             return qTopic;
         } else { // 无则添加
-            topic.setProjectTypeId(projectTypeId);
-            topic.setCreateBy(userId);
-            topic.setUpdateBy(userId);
-            topic.setCreateTime(time);
-            topic.setUpdateTime(time);
-            topic.setOrganizationId(sysUser.getOrganizationId());
             try {
+                Long userId = sysUser.getUserId();
+                String time = DateUtils.getCurrentHHmmssString("yyyy-MM-dd HH:mm:ss");
+
+                topic.setProjectTypeId(projectTypeId);
+                topic.setCreateBy(userId);
+                topic.setUpdateBy(userId);
+                topic.setCreateTime(time);
+                topic.setUpdateTime(time);
+                topic.setOrganizationId(sysUser.getOrganizationId());
+
                 this.baseMapper.insert(topic);
             } catch (DuplicateKeyException e) {
                 log.info("添加专题-主键冲突 {}", e);

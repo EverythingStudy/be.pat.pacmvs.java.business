@@ -1,8 +1,9 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.Folder;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-public interface FolderMapper {
+public interface FolderMapper extends BaseMapper<Folder> {
     int deleteByPrimaryKey(Long folderId);
 
     int insert(Folder record);

@@ -8,6 +8,7 @@ import cn.staitech.anno.mapper.FilesMapper;
 import cn.staitech.anno.mapper.FolderMapper;
 import cn.staitech.anno.mapper.ImageMapper;
 import cn.staitech.anno.service.FilesService;
+import cn.staitech.anno.service.FolderService;
 import cn.staitech.anno.service.SysOrganizationService;
 import cn.staitech.anno.service.TopicService;
 import cn.staitech.anno.utils.ImgPicCompression;
@@ -34,6 +35,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -42,6 +46,8 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import static cn.hutool.crypto.SecureUtil.md5;
 
 /**
  * @author wangf
@@ -65,12 +71,15 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                 }
             },
             new ThreadPoolExecutor.DiscardOldestPolicy());
+    private final String basePath = "/home/pat_saas/";
     @Resource
     private FilesMapper filesMapper;
     @Resource
     private SysOrganizationService organizationService;
     @Resource
     private TopicService topicService;
+    @Resource
+    private FolderService folderService;
     @Resource
     private FolderMapper folderMapper;
     @Resource
@@ -136,19 +145,22 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
     @Override
     public void process(Files files) throws Exception {
         String zipFilePath = files.getFilesPath();
-        Long topicId = files.getTopicId();
-        String topicName = files.getTopicName();
-        Long filesId = files.getFilesId();
 
         // 1、解析zip压缩包
         if (unZip(zipFilePath)) {
+            Long topicId = files.getTopicId();
+            String topicName = files.getTopicName();
+            Long filesId = files.getFilesId();
+
             SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
             Long createBy = sysUser.getUserId();
             Long organizationId = sysUser.getOrganizationId();
 
-            // 遍历文件夹
+            // 生成目标文件对应的文件夹路径
+            String destDirRootPath = basePath + OrganizationUtils.geNumber(organizationId) + File.separator + "Slides" + File.separator + topicName;
+
+            // 遍历解压后文件夹
             String zipFileRootDir = zipFilePath.substring(0, zipFilePath.lastIndexOf(CommonConstant.FILE_SUFFIX));
-            // String zipFileRootDir = zipFilePath;
             File zipFileSrc = new File(zipFileRootDir);
 
             if (zipFileSrc.isDirectory()) {
@@ -164,37 +176,62 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                 }
                 // 只有根目录，根目录下为图像
                 if (dirCount.get() == 0) {
-                    // INSERT INTO aipre_folder
-                    Folder folder = new Folder();
-
-                    folder.setFolderName(zipFileSrc.getName());
-                    folder.setFolderUrl(zipFileRootDir);
-                    folder.setFilesId(filesId);
-                    folder.setOrganizationId(organizationId);
-                    folder.setCreateBy(createBy);
-                    folder.setCreateTime(new Date());
-                    folder.setDeleteFlag("1");
-
-                    folderMapper.insert(folder);
-                    Long folderSize = 0L;
-                    Long folderId = folder.getFolderId();
-
                     for (File file : fileArray) {
                         // INSERT INTO tb_image
                         if (file.isFile()) {
-                            String absolutePath = file.getAbsolutePath();
+                            // 源文件名 FCPM21-016-CAR20231213D001N1A1234567E01P02
+                            String fileName = file.getName();
+
                             // 判断文件格式，非jpg,png排除
-                            String fileExt = absolutePath.substring(absolutePath.lastIndexOf('.') + 1).toLowerCase();
+                            String fileExt = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
                             if (!Container.IMAGE_EXT_SET.contains(fileExt)) {
                                 continue;
                             }
 
+                            // 源文件绝对路径
+                            String sourcePath = file.getAbsolutePath();
+
+                            // TODO:判断MD5
+                            String md5 = md5(file);
+                            log.info("md5 {}", md5);
+                            // MD5 相同则不移动新的文件 - 直接删除，不同则添加
+
+
+
+                            // 解析目标文件夹名称
+                            int index = fileName.lastIndexOf("P");
+                            String folderName = fileName.substring(0, index);
+                            log.info("fileName {},length {},index {},folderName {},fileName {}", fileName, fileName.length(), index, folderName, fileName);
+
+                            // 目标文件件路径
+                            File destDir = new File(destDirRootPath, folderName);
+                            if (!destDir.exists()) {
+                                destDir.mkdirs();
+                            }
+
+                            // INSERT INTO aipre_folder
+                            Folder folder = new Folder();
+                            folder.setFolderName(folderName);
+                            folder.setFolderUrl(destDir.getAbsolutePath());
+                            folder.setFilesId(filesId);
+                            folder.setOrganizationId(organizationId);
+                            folder.setCreateBy(createBy);
+                            // 检查MySQL中是否有该文件夹记录 有读出-无添加
+                            folder = folderService.selectOne(folder);
+                            Long folderId = folder.getFolderId();
+
+
+                            // 目标文件路径
+                            Path destPath = Paths.get(destDirRootPath, folderName, fileName);
+                            // 移动文件 - StandardCopyOption.REPLACE_EXISTING选项表示如果目标文件已经存在，则覆盖原文件。
+                            java.nio.file.Files.move(Paths.get(sourcePath), destPath, StandardCopyOption.REPLACE_EXISTING);
+
                             Image image = new Image();
                             image.setFormat(fileExt);
-                            image.setFileName(file.getName().substring(0, file.getName().lastIndexOf(CommonConstant.FILE_SUFFIX)));
-                            image.setImageName(file.getName());
-                            image.setImagePath(absolutePath);
-                            image.setImageUrl(absolutePath);
+                            image.setFileName(fileName.substring(0, fileName.lastIndexOf(CommonConstant.FILE_SUFFIX)));
+                            image.setImageName(fileName);
+                            image.setImagePath(sourcePath);
+                            image.setImageUrl(sourcePath);
                             image.setFolderId(folderId);
                             image.setOrganizationId(organizationId);
                             image.setTopicId(topicId);
@@ -208,10 +245,8 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
 
                             imageMapper.insert(image);
 
-                            folderSize = folderSize + Long.valueOf(image.getSize());
                         }
                     }
-                    folder.setFolderSize(folderSize);
 
 
                 } else if (dirCount.get() > 0) {
@@ -288,6 +323,168 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
 
     }
 
+//    /**
+//     * 解压压缩包并解析
+//     *
+//     * @param files
+//     * @throws Exception
+//     */
+//    @Override
+//    public void process(Files files) throws Exception {
+//        String zipFilePath = files.getFilesPath();
+//        Long topicId = files.getTopicId();
+//        String topicName = files.getTopicName();
+//        Long filesId = files.getFilesId();
+//
+//        // 1、解析zip压缩包
+//        if (unZip(zipFilePath)) {
+//            SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+//            Long createBy = sysUser.getUserId();
+//            Long organizationId = sysUser.getOrganizationId();
+//
+//            // 遍历文件夹
+//            String zipFileRootDir = zipFilePath.substring(0, zipFilePath.lastIndexOf(CommonConstant.FILE_SUFFIX));
+//            // String zipFileRootDir = zipFilePath;
+//            File zipFileSrc = new File(zipFileRootDir);
+//
+//            if (zipFileSrc.isDirectory()) {
+//                File[] fileArray = zipFileSrc.listFiles();
+//                AtomicInteger dirCount = new AtomicInteger(0);
+//                AtomicInteger fileCount = new AtomicInteger(0);
+//                for (File file : fileArray) {
+//                    if (file.isDirectory()) {
+//                        dirCount.getAndIncrement();
+//                    } else {
+//                        fileCount.getAndIncrement();
+//                    }
+//                }
+//                // 只有根目录，根目录下为图像
+//                if (dirCount.get() == 0) {
+//                    // INSERT INTO aipre_folder
+//                    Folder folder = new Folder();
+//
+//                    folder.setFolderName(zipFileSrc.getName());
+//                    folder.setFolderUrl(zipFileRootDir);
+//                    folder.setFilesId(filesId);
+//                    folder.setOrganizationId(organizationId);
+//                    folder.setCreateBy(createBy);
+//                    folder.setCreateTime(new Date());
+//                    folder.setDeleteFlag("1");
+//
+//                    folderMapper.insert(folder);
+//                    Long folderSize = 0L;
+//                    Long folderId = folder.getFolderId();
+//
+//                    for (File file : fileArray) {
+//                        // INSERT INTO tb_image
+//                        if (file.isFile()) {
+//                            String absolutePath = file.getAbsolutePath();
+//                            // 判断文件格式，非jpg,png排除
+//                            String fileExt = absolutePath.substring(absolutePath.lastIndexOf('.') + 1).toLowerCase();
+//                            if (!Container.IMAGE_EXT_SET.contains(fileExt)) {
+//                                continue;
+//                            }
+//
+//                            Image image = new Image();
+//                            image.setFormat(fileExt);
+//                            image.setFileName(file.getName().substring(0, file.getName().lastIndexOf(CommonConstant.FILE_SUFFIX)));
+//                            image.setImageName(file.getName());
+//                            image.setImagePath(absolutePath);
+//                            image.setImageUrl(absolutePath);
+//                            image.setFolderId(folderId);
+//                            image.setOrganizationId(organizationId);
+//                            image.setTopicId(topicId);
+//                            image.setTopicName(topicName);
+//                            image.setCreateBy(createBy);
+//                            image.setCreateTime(new Date());
+//
+//                            // 0上传中、1上传失败、2解析中、3解析失败、4可用
+//                            image.setStatus(4);
+//                            image = imageTransfer(image);
+//
+//                            imageMapper.insert(image);
+//
+//                            folderSize = folderSize + Long.valueOf(image.getSize());
+//                        }
+//                    }
+//                    folder.setFolderSize(folderSize);
+//
+//
+//                } else if (dirCount.get() > 0) {
+//                    for (File file : fileArray) {
+//                        if (file.isDirectory()) {
+//                            // INSERT INTO aipre_folder
+//                            Folder subFolder = new Folder();
+//
+//                            subFolder.setFolderName(file.getName());
+//                            subFolder.setFolderUrl(file.getAbsolutePath());
+//                            subFolder.setFilesId(filesId);
+//                            subFolder.setOrganizationId(organizationId);
+//                            subFolder.setCreateBy(createBy);
+//                            subFolder.setCreateTime(new Date());
+//                            subFolder.setDeleteFlag("1");
+//
+//                            folderMapper.insert(subFolder);
+//                            Long subFolderId = subFolder.getFolderId();
+//
+//                            Long folderSize = 0L;
+//
+//                            File[] subFileArray = file.listFiles();
+//                            for (File subfile : subFileArray) {
+//                                // INSERT INTO tb_image
+//                                if (subfile.isFile()) {
+//                                    String absolutePath = subfile.getAbsolutePath();
+//                                    // 判断文件格式，非jpg,png排除
+//                                    String fileExt = absolutePath.substring(absolutePath.lastIndexOf('.') + 1).toLowerCase();
+//                                    if (!Container.IMAGE_EXT_SET.contains(fileExt)) {
+//                                        continue;
+//                                    }
+//
+//                                    Image image = new Image();
+//                                    image.setFileName(subfile.getName().substring(0, subfile.getName().lastIndexOf(CommonConstant.FILE_SUFFIX)));
+//                                    image.setImageName(subfile.getName());
+//                                    image.setImagePath(absolutePath);
+//                                    image.setImageUrl(absolutePath);
+//                                    image.setFolderId(subFolderId);
+//                                    image.setOrganizationId(organizationId);
+//                                    image.setTopicId(topicId);
+//                                    image.setTopicName(topicName);
+//                                    image.setCreateBy(createBy);
+//                                    image.setCreateTime(new Date());
+//                                    // 0上传中、1上传失败、2解析中、3解析失败、4可用
+//                                    image.setStatus(4);
+//                                    image = imageTransfer(image);
+//
+//                                    imageMapper.insert(image);
+//
+//                                    folderSize = folderSize + Long.valueOf(image.getSize());
+//                                }
+//                            }
+//                            subFolder.setFolderSize(folderSize);
+//                            folderMapper.updateByPrimaryKey(subFolder);
+//                        }
+//                    }
+//                }
+//            }
+//
+//            // 删除ZIP文件
+//            File zipFile = new File(zipFilePath);
+//            if (zipFile.exists()) {
+//                boolean delete = zipFile.delete();
+//                if (delete) {
+//                    log.info("压缩文件删除成功:{}", zipFile.getAbsolutePath());
+//                } else {
+//                    log.info("压缩文件删除失败:{}", zipFile.getAbsolutePath());
+//                }
+//            }
+//
+//        } else {
+//            throw new Exception(MessageSource.M("ZIP_FILE_UNZIP_FAILURE"));
+//        }
+//
+//    }
+//
+//
 
     /**
      * 解压缩ZIP文件
@@ -299,7 +496,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
     public Boolean unZip(String zipUrl) throws Exception {
         // ZIP文件
         File zipFile = new File(zipUrl);
-        
+
         // zip文件名称，不带扩展名，即新的解压文件夹
         String zipFileNameNoExt = zipUrl.substring(zipUrl.lastIndexOf(File.separator) + 1, zipUrl.lastIndexOf("."));
         // 目标路径根目录
