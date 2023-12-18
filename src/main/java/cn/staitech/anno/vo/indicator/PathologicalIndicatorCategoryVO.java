@@ -36,6 +36,6 @@ public class PathologicalIndicatorCategoryVO {
     @NotNull(message = "{StatisticCategoryListOutVO.orderNumber.isnull}")
     private Integer orderNumber;
     
-    @ApiModelProperty(hidden = true, value = "标签类型 0:下拉筛选标签；1:自定义标签")
+    @ApiModelProperty(value = "标签类型 0:下拉筛选标签；1:自定义标签")
     private Integer categoryType;
 }

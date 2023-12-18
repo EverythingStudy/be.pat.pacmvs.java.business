@@ -18,6 +18,6 @@ public class IndicatorAddVO {
     private String organId;
     @ApiModelProperty(value = "脏器名称")
     private String organName;
-    @ApiModelProperty(hidden = true, value = "标签类型 0:下拉筛选标签；1:自定义标签")
+    @ApiModelProperty(value = "标签类型 0:下拉筛选标签；1:自定义标签")
     private Integer indicatorType;
 }
