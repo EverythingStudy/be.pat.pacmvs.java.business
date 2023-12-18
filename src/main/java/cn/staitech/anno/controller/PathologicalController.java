@@ -3,10 +3,13 @@ package cn.staitech.anno.controller;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.json.JSONUtil;
+import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Indicator;
+import cn.staitech.anno.domain.Organ;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.Structure;
+import cn.staitech.anno.mapper.OrganMapper;
 import cn.staitech.anno.mapper.StructureMapper;
 import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.project.service.MarkingServiceV1;
@@ -47,6 +50,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author wangfeng .
@@ -68,6 +73,9 @@ public class PathologicalController {
 
 	@Resource
 	private StructureService structureService;
+	
+	@Resource
+	private OrganMapper organMapper;
 	
 
 	/**
@@ -173,6 +181,11 @@ public class PathologicalController {
 			}
 			//保存结构（3条）
 			structureService.saveBatch(structureNewList);
+			
+			MapConstant.ORGAN_MAP = selectMap();
+			MapConstant.ORGAN_MAP_EN = selectMapEn();
+			MapConstant.STRUCTURE_MAP = structureService.selectMap();
+			MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
 		}
 		
 		List<String> structureIdList = new ArrayList<String>();
@@ -406,6 +419,11 @@ public class PathologicalController {
 			}
 			//保存结构（3条）
 			structureService.saveBatch(structureNewList);
+			
+			MapConstant.ORGAN_MAP = selectMap();
+			MapConstant.ORGAN_MAP_EN = selectMapEn();
+			MapConstant.STRUCTURE_MAP = structureService.selectMap();
+			MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
 		}
 
 
@@ -615,6 +633,22 @@ public class PathologicalController {
 		}
 	}
 
+	public Map<String, String> selectMap() {
+		return select(false);
+	}
+
+	public Map<String, String> selectMapEn() {
+		return select(true);
+	}
+
+	public Map<String, String> select(boolean en) {
+		List<Organ> list = organMapper.selectList();
+		if (en) {
+			return list.stream().collect(Collectors.toMap(item -> item.getSpeciesCode().concat(item.getOrganId()), Organ::getNameEn));
+		} else {
+			return list.stream().collect(Collectors.toMap(item -> item.getSpeciesCode().concat(item.getOrganId()), Organ::getName));
+		}
+	}
 
 
 	@PostMapping("/test")
