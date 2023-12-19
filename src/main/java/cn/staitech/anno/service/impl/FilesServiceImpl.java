@@ -158,17 +158,9 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
             String zipFileRootDir = zipFilePath.substring(0, zipFilePath.lastIndexOf(CommonConstant.FILE_SUFFIX));
             File zipFileSrc = new File(zipFileRootDir);
 
-            if (zipFileSrc.isDirectory()) {
-                File[] fileArray = zipFileSrc.listFiles();
-                for (File file : fileArray) {
-                    if (file.isFile()) {
-                        processFile(topicId, topicName, filesId, createBy, organizationId, destDirRootPath, file);
-                    } else {
-                        processDir(topicId, topicName, filesId, createBy, organizationId, destDirRootPath, file);
-                        // 删除空文件件
-                        removeEmptyDir(file);
-                    }
-                }
+            // 递归处理文件夹
+            if (zipFileSrc.exists() && zipFileSrc.isDirectory()) {
+                processDir(topicId, topicName, filesId, createBy, organizationId, destDirRootPath, zipFileSrc);
             }
 
             // 删除ZIP文件
@@ -187,13 +179,6 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
 
     }
 
-    private void removeEmptyDir(File file) {
-        // 如果根目录为空，删除空文件夹
-        if (file.listFiles().length == 0) {
-            file.delete();
-        }
-    }
-
     /**
      * 递归处理文件夹：如果文件夹下没有文件则删除当前文件夹，如果有文件继续递归
      *
@@ -203,25 +188,25 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
      * @param createBy
      * @param organizationId
      * @param destDirRootPath
-     * @param file
+     * @param directory
      * @throws Exception
      */
-    private void processDir(Long topicId, String topicName, Long filesId, Long createBy, Long organizationId, String destDirRootPath, File file) throws Exception {
-        log.info("processDir - 处理文件夹:{}", organizationId, file.getAbsolutePath());
-        File[] subFileArray = file.listFiles();
-        if (subFileArray.length == 0) {
-            file.delete();
-        } else {
-            for (File subFile : subFileArray) {
-                if (subFile.isFile()) {
-                    processFile(topicId, topicName, filesId, createBy, organizationId, destDirRootPath, subFile);
+    private void processDir(Long topicId, String topicName, Long filesId, Long createBy, Long organizationId, String destDirRootPath, File directory) throws Exception {
+        log.info("processDir - 处理文件夹:{}", directory.getAbsolutePath());
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    processDir(topicId, topicName, filesId, createBy, organizationId, destDirRootPath, file);
+                    log.info("dir: {}", file.getAbsolutePath());
                 } else {
-                    processDir(topicId, topicName, filesId, createBy, organizationId, destDirRootPath, subFile);
-                    // 删除空文件件
-                    removeEmptyDir(subFile);
+                    processFile(topicId, topicName, filesId, createBy, organizationId, destDirRootPath, file);
+                    log.info("file: {}", file.getAbsolutePath());
                 }
             }
         }
+        // 删除空文件夹
+        removeEmptyDir(directory);
     }
 
     /**
@@ -338,15 +323,8 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
             ZipEntry entry = zis.getNextEntry();
             while (entry != null) {
                 // 处理ZIP重复不覆盖逻辑
-                String entryName = entry.getName();
-
-//                String entryNamePath = entry.getName().substring(entry.getName().indexOf("/"), entryName.length());
-//                String filePath = destDirRoot + entryNamePath;
-
-                String filePath = destDirRoot + "/" + entryName;
-
+                String filePath = destDirRoot + "/" + entry.getName();
                 File file = new File(filePath);
-
                 if (entry.isDirectory()) {
                     file.mkdirs();
                 } else {
@@ -410,6 +388,17 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         return image;
     }
 
+    /**
+     * 删除空文件夹
+     *
+     * @param file
+     */
+    private void removeEmptyDir(File file) {
+        // 如果根目录为空，删除空文件夹
+        if (file.listFiles().length == 0) {
+            file.delete();
+        }
+    }
 
     /**
      * 异步
