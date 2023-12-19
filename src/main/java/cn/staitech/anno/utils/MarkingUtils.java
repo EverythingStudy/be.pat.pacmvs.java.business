@@ -256,15 +256,15 @@ public class MarkingUtils {
             GeometryJSON gJson = new GeometryJSON();
             Reader reader = GeoJSONUtil.toReader(geometry.toString());
             Geometry read = gJson.read(reader);
-
             List<Double> xList = new ArrayList<>();
             List<Double> yList = new ArrayList<>();
             List<Object> lists = new ArrayList<>();
             JSONArray coordinatesJsonArray1 = geometry.getJSONArray("coordinates");
             String type = geometry.getString("type");
             if (Objects.equals(type, "Polygon")) {
-                List<Object> list1 = new ArrayList<>();
+
                 for (Object i1 : coordinatesJsonArray1) {
+                    List<Object> list1 = new ArrayList<>();
                     JSONArray jsonArray1 = JSONArray.parseArray(i1.toString());
                     // 定义一个变量
                     Double x = null;
@@ -292,8 +292,8 @@ public class MarkingUtils {
                         x = list.get(0);
                         y = list.get(1);
                     }
+                    lists.add(list1);
                 }
-                lists.add(list1);
             }
             geometryJson.put("type", type);
             geometryJson.put("coordinates", lists);

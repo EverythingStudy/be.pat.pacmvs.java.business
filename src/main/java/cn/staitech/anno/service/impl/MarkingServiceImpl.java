@@ -373,7 +373,7 @@ public class MarkingServiceImpl implements MarkingService {
 		JSONObject geoJson = MarkingUtils.updatePoint(jsonObject);
 
 		cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
-		marking.setGeometry(geoJson);
+		marking.setGeometry(jsonObject);
 		marking.setArea(markingBys.getArea());
 		marking.setPerimeter(markingBys.getPerimeter());
 		marking.setMarkingId(req.getMarking_id());
@@ -386,7 +386,7 @@ public class MarkingServiceImpl implements MarkingService {
 		// BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features);
 		BroadcastVO broadcastVO = SendMessage.sendOneMessagesByAnnoType(CommonConstant.ANNO_TYPE_DRAW,UPDATE_STATUS, features);
 		NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
-		return geoJson;
+		return jsonObject;
 	}
 
 	//@Async
