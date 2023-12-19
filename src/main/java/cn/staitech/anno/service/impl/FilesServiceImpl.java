@@ -237,6 +237,15 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
 
         // 解析目标文件夹名称
         int index = fileName.lastIndexOf("P");
+
+        if (index < 1) {
+            index = fileName.lastIndexOf("p");
+        }
+
+        if (index < 1) {
+            return;
+        }
+
         String folderName = fileName.substring(0, index);
 
         log.info("sourcePath {} fileName {},length {},index {},folderName {},fileName {}", sourcePath, fileName, fileName.length(), index, folderName, fileName);
