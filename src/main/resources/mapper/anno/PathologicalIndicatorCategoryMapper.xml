@@ -211,7 +211,7 @@
                 #{groupNumber,jdbcType=INTEGER},
             </if>
             <if test="categoryType != null">
-                categoryType,
+                #{categoryType,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>
