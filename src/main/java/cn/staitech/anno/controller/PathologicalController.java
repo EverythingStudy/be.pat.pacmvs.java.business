@@ -169,7 +169,7 @@ public class PathologicalController {
 					structureNameNew = structureId+" 标注区域";
 					structureNameEnNew = structureId+CommonConstant.STRUCTURE_ROA;
 					type = CommonConstant.STRUCTURE_ROA;
-				}else if(j==21){
+				}else if(j==2){
 					// ROE:考核区域
 					structureIdNew = structureId+CommonConstant.STRUCTURE_ROE;
 					structureNameNew = structureId+" 考核区域";
