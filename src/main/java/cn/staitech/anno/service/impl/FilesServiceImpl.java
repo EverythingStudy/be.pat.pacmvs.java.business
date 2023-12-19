@@ -343,7 +343,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
 //                String entryNamePath = entry.getName().substring(entry.getName().indexOf("/"), entryName.length());
 //                String filePath = destDirRoot + entryNamePath;
 
-                String filePath = destDirRoot + entryName;
+                String filePath = destDirRoot + "/" + entryName;
 
                 File file = new File(filePath);
 
