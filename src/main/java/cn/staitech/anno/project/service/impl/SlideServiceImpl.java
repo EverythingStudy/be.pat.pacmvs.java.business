@@ -92,7 +92,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         });
     }
 
-    @Override
+   /* @Override
     public PageMaster<SlideVO> pageSlides(Page page, SlideQueryIn params) throws Exception {
         getBaseMapper().pageSlides(page, params);
         List<SlideVO> list = page.getRecords();
@@ -108,6 +108,25 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
                }
 //                slideIds.add(slideVO.getSlideId());
 //                map.put(slideVO.getSlideId(), slideVO);
+            });
+            List<Marking> annotationList = queryAnnotation(slideIds, params);
+            handleAnnoList(annotationList, map);
+        }
+        PageMaster<SlideVO> pageMaster = PageMaster.of(list);
+        pageMaster.setTotal(page.getTotal());
+        return pageMaster;
+    }*/
+    
+    @Override
+    public PageMaster<SlideVO> pageSlides(Page page, SlideQueryIn params) throws Exception {
+        getBaseMapper().pageSlides(page, params);
+        List<SlideVO> list = page.getRecords();
+        List<Long> slideIds = new ArrayList<>();
+        Map<Long, SlideVO> map = new HashMap<>();
+        if (list != null && !list.isEmpty()) {
+            list.forEach(slideVO -> {
+                slideIds.add(slideVO.getSlideId());
+                map.put(slideVO.getSlideId(), slideVO);
             });
             List<Marking> annotationList = queryAnnotation(slideIds, params);
             handleAnnoList(annotationList, map);
@@ -307,15 +326,10 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
 
 
     private List<Marking> queryAnnotation(List<Long> slideIds, SlideQueryIn params) throws Exception {
-    	
         QueryWrapper<Marking> queryWrapper = Wrappers.query();
         queryWrapper.eq("annotation_type", "Draw");
-//        queryWrapper.ne("annotation_type", "Measure");
         queryWrapper.eq("project_id", params.getProjectId());
-        /*if (slideIds != null) {
-            queryWrapper.in("slide_id", slideIds);
-        }*/
-        if (CollectionUtils.isNotEmpty(slideIds)) {
+        if (slideIds != null) {
             queryWrapper.in("slide_id", slideIds);
         }
         if (params.getAnnoCategory() != null) {
@@ -324,13 +338,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         if (params.getAnnoUser() != null) {
             queryWrapper.eq("create_by", params.getAnnoUser());
         }
-        log.info("parms:"+JSONUtil.toJsonStr(params));
-        if(CollectionUtils.isNotEmpty(slideIds)){
-            log.info("slideIds:"+slideIds.toString());
-        }else{
-        	log.info("slideIds是空的");
-        }
-
         queryWrapper.select("slide_id", "category_id", "create_by");
         return markingMapperV1.selectList(queryWrapper);
     }
