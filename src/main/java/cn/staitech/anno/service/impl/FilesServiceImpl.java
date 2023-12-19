@@ -5,12 +5,7 @@ import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.Folder;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.mapper.FilesMapper;
-import cn.staitech.anno.mapper.FolderMapper;
-import cn.staitech.anno.mapper.ImageMapper;
-import cn.staitech.anno.service.FilesService;
-import cn.staitech.anno.service.FolderService;
-import cn.staitech.anno.service.SysOrganizationService;
-import cn.staitech.anno.service.TopicService;
+import cn.staitech.anno.service.*;
 import cn.staitech.anno.utils.ImgPicCompression;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.OrganizationUtils;
@@ -57,6 +52,7 @@ import static cn.hutool.crypto.SecureUtil.md5;
 @Service
 public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         implements FilesService {
+
     private static final ExecutorService executorService = new ThreadPoolExecutor(
             Runtime.getRuntime().availableProcessors(),
             Runtime.getRuntime().availableProcessors() * 2,
@@ -70,7 +66,9 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                 }
             },
             new ThreadPoolExecutor.DiscardOldestPolicy());
+
     private final String basePath = "/home/pat_saas/";
+
     @Resource
     private FilesMapper filesMapper;
     @Resource
@@ -80,9 +78,8 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
     @Resource
     private FolderService folderService;
     @Resource
-    private FolderMapper folderMapper;
-    @Resource
-    private ImageMapper imageMapper;
+    private ImageService imageService;
+
 
     @Override
     public PageMaster<Files> selectList(FilesListVO req) throws ExecutionException, InterruptedException {
@@ -166,69 +163,9 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                 File[] fileArray = zipFileSrc.listFiles();
                 for (File file : fileArray) {
                     if (file.isFile()) {
-                        // INSERT INTO tb_image
-                        // 源文件名 FCPM21-016-CAR20231213D001N1A1234567E01P02
-                        String fileName = file.getName();
-
-                        // 判断文件格式，非jpg,png排除
-                        String fileExt = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
-                        if (!Container.IMAGE_EXT_SET.contains(fileExt)) {
-                            continue;
-                        }
-
-                        // 源文件绝对路径
-                        String sourcePath = file.getAbsolutePath();
-
-                        // TODO:判断MD5
-                        String md5 = md5(file);
-                        log.info("md5 {}", md5);
-                        // MD5 相同则不移动新的文件 - 直接删除，不同则添加
-
-
-                        // 解析目标文件夹名称
-                        int index = fileName.lastIndexOf("P");
-                        String folderName = fileName.substring(0, index);
-
-                        log.info("sourcePath {} fileName {},length {},index {},folderName {},fileName {}", sourcePath, fileName, fileName.length(), index, folderName, fileName);
-
-                        // 目标文件件路径
-                        File destDir = new File(destDirRootPath, folderName);
-                        if (!destDir.exists()) {
-                            destDir.mkdirs();
-                        }
-
-                        // INSERT INTO aipre_folder
-                        Folder folder = new Folder();
-                        folder.setFolderName(folderName);
-                        folder.setFolderUrl(destDir.getAbsolutePath());
-                        folder.setFilesId(filesId);
-                        folder.setOrganizationId(organizationId);
-                        folder.setCreateBy(createBy);
-                        // 检查MySQL中是否有该文件夹记录 有读出-无添加
-                        folder = folderService.selectOne(folder);
-                        Long folderId = folder.getFolderId();
-
-                        // 目标文件路径
-                        Path destPath = Paths.get(destDirRootPath, folderName, fileName);
-                        // 移动文件 - StandardCopyOption.REPLACE_EXISTING选项表示如果目标文件已经存在，则覆盖原文件。
-                        java.nio.file.Files.move(Paths.get(sourcePath), destPath, StandardCopyOption.REPLACE_EXISTING);
-
-                        Image image = new Image();
-                        image.setFormat(fileExt);
-                        image.setFileName(fileName.substring(0, fileName.lastIndexOf(CommonConstant.FILE_SUFFIX)));
-                        image.setImageName(fileName);
-                        image.setImagePath(destPath.toString());
-                        image.setImageUrl(destPath.toString());
-                        image.setFolderId(folderId);
-                        image.setOrganizationId(organizationId);
-                        image.setTopicId(topicId);
-                        image.setTopicName(topicName);
-                        image.setCreateBy(createBy);
-                        image.setCreateTime(new Date());
-                        // 0上传中、1上传失败、2解析中、3解析失败、4可用
-                        image.setStatus(4);
-                        image = imageTransfer(image);
-                        imageMapper.insert(image);
+                        processFile(topicId, topicName, filesId, createBy, organizationId, destDirRootPath, file);
+                    } else {
+                        processDir(topicId, topicName, filesId, createBy, organizationId, destDirRootPath, file);
                     }
                 }
             }
@@ -241,10 +178,125 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                 log.info("压缩文件删除失败:{}", zipFile.getAbsolutePath());
             }
 
+            // 删除空文件夹
+
         } else {
             throw new Exception(MessageSource.M("ZIP_FILE_UNZIP_FAILURE"));
         }
 
+    }
+
+    /**
+     * 递归处理文件夹：如果文件夹下没有文件则删除当前文件夹，如果有文件继续递归
+     *
+     * @param topicId
+     * @param topicName
+     * @param filesId
+     * @param createBy
+     * @param organizationId
+     * @param destDirRootPath
+     * @param file
+     * @throws Exception
+     */
+    private void processDir(Long topicId, String topicName, Long filesId, Long createBy, Long organizationId, String destDirRootPath, File file) throws Exception {
+        File[] subFileArray = file.listFiles();
+        if (subFileArray.length == 0) {
+            file.delete();
+        } else {
+            for (File subFile : subFileArray) {
+                if (subFile.isFile()) {
+                    processFile(topicId, topicName, filesId, createBy, organizationId, destDirRootPath, subFile);
+                } else {
+                    processDir(topicId, topicName, filesId, createBy, organizationId, destDirRootPath, subFile);
+                }
+            }
+        }
+    }
+
+    /**
+     * 处理图片
+     *
+     * @param topicId
+     * @param topicName
+     * @param filesId
+     * @param createBy
+     * @param organizationId
+     * @param destDirRootPath
+     * @param file
+     * @throws Exception
+     */
+    private void processFile(Long topicId, String topicName, Long filesId, Long createBy, Long organizationId, String destDirRootPath, File file) throws Exception {
+        // INSERT INTO tb_image
+        // 源文件名 FCPM21-016-CAR20231213D001N1A1234567E01P02
+        String fileName = file.getName();
+
+        // 判断文件格式，非jpg,png排除
+        String fileExt = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+        if (!Container.IMAGE_EXT_SET.contains(fileExt)) {
+            return;
+        }
+
+        // 源文件绝对路径
+        String sourcePath = file.getAbsolutePath();
+
+        // 解析目标文件夹名称
+        int index = fileName.lastIndexOf("P");
+        String folderName = fileName.substring(0, index);
+
+        log.info("sourcePath {} fileName {},length {},index {},folderName {},fileName {}", sourcePath, fileName, fileName.length(), index, folderName, fileName);
+
+        // 目标文件件路径
+        File destDir = new File(destDirRootPath, folderName);
+        if (!destDir.exists()) {
+            destDir.mkdirs();
+        }
+
+        // INSERT INTO aipre_folder
+        Folder folder = new Folder();
+        folder.setFolderName(folderName);
+        folder.setFolderUrl(destDir.getAbsolutePath());
+        folder.setFilesId(filesId);
+        folder.setOrganizationId(organizationId);
+        folder.setCreateBy(createBy);
+        // 检查MySQL中是否有该文件夹记录 有读出-无添加
+        folder = folderService.selectOne(folder);
+        Long folderId = folder.getFolderId();
+
+        // 目标文件路径
+        Path destPath = Paths.get(destDirRootPath, folderName, fileName);
+
+        String md5 = md5(file);
+        String distPathStr = destPath.toString();
+
+        // check image file exists
+        Image image = new Image();
+        image.setMd5(md5);
+        image.setImagePath(distPathStr);
+
+        // 检查是否存在否合条件的记录 - 判断MD5、文件绝对路径是否存在 - 如果相同则直接删除源文件，不移动；如果不同则移动并添加新记录
+        if (imageService.exists(image)) {
+            // 删除当前文件
+            file.delete();
+            return;
+        }
+
+        image.setFormat(fileExt);
+        image.setFileName(fileName.substring(0, fileName.lastIndexOf(CommonConstant.FILE_SUFFIX)));
+        image.setImageName(fileName);
+        image.setImageUrl(distPathStr);
+        image.setFolderId(folderId);
+        image.setOrganizationId(organizationId);
+        image.setTopicId(topicId);
+        image.setTopicName(topicName);
+        image.setCreateBy(createBy);
+        image.setCreateTime(new Date());
+        // 0上传中、1上传失败、2解析中、3解析失败、4可用
+        image.setStatus(4);
+        image = imageTransfer(image);
+
+        imageService.save(image);
+        // 移动文件 - StandardCopyOption.REPLACE_EXISTING选项表示如果目标文件已经存在，则覆盖原文件。
+        java.nio.file.Files.move(Paths.get(sourcePath), destPath, StandardCopyOption.REPLACE_EXISTING);
     }
 
 //    /**
@@ -326,7 +378,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
 //                            image.setStatus(4);
 //                            image = imageTransfer(image);
 //
-//                            imageMapper.insert(image);
+//                            imageService.save(image);
 //
 //                            folderSize = folderSize + Long.valueOf(image.getSize());
 //                        }
@@ -379,7 +431,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
 //                                    image.setStatus(4);
 //                                    image = imageTransfer(image);
 //
-//                                    imageMapper.insert(image);
+//                                    imageService.save(image);
 //
 //                                    folderSize = folderSize + Long.valueOf(image.getSize());
 //                                }
@@ -503,7 +555,6 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
             // FileUtils.copyFile(file, new File(absFilePath));
             // 生成缩略图
             ImgPicCompression.doCompress(image.getImagePath(), 256, 256, absFilePath, true);
-
 
             image.setImageCode(uuid);
             image.setBizType(7);

@@ -19,20 +19,19 @@ import cn.staitech.anno.vo.image.in.*;
 import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -410,6 +409,58 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         Long loginUser = SecurityUtils.getUserId();
         image.setUpdateBy(loginUser);
         return imageMapper.updateById(image);
+    }
+
+    /**
+     * 判断MD5、文件绝对路径是否存在 - 如果相同则直接删除源文件，不移动；如果不同则移动并添加新记录
+     *
+     * @param image
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Image selectOne(Image image) throws Exception {
+        LambdaQueryWrapper<Image> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Image::getMd5, image.getMd5());
+        queryWrapper.eq(Image::getImagePath, image.getImagePath());
+        queryWrapper.orderByDesc(Image::getImageId);
+        queryWrapper.last("limit 1");
+        Image oldImage = this.baseMapper.selectOne(queryWrapper);
+
+        // 有则返回
+        if (oldImage != null) {
+            return oldImage;
+        } else {
+            // 无则添加
+            try {
+                image.setCreateTime(new Date());
+                this.baseMapper.insert(image);
+            } catch (DuplicateKeyException e) {
+                log.info("添加图片-主键冲突 {}", e);
+                return this.baseMapper.selectOne(queryWrapper);
+            }
+        }
+        return image;
+    }
+
+    /**
+     * 检查是否存在否合条件的记录
+     *
+     * @param image
+     * @return
+     */
+    @Override
+    public boolean exists(Image image) throws Exception {
+        LambdaQueryWrapper<Image> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.select(Image::getImageId);
+        queryWrapper.eq(Image::getMd5, image.getMd5());
+        queryWrapper.eq(Image::getImagePath, image.getImagePath());
+        queryWrapper.orderByDesc(Image::getImageId);
+        queryWrapper.last("limit 1");
+        if (this.baseMapper.selectOne(queryWrapper) != null) {
+            return true;
+        }
+        return false;
     }
 
 }
