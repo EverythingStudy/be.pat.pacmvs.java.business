@@ -228,6 +228,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
 
         // 判断文件格式，非jpg,png排除
         String fileExt = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+        String tmpFileName = fileName.substring(0, fileName.lastIndexOf('.')).toLowerCase();
         if (!Container.IMAGE_EXT_SET.contains(fileExt)) {
             return;
         }
@@ -235,11 +236,12 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         // 源文件绝对路径
         String sourcePath = file.getAbsolutePath();
 
+
         // 解析目标文件夹名称
-        int index = fileName.lastIndexOf("P");
+        int index = tmpFileName.lastIndexOf("P");
 
         if (index < 1) {
-            index = fileName.lastIndexOf("p");
+            index = tmpFileName.lastIndexOf("p");
         }
 
         if (index < 1) {
