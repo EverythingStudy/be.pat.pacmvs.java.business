@@ -90,9 +90,9 @@ public class PathologicalController {
 	 * 图层顺序 orderNumber
 	 * 结构指标ID	indicatorId
 	 */
-//	@ApiOperation(value = "标签添加接口", notes = "wangfeng")
-//	@RequiresPermissions("project:pathology:tabadd")
-//	@Log(title = "配置标签-新增标签", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.INSERT)
+	@ApiOperation(value = "标签添加接口", notes = "wangfeng")
+	@RequiresPermissions("project:pathology:tabadd")
+	@Log(title = "配置标签-新增标签", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.INSERT)
 	@PostMapping("/add")
 	public R<String> add(@Validated @RequestBody PathologicalIndicatorCategoryVO vo) {
 		//标签类型 0:下拉筛选标签；1:自定义标签

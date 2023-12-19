@@ -79,9 +79,9 @@ public class IndicatorController extends BaseController {
 			indicatorType = 0;
 		}
 
-//		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-//		Long organizationId = sysUser.getOrganizationId();
-				Long organizationId = 1L;
+		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+		Long organizationId = sysUser.getOrganizationId();
+//				Long organizationId = 1L;
 		Indicator indicator = new Indicator();
 		indicator.setSpeciesId(req.getSpeciesId());
 		indicator.setOrganId(req.getOrganId());
@@ -115,11 +115,10 @@ public class IndicatorController extends BaseController {
 
 			Organ organ = new Organ();
 			organ.setName(req.getOrganName());
-			//			organ.setNameEn(req.getOrganName());
+						organ.setNameEn(req.getOrganName());
 			organ.setOrganId(req.getOrganId());
 			organ.setSpeciesCode(req.getSpeciesId());
 			organ.setOrganizationId(organizationId);
-			//			organMapper.insert(organ);
 
 			//先查询是否有这个脏器
 			QueryWrapper<Organ> queryOrganEditWrapper = new QueryWrapper<>();
@@ -150,8 +149,8 @@ public class IndicatorController extends BaseController {
 			indicator.setIndicatorNameEn(req.getOrganName());
 		}
 		indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
-//		indicator.setCreateBy(sysUser.getUserId());
-				indicator.setCreateBy(1L);
+		indicator.setCreateBy(sysUser.getUserId());
+//				indicator.setCreateBy(1L);
 		//20231107wd结构指标关联机构
 		indicator.setOrganizationId(organizationId);
 		indicator.setIndicatorType(indicatorType);
@@ -232,8 +231,8 @@ public class IndicatorController extends BaseController {
 	/**
 	 * 病理指标修改接口 .
 	 */
-	//	@ApiOperation(value = "病理指标修改接口", notes = "ZMJ")
-	//	@Log(title = "病理指标修改接口", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.UPDATE)
+	@ApiOperation(value = "病理指标修改接口", notes = "ZMJ")
+	@Log(title = "病理指标修改接口", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.UPDATE)
 	@PutMapping("/edit")
 	public R<Integer> edit(@Validated @RequestBody IndicatorReviseVO req) {
 		// 和项目绑定的不能修改
@@ -284,7 +283,6 @@ public class IndicatorController extends BaseController {
 			//先查询是否有这个脏器
 			QueryWrapper<Organ> queryOrganEditWrapper = new QueryWrapper<>();
 			queryOrganEditWrapper.eq("organ_id", req.getOrganId());
-			//			queryOrganEditWrapper.eq("name", req.getOrganName());
 			queryOrganEditWrapper.eq("species_code", req.getSpeciesId());
 			queryOrganEditWrapper.eq("organization_id", organizationId);
 			List<Organ> organEditWrapperList = organMapper.selectList(queryOrganEditWrapper);
@@ -310,8 +308,6 @@ public class IndicatorController extends BaseController {
 			MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
 		}
 
-		//		indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
-		//		indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
 		if(indicatorType == 0){
 			indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
 			indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
