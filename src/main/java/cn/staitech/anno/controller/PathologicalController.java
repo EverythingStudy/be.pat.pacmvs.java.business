@@ -451,7 +451,7 @@ public class PathologicalController {
 				Structure st2 = new Structure();
 				st2.setName(category.getStructureName()+" 标注区域");
 				st2.setNameEn(category.getStructureName()+CommonConstant.STRUCTURE_ROA);
-				structureService.update(st2, updateWrapper);
+				structureService.update(st2, updateROAWrapper);
 				
 				// ROE:考核区域
 				String structureRoEId = category.getStructureId()+CommonConstant.STRUCTURE_ROE;
