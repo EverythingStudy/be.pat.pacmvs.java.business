@@ -254,6 +254,7 @@ public class PathologicalController {
 			}else{
 				category.setGroupNumber(CommonConstant.STRUCTURE_RO_GROUP_NUMBER);
 			}
+			category.setCategoryType(categoryType);
 			pathologicalIndicatorCategoryService.insertSelective(category);
 			IndicatorReviseVO indicatorReviseVO = IndicatorReviseVO.builder().indicatorId(indicatorId.intValue()).build();
 			// 更新病理表数据
