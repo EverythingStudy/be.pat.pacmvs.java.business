@@ -165,6 +165,8 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                         processFile(topicId, topicName, filesId, createBy, organizationId, destDirRootPath, file);
                     } else {
                         processDir(topicId, topicName, filesId, createBy, organizationId, destDirRootPath, file);
+                        // 删除空文件件
+                        removeEmptyDir(file);
                     }
                 }
             }
@@ -185,10 +187,10 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
 
     }
 
-    private void removeEmptyDir(File zipFileSrc) {
+    private void removeEmptyDir(File file) {
         // 如果根目录为空，删除空文件夹
-        if (zipFileSrc.listFiles().length == 0) {
-            zipFileSrc.delete();
+        if (file.listFiles().length == 0) {
+            file.delete();
         }
     }
 
