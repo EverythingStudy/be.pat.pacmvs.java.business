@@ -307,7 +307,8 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
 //        queryWrapper.eq("annotation_type", "Draw");
         queryWrapper.ne("annotation_type", "Measure");
         queryWrapper.eq("project_id", params.getProjectId());
-        if (slideIds != null) {
+//        if (slideIds != null) {
+        if (CollectionUtils.isNotEmpty(slideIds)) {
             queryWrapper.in("slide_id", slideIds);
         }
 //        if (params.getAnnoCategory() != null) {
