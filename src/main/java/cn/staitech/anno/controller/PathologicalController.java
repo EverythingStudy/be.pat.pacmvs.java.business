@@ -375,76 +375,83 @@ public class PathologicalController {
 
 			QueryWrapper<Structure> queryWrapper = new QueryWrapper<>();
 			queryWrapper.eq("species_id", speciesId);
-			queryWrapper.eq("name",structureName);
-//			queryWrapper.eq("structure_id",structureId);
+			queryWrapper.eq("structure_id",structureId);
 			queryWrapper.eq("organization_id", organizationId);
 			List<Structure>  sIdList = structureService.list(queryWrapper);
-			if(CollectionUtils.isNotEmpty(sIdList)){
-				boolean idCheck = true;
-				for(Structure structure: sIdList){
-					String structure_id = structure.getStructureId();
-					if(!structure_id.equals(category.getStructureId())){
-//					if(!structure_name.equals(category.getStructureName())){
-						idCheck = false;
-						break;
+			if(CollectionUtils.isEmpty(sIdList)){
+				//structure表保存结构信息
+				List<Structure> structureNewList = new ArrayList<>();
+				for(int j=0;j<3;j++){
+					Structure structure = new Structure();
+					String structureIdNew = structureId;
+					String structureNameNew = structureName;
+					String structureNameEnNew =structureName ;
+					String type = CommonConstant.STRUCTURE_RO;
+					if(j==1){
+						// ROA:标注区域
+						structureIdNew = structureId+CommonConstant.STRUCTURE_ROA;
+						structureNameNew = structureId+" 标注区域";
+						structureNameEnNew = structureId+CommonConstant.STRUCTURE_ROA;
+						type = CommonConstant.STRUCTURE_ROA;
+					}else if(j==21){
+						// ROE:考核区域
+						structureIdNew = structureId+CommonConstant.STRUCTURE_ROE;
+						structureNameNew = structureId+" 考核区域";
+						structureNameEnNew = structureId+CommonConstant.STRUCTURE_ROE;
+						type = CommonConstant.STRUCTURE_ROE;
 					}
+
+					structure.setStructureId(structureIdNew);
+					structure.setName(structureNameNew);
+					structure.setNameEn(structureNameEnNew);
+					structure.setSpeciesId(speciesId);
+					structure.setOrganId(organId);
+					//RO：结构类型  ROA:标注区域 ROE:考核区域
+					structure.setType(type);
+					structure.setOrganizationId(organizationId);
+					structureNewList.add(structure);
 				}
-				if(!idCheck){
-					return R.fail("STRUCTUREID EXIST");
-				}
-			}
-			/*queryWrapper.eq("structure_id",null);
-			queryWrapper.eq("name",structureName);
-			queryWrapper.eq("organ_id", organId);
-			List<Structure>  sNameList = structureService.list(queryWrapper);
-			if(CollectionUtils.isNotEmpty(sNameList)){
-				return R.fail("STRUCTURENAME EXIST");
-			}*/
-			//structure表保存结构信息
-			List<Structure> structureNewList = new ArrayList<>();
-			for(int j=0;j<3;j++){
-		        UpdateWrapper<Structure> updateWrapper=new UpdateWrapper<>();
-//				Structure structure = new Structure();
-				String structureIdNew = structureId;
-				String structureNameNew = structureName;
-				String structureNameEnNew =structureName ;
-				String type = CommonConstant.STRUCTURE_RO;
-				if(j==1){
-					// ROA:标注区域
-					structureIdNew = structureId+CommonConstant.STRUCTURE_ROA;
-					structureNameNew = structureId+" 标注区域";
-					structureNameEnNew = structureId+CommonConstant.STRUCTURE_ROA;
-					type = CommonConstant.STRUCTURE_ROA;
-				}else if(j==21){
-					// ROE:考核区域
-					structureIdNew = structureId+CommonConstant.STRUCTURE_ROE;
-					structureNameNew = structureId+" 考核区域";
-					structureNameEnNew = structureId+CommonConstant.STRUCTURE_ROE;
-					type = CommonConstant.STRUCTURE_ROE;
-				}
+				//保存结构（3条）
+				structureService.saveBatch(structureNewList);
+			}else{
+				//修改名称
+				UpdateWrapper<Structure> updateWrapper=new UpdateWrapper<>();
 				updateWrapper.eq("organ_id", indicator.getOrganId());
 				updateWrapper.eq("structure_id", category.getStructureId());
 				updateWrapper.eq("species_id", indicator.getSpeciesId());
 				updateWrapper.eq("organization_id", organizationId);
-
-
 				Structure st = new Structure();
-				st.setName(structureNameNew);
-				st.setNameEn(structureNameEnNew);
-
-//				structure.setStructureId(structureIdNew);
-//				structure.setName(structureNameNew);
-//				structure.setNameEn(structureNameEnNew);
-//				structure.setSpeciesId(speciesId);
-//				structure.setOrganId(organId);
-				//RO：结构类型  ROA:标注区域 ROE:考核区域
-//				structure.setType(type);
-//				structure.setOrganizationId(organizationId);
-//				structureNewList.add(structure);
+				st.setName(category.getStructureName());
+				st.setNameEn(category.getStructureName());
 				structureService.update(st, updateWrapper);
+				// ROA:标注区域
+//				String structureRoaName = category.getStructureName()+" "+CommonConstant.STRUCTURE_ROA;
+				String structureRoaId = category.getStructureId()+CommonConstant.STRUCTURE_ROA;
+
+				UpdateWrapper<Structure> updateROAWrapper=new UpdateWrapper<>();
+				updateROAWrapper.eq("organ_id", indicator.getOrganId());
+				updateROAWrapper.eq("structure_id", structureRoaId);
+				updateROAWrapper.eq("species_id", indicator.getSpeciesId());
+				updateROAWrapper.eq("organization_id", organizationId);
+				Structure st2 = new Structure();
+				st2.setName(category.getStructureName()+" 标注区域");
+				st2.setNameEn(category.getStructureName()+CommonConstant.STRUCTURE_ROA);
+				structureService.update(st2, updateWrapper);
+				
+				// ROE:考核区域
+				String structureRoEId = category.getStructureId()+CommonConstant.STRUCTURE_ROE;
+
+				UpdateWrapper<Structure> updateROEWrapper=new UpdateWrapper<>();
+				updateROEWrapper.eq("organ_id", indicator.getOrganId());
+				updateROEWrapper.eq("structure_id", structureRoEId);
+				updateROEWrapper.eq("species_id", indicator.getSpeciesId());
+				updateROEWrapper.eq("organization_id", organizationId);
+				Structure st3 = new Structure();
+				st3.setName(category.getStructureName()+" 考核区域");
+				st3.setNameEn(category.getStructureName()+CommonConstant.STRUCTURE_ROE);
+				structureService.update(st3, updateROEWrapper);
+				
 			}
-			//保存结构（3条）
-//			structureService.saveBatch(structureNewList);
 			
 			MapConstant.ORGAN_MAP = selectMap();
 			MapConstant.ORGAN_MAP_EN = selectMapEn();

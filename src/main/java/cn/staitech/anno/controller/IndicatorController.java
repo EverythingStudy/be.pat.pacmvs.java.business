@@ -115,12 +115,12 @@ public class IndicatorController extends BaseController {
 
 			Organ organ = new Organ();
 			organ.setName(req.getOrganName());
-//			organ.setNameEn(req.getOrganName());
+			//			organ.setNameEn(req.getOrganName());
 			organ.setOrganId(req.getOrganId());
 			organ.setSpeciesCode(req.getSpeciesId());
 			organ.setOrganizationId(organizationId);
-//			organMapper.insert(organ);
-			
+			//			organMapper.insert(organ);
+
 			//先查询是否有这个脏器
 			QueryWrapper<Organ> queryOrganEditWrapper = new QueryWrapper<>();
 			queryOrganEditWrapper.eq("organ_id", req.getOrganId());
@@ -129,12 +129,12 @@ public class IndicatorController extends BaseController {
 			queryOrganEditWrapper.eq("organization_id", organizationId);
 			List<Organ> organEditWrapperList = organMapper.selectList(queryOrganEditWrapper);
 			if(CollectionUtils.isNotEmpty(organEditWrapperList)){
-				
+
 			}else{
 				organ.setNameEn(req.getOrganName());
 				organMapper.insert(organ);
 			}
-			
+
 
 			MapConstant.ORGAN_MAP = selectMap();
 			MapConstant.ORGAN_MAP_EN = selectMapEn();
@@ -232,8 +232,8 @@ public class IndicatorController extends BaseController {
 	/**
 	 * 病理指标修改接口 .
 	 */
-//	@ApiOperation(value = "病理指标修改接口", notes = "ZMJ")
-//	@Log(title = "病理指标修改接口", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.UPDATE)
+	//	@ApiOperation(value = "病理指标修改接口", notes = "ZMJ")
+	//	@Log(title = "病理指标修改接口", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.UPDATE)
 	@PutMapping("/edit")
 	public R<Integer> edit(@Validated @RequestBody IndicatorReviseVO req) {
 		// 和项目绑定的不能修改
@@ -249,9 +249,9 @@ public class IndicatorController extends BaseController {
 		}
 
 
-				SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-				Long organizationId = sysUser.getOrganizationId();
-//		Long organizationId = 1L;
+		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+		Long organizationId = sysUser.getOrganizationId();
+		//		Long organizationId = 1L;
 		Indicator indicator = new Indicator();
 		indicator.setSpeciesId(req.getSpeciesId());
 		indicator.setOrganId(req.getOrganId());
@@ -276,99 +276,56 @@ public class IndicatorController extends BaseController {
 
 
 		if(indicatorType == 1){
-			//校验脏器名称是否已经重复
-			/*QueryWrapper<Organ> queryNameWrapper = new QueryWrapper<>();
-			queryNameWrapper.eq("name", req.getOrganName());
-			queryNameWrapper.eq("species_code", req.getSpeciesId());
-			queryNameWrapper.eq("organization_id", organizationId);
-			List<Organ> nameList = organMapper.selectList(queryNameWrapper);
-			if(CollectionUtils.isNotEmpty(nameList)){
-				boolean nameCheck = true;
-				for(Organ organ: nameList){
-					String organ_id = organ.getOrganId();
-					if(!organ_id.equals(req.getOrganId())){
-						nameCheck = false;
-						break;
-					}
-				}
-				if(!nameCheck){
-					return R.fail(MessageSource.M("InsertOrganVO.NAME.EXIST"));
-				}
-			}*/
-
-
-			//校验脏器编码 是否已经重复
-			QueryWrapper<Organ> queryOrganIdWrapper = new QueryWrapper<>();
-			//			queryOrganIdWrapper.eq("organ_id", req.getOrganId());
-			queryOrganIdWrapper.eq("name", req.getOrganName());
-			queryOrganIdWrapper.eq("species_code", req.getSpeciesId());
-			queryOrganIdWrapper.eq("organization_id", organizationId);
-
-			List<Organ> organWrapperList = organMapper.selectList(queryOrganIdWrapper);
-			if(CollectionUtils.isNotEmpty(organWrapperList)){
-				boolean idCheck = true;
-				for(Organ organ: organWrapperList){
-					String organ_id = organ.getOrganId();
-					if(!organ_id.equals(req.getOrganId())){
-						idCheck = false;
-						break;
-					}
-				}
-				if(!idCheck){
-					return R.fail(MessageSource.M("InsertOrganVO.ORGANID.EXIST"));
-					//				}
-				}
-			}
-				Organ organ = new Organ();
-				organ.setName(req.getOrganName());
-				organ.setOrganId(req.getOrganId());
-				organ.setSpeciesCode(req.getSpeciesId());
-				organ.setOrganizationId(organizationId);
-				//先查询是否有这个脏器
-				QueryWrapper<Organ> queryOrganEditWrapper = new QueryWrapper<>();
-				queryOrganEditWrapper.eq("organ_id", req.getOrganId());
-				//			queryOrganEditWrapper.eq("name", req.getOrganName());
-				queryOrganEditWrapper.eq("species_code", req.getSpeciesId());
-				queryOrganEditWrapper.eq("organization_id", organizationId);
-				List<Organ> organEditWrapperList = organMapper.selectList(queryOrganEditWrapper);
-				if(CollectionUtils.isNotEmpty(organEditWrapperList)){
-					Organ o1 = organEditWrapperList.get(0);
-					UpdateWrapper<Organ> updateWrapper = new UpdateWrapper();
-					updateWrapper.eq("organ_id", o1.getOrganId());
-					updateWrapper.eq("species_code", o1.getSpeciesCode());
-					updateWrapper.eq("organization_id", organizationId);
-					updateWrapper.set("name", req.getOrganName());
-					organMapper.update(null, updateWrapper);
-				}else{
-					organ.setNameEn(req.getOrganName());
-					organMapper.insert(organ);
-				}
-
-
-				MapConstant.ORGAN_MAP = selectMap();
-				MapConstant.ORGAN_MAP_EN = selectMapEn();
-				MapConstant.STRUCTURE_MAP = structureService.selectMap();
-				MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
-			}
-		
-			//		indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
-			//		indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
-			if(indicatorType == 0){
-				indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
-				indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
+			Organ organ = new Organ();
+			organ.setName(req.getOrganName());
+			organ.setOrganId(req.getOrganId());
+			organ.setSpeciesCode(req.getSpeciesId());
+			organ.setOrganizationId(organizationId);
+			//先查询是否有这个脏器
+			QueryWrapper<Organ> queryOrganEditWrapper = new QueryWrapper<>();
+			queryOrganEditWrapper.eq("organ_id", req.getOrganId());
+			//			queryOrganEditWrapper.eq("name", req.getOrganName());
+			queryOrganEditWrapper.eq("species_code", req.getSpeciesId());
+			queryOrganEditWrapper.eq("organization_id", organizationId);
+			List<Organ> organEditWrapperList = organMapper.selectList(queryOrganEditWrapper);
+			if(CollectionUtils.isNotEmpty(organEditWrapperList)){
+				Organ o1 = organEditWrapperList.get(0);
+				UpdateWrapper<Organ> updateWrapper = new UpdateWrapper();
+				updateWrapper.eq("organ_id", o1.getOrganId());
+				updateWrapper.eq("species_code", o1.getSpeciesCode());
+				updateWrapper.eq("organization_id", organizationId);
+				updateWrapper.set("name", req.getOrganName());
+				organMapper.update(null, updateWrapper);
 			}else{
-				indicator.setIndicatorName(req.getOrganName());
-				indicator.setIndicatorNameEn(req.getOrganName());
+				organ.setNameEn(req.getOrganName());
+				organMapper.insert(organ);
 			}
-			indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
-					indicator.setCreateBy(sysUser.getUserId());
-			//		indicator.setCreateBy(1L);
 
-			req.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
-			// 修改病理指标
-			indicatorService.updateIndicator(req);
-			return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
-		
+
+			MapConstant.ORGAN_MAP = selectMap();
+			MapConstant.ORGAN_MAP_EN = selectMapEn();
+			MapConstant.STRUCTURE_MAP = structureService.selectMap();
+			MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
+		}
+
+		//		indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
+		//		indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
+		if(indicatorType == 0){
+			indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
+			indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
+		}else{
+			indicator.setIndicatorName(req.getOrganName());
+			indicator.setIndicatorNameEn(req.getOrganName());
+		}
+		indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
+		indicator.setCreateBy(sysUser.getUserId());
+		//		indicator.setCreateBy(1L);
+
+		req.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
+		// 修改病理指标
+		indicatorService.updateIndicator(req);
+		return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+
 	}
 
 	@ApiOperation(value = "病理指标查重接口", notes = "ZMJ")
@@ -399,10 +356,10 @@ public class IndicatorController extends BaseController {
 	}
 
 
-//	@SneakyThrows
-//	@ApiOperation(value = "添加结构指标-New")
-//	@Log(title = "添加结构指标", menu = "结构指标", subMenu = "结构指标", businessType = BusinessType.INSERT)
-//	@PostMapping("/save")
+	//	@SneakyThrows
+	//	@ApiOperation(value = "添加结构指标-New")
+	//	@Log(title = "添加结构指标", menu = "结构指标", subMenu = "结构指标", businessType = BusinessType.INSERT)
+	//	@PostMapping("/save")
 	public R<String> save(@Validated @RequestBody IndicatorAddVO req) {
 		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 		int saveCheck = indicatorService.saveCheck(req);
