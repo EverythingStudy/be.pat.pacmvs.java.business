@@ -390,7 +390,9 @@ public class PathologicalController {
 			queryWrapper.eq("species_id", speciesId);
 			queryWrapper.eq("structure_id",structureId);
 			queryWrapper.eq("organization_id", organizationId);
-			List<Structure>  sIdList = structureService.list(queryWrapper);
+//			List<Structure>  sIdList = structureService.list(queryWrapper);
+			List<Map<String, Object>> sIdList = structureService.listMaps(queryWrapper);
+
 			if(CollectionUtils.isEmpty(sIdList)){
 				//structure表保存结构信息
 				List<Structure> structureNewList = new ArrayList<>();
