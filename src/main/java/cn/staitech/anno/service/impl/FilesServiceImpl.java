@@ -178,7 +178,10 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                 log.info("压缩文件删除失败:{}", zipFile.getAbsolutePath());
             }
 
-            // 删除空文件夹
+            // 如果根目录为空，删除空文件夹
+            if (zipFileSrc.listFiles().length == 0) {
+                zipFileSrc.delete();
+            }
 
         } else {
             throw new Exception(MessageSource.M("ZIP_FILE_UNZIP_FAILURE"));
@@ -272,20 +275,24 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         Image image = new Image();
         image.setMd5(md5);
         image.setImagePath(distPathStr);
+        image.setOrganizationId(organizationId);
 
         // 检查是否存在否合条件的记录 - 判断MD5、文件绝对路径是否存在 - 如果相同则直接删除源文件，不移动；如果不同则移动并添加新记录
         if (imageService.exists(image)) {
+            log.info("文件存在，删除当前文件 md5:{} organizationId:{} filepath:{}", md5, organizationId, file.getAbsolutePath());
             // 删除当前文件
             file.delete();
             return;
         }
+
+        // 移动文件 - StandardCopyOption.REPLACE_EXISTING选项表示如果目标文件已经存在，则覆盖原文件。
+        java.nio.file.Files.move(Paths.get(sourcePath), destPath, StandardCopyOption.REPLACE_EXISTING);
 
         image.setFormat(fileExt);
         image.setFileName(fileName.substring(0, fileName.lastIndexOf(CommonConstant.FILE_SUFFIX)));
         image.setImageName(fileName);
         image.setImageUrl(distPathStr);
         image.setFolderId(folderId);
-        image.setOrganizationId(organizationId);
         image.setTopicId(topicId);
         image.setTopicName(topicName);
         image.setCreateBy(createBy);
@@ -295,8 +302,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         image = imageTransfer(image);
 
         imageService.save(image);
-        // 移动文件 - StandardCopyOption.REPLACE_EXISTING选项表示如果目标文件已经存在，则覆盖原文件。
-        java.nio.file.Files.move(Paths.get(sourcePath), destPath, StandardCopyOption.REPLACE_EXISTING);
+        log.info("文件处理成功 {} {} => {}", image, sourcePath, distPathStr);
     }
 
 //    /**
@@ -528,9 +534,6 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
      * @return
      */
     public Image imageTransfer(Image image) throws IOException {
-
-        String basePath = "/home/pat_saas";
-
         if (org.apache.commons.lang3.StringUtils.isNotEmpty(image.getImagePath())) {
             // 步骤一：创建 File 对象
             File file = new File(image.getImagePath());

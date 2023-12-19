@@ -423,6 +423,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         LambdaQueryWrapper<Image> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Image::getMd5, image.getMd5());
         queryWrapper.eq(Image::getImagePath, image.getImagePath());
+        queryWrapper.eq(Image::getOrganizationId, image.getOrganizationId());
         queryWrapper.orderByDesc(Image::getImageId);
         queryWrapper.last("limit 1");
         Image oldImage = this.baseMapper.selectOne(queryWrapper);
@@ -454,7 +455,8 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         LambdaQueryWrapper<Image> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.select(Image::getImageId);
         queryWrapper.eq(Image::getMd5, image.getMd5());
-        queryWrapper.eq(Image::getImagePath, image.getImagePath());
+        // queryWrapper.eq(Image::getImagePath, image.getImagePath());
+        queryWrapper.eq(Image::getOrganizationId, image.getOrganizationId());
         queryWrapper.orderByDesc(Image::getImageId);
         queryWrapper.last("limit 1");
         if (this.baseMapper.selectOne(queryWrapper) != null) {

@@ -31,6 +31,7 @@ public class FolderServiceImpl extends ServiceImpl<FolderMapper, Folder> impleme
     public Folder selectOne(Folder folder) throws Exception {
         LambdaQueryWrapper<Folder> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Folder::getFolderUrl, folder.getFolderUrl());
+        queryWrapper.eq(Folder::getOrganizationId, folder.getOrganizationId());
         queryWrapper.orderByDesc(Folder::getFolderId);
         queryWrapper.last("limit 1");
         Folder destFolder = this.baseMapper.selectOne(queryWrapper);
