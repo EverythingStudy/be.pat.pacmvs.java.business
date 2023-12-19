@@ -304,15 +304,15 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
 
     private List<Marking> queryAnnotation(List<Long> slideIds, SlideQueryIn params) throws Exception {
         QueryWrapper<Marking> queryWrapper = Wrappers.query();
-//        queryWrapper.eq("annotation_type", "Draw");
-        queryWrapper.ne("annotation_type", "Measure");
+        queryWrapper.eq("annotation_type", "Draw");
+//        queryWrapper.ne("annotation_type", "Measure");
         queryWrapper.eq("project_id", params.getProjectId());
         if (slideIds != null) {
             queryWrapper.in("slide_id", slideIds);
         }
-//        if (params.getAnnoCategory() != null) {
-//            queryWrapper.eq("category_id", params.getAnnoCategory());
-//        }
+        if (params.getAnnoCategory() != null) {
+            queryWrapper.eq("category_id", params.getAnnoCategory());
+        }
         if (params.getAnnoUser() != null) {
             queryWrapper.eq("create_by", params.getAnnoUser());
         }
