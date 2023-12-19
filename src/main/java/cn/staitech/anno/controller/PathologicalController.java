@@ -174,14 +174,14 @@ public class PathologicalController {
 				if(j==1){
 					// ROA:标注区域
 					structureIdNew = structureId+CommonConstant.STRUCTURE_ROA;
-					structureNameNew = structureId+" 标注区域";
-					structureNameEnNew = structureId+CommonConstant.STRUCTURE_ROA;
+					structureNameNew = structureName+" 标注区域";
+					structureNameEnNew = structureName+CommonConstant.STRUCTURE_ROA;
 					type = CommonConstant.STRUCTURE_ROA;
 				}else if(j==2){
 					// ROE:考核区域
 					structureIdNew = structureId+CommonConstant.STRUCTURE_ROE;
-					structureNameNew = structureId+" 考核区域";
-					structureNameEnNew = structureId+CommonConstant.STRUCTURE_ROE;
+					structureNameNew = structureName+" 考核区域";
+					structureNameEnNew = structureName+CommonConstant.STRUCTURE_ROE;
 					type = CommonConstant.STRUCTURE_ROE;
 				}
 				structure.setStructureId(structureIdNew);
@@ -403,14 +403,14 @@ public class PathologicalController {
 					if(j==1){
 						// ROA:标注区域
 						structureIdNew = structureId+CommonConstant.STRUCTURE_ROA;
-						structureNameNew = structureId+" 标注区域";
-						structureNameEnNew = structureId+CommonConstant.STRUCTURE_ROA;
+						structureNameNew = structureName+" 标注区域";
+						structureNameEnNew = structureName+CommonConstant.STRUCTURE_ROA;
 						type = CommonConstant.STRUCTURE_ROA;
 					}else if(j==2){
 						// ROE:考核区域
 						structureIdNew = structureId+CommonConstant.STRUCTURE_ROE;
-						structureNameNew = structureId+" 考核区域";
-						structureNameEnNew = structureId+CommonConstant.STRUCTURE_ROE;
+						structureNameNew = structureName+" 考核区域";
+						structureNameEnNew = structureName+CommonConstant.STRUCTURE_ROE;
 						type = CommonConstant.STRUCTURE_ROE;
 					}
 
