@@ -207,6 +207,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
      * @throws Exception
      */
     private void processDir(Long topicId, String topicName, Long filesId, Long createBy, Long organizationId, String destDirRootPath, File file) throws Exception {
+        log.info("processDir - 处理文件夹:{}", organizationId, file.getAbsolutePath());
         File[] subFileArray = file.listFiles();
         if (subFileArray.length == 0) {
             file.delete();
@@ -287,7 +288,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         // 检查是否存在否合条件的记录 - 判断MD5、文件绝对路径是否存在 - 如果相同则直接删除源文件，不移动；如果不同则移动并添加新记录
         if (imageService.exists(image)) {
             log.info("文件存在，删除当前文件 md5:{} organizationId:{} filepath:{}", md5, organizationId, file.getAbsolutePath());
-            // 删除当前文件
+            // 删除当前源文件
             file.delete();
             return;
         }
@@ -310,7 +311,8 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
 
         imageService.save(image);
         log.info("文件处理成功 {} {} => {}", image, sourcePath, distPathStr);
-        // 删除空文件夹
+
+        // 删除空文件夹(目录文件夹)
         removeEmptyDir(destDir);
     }
 
@@ -338,8 +340,10 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                 // 处理ZIP重复不覆盖逻辑
                 String entryName = entry.getName();
 
-                String entryNamePath = entry.getName().substring(entry.getName().indexOf("/"), entryName.length());
-                String filePath = destDirRoot + entryNamePath;
+//                String entryNamePath = entry.getName().substring(entry.getName().indexOf("/"), entryName.length());
+//                String filePath = destDirRoot + entryNamePath;
+
+                String filePath = destDirRoot + entryName;
 
                 File file = new File(filePath);
 
@@ -392,7 +396,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
             String folderName = simpleDateFormat.format(new Date());
             String uuid = IdUtils.randomUUID();
-            String filePathStr = folderName + "/" + uuid + "/0.jpg";
+            String filePathStr = folderName + "/" + uuid + ".jpg";
             String thumbPath = "/file/statics/" + OrganizationUtils.geNumber(image.getOrganizationId()) + "/thumbnail/" + filePathStr;
             image.setThumbUrl(thumbPath);
             String absFilePath = thumbPath.replace("/file/statics", "/home/pat_saas");
