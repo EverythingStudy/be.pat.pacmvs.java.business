@@ -312,6 +312,13 @@ public class PathologicalController {
 		//根据标注id获取标注类别详情
 		PathologicalIndicatorCategory categoryList = pathologicalIndicatorCategoryService.selectByPrimaryKey(
 				categoryId);
+		if(null != categoryList){
+			String structureId = categoryList.getStructureId();
+			List<Structure> list = structureService.getListByStructureId(structureId);
+			if(CollectionUtils.isNotEmpty(list)){
+				categoryList.setStructureName(list.get(0).getName());
+			}
+		}
 		return R.ok(categoryList);
 	}
 
