@@ -1,4 +1,4 @@
-package cn.staitech.anno.vo.Species;
+package cn.staitech.anno.vo.species;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

@@ -17,7 +17,7 @@ import cn.staitech.anno.domain.Species;
 import cn.staitech.anno.mapper.SpeciesMapper;
 import cn.staitech.anno.service.SpeciesService;
 import cn.staitech.anno.utils.MessageSource;
-import cn.staitech.anno.vo.Species.InsertSpeciesVO;
+import cn.staitech.anno.vo.species.InsertSpeciesVO;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 

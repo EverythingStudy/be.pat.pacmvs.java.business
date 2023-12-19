@@ -1,4 +1,4 @@
-package cn.staitech.anno.vo.specialimageanno;
+package cn.staitech.anno.vo.annotation;
 
 import cn.staitech.anno.vo.marking.PointCount;
 import lombok.Data;

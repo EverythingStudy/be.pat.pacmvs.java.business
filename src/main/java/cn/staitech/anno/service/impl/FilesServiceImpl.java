@@ -216,6 +216,8 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                     processFile(topicId, topicName, filesId, createBy, organizationId, destDirRootPath, subFile);
                 } else {
                     processDir(topicId, topicName, filesId, createBy, organizationId, destDirRootPath, subFile);
+                    // 删除空文件件
+                    removeEmptyDir(subFile);
                 }
             }
         }

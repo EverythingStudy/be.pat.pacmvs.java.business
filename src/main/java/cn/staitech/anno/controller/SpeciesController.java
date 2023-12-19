@@ -17,7 +17,7 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import cn.staitech.anno.domain.Species;
 import cn.staitech.anno.service.SpeciesService;
 import cn.staitech.anno.utils.MessageSource;
-import cn.staitech.anno.vo.Species.InsertSpeciesVO;
+import cn.staitech.anno.vo.species.InsertSpeciesVO;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
@@ -52,11 +52,11 @@ public class SpeciesController extends BaseController {
     public R<List<Species>> list() throws ExecutionException, InterruptedException {
         LambdaQueryWrapper<Species> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Species::getOrganizationId, SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-        
+
         List<Species> list = speciesService.list(queryWrapper);
         return R.ok(list, MessageSource.M("OPERATE_SUCCEED"));
     }
-    
+
     @Log(title = "种属增加", businessType = BusinessType.INSERT)
     @ApiOperation(value = "种属增加")
     @PostMapping("/add")

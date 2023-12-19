@@ -1,4 +1,4 @@
-package cn.staitech.anno.vo.specialimageanno;
+package cn.staitech.anno.vo.annotation;
 
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModelProperty;
