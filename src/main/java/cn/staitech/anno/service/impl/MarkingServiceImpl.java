@@ -342,9 +342,9 @@ public class MarkingServiceImpl implements MarkingService {
 		}
 		Project project = projectMapperV1.selectById(markingBy.getProject_id());
 		// 验证集项目中不能修改他人轮廓
-		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
-			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
-		}
+//		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
+//			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
+//		}
 		return MarkingUtils.updateOperationVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation());
 	}
 
@@ -363,9 +363,9 @@ public class MarkingServiceImpl implements MarkingService {
 		}
 		Project project = projectMapperV1.selectById(markingBy.getProject_id());
 		// 验证集项目中不能修改他人轮廓
-		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
-			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
-		}
+//		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
+//			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
+//		}
 		// 合并 - 校验飞点 TODO: MarkingUtils.updatePolygonPoint(jsonObject);
 		cn.staitech.anno.project.domain.Marking markingBys = MarkingUtils.updateVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation(), req.getCheck(), req.getResolution());
 		JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(markingBys.getMarkingId()));
@@ -404,9 +404,9 @@ public class MarkingServiceImpl implements MarkingService {
 		}
 		Project project = projectMapperV1.selectById(markingBy.getProject_id());
 		//验证集项目中不能修改他人轮廓
-		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
-			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
-		}
+//		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
+//			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
+//		}
 		// 查询切片表中信息==》先走缓存
 		Slide slide = redisService.getCacheObject(CommonConstant.ANNO_SLIDE + markingBy.getSlide_id());
 		if (null == slide) {
