@@ -318,6 +318,7 @@ public class IndicatorController extends BaseController {
 		}else{
 			indicator.setIndicatorName(req.getOrganName());
 			indicator.setIndicatorNameEn(req.getOrganName());
+			req.setIndicatorName(req.getOrganName());
 		}
 		indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
 		indicator.setCreateBy(sysUser.getUserId());
