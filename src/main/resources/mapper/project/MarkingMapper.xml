@@ -58,4 +58,19 @@
     <select id="selectMarkings" resultMap="BaseResultMap">
         select * from tb_marking_tmp
     </select>
+    
+    <select id="markingList" parameterType="cn.staitech.anno.project.domain.Marking" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from tb_marking
+            <where>
+                <if test="slideId != null">
+                    AND slide_id = #{slideId}
+                </if>
+                <if test="categoryId != null">
+                    AND category_id = #{categoryId}
+                </if>
+                <if test="projectId != null">
+                    AND project_id = #{projectId}
+                </if>
+            </where>
+    </select>
 </mapper>
