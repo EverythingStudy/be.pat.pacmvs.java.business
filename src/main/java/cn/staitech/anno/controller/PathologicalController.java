@@ -90,9 +90,9 @@ public class PathologicalController {
 	 * 图层顺序 orderNumber
 	 * 结构指标ID	indicatorId
 	 */
-	@ApiOperation(value = "标签添加接口", notes = "wangfeng")
-	@RequiresPermissions("project:pathology:tabadd")
-	@Log(title = "配置标签-新增标签", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.INSERT)
+//	@ApiOperation(value = "标签添加接口", notes = "wangfeng")
+//	@RequiresPermissions("project:pathology:tabadd")
+//	@Log(title = "配置标签-新增标签", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.INSERT)
 	@PostMapping("/add")
 	public R<String> add(@Validated @RequestBody PathologicalIndicatorCategoryVO vo) {
 		//标签类型 0:下拉筛选标签；1:自定义标签
@@ -112,6 +112,9 @@ public class PathologicalController {
 			return R.fail(MessageSource.M("INDICATOR_ABSENT"));
 		}
 		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+		Long currentUserId = SecurityUtils.getLoginUser().getSysUser().getUserId();
+//		Long organizationId = 1L;
+//		Long currentUserId = 1L;
 		//验证结构是否已经存在 
 		PathologicalIndicatorCategory categoryS = new PathologicalIndicatorCategory();
 		categoryS.setIndicatorId(indicatorId);
@@ -140,13 +143,15 @@ public class PathologicalController {
 			queryWrapper.eq("organ_id", organId);
 			queryWrapper.eq("structure_id",structureId);
 			queryWrapper.eq("organization_id", organizationId);
-			List<Structure>  sIdList = structureService.list(queryWrapper);
+			List<Map<String, Object>> sIdList = structureService.listMaps(queryWrapper);
+//			List<Structure>  sIdList2 = structureService.list(queryWrapper);
 			if(CollectionUtils.isNotEmpty(sIdList)){
 				return R.fail("STRUCTUREID EXIST");
 			}
 			queryWrapper.eq("structure_id",null);
 			queryWrapper.eq("name",structureName);
-			List<Structure>  sNameList = structureService.list(queryWrapper);
+//			List<Structure>  sNameList = structureService.list(queryWrapper);
+			List<Map<String, Object>> sNameList = structureService.listMaps(queryWrapper);
 			if(CollectionUtils.isNotEmpty(sNameList)){
 				return R.fail("STRUCTURENAME EXIST");
 			}
@@ -205,7 +210,6 @@ public class PathologicalController {
 			structureIdList.add(structureRoeId);
 		}
 		Date currentDate = DateUtil.date();
-		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 		Snowflake snowflake = new Snowflake();
 		String categoryCode = snowflake.nextIdStr();
 		for(int i=0;i<structureIdList.size();i++){
@@ -229,8 +233,8 @@ public class PathologicalController {
 			category.setCategoryName(categoryName);
 			// 生成完整编码
 			category.setNumber(currentStructureId);
-			category.setCreateBy(sysUser.getUserId());
-			category.setOrganizationId(sysUser.getOrganizationId());
+			category.setCreateBy(currentUserId);
+			category.setOrganizationId(organizationId);
 			category.setCreateTime(currentDate);
 			category.setCategoryCode(categoryCode);
 			if(currentStructureId.endsWith("ROA")){
