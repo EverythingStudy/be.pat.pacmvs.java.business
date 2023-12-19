@@ -79,9 +79,9 @@ public class IndicatorController extends BaseController {
 			indicatorType = 0;
 		}
 
-		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-		Long organizationId = sysUser.getOrganizationId();
-		//		Long organizationId = 1L;
+//		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+//		Long organizationId = sysUser.getOrganizationId();
+				Long organizationId = 1L;
 		Indicator indicator = new Indicator();
 		indicator.setSpeciesId(req.getSpeciesId());
 		indicator.setOrganId(req.getOrganId());
@@ -150,8 +150,8 @@ public class IndicatorController extends BaseController {
 			indicator.setIndicatorNameEn(req.getOrganName());
 		}
 		indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
-		indicator.setCreateBy(sysUser.getUserId());
-		//		indicator.setCreateBy(1L);
+//		indicator.setCreateBy(sysUser.getUserId());
+				indicator.setCreateBy(1L);
 		//20231107wd结构指标关联机构
 		indicator.setOrganizationId(organizationId);
 		indicator.setIndicatorType(indicatorType);
@@ -295,6 +295,8 @@ public class IndicatorController extends BaseController {
 				updateWrapper.eq("species_code", o1.getSpeciesCode());
 				updateWrapper.eq("organization_id", organizationId);
 				updateWrapper.set("name", req.getOrganName());
+				updateWrapper.set("name_en", req.getOrganName());
+
 				organMapper.update(null, updateWrapper);
 			}else{
 				organ.setNameEn(req.getOrganName());
