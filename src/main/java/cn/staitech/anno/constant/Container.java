@@ -40,6 +40,23 @@ public class Container {
             .put(3, "Unavailable")
             .put(4, "Available")
             .build();
+    
+    
+    /**
+     * 专题用户状态 - EN：0开启，1禁用 SpecialRoleUser
+     */
+    public static final Map<Long, String> SPECIAL_ROLE_STATUS_MAP_EN = new ImmutableMap.Builder<Long, String>()
+            .put(0L, "ON")
+            .put(1L, "FORBIDDEN")
+            .build();
+    
+    /**
+     * 专题用户状态：0开启，1禁用 SpecialRoleUser
+     */
+    public static final Map<Long, String> SPECIAL_ROLE_STATUS_MAP = new ImmutableMap.Builder<Long, String>()
+            .put(0L, "开启")
+            .put(1L, "禁用")
+            .build();
 
     /**
      * 项目状态
