@@ -598,11 +598,11 @@ public class PathologicalController {
 			for(PathologicalIndicatorCategory perCategory:categoryList){
 				Long perCategoryId = perCategory.getCategoryId();
 				//查询标注是否关联标签
-				Integer num = pathologicalIndicatorCategoryService.selectLabelNum(perCategoryId);
+				/*Integer num = pathologicalIndicatorCategoryService.selectLabelNum(perCategoryId);
 				if (0 < num) {
 					tag = false;
 					break;
-				}
+				}*/
 				// 查询标注数量，大于0不可删除
 				QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
 				markingQueryWrapper.eq("category_id",perCategoryId);
