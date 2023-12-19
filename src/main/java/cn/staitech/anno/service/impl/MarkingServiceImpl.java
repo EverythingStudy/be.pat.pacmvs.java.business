@@ -281,17 +281,17 @@ public class MarkingServiceImpl implements MarkingService {
 			marking.setAnnotation_owner(user.getUserName());
 		}
 		// 查询
-		int number = 1;
-		QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
+//		int number = 1;
+//		QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
 		// 根据切片和测量轮廓名称查询最大值
-		markingQueryWrapper.eq("slide_id", req.getSlide_id()).eq("measure_name", req.getMeasure_name()).orderByDesc("create_time").last("limit 1");
-		Marking markingBy = markingMapper.selectOne(markingQueryWrapper);
-		if (markingBy != null) {
-			if (markingBy.getNumber() != null) {
-				number += markingBy.getNumber();
-			}
-		}
-		marking.setNumber(number);
+//		markingQueryWrapper.eq("slide_id", req.getSlide_id()).eq("measure_name", req.getMeasure_name()).orderByDesc("create_time").last("limit 1");
+//		Marking markingBy = markingMapper.selectOne(markingQueryWrapper);
+//		if (markingBy != null) {
+//			if (markingBy.getNumber() != null) {
+//				number += markingBy.getNumber();
+//			}
+//		}
+//		marking.setNumber(number);
 		marking.setProject_id(Long.valueOf(slideBy.getProjectId()));
 		//加image缓存
 		/*Image image = redisService.getCacheObject(CommonConstant.ANNO_IMAGE+slideBy.getImageId());
@@ -370,10 +370,10 @@ public class MarkingServiceImpl implements MarkingService {
 		cn.staitech.anno.project.domain.Marking markingBys = MarkingUtils.updateVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation(), req.getCheck(), req.getResolution());
 		JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(markingBys.getMarkingId()));
 		// 校验合并后的图形是否正常
-		MarkingUtils.updatePoint(jsonObject);
+		JSONObject geoJson = MarkingUtils.updatePoint(jsonObject);
 
 		cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
-		marking.setGeometry(jsonObject);
+		marking.setGeometry(geoJson);
 		marking.setArea(markingBys.getArea());
 		marking.setPerimeter(markingBys.getPerimeter());
 		marking.setMarkingId(req.getMarking_id());
@@ -386,7 +386,7 @@ public class MarkingServiceImpl implements MarkingService {
 		// BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features);
 		BroadcastVO broadcastVO = SendMessage.sendOneMessagesByAnnoType(CommonConstant.ANNO_TYPE_DRAW,UPDATE_STATUS, features);
 		NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
-		return jsonObject;
+		return geoJson;
 	}
 
 	//@Async

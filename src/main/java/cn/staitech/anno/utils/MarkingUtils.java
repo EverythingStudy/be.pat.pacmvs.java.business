@@ -68,7 +68,7 @@ public class MarkingUtils {
      * @throws Exception
      */
     public static double updateOperationVerify(JSONObject oldLocations, JSONObject newLocations, String operation) throws Exception {
-        try {
+//        try {
             String oldLocation = WktUtil.jsonToWkt(oldLocations);
 
             String newLocation = WktUtil.jsonToWkt(newLocations);
@@ -125,9 +125,9 @@ public class MarkingUtils {
                 percentage = geometry2.getArea() / geometry1.getArea();
             }
             return percentage;
-        } catch (Exception e) {
-            throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
-        }
+//        } catch (Exception e) {
+//            throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
+//        }
 
     }
 
