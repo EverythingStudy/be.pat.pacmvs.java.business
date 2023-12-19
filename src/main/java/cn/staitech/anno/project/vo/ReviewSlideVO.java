@@ -185,4 +185,7 @@ public class ReviewSlideVO {
      * 所在主机ID
      */
     private Integer hostId;
+    
+    @ApiModelProperty("单审状态 1：未审 2：已审")
+    private String selfReviewStatus;
 }

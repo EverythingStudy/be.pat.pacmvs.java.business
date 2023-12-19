@@ -61,22 +61,23 @@ public class Container {
             .put(4, "Done")
             .build();
 
+    
     /**
-     * 专题用户状态：0开启，1禁用 SpecialRoleUser
+     * 单审状态
      */
-    public static final Map<Long, String> SPECIAL_ROLE_STATUS_MAP = new ImmutableMap.Builder<Long, String>()
-            .put(0L, "开启")
-            .put(1L, "禁用")
+    public static final Map<Integer, String> SELF_REVIEW_STATUS = new ImmutableMap.Builder<Integer, String>()
+            .put(1, "未审")
+            .put(2, "已审")
             .build();
 
     /**
-     * 专题用户状态 - EN：0开启，1禁用 SpecialRoleUser
+     *  单审状态 - EN
      */
-    public static final Map<Long, String> SPECIAL_ROLE_STATUS_MAP_EN = new ImmutableMap.Builder<Long, String>()
-            .put(0L, "ON")
-            .put(1L, "FORBIDDEN")
+    public static final Map<Integer, String> SELF_REVIEW_STATUS_EN = new ImmutableMap.Builder<Integer, String>()
+    		.put(1, "Unreviewed")
+            .put(2, "Reviewed")
             .build();
-
+    
     /**
      * 颜色类型
      */
