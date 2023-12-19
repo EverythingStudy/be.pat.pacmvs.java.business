@@ -202,10 +202,10 @@
             <if test="params.reviewStatus != null">
                 <choose>
                     <when test="params.reviewStatus == 1">
-                        AND (r.review_count <![CDATA[<]]>3 or r.review_count is null)
+                        AND (r3.review_count <![CDATA[<]]>3 or r3.review_count is null)
                     </when>
                     <otherwise>
-                        AND r.review_count >2
+                        AND r3.review_count >2
                     </otherwise>
                 </choose>
             </if>
