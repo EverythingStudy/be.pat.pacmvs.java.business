@@ -15,6 +15,10 @@ import java.util.Map;
 @Component
 public class MapConstant {
     /**
+     * 机构
+     */
+    public static Map<Long, String> ORGANIZATION_MAP;
+    /**
      * 种属
      */
     public static Map<String, String> SPECIES_MAP;
@@ -30,6 +34,9 @@ public class MapConstant {
     public static Map<String, String> ORGAN_MAP_EN;
     public static Map<String, String> STRUCTURE_MAP;
     public static Map<String, String> STRUCTURE_MAP_EN;
+
+    @Resource
+    private SysOrganizationService sysOrganizationService;
     @Resource
     private SpeciesService speciesService;
     @Resource
@@ -44,6 +51,20 @@ public class MapConstant {
     private OrganService organService;
     @Resource
     private StructureService structureService;
+
+    /**
+     * 获取种属名称
+     *
+     * @param organizationId
+     * @return
+     */
+    public static String getOrganizationName(Long organizationId) {
+        if (ORGANIZATION_MAP.containsKey(organizationId)) {
+
+            return ORGANIZATION_MAP.get(organizationId);
+        }
+        return "";
+    }
 
     /**
      * 获取种属名称
@@ -216,9 +237,12 @@ public class MapConstant {
         }
         return "";
     }
-    
+
     @PostConstruct
     public void init() {
+        // 机构
+        ORGANIZATION_MAP = sysOrganizationService.selectMap();
+
         // 分组
         GROUP_MAP = groupService.selectMap();
 
@@ -246,7 +270,4 @@ public class MapConstant {
         STRUCTURE_MAP = structureService.selectMap();
         STRUCTURE_MAP_EN = structureService.selectMapEn();
     }
-    
-  
-
 }

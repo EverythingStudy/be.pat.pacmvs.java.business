@@ -104,12 +104,10 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
             PageMaster pageMaster = new PageMaster<>(list);
             return pageMaster;
         });
-        // 异步查询所有的机构Map
-        CompletableFuture<Map<Long, String>> mapFuture = CompletableFuture.supplyAsync(() -> sysOrganizationService.selectMap());
 
         PageMaster<Image> pageMaster = listFuture.get();
         List<Image> list = pageMaster.getList();
-        Map<Long, String> map = mapFuture.get();
+
         // response List
         List<ImageListOutVO> respList = new ArrayList<>();
 
@@ -139,9 +137,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                 }
 
                 // 匹配机构名称
-                if (map.containsKey(in.getOrganizationId())) {
-                    out.setOrganizationName(map.get(in.getOrganizationId()));
-                }
+                out.setOrganizationName(MapConstant.getOrganizationName(in.getOrganizationId()));
 
                 // 图片类型
                 if (bizType == 7) {
@@ -215,12 +211,10 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
             PageMaster pageMaster = new PageMaster<>(list);
             return pageMaster;
         });
-        // 异步查询所有的机构Map
-        CompletableFuture<Map<Long, String>> mapFuture = CompletableFuture.supplyAsync(() -> sysOrganizationService.selectMap());
 
         PageMaster<Image> pageMaster = listFuture.get();
         List<Image> list = pageMaster.getList();
-        Map<Long, String> map = mapFuture.get();
+
         // response List
         List<ImageListOutVO> respList = new ArrayList<>();
 
@@ -250,10 +244,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                 }
 
                 // 匹配机构名称
-                if (map.containsKey(in.getOrganizationId())) {
-                    out.setOrganizationName(map.get(in.getOrganizationId()));
-                }
-
+                out.setOrganizationName(MapConstant.getOrganizationName(in.getOrganizationId()));
 
                 if (vo.getChoiceState() == null) {
                     // 查询选中状态
@@ -412,39 +403,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     }
 
     /**
-     * 判断MD5、文件绝对路径是否存在 - 如果相同则直接删除源文件，不移动；如果不同则移动并添加新记录
-     *
-     * @param image
-     * @return
-     * @throws Exception
-     */
-    @Override
-    public Image selectOne(Image image) throws Exception {
-        LambdaQueryWrapper<Image> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Image::getMd5, image.getMd5());
-        queryWrapper.eq(Image::getImagePath, image.getImagePath());
-        queryWrapper.eq(Image::getOrganizationId, image.getOrganizationId());
-        queryWrapper.orderByDesc(Image::getImageId);
-        queryWrapper.last("limit 1");
-        Image oldImage = this.baseMapper.selectOne(queryWrapper);
-
-        // 有则返回
-        if (oldImage != null) {
-            return oldImage;
-        } else {
-            // 无则添加
-            try {
-                image.setCreateTime(new Date());
-                this.baseMapper.insert(image);
-            } catch (DuplicateKeyException e) {
-                log.info("添加图片-主键冲突 {}", e);
-                return this.baseMapper.selectOne(queryWrapper);
-            }
-        }
-        return image;
-    }
-
-    /**
      * 检查是否存在否合条件的记录
      *
      * @param image
@@ -455,7 +413,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         LambdaQueryWrapper<Image> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.select(Image::getImageId);
         queryWrapper.eq(Image::getMd5, image.getMd5());
-        // queryWrapper.eq(Image::getImagePath, image.getImagePath());
         queryWrapper.eq(Image::getOrganizationId, image.getOrganizationId());
         queryWrapper.orderByDesc(Image::getImageId);
         queryWrapper.last("limit 1");
