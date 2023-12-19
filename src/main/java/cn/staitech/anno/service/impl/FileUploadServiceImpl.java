@@ -149,7 +149,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 
         String fileName = fileUploadVO.getFileName();
         // 获取文件的后缀名
-        String suffixName = fileName.substring(fileName.lastIndexOf("."));
+        String suffixName = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
         // 文件名称
         String filePath = dirPath + File.separator + fileName;
 
@@ -158,7 +158,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         if (!file.exists()) {
             fileUploadVO.getMultipartFile().transferTo(Paths.get(filePath));
         } else {
-            // 删除文件
+            // 先删除原文件，再存
             file.delete();
             fileUploadVO.getMultipartFile().transferTo(Paths.get(filePath));
         }
