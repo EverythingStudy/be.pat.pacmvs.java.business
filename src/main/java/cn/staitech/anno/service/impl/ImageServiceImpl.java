@@ -335,7 +335,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
      * @param ids
      * @return
      */
-    @Async
     @Override
     public List<Long> deleteBatchIds(ImageBatchIdsVO ids) throws Exception {
         Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
@@ -369,22 +368,9 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                 // 删除SQL记录
                 imageMapper.deleteById(imageId);
 
-                // 若只有一条记录,删除文件
+                // 如果只有一条记录,删除文件
                 if (imageList.size() == 1) {
-                    retryService.deleteFileRetry(new File(image.getImagePath()));
-
-                    if (StringUtils.isNotEmpty(image.getImageUrl())) {
-                        retryService.deleteFileRetry(new File(image.getImageUrl()));
-                    }
-                    if (StringUtils.isNotEmpty(image.getThumbUrl())) {
-                        retryService.deleteFileRetry(new File(image.getThumbUrl().replace("/file/statics", "/home/pat_saas")));
-                    }
-                    if (StringUtils.isNotEmpty(image.getMacroUrl())) {
-                        retryService.deleteFileRetry(new File(image.getMacroUrl().replace("/file/statics", "/home/pat_saas")));
-                    }
-                    if (StringUtils.isNotEmpty(image.getLabelUrl())) {
-                        retryService.deleteFileRetry(new File(image.getLabelUrl().replace("/file/statics", "/home/pat_saas")));
-                    }
+                    removeImageFile(image);
                 }
             }
         }
@@ -409,7 +395,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     }
 
     /**
-     * 检查是否存在否合条件的记录
+     * 检查是否存在符合条件的记录
      *
      * @param image
      * @return
@@ -426,5 +412,29 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
             return true;
         }
         return false;
+    }
+
+    /**
+     * 异步删除切片物理文件
+     *
+     * @param image
+     * @throws Exception
+     */
+    @Async
+    private void removeImageFile(Image image) throws Exception {
+        retryService.deleteFileRetry(new File(image.getImagePath()));
+
+        if (StringUtils.isNotEmpty(image.getImageUrl())) {
+            retryService.deleteFileRetry(new File(image.getImageUrl()));
+        }
+        if (StringUtils.isNotEmpty(image.getThumbUrl())) {
+            retryService.deleteFileRetry(new File(image.getThumbUrl().replace("/file/statics", "/home/pat_saas")));
+        }
+        if (StringUtils.isNotEmpty(image.getMacroUrl())) {
+            retryService.deleteFileRetry(new File(image.getMacroUrl().replace("/file/statics", "/home/pat_saas")));
+        }
+        if (StringUtils.isNotEmpty(image.getLabelUrl())) {
+            retryService.deleteFileRetry(new File(image.getLabelUrl().replace("/file/statics", "/home/pat_saas")));
+        }
     }
 }
