@@ -33,10 +33,13 @@ public class RetryServiceImpl implements RetryService {
     @Override
     @Retryable(value = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 2000, multiplier = 1.5))
     public boolean deleteFileRetry(File file) throws Exception {
-        if (file.exists() && file.delete()) {
-            return true;
+        if (file.exists()) {
+            if (file.delete()) {
+                return true;
+            }
+            throw new Exception("文件删除失败" + file.getAbsolutePath());
         }
-        throw new Exception("文件删除失败" + file.getAbsolutePath());
+        return false;
     }
 
     /**
