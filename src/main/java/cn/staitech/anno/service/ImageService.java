@@ -73,7 +73,7 @@ public interface ImageService extends IService<Image> {
      */
     List<Image> selectImageAnnotationList(Image image);
 
-    List<Long> deleteBatchIds(ImageBatchIdsVO ids) throws InterruptedException;
+    List<Long> deleteBatchIds(ImageBatchIdsVO ids) throws Exception;
 
     int updateById(ImageUpdateVO vo) throws Exception;
 

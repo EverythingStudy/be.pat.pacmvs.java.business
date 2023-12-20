@@ -110,7 +110,7 @@ public class ImageController extends BaseController {
     @ApiOperation(value = "批量删除切片-物理删除")
     @RequiresPermissions(value = {"section:ophthalmology:del", "section:ophthalmology:remove", "projectConfig:spliceImgConfig:batchDelete"}, logical = Logical.OR)
     @PostMapping("/deleteBatchIds")
-    public R<List<Long>> deleteBatchIds(@Validated @RequestBody ImageBatchIdsVO request) throws InterruptedException {
+    public R<List<Long>> deleteBatchIds(@Validated @RequestBody ImageBatchIdsVO request) throws Exception {
         List<Long> data = imageService.deleteBatchIds(request);
         return R.ok(data, MessageSource.M("OPERATE_SUCCEED"));
     }

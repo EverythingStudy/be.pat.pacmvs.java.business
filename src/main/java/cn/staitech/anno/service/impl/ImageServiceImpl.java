@@ -9,8 +9,8 @@ import cn.staitech.anno.domain.SlidePrediction;
 import cn.staitech.anno.mapper.ImageMapper;
 import cn.staitech.anno.mapper.SlidePredictionMapper;
 import cn.staitech.anno.service.ImageService;
+import cn.staitech.anno.service.RetryService;
 import cn.staitech.anno.service.SlideService;
-import cn.staitech.anno.service.SysOrganizationService;
 import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
@@ -25,13 +25,16 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DuplicateKeyException;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -41,7 +44,7 @@ import static cn.staitech.common.security.utils.SecurityUtils.isAdmin;
  * 切片列表（原图像）服务层实现
  *
  * @author wangfeng
- * @date 2023/06/01
+ * @date 2023/12/20
  */
 @Slf4j
 @Service
@@ -51,11 +54,11 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     @Resource
     private SlideService slideService;
     @Resource
-    private SysOrganizationService sysOrganizationService;
-    @Resource
     private AsyncTask asyncTask;
     @Resource
     private SlidePredictionMapper slidePredictionMapper;
+    @Resource
+    private RetryService retryService;
 
     /**
      * 切片状态列表 .
@@ -345,8 +348,10 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
      * @param ids
      * @return
      */
+    @Async
     @Override
-    public List<Long> deleteBatchIds(ImageBatchIdsVO ids) throws InterruptedException {
+    public List<Long> deleteBatchIds(ImageBatchIdsVO ids) throws Exception {
+        Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
         // 不可删除的列表
         List<Long> forbidIds = new ArrayList<>();
         for (Long imageId : ids.getImageIdList()) {
@@ -368,15 +373,19 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                     continue;
                 }
 
-                // 查询相同路径的图像数量
+                // 查询当前机构下相同路径的图像数量
                 QueryWrapper<Image> imageQueryWrapper = new QueryWrapper<>();
                 imageQueryWrapper.eq("image_path", image.getImagePath().trim());
+                imageQueryWrapper.eq("organization_id", organizationId);
                 List<Image> imageList = imageMapper.selectList(imageQueryWrapper);
 
                 // 只有一条记录,SQL记录和文件全删除
                 if (imageList.size() == 1) {
-                    asyncTask.deleteFileTask(new File(image.getImagePath()));
-                    asyncTask.deleteFileTask(new File(image.getImageUrl()));
+                    retryService.deleteFileRetry(new File(image.getImagePath()));
+                    retryService.deleteFileRetry(new File(image.getImageUrl()));
+                    retryService.deleteFileRetry(new File(image.getThumbUrl()));
+                    retryService.deleteFileRetry(new File(image.getMacroUrl()));
+                    retryService.deleteFileRetry(new File(image.getLabelUrl()));
                 }
 
                 imageMapper.deleteById(imageId);

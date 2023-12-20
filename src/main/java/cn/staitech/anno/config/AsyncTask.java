@@ -72,30 +72,6 @@ public class AsyncTask {
     @Resource
     private MarkingMapperV1 markingMapperV1;
 
-    /**
-     * 异步删除文件
-     *
-     * @param file
-     * @throws InterruptedException
-     */
-    @Async
-    public void deleteFileTask(File file) throws InterruptedException {
-        long startTime = System.currentTimeMillis();
-        AtomicInteger count = new AtomicInteger(0);
-        for (; ; ) {
-            Thread.sleep(1000);
-            if (file.exists() && file.delete()) {
-                long endTime = System.currentTimeMillis();
-                log.info("[{}] async delete file success:{},cost {} ms,cas count:{}", Thread.currentThread().getName(), file.getAbsolutePath(), endTime - startTime, count.getAndIncrement());
-                break;
-            }
-            if (count.getAndIncrement() > 5000) {
-                break;
-            }
-        }
-    }
-
-
     @SneakyThrows
     @Async
     //TODO1 解析json过程中无法标注
