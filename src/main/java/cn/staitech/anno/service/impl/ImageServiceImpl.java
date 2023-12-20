@@ -1,6 +1,5 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.config.AsyncTask;
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.Image;
@@ -53,8 +52,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     private ImageMapper imageMapper;
     @Resource
     private SlideService slideService;
-    @Resource
-    private AsyncTask asyncTask;
     @Resource
     private SlidePredictionMapper slidePredictionMapper;
     @Resource
@@ -379,16 +376,25 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                 imageQueryWrapper.eq("organization_id", organizationId);
                 List<Image> imageList = imageMapper.selectList(imageQueryWrapper);
 
-                // 只有一条记录,SQL记录和文件全删除
+                // 删除SQL记录
+                imageMapper.deleteById(imageId);
+
+                // 若只有一条记录,删除文件
                 if (imageList.size() == 1) {
                     retryService.deleteFileRetry(new File(image.getImagePath()));
-                    retryService.deleteFileRetry(new File(image.getImageUrl()));
-                    retryService.deleteFileRetry(new File(image.getThumbUrl()));
-                    retryService.deleteFileRetry(new File(image.getMacroUrl()));
-                    retryService.deleteFileRetry(new File(image.getLabelUrl()));
+                    if (!image.getImageUrl().isEmpty()) {
+                        retryService.deleteFileRetry(new File(image.getImageUrl()));
+                    }
+                    if (!image.getThumbUrl().isEmpty()) {
+                        retryService.deleteFileRetry(new File(image.getThumbUrl().replace("/file/statics", "/home/pat_saas")));
+                    }
+                    if (!image.getMacroUrl().isEmpty()) {
+                        retryService.deleteFileRetry(new File(image.getMacroUrl().replace("/file/statics", "/home/pat_saas")));
+                    }
+                    if (!image.getLabelUrl().isEmpty()) {
+                        retryService.deleteFileRetry(new File(image.getLabelUrl().replace("/file/statics", "/home/pat_saas")));
+                    }
                 }
-
-                imageMapper.deleteById(imageId);
             }
         }
         return forbidIds;
@@ -430,5 +436,4 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         }
         return false;
     }
-
 }
