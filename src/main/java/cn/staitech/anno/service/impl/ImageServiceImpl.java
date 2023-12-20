@@ -355,7 +355,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                 String imagePath = image.getImagePath().trim();
 
                 // 若为空串,只删除SQL记录,跳出
-                if (imagePath.isEmpty()) {
+                if (StringUtils.isEmpty(imagePath)) {
                     imageMapper.deleteById(imageId);
                     continue;
                 }
