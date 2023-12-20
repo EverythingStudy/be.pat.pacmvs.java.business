@@ -79,4 +79,7 @@ public class Indicator extends BaseEntity {
     private String number;
     @ApiModelProperty(hidden = true, value = "删除状态")
     private Integer delFlag;
+    
+    @ApiModelProperty(value = "标签类型 0:下拉筛选标签；1:自定义标签")
+    private Integer indicatorType;
 }

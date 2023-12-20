@@ -16,6 +16,7 @@
         <result property="number" column="number"/>
         <result property="organizationId" column="organization_id"/>
         <result property="delFlag" column="del_flag"/>
+        <result property="indicatorType" column="indicator_type"/>
         <result property="createBy" column="create_by"/>
         <result property="updateBy" column="update_by"/>
         <result property="createTime" column="create_time"/>
@@ -41,6 +42,7 @@
                i.update_time,
                i.number,
                i.organization_id,
+               i.indicator_type,
                u.user_id,
                u.user_name
         from tb_pathological_indicator i
@@ -71,6 +73,9 @@
         <if test="number != null">
             number,
         </if><!-- 指标编号：暂未使用-->
+        <if test="indicatorType != null">
+            indicator_type,
+        </if>
         create_time,
         project_total,
         annotation_category_total
@@ -96,6 +101,9 @@
         <if test="number != null">
             #{number},
         </if><!-- 指标编号：暂未使用-->
+        <if test="indicatorType != null">
+            #{indicatorType},
+        </if>
         sysdate(),
         0,
         0
@@ -161,6 +169,7 @@
                pa.update_by,
                pa.create_time,
                pa.update_time,
+               pa.indicator_type,
                u.user_id,
                u.user_name
         from tb_pathological_indicator pa
@@ -197,6 +206,16 @@
             <if test="updateBy != null and updateBy != ''">
                 update_by = #{updateBy},
             </if>
+            <if test="number != null">
+                number = #{number},
+            </if>
+            <if test="speciesId != null and speciesId != ''">
+                species_id = #{speciesId},
+            </if>
+             <if test="organId != null and organId != ''">
+                organ_id = #{organId},
+            </if>
+            
             annotation_category_total = (select count(*)from tb_pathological_indicator_category where
             indicator_id=#{indicatorId} and del_flag=0),
             project_total =(select count(*) from tb_project where indicator_id=#{indicatorId} and del_flag=0),
@@ -245,6 +264,9 @@
             </if>
             <if test="organizationId !=null and organizationId !=0">
                 and organization_id = #{organizationId}
+            </if>
+            <if test="delFlag !=null">
+                and del_flag = #{delFlag}
             </if>
         </where>
     </select>

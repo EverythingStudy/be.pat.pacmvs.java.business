@@ -139,5 +139,12 @@ public class PathologicalIndicatorCategory implements Serializable {
     @TableField(exist = false)
     @ApiModelProperty(value = "指标id(模糊查询)")
     private String structureIds;
+    
+    @ApiModelProperty(value = "标签类型 0:下拉筛选标签；1:自定义标签")
+    private Integer categoryType;
+    
+    @TableField(exist = false)
+    @ApiModelProperty(required = true, value = "结构名称")
+    private String structureName;
 }
 
