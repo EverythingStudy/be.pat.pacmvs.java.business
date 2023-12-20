@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -281,17 +282,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         return resp;
     }
 
-
-    /**
-     * 查询图像列表 - 通过 projectId 查询
-     *
-     * @param projectId
-     * @return
-     */
-    public List<ImageListVO> selectImageListByPorjectId(Long projectId) {
-        return imageMapper.selectImageListByPorjectId(projectId);
-    }
-
     /**
      * 查询单个图像信息
      *
@@ -382,16 +372,17 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                 // 若只有一条记录,删除文件
                 if (imageList.size() == 1) {
                     retryService.deleteFileRetry(new File(image.getImagePath()));
-                    if (!image.getImageUrl().isEmpty()) {
+
+                    if (StringUtils.isNotEmpty(image.getImageUrl())) {
                         retryService.deleteFileRetry(new File(image.getImageUrl()));
                     }
-                    if (!image.getThumbUrl().isEmpty()) {
+                    if (StringUtils.isNotEmpty(image.getThumbUrl())) {
                         retryService.deleteFileRetry(new File(image.getThumbUrl().replace("/file/statics", "/home/pat_saas")));
                     }
-                    if (!image.getMacroUrl().isEmpty()) {
+                    if (StringUtils.isNotEmpty(image.getMacroUrl())) {
                         retryService.deleteFileRetry(new File(image.getMacroUrl().replace("/file/statics", "/home/pat_saas")));
                     }
-                    if (!image.getLabelUrl().isEmpty()) {
+                    if (StringUtils.isNotEmpty(image.getLabelUrl())) {
                         retryService.deleteFileRetry(new File(image.getLabelUrl().replace("/file/statics", "/home/pat_saas")));
                     }
                 }
