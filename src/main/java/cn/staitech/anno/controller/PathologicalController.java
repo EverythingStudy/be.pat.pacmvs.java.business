@@ -29,6 +29,7 @@ import cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCa
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
+import cn.staitech.common.security.annotation.Logical;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -91,7 +92,7 @@ public class PathologicalController {
 	 * 结构指标ID	indicatorId
 	 */
 	@ApiOperation(value = "标签添加接口", notes = "wangfeng")
-	@RequiresPermissions("project:pathology:tabadd")
+	@RequiresPermissions(value = {"project:pathology:tabadd", "project:pathology:tabdefine"}, logical = Logical.OR)
 	@Log(title = "配置标签-新增标签", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.INSERT)
 	@PostMapping("/add")
 	public R<String> add(@Validated @RequestBody PathologicalIndicatorCategoryVO vo) {

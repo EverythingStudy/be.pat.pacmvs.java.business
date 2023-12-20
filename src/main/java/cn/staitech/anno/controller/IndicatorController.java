@@ -19,6 +19,7 @@ import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
+import cn.staitech.common.security.annotation.Logical;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -69,6 +70,7 @@ public class IndicatorController extends BaseController {
 	 * 添加结构指标 2.0SAAS .
 	 */
 	@SneakyThrows
+	@RequiresPermissions(value = {"project:pathology:define", "project:pathology:add"}, logical = Logical.OR)
 	@ApiOperation(value = "添加结构指标", notes = "wangfeng")
 	@Log(title = "添加结构指标", menu = "结构指标", subMenu = "结构指标", businessType = BusinessType.INSERT)
 	@PostMapping("/add")
@@ -209,6 +211,7 @@ public class IndicatorController extends BaseController {
 	 * 病理指标删除接口 .
 	 */
 	@ApiOperation(value = "病理指标删除接口", notes = "ZMJ")
+	@RequiresPermissions("project:pathology:remove")
 	@Log(title = "病理指标删除接口", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.UPDATE)
 	@PostMapping("/del")
 	public R<String> delIndicator(@RequestBody IndicatorGetVO indicatorGetVO) {
@@ -232,6 +235,7 @@ public class IndicatorController extends BaseController {
 	 * 病理指标修改接口 .
 	 */
 	@ApiOperation(value = "病理指标修改接口", notes = "ZMJ")
+	@RequiresPermissions("project:pathology:edit")
 	@Log(title = "病理指标修改接口", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.UPDATE)
 	@PutMapping("/edit")
 	public R<Integer> edit(@Validated @RequestBody IndicatorReviseVO req) {
