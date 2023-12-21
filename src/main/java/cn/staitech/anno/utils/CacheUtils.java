@@ -93,8 +93,7 @@ public class CacheUtils {
         cacheUtils.imageService = this.imageService;
         cacheUtils.indicatorService = this.indicatorService;
         cacheUtils.projectService = this.projectService;
-
-        /*ProjectCache(new Project());*/
+        
         imagesCache(new Image());
         indicatorCache(new Indicator());
     }

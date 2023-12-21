@@ -73,14 +73,11 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
     @Resource
     private FilesMapper filesMapper;
     @Resource
-    private SysOrganizationService organizationService;
-    @Resource
     private TopicService topicService;
     @Resource
     private FolderService folderService;
     @Resource
     private ImageService imageService;
-
 
     @Override
     public PageMaster<Files> selectList(FilesListVO req) throws ExecutionException, InterruptedException {
@@ -222,8 +219,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
      * @throws Exception
      */
     private void processFile(Long topicId, String topicName, Long filesId, Long createBy, Long organizationId, String destDirRootPath, File file) throws Exception {
-        // INSERT INTO tb_image
-        // 源文件名 FCPM21-016-CAR20231213D001N1A1234567E01P02
+        // INSERT INTO tb_image 源文件名示例：FCPM21-016-CAR20231213D001N1A1234567E01P02
         String fileName = file.getName();
 
         // 判断文件格式，非jpg,png排除
@@ -236,20 +232,13 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         // 源文件绝对路径
         String sourcePath = file.getAbsolutePath();
 
-
         // 解析目标文件夹名称
-        int index = tmpFileName.lastIndexOf("P");
-
-        if (index < 1) {
-            index = tmpFileName.lastIndexOf("p");
-        }
-
+        int index = getIndex(tmpFileName);
         if (index < 1) {
             return;
         }
 
         String folderName = fileName.substring(0, index);
-
         log.info("sourcePath {} fileName {},length {},index {},folderName {},fileName {}", sourcePath, fileName, fileName.length(), index, folderName, fileName);
 
         // 目标文件件路径
@@ -310,6 +299,20 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
 
         // 删除空文件夹(目录文件夹)
         removeEmptyDir(destDir);
+    }
+
+    /**
+     * 查找文件名称中最后一个P、p出现的位置（不包含文件扩展名）
+     * @param tmpFileName
+     * @return
+     */
+    private static int getIndex(String tmpFileName) {
+        int index = tmpFileName.lastIndexOf("P");
+
+        if (index < 1) {
+            index = tmpFileName.lastIndexOf("p");
+        }
+        return index;
     }
 
     /**
