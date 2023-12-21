@@ -24,6 +24,7 @@ import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.Structure;
 import cn.staitech.anno.mapper.IndicatorMapper;
 import cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper;
+import cn.staitech.anno.mapper.StructureMapper;
 import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
@@ -49,7 +50,8 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 	private StructureService structureService;
 	@Resource
 	private IndicatorMapper indicatorMapper;
-
+	@Resource
+	private StructureMapper structureMapper;
 
 	/**
 	 * 添加标签
@@ -267,17 +269,17 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 	}
 	
 	private Structure getStructure(String organId,String speciesId,Long organizationId,String structureId){
+		Structure retStructure = new Structure();
 		Structure structure = new Structure();
-		QueryWrapper<Structure> queryWrapper = new QueryWrapper<>();
-		queryWrapper.eq("species_id", speciesId);
-		queryWrapper.eq("organ_id", organId);
-		queryWrapper.eq("organization_id", organizationId);
-		queryWrapper.eq("structure_id", structureId);
-		List<Structure> list = structureService.list(queryWrapper);
+		structure.setSpeciesId(speciesId);
+		structure.setOrganId(organId);
+		structure.setOrganizationId(organizationId);
+		structure.setStructureId(structureId);
+		List<Structure> list = structureMapper.selectList(structure);
 		if(CollectionUtils.isNotEmpty(list)){
-			 structure = list.get(0);
+			retStructure = list.get(0);
 		}
-		return structure;
+		return retStructure;
 	}
 
 	@Override
