@@ -17,10 +17,11 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
 
     /**
      * 根据code查询出当前一组数据的roe标签
+     *
      * @param map
      * @return
      */
-    PathologicalIndicatorCategory selectRoe(Map<String,Object> map);
+    PathologicalIndicatorCategory selectRoe(Map<String, Object> map);
 
     /**
      * 根据主键删除信息
@@ -164,7 +165,7 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
     /**
      * 根据项目和结构编码查询详情数据
      */
-    PathologicalIndicatorCategory selectProjectAndNumber(@Param("projectId") Long projectId, @Param("number") String number,@Param("organizationId") Long organizationId);
+    PathologicalIndicatorCategory selectProjectAndNumber(@Param("projectId") Long projectId, @Param("number") String number, @Param("organizationId") Long organizationId);
 
     String selectCategoryById(@Param("split") String[] split);
 }

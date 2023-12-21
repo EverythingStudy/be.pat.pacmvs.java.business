@@ -24,7 +24,7 @@ public interface MarkingService {
      * @param slideId 标注信息
      * @return List<Slide>
      */
-    PageResponse<MarkingSelectListVO> selectList(Long slideId, Integer pageNum, Integer pageSize,String measureFullName) throws Exception;
+    PageResponse<MarkingSelectListVO> selectList(Long slideId, Integer pageNum, Integer pageSize, String measureFullName) throws Exception;
 
 
     List<Features> selectListBy(Long slideId) throws Exception;

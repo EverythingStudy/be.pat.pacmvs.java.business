@@ -1,8 +1,6 @@
-
 /**
 **第一部分：删除了开发环境大量废弃的表；测试、生产环境一定要慎重、仔细执行；若无足够的把握可不删除整个表，或删除前先备份！！！
 **/
-
 
 
 /**
@@ -67,7 +65,6 @@ DROP TABLE gen_table_column;
 
 
 
-
 /**
 **第二部分：此次发版相关表结构修改；测试、生产环境一定要慎重、仔细执行；执行前一定要先备份！！！
 **/
@@ -76,22 +73,24 @@ DROP TABLE gen_table_column;
 修改切片表tb_slide-删除人工诊断状态
 */
 ALTER TABLE `tb_slide`
-DROP COLUMN `diagnosis`;
+DROP
+COLUMN `diagnosis`;
 
 
 /**
 修改专题表tb_topic-删除删除状态
 */
 ALTER TABLE `tb_topic`
-DROP COLUMN `del_flag`;
+DROP
+COLUMN `del_flag`;
 
 
 /**
 修改种属表tb_species-添加机构ID、唯一约束索引、注释
 */
 ALTER TABLE `tb_species`
-    MODIFY COLUMN `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '种属名称' AFTER `species_id`,
-    MODIFY COLUMN `name_en` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '种属名称EN' AFTER `name`,
+    MODIFY COLUMN `name` varchar (255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '种属名称' AFTER `species_id`,
+    MODIFY COLUMN `name_en` varchar (255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '种属名称EN' AFTER `name`,
     ADD COLUMN `organization_id` bigint NOT NULL COMMENT '机构ID' AFTER `name_en`,
     ADD UNIQUE INDEX `species_uk`(`species_id` ASC, `name` ASC, `name_en` ASC, `organization_id` ASC) USING BTREE COMMENT '种属唯一约束';
 
@@ -106,7 +105,7 @@ ADD UNIQUE INDEX `organ_uk`(`organ_id` ASC, `name` ASC, `species_code` ASC, `org
 修改品系表tb_product_series-添加机构ID、唯一约束索引、注释
 */
 ALTER TABLE `tb_product_series`
-    MODIFY COLUMN `species_id` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '种属ID' AFTER `name_en`,
+    MODIFY COLUMN `species_id` varchar (200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '种属ID' AFTER `name_en`,
     ADD COLUMN `organization_id` bigint NULL COMMENT '机构ID' AFTER `species_id`,
     ADD UNIQUE INDEX `ps_uk`(`name` ASC, `name_en` ASC, `species_id` ASC, `organization_id` ASC) USING BTREE COMMENT '品系唯一约束';
 
@@ -129,7 +128,8 @@ ALTER TABLE `aipre_airepost`
 /*
 * 评审表增加单审状态
 */
-ALTER TABLE tb_review ADD COLUMN review_status char(1) DEFAULT '2' COMMENT '单审状态 默认1：未审 2：已审';
+ALTER TABLE tb_review
+    ADD COLUMN review_status char(1) DEFAULT '2' COMMENT '单审状态 默认1：未审 2：已审';
 
 
 /**
@@ -153,20 +153,15 @@ ALTER TABLE tb_review ADD COLUMN review_status char(1) DEFAULT '2' COMMENT '单�
 */
 UPDATE tb_organ
 SET organization_id = 1
-WHERE species_code in(
-    SELECT species_id
-    FROM tb_species
-    WHERE organization_id = 1
-);
+WHERE species_code in (SELECT species_id
+                       FROM tb_species
+                       WHERE organization_id = 1);
 
 UPDATE tb_organ
 SET organization_id = 2
-WHERE species_code in(
-    SELECT species_id
-    FROM tb_species
-    WHERE organization_id = 2
-);
-
+WHERE species_code in (SELECT species_id
+                       FROM tb_species
+                       WHERE organization_id = 2);
 
 
 /*
@@ -174,20 +169,15 @@ WHERE species_code in(
 */
 UPDATE tb_product_series
 SET organization_id = 1
-WHERE species_id in(
-    SELECT species_id
-    FROM tb_species
-    WHERE organization_id = 1
-);
+WHERE species_id in (SELECT species_id
+                     FROM tb_species
+                     WHERE organization_id = 1);
 
 UPDATE tb_product_series
 SET organization_id = 2
-WHERE species_id in(
-    SELECT species_id
-    FROM tb_species
-    WHERE organization_id = 2
-);
-
+WHERE species_id in (SELECT species_id
+                     FROM tb_species
+                     WHERE organization_id = 2);
 
 
 /*
@@ -195,17 +185,13 @@ WHERE species_id in(
 */
 UPDATE tb_structure
 SET organization_id = 1
-WHERE species_id in(
-    SELECT species_id
-    FROM tb_species
-    WHERE organization_id = 1
-);
+WHERE species_id in (SELECT species_id
+                     FROM tb_species
+                     WHERE organization_id = 1);
 
 UPDATE tb_structure
 SET organization_id = 2
-WHERE species_id in(
-    SELECT species_id
-    FROM tb_species
-    WHERE organization_id = 2
-);
+WHERE species_id in (SELECT species_id
+                     FROM tb_species
+                     WHERE organization_id = 2);
 

@@ -29,12 +29,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.ibm.icu.text.SimpleDateFormat;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.awt.event.WindowFocusListener;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -150,7 +148,6 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
 //    }
 
 
-
     @Override
     public List<SelectExaminationListVO> selectExaminationList(Long projectId, String imageName) {
         QuestionBank questionBank = new QuestionBank();
@@ -160,28 +157,28 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         // 根据项目查询
         QueryWrapper<QuestionProjectRel> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("project_id", projectId).eq("del_flag", '0');
-       List<QuestionProjectRel> questionProjectRel = questionProjectRelMapper.selectList(queryWrapper);
+        List<QuestionProjectRel> questionProjectRel = questionProjectRelMapper.selectList(queryWrapper);
         // 为空表示项目未添加切片
         if (questionProjectRel.isEmpty()) {
             return new ArrayList<>();
         }
         //项目下的所有questionProjectId
-        List<Long>questionProjectIdList=questionProjectRel.stream().map(QuestionProjectRel::getQuestionProjectId).collect(Collectors.toList());
-        List<SelectExaminationListVO> selectExaminationListVOList=new ArrayList<>();
+        List<Long> questionProjectIdList = questionProjectRel.stream().map(QuestionProjectRel::getQuestionProjectId).collect(Collectors.toList());
+        List<SelectExaminationListVO> selectExaminationListVOList = new ArrayList<>();
         //考试过的数据
         List<SelectExaminationListVO> selectExaminationListVOS = examineScoreMapper.selectExaminationList(questionBank);
-        if (CollectionUtil.isNotEmpty(selectExaminationListVOS)){
+        if (CollectionUtil.isNotEmpty(selectExaminationListVOS)) {
             selectExaminationListVOList.addAll(selectExaminationListVOS);
         }
         //考试过的questionProjectId
-        List<Long> questionProjectList=selectExaminationListVOS.stream().map(SelectExaminationListVO::getQuestionProjectId).collect(Collectors.toList());
-        for (Long questionProjectId:questionProjectIdList){
+        List<Long> questionProjectList = selectExaminationListVOS.stream().map(SelectExaminationListVO::getQuestionProjectId).collect(Collectors.toList());
+        for (Long questionProjectId : questionProjectIdList) {
             //筛选出没有考试过的questionProjectId
-            if (!questionProjectList.contains(questionProjectId)){
-                ExaminationInVO examinationInVO=ExaminationInVO.builder().questionProjectId(questionProjectId).imageName(imageName).build();
+            if (!questionProjectList.contains(questionProjectId)) {
+                ExaminationInVO examinationInVO = ExaminationInVO.builder().questionProjectId(questionProjectId).imageName(imageName).build();
                 //没考试的数据
                 List<SelectExaminationListVO> selectExaminationList = examineScoreMapper.selectQuestionProjectList(examinationInVO);
-                if (CollectionUtil.isNotEmpty(selectExaminationList)){
+                if (CollectionUtil.isNotEmpty(selectExaminationList)) {
                     selectExaminationListVOList.addAll(selectExaminationList);
                 }
             }
@@ -412,7 +409,7 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         ExamineScore examineScore = examineScoreMapper.selectById(examineScoreId);
         markingJsonObject.put("examine_score_id", examineScoreId);
         markingJsonObject.put("user_id", examineScore.getCreateBy());
-        List<JSONObject> jsonObjects=new ArrayList<>();
+        List<JSONObject> jsonObjects = new ArrayList<>();
         jsonObjects.add(markingJsonObject);
 //        JSONObject jsonObjectList=new JSONObject();
 //        jsonObjectList.put("dataList",jsonObjects);
@@ -428,10 +425,10 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
 
     /**
      * 人工评分
-     * */
+     */
     @Override
-    public int manualScoring(ExamineScoreUpdateVO examineScoreUpdateVO){
-        ExamineScore examineScore=new ExamineScore();
+    public int manualScoring(ExamineScoreUpdateVO examineScoreUpdateVO) {
+        ExamineScore examineScore = new ExamineScore();
         examineScore.setExamineScoreId(examineScoreUpdateVO.getExamineScoreId());
         examineScore.setExamResults(examineScoreUpdateVO.getExamResults());
         examineScore.setUpdateBy(SecurityUtils.getUserId());
@@ -442,16 +439,15 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
     }
 
 
-
     /**
      * 批量算法评分
-     * */
+     */
     @Override
-    public int BatchAlgorithm(ExamineScoreBathVO examineScoreBathVO){
-        List<JSONObject> jsonObjectList=new ArrayList<>();
-        for (Long examineScoreId:examineScoreBathVO.getExamineScoreIdList()){
-            ExamineScoreBy examineScoreBy=examineScoreMapper.selectByIds(examineScoreId);
-            if (Objects.equals(examineScoreBy.getExamResults(), "0")){
+    public int BatchAlgorithm(ExamineScoreBathVO examineScoreBathVO) {
+        List<JSONObject> jsonObjectList = new ArrayList<>();
+        for (Long examineScoreId : examineScoreBathVO.getExamineScoreIdList()) {
+            ExamineScoreBy examineScoreBy = examineScoreMapper.selectByIds(examineScoreId);
+            if (Objects.equals(examineScoreBy.getExamResults(), "0")) {
                 JSONObject markingJsonObject = new JSONObject();
                 markingJsonObject.put("examine_score_id", examineScoreId);
                 markingJsonObject.put("user_id", examineScoreBy.getCreateBy());
@@ -459,7 +455,7 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
             }
 
         }
-        if (CollectionUtil.isNotEmpty(jsonObjectList)){
+        if (CollectionUtil.isNotEmpty(jsonObjectList)) {
             remoteLabelService.marking(jsonObjectList);
         }
         return 1;

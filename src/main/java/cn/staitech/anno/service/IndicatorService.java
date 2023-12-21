@@ -107,7 +107,7 @@ public interface IndicatorService {
      * @return 结果
      */
     List<Indicator> selectIndicatorInformation(Indicator indicator);
-    
+
     int saveCheck(IndicatorAddVO req);
 
 }

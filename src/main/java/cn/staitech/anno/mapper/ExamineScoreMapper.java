@@ -38,7 +38,7 @@ public interface ExamineScoreMapper extends BaseMapper<ExamineScore> {
 
     /**
      * 人工评分
-     * */
+     */
     int manualScoring(ExamineScore examineScore);
 
 }

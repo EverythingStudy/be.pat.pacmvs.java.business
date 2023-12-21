@@ -1,6 +1,5 @@
 package cn.staitech.anno.utils;
 
-import cn.staitech.anno.exception.AnnoException;
 import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.Properties;

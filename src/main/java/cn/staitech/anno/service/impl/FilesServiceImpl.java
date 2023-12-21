@@ -6,7 +6,10 @@ import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.Folder;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.mapper.FilesMapper;
-import cn.staitech.anno.service.*;
+import cn.staitech.anno.service.FilesService;
+import cn.staitech.anno.service.FolderService;
+import cn.staitech.anno.service.ImageService;
+import cn.staitech.anno.service.TopicService;
 import cn.staitech.anno.utils.ImgPicCompression;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.OrganizationUtils;
@@ -78,6 +81,21 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
     private FolderService folderService;
     @Resource
     private ImageService imageService;
+
+    /**
+     * 查找文件名称中最后一个P、p出现的位置（不包含文件扩展名）
+     *
+     * @param tmpFileName
+     * @return
+     */
+    private static int getIndex(String tmpFileName) {
+        int index = tmpFileName.lastIndexOf("P");
+
+        if (index < 1) {
+            index = tmpFileName.lastIndexOf("p");
+        }
+        return index;
+    }
 
     @Override
     public PageMaster<Files> selectList(FilesListVO req) throws ExecutionException, InterruptedException {
@@ -299,20 +317,6 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
 
         // 删除空文件夹(目录文件夹)
         removeEmptyDir(destDir);
-    }
-
-    /**
-     * 查找文件名称中最后一个P、p出现的位置（不包含文件扩展名）
-     * @param tmpFileName
-     * @return
-     */
-    private static int getIndex(String tmpFileName) {
-        int index = tmpFileName.lastIndexOf("P");
-
-        if (index < 1) {
-            index = tmpFileName.lastIndexOf("p");
-        }
-        return index;
     }
 
     /**

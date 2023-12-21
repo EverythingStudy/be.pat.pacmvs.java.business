@@ -9,7 +9,10 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -28,8 +31,8 @@ public class PathologicalTissueController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "projectTypeId", value = "项目类型id", dataTypeClass = Long.class, paramType = "query")})
     @GetMapping("/list")
-    public R<List<PathologicalTissueVO>> getTissueList(@RequestParam("projectTypeId") Long projectTypeId){
-        List<PathologicalTissueVO> pathologicalTissueVOList=pathologicalTissueService.selectByPrimaryKey(projectTypeId);
+    public R<List<PathologicalTissueVO>> getTissueList(@RequestParam("projectTypeId") Long projectTypeId) {
+        List<PathologicalTissueVO> pathologicalTissueVOList = pathologicalTissueService.selectByPrimaryKey(projectTypeId);
         return R.ok(pathologicalTissueVOList);
     }
 }

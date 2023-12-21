@@ -117,13 +117,13 @@ public class ExamineScore implements Serializable {
      */
     @ApiModelProperty(value = "考试结果(1通过、2未通过)")
     private String examResults;
-    
+
     /**
      * 考试审核 默认0：待审核 为1：算法审核，2：系统用户审核
      */
     @ApiModelProperty(value = "考试审核 默认0：待审核 为1：算法审核，2：系统用户审核")
     private String examReviewType;
-    
+
     /**
      * 审核者
      */

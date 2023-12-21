@@ -72,7 +72,6 @@ public class MarkingExamineController {
     }
 
 
-
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "合并、裁剪轮廓")
     @PutMapping("/updateOperation")
@@ -80,7 +79,6 @@ public class MarkingExamineController {
         JSONObject geoJson = markingExamineService.updateOperation(req);
         return R.ok(geoJson, MessageSource.M("OPERATE_SUCCEED"));
     }
-
 
 
     @ApiOperationSupport(author = "gjt")

@@ -35,7 +35,7 @@ public class FileServiceImpl implements FileService {
 
     private static final String pathUrl = "/home/pat_saas";
     private static final String zipUrl = "/home/pat_saas/Data/zipFile/";
-    String fileUrl =  File.separator + "Data";
+    String fileUrl = File.separator + "Data";
 
     @Resource
     private SlideMapper slideMapper;
@@ -163,9 +163,9 @@ public class FileServiceImpl implements FileService {
             fileUrl += GLIDE_LINE + slideFileName.getSlideType();
         }
         // 若传入标签不为空，则使用传入标签
-        if(structureId != null && !"".equals(structureId)){
+        if (structureId != null && !"".equals(structureId)) {
             fileUrl += GLIDE_LINE + structureId;
-        }else{
+        } else {
             // 根据切片查询标注表中所使用的标签
             QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
             markingQueryWrapper.select("category_id").eq("slide_id", slideId).ne("category_id", 0).groupBy("category_id");
@@ -180,9 +180,9 @@ public class FileServiceImpl implements FileService {
             if (categoryList.size() > 0) {
                 String categoryNumber = "";
                 for (GeoLabel geoLabel : categoryList) {
-                    if(!"".equals(categoryNumber)){
-                        categoryNumber = categoryNumber + "-" +  geoLabel.getLabel_code();
-                    }else {
+                    if (!"".equals(categoryNumber)) {
+                        categoryNumber = categoryNumber + "-" + geoLabel.getLabel_code();
+                    } else {
                         categoryNumber = categoryNumber + geoLabel.getLabel_code();
                     }
                 }

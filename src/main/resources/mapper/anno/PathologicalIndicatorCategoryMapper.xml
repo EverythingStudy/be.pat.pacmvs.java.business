@@ -59,8 +59,8 @@
         <result column="name_en" jdbcType="VARCHAR" property="nameEn"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="category_code" jdbcType="VARCHAR" property="categoryCode"/>
-        <result column="group_number" jdbcType="INTEGER"  property="groupNumber"/>
-        <result column="category_type" jdbcType="INTEGER"  property="categoryType"/>
+        <result column="group_number" jdbcType="INTEGER" property="groupNumber"/>
+        <result column="category_type" jdbcType="INTEGER" property="categoryType"/>
 
     </resultMap>
 
@@ -74,9 +74,9 @@
     <select id="selectRoe" parameterType="map" resultMap="BaseResultMap">
         select *
         from tb_pathological_indicator_category as p
-        left join tb_structure as s on p.structure_id = s.structure_id
+                 left join tb_structure as s on p.structure_id = s.structure_id
         where p.category_code = #{categoryCode,jdbcType=BIGINT}
-        and s.type = "ROE"
+          and s.type = "ROE"
     </select>
 
     <!--  根据主键查询单条标注信息-->
@@ -278,12 +278,13 @@
         WHERE indicator_id = #{indicatorId}
     </select>
 
-    <select id="selectIndicatorList" parameterType="java.lang.Long" resultType="cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo">
+    <select id="selectIndicatorList" parameterType="java.lang.Long"
+            resultType="cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo">
         SELECT p.*
         FROM tb_pathological_indicator_category as p
         WHERE indicator_id = #{indicatorId}
           AND p.del_flag = "0"
-        order by p.order_number desc,p.group_number desc
+        order by p.order_number desc, p.group_number desc
     </select>
 
 
@@ -310,13 +311,13 @@
     <select id="selectProjectAndNumber" resultMap="BaseResultMap">
         SELECT *
         FROM tb_pathological_indicator_category AS pic
-                 LEFT JOIN tb_project AS p ON p.indicator_id = pic.indicator_id
+        LEFT JOIN tb_project AS p ON p.indicator_id = pic.indicator_id
         WHERE p.project_id = #{projectId}
-          AND pic.number = #{number}
-          and pic.del_flag = '0'
-          <if test="organizationId != null">
-                AND pic.organization_id = #{organizationId}
-          </if>
+        AND pic.number = #{number}
+        and pic.del_flag = '0'
+        <if test="organizationId != null">
+            AND pic.organization_id = #{organizationId}
+        </if>
     </select>
 
     <select id="selectCategoryById" resultType="java.lang.String">
@@ -352,9 +353,9 @@
             AND structure_id = #{structureId,jdbcType=VARCHAR}
         </if>
         <if test="structureIds != null  and categoryName != ''">
-            AND structure_id  like  concat(#{structureIds}, '%')
+            AND structure_id like concat(#{structureIds}, '%')
         </if>
-         <if test="organizationId != null">
+        <if test="organizationId != null">
             AND organization_id = #{organizationId}
         </if>
     </select>
@@ -389,8 +390,8 @@
     <select id="selectByProjectId" parameterType="java.lang.Long" resultMap="SysAnnotationCategoryStatisticResult">
         select DISTINCT a.category_id, i.category_name, sum(a.sum) as sum
         from tb_slide_annotation_result as a left join tb_slide as s
-                                                       on a.slide_id =s.slide_id left join tb_pathological_indicator_category as i
-                                                                                           on i.category_id=a.category_id
+        on a.slide_id =s.slide_id left join tb_pathological_indicator_category as i
+            on i.category_id=a.category_id
         where s.project_id=#{projectId}
         group by a.category_id
         order by sum desc
@@ -424,8 +425,9 @@
     </select>
 
 
-    <select id="selectProjectListFilter" parameterType="java.lang.Long" resultType="cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo">
-        SELECT i.*,s.type
+    <select id="selectProjectListFilter" parameterType="java.lang.Long"
+            resultType="cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo">
+        SELECT i.*, s.type
         FROM tb_pathological_indicator_category AS i
                  LEFT JOIN tb_structure AS s ON s.structure_id = i.structure_id
         WHERE i.indicator_id = #{indicatorId}
@@ -549,7 +551,7 @@
         LEFT JOIN tb_structure p2 ON p1.species_id = p2.species_id
         AND p1.organ_id = p2.organ_id
         AND p1.structure_id = p2.structure_id
-        ORDER BY	p1.category_code,	type_number ASC
+        ORDER BY p1.category_code, type_number ASC
     </select>
 
     <select id="selectLabelNum" parameterType="java.lang.Long" resultType="java.lang.Integer">
@@ -559,20 +561,17 @@
     </select>
 
     <select id="selectLabelNumByStructureId" parameterType="java.lang.String" resultType="java.lang.Integer">
-        SELECT
-            cc
-        FROM
-            (
-                SELECT
-                    organ_id,
-                    count( 1 ) cc
-                FROM
-                    ( SELECT t2.organ_id, t1.structure_id FROM tb_pathological_indicator_category t1 LEFT JOIN tb_structure t2 ON t1.structure_id = t2.structure_id ) p
-                GROUP BY
-                    organ_id
-                ORDER BY
-                    organ_id
-            ) m
-                RIGHT JOIN ( SELECT t2.organ_id FROM tb_pathological_indicator_category t1 LEFT JOIN tb_structure t2 ON t1.structure_id = t2.structure_id WHERE t2.structure_id = #{structureId} ) n ON m.organ_id = n.organ_id
+        SELECT cc
+        FROM (SELECT organ_id,
+                     count(1) cc
+              FROM (SELECT t2.organ_id, t1.structure_id
+                    FROM tb_pathological_indicator_category t1
+                             LEFT JOIN tb_structure t2 ON t1.structure_id = t2.structure_id) p
+              GROUP BY organ_id
+              ORDER BY organ_id) m
+                 RIGHT JOIN (SELECT t2.organ_id
+                             FROM tb_pathological_indicator_category t1
+                                      LEFT JOIN tb_structure t2 ON t1.structure_id = t2.structure_id
+                             WHERE t2.structure_id = #{structureId}) n ON m.organ_id = n.organ_id
     </select>
 </mapper>

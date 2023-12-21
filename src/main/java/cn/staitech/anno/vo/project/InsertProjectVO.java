@@ -83,13 +83,13 @@ public class InsertProjectVO implements Serializable {
 
     /**
      * 病理组织
-     * */
+     */
     @ApiModelProperty(value = "病理组织id")
     private Long tissueId;
 
     /**
      * 算法模型
-     * */
+     */
     @ApiModelProperty(value = "算法模型id")
     private Long modelId;
 }

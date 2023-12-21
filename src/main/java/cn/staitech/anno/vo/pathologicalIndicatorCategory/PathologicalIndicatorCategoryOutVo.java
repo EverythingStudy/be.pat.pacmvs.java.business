@@ -130,10 +130,10 @@ public class PathologicalIndicatorCategoryOutVo {
 
     @ApiModelProperty(value = "类型")
     private String type;
-    
+
     @ApiModelProperty(value = "组内排序 1:标注区域 2：考核区域 3：结构标签")
     private Integer groupNumber;
-    
+
     @ApiModelProperty(hidden = true, value = "标签类型 0:下拉筛选标签；1:自定义标签")
     private Integer categoryType;
 }

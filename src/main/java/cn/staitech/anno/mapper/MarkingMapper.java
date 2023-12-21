@@ -37,7 +37,7 @@ public interface MarkingMapper extends BaseMapper<Marking> {
      */
     List<Features> selectLists(Long slideId);
 
-    List<Features> selectFilterCategoryLists(Map<String,Object> map);
+    List<Features> selectFilterCategoryLists(Map<String, Object> map);
 
 
     /**

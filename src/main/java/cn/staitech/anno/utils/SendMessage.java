@@ -1,11 +1,11 @@
 package cn.staitech.anno.utils;
 
+import cn.staitech.anno.vo.annotation.AnnoBroadcastVO;
+import cn.staitech.anno.vo.annotation.AnnoFeatures;
 import cn.staitech.anno.vo.annotation.AnnotationBroadcastVO;
 import cn.staitech.anno.vo.annotation.BroadcastVO;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.marking.PointCount;
-import cn.staitech.anno.vo.annotation.AnnoBroadcastVO;
-import cn.staitech.anno.vo.annotation.AnnoFeatures;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +25,8 @@ public class SendMessage {
         return broadcast;
 
     }
-    
-    public static BroadcastVO sendListMessages(String annoType,String status, Features features, List<PointCount> pointCountRes) {
+
+    public static BroadcastVO sendListMessages(String annoType, String status, Features features, List<PointCount> pointCountRes) {
         BroadcastVO broadcast = new BroadcastVO();
         broadcast.setData(features);
         broadcast.setType(status);
@@ -43,8 +43,8 @@ public class SendMessage {
         broadcast.setPoint_count_list(new ArrayList<>());
         return broadcast;
     }
-    
-    public static BroadcastVO sendOneMessagesByAnnoType(String annoType,String status, Features features) {
+
+    public static BroadcastVO sendOneMessagesByAnnoType(String annoType, String status, Features features) {
         BroadcastVO broadcast = new BroadcastVO();
         broadcast.setData(features);
         broadcast.setType(status);

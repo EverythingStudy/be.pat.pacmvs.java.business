@@ -4,7 +4,6 @@ import cn.staitech.anno.project.domain.Slide;
 import cn.staitech.anno.project.vo.*;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.system.api.model.LoginUser;
-
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -20,7 +19,7 @@ public interface SlideService extends IService<Slide> {
     void slideAnnoStatisticsExport(SlideQueryIn params) throws Exception;
 
     PageMaster<ReviewSlideVO> pageReviewSlide(Page page, ReviewSlideIn params);
-    
-    boolean isProjectAmin(LoginUser user,Long projectId);
+
+    boolean isProjectAmin(LoginUser user, Long projectId);
 
 }

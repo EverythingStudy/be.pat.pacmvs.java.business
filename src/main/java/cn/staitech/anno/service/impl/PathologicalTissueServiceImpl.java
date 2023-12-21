@@ -22,13 +22,13 @@ public class PathologicalTissueServiceImpl implements PathologicalTissueService 
 
     /**
      * 查询项目类型下的病理组织和算法模型
-     * */
+     */
     @Override
-   public List<PathologicalTissueVO> selectByPrimaryKey(Long projectTypeId){
-        List<PathologicalTissueVO> pathologicalTissueVOList=pathologicalTissueMapper.selectByPrimaryKey(projectTypeId);
-        for (PathologicalTissueVO pathologicalTissueVO:pathologicalTissueVOList){
-            AlgorithmModel algorithmModel=AlgorithmModel.builder().tissueId(pathologicalTissueVO.getTissueId()).build();
-            List<AlgorithmModel> algorithmModelList=algorithmModelMapper.selectByPrimaryKey(algorithmModel);
+    public List<PathologicalTissueVO> selectByPrimaryKey(Long projectTypeId) {
+        List<PathologicalTissueVO> pathologicalTissueVOList = pathologicalTissueMapper.selectByPrimaryKey(projectTypeId);
+        for (PathologicalTissueVO pathologicalTissueVO : pathologicalTissueVOList) {
+            AlgorithmModel algorithmModel = AlgorithmModel.builder().tissueId(pathologicalTissueVO.getTissueId()).build();
+            List<AlgorithmModel> algorithmModelList = algorithmModelMapper.selectByPrimaryKey(algorithmModel);
             pathologicalTissueVO.setModels(algorithmModelList);
         }
 

@@ -80,7 +80,6 @@ public class MarkingTest {
     }
 
 
-
     @Test
     public void migration() {
         dataMigrationService.markingData();

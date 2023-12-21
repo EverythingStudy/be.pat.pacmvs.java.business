@@ -138,16 +138,16 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
         // 判断传入列表不为空
         if (selectGeoJson.getLabelList().size() > 0) {
             // 根据labelCode查询标签详情
-            for(String labelCode:selectGeoJson.getLabelList()){
+            for (String labelCode : selectGeoJson.getLabelList()) {
                 QueryWrapper<PathologicalIndicatorCategory> queryWrapper = new QueryWrapper<>();
                 queryWrapper.eq("structure_id", labelCode);
                 PathologicalIndicatorCategory pathologicalIndicatorCategory = categoryMapper.selectOne(queryWrapper);
 
-                if(pathologicalIndicatorCategory != null){
+                if (pathologicalIndicatorCategory != null) {
                     QueryWrapper<PathologicalIndicatorCategory> categoryQueryWrapper = new QueryWrapper<>();
                     categoryQueryWrapper.eq("category_code", pathologicalIndicatorCategory.getCategoryCode());
                     List<PathologicalIndicatorCategory> pathologicalIndicatorCategoryList = categoryMapper.selectList(categoryQueryWrapper);
-                    for(PathologicalIndicatorCategory pathologicalIndicatorCategory1:pathologicalIndicatorCategoryList){
+                    for (PathologicalIndicatorCategory pathologicalIndicatorCategory1 : pathologicalIndicatorCategoryList) {
                         labelList.add(pathologicalIndicatorCategory1.getStructureId());
                     }
                 }

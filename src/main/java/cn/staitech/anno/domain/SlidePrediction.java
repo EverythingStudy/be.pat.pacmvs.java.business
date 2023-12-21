@@ -1,13 +1,14 @@
 package cn.staitech.anno.domain;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
-import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -23,10 +24,10 @@ import lombok.*;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @TableName("aipre_slide_prediction")
-@ApiModel(value="SlidePrediction对象", description="眼科切片预测表")
+@ApiModel(value = "SlidePrediction对象", description = "眼科切片预测表")
 public class SlidePrediction implements Serializable {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "切片预测ID")
     @TableId(value = "slide_prediction_id", type = IdType.AUTO)
@@ -40,7 +41,7 @@ public class SlidePrediction implements Serializable {
 
     @ApiModelProperty(value = "AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败）")
     private Integer aiAnalyzed;
-    
+
     @ApiModelProperty(value = "是否是主图默认为2，1是，2否")
     private String mainImage;
 

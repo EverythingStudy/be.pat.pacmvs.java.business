@@ -1,5 +1,30 @@
 package cn.staitech.anno.project.service.impl;
 
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
+import cn.staitech.anno.mapper.SysUserMapper;
+import cn.staitech.anno.project.domain.*;
+import cn.staitech.anno.project.mapper.*;
+import cn.staitech.anno.project.service.SlideService;
+import cn.staitech.anno.project.vo.*;
+import cn.staitech.anno.service.ProjectService;
+import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.system.api.model.LoginUser;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -7,47 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
-import cn.hutool.core.io.IoUtil;
-import cn.hutool.poi.excel.ExcelUtil;
-import cn.hutool.poi.excel.ExcelWriter;
-import cn.staitech.anno.mapper.SysUserMapper;
-import cn.staitech.anno.project.domain.Marking;
-import cn.staitech.anno.project.domain.PathologicalIndicatorCategory;
-import cn.staitech.anno.project.domain.Review;
-import cn.staitech.anno.project.domain.Slide;
-import cn.staitech.anno.project.domain.SysUser;
-import cn.staitech.anno.project.mapper.MarkingMapperV1;
-import cn.staitech.anno.project.mapper.PathologicalIndicatorCategoryMapperV1;
-import cn.staitech.anno.project.mapper.ReviewMapper;
-import cn.staitech.anno.project.mapper.SlideMapperV1;
-import cn.staitech.anno.project.mapper.SysUserMapperV1;
-import cn.staitech.anno.project.service.SlideService;
-import cn.staitech.anno.project.vo.ReviewSlideIn;
-import cn.staitech.anno.project.vo.ReviewSlideVO;
-import cn.staitech.anno.project.vo.SlideAnnoStatisticsVO;
-import cn.staitech.anno.project.vo.SlideExportVO;
-import cn.staitech.anno.project.vo.SlideQueryIn;
-import cn.staitech.anno.project.vo.SlideVO;
-import cn.staitech.anno.service.ProjectService;
-import cn.staitech.anno.utils.MessageSource;
-import cn.staitech.anno.utils.PageMaster;
-import cn.staitech.common.security.utils.SecurityUtils;
-import cn.staitech.system.api.model.LoginUser;
 
 /**
  * @author 86186
@@ -70,7 +54,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
 
     @Resource
     private ReviewMapper reviewMapper;
-    
+
     @Resource
     private SysUserMapper sysUserMapper;
 
@@ -96,12 +80,12 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         Map<Long, SlideVO> map = new HashMap<>();
         if (list != null && !list.isEmpty()) {
             list.forEach(slideVO -> {
-                Marking marking=Marking.builder().projectId(params.getProjectId().longValue()).slideId(slideVO.getSlideId()).categoryId(params.getAnnoCategory()).build();
-               List<Marking> markings=markingMapperV1.markingList(marking);
-               if (CollectionUtils.isNotEmpty(markings)){
-                   slideIds.add(slideVO.getSlideId());
-                   map.put(slideVO.getSlideId(), slideVO);
-               }
+                Marking marking = Marking.builder().projectId(params.getProjectId().longValue()).slideId(slideVO.getSlideId()).categoryId(params.getAnnoCategory()).build();
+                List<Marking> markings = markingMapperV1.markingList(marking);
+                if (CollectionUtils.isNotEmpty(markings)) {
+                    slideIds.add(slideVO.getSlideId());
+                    map.put(slideVO.getSlideId(), slideVO);
+                }
 //                slideIds.add(slideVO.getSlideId());
 //                map.put(slideVO.getSlideId(), slideVO);
             });
@@ -115,20 +99,20 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
 
     @Override
     public PageMaster<ReviewSlideVO> pageReviewSlide(Page page, ReviewSlideIn params) {
-    	//判断是否是项目管理员（22：项目管理所有权限）
-    	boolean isProjectAmin = isProjectAmin(SecurityUtils.getLoginUser(),params.getProjectId());
-    	if(!isProjectAmin){
-    		params.setCreateBy(SecurityUtils.getUserId());
-    	}
-    	params.setCurrentUser(SecurityUtils.getUserId());
-    	getBaseMapper().pageReviewSlide(page, params);
+        //判断是否是项目管理员（22：项目管理所有权限）
+        boolean isProjectAmin = isProjectAmin(SecurityUtils.getLoginUser(), params.getProjectId());
+        if (!isProjectAmin) {
+            params.setCreateBy(SecurityUtils.getUserId());
+        }
+        params.setCurrentUser(SecurityUtils.getUserId());
+        getBaseMapper().pageReviewSlide(page, params);
         List<ReviewSlideVO> list = page.getRecords();
-        if(CollectionUtils.isNotEmpty(list)){
-        	for(ReviewSlideVO vo : list){
-        		if(StringUtils.isEmpty(vo.getSelfReviewStatus())){
-        			vo.setSelfReviewStatus("1");
-        		}
-        	}
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (ReviewSlideVO vo : list) {
+                if (StringUtils.isEmpty(vo.getSelfReviewStatus())) {
+                    vo.setSelfReviewStatus("1");
+                }
+            }
         }
         PageMaster<ReviewSlideVO> pageMaster = PageMaster.of(list);
         pageMaster.setTotal(page.getTotal());
@@ -386,11 +370,11 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         }
         return resp;
     }
-    
+
     @Override
-    public boolean isProjectAmin(LoginUser user,Long projectId){
-    	boolean isProjectAmin = false;
-    	Long userId = user.getUserid();
+    public boolean isProjectAmin(LoginUser user, Long projectId) {
+        boolean isProjectAmin = false;
+        Long userId = user.getUserid();
     	/*List<SysRole> roleList = sysUserMapper.getRoleListByUserId(userId);
     	List<Long> roleIdList = new ArrayList<>();
     	//判断是否是项目管理员（22：项目管理所有权限）
@@ -400,12 +384,12 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
     		}
     		isProjectAmin = roleIdList.contains(22L);
     	}*/
-    	//项目创建者就是项目管理员（不根据系统角色去判断）
-    	cn.staitech.anno.domain.Project project = projectService.selectPrimKey(projectId);
-    	if(userId.equals(project.getCreateBy())){
-    		isProjectAmin = true;
-    	}
-    	return isProjectAmin;
-    } 
+        //项目创建者就是项目管理员（不根据系统角色去判断）
+        cn.staitech.anno.domain.Project project = projectService.selectPrimKey(projectId);
+        if (userId.equals(project.getCreateBy())) {
+            isProjectAmin = true;
+        }
+        return isProjectAmin;
+    }
 }
 

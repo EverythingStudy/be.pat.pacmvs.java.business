@@ -1,9 +1,9 @@
 package cn.staitech.anno.controller;
 
 import cn.staitech.anno.domain.DataMigration;
+import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.project.mapper.MarkingMapperV1;
 import cn.staitech.anno.project.service.MarkingServiceV1;
-import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.service.DataMigrationService;
 import cn.staitech.common.core.domain.R;
 import com.github.pagehelper.Page;

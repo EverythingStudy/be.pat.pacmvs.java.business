@@ -37,7 +37,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.rmi.RemoteException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -184,7 +183,7 @@ public class AsyncTask {
                     JsonFactory jfs = new MappingJsonFactory();
                     JsonParser jpr = jfs.createParser(newBfs);
                     //存放标注者id
-                    Set<String> userIdList=new HashSet<>();
+                    Set<String> userIdList = new HashSet<>();
                     JsonToken currents;
                     currents = jpr.nextToken();
                     //循环获取json中用户信息
@@ -208,10 +207,10 @@ public class AsyncTask {
                         }
                     }
                     //删除json中标注者的标注数据
-                    for(String user:userIdList){
+                    for (String user : userIdList) {
                         QueryWrapper<Marking> markingQueryWrapperBy = new QueryWrapper<>();
                         markingQueryWrapperBy.eq("create_by", user);
-                         markingQueryWrapperBy.eq("slide_id", slide.getSlideId());
+                        markingQueryWrapperBy.eq("slide_id", slide.getSlideId());
                         markingMapperV1.delete(markingQueryWrapperBy);
                     }
                     // 查询切片详情
@@ -301,7 +300,7 @@ public class AsyncTask {
         if (!Objects.equals(properties1.getLabel_code(), "") && properties1.getLabel_code() != null) {
             Long categoryId = categoryMap.get(properties1.getLabel_code());
             if (categoryId == null) {
-                PathologicalIndicatorCategory pathologicalIndicatorCategory = pathologicalIndicatorCategoryMapper.selectProjectAndNumber(Long.valueOf(slideBy.getProjectId()), properties1.getLabel_code(),SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+                PathologicalIndicatorCategory pathologicalIndicatorCategory = pathologicalIndicatorCategoryMapper.selectProjectAndNumber(Long.valueOf(slideBy.getProjectId()), properties1.getLabel_code(), SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
                 if (pathologicalIndicatorCategory != null) {
                     marking.setCategoryId(pathologicalIndicatorCategory.getCategoryId());
                     categoryMap.put(properties1.getLabel_code(), pathologicalIndicatorCategory.getCategoryId());

@@ -1,13 +1,12 @@
 package cn.staitech.anno.service;
 
-import java.util.List;
-import java.util.Map;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-
 import cn.staitech.anno.domain.Organ;
 import cn.staitech.anno.vo.organ.InsertOrganVO;
 import cn.staitech.common.core.domain.R;
+import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -22,6 +21,6 @@ public interface OrganService extends IService<Organ> {
     Map<String, String> selectMapEn();
 
     List<Organ> getOrganBySpeciesId(String speciesId);
-    
+
     R<Organ> add(InsertOrganVO req);
 }

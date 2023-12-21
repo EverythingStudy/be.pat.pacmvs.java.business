@@ -7,12 +7,12 @@ package cn.staitech.anno.constant;
  */
 public class CommonConstant {
 
-	 /**
+    /**
      * system
      */
-	
-	public static final String SYS_USER = "SYS_USER_";
-	public static final Long SYS_USER_CACHE_HOURS = 7L;
+
+    public static final String SYS_USER = "SYS_USER_";
+    public static final Long SYS_USER_CACHE_HOURS = 7L;
     /**
      * cache key
      */
@@ -56,18 +56,18 @@ public class CommonConstant {
     public static final Long MARKING_CACHE_HOURS = 24L;
     public static final String ANNO_TYPE_DRAW = "Draw";
     public static final String ANNO_TYPE_MEASURE = "Measure";
-    
+
     /**
      * 上传下载限制
      */
     public static final double UPLOAD_FILE_LIMIT = 300;
     public static final double DOWN_FILE_LIMIT = 300;
-    
+
     /**
      * Viewer
      */
     public static final Double MICRON = 0.26;
-    
+
     /**
      * structure
      */
@@ -116,6 +116,7 @@ public class CommonConstant {
     public static final String ANNOTATION_CATEGORY = "标注类别";
     public static final String USER = "成员";
     public static final String SLIDE = "图像";
+
     private CommonConstant() {
         throw new IllegalStateException("CommonConstant class");
     }

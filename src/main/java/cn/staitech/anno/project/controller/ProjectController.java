@@ -50,7 +50,7 @@ public class ProjectController {
         handleAuth(in);
 
         // 机构层级
-        if(in.getOrganizationId()==null || in.getOrganizationId()<1 ){
+        if (in.getOrganizationId() == null || in.getOrganizationId() < 1) {
             if (!SysUser.isAdmin(SecurityUtils.getUserId())) {
                 in.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
             }

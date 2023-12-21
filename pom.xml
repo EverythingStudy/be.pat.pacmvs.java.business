@@ -357,9 +357,9 @@
         <profile>
             <!--108线开发环境-->
             <id>patsaasdev</id>
-<!--            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>-->
+            <!--            <activation>
+                            <activeByDefault>true</activeByDefault>
+                        </activation>-->
             <properties>
                 <activatedProperties>patsaasdev</activatedProperties>
                 <nacosNamespace>9db07238-8e80-49f9-b665-5afa03e8d569</nacosNamespace>

@@ -139,41 +139,41 @@
 
     <sql id="selectBy">
         SELECT t.annotation_type,
-               t.marking_id,
-               t.area,
-               t.perimeter,
-               t.description,
-               t.category_id,
-               t.measure_type,
-               t.measure_relation,
-               t.measure_name,
-               t.measure_number,
-               t.radius,
-               t.mean_distance,
-               t.max_distance,
-               t.min_distance,
-               t.inner_angle,
-               t.exterior_angle,
-               t.create_by,
-               t.create_time,
-               t.location_type,
-               t.slide_id,
-               t.center_point,
-               t.point_count,
-               t.annotation_owner,
-               c.rgb                                                             as label_color,
-               c.category_name                                                   as label_name,
-               <!-- CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) as measure_full_name, -->
-               c.category_name as measure_full_name,
-               t.annotation_owner,
-               t.annotation_update_owner,
-               t.update_time,
-               t.update_by,
-               t.image_id,
-               t.project_id
---                t.image_url
+        t.marking_id,
+        t.area,
+        t.perimeter,
+        t.description,
+        t.category_id,
+        t.measure_type,
+        t.measure_relation,
+        t.measure_name,
+        t.measure_number,
+        t.radius,
+        t.mean_distance,
+        t.max_distance,
+        t.min_distance,
+        t.inner_angle,
+        t.exterior_angle,
+        t.create_by,
+        t.create_time,
+        t.location_type,
+        t.slide_id,
+        t.center_point,
+        t.point_count,
+        t.annotation_owner,
+        c.rgb as label_color,
+        c.category_name as label_name,
+        <!-- CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) as measure_full_name, -->
+        c.category_name as measure_full_name,
+        t.annotation_owner,
+        t.annotation_update_owner,
+        t.update_time,
+        t.update_by,
+        t.image_id,
+        t.project_id
+        -- t.image_url
         FROM tb_marking AS t
-                 LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
+        LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
     </sql>
 
     <sql id="   selectPoint">
@@ -185,54 +185,54 @@
 
     <sql id="selectList">
         SELECT annotation_id,
-               geometry,
-               JSON_OBJECT(
-                       "annotation_type",
-                       t.annotation_type,
-                       "area",
-                       t.area,
-                       "perimeter",
-                       t.perimeter,
-                       "measure_type",
-                       t.measure_type,
-                       "measure_relation",
-                       t.measure_relation,
-                       "measure_name",
-                       t.measure_name,
-                       "measure_number",
-                       t.measure_number,
-                       "radius",
-                       t.radius,
-                       "mean_distance",
-                       t.mean_distance,
-                       "max_distance",
-                       t.max_distance,
-                       "min_distance",
-                       t.min_distance,
-                       "inner_angle",
-                       t.inner_angle,
-                       "exterior_angle",
-                       t.exterior_angle,
-                       "create_time",
-                       DATE_FORMAT(t.create_time, '%Y-%m-%d %H:%i:%s'),
-                       "center_point",
-                       t.center_point,
-                       "annotation_owner",
-                       cast(t.create_by as char(200)),
-                       "label_color",
-                       c.rgb,
-                       "label_code",
-                       c.number,
-                       "number",
-                       t.number,
-                       "label_name",
-                       c.category_name,
-                       "measure_full_name",
-                      <!--  CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) -->
-                      c.category_name
-                   ) AS properties
+        geometry,
+        JSON_OBJECT(
+        "annotation_type",
+        t.annotation_type,
+        "area",
+        t.area,
+        "perimeter",
+        t.perimeter,
+        "measure_type",
+        t.measure_type,
+        "measure_relation",
+        t.measure_relation,
+        "measure_name",
+        t.measure_name,
+        "measure_number",
+        t.measure_number,
+        "radius",
+        t.radius,
+        "mean_distance",
+        t.mean_distance,
+        "max_distance",
+        t.max_distance,
+        "min_distance",
+        t.min_distance,
+        "inner_angle",
+        t.inner_angle,
+        "exterior_angle",
+        t.exterior_angle,
+        "create_time",
+        DATE_FORMAT(t.create_time, '%Y-%m-%d %H:%i:%s'),
+        "center_point",
+        t.center_point,
+        "annotation_owner",
+        cast(t.create_by as char(200)),
+        "label_color",
+        c.rgb,
+        "label_code",
+        c.number,
+        "number",
+        t.number,
+        "label_name",
+        c.category_name,
+        "measure_full_name",
+        <!--  CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) -->
+        c.category_name
+        ) AS properties
         FROM tb_marking AS t
-                 LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
+        LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
     </sql>
 
     <sql id="selectPoint">
@@ -243,42 +243,45 @@
     </sql>
 
 
-
     <select id="selectUnionList" parameterType="map" resultMap="markingSelectListVoResult">
         SELECT *
         FROM (SELECT t.marking_id,
-                     t.create_time,
-                     t.measure_name,
-                     t.category_id,
-                     0                                                                 AS point_count,
-                     t.slide_id,
-                     t.perimeter,
-                     t.area,
-                     t.mean_distance,
-                     t.max_distance,
-                     t.min_distance,
-                     t.radius,
-                     t.inner_angle,
-                     t.exterior_angle,
-                    <!--  CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) AS measure_full_name, -->
-                    c.category_name as measure_full_name,
-                     c.category_name
-              FROM tb_marking AS t
-                       LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
-              WHERE t.measure_name != "P"
-            AND t.slide_id = #{slideId}
-              UNION ALL
-              SELECT
-                  max ( t.marking_id ) AS marking_id, max ( t.create_time ) AS create_time, t.measure_name, t.category_id, sum ( 1 ) AS point_count, t.slide_id, max ( t.perimeter ) AS perimeter, max ( t.area ) AS area, max ( t.mean_distance ) AS mean_distance, max ( t.max_distance ) AS max_distance, max ( t.min_distance ) AS min_distance, max ( t.radius ) AS radius, max ( t.inner_angle ) AS inner_angle, max ( t.exterior_angle ) AS exterior_angle, CONCAT_WS( "_", t.measure_name, c.category_name ) AS measure_full_name, c.category_name
-              FROM
-                  tb_marking AS t
-                  LEFT JOIN tb_pathological_indicator_category AS c
-              ON t.category_id = c.category_id
-              WHERE
-                  measure_name = "P"
-                AND slide_id = #{slideId}
-              GROUP BY
-                  t.category_id) AS al
+        t.create_time,
+        t.measure_name,
+        t.category_id,
+        0 AS point_count,
+        t.slide_id,
+        t.perimeter,
+        t.area,
+        t.mean_distance,
+        t.max_distance,
+        t.min_distance,
+        t.radius,
+        t.inner_angle,
+        t.exterior_angle,
+        <!--  CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) AS measure_full_name, -->
+        c.category_name as measure_full_name,
+        c.category_name
+        FROM tb_marking AS t
+        LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
+        WHERE t.measure_name != "P"
+        AND t.slide_id = #{slideId}
+        UNION ALL
+        SELECT
+        max ( t.marking_id ) AS marking_id, max ( t.create_time ) AS create_time, t.measure_name, t.category_id, sum ( 1
+        ) AS point_count, t.slide_id, max ( t.perimeter ) AS perimeter, max ( t.area ) AS area, max ( t.mean_distance )
+        AS mean_distance, max ( t.max_distance ) AS max_distance, max ( t.min_distance ) AS min_distance, max ( t.radius
+        ) AS radius, max ( t.inner_angle ) AS inner_angle, max ( t.exterior_angle ) AS exterior_angle, CONCAT_WS( "_",
+        t.measure_name, c.category_name ) AS measure_full_name, c.category_name
+        FROM
+        tb_marking AS t
+        LEFT JOIN tb_pathological_indicator_category AS c
+        ON t.category_id = c.category_id
+        WHERE
+        measure_name = "P"
+        AND slide_id = #{slideId}
+        GROUP BY
+        t.category_id) AS al
         <if test="measureFullName != null and measureFullName != ''">
             WHERE al.measure_full_name LIKE #{measureFullName}
         </if>
@@ -287,79 +290,79 @@
 
     <sql id="selectListBy">
         SELECT annotation_id,
-               geometry,
-               JSON_OBJECT(
-                       "annotation_type",
-                       t.annotation_type,
-                       "marking_id",
-                       t.marking_id,
-                       "area",
-                       t.area,
-                       "perimeter",
-                       t.perimeter,
-                       "description",
-                       t.description,
-                       "category_id",
-                       t.category_id,
-                       "measure_type",
-                       t.measure_type,
-                       "measure_relation",
-                       t.measure_relation,
-                       "measure_name",
-                       t.measure_name,
-                       "measure_number",
-                       t.measure_number,
-                       "radius",
-                       t.radius,
-                       "mean_distance",
-                       t.mean_distance,
-                       "max_distance",
-                       t.max_distance,
-                       "min_distance",
-                       t.min_distance,
-                       "inner_angle",
-                       t.inner_angle,
-                       "exterior_angle",
-                       t.exterior_angle,
-                       "create_by",
-                       t.create_by,
-                       "create_time",
-                       DATE_FORMAT(t.create_time, '%Y-%m-%d %H:%i:%s'),
-                       "location_type",
-                       t.location_type,
-                       "slide_id",
-                       t.slide_id,
-                       "center_point",
-                       t.center_point,
-                       "point_count",
-                       t.point_count,
-                       "annotation_owner",
-                       t.annotation_owner,
-                       "label_color",
-                       c.rgb,
-                       "label_code",
-                       c.number,
-                       "number",
-                       t.number,
-                       "label_name",
-                       c.category_name,
-                       "measure_full_name",
-                       <!-- CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name), -->
-                       c.category_name,
-                       "image_id",
-                       t.image_id,
-                       "update_by",
-                       t.update_by,
-                       "annotation_update_owner",
-                       t.annotation_update_owner,
-                       "project_id",
-                       t.project_id
-                   --                    ,
---                        "image_url",
---                        t.image_url
-                   ) AS properties
+        geometry,
+        JSON_OBJECT(
+        "annotation_type",
+        t.annotation_type,
+        "marking_id",
+        t.marking_id,
+        "area",
+        t.area,
+        "perimeter",
+        t.perimeter,
+        "description",
+        t.description,
+        "category_id",
+        t.category_id,
+        "measure_type",
+        t.measure_type,
+        "measure_relation",
+        t.measure_relation,
+        "measure_name",
+        t.measure_name,
+        "measure_number",
+        t.measure_number,
+        "radius",
+        t.radius,
+        "mean_distance",
+        t.mean_distance,
+        "max_distance",
+        t.max_distance,
+        "min_distance",
+        t.min_distance,
+        "inner_angle",
+        t.inner_angle,
+        "exterior_angle",
+        t.exterior_angle,
+        "create_by",
+        t.create_by,
+        "create_time",
+        DATE_FORMAT(t.create_time, '%Y-%m-%d %H:%i:%s'),
+        "location_type",
+        t.location_type,
+        "slide_id",
+        t.slide_id,
+        "center_point",
+        t.center_point,
+        "point_count",
+        t.point_count,
+        "annotation_owner",
+        t.annotation_owner,
+        "label_color",
+        c.rgb,
+        "label_code",
+        c.number,
+        "number",
+        t.number,
+        "label_name",
+        c.category_name,
+        "measure_full_name",
+        <!-- CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name), -->
+        c.category_name,
+        "image_id",
+        t.image_id,
+        "update_by",
+        t.update_by,
+        "annotation_update_owner",
+        t.annotation_update_owner,
+        "project_id",
+        t.project_id
+        -- ,
+        -- "image_url",
+        -- t.image_url
+        ) AS properties
         FROM tb_marking AS t
-                 LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
+        LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
     </sql>
 
     <select id="selectListBy" parameterType="long" resultMap="featuresResult">
@@ -443,7 +446,6 @@
     </select>
 
 
-
     <select id="selectFilterCategoryLists" parameterType="map" resultMap="featuresResult">
         <include refid="selectList"/>
         where slide_id = #{slideId}
@@ -456,7 +458,6 @@
     </select>
 
 
-
     <select id="selectListCount" parameterType="long" resultType="int">
         SELECT count(*) * 1
         FROM tb_marking AS t
@@ -464,7 +465,8 @@
         where slide_id = #{slideId}
         AND location_type != "Point"
         <if test="measureFullName != null and measureFullName != ''">
-             and CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) LIKE concat('%', #{measureFullName}, '%')
+            and CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) LIKE concat('%', #{measureFullName},
+            '%')
         </if>
     </select>
 
@@ -474,7 +476,8 @@
         where slide_id = #{slideId}
         AND location_type != "Point"
         <if test="measureFullName != null and measureFullName != ''">
-           and CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) LIKE concat('%', #{measureFullName}, '%')
+            and CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name) LIKE concat('%', #{measureFullName},
+            '%')
         </if>
         ORDER BY marking_id DESC
         limit #{pageNum},#{pageSize}
@@ -484,7 +487,7 @@
         <include refid="selectPoint"/>
         where slide_id = #{slideId}
         <if test="measureFullName != null and measureFullName != ''">
-           AND CONCAT_WS("_", t.measure_name, t1.category_name) LIKE concat('%', #{measureFullName}, '%')
+            AND CONCAT_WS("_", t.measure_name, t1.category_name) LIKE concat('%', #{measureFullName}, '%')
         </if>
         AND location_type = "Point"
     </select>
