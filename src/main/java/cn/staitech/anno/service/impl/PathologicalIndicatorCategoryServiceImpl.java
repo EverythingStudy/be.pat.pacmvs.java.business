@@ -238,12 +238,22 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 	public List<PathologicalIndicatorCategoryOutVo> selectprojectList(Long projectId) {
 		Project project = projectMapperv1.selectById(projectId);
 		if (project != null) {
-
 			List<PathologicalIndicatorCategoryOutVo> list = pathologicalIndicatorCategoryMapper.selectIndicatorList(project.getIndicatorId());
+			Indicator indicator = indicatorMapper.selectIndicatorById(project.getIndicatorId());
+			//根据IndicatorId 得到种属id,脏器id，organization_id+structure_id 去structure查询类型
+			String organId = indicator.getOrganId();
+			String speciesId = indicator.getSpeciesId();
+			Long organizationId = indicator.getOrganizationId();
 			for (PathologicalIndicatorCategoryOutVo category : list) {
+				String structureId = category.getStructureId();
+				Structure structure = getStructure(organId, speciesId, organizationId, structureId);
+				if(null != structure){
+					category.setType(structure.getType());
+				}else{
+					category.setType("");
+				}
 				// 处理标签集中英文
 				if (LanguageUtils.isEn()) {
-					Indicator indicator = indicatorMapper.selectIndicatorById(category.getIndicatorId());
 					if (indicator != null) {
 						String categoryName = indicator.getIndicatorNameEn().concat(" ").concat(MapConstant.getStructureNameEn(category.getStructureId()));
 						category.setCategoryName(categoryName);
@@ -254,6 +264,20 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 			return list;
 		}
 		return new ArrayList<>();
+	}
+	
+	private Structure getStructure(String organId,String speciesId,Long organizationId,String structureId){
+		Structure structure = new Structure();
+		QueryWrapper<Structure> queryWrapper = new QueryWrapper<>();
+		queryWrapper.eq("species_id", speciesId);
+		queryWrapper.eq("organ_id", organId);
+		queryWrapper.eq("organization_id", organizationId);
+		queryWrapper.eq("structure_id", structureId);
+		List<Structure> list = structureService.list(queryWrapper);
+		if(CollectionUtils.isNotEmpty(list)){
+			 structure = list.get(0);
+		}
+		return structure;
 	}
 
 	@Override
