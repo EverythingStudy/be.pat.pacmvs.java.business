@@ -51,4 +51,7 @@ public class ProjectIn {
     private Long indicatorId;
     @ApiModelProperty(value = "机构编号")
     private Long organizationId;
+
+    @ApiModelProperty(value = "描述")
+    private String description;
 }

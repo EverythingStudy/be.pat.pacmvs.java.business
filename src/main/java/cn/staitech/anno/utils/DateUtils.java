@@ -17,14 +17,14 @@ import java.util.*;
 public class DateUtils {
 
     public static final String DEFAULT_PATTERN = "yyyy-MM-dd HH:mm:ss";
-    private static Logger logger = LogManager.getLogger(DateUtils.class);
-    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private static SimpleDateFormat sdfYMD = new SimpleDateFormat("yyyy-MM-dd");
-    private static SimpleDateFormat sdfLongTimeS = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-    private static SimpleDateFormat sdfLongTime = new SimpleDateFormat("yyyyMMddHHmmss");
-    private static SimpleDateFormat sdfLongTimePlusMill = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSSS");
-    private static SimpleDateFormat sdfLongU = new SimpleDateFormat("MMM dd,yyyy", Locale.ENGLISH);
-    private static long DAY_IN_MILLISECOND = 0x5265c00L;
+    private static final Logger logger = LogManager.getLogger(DateUtils.class);
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat sdfYMD = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat sdfLongTimeS = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+    private static final SimpleDateFormat sdfLongTime = new SimpleDateFormat("yyyyMMddHHmmss");
+    private static final SimpleDateFormat sdfLongTimePlusMill = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSSS");
+    private static final SimpleDateFormat sdfLongU = new SimpleDateFormat("MMM dd,yyyy", Locale.ENGLISH);
+    private static final long DAY_IN_MILLISECOND = 0x5265c00L;
 
     public DateUtils() {
     }

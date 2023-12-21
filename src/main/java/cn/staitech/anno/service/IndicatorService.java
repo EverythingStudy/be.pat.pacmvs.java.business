@@ -2,6 +2,7 @@ package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.utils.PageMaster;
+import cn.staitech.anno.vo.indicator.IndicatorAddVO;
 import cn.staitech.anno.vo.indicator.IndicatorGetVO;
 import cn.staitech.anno.vo.indicator.IndicatorReviseVO;
 import cn.staitech.anno.vo.statistic.StatisticIndicatorListInVO;
@@ -17,7 +18,7 @@ public interface IndicatorService {
      * @param indicator 添加的字段信息
      * @return 结果
      */
-    public int insertIndicator(Indicator indicator);
+    int insertIndicator(Indicator indicator);
 
     /**
      * 展示病例指标
@@ -25,7 +26,7 @@ public interface IndicatorService {
      * @param indicator 查询的条件
      * @return 结果
      */
-    public PageMaster<Indicator> selectIndicatorList(Indicator indicator, Integer pageNum, Integer pageSize);
+    PageMaster<Indicator> selectIndicatorList(Indicator indicator, Integer pageNum, Integer pageSize);
 
 
     /**
@@ -34,7 +35,7 @@ public interface IndicatorService {
      * @param indicator 查询的条件
      * @return 结果
      */
-    public List<Indicator> selectIndicatorList1(Indicator indicator);
+    List<Indicator> selectIndicatorList1(Indicator indicator);
 
     /**
      * 展示病例指标详情
@@ -42,7 +43,7 @@ public interface IndicatorService {
      * @param indicatorId 病例指标id
      * @return 结果
      */
-    public Indicator selectIndicatorsById(Long indicatorId);
+    Indicator selectIndicatorsById(Long indicatorId);
 
     /**
      * 修改
@@ -50,7 +51,7 @@ public interface IndicatorService {
      * @param indicator 病例指标id
      * @return 结果
      */
-    public int updateIndicator(IndicatorReviseVO indicator);
+    int updateIndicator(IndicatorReviseVO indicator);
 
     /**
      * 删除
@@ -58,7 +59,7 @@ public interface IndicatorService {
      * @param indicatorId 指标id
      * @return 结果
      */
-    public int delIndicator(Long indicatorId);
+    int delIndicator(Long indicatorId);
 
     /**
      * 展示指定的统计病例指标列表
@@ -66,7 +67,7 @@ public interface IndicatorService {
      * @param projectIdList 项目ID数组
      * @return 结果
      */
-    public List<StatisticIndicatorListOutVO> selectIndicatorStatisticList(StatisticIndicatorListInVO projectIdList);
+    List<StatisticIndicatorListOutVO> selectIndicatorStatisticList(StatisticIndicatorListInVO projectIdList);
 
 
     /**
@@ -75,7 +76,7 @@ public interface IndicatorService {
      * @param indicator
      * @return 结果
      */
-    public List<Indicator> selectIndicator(Indicator indicator);
+    List<Indicator> selectIndicator(Indicator indicator);
 
     /**
      * 根据病理id和名字查询信息
@@ -83,13 +84,13 @@ public interface IndicatorService {
      * @param indicator
      * @return 结果
      */
-    public List<Indicator> selectIndicatorName(IndicatorGetVO indicator);
+    List<Indicator> selectIndicatorName(IndicatorGetVO indicator);
 
 
     /**
      * 查询所有的病理数量
      */
-    public Integer selectIndicatorNum();
+    Integer selectIndicatorNum();
 
 
     // 2.0 新修改====================================
@@ -97,7 +98,7 @@ public interface IndicatorService {
     /**
      * 查询专题在项目表中的数量
      */
-    public Integer selectIndicatorCountInProject(Long indicatorId);
+    Integer selectIndicatorCountInProject(Long indicatorId);
 
     /**
      * 查询指标列表
@@ -105,6 +106,8 @@ public interface IndicatorService {
      * @param
      * @return 结果
      */
-    public List<Indicator> selectIndicatorInformation(Indicator indicator);
+    List<Indicator> selectIndicatorInformation(Indicator indicator);
+    
+    int saveCheck(IndicatorAddVO req);
 
 }

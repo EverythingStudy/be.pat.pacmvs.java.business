@@ -98,21 +98,20 @@ public class ProjectGroup implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", projectGroupId=").append(projectGroupId);
-        sb.append(", projectId=").append(projectId);
-        sb.append(", groupId=").append(groupId);
-        sb.append(", slideTotal=").append(slideTotal);
-        sb.append(", delFlag=").append(delFlag);
-        sb.append(", createBy=").append(createBy);
-        sb.append(", createTime=").append(createTime);
-        sb.append(", updateBy=").append(updateBy);
-        sb.append(", updateTime=").append(updateTime);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
+        String sb = getClass().getSimpleName() +
+                " [" +
+                "Hash = " + hashCode() +
+                ", projectGroupId=" + projectGroupId +
+                ", projectId=" + projectId +
+                ", groupId=" + groupId +
+                ", slideTotal=" + slideTotal +
+                ", delFlag=" + delFlag +
+                ", createBy=" + createBy +
+                ", createTime=" + createTime +
+                ", updateBy=" + updateBy +
+                ", updateTime=" + updateTime +
+                ", serialVersionUID=" + serialVersionUID +
+                "]";
+        return sb;
     }
 }

@@ -141,7 +141,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
                 // 匹配机构名称
                 if (map.containsKey(in.getOrganizationId())) {
-                    out.setOrganizationName(map.get(in.getOrganizationId()).toString());
+                    out.setOrganizationName(map.get(in.getOrganizationId()));
                 }
 
                 // 图片类型
@@ -252,7 +252,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
                 // 匹配机构名称
                 if (map.containsKey(in.getOrganizationId())) {
-                    out.setOrganizationName(map.get(in.getOrganizationId()).toString());
+                    out.setOrganizationName(map.get(in.getOrganizationId()));
                 }
 
 

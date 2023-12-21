@@ -28,7 +28,7 @@ public class FileManagerController {
     /**
      * 根目录 /home/pat_saas/Data、Slides、Upload
      */
-    private String baseDir = "/home/pat_saas";
+    private final String baseDir = "/home/pat_saas";
 
     /**
      * 查询目录下的文件夹和文件列表

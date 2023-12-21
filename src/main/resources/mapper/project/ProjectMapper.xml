@@ -109,6 +109,9 @@
             <if test="params.colorType!= null">
                 AND p.color_type = #{params.colorType}
             </if>
+            <if test="params.description!= null">
+                AND p.description like CONCAT('%',#{params.description},'%')
+            </if>
             <if test="params.createTimeParams != null and params.createTimeParams.beginTime != null">
                 and date_format(m.create_time,'%y%m%d') &gt;= date_format(#{params.createTimeParams.beginTime},'%y%m%d')
             </if>

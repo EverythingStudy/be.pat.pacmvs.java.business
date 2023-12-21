@@ -10,9 +10,6 @@ import cn.staitech.common.security.utils.SecurityUtils;
 
 public class LanguageUtils {
     public static boolean isEn() {
-        if (SecurityUtils.getLoginUser().getLanguage() != null && "en-us".equals(SecurityUtils.getLoginUser().getLanguage())) {
-            return true;
-        }
-        return false;
+        return SecurityUtils.getLoginUser().getLanguage() != null && "en-us".equals(SecurityUtils.getLoginUser().getLanguage());
     }
 }

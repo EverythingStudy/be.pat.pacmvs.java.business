@@ -154,23 +154,22 @@ public class PathologicalIndicatorCategory implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", categoryId=").append(categoryId);
-        sb.append(", indicatorId=").append(indicatorId);
-        sb.append(", categoryName=").append(categoryName);
-        sb.append(", createBy=").append(createBy);
-        sb.append(", createTime=").append(createTime);
-        sb.append(", updateBy=").append(updateBy);
-        sb.append(", updateTime=").append(updateTime);
-        sb.append(", annoType=").append(annoType);
-        sb.append(", orderNumber=").append(orderNumber);
-        sb.append(", delFlag=").append(delFlag);
-        sb.append(", number=").append(number);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
+        String sb = getClass().getSimpleName() +
+                " [" +
+                "Hash = " + hashCode() +
+                ", categoryId=" + categoryId +
+                ", indicatorId=" + indicatorId +
+                ", categoryName=" + categoryName +
+                ", createBy=" + createBy +
+                ", createTime=" + createTime +
+                ", updateBy=" + updateBy +
+                ", updateTime=" + updateTime +
+                ", annoType=" + annoType +
+                ", orderNumber=" + orderNumber +
+                ", delFlag=" + delFlag +
+                ", number=" + number +
+                ", serialVersionUID=" + serialVersionUID +
+                "]";
+        return sb;
     }
 }

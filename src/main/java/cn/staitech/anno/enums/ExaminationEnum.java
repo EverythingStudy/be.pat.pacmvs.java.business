@@ -16,8 +16,8 @@ public enum ExaminationEnum {
     STATUS_INFO_2(2, "已复核"),
     STATUS_INFO_3(3, "驳回"),
     STATUS_INFO_4(4, "交付");
-    private int value;
-    private String label;
+    private final int value;
+    private final String label;
 
     ExaminationEnum(int value, String label) {
         this.label = label;

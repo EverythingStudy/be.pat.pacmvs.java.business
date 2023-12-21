@@ -234,6 +234,7 @@ public class MarkingUtils {
                     String per = String.valueOf(geometry.getLength() * resolutions);
                     marking.setPerimeter(per);
                 }
+
             }
             return marking;
 

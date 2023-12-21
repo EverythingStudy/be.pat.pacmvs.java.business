@@ -21,7 +21,6 @@
         <result column="is_delete" jdbcType="INTEGER" property="isDelete"/>
         <result column="ai_check" jdbcType="SMALLINT" property="aiCheck"/>
         <result column="ai_analyzed" jdbcType="SMALLINT" property="aiAnalyzed"/>
-        <result column="diagnosis" jdbcType="SMALLINT" property="diagnosis"/>
         <result column="geojson_url" jdbcType="VARCHAR" property="geojsonUrl"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="status" jdbcType="VARCHAR" property="status"/>
@@ -72,7 +71,6 @@
         is_delete,
         ai_check,
         ai_analyzed,
-        diagnosis,
         geojson_url,
         remark,
         `status`,
@@ -219,7 +217,6 @@
         <result property="resolutionX" column="resolution_x"/>
         <result property="resolutionY" column="resolution_y"/>
         <result property="sourceLens" column="source_lens"/>
-        <result property="processFlag" column="process_flag"/>
         <result property="createBy" column="create_by"/>
         <result property="createTime" column="create_time"/>
         <result property="updateBy" column="update_by"/>
@@ -451,21 +448,6 @@
         </foreach>
     </update>
 
-    <!--根据项目、分组及图像更新切片诊断状态-->
-    <update id="updateBatchBySpecialDiagnosis" parameterType="java.util.List">
-        <foreach collection="diagnosisList" item="item" index="index" open="" close="" separator=";">
-            update tb_slide
-            <set>
-                diagnosis=${item.diagnosisStatus},
-                update_time=now(),
-                process_flag=2
-            </set>
-            where project_id = ${item.projectId}
-            and image_id = ${item.subImageId}
-            and group_id = ${item.groupId}
-        </foreach>
-    </update>
-
     <!--查询组内切片报表摘要-->
     <select id="selectSlideByProjectAndGroup" parameterType="java.util.Map"
             resultType="cn.staitech.anno.vo.slide.SlideReportSummaryVO">
@@ -497,7 +479,6 @@
             resultType="cn.staitech.anno.vo.slide.SlideReportVO">
         select m.*,
         s.slide_id,
-        s.diagnosis,
         s.ai_analyzed,
         s.ai_check,
         case when g.gender = 0 then '雌' else '雄' end as gender
@@ -511,9 +492,6 @@
             </if>
             <if test="params.aiCheck != null and params.aiCheck != ''">
                 AND s.ai_check = #{params.aiCheck}
-            </if>
-            <if test="params.diagnosis != null and params.diagnosis != ''">
-                AND s.diagnosis = #{params.diagnosis}
             </if>
             <if test="params.groupId != null and params.groupId != ''">
                 AND s.group_id = #{params.groupId}
@@ -553,7 +531,6 @@
         sum(case when s.ai_check = 1 then 1 end) as negative_total,
         sum(case when s.ai_check = 2 then 1 end) as positive_total,
         sum(case when s.ai_analyzed = 2 then 1 end) as finish_total,
-        sum(case when s.diagnosis = 1 then 1 end) as diagnosis_total,
         sum(case when s.ai_analyzed = 1 or s.ai_analyzed = 3 then 1 end) as analysis_total
         from tb_project p
         left join (select * from tb_slide where is_delete = 0) s on p.project_id = s.project_id
@@ -583,7 +560,6 @@
             resultType="cn.staitech.anno.vo.slide.SlideReportVO">
         select m.*,
         s.slide_id,
-        s.diagnosis,
         s.ai_analyzed,
         s.ai_check,
         p.project_name,
@@ -601,9 +577,6 @@
             </if>
             <if test="params.aiCheck != null and params.aiCheck != ''">
                 AND s.ai_check = #{params.aiCheck}
-            </if>
-            <if test="params.diagnosis != null and params.diagnosis != ''">
-                AND s.diagnosis = #{params.diagnosis}
             </if>
             <if test="params.groupId != null and params.groupId != ''">
                 AND s.group_id = #{params.groupId}
@@ -643,75 +616,12 @@
             </if>
         </where>
     </select>
-    <!--查询项目内切片诊断信息-->
-    <select id="queryVisceraLesionRpt" parameterType="java.util.Map" resultType="java.util.Map">
-        select g.group_name as 'group', g.description as groupDesc,
-        g.group_id,
-        g.gender,
-        g.dosage,
-        i.image_name as subImageName,
-        i.parent_image_name as imageName,
-        i.image_id,
-        t1.special_diagnosis_id,
-        t1.diagnosis,
-        CASE
-        WHEN (ISNULL(t1.remark) = 1) || (LENGTH(trim(t1.remark)) = 0) THEN '-'
-        ELSE t1.remark
-        END as remark
-
-        from tb_slide s
-        left join tb_group g on s.group_id = g.group_id
-        left join tb_sub_image i on s.image_id = i.image_id
-        left join (select d.special_diagnosis_id,
-        d.project_id,
-        d.special_id,
-        d.sub_image_id,
-        d.group_id,
-        d.remark,
-        GROUP_CONCAT(t.tag_name SEPARATOR "; ") as diagnosis
-        from tb_special_diagnosis_detail t
-        left join tb_special_diagnosis d on t.special_diagnosis_id = d.special_diagnosis_id
-        <where>
-            <!--是否可用 0:不可用1:可用-->
-            d.status = 1
-            <if test="params.specialId != null and params.specialId != ''">
-                AND d.special_id = #{params.specialId}
-            </if>
-            <if test="params.currentUserId != null and params.currentUserId != ''">
-                <!--需求所要求权限-->
-                <!--当抽取数据进报告时，如果是其他，不抽其他，只抽取用户自己输入的内容-->
-                AND d.create_by = #{params.currentUserId}
-            </if>
-            <if test="params.projectId != null">
-                AND d.project_id = #{params.projectId, jdbcType=NUMERIC}
-            </if>
-        </where>
-        group by d.special_diagnosis_id, d.project_id, d.special_id, d.sub_image_id, d.group_id) t1
-        on s.project_id = t1.project_id and s.group_id = t1.group_id and s.image_id = t1.sub_image_id
-        <where>
-            s.is_delete = 0
-            <if test="params.groupId != null and params.groupId != ''">
-                AND s.group_id = #{params.groupId}
-            </if>
-            <if test="params.projectId != null">
-                AND s.project_id = #{params.projectId, jdbcType=NUMERIC}
-            </if>
-            <if test="params.reasons != null">
-                AND g.reasons = #{params.reasons, jdbcType=NUMERIC}
-            </if>
-            <if test="params.gender != null">
-                AND g.gender = #{params.gender, jdbcType=NUMERIC}
-            </if>
-        </where>
-        order by g.gender, g.group_id, i.parent_image_name, i.image_name
-    </select>
 
     <!--分页查询切片列表信息-->
     <select id="pageImageCsvListVOList" parameterType="cn.staitech.anno.vo.imagecsv.ImageCsvGetVO"
             resultType="cn.staitech.anno.vo.imagecsv.ImageCsvListVO">
         select s.slide_id,
         s.review_round_id,
-        s.diagnosis,
         s.status,
         s.description,
         s.ai_analyzed,
@@ -811,7 +721,6 @@
             resultType="cn.staitech.anno.vo.imagecsv.ImageCsvListVO">
         select s.slide_id,
         s.review_round_id,
-        s.diagnosis,
         s.status,
         s.remark,
         s.ai_analyzed,
@@ -900,7 +809,6 @@
         s.description,
         s.ai_analyzed,
         s.remark,
-        s.diagnosis,
         s.status,
         s.ai_check,
         s.group_name,

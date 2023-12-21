@@ -21,6 +21,7 @@
         <result column="update_time" property="updateTime"/>
         <result column="category_code" property="categoryCode"/>
         <result column="group_number" property="groupNumber"/>
+        <result column="category_type" property="categoryType"/>
 
 
     </resultMap>
@@ -59,6 +60,7 @@
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="category_code" jdbcType="VARCHAR" property="categoryCode"/>
         <result column="group_number" jdbcType="INTEGER"  property="groupNumber"/>
+        <result column="category_type" jdbcType="INTEGER"  property="categoryType"/>
 
     </resultMap>
 
@@ -66,7 +68,7 @@
     <sql id="Base_Column_List">
         category_id
         , indicator_id, category_name, structure_id, rgb, hex, color, number, order_number, anno_type, del_flag, create_by,
-         update_by, create_time, update_time,category_code,organization_id,group_number
+         update_by, create_time, update_time,category_code,organization_id,group_number,category_type
     </sql>
 
     <select id="selectRoe" parameterType="map" resultMap="BaseResultMap">
@@ -163,6 +165,9 @@
             <if test="groupNumber != null">
                 group_number,
             </if>
+            <if test="categoryType != null">
+                category_type,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="categoryId != null">
@@ -204,6 +209,9 @@
             </if>
             <if test="groupNumber != null">
                 #{groupNumber,jdbcType=INTEGER},
+            </if>
+            <if test="categoryType != null">
+                #{categoryType,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>
@@ -271,9 +279,14 @@
     </select>
 
     <select id="selectIndicatorList" parameterType="java.lang.Long" resultType="cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo">
-        SELECT p.*,s.type
+       <!--  SELECT p.*,s.type
         FROM tb_pathological_indicator_category as p
                  left join tb_structure as s on s.structure_id = p.structure_id
+        WHERE indicator_id = #{indicatorId}
+          AND p.del_flag = "0"
+        order by p.order_number desc,p.group_number desc -->
+         SELECT p.*
+        FROM tb_pathological_indicator_category as p
         WHERE indicator_id = #{indicatorId}
           AND p.del_flag = "0"
         order by p.order_number desc,p.group_number desc
@@ -307,6 +320,9 @@
         WHERE p.project_id = #{projectId}
           AND pic.number = #{number}
           and pic.del_flag = '0'
+          <if test="organizationId != null">
+                AND pic.organization_id = #{organizationId}
+          </if>
     </select>
 
     <select id="selectCategoryById" resultType="java.lang.String">
@@ -343,6 +359,9 @@
         </if>
         <if test="structureIds != null  and categoryName != ''">
             AND structure_id  like  concat(#{structureIds}, '%')
+        </if>
+         <if test="organizationId != null">
+            AND organization_id = #{organizationId}
         </if>
     </select>
 
@@ -479,7 +498,8 @@
         p1.species_id,
         p1.organ_id,
         p1.category_code,
-        p1.group_number
+        p1.group_number,
+        p1.category_type
         FROM
         (
         SELECT
@@ -497,7 +517,8 @@
         idc.species_id,
         idc.organ_id,
         p.category_code,
-        p.group_number
+        p.group_number,
+        p.category_type
         FROM
         tb_pathological_indicator_category AS p
         LEFT JOIN tb_pathological_indicator AS idc ON p.indicator_id = idc.indicator_id

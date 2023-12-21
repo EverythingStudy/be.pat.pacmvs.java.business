@@ -23,10 +23,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import cn.hutool.core.io.IoUtil;
-import cn.hutool.json.JSONUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
-import cn.staitech.anno.config.AsyncTask;
 import cn.staitech.anno.mapper.SysUserMapper;
 import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.project.domain.PathologicalIndicatorCategory;
@@ -50,14 +48,12 @@ import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.model.LoginUser;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author 86186
  * @description 针对表【tb_slide(tb_slide)】的数据库操作Service实现
  * @createDate 2023-09-13 17:21:03
  */
-@Slf4j
 @Service("SlideServiceImplV1")
 public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         implements SlideService {
@@ -92,7 +88,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         });
     }
 
-   /* @Override
+    @Override
     public PageMaster<SlideVO> pageSlides(Page page, SlideQueryIn params) throws Exception {
         getBaseMapper().pageSlides(page, params);
         List<SlideVO> list = page.getRecords();
@@ -108,25 +104,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
                }
 //                slideIds.add(slideVO.getSlideId());
 //                map.put(slideVO.getSlideId(), slideVO);
-            });
-            List<Marking> annotationList = queryAnnotation(slideIds, params);
-            handleAnnoList(annotationList, map);
-        }
-        PageMaster<SlideVO> pageMaster = PageMaster.of(list);
-        pageMaster.setTotal(page.getTotal());
-        return pageMaster;
-    }*/
-    
-    @Override
-    public PageMaster<SlideVO> pageSlides(Page page, SlideQueryIn params) throws Exception {
-        getBaseMapper().pageSlides(page, params);
-        List<SlideVO> list = page.getRecords();
-        List<Long> slideIds = new ArrayList<>();
-        Map<Long, SlideVO> map = new HashMap<>();
-        if (list != null && !list.isEmpty()) {
-            list.forEach(slideVO -> {
-                slideIds.add(slideVO.getSlideId());
-                map.put(slideVO.getSlideId(), slideVO);
             });
             List<Marking> annotationList = queryAnnotation(slideIds, params);
             handleAnnoList(annotationList, map);
@@ -327,14 +304,16 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
 
     private List<Marking> queryAnnotation(List<Long> slideIds, SlideQueryIn params) throws Exception {
         QueryWrapper<Marking> queryWrapper = Wrappers.query();
-        queryWrapper.eq("annotation_type", "Draw");
+//        queryWrapper.eq("annotation_type", "Draw");
+        queryWrapper.ne("annotation_type", "Measure");
         queryWrapper.eq("project_id", params.getProjectId());
-        if (slideIds != null) {
+//        if (slideIds != null) {
+        if (CollectionUtils.isNotEmpty(slideIds)) {
             queryWrapper.in("slide_id", slideIds);
         }
-        if (params.getAnnoCategory() != null) {
-            queryWrapper.eq("category_id", params.getAnnoCategory());
-        }
+//        if (params.getAnnoCategory() != null) {
+//            queryWrapper.eq("category_id", params.getAnnoCategory());
+//        }
         if (params.getAnnoUser() != null) {
             queryWrapper.eq("create_by", params.getAnnoUser());
         }

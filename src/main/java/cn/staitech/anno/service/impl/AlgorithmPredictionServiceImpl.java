@@ -193,8 +193,6 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 					}
 				}catch(Exception e){
 					e.printStackTrace();
-				}finally {
-
 				}
 			}
 

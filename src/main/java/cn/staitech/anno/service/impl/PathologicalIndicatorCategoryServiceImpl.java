@@ -24,6 +24,7 @@ import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.Structure;
 import cn.staitech.anno.mapper.IndicatorMapper;
 import cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper;
+import cn.staitech.anno.mapper.StructureMapper;
 import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
@@ -49,7 +50,8 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 	private StructureService structureService;
 	@Resource
 	private IndicatorMapper indicatorMapper;
-
+	@Resource
+	private StructureMapper structureMapper;
 
 	/**
 	 * 添加标签
@@ -238,12 +240,22 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 	public List<PathologicalIndicatorCategoryOutVo> selectprojectList(Long projectId) {
 		Project project = projectMapperv1.selectById(projectId);
 		if (project != null) {
-
 			List<PathologicalIndicatorCategoryOutVo> list = pathologicalIndicatorCategoryMapper.selectIndicatorList(project.getIndicatorId());
+			Indicator indicator = indicatorMapper.selectIndicatorById(project.getIndicatorId());
+			//根据IndicatorId 得到种属id,脏器id，organization_id+structure_id 去structure查询类型
+			String organId = indicator.getOrganId();
+			String speciesId = indicator.getSpeciesId();
+			Long organizationId = indicator.getOrganizationId();
 			for (PathologicalIndicatorCategoryOutVo category : list) {
+				String structureId = category.getStructureId();
+				Structure structure = getStructure(organId, speciesId, organizationId, structureId);
+				if(null != structure){
+					category.setType(structure.getType());
+				}else{
+					category.setType("");
+				}
 				// 处理标签集中英文
 				if (LanguageUtils.isEn()) {
-					Indicator indicator = indicatorMapper.selectIndicatorById(category.getIndicatorId());
 					if (indicator != null) {
 						String categoryName = indicator.getIndicatorNameEn().concat(" ").concat(MapConstant.getStructureNameEn(category.getStructureId()));
 						category.setCategoryName(categoryName);
@@ -254,6 +266,20 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 			return list;
 		}
 		return new ArrayList<>();
+	}
+	
+	private Structure getStructure(String organId,String speciesId,Long organizationId,String structureId){
+		Structure retStructure = new Structure();
+		Structure structure = new Structure();
+		structure.setSpeciesId(speciesId);
+		structure.setOrganId(organId);
+		structure.setOrganizationId(organizationId);
+		structure.setStructureId(structureId);
+		List<Structure> list = structureMapper.selectList(structure);
+		if(CollectionUtils.isNotEmpty(list)){
+			retStructure = list.get(0);
+		}
+		return retStructure;
 	}
 
 	@Override
@@ -287,6 +313,8 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 			queryWrapper.in("category_id", dataList);
 		}
 		queryWrapper.isNull("category_code");
+		//structure_id 为空
+		queryWrapper.isNotNull("structure_id");
 		queryWrapper.orderByAsc("indicator_id","structure_id");
 		List<PathologicalIndicatorCategory> list = pathologicalIndicatorCategoryMapper.selectList(queryWrapper);
 		if(CollectionUtils.isNotEmpty(list)){

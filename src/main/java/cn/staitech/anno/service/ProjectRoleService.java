@@ -17,7 +17,7 @@ public interface ProjectRoleService {
      * @param role 角色信息
      * @return 角色数据集合信息
      */
-    public List<SysProjectRole> selectProjectRoleList(SysProjectRole role);
+    List<SysProjectRole> selectProjectRoleList(SysProjectRole role);
 
     /**
      * 根据主键查询单条信息
@@ -33,7 +33,7 @@ public interface ProjectRoleService {
      * @param role
      * @return
      */
-    public Integer countProjectRole(SysProjectRole role);
+    Integer countProjectRole(SysProjectRole role);
 
     /**
      * 新增保存角色信息
@@ -41,7 +41,7 @@ public interface ProjectRoleService {
      * @param role 角色信息
      * @return 结果
      */
-    public int insertProjectRole(SysProjectRole role);
+    int insertProjectRole(SysProjectRole role);
 
 
     /**
@@ -50,7 +50,7 @@ public interface ProjectRoleService {
      * @param roleId 角色ID
      * @return 结果
      */
-    public int deleteProjectRoleById(Long roleId);
+    int deleteProjectRoleById(Long roleId);
 
     /**
      * 批量删除角色信息
@@ -58,7 +58,7 @@ public interface ProjectRoleService {
      * @param roleIds 需要删除的角色ID
      * @return 结果
      */
-    public int deleteProjectRoleByIds(Long[] roleIds);
+    int deleteProjectRoleByIds(Long[] roleIds);
 
     /**
      * 根据项目id查询数据
@@ -75,5 +75,5 @@ public interface ProjectRoleService {
      * @param createBy  创建人
      * @return 返回新添加的角色，重复添加的不更新，但是返回
      */
-    public List<SysProjectRole> addProjectRoles(Long projectId, Long createBy);
+    List<SysProjectRole> addProjectRoles(Long projectId, Long createBy);
 }

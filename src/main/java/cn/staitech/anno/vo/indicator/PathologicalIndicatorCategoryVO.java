@@ -16,6 +16,9 @@ public class PathologicalIndicatorCategoryVO {
     @ApiModelProperty(required = true, value = "结构ID")
     @NotBlank(message = "{PathologicalIndicatorCategoryVO.structureId.isnull}")
     private String structureId;
+    
+    @ApiModelProperty(required = true, value = "结构名称")
+    private String structureName;
 
     @NotBlank(message = "{StatisticCategoryListOutVO.rgb.isnull}")
     @ApiModelProperty(required = true, value = "颜色RBG值")
@@ -32,4 +35,7 @@ public class PathologicalIndicatorCategoryVO {
     @ApiModelProperty(value = "图层顺序")
     @NotNull(message = "{StatisticCategoryListOutVO.orderNumber.isnull}")
     private Integer orderNumber;
+    
+    @ApiModelProperty(value = "标签类型 0:下拉筛选标签；1:自定义标签")
+    private Integer categoryType;
 }

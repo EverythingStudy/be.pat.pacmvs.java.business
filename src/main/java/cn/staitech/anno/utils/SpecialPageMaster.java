@@ -18,7 +18,7 @@ import java.util.List;
 @Api(value = "分页类", tags = "分页类")
 public class SpecialPageMaster<T> extends PageSerializable<T> {
 
-    public static final SpecialPageMaster EMPTY = new SpecialPageMaster(Collections.emptyList(), 0, 0l, new SpecialResVo());
+    public static final SpecialPageMaster EMPTY = new SpecialPageMaster(Collections.emptyList(), 0, 0L, new SpecialResVo());
 
     @ApiModelProperty(value = "页码")
     private int pageNum;
@@ -118,14 +118,13 @@ public class SpecialPageMaster<T> extends PageSerializable<T> {
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder("PageMaster{");
-        sb.append("pageNum=").append(this.pageNum);
-        sb.append(", pageSize=").append(this.pageSize);
-        sb.append(", total=").append(this.total);
-        sb.append(", pages=").append(this.pages);
-        sb.append(", rows=").append(this.list);
+        String sb = "PageMaster{" + "pageNum=" + this.pageNum +
+                ", pageSize=" + this.pageSize +
+                ", total=" + this.total +
+                ", pages=" + this.pages +
+                ", rows=" + this.list;
 
-        return sb.toString();
+        return sb;
     }
 
 }

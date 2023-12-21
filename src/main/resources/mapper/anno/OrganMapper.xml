@@ -8,6 +8,7 @@
         <result property="name" column="name"/>
         <result property="nameEn" column="name_en"/>
         <result property="speciesCode" column="species_code"/>
+        <result property="organizationId" column="organization_id"/>
     </resultMap>
 
     <select id="getOrganBySpeciesId" parameterType="java.lang.String"

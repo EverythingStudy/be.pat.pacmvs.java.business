@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 /**
- * 眼科-View图像列表
+ * AI预测-算法项目-眼科拼接Viewer-View图像
  *
  * @author wangfeng
  * @date 2023-11-10
@@ -60,10 +60,16 @@ public class Airepost {
     private Integer centerX;
     @ApiModelProperty(value = "中心点y")
     private Integer centerY;
+    @ApiModelProperty(value = "初始化-中心点x")
+    private Integer initCenterX;
+    @ApiModelProperty(value = "初始化-中心点y")
+    private Integer initCenterY;
     @ApiModelProperty(value = "旋转角度（默认0）")
     private Integer rotation;
     @ApiModelProperty(value = "层级:解析不出的给0）")
     private Integer level;
+    @ApiModelProperty(value = "初始化-层级:解析不出的给0）")
+    private Integer initLevel;
     @ApiModelProperty(value = "是否主图：主图1、非主图0")
     private Integer primary;
     @ApiModelProperty(value = "是否显示：1是显示、0不显示，默认是1，不允许为空")

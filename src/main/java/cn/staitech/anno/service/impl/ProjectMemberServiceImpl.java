@@ -152,7 +152,7 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
     @Override
     public boolean checkLonginUserRoleType(int userRoleType, int roleType) {
         // 项目贡献者没有添加成员的权限
-        return userRoleType == roleType ? true : false;
+        return userRoleType == roleType;
     }
 
     @Override

@@ -17,8 +17,8 @@ public enum ReasonsEnum {
      */
     reasons_2(2, "恢复期结束安乐死");
 
-    private int value;
-    private String label;
+    private final int value;
+    private final String label;
 
     ReasonsEnum(int value, String label) {
         this.label = label;

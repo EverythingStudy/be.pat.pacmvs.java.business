@@ -89,14 +89,13 @@ public class PageMaster<T> extends PageSerializable<T> {
 
 
     public String toString() {
-        StringBuilder sb = new StringBuilder("PageMaster{");
-        sb.append("pageNum=").append(this.pageNum);
-        sb.append(", pageSize=").append(this.pageSize);
-        sb.append(", total=").append(this.total);
-        sb.append(", pages=").append(this.pages);
-        sb.append(", rows=").append(this.list);
+        String sb = "PageMaster{" + "pageNum=" + this.pageNum +
+                ", pageSize=" + this.pageSize +
+                ", total=" + this.total +
+                ", pages=" + this.pages +
+                ", rows=" + this.list;
 
-        return sb.toString();
+        return sb;
     }
 
 }

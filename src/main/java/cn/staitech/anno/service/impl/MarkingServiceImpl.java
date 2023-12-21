@@ -129,7 +129,7 @@ public class MarkingServiceImpl implements MarkingService {
 	private MarkingMapperV1 markingMapperV1;
 	@Resource
 	private DownTaskService downTaskService;
-	@Autowired
+	@Resource
 	private RedisService redisService;
 
 	@Override
@@ -342,9 +342,9 @@ public class MarkingServiceImpl implements MarkingService {
 		}
 		Project project = projectMapperV1.selectById(markingBy.getProject_id());
 		// 验证集项目中不能修改他人轮廓
-		/*if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
+		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
 			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
-		}*/
+		}
 		return MarkingUtils.updateOperationVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation());
 	}
 
@@ -363,9 +363,9 @@ public class MarkingServiceImpl implements MarkingService {
 		}
 		Project project = projectMapperV1.selectById(markingBy.getProject_id());
 		// 验证集项目中不能修改他人轮廓
-		/*if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
+		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
 			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
-		}*/
+		}
 		// 合并 - 校验飞点 TODO: MarkingUtils.updatePolygonPoint(jsonObject);
 		cn.staitech.anno.project.domain.Marking markingBys = MarkingUtils.updateVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation(), req.getCheck(), req.getResolution());
 		JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(markingBys.getMarkingId()));
@@ -404,9 +404,9 @@ public class MarkingServiceImpl implements MarkingService {
 		}
 		Project project = projectMapperV1.selectById(markingBy.getProject_id());
 		//验证集项目中不能修改他人轮廓
-		/*if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
+		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
 			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
-		}*/
+		}
 		// 查询切片表中信息==》先走缓存
 		Slide slide = redisService.getCacheObject(CommonConstant.ANNO_SLIDE + markingBy.getSlide_id());
 		if (null == slide) {
@@ -559,9 +559,9 @@ public class MarkingServiceImpl implements MarkingService {
 	class TaskGenerateJson implements Runnable {
 
 
-		private CountDownLatch countDownLatch;
-		private Features features;
-		private ConcurrentLinkedQueue<Features> concurrentLinkedQueue;
+		private final CountDownLatch countDownLatch;
+		private final Features features;
+		private final ConcurrentLinkedQueue<Features> concurrentLinkedQueue;
 
 		public TaskGenerateJson(CountDownLatch countDownLatch, Features features, ConcurrentLinkedQueue<Features> concurrentLinkedQueue) {
 			this.countDownLatch = countDownLatch;
@@ -1070,10 +1070,7 @@ public class MarkingServiceImpl implements MarkingService {
 		if (Objects.equals(projectBy.getProjectType(), "1") && CollectionUtil.isNotEmpty(slideIds)) {
 			List<Long> slideIdList = slideIds.stream().filter(e -> {
 				Slide slideBy = slideMapperV1.selectById(e);
-				if (Objects.equals(slideBy.getStatus(), "7")) {
-					return true;
-				}
-				return false;
+				return Objects.equals(slideBy.getStatus(), "7");
 			}).collect(Collectors.toList());
 			// 执行任务
 			// 查询所有的切片
@@ -1186,7 +1183,7 @@ public class MarkingServiceImpl implements MarkingService {
 		private final Long projectId;
 		private final String projectName;
 		private List<Long> slideIds;
-		private SysUser sysUser;
+		private final SysUser sysUser;
 
 		public TaskThread(DownTask downTask, Long projectId, String projectName, List<Long> slideIds, SysUser sysUser) {
 			this.downTask = downTask;
@@ -1438,7 +1435,7 @@ public class MarkingServiceImpl implements MarkingService {
 		}
 		return marking;
 	}
-
+	
 	public Image getImageById(Long imageId){
 		Image image = redisService.getCacheObject(CommonConstant.ANNO_IMAGE+imageId);
 		if(null == image){

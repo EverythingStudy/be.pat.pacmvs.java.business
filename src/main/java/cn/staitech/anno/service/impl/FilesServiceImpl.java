@@ -299,13 +299,12 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
     public Boolean unZip(String zipUrl) throws Exception {
         // ZIP文件
         File zipFile = new File(zipUrl);
-
-        // 处理ZIP重复不覆盖逻辑
-        // 重命名后的zip文件名称，不带扩展名，即新的解压文件夹
+        
+        // zip文件名称，不带扩展名，即新的解压文件夹
         String zipFileNameNoExt = zipUrl.substring(zipUrl.lastIndexOf(File.separator) + 1, zipUrl.lastIndexOf("."));
         // 目标路径根目录
         String destDirRoot = zipUrl.substring(0, zipUrl.lastIndexOf(File.separator) + 1) + zipFileNameNoExt;
-        byte[] buffer = new byte[1024];
+
         log.info("unZip开始解压文件: {} {}", zipFile.getAbsolutePath(), zipFile.length());
 
         try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile), Charset.forName("GBK"))) {
@@ -331,6 +330,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                     }
                     try (FileOutputStream fos = new FileOutputStream(file)) {
                         int len;
+                        byte[] buffer = new byte[1024];
                         while ((len = zis.read(buffer)) > 0) {
                             fos.write(buffer, 0, len);
                         }
@@ -420,7 +420,3 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         }
     }
 }
-
-
-
-

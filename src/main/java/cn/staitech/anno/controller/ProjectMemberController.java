@@ -66,7 +66,7 @@ public class ProjectMemberController extends BaseController {
         Long projectId = projectMemberAddVO.getProjectId();
         // 添加有效用户总数
         AtomicInteger sum = new AtomicInteger(0);
-        //20231107wd admin没有机构，新增时无法获得机构id取项目机构
+        //20231107wd admin没有机构，新增时无法获得机构ID取项目机构
         Project project = projectMapperV.selectById(projectId);
         // 遍历添加
         for (Long userId : projectMemberAddVO.getUserId()) {

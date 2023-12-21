@@ -58,7 +58,7 @@ public interface PathologicalIndicatorCategoryService {
      * @param indicatorId 病理指标ID
      * @return 标签信息
      */
-    public List<PathologicalIndicatorCategory> selectIndicatorIdAll(Long indicatorId);
+    List<PathologicalIndicatorCategory> selectIndicatorIdAll(Long indicatorId);
 
     /**
      * 根据病理指标id删除信息
@@ -68,7 +68,7 @@ public interface PathologicalIndicatorCategoryService {
      */
     int delIndicatorCategory(Long indicatorId);
 
-    public PathologicalIndicatorCategory selectCategoryAll(Long CategoryId);
+    PathologicalIndicatorCategory selectCategoryAll(Long CategoryId);
 
     /**
      * 获取标注类别统计列表

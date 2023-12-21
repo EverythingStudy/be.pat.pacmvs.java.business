@@ -6,5 +6,6 @@
     <resultMap type="cn.staitech.anno.domain.ProductSeries" id="ProductSeriesResult">
         <result property="productSeriesId" column="product_series_id"/>
         <result property="name" column="name"/>
+        <result property="organizationId" column="organization_id"/>
     </resultMap>
 </mapper>

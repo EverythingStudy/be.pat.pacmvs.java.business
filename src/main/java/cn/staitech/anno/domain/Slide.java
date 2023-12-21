@@ -146,13 +146,6 @@ public class Slide {
     private Short aiAnalyzed;
 
     /**
-     * 人工诊断状态：0未诊断，1已诊断
-     */
-    @TableField(value = "diagnosis")
-    @ApiModelProperty(value = "人工诊断状态：0未诊断，1已诊断")
-    private Short diagnosis;
-
-    /**
      * geojson文件地址
      */
     @TableField(value = "geojson_url")

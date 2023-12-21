@@ -33,4 +33,12 @@ public class IndicatorReviseVO {
     private String speciesId;
     @ApiModelProperty(value = "脏器编号")
     private String organId;
+    @ApiModelProperty(value = "标签类型 0:下拉筛选标签；1:自定义标签")
+    private Integer indicatorType;
+    @ApiModelProperty(value = "脏器名称")
+    private String organName;
+    @ApiModelProperty(value = "number")
+    private String number;
+    
+    
 }

@@ -494,9 +494,9 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 	class TaskGenerateJson implements Runnable {
 
 
-		private CountDownLatch countDownLatch;
-		private Features features;
-		private ConcurrentLinkedQueue<Features> concurrentLinkedQueue;
+		private final CountDownLatch countDownLatch;
+		private final Features features;
+		private final ConcurrentLinkedQueue<Features> concurrentLinkedQueue;
 
 		public TaskGenerateJson(CountDownLatch countDownLatch, Features features, ConcurrentLinkedQueue<Features> concurrentLinkedQueue) {
 			this.countDownLatch = countDownLatch;

@@ -192,17 +192,51 @@ public class AsyncTask {
                 // 判断名称切片名称是否相同
 
                 if (Objects.equals(slide.getImageName(), imageName)) {
-                    JsonFactory fs = new MappingJsonFactory();
-                    JsonParser jps = fs.createParser(newBfs);
-                    JSONObject jsonObject = JSONObject.parseObject(jps.readValueAsTree().toString());
-                    // 删除当前切片中(json中用户的)所有标注
-                    QueryWrapper<Marking> markingQueryWrapperBy = new QueryWrapper<>();
-                    markingQueryWrapperBy.eq("slide_id", slide.getSlideId());
-                    //获取json中用户信息
+//                    JsonFactory fs = new MappingJsonFactory();
+//                    JsonParser jps = fs.createParser(newBfs);
+//                    JSONObject jsonObject = JSONObject.parseObject(jps.readValueAsTree().toString());
+//                    // 删除当前切片中(json中用户的)所有标注
+//                    QueryWrapper<Marking> markingQueryWrapperBy = new QueryWrapper<>();
+//                    markingQueryWrapperBy.eq("slide_id", slide.getSlideId());
+//                    //获取json中用户信息
 //                    String name = jsonObject.getJSONObject("attribute").getString("author");
 //                    markingQueryWrapperBy.eq("annotation_owner", name);
-                    //删除slideId下author的所有标注
-                    markingMapperV1.delete(markingQueryWrapperBy);
+//                    //删除slideId下author的所有标注
+//                    markingMapperV1.delete(markingQueryWrapperBy);
+
+                    JsonFactory jfs = new MappingJsonFactory();
+                    JsonParser jpr = jfs.createParser(newBfs);
+                    //存放标注者id
+                    Set<String> userIdList=new HashSet<>();
+                    JsonToken currents;
+                    currents = jpr.nextToken();
+                    //循环获取json中用户信息
+                    while (jpr.nextToken() != JsonToken.END_OBJECT) {
+                        String fieldName = jpr.getCurrentName();
+                        // move from field name to field value
+                        currents = jpr.nextToken();
+                        if ("features".equals(fieldName)) {
+                            if (currents == JsonToken.START_ARRAY) {
+                                while (jpr.nextToken() != JsonToken.END_ARRAY) {
+                                    String node = jpr.readValueAsTree().toString();
+                                    JSONObject featureObject = JSONObject.parseObject(node);
+                                    // 获取属性和自定义字段
+                                    JSONObject properties = featureObject.getJSONObject("properties");
+                                    cn.staitech.anno.vo.geojson.Properties properties1 = JSONObject.toJavaObject(JSONObject.parseObject(JSONObject.toJSONString(properties)), Properties.class);
+                                    userIdList.add(properties1.getAnnotation_owner());
+                                }
+                            }
+                        } else {
+                            jpr.skipChildren();
+                        }
+                    }
+                    //删除json中标注者的标注数据
+                    for(String user:userIdList){
+                        QueryWrapper<Marking> markingQueryWrapperBy = new QueryWrapper<>();
+                        markingQueryWrapperBy.eq("create_by", user);
+                         markingQueryWrapperBy.eq("slide_id", slide.getSlideId());
+                        markingMapperV1.delete(markingQueryWrapperBy);
+                    }
                     // 查询切片详情
                     Slide slideBy = slideMapperV1.selectById(slide.getSlideId());
                     // 查询图片详情

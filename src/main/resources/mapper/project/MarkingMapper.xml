@@ -58,7 +58,7 @@
     <select id="selectMarkings" resultMap="BaseResultMap">
         select * from tb_marking_tmp
     </select>
-    
+
     <select id="markingList" parameterType="cn.staitech.anno.project.domain.Marking" resultMap="BaseResultMap">
         select <include refid="Base_Column_List"/> from tb_marking
             <where>

@@ -21,8 +21,8 @@ public enum ReportRecordEnum {
      */
     TYPE_3(3, "脏器病变报告");
 
-    private int value;
-    private String label;
+    private final int value;
+    private final String label;
 
     ReportRecordEnum(int value, String label) {
         this.label = label;

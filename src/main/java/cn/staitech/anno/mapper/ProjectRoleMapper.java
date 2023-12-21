@@ -17,7 +17,7 @@ public interface ProjectRoleMapper {
      * @param role 角色信息
      * @return 角色数据集合信息
      */
-    public List<SysProjectRole> selectProjectRoleList(SysProjectRole role);
+    List<SysProjectRole> selectProjectRoleList(SysProjectRole role);
 
     /**
      * 根据条件查询项目角色数据总记录数
@@ -25,7 +25,7 @@ public interface ProjectRoleMapper {
      * @param role 角色信息
      * @return 角色数据集合信息
      */
-    public Integer countProjectRole(SysProjectRole role);
+    Integer countProjectRole(SysProjectRole role);
 
 
     /**
@@ -42,7 +42,7 @@ public interface ProjectRoleMapper {
      * @param role 角色信息
      * @return 结果
      */
-    public int updateProjectRole(SysProjectRole role);
+    int updateProjectRole(SysProjectRole role);
 
     /**
      * 新增角色信息
@@ -50,7 +50,7 @@ public interface ProjectRoleMapper {
      * @param role 角色信息
      * @return 结果
      */
-    public int insertProjectRole(SysProjectRole role);
+    int insertProjectRole(SysProjectRole role);
 
     /**
      * 通过角色ID删除角色
@@ -58,7 +58,7 @@ public interface ProjectRoleMapper {
      * @param roleId 角色ID
      * @return 结果
      */
-    public int deleteProjectRoleById(Long roleId);
+    int deleteProjectRoleById(Long roleId);
 
     /**
      * 批量删除角色信息
@@ -66,7 +66,7 @@ public interface ProjectRoleMapper {
      * @param roleIds 需要删除的角色ID
      * @return 结果
      */
-    public int deleteProjectRoleByIds(Long[] roleIds);
+    int deleteProjectRoleByIds(Long[] roleIds);
 
     /**
      * 根据项目id查询数据

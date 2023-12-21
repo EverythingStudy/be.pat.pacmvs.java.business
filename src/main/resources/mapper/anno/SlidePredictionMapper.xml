@@ -211,7 +211,6 @@
             resultType="cn.staitech.anno.vo.imagecsv.ImageCsvListVO">
         select s.slide_id,
         s.review_round_id,
-        s.diagnosis,
         s.status,
         s.description,
         s.ai_analyzed,

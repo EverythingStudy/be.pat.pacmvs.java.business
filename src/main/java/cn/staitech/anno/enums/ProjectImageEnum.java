@@ -11,9 +11,9 @@ public enum ProjectImageEnum implements ProcessFlagValue {
     COMPLETE(2, "标注完成"),
     SUBMITTED(3, "已提交复核");
 
-    private int value;
+    private final int value;
 
-    private String label;
+    private final String label;
 
     ProjectImageEnum(int value, String label) {
         this.label = label;

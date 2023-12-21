@@ -229,43 +229,42 @@ public class ImageCsv implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", imageId=").append(imageId);
-        sb.append(", imageName=").append(imageName);
-        sb.append(", groupName=").append(groupName);
-        sb.append(", gender=").append(gender);
-        sb.append(", species=").append(species);
-        sb.append(", productSeries=").append(productSeries);
-        sb.append(", dosage=").append(dosage);
-        sb.append(", animalSource=").append(animalSource);
-        sb.append(", receivingWeek=").append(receivingWeek);
-        sb.append(", dosingCycle=").append(dosingCycle);
-        sb.append(", recoveryCycle=").append(recoveryCycle);
-        sb.append(", dateOfDeath=").append(dateOfDeath);
-        sb.append(", removeReason=").append(removeReason);
-        sb.append(", remark=").append(remark);
-        sb.append(", organ=").append(organ);
-        sb.append(", lesionType1=").append(lesionType1);
-        sb.append(", lesionDegree1=").append(lesionDegree1);
-        sb.append(", lesionType2=").append(lesionType2);
-        sb.append(", lesionDegree2=").append(lesionDegree2);
-        sb.append(", processFlag=").append(processFlag);
-        sb.append(", createBy=").append(createBy);
-        sb.append(", createTime=").append(createTime);
-        sb.append(", updateBy=").append(updateBy);
-        sb.append(", updateTime=").append(updateTime);
-        sb.append(", topicId=").append(topicId);
-        sb.append(", topicName=").append(topicName);
-        sb.append(", status=").append(status);
-        sb.append(", deleteFlag=").append(deleteFlag);
-        sb.append(", organizationId=").append(organizationId);
-        sb.append(", hostId=").append(hostId);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
+        String sb = getClass().getSimpleName() +
+                " [" +
+                "Hash = " + hashCode() +
+                ", id=" + id +
+                ", imageId=" + imageId +
+                ", imageName=" + imageName +
+                ", groupName=" + groupName +
+                ", gender=" + gender +
+                ", species=" + species +
+                ", productSeries=" + productSeries +
+                ", dosage=" + dosage +
+                ", animalSource=" + animalSource +
+                ", receivingWeek=" + receivingWeek +
+                ", dosingCycle=" + dosingCycle +
+                ", recoveryCycle=" + recoveryCycle +
+                ", dateOfDeath=" + dateOfDeath +
+                ", removeReason=" + removeReason +
+                ", remark=" + remark +
+                ", organ=" + organ +
+                ", lesionType1=" + lesionType1 +
+                ", lesionDegree1=" + lesionDegree1 +
+                ", lesionType2=" + lesionType2 +
+                ", lesionDegree2=" + lesionDegree2 +
+                ", processFlag=" + processFlag +
+                ", createBy=" + createBy +
+                ", createTime=" + createTime +
+                ", updateBy=" + updateBy +
+                ", updateTime=" + updateTime +
+                ", topicId=" + topicId +
+                ", topicName=" + topicName +
+                ", status=" + status +
+                ", deleteFlag=" + deleteFlag +
+                ", organizationId=" + organizationId +
+                ", hostId=" + hostId +
+                ", serialVersionUID=" + serialVersionUID +
+                "]";
+        return sb;
     }
 }
