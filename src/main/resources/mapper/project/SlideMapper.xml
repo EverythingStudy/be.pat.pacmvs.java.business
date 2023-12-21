@@ -132,9 +132,9 @@
         s.ai_analyzed,
         s.ai_check,
         <!-- case when r.review_count >2 then '2' else '1' end as review_status, -->
-        case when r3.review_count >2 then '2' else '1' end as review_status,
+        case when  r3.review_count >2 then '2'    else '1' end as review_status,
+        t5.self_review_status,
         r.score,
-        t2.self_review_status,
         s.image_id,
         s.group_name,
         s.gender,
@@ -163,6 +163,9 @@
         s.status,
         s.delete_flag,
         s.organization_id,
+        s.project_id,
+        s.review_round_id,
+        r3.review_count,
         s.host_id
         from tb_slide s
         left join tb_image m on m.image_id = s.image_id
@@ -175,7 +178,7 @@
              </otherwise>
         </choose>
          left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score from tb_review t3  group by t3.slide_id) r3 on s.slide_id = r3.slide_id
-         LEFT JOIN  tb_review t2  ON s.slide_id = t2.slide_id and t2.create_by = #{params.currentUser}
+         LEFT JOIN (select t2.slide_id as review_slide_id,t2.self_review_status from tb_review t2 where  t2.create_by = #{params.currentUser} GROUP BY t2.slide_id,t2.self_review_status)t5   ON  	t5.review_slide_id = s.slide_id
         <where>
             <if test="params.imageCode != null ">
                 AND m.image_name like CONCAT('%',#{params.imageCode},'%')
@@ -191,10 +194,10 @@
             </if>
             	<!-- 自评审状态：1未评审，2已评审 -->
             <if test="params.selfReviewStatus != null and params.selfReviewStatus != ''  and  params.selfReviewStatus == 1">
-                AND t2.self_review_status is null
+                AND t5.self_review_status is null
             </if>
             <if test="params.selfReviewStatus != null and params.selfReviewStatus != ''  and  params.selfReviewStatus == 2">
-                AND t2.self_review_status is not null
+                AND t5.self_review_status is not null
             </if>
             <if test="params.removeReason != null ">
                 AND s.remove_reason like CONCAT('%',#{params.removeReason},'%')
@@ -210,6 +213,6 @@
                 </choose>
             </if>
         </where>
-        order by s.update_time desc
+        order by s.slide_id desc
     </select>
 </mapper>
