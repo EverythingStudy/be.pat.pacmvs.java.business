@@ -165,6 +165,9 @@
         s.status,
         s.delete_flag,
         s.organization_id,
+        s.project_id,
+        s.review_round_id,
+        r3.review_count,
         s.host_id
         from tb_slide s
         left join tb_image m on m.image_id = s.image_id
