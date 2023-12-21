@@ -119,7 +119,6 @@
 
     <select id="pageReviewSlide" parameterType="cn.staitech.anno.project.vo.ReviewSlideIn"
             resultType="cn.staitech.anno.project.vo.ReviewSlideVO">
-        SELECT p.* from (    
         select m.image_name,
         m.thumb_url,
         m.format,
@@ -133,10 +132,9 @@
         s.ai_analyzed,
         s.ai_check,
         <!-- case when r.review_count >2 then '2' else '1' end as review_status, -->
-        case when r3.review_count >2 then '2' else '1' end as review_status,
+        case when  r3.review_count >2 then '2'    else '1' end as review_status,
+        t5.self_review_status,
         r.score,
-        <!-- t2.self_review_status, -->
-        (select w.self_review_status from tb_review w where s.slide_id = w.slide_id and w.create_by = 13) self_review_status,
         s.image_id,
         s.group_name,
         s.gender,
@@ -165,6 +163,9 @@
         s.status,
         s.delete_flag,
         s.organization_id,
+        s.project_id,
+        s.review_round_id,
+        r3.review_count,
         s.host_id
         from tb_slide s
         left join tb_image m on m.image_id = s.image_id
@@ -177,42 +178,41 @@
              </otherwise>
         </choose>
          left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score from tb_review t3  group by t3.slide_id) r3 on s.slide_id = r3.slide_id
-         <!-- LEFT JOIN  tb_review t2  ON s.slide_id = t2.slide_id and t2.create_by = #{params.currentUser} -->
-         )p
+         LEFT JOIN (select t2.slide_id as review_slide_id,t2.self_review_status from tb_review t2 where  t2.create_by = #{params.currentUser} GROUP BY t2.slide_id,t2.self_review_status)t5   ON  	t5.review_slide_id = s.slide_id
         <where>
             <if test="params.imageCode != null ">
-                AND p.image_name like CONCAT('%',#{params.imageCode},'%')
+                AND m.image_name like CONCAT('%',#{params.imageCode},'%')
             </if>
             <if test="params.projectId != null ">
-                AND p.project_id = #{params.projectId}
+                AND s.project_id = #{params.projectId}
             </if>
             <if test="params.reviewRoundId != null ">
-                AND p.review_round_id = #{params.reviewRoundId}
+                AND s.review_round_id = #{params.reviewRoundId}
             </if>
             <if test="params.score != null ">
-                AND p.score like CONCAT('%',#{params.score},'%')
+                AND r.score like CONCAT('%',#{params.score},'%')
             </if>
             	<!-- 自评审状态：1未评审，2已评审 -->
             <if test="params.selfReviewStatus != null and params.selfReviewStatus != ''  and  params.selfReviewStatus == 1">
-                AND p.self_review_status is null
+                AND t5.self_review_status is null
             </if>
             <if test="params.selfReviewStatus != null and params.selfReviewStatus != ''  and  params.selfReviewStatus == 2">
-                AND p.self_review_status is not null
+                AND t5.self_review_status is not null
             </if>
             <if test="params.removeReason != null ">
-                AND p.remove_reason like CONCAT('%',#{params.removeReason},'%')
+                AND s.remove_reason like CONCAT('%',#{params.removeReason},'%')
             </if>
             <if test="params.reviewStatus != null">
                 <choose>
                     <when test="params.reviewStatus == 1">
-                        AND (p.review_count <![CDATA[<]]>3 or p.review_count is null)
+                        AND (r3.review_count <![CDATA[<]]>3 or r3.review_count is null)
                     </when>
                     <otherwise>
-                        AND p.review_count >2
+                        AND r3.review_count >2
                     </otherwise>
                 </choose>
             </if>
         </where>
-        order by p.update_time desc
+        order by s.slide_id desc
     </select>
 </mapper>
