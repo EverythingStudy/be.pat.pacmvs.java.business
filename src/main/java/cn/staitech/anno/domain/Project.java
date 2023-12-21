@@ -205,5 +205,6 @@ public class Project extends BaseEntity {
     private Long partUserId;
 
     @ApiModelProperty(value = "创建者名称")
+    @TableField(exist = false)
     private String userName;
 }
