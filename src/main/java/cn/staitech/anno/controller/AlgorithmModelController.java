@@ -31,5 +31,4 @@ public class AlgorithmModelController {
         List<AlgorithmModel> algorithmModelList=algorithmModelService.list();
         return R.ok(algorithmModelList);
     }
-
 }

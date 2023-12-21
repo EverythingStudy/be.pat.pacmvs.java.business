@@ -21,6 +21,6 @@ public interface SlideService extends IService<Slide> {
 
     PageMaster<ReviewSlideVO> pageReviewSlide(Page page, ReviewSlideIn params);
     
-    public boolean isProjectAmin(LoginUser user,Long projectId);
+    boolean isProjectAmin(LoginUser user,Long projectId);
 
 }

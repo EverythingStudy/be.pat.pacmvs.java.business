@@ -31,7 +31,6 @@ public class DataMigrationController {
     private MarkingMapperV1 markingMapperV1;
     @Autowired
     private MarkingServiceV1 markingServiceV1;
-
     @Autowired
     private DataMigrationService dataMigrationService;
 
@@ -78,17 +77,12 @@ public class DataMigrationController {
 
     @GetMapping("/markingData")
     public R markingData() {
-
-
         return R.ok(dataMigrationService.markingData());
     }
 
     @GetMapping("/otherMarking")
     public R otherMarking() {
-
         DataMigration dataMigration = dataMigrationService.otherMarking();
-
-
         return R.ok(dataMigration);
     }
 }

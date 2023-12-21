@@ -408,10 +408,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         queryWrapper.eq(Image::getOrganizationId, image.getOrganizationId());
         queryWrapper.orderByDesc(Image::getImageId);
         queryWrapper.last("limit 1");
-        if (this.baseMapper.selectOne(queryWrapper) != null) {
-            return true;
-        }
-        return false;
+        return this.baseMapper.selectOne(queryWrapper) != null;
     }
 
     /**

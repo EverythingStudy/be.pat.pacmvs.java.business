@@ -36,21 +36,7 @@ public class CommonConstant {
     public static final String HEADER = "Content-Disposition";
     public static final Integer NOT_START_REVIEW = 0;
     public static final Integer SUBMIT_REVIEW = 3;
-    /**
-     * Project
-     */
-    public static final String NONE = "none";
-    public static final String REGIONS = "regions";
-    public static final String REGION_ATTRIBUTES = "region_attributes";
-    public static final String BONE_MARROW = "bone_marrow";
-    public static final String SHAPE_ATTRIBUTES = "shape_attributes";
-    public static final String ALL_POINTS_X = "all_points_x";
-    public static final String ALL_POINTS_Y = "all_points_y";
-    public static final String NAME = "name";
-    public static final String POLYGON_WITH_HOLES = "polygon_with_holes";
-    public static final String CHILDREN_CNTS = "children_cnts";
-    public static final String VIA_IMG_METADATA = "_via_img_metadata";
-    public static final String LOGIN_TOKEN_KEY = "login_tokens:";
+
     /**
      * Annotation
      */
@@ -69,10 +55,7 @@ public class CommonConstant {
     public static final String ANNO_MARKING = "ANNO_MARKING_";
     public static final Long MARKING_CACHE_HOURS = 24L;
     public static final String ANNO_TYPE_DRAW = "Draw";
-    public static final String ANNO_TYPE_AI = "AI";
     public static final String ANNO_TYPE_MEASURE = "Measure";
-
-
     
     /**
      * 上传下载限制
@@ -94,10 +77,7 @@ public class CommonConstant {
     public static final Integer STRUCTURE_ROA_GROUP_NUMBER = 1;
     public static final Integer STRUCTURE_ROE_GROUP_NUMBER = 2;
     public static final Integer STRUCTURE_RO_GROUP_NUMBER = 3;
-    //5L：天津血研所
-    public static final Long[] ORGANIZATION_ID = {5L};
 
-    
     /**
      * Statistic
      */
@@ -105,16 +85,7 @@ public class CommonConstant {
     public static final int THIRTY_ONE_DAY = 31;
     public static final int ONE_YEAR = 366;
     public static final int THREE_YEAR = 1096;
-    /**
-     * Special Role
-     */
-    public static final String RESP = "resp";
-    public static final String ANNO = "anno";
-    public static final String READ = "read";
-    public static final Long[] RESPONSIBLE_MENU = {1001L, 1002L, 1003L, 1004L, 1005L, 1006L, 1007L, 1008L, 1009L, 1010L, 1011L, 1012L, 1013L, 1014L, 1015L, 1016L, 1017L, 1018L, 1019L, 1020L, 1021L, 1022L, 1023L, 1024L, 1025L, 1026L, 1027L, 1028L, 1029L};
-    public static final Long[] ANNOTATOR_MENU = {1001L, 1003L, 1004L, 1008L, 1009L, 1010L, 1011L, 1012L, 1013L, 1014L, 1015L};
-    public static final Long[] READER_MENU = {1002L, 1005L, 1006L, 1007L, 1016L, 1017L, 1018L, 1019L, 1020L, 1021L, 1022L, 1023L, 1024L, 1025L, 1026L, 1027L, 1028L, 1029L};
-    public static final String[] SPECIAL_ROLE_TYPE = new String[]{"专题负责人", "标注员", "普通阅片员"};
+
     /**
      * ProjectRole:构造3个默认项目角色类型：1、项目代表；2、项目管理者；3、项目贡献者
      */
