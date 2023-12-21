@@ -15,7 +15,7 @@
 
     <select id="selectList" parameterType="cn.staitech.anno.domain.Structure"
             resultType="cn.staitech.anno.domain.Structure">
-        SELECT organ_id,`name`, `name_en`, species_id, structure_id,organization_id FROM tb_structure
+        SELECT organ_id,`name`, `name_en`, species_id, structure_id,organization_id,type FROM tb_structure
         <where>
             <if test="structureId != null">
                 AND structure_id = #{structureId}
