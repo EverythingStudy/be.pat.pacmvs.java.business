@@ -261,14 +261,14 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 				if (LanguageUtils.isEn()) {
 					if (indicator != null) {
 						// 20231222wangfeng
-						String categoryName = indicator.getIndicatorNameEn().concat(" ").concat(MapConstant.getStructureNameEn(
-								organizationId.toString()+speciesId+organId + category.getStructureId()));
+						String categoryName = indicator.getIndicatorNameEn() +
+								MapConstant.getStructureNameEn(organizationId.toString() + speciesId.toString() + organId.toString() + category.getStructureId());
 						category.setCategoryName(categoryName);
 					}
 				}else {
 					if (indicator != null) {
-						String categoryName = indicator.getIndicatorNameEn().concat(" ").concat(MapConstant.getStructureName(
-								organizationId.toString()+speciesId+organId + category.getStructureId()));
+						String categoryName = indicator.getIndicatorName() +
+								MapConstant.getStructureName(organizationId.toString() + speciesId.toString() + organId.toString() + category.getStructureId());
 						category.setCategoryName(categoryName);
 					}
 				}
