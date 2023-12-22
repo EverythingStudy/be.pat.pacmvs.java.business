@@ -23,21 +23,23 @@ class ProductSeriesServiceImpl extends ServiceImpl<ProductSeriesMapper, ProductS
     private ProductSeriesMapper productSeriesMapper;
 
     @Override
-    public Map<Integer, String> selectMap() {
+    public Map<String, String> selectMap() {
         return select(false);
     }
 
     @Override
-    public Map<Integer, String> selectMapEn() {
+    public Map<String, String> selectMapEn() {
         return select(true);
     }
 
-    public Map<Integer, String> select(boolean en) {
+    public Map<String, String> select(boolean en) {
         List<ProductSeries> list = productSeriesMapper.selectList();
         if (en) {
-            return list.stream().collect(Collectors.toMap(ProductSeries::getProductSeriesId, ProductSeries::getNameEn));
+            // 20231222wangfeng
+            // return list.stream().collect(Collectors.toMap(ProductSeries::getProductSeriesId, ProductSeries::getNameEn));
+            return list.stream().collect(Collectors.toMap(item -> item.getOrganizationId().toString() + item.getSpeciesId() + item.getProductSeriesId().toString(), ProductSeries::getNameEn));
         } else {
-            return list.stream().collect(Collectors.toMap(ProductSeries::getProductSeriesId, ProductSeries::getName));
+            return list.stream().collect(Collectors.toMap(item -> item.getOrganizationId().toString() + item.getSpeciesId() + item.getProductSeriesId().toString(), ProductSeries::getName));
         }
     }
 }

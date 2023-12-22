@@ -539,6 +539,9 @@
             <if test="structureName != null and structureName != ''">
                 AND p.structure_name like concat('%', #{structureName}, '%')
             </if>
+            <if test="organizationId != null">
+                AND p.organization_id = #{organizationId}
+            </if>
             <if test="params != null">
                 <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
                     <!-- 开始时间检索 -->
