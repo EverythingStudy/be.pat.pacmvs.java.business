@@ -66,9 +66,12 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
      * @return
      */
     @Override
-    public List<Organ> getOrganBySpeciesId(String speciesId) {
+    public List<Organ> getOrganBySpeciesId(String speciesCode) {
 		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-        List<Organ> list = organMapper.getOrganBySpeciesId(organizationId , speciesId);
+		Organ organQ = new Organ();
+		organQ.setOrganizationId(organizationId);
+		organQ.setSpeciesCode(speciesCode);
+        List<Organ> list = organMapper.getOrganBySpeciesId(organQ);
         for (Organ organ : list) {
             // 中英文
             if (LanguageUtils.isEn()) {

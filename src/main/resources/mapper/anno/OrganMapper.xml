@@ -11,10 +11,17 @@
         <result property="organizationId" column="organization_id"/>
     </resultMap>
 
-    <select id="getOrganBySpeciesId" parameterType="java.lang.String"
+    <select id="getOrganBySpeciesId" parameterType="cn.staitech.anno.domain.Organ"
             resultType="cn.staitech.anno.domain.Organ">
         SELECT organ_id,`name`,`name_en`,species_code,organization_id
         FROM tb_organ
-        WHERE organization_id = #{organizationId} AND species_code = #{speciesCode,jdbcType=VARCHAR};
+        <where>
+            <if test="organizationId != null">
+                AND organization_id = #{organizationId}
+            </if>
+            <if test="speciesCode != null">
+                AND species_code = #{speciesCode}
+            </if>
+        </where>
     </select>
 </mapper>

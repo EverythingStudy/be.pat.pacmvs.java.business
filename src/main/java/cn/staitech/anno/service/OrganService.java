@@ -21,7 +21,7 @@ public interface OrganService extends IService<Organ> {
 
     Map<String, String> selectMapEn();
 
-    List<Organ> getOrganBySpeciesId(String speciesId);
+    List<Organ> getOrganBySpeciesId(String speciesCode);
     
     R<Organ> add(InsertOrganVO req);
 }
