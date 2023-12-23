@@ -2,8 +2,6 @@ package cn.staitech.anno.controller;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Snowflake;
-import cn.hutool.db.sql.Wrapper;
-import cn.hutool.json.JSONUtil;
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Indicator;
@@ -11,7 +9,6 @@ import cn.staitech.anno.domain.Organ;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.Structure;
 import cn.staitech.anno.mapper.OrganMapper;
-import cn.staitech.anno.mapper.StructureMapper;
 import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.project.service.MarkingServiceV1;
 import cn.staitech.anno.service.IndicatorService;
@@ -19,7 +16,6 @@ import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
 import cn.staitech.anno.service.StructureService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
-import cn.staitech.anno.vo.algorithm.AlgorithmJson;
 import cn.staitech.anno.vo.annotation.CategoryVO;
 import cn.staitech.anno.vo.annotation.LabelListVO;
 import cn.staitech.anno.vo.annotation.LabelVO;
@@ -50,7 +46,6 @@ import javax.annotation.Resource;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -112,10 +107,12 @@ public class PathologicalController {
 		if (indicator == null) {
 			return R.fail(MessageSource.M("INDICATOR_ABSENT"));
 		}
-		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-		Long currentUserId = SecurityUtils.getLoginUser().getSysUser().getUserId();
-//		Long organizationId = 1L;
-//		Long currentUserId = 1L;
+
+		// wangfeng20231222
+		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+		Long organizationId = sysUser.getOrganizationId();
+		Long currentUserId = sysUser.getUserId();
+
 		//验证结构是否已经存在 
 		PathologicalIndicatorCategory categoryS = new PathologicalIndicatorCategory();
 		categoryS.setIndicatorId(indicatorId);
@@ -274,7 +271,7 @@ public class PathologicalController {
 	@PostMapping("/all")
 	public R<PageMaster<LabelListVO>> list(@RequestBody LabelVO labelVO) {
 		PageHelper.startPage(labelVO.getPageNum(), labelVO.getPageSize()).setReasonable(true);
-		//获取病理指标下的标注类别
+		// 获取病理指标下的标注类别
 		List<LabelListVO> categoryList = pathologicalIndicatorCategoryService.selectByIndicator(labelVO);
 		PageMaster<LabelListVO> pageMaster = new PageMaster<>(categoryList);
 		return R.ok(pageMaster);

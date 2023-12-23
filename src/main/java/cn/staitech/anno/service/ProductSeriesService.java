@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public interface ProductSeriesService extends IService<ProductSeries> {
 
-    Map<Integer, String> selectMap();
+    Map<String, String> selectMap();
 
-    Map<Integer, String> selectMapEn();
+    Map<String, String> selectMapEn();
 }

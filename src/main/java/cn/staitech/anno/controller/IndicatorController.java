@@ -83,7 +83,6 @@ public class IndicatorController extends BaseController {
 
 		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 		Long organizationId = sysUser.getOrganizationId();
-//				Long organizationId = 1L;
 		Indicator indicator = new Indicator();
 		indicator.setSpeciesId(req.getSpeciesId());
 		indicator.setOrganId(req.getOrganId());
@@ -144,8 +143,9 @@ public class IndicatorController extends BaseController {
 		}
 
 		if(indicatorType == 0){
-			indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
-			indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
+			// 20231222wangfeng
+			indicator.setIndicatorName(MapConstant.getOrgan(organizationId + req.getSpeciesId() + req.getOrganId()));
+			indicator.setIndicatorNameEn(MapConstant.getOrganEn(organizationId + req.getSpeciesId() + req.getOrganId()));
 		}else{
 			indicator.setIndicatorName(req.getOrganName());
 			indicator.setIndicatorNameEn(req.getOrganName());
@@ -313,8 +313,8 @@ public class IndicatorController extends BaseController {
 		}
 
 		if(indicatorType == 0){
-			indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
-			indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
+			indicator.setIndicatorName(MapConstant.getOrgan(organizationId + req.getSpeciesId() + req.getOrganId()));
+			indicator.setIndicatorNameEn(MapConstant.getOrganEn(organizationId + req.getSpeciesId() + req.getOrganId()));
 		}else{
 			indicator.setIndicatorName(req.getOrganName());
 			indicator.setIndicatorNameEn(req.getOrganName());
@@ -322,7 +322,6 @@ public class IndicatorController extends BaseController {
 		}
 		indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
 		indicator.setCreateBy(sysUser.getUserId());
-		//		indicator.setCreateBy(1L);
 
 		req.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
 		// 修改病理指标
@@ -365,6 +364,7 @@ public class IndicatorController extends BaseController {
 	//	@PostMapping("/save")
 	public R<String> save(@Validated @RequestBody IndicatorAddVO req) {
 		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+		Long organizationId = sysUser.getOrganizationId();
 		int saveCheck = indicatorService.saveCheck(req);
 		if(saveCheck !=0){
 			if(saveCheck == 1){
@@ -380,20 +380,21 @@ public class IndicatorController extends BaseController {
 		Indicator indicator = new Indicator();
 		indicator.setSpeciesId(req.getSpeciesId());
 		indicator.setOrganId(req.getOrganId());
-		indicator.setOrganizationId(sysUser.getOrganizationId());
+		indicator.setOrganizationId(organizationId);
 		indicator.setDelFlag(0);
 		// 查询结构指标是否存在
 		List<Indicator> indicatorList = indicatorService.selectIndicator(indicator);
 		if (!indicatorList.isEmpty()) {
 			return R.fail(MessageSource.M("INDICATOR_EXIST"));
 		}
-
-		String indicatorName = MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId()));
+		// 20231222wangfeng
+		String indicatorName = MapConstant.getOrgan(organizationId + req.getSpeciesId() + req.getOrganId());
 		if(StringUtils.isEmpty(indicatorName)){
 			indicatorName =  req.getOrganName();
 		}
 		indicator.setIndicatorName(indicatorName);
-		String indicatorNameEn = MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId()));
+		// 20231222wangfeng
+		String indicatorNameEn = MapConstant.getOrganEn(organizationId + req.getSpeciesId() + req.getOrganId());
 		if(StringUtils.isEmpty(indicatorNameEn)){
 			indicatorNameEn =  req.getOrganName();
 		}
@@ -401,7 +402,7 @@ public class IndicatorController extends BaseController {
 		indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
 		indicator.setCreateBy(sysUser.getUserId());
 		//20231107wd结构指标关联机构
-		indicator.setOrganizationId(sysUser.getOrganizationId());
+		indicator.setOrganizationId(organizationId);
 		//添加结构指标
 		indicatorService.insertIndicator(indicator);
 		return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
@@ -418,9 +419,10 @@ public class IndicatorController extends BaseController {
 	public Map<String, String> select(boolean en) {
 		List<Organ> list = organMapper.selectList();
 		if (en) {
-			return list.stream().collect(Collectors.toMap(item -> item.getSpeciesCode().concat(item.getOrganId()), Organ::getNameEn));
+			// wangfeng20231222
+			return list.stream().collect(Collectors.toMap(item -> item.getOrganizationId() + item.getSpeciesCode() + item.getOrganId(), Organ::getNameEn));
 		} else {
-			return list.stream().collect(Collectors.toMap(item -> item.getSpeciesCode().concat(item.getOrganId()), Organ::getName));
+			return list.stream().collect(Collectors.toMap(item -> item.getOrganizationId() + item.getSpeciesCode() + item.getOrganId(), Organ::getName));
 		}
 	}
 }

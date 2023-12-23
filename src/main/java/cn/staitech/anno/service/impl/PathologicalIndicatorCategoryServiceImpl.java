@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 import cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Lang;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -206,6 +207,8 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 	 */
 	@Override
 	public List<LabelListVO> selectByIndicator(LabelVO labelVO) {
+		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+		labelVO.setOrganizationId(organizationId);
 		List<LabelListVO> list = pathologicalIndicatorCategoryMapper.selectByIndicator(labelVO);
 		for (LabelListVO listVO : list) {
 			/*try {
@@ -257,7 +260,15 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 				// 处理标签集中英文
 				if (LanguageUtils.isEn()) {
 					if (indicator != null) {
-						String categoryName = indicator.getIndicatorNameEn().concat(" ").concat(MapConstant.getStructureNameEn(category.getStructureId()));
+						// 20231222wangfeng
+						String categoryName = indicator.getIndicatorNameEn() +
+								MapConstant.getStructureNameEn(organizationId.toString() + speciesId.toString() + organId.toString() + category.getStructureId());
+						category.setCategoryName(categoryName);
+					}
+				}else {
+					if (indicator != null) {
+						String categoryName = indicator.getIndicatorName() +
+								MapConstant.getStructureName(organizationId.toString() + speciesId.toString() + organId.toString() + category.getStructureId());
 						category.setCategoryName(categoryName);
 					}
 				}

@@ -357,11 +357,11 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             // 项目类型
             project.setProjectTypeName(MapConstant.getProjectTypeEn(projectType));
             // 种属
-            project.setSpeciesName(MapConstant.getSpeciesNameEn(project.getSpeciesId()));
+            project.setSpeciesName(MapConstant.getSpeciesNameEn(project.getOrganizationId().toString() + project.getSpeciesId().toString()));
             // 颜色类型
             project.setColorTypeName(Container.COLOR_TYPE_EN.get(project.getColorType()));
             // 品系
-            project.setProductSeries(MapConstant.getProductSeriesEn(project.getProductSeriesId()));
+            project.setProductSeries(MapConstant.getProductSeriesEn(project.getOrganizationId().toString() + project.getSpeciesId().toString() + project.getProductSeriesId().toString()));
             project.setStatusName(Container.PROJECT_STATUS_EN.get(project.getStatus()));
             // 标签类型
             project.setIndicatorName(project.getIndicatorNameEn());
@@ -369,11 +369,11 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             // 项目类型
             project.setProjectTypeName(MapConstant.getProjectType(projectType));
             // 种属
-            project.setSpeciesName(MapConstant.getSpeciesName(project.getSpeciesId()));
+            project.setSpeciesName(MapConstant.getSpeciesName(project.getOrganizationId().toString() + project.getSpeciesId().toString()));
             // 颜色类型
             project.setColorTypeName(Container.COLOR_TYPE.get(project.getColorType()));
             // 品系
-            project.setProductSeries(MapConstant.getProductSeries(project.getProductSeriesId()));
+            project.setProductSeries(MapConstant.getProductSeries(project.getOrganizationId().toString() + project.getSpeciesId().toString() + project.getProductSeriesId().toString()));
             project.setStatusName(Container.PROJECT_STATUS.get(project.getStatus()));
         }
         return project;

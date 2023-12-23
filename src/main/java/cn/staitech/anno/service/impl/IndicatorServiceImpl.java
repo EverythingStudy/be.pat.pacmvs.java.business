@@ -67,15 +67,15 @@ public class IndicatorServiceImpl implements IndicatorService {
         List<Indicator> list = indicatorMapper.selectIndicatorList(indicator);
         for (Indicator obj : list) {
             if (LanguageUtils.isEn()) {
-                // 种属
-                obj.setSpeciesName(MapConstant.getSpeciesNameEn(obj.getSpeciesId()));
+                // 种属 20231222wangfeng
+                obj.setSpeciesName(MapConstant.getSpeciesNameEn(obj.getOrganizationId().toString() + obj.getSpeciesId()));
                 // 脏器
-                obj.setOrganName(MapConstant.getOrganEn(obj.getSpeciesId().concat(obj.getOrganId())));
+                obj.setOrganName(MapConstant.getOrganEn(obj.getOrganizationId().toString() + obj.getSpeciesId() + obj.getOrganId()));
             } else {
-                // 种属
-                obj.setSpeciesName(MapConstant.getSpeciesName(obj.getSpeciesId()));
+                // 种属 20231222wangfeng
+                obj.setSpeciesName(MapConstant.getSpeciesName(obj.getOrganizationId().toString() + obj.getSpeciesId()));
                 // 脏器
-                obj.setOrganName(MapConstant.getOrgan(obj.getSpeciesId().concat(obj.getOrganId())));
+                obj.setOrganName(MapConstant.getOrgan(obj.getOrganizationId().toString() + obj.getSpeciesId() + obj.getOrganId()));
             }
             // 查询总数
             obj.setAnnotationCategoryTotal(pathologicalIndicatorCategoryService.selectCategoryNumber(obj.getIndicatorId()));
