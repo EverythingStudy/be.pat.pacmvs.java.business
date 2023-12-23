@@ -49,10 +49,10 @@ class SpeciesServiceImpl extends ServiceImpl<SpeciesMapper, Species> implements 
         if (en) {
 			// 20231222wangfeng
             // return list.stream().collect(Collectors.toMap(Species::getSpeciesId, Species::getNameEn));
-            return list.stream().collect(Collectors.toMap(item->item.getOrganizationId().toString()+item.getSpeciesId(), Species::getNameEn));
+            return list.stream().collect(Collectors.toMap(item->item.getOrganizationId().toString() + item.getSpeciesId().toString(), Species::getNameEn));
         } else {
             // return list.stream().collect(Collectors.toMap(Species::getSpeciesId, Species::getName));
-			return list.stream().collect(Collectors.toMap(item->item.getOrganizationId().toString()+item.getSpeciesId(), Species::getNameEn));
+			return list.stream().collect(Collectors.toMap(item->item.getOrganizationId().toString() + item.getSpeciesId().toString(), Species::getName));
         }
     }
 

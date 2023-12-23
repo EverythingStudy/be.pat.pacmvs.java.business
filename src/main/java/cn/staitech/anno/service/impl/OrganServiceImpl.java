@@ -82,10 +82,10 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
         if (en) {
 			// 20231222wangfeng
             // return list.stream().collect(Collectors.toMap(item -> item.getSpeciesCode().concat(item.getOrganId()), Organ::getNameEn));
-            return list.stream().collect(Collectors.toMap(item -> item.getOrganizationId() + item.getSpeciesCode() + item.getOrganId(), Organ::getNameEn));
+            return list.stream().collect(Collectors.toMap(item -> item.getOrganizationId().toString() + item.getSpeciesCode() + item.getOrganId(), Organ::getNameEn));
         } else {
             // return list.stream().collect(Collectors.toMap(item -> item.getSpeciesCode().concat(item.getOrganId()), Organ::getName));
-            return list.stream().collect(Collectors.toMap(item -> item.getOrganizationId() + item.getSpeciesCode() + item.getOrganId(), Organ::getName));
+            return list.stream().collect(Collectors.toMap(item -> item.getOrganizationId().toString() + item.getSpeciesCode() + item.getOrganId(), Organ::getName));
         }
     }
     
