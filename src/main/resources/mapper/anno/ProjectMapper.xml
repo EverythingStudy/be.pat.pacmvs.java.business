@@ -237,7 +237,7 @@
                a.tissue_name_en
         from tb_project p
                  left join sys_user u on p.create_by = u.user_id
-                 left join tb_pathological_indicator i on p.indicator_id = i.indicator_id
+                 left join tb_pathological_indicator i on p.indicator_id = i.indicator_id 
                  left join tb_product_series ps on p.product_series_id = ps.product_series_id
                  left join sys_organization org on p.organization_id = org.organization_id
                  left join aipre_algorithm_model m on p.model_id=m.model_id
@@ -263,6 +263,14 @@
             <if test="organizationId != null">
                 <!-- 组织机构ID -->
                 AND p.organization_id = #{organizationId}
+            </if>
+            <if test="organizationId != null">
+                <!-- 组织机构ID -->
+                AND i.organization_id = #{organizationId}
+            </if>
+            <if test="organizationId != null">
+                <!-- 组织机构ID -->
+                AND ps.organization_id = #{organizationId}
             </if>
             <if test="status != null">
                 AND p.status = #{status}
