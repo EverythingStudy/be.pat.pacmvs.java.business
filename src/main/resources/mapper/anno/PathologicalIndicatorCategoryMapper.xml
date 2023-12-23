@@ -536,8 +536,11 @@
             <if test="categoryCode != null">
                 AND p.category_code = #{categoryCode}
             </if>
-            <if test="structureName != null and structureName != ''">
+<!--            <if test="structureName != null and structureName != ''">
                 AND p.structure_name like concat('%', #{structureName}, '%')
+            </if>-->
+            <if test="structureName != null and structureName != ''">
+                AND p.category_name like concat('%', #{structureName}, '%')
             </if>
             <if test="organizationId != null">
                 AND p.organization_id = #{organizationId}
