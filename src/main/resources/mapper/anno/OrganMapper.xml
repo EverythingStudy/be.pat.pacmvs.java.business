@@ -15,10 +15,6 @@
             resultType="cn.staitech.anno.domain.Organ">
         SELECT organ_id,`name`,`name_en`,species_code,organization_id
         FROM tb_organ
-        <where>
-            <if test="speciesId != null">
-                organization_id = #{organizationId} AND species_code = #{speciesCode,jdbcType=VARCHAR}
-            </if>
-        </where>
+        WHERE organization_id = #{organizationId} AND species_code = #{speciesCode,jdbcType=VARCHAR};
     </select>
 </mapper>
