@@ -524,9 +524,6 @@
         LEFT JOIN tb_pathological_indicator AS idc ON p.indicator_id = idc.indicator_id
         LEFT JOIN sys_user AS s ON p.create_by = s.user_id
         <where>
-            <if test="categoryName != null and categoryName != ''">
-                AND p.category_name like concat('%', #{categoryName}, '%')
-            </if>
             <if test="structureId != null">
                 AND p.structure_id =#{structureId}
             </if>
@@ -536,16 +533,14 @@
             <if test="categoryCode != null">
                 AND p.category_code = #{categoryCode}
             </if>
-<!--            <if test="structureName != null and structureName != ''">
-                AND p.structure_name like concat('%', #{structureName}, '%')
-            </if>-->
+
             <if test="structureName != null and structureName != ''">
                 AND p.category_name like concat('%', #{structureName}, '%')
             </if>
             <if test="organizationId != null">
                 AND p.organization_id = #{organizationId}
             </if>
-            <if test="params != null">
+            <if test="createTimeParams != null">
                 <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
                     <!-- 开始时间检索 -->
                     AND date_format(p.create_time,'%y%m%d') &gt;= date_format(#{createTimeParams.beginTime},'%y%m%d')
