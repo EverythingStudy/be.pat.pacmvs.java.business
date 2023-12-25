@@ -61,6 +61,7 @@
         <result column="category_code" jdbcType="VARCHAR" property="categoryCode"/>
         <result column="group_number" jdbcType="INTEGER"  property="groupNumber"/>
         <result column="category_type" jdbcType="INTEGER"  property="categoryType"/>
+
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -490,8 +491,7 @@
         p1.organ_id,
         p1.category_code,
         p1.group_number,
-        p1.category_type,
-        p1.organization_id
+        p1.category_type
         FROM
         (
         SELECT
@@ -510,8 +510,7 @@
         idc.organ_id,
         p.category_code,
         p.group_number,
-        p.category_type,
-        p.organization_id
+        p.category_type
         FROM
         tb_pathological_indicator_category AS p
         LEFT JOIN tb_pathological_indicator AS idc ON p.indicator_id = idc.indicator_id
@@ -533,9 +532,6 @@
             <if test="organizationId != null">
                 AND p.organization_id = #{organizationId}
             </if>
-            <if test="organizationId != null">
-                AND idc.organization_id = #{organizationId}
-            </if>
             <if test="createTimeParams != null">
                 <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
                     <!-- 开始时间检索 -->
@@ -546,13 +542,12 @@
                     AND date_format(p.create_time,'%y%m%d') &lt;= date_format(#{createTimeParams.endTime},'%y%m%d')
                 </if>
             </if>
-            AND p.del_flag=0 AND p.organization_id = idc.organization_id
+            and p.del_flag=0
         </where>
         ) p1
         LEFT JOIN tb_structure p2 ON p1.species_id = p2.species_id
         AND p1.organ_id = p2.organ_id
         AND p1.structure_id = p2.structure_id
-        AND p1.organization_id = p2.organization_id
         ORDER BY	p1.category_code,	type_number ASC
     </select>
 
