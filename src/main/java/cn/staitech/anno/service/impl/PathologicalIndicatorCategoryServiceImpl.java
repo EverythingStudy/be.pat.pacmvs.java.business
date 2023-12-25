@@ -279,7 +279,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 		}
 		return new ArrayList<>();
 	}
-	
+
 	private Structure getStructure(String organId,String speciesId,Long organizationId,String structureId){
 		Structure retStructure = new Structure();
 		Structure structure = new Structure();
@@ -348,7 +348,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 						}else if(structureId.contains("ROA")){
 							//ROA:标注区域
 							type = 3;
-						} 
+						}
 					}
 				}else{
 					//结构指标
@@ -405,7 +405,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 							category2.setCategoryId(parmValue.get(1));
 							category2.setGroupNumber(CommonConstant.STRUCTURE_RO_GROUP_NUMBER);
 							pathologicalIndicatorCategoryMapper.updateById(category2);
-							
+
 							//其他两个请参考结构指标
 							//其他两个有则修改，没有加添加
 							String structureROEId = structureId+CommonConstant.STRUCTURE_ROE;
