@@ -278,13 +278,20 @@
         WHERE indicator_id = #{indicatorId}
     </select>
 
-    <!-- WHERE indicator_id = #{indicatorId} AND organization_id = #{organizationId} AND p.del_flag = "0" -->
-    <select id="selectIndicatorList" parameterType="cn.staitech.anno.project.domain.Project" resultType="cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo">
-        SELECT p.*
+    <select id="selectIndicatorList" parameterType="java.lang.Long" resultType="cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo">
+       <!--  SELECT p.*,s.type
         FROM tb_pathological_indicator_category as p
-        WHERE indicator_id = #{indicatorId} AND p.del_flag = "0"
+                 left join tb_structure as s on s.structure_id = p.structure_id
+        WHERE indicator_id = #{indicatorId}
+          AND p.del_flag = "0"
+        order by p.order_number desc,p.group_number desc -->
+         SELECT p.*
+        FROM tb_pathological_indicator_category as p
+        WHERE indicator_id = #{indicatorId}
+          AND p.del_flag = "0"
         order by p.order_number desc,p.group_number desc
     </select>
+
 
     <select id="selectGeoLabel" parameterType="java.lang.Long" resultMap="GeoLabelResult">
         SELECT category_name as label_name,

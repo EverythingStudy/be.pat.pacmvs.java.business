@@ -244,12 +244,12 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 		Project project = projectMapperv1.selectById(projectId);
 		if (project != null) {
 			// 20231225wangfeng 查询条件添加机构ID
-			List<PathologicalIndicatorCategoryOutVo> list = pathologicalIndicatorCategoryMapper.selectIndicatorList(project);
+			List<PathologicalIndicatorCategoryOutVo> list = pathologicalIndicatorCategoryMapper.selectIndicatorList(project.getIndicatorId());
 			Indicator indicator = indicatorMapper.selectIndicatorById(project.getIndicatorId());
 			//根据IndicatorId 得到种属id,脏器id，organization_id+structure_id 去structure查询类型
 			String organId = indicator.getOrganId();
 			String speciesId = indicator.getSpeciesId();
-			Long organizationId = project.getOrganizationId();
+			Long organizationId = indicator.getOrganizationId();
 			for (PathologicalIndicatorCategoryOutVo category : list) {
 				String structureId = category.getStructureId();
 				Structure structure = getStructure(organId, speciesId, organizationId, structureId);
