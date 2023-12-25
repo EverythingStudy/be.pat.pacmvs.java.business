@@ -106,7 +106,9 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
 //                map.put(slideVO.getSlideId(), slideVO);
             });
             List<Marking> annotationList = queryAnnotation(slideIds, params);
-            handleAnnoList(annotationList, map);// TODO: wangfeng
+            if(!annotationList.isEmpty() && !map.isEmpty()) {
+                handleAnnoList(annotationList, map);// TODO: wangfeng
+            }
         }
         PageMaster<SlideVO> pageMaster = PageMaster.of(list);
         pageMaster.setTotal(page.getTotal());
