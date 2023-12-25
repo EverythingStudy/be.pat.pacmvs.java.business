@@ -61,7 +61,6 @@
         <result column="category_code" jdbcType="VARCHAR" property="categoryCode"/>
         <result column="group_number" jdbcType="INTEGER"  property="groupNumber"/>
         <result column="category_type" jdbcType="INTEGER"  property="categoryType"/>
-
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -74,9 +73,9 @@
     <select id="selectRoe" parameterType="map" resultMap="BaseResultMap">
         select *
         from tb_pathological_indicator_category as p
-        left join tb_structure as s on p.structure_id = s.structure_id
+                 left join tb_structure as s on p.structure_id = s.structure_id
         where p.category_code = #{categoryCode,jdbcType=BIGINT}
-        and s.type = "ROE"
+          and s.type = "ROE"
     </select>
 
     <!--  根据主键查询单条标注信息-->
@@ -278,20 +277,12 @@
         WHERE indicator_id = #{indicatorId}
     </select>
 
-    <select id="selectIndicatorList" parameterType="java.lang.Long" resultType="cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo">
-       <!--  SELECT p.*,s.type
+    <select id="selectIndicatorList" parameterType="cn.staitech.anno.project.domain.Project" resultType="cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo">
+        SELECT p.*
         FROM tb_pathological_indicator_category as p
-                 left join tb_structure as s on s.structure_id = p.structure_id
-        WHERE indicator_id = #{indicatorId}
-          AND p.del_flag = "0"
-        order by p.order_number desc,p.group_number desc -->
-         SELECT p.*
-        FROM tb_pathological_indicator_category as p
-        WHERE indicator_id = #{indicatorId}
-          AND p.del_flag = "0"
+        WHERE indicator_id = #{indicatorId} AND organization_id = #{organizationId} AND p.del_flag = "0"
         order by p.order_number desc,p.group_number desc
     </select>
-
 
     <select id="selectGeoLabel" parameterType="java.lang.Long" resultMap="GeoLabelResult">
         SELECT category_name as label_name,
@@ -316,13 +307,13 @@
     <select id="selectProjectAndNumber" resultMap="BaseResultMap">
         SELECT *
         FROM tb_pathological_indicator_category AS pic
-                 LEFT JOIN tb_project AS p ON p.indicator_id = pic.indicator_id
+        LEFT JOIN tb_project AS p ON p.indicator_id = pic.indicator_id
         WHERE p.project_id = #{projectId}
-          AND pic.number = #{number}
-          and pic.del_flag = '0'
-          <if test="organizationId != null">
-                AND pic.organization_id = #{organizationId}
-          </if>
+        AND pic.number = #{number}
+        and pic.del_flag = '0'
+        <if test="organizationId != null">
+            AND pic.organization_id = #{organizationId}
+        </if>
     </select>
 
     <select id="selectCategoryById" resultType="java.lang.String">
@@ -360,7 +351,7 @@
         <if test="structureIds != null  and categoryName != ''">
             AND structure_id  like  concat(#{structureIds}, '%')
         </if>
-         <if test="organizationId != null">
+        <if test="organizationId != null">
             AND organization_id = #{organizationId}
         </if>
     </select>
@@ -395,8 +386,8 @@
     <select id="selectByProjectId" parameterType="java.lang.Long" resultMap="SysAnnotationCategoryStatisticResult">
         select DISTINCT a.category_id, i.category_name, sum(a.sum) as sum
         from tb_slide_annotation_result as a left join tb_slide as s
-                                                       on a.slide_id =s.slide_id left join tb_pathological_indicator_category as i
-                                                                                           on i.category_id=a.category_id
+        on a.slide_id =s.slide_id left join tb_pathological_indicator_category as i
+            on i.category_id=a.category_id
         where s.project_id=#{projectId}
         group by a.category_id
         order by sum desc
@@ -499,7 +490,8 @@
         p1.organ_id,
         p1.category_code,
         p1.group_number,
-        p1.category_type
+        p1.category_type,
+        p1.organization_id
         FROM
         (
         SELECT
@@ -518,7 +510,8 @@
         idc.organ_id,
         p.category_code,
         p.group_number,
-        p.category_type
+        p.category_type,
+        p.organization_id
         FROM
         tb_pathological_indicator_category AS p
         LEFT JOIN tb_pathological_indicator AS idc ON p.indicator_id = idc.indicator_id
@@ -540,6 +533,9 @@
             <if test="organizationId != null">
                 AND p.organization_id = #{organizationId}
             </if>
+            <if test="organizationId != null">
+                AND idc.organization_id = #{organizationId}
+            </if>
             <if test="createTimeParams != null">
                 <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
                     <!-- 开始时间检索 -->
@@ -550,12 +546,13 @@
                     AND date_format(p.create_time,'%y%m%d') &lt;= date_format(#{createTimeParams.endTime},'%y%m%d')
                 </if>
             </if>
-            and p.del_flag=0
+            AND p.del_flag=0 AND p.organization_id = idc.organization_id
         </where>
         ) p1
         LEFT JOIN tb_structure p2 ON p1.species_id = p2.species_id
         AND p1.organ_id = p2.organ_id
         AND p1.structure_id = p2.structure_id
+        AND p1.organization_id = p2.organization_id
         ORDER BY	p1.category_code,	type_number ASC
     </select>
 

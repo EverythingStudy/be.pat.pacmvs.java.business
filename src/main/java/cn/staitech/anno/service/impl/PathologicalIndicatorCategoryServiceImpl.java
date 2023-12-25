@@ -244,12 +244,12 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 		Project project = projectMapperv1.selectById(projectId);
 		if (project != null) {
 			// 20231225wangfeng 查询条件添加机构ID
-			List<PathologicalIndicatorCategoryOutVo> list = pathologicalIndicatorCategoryMapper.selectIndicatorList(project.getIndicatorId());
+			List<PathologicalIndicatorCategoryOutVo> list = pathologicalIndicatorCategoryMapper.selectIndicatorList(project);
 			Indicator indicator = indicatorMapper.selectIndicatorById(project.getIndicatorId());
 			//根据IndicatorId 得到种属id,脏器id，organization_id+structure_id 去structure查询类型
 			String organId = indicator.getOrganId();
 			String speciesId = indicator.getSpeciesId();
-			Long organizationId = indicator.getOrganizationId();
+			Long organizationId = project.getOrganizationId();
 			for (PathologicalIndicatorCategoryOutVo category : list) {
 				String structureId = category.getStructureId();
 				Structure structure = getStructure(organId, speciesId, organizationId, structureId);
@@ -279,7 +279,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 		}
 		return new ArrayList<>();
 	}
-	
+
 	private Structure getStructure(String organId,String speciesId,Long organizationId,String structureId){
 		Structure retStructure = new Structure();
 		Structure structure = new Structure();
@@ -348,7 +348,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 						}else if(structureId.contains("ROA")){
 							//ROA:标注区域
 							type = 3;
-						} 
+						}
 					}
 				}else{
 					//结构指标
@@ -405,7 +405,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 							category2.setCategoryId(parmValue.get(1));
 							category2.setGroupNumber(CommonConstant.STRUCTURE_RO_GROUP_NUMBER);
 							pathologicalIndicatorCategoryMapper.updateById(category2);
-							
+
 							//其他两个请参考结构指标
 							//其他两个有则修改，没有加添加
 							String structureROEId = structureId+CommonConstant.STRUCTURE_ROE;
