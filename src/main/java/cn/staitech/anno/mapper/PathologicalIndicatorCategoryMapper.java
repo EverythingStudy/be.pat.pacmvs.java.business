@@ -1,6 +1,7 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
+import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.vo.annotation.LabelListVO;
 import cn.staitech.anno.vo.annotation.LabelVO;
 import cn.staitech.anno.vo.geojson.GeoLabel;
@@ -71,7 +72,7 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
      */
     List<GeoLabel> selectIndicatorIdList(Long indicatorId);
 
-    List<PathologicalIndicatorCategoryOutVo> selectIndicatorList(Long indicatorId);
+    List<PathologicalIndicatorCategoryOutVo> selectIndicatorList(Project project );
 
     GeoLabel selectGeoLabel(Long categoryId);
 

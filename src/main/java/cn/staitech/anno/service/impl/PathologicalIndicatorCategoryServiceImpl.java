@@ -243,12 +243,13 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 	public List<PathologicalIndicatorCategoryOutVo> selectprojectList(Long projectId) {
 		Project project = projectMapperv1.selectById(projectId);
 		if (project != null) {
-			List<PathologicalIndicatorCategoryOutVo> list = pathologicalIndicatorCategoryMapper.selectIndicatorList(project.getIndicatorId());
+			// 20231225wangfeng 查询条件添加机构ID
+			List<PathologicalIndicatorCategoryOutVo> list = pathologicalIndicatorCategoryMapper.selectIndicatorList(project);
 			Indicator indicator = indicatorMapper.selectIndicatorById(project.getIndicatorId());
 			//根据IndicatorId 得到种属id,脏器id，organization_id+structure_id 去structure查询类型
 			String organId = indicator.getOrganId();
 			String speciesId = indicator.getSpeciesId();
-			Long organizationId = indicator.getOrganizationId();
+			Long organizationId = project.getOrganizationId();
 			for (PathologicalIndicatorCategoryOutVo category : list) {
 				String structureId = category.getStructureId();
 				Structure structure = getStructure(organId, speciesId, organizationId, structureId);
@@ -262,13 +263,13 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 					if (indicator != null) {
 						// 20231222wangfeng
 						String categoryName = indicator.getIndicatorNameEn() +
-								MapConstant.getStructureNameEn(organizationId.toString() + speciesId.toString() + organId.toString() + category.getStructureId());
+								MapConstant.getStructureNameEn(organizationId.toString() + speciesId + organId + category.getStructureId());
 						category.setCategoryName(categoryName);
 					}
 				}else {
 					if (indicator != null) {
 						String categoryName = indicator.getIndicatorName() +
-								MapConstant.getStructureName(organizationId.toString() + speciesId.toString() + organId.toString() + category.getStructureId());
+								MapConstant.getStructureName(organizationId.toString() + speciesId + organId + category.getStructureId());
 						category.setCategoryName(categoryName);
 					}
 				}
