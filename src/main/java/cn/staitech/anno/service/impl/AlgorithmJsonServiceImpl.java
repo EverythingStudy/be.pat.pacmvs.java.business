@@ -7,6 +7,7 @@ import cn.staitech.anno.mapper.AlgorithmJsonMapper;
 import cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper;
 import cn.staitech.anno.mapper.StructureMapper;
 import cn.staitech.anno.service.AlgorithmJsonService;
+import cn.staitech.anno.service.StructureService;
 import cn.staitech.anno.utils.GeometryUtil;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.algorithm.AlgorithmAssessment;
@@ -19,6 +20,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -55,6 +58,9 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
 
     @Resource
     private RemoteLabelService remoteLabelService;
+    
+    @Resource
+    private StructureService structureService;
 
     public static JSONObject getGeoJson(String jsonUrl) {
         JSONObject parse = new com.alibaba.fastjson.JSONObject();
@@ -208,18 +214,19 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
         JSONArray labelInfoLists = new JSONArray();
         // 对标注区域和考核区域进行筛选,只选择code为RO的标签
         if (labelInfoList.size() > 0) {
-            for (Object i : labelInfoList) {
-                JSONObject labelInfos = JSONObject.parseObject(JSONObject.toJSONString(i));
-                String labelCode = labelInfos.getString("label_code");
-                // 根据主键查询详情
-                Structure structure = structureMapper.selectById(labelCode);
-                if (structure != null) {
-                    if (!Objects.equals(structure.getType(), "ROE")) {
-                        // 查询结果
-                        labelInfoLists.add(labelInfos);
-                    }
-                }
-            }
+        	for (Object i : labelInfoList) {
+        		JSONObject labelInfos = JSONObject.parseObject(JSONObject.toJSONString(i));
+        		String labelCode = labelInfos.getString("label_code");
+        		// 根据主键查询详情
+        		//Structure structure = structureMapper.selectById(labelCode);
+        		List<Structure> structureList = structureService.getListByStructureId(labelCode);
+        		if(CollectionUtils.isNotEmpty(structureList)){
+        				if (!Objects.equals(structureList.get(0).getType(), "ROE")) {
+        					// 查询结果
+        					labelInfoLists.add(labelInfos);
+        				}
+        		}
+        	}
         }
         // 封装数据
         SelectGeoJsonList selectGeoJsonList = new SelectGeoJsonList();

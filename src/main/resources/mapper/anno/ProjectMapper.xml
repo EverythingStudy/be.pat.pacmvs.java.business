@@ -263,10 +263,9 @@
                 <!-- 组织机构ID -->
                 AND p.organization_id = #{organizationId}
             </if>
-            <if test="organizationId != null">
-                <!-- 组织机构ID -->
+            <!-- <if test="organizationId != null">
                 AND i.organization_id = #{organizationId}
-            </if>
+            </if> -->
             <if test="organizationId != null">
                 <!-- 组织机构ID -->
                 AND ps.organization_id = #{organizationId}
