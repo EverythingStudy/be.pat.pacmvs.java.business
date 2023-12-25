@@ -117,6 +117,15 @@ public class CommonConstant {
     public static final String USER = "成员";
     public static final String SLIDE = "图像";
 
+
+    /**
+     * 标注统计表头
+     * */
+    public static final String[] LABEL_STATISTICS_KEY = {"项目名称", "标签集", "标签", "图像数量", "标注总数", "项目状态"};
+    public static final String[] LABEL_STATISTICS_VALUE = {"projectName", "indicatorName", "categoryName", "imageNum", "markingNum", "statusName"};
+
+
+
     private CommonConstant() {
         throw new IllegalStateException("CommonConstant class");
     }

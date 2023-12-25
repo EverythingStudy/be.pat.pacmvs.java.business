@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.LabelStatisticsMapper">
+    <resultMap type="cn.staitech.anno.vo.labelprojectstatistics.ProjectListVO" id="projectResult">
+        <result property="projectId" column="project_id"/>
+        <result property="projectName" column="project_name"/>
+    </resultMap>
+
+    <resultMap type="cn.staitech.anno.vo.labelprojectstatistics.LabelSetOut" id="projectLabelSetResult">
+        <result property="indicatorId" column="indicator_id"/>
+        <result property="indicatorName" column="indicator_name"/>
+        <result property="indicatorNameEn" column="indicator_name_en"/>
+    </resultMap>
+
+
+    <resultMap type="cn.staitech.anno.vo.labelprojectstatistics.ProjectLabelOut" id="projectLabelListResult">
+        <result property="indicatorId" column="indicator_id"/>
+        <result property="indicatorName" column="indicator_name"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="projectName" column="project_name"/>
+        <result property="status" column="status"/>
+        <result property="userName" column="user_name"/>
+        <result property="description" column="description"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <resultMap type="cn.staitech.anno.vo.labelprojectstatistics.LabelOut" id="labelListResult">
+        <result property="categoryId" column="category_id"/>
+        <result property="categoryName" column="category_name"/>
+    </resultMap>
+
+    <resultMap type="cn.staitech.anno.vo.labelprojectstatistics.ProjectCreateByOut" id="userListResult">
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+
+    </resultMap>
+
+
+    <!--查询项目-->
+    <select id="projectList" resultMap="projectResult" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ProjectInVO">
+        select p.project_name,p.project_id from tb_project as p left join tb_project_member as m on
+        p.project_id=m.project_id
+        <where>
+            <if test="organizationId != null">
+                AND p.organization_id=#{organizationId}
+            </if>
+            <if test="userId != null">
+                AND m.user_id=#{userId}
+            </if>
+            <if test="projectType != null">
+                AND p.project_type=#{projectType}
+            </if>
+            and p.del_flag=0
+        </where>
+    </select>
+
+
+    <!--查询标准集-->
+    <select id="projectLabelSet" parameterType="cn.staitech.anno.vo.labelprojectstatistics.LabelSetIn"
+            resultMap="projectLabelSetResult">
+        SELECT a.indicator_id,a.indicator_name,a.indicator_name_en
+        FROM tb_pathological_indicator as a
+        <where>
+            <if test="projectIdList != null and projectIdList.size() >0 ">
+                AND a.indicator_id IN
+                (
+                SELECT
+                p.indicator_id
+                FROM
+                tb_project as p
+                WHERE
+                p.project_id IN
+                <foreach collection="projectIdList" item="projectId" open="(" separator="," close=")">
+                    #{projectId}
+                </foreach>
+                )
+            </if>
+            <if test="organizationId != null and userId != null ">
+                AND a.indicator_id IN
+                (
+                SELECT
+                pa.indicator_id
+                FROM
+                tb_project as pa
+                left join tb_project_member as pn on pn.project_id=pa.project_id
+                WHERE pn.user_id=#{userId} and pa.organization_id=#{organizationId} and pa.project_type=1
+                )
+            </if>
+        </where>
+    </select>
+
+    <!--查询标签-->
+    <select id="labelList" parameterType="cn.staitech.anno.vo.labelprojectstatistics.LabelIn"
+            resultMap="labelListResult">
+        select ic.category_id,ic.category_name from tb_pathological_indicator_category as ic left join
+        tb_pathological_indicator as i on i.indicator_id=ic.indicator_id
+        <where>
+            <if test="projectIdList != null and projectIdList.size()>0 ">
+                AND i.indicator_id IN
+                (
+                SELECT
+                pa.indicator_id
+                FROM
+                tb_project as pa
+                WHERE
+                pa.project_id IN
+                <foreach collection="projectIdList" item="projectId" open="(" separator="," close=")">
+                    #{projectId}
+                </foreach>
+                and pa.project_type=1
+                )
+            </if>
+            <if test="indicatorIdList != null and indicatorIdList.size()>0">
+                AND i.indicator_id IN
+                <foreach collection="indicatorIdList" item="indicatorId" open="(" separator="," close=")">
+                    #{indicatorId}
+                </foreach>
+            </if>
+            <if test="organizationId != null and userId != null ">
+                AND i.indicator_id IN
+                (
+                SELECT
+                pa.indicator_id
+                FROM
+                tb_project as pa
+                left join tb_project_member as pn on pn.project_id=pa.project_id
+                WHERE pn.user_id=#{userId} and pa.organization_id=#{organizationId} and pa.project_type=1
+                )
+            </if>
+        </where>
+    </select>
+
+    <!--查询项目标签-->
+    <select id="projectLabelList" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ProjectLabelIn"
+            resultMap="projectLabelListResult">
+        select DISTINCT ic.category_id,
+        p.project_id,
+        pi.indicator_id,
+        ic.category_name,
+        p.project_name,
+        pi.indicator_name,
+        p.status
+        from tb_pathological_indicator_category as ic
+        left join tb_pathological_indicator as pi on ic.indicator_id = pi.indicator_id
+        left join tb_project as p on pi.indicator_id = p.indicator_id
+        <where>
+            <if test="organizationId != null and userId != null ">
+                AND p.project_id IN (select pm.project_id from tb_project_member as pm
+                where pm.user_id = #{userId} and pm.organization_id = #{organizationId} )
+            </if>
+            <if test="projectIdList != null and projectIdList.size()>0 ">
+                AND p.project_id IN
+                <foreach collection="projectIdList" item="projectId" open="(" separator="," close=")">
+                    #{projectId}
+                </foreach>
+            </if>
+            <if test="indicatorIdList != null and indicatorIdList.size()>0 ">
+                AND pi.indicator_id IN
+                <foreach collection="indicatorIdList" item="indicatorId" open="(" separator="," close=")">
+                    #{indicatorId}
+                </foreach>
+            </if>
+            <if test="categoryIdList != null and categoryIdList.size()>0 ">
+                AND ic.category_id IN
+                <foreach collection="categoryIdList" item="categoryId" open="(" separator="," close=")">
+                    #{categoryId}
+                </foreach>
+            </if>
+            and p.project_type=1 and p.status !=1
+        </where>
+            order by p.project_id desc
+    </select>
+
+    <!--查询图像数量-->
+    <select id="imageNum" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingIn" resultType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingOut">
+        select count(distinct slide_id) as imageNum from tb_marking
+        <where>
+            <if test="projectId != null">
+               AND project_id=#{projectId}
+            </if>
+            <if test="categoryId != null">
+                AND category_id=#{categoryId}
+            </if>
+            <if test="annotationType != null">
+                AND annotation_type !=#{annotationType}
+            </if>
+        </where>
+    </select>
+
+    <!--查询标注数量-->
+    <select id="markingNum" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingIn" resultType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingOut">
+        select count(*) as markingNum from tb_marking
+        <where>
+            <if test="projectId != null">
+                AND project_id=#{projectId}
+            </if>
+            <if test="categoryId != null">
+                AND category_id=#{categoryId}
+            </if>
+            <if test="annotationType != null">
+                AND annotation_type !=#{annotationType}
+            </if>
+        </where>
+    </select>
+
+    <!--项目创建者-->
+    <select id="userList" resultMap="userListResult" parameterType="cn.staitech.anno.vo.labelprojectstatistics.LabelSetIn">
+        select user_id,user_name from sys_user
+        <where>
+            <if test="organizationId != null">
+                organization_id=#{organizationId}
+            </if>
+            <if test="projectIdList != null and projectIdList.size()>0 ">
+                AND user_id IN (
+                select create_by from tb_project where
+                project_id IN
+                <foreach collection="projectIdList" item="projectId" open="(" separator="," close=")">
+                    #{projectId}
+                </foreach>
+                and del_flag=0
+                )
+            </if>
+            AND del_flag=0
+        </where>
+    </select>
+
+
+    <!--查询项目-->
+    <select id="itemList" resultMap="projectLabelListResult" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ProjectListIn">
+        select p.project_name,u.user_name,p.description,p.create_time,p.status from tb_project as p left join sys_user as u on u.user_id=p.create_by
+        <where>
+            <if test="createTimeParams != null">
+                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
+                    <!-- 开始时间检索 -->
+                    AND date_format(p.create_time,'%y%m%d') &gt;= date_format(#{createTimeParams.beginTime},'%y%m%d')
+                </if>
+                <if test="createTimeParams.endTime != null and createTimeParams.endTime != ''">
+                    <!-- 结束时间检索 -->
+                    AND date_format(p.create_time,'%y%m%d') &lt;= date_format(#{createTimeParams.endTime},'%y%m%d')
+                </if>
+            </if>
+            <if test="organizationId != null and userIds != null ">
+                AND p.project_id IN (select pm.project_id from tb_project_member as pm
+                where pm.user_id = #{userIds} and pm.organization_id = #{organizationId} )
+            </if>
+            <if test="projectIdList != null">
+                AND p.project_id IN
+                <foreach collection="projectIdList" item="projectId" open="(" separator="," close=")">
+                    #{projectId}
+                </foreach>
+            </if>
+            <if test="statusList != null">
+                AND p.status IN
+                <foreach collection="statusList" item="status" open="(" separator="," close=")">
+                    #{status}
+                </foreach>
+            </if>
+            <if test="indicatorIdList != null">
+                AND p.indicator_id IN
+                <foreach collection="indicatorIdList" item="indicatorId" open="(" separator="," close=")">
+                    #{indicatorId}
+                </foreach>
+            </if>
+            <if test="userId != null">
+               AND p.create_by=#{userId}
+            </if>
+            <if test="description != null">
+                p.description like concat('%', #{description}, '%')
+            </if>
+            <if test="projectType != null">
+               AND p.project_type=#{projectType}
+            </if>
+            AND p.project_type=1 and p.status !=1
+
+        </where>
+        order by p.project_id desc
+    </select>
+
+
+
+</mapper>
+
