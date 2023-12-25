@@ -263,6 +263,14 @@
                 <!-- 组织机构ID -->
                 AND p.organization_id = #{organizationId}
             </if>
+            <if test="organizationId != null">
+                <!-- 组织机构ID -->
+                AND i.organization_id = #{organizationId}
+            </if>
+            <if test="organizationId != null">
+                <!-- 组织机构ID -->
+                AND ps.organization_id = #{organizationId}
+            </if>
             <if test="status != null">
                 AND p.status = #{status}
             </if>

@@ -12,6 +12,7 @@ import cn.staitech.anno.mapper.OrganMapper;
 import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.project.service.MarkingServiceV1;
 import cn.staitech.anno.service.IndicatorService;
+import cn.staitech.anno.service.OrganService;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
 import cn.staitech.anno.service.StructureService;
 import cn.staitech.anno.utils.MessageSource;
@@ -72,6 +73,9 @@ public class PathologicalController {
 
     @Resource
     private OrganMapper organMapper;
+    
+    @Resource
+    private OrganService organService;
 
 
     /**
@@ -191,8 +195,8 @@ public class PathologicalController {
             //保存结构（3条）
             structureService.saveBatch(structureNewList);
 
-            MapConstant.ORGAN_MAP = selectMap();
-            MapConstant.ORGAN_MAP_EN = selectMapEn();
+            MapConstant.ORGAN_MAP = organService.selectMap();
+            MapConstant.ORGAN_MAP_EN = organService.selectMapEn();
             MapConstant.STRUCTURE_MAP = structureService.selectMap();
             MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
         }
@@ -469,8 +473,8 @@ public class PathologicalController {
 
             }
 
-            MapConstant.ORGAN_MAP = selectMap();
-            MapConstant.ORGAN_MAP_EN = selectMapEn();
+            MapConstant.ORGAN_MAP = organService.selectMap();
+            MapConstant.ORGAN_MAP_EN = organService.selectMapEn();
             MapConstant.STRUCTURE_MAP = structureService.selectMap();
             MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
         }
@@ -682,7 +686,7 @@ public class PathologicalController {
         }
     }
 
-    public Map<String, String> selectMap() {
+   /* public Map<String, String> selectMap() {
         return select(false);
     }
 
@@ -697,7 +701,7 @@ public class PathologicalController {
         } else {
             return list.stream().collect(Collectors.toMap(item -> item.getSpeciesCode().concat(item.getOrganId()), Organ::getName));
         }
-    }
+    }*/
 
 
     @PostMapping("/test")
