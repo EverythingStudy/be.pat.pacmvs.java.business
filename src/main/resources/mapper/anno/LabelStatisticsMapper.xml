@@ -231,7 +231,7 @@
 
     <!--查询项目-->
     <select id="itemList" resultMap="projectLabelListResult" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ProjectListIn">
-        select p.project_name,u.user_name,p.description,p.create_time,p.status from tb_project as p left join sys_user as u on u.user_id=p.create_by
+        select p.project_id,p.project_name,u.user_name,p.description,p.create_time,p.status from tb_project as p left join sys_user as u on u.user_id=p.create_by
         <where>
             <if test="createTimeParams != null">
                 <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
@@ -280,7 +280,15 @@
         order by p.project_id desc
     </select>
 
-
+    <!--查询图像数量-->
+    <select id="slideNum" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingIn" resultType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingOut">
+        select count(slide_id) as imageNum from tb_slide
+        <where>
+            <if test="projectId != null">
+                AND project_id=#{projectId}
+            </if>
+        </where>
+    </select>
 
 </mapper>
 

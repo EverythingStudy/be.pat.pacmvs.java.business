@@ -118,6 +118,13 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
         projectListIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         projectListIn.setUserIds(SecurityUtils.getUserId());
         List<ProjectLabelOut> itemList=labelStatisticsMapper.itemList(projectListIn);
+        for (ProjectLabelOut projectLabelOut:itemList){
+            ImageMarkingIn imageMarkingIn= ImageMarkingIn.builder().projectId(projectLabelOut.getProjectId()).annotationType("Measure").build();
+            ImageMarkingOut imageOut=labelStatisticsMapper.imageNum(imageMarkingIn);
+            projectLabelOut.setImageNum(imageOut.getImageNum().toString());
+            ImageMarkingOut markingOut=labelStatisticsMapper.markingNum(imageMarkingIn);
+            projectLabelOut.setMarkingNum(markingOut.getMarkingNum().toString());
+        }
         PageMaster<ProjectLabelOut> pageMaster = new PageMaster<>(itemList);
         return R.ok(pageMaster);
     }
@@ -166,7 +173,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 
 
     /**
-     * 标签导出
+     * 项目导出
      * */
     @Override
     public void projectExport(HttpServletResponse response) throws Exception{
@@ -175,8 +182,14 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
         projectListIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         projectListIn.setUserIds(SecurityUtils.getUserId());
         List<ProjectLabelOut> itemList=labelStatisticsMapper.itemList(projectListIn);
+        log.info("数据："+itemList);
         for (ProjectLabelOut projectLabelOut:itemList){
             projectLabelOut.setStatusName(Container.PROJECT_STATUS.get(projectLabelOut.getStatus()));
+            ImageMarkingIn imageMarkingIn= ImageMarkingIn.builder().projectId(projectLabelOut.getProjectId()).annotationType("Measure").build();
+            ImageMarkingOut imageOut=labelStatisticsMapper.slideNum(imageMarkingIn);
+            projectLabelOut.setImageNum(imageOut.getImageNum().toString());
+            ImageMarkingOut markingOut=labelStatisticsMapper.markingNum(imageMarkingIn);
+            projectLabelOut.setMarkingNum(markingOut.getMarkingNum().toString());
         }
 
         // 构造表头的每个列头 定义表头
