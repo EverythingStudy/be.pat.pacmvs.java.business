@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author: wangfeng
@@ -16,16 +15,16 @@ import java.util.List;
 @Data
 public class MarkingStatisticSelectVO extends Pager implements Serializable {
     @ApiModelProperty(value = "项目ID")
-    private List<Long> projectIds;
+    private Long[] projectIds;
 
     @ApiModelProperty(value = "创建人")
-    private List<Long> createBys;
+    private Long[] createBys;
 
     @ApiModelProperty(value = "标签集")
-    private List<Long> indicatorIds;
+    private Long[] indicatorIds;
 
     @ApiModelProperty(value = "标签")
-    private List<Long> categoryIds;
+    private Long[] categoryIds;
 
     @ApiModelProperty(value = "机构ID", hidden = true, required = true)
     private Long organizationId;

@@ -618,6 +618,6 @@
             </foreach>
         </if>
         GROUP BY m.project_id,m.create_by,n.indicator_id,m.category_id,m.organization_id
-        ORDER BY m.project_id ASC,m.create_by ASC,n.indicator_id ASC,m.category_id ASC;
+        ORDER BY m.project_id ASC,m.create_by ASC,n.indicator_id ASC,m.category_id ASC
     </select>
 </mapper>
