@@ -60,5 +60,5 @@ public class SlideQueryIn {
     private Long[] projectIds;
     
     @ApiModelProperty("参与人员ID")
-    private Long[] partUsers;
+    private Long[] createBys;
 }

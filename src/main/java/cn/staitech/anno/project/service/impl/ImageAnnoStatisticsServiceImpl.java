@@ -82,13 +82,13 @@ implements ImageAnnoStatisticsService {
 		partQuery.setProjectIds(pIds);
 
 		//参与人员
-		Long[] partUsers = req.getPartUsers();
+		Long[] partUsers = req.getCreateBys();
 		List<Long> partUserList = new ArrayList<>();
 		if (partUsers != null) {
 			partUserList = Arrays.asList(partUsers);
 		}else{
 			ImageAnnoUserQueryIn query = new ImageAnnoUserQueryIn();
-			query.setProjectId(null);
+			query.setProjectIds(null);
 			List<ProjectPartUserVO> queryList = projectMemberService.getUserList(query);
 			if(CollectionUtils.isNotEmpty(queryList)){
 				for(ProjectPartUserVO p:queryList){
@@ -191,13 +191,13 @@ implements ImageAnnoStatisticsService {
 		partQuery.setProjectIds(pIds);
 
 		//参与人员
-		Long[] partUsers = req.getPartUsers();
+		Long[] partUsers = req.getCreateBys();
 		List<Long> partUserList = new ArrayList<>();
 		if (partUsers != null) {
 			partUserList = Arrays.asList(partUsers);
 		}else{
 			ImageAnnoUserQueryIn query = new ImageAnnoUserQueryIn();
-			query.setProjectId(null);
+			query.setProjectIds(null);
 			List<ProjectPartUserVO> queryList = projectMemberService.getUserList(query);
 			if(CollectionUtils.isNotEmpty(queryList)){
 				for(ProjectPartUserVO p:queryList){

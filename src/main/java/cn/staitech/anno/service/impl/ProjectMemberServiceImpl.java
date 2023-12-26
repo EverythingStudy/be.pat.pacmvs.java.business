@@ -177,7 +177,7 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 	@Override
 	public List<ProjectPartUserVO> getUserList(ImageAnnoUserQueryIn query) {
 		List<SysUser> list =  new ArrayList<SysUser>();
-		Long[] projectId = query.getProjectId();
+		Long[] projectId = query.getProjectIds();
 		ProjectMember projectMember = new ProjectMember();
 		if(null == projectId){
 	    	cn.staitech.system.api.domain.SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();

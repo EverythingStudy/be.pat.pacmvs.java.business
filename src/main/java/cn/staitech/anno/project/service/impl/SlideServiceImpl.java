@@ -273,14 +273,31 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
             catesMapList.add(catesMap);
         }
         // 补全数据行缺失字段
-        for (Map<String, String> catesMap : catesMapList) {
+        /*for (Map<String, String> catesMap : catesMapList) {
             for (PathologicalIndicatorCategory column : columns) {
                 String count = catesMap.get(String.valueOf(column.getCategoryId()));
                 if (count == null) {
                     catesMap.put(String.valueOf(column.getCategoryId()), "");
                 }
             }
+        }*/
+        for (Map<String, String> catesMap : catesMapList) {
+            for (PathologicalIndicatorCategory column : columns) {
+            	if(null != catesMap && !catesMap.isEmpty()){
+            		if(null != column.getCategoryId()){
+            			if(catesMap.containsKey(String.valueOf(column.getCategoryId()))){
+            				String count = catesMap.get(String.valueOf(column.getCategoryId()));
+            				if (count == null) {
+            					catesMap.put(String.valueOf(column.getCategoryId()), "");
+            				}
+            			}else{
+            				catesMap.put(String.valueOf(column.getCategoryId()), "");
+            			}
+            		}
+            	}
+            }
         }
+
 
         return columns;
     }
