@@ -6,6 +6,8 @@ import cn.staitech.anno.vo.eyeslide.EyeProjectSlideIn;
 import cn.staitech.anno.vo.eyeslide.EyeProjectSlideOut;
 import cn.staitech.anno.vo.eyeslide.EyeSlideIn;
 import cn.staitech.anno.vo.image.out.ImageListOutVO;
+import cn.staitech.anno.vo.labelprojectstatistics.ProjectLabelIn;
+import cn.staitech.anno.vo.labelprojectstatistics.ProjectLabelOut;
 import cn.staitech.anno.vo.project.ProjectDelVO;
 import cn.staitech.anno.vo.project.ProjectStatusVO;
 import cn.staitech.common.security.utils.SecurityUtils;
@@ -98,6 +100,28 @@ public class ProjectUtils {
         projectDelVO.setPageSize(pageSize);
         projectDelVO.setFlag(flag);
         projectDelVO.setResults(result);
+        return projectDelVO;
+    }
+
+
+
+    /**
+     * 标签统计--分页
+     */
+    public static ProjectDelVO pagingLabel(ProjectLabelIn projectLabelIn) {
+        int pageNum = projectLabelIn.getPageNum();
+        int pageSize = projectLabelIn.getPageSize();
+        boolean flag = false;
+        if (pageNum > 0) {
+            pageNum--;
+            flag = true;
+        }
+        List<ProjectLabelOut> result = new ArrayList<>();
+        ProjectDelVO projectDelVO = new ProjectDelVO();
+        projectDelVO.setPageNum(pageNum);
+        projectDelVO.setPageSize(pageSize);
+        projectDelVO.setFlag(flag);
+        projectDelVO.setResultList(result);
         return projectDelVO;
     }
 
