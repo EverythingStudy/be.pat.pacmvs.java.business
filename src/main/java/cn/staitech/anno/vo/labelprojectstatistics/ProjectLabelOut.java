@@ -43,6 +43,9 @@ public class ProjectLabelOut {
     private String markingNum;
 
     @ApiModelProperty(value = "创建者")
+    private String nickName;
+
+    @ApiModelProperty(value = "账号名称")
     private String userName;
 
     @ApiModelProperty(value = "描述")

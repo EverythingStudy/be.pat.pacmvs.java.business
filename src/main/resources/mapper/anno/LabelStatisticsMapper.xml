@@ -23,6 +23,7 @@
         <result property="categoryName" column="category_name"/>
         <result property="projectName" column="project_name"/>
         <result property="status" column="status"/>
+        <result property="nickName" column="nick_name"/>
         <result property="userName" column="user_name"/>
         <result property="description" column="description"/>
         <result property="createTime" column="create_time"/>
@@ -36,6 +37,7 @@
     <resultMap type="cn.staitech.anno.vo.labelprojectstatistics.ProjectCreateByOut" id="userListResult">
         <result property="userId" column="user_id"/>
         <result property="userName" column="user_name"/>
+        <result property="nickName" column="nick_name"/>
 
     </resultMap>
 
@@ -212,7 +214,7 @@
 
     <!--项目创建者-->
     <select id="userList" resultMap="userListResult" parameterType="cn.staitech.anno.vo.labelprojectstatistics.LabelSetIn">
-        select user_id,user_name from sys_user
+        select user_id,nick_name,user_name from sys_user
         <where>
             <if test="organizationId != null">
                 organization_id=#{organizationId}
@@ -234,7 +236,7 @@
 
     <!--查询项目-->
     <select id="itemList" resultMap="projectLabelListResult" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ProjectListIn">
-        select p.project_id,p.project_name,u.user_name,p.description,p.create_time,p.status from tb_project as p left join sys_user as u on u.user_id=p.create_by
+        select p.project_id,p.project_name,u.nick_name,u.user_name,p.description,p.create_time,p.status from tb_project as p left join sys_user as u on u.user_id=p.create_by
         <where>
             <if test="createTimeParams != null">
                 <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">

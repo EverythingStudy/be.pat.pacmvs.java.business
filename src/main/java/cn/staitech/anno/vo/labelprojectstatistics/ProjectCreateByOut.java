@@ -15,6 +15,8 @@ public class ProjectCreateByOut {
     private Long userId;
 
     @ApiModelProperty(value = "创建者")
-    private String userName;
+    private String nickName;
 
+    @ApiModelProperty(value = "创建者")
+    private String userName;
 }
