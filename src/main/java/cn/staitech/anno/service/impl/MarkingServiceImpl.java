@@ -1000,7 +1000,7 @@ public class MarkingServiceImpl implements MarkingService {
     @Override
     public void execlExport(Long slideId, HttpServletResponse response) throws Exception {
         // 构造表头的每个列头 定义表头
-        List<Map<String, String>> titleList = getTitleList(CommonConstant.MEASURE_COLHEAD_KEY, CommonConstant.MEASURE_COLHEAD_VALUE);
+        List<Map<String, String>> titleList = ExcelUtil.getTitleList(CommonConstant.MEASURE_COLHEAD_KEY, CommonConstant.MEASURE_COLHEAD_VALUE);
         // 查询当前切片不为点类型的标注数据
         List<Properties> propertiesList = markingMapper.selectMeasureList(slideId);
         // 加点的记录
@@ -1064,7 +1064,7 @@ public class MarkingServiceImpl implements MarkingService {
     public void downTaskByCode(String code, HttpServletResponse response) throws Exception {
         DownTask downTask = downTaskService.getOne(Wrappers.query(DownTask.builder().code(code).build()));
         // 构造表头的每个列头 定义表头
-        List<Map<String, String>> titleList = getTitleList(CommonConstant.EXPORT_COLHEAD_KEY, CommonConstant.EXPORT_COLHEAD_VALUE);
+        List<Map<String, String>> titleList = ExcelUtil.getTitleList(CommonConstant.EXPORT_COLHEAD_KEY, CommonConstant.EXPORT_COLHEAD_VALUE);
         List<Map<String, String>> res = new ArrayList<>();
         JSONObject jsonObject = JSON.parseObject(String.valueOf(downTask.getPath()));
         for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
@@ -1097,14 +1097,10 @@ public class MarkingServiceImpl implements MarkingService {
     }
 
     /**
-     * 封装socket发送数据
      *
-     * @param annotationId
-     * @param geometry
-     * @param properties
-     * @return
+     * @param fileUrl
+     * @param jsonString
      */
-
     public void exportJson(String fileUrl, String jsonString) {
         try {
             OutputStream outputStream = Files.newOutputStream(Paths.get(fileUrl));
@@ -1127,18 +1123,6 @@ public class MarkingServiceImpl implements MarkingService {
         slide.setSlideId(slideId);
         slide.setUpdateTime(new Date());
         slideMapperV1.updateById(slide);
-    }
-
-    public List<Map<String, String>> getTitleList(String[] colHeadKey, String[] colHeadValue) {
-        // 定义表头
-        List<Map<String, String>> list = new ArrayList<>();
-
-        for (int i = 0; i < colHeadKey.length; i++) {
-            Map<String, String> map = new HashMap<String, String>(1);
-            map.put(colHeadKey[i], colHeadValue[i]);
-            list.add(map);
-        }
-        return list;
     }
 
     public void process(Integer type, Slide slide, Marking marking) throws Exception {
