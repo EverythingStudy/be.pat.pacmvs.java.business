@@ -1,4 +1,4 @@
-package cn.staitech.anno.task;
+/*package cn.staitech.anno.task;
 
 import cn.staitech.anno.config.ScheduleConfig;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
@@ -23,13 +23,13 @@ public class PathologicalIndicatorCategoryTask {
     @Autowired
     private ScheduleConfig scheduleConfig;
 
-    /**
+    *//**
      * tb_pathological_indicator_category 历史数据处理
      * 1、以结构指标为准
      * 2、如果没有结构指标，以标注区域为准
      *
      * @throws ParseException
-     */
+     *//*
     // @Scheduled(cron = "0 0 0/2 * * ?")
     @Scheduled(cron = "#{scheduleConfig.getCron()}")
     public void handlerCouponsUserStatusTimeOutToExpired() throws ParseException {
@@ -38,3 +38,4 @@ public class PathologicalIndicatorCategoryTask {
         categoryService.handlerCouponsUserStatusTimeOutToExpired(dataList);
     }
 }
+*/
