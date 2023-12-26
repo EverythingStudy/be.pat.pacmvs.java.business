@@ -66,9 +66,9 @@ public class LabelStatisticsController {
 
     @ApiOperationSupport(author = "ZMJ")
     @ApiOperation(value = "标签统计导出")
-    @GetMapping("/labelExport")
-    public void export(HttpServletResponse response) throws Exception {
-        labelStatisticsService.labelExport(response);
+    @PostMapping("/labelExport")
+    public void export(@RequestBody ProjectLabelIn projectLabelIn,HttpServletResponse response) throws Exception {
+        labelStatisticsService.labelExport(projectLabelIn,response);
     }
 
 
@@ -91,14 +91,7 @@ public class LabelStatisticsController {
         } else {
             map = Container.PROJECT_STATUS;
         }
-        Map<Integer, String> maps=new HashMap<>();
-       for (Integer key:map.keySet()) {
-           if (key!=1){
-               maps.put(key,map.get(key));
-           }
-       }
-
-        return R.ok(maps);
+        return R.ok(map);
     }
 
 
@@ -112,10 +105,11 @@ public class LabelStatisticsController {
 
     @ApiOperationSupport(author = "ZMJ")
     @ApiOperation(value = "项目统计导出")
-    @GetMapping("/projectExport")
-    public void projectExport(HttpServletResponse response) throws Exception {
-        labelStatisticsService.projectExport(response);
+    @PostMapping("/projectExport")
+    public void projectExport(@RequestBody ProjectListIn projectListIn, HttpServletResponse response) throws Exception {
+        labelStatisticsService.projectExport(projectListIn,response);
     }
+
 
 
 }
