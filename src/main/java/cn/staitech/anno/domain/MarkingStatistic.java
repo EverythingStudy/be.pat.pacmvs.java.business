@@ -35,7 +35,7 @@ public class MarkingStatistic {
     Long categoryId;
 
     @ApiModelProperty(value = "标注总数", required = true)
-    Long sums;
+    Long markingNum;
 
     @ApiModelProperty(value = "机构ID", required = true)
     private Long organizationId;

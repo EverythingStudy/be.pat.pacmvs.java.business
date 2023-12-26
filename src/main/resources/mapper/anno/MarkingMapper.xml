@@ -573,7 +573,7 @@
             resultType="cn.staitech.anno.domain.MarkingStatistic">
         SELECT
         m.project_id,p.project_name,m.create_by,u.nick_name,i.indicator_id,n.indicator_name,m.category_id,i.category_name,m.organization_id,COUNT(*)
-        AS sums
+        AS marking_num
         FROM tb_marking_6 m
         LEFT JOIN tb_pathological_indicator_category i ON m.category_id = i.category_id
         LEFT JOIN tb_pathological_indicator n ON n.indicator_id = i.indicator_id
