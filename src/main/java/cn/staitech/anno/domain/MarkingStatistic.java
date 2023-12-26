@@ -11,31 +11,31 @@ import lombok.Data;
 @Data
 public class MarkingStatistic {
     @ApiModelProperty(value = "项目名称", required = true)
-    String projectName;
+    private String projectName;
 
     @ApiModelProperty(value = "创建人姓名", required = true)
-    String nickName;
+    private String nickName;
 
     @ApiModelProperty(value = "标签集名称", required = true)
-    String indicatorName;
+    private String indicatorName;
 
     @ApiModelProperty(value = "标签名称", required = true)
-    String categoryName;
+    private String categoryName;
 
     @ApiModelProperty(value = "项目ID", required = true)
-    Long projectId;
+    private Long projectId;
 
     @ApiModelProperty(value = "创建人", required = true)
-    Long createBy;
+    private Long createBy;
 
     @ApiModelProperty(value = "标签集", required = true)
-    Long indicatorId;
+    private Long indicatorId;
 
     @ApiModelProperty(value = "标签", required = true)
-    Long categoryId;
+    private String categoryId;
 
     @ApiModelProperty(value = "标注总数", required = true)
-    Long markingNum;
+    private Long markingNum;
 
     @ApiModelProperty(value = "机构ID", required = true)
     private Long organizationId;

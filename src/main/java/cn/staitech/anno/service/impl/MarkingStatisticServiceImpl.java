@@ -42,8 +42,6 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
         selectVO.setOrganizationId(sysUser.getOrganizationId());
         selectVO.setUserId(sysUser.getUserId());
         return markingMapper.selectMarkingStatistic(selectVO);
-
-
     }
 
 
