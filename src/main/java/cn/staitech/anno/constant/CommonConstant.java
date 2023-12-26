@@ -102,6 +102,14 @@ public class CommonConstant {
      */
     public static final String[] MEASURE_COLHEAD_KEY = {"名称", "周长/长度", "面积", "内角", "外角", "平均间距", "最小间距", "最大间距", "总数", "测量人", "创建时间"};
     public static final String[] MEASURE_COLHEAD_VALUE = {"measure_full_name", "perimeter", "area", "inner_angle", "exterior_angle", "mean_distance", "min_distance", "max_distance", "point_count", "annotation_owner", "create_time"};
+    
+    /**
+     * 图像标注统计
+     */
+    public static final String[] SLIDE_COUNT_COLHEAD_KEY = {"项目名称", "用户", "图像数量", "标注总数", "项目状态"};
+    public static final String[] SLIDE_COUNT_COLHEAD_VALUE = {"projectName", "nickName", "imageCount", "markingNum", "statusDesc"};
+    
+    
     /**
      * Excel表头 - Export
      */
