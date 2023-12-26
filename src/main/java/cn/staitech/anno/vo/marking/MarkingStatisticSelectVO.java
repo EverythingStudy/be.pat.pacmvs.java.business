@@ -29,4 +29,8 @@ public class MarkingStatisticSelectVO extends Pager implements Serializable {
 
     @ApiModelProperty(value = "机构ID", hidden = true, required = true)
     private Long organizationId;
+
+    @ApiModelProperty(value = "当前登录用户ID", hidden = true, required = true)
+    private Long userId;
+
 }

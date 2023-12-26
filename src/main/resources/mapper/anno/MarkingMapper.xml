@@ -586,6 +586,13 @@
         AND n.organization_id = #{organizationId}
         AND p.organization_id = #{organizationId}
         AND u.organization_id = #{organizationId}
+        <if test="userId != null">
+            AND m.project_id IN(
+                SELECT DISTINCT project_id
+                FROM tb_project_member
+                WHERE user_id = 11;
+            )
+        </if>
         <if test="projectIds != null and projectIds.size() >0 ">
             AND m.project_id IN
             <foreach item="projectId" collection="projectIds" separator="," open="(" close=")" index="">
