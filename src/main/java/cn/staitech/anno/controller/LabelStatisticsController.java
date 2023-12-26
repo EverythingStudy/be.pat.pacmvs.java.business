@@ -4,7 +4,10 @@ import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.service.LabelStatisticsService;
 import cn.staitech.anno.utils.*;
 import cn.staitech.anno.vo.labelprojectstatistics.*;
+import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
+import cn.staitech.system.api.domain.SysUser;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
@@ -57,11 +60,15 @@ public class LabelStatisticsController {
     @ApiOperationSupport(author = "ZMJ")
     @ApiOperation(value = "标签统计")
     @PostMapping("/projectLabel")
-    public R<PageMaster<ProjectLabelOut>> projectLabel(@RequestBody ProjectLabelIn projectLabelIn){
-        PageHelper.startPage(projectLabelIn.getPageNum(), projectLabelIn.getPageSize()).setReasonable(true);
+    public R<PageResponse<ProjectLabelOut>> projectLabel(@RequestBody ProjectLabelIn projectLabelIn){
+        PageResponse resp = new PageResponse();
+        PageUtils<ProjectLabelOut> page=new PageUtils<>(projectLabelIn.getPageNum(),projectLabelIn.getPageSize());
         List<ProjectLabelOut> projectLabelOuts=labelStatisticsService.projectLabelList(projectLabelIn);
-        PageMaster<ProjectLabelOut> pageMaster = new PageMaster<>(projectLabelOuts);
-        return R.ok(pageMaster);
+        page.doPage(projectLabelOuts);
+        resp.setTotal(page.getTotal());
+        resp.setList(page.getResults());
+        resp.setPages(page.getPages());
+        return R.ok(resp);
     }
 
     @ApiOperationSupport(author = "ZMJ")
