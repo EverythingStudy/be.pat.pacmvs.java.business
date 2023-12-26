@@ -62,7 +62,7 @@
 
     <select id="markingList" parameterType="cn.staitech.anno.project.domain.Marking" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
+        annotation_id
         from tb_marking
         <where>
             <if test="slideId != null">
