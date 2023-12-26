@@ -120,16 +120,21 @@ public class CommonConstant {
 
     /**
      * 标注统计表头
-     * */
+     */
     public static final String[] LABEL_STATISTICS_KEY = {"项目名称", "标签集", "标签", "图像数量", "标注总数", "项目状态"};
     public static final String[] LABEL_STATISTICS_VALUE = {"projectName", "indicatorName", "categoryName", "imageNum", "markingNum", "statusName"};
 
     /**
      * 项目统计表头
-     * */
-    public static final String[] PROJECT_STATISTICS_KEY = {"项目名称", "图像数量", "标注总数","创建者","描述", "创建时间", "项目状态"};
+     */
+    public static final String[] PROJECT_STATISTICS_KEY = {"项目名称", "图像数量", "标注总数", "创建者", "描述", "创建时间", "项目状态"};
+    public static final String[] PROJECT_STATISTICS_VALUE = {"projectName", "imageNum", "markingNum", "userName", "description", "createTime", "statusName"};
 
-    public static final String[] PROJECT_STATISTICS_VALUE = {"projectName", "imageNum", "markingNum","userName","description","createTime", "statusName"};
+    /**
+     * 智能标注-标注统计-用户标签统计-excel导出
+     */
+    public static final String[] MARKING_STATISTICS_KEY = {"项目名称", "用户", "标签集", "标签", "标注总数"};
+    public static final String[] MARKING_STATISTICS_VALUE = {"projectName", "nickName", "indicatorName", "categoryName", "sums"};
 
     private CommonConstant() {
         throw new IllegalStateException("CommonConstant class");

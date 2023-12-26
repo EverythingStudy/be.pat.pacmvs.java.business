@@ -530,61 +530,6 @@
         </if>
     </select>
 
-    <!--    <select id="selectById" parameterType="Long" resultMap="markingResult">-->
-    <!--        <include refid="selectMarking"/>-->
-    <!--        where marking_id = #{markingId}-->
-    <!--    </select>-->
-
-    <!--    <insert id="insert" parameterType="cn.staitech.anno.domain.marking.Marking" useGeneratedKeys="true"-->
-    <!--            keyProperty="marking_id">-->
-    <!--        insert into tb_marking (-->
-    <!--        <if test="annotation_id != null and annotation_id != '' ">annotation_id,</if>-->
-    <!--        <if test="area != null and area != '' ">area,</if>-->
-    <!--        <if test="perimeter != null and perimeter != '' ">perimeter,</if>-->
-    <!--        <if test="description != null and description != ''">description ,</if>-->
-    <!--        <if test="category_id != null and category_id != ''">category_id,</if>-->
-    <!--        <if test="measure_full_name != null and measure_full_name != '' ">measure_full_name,</if>-->
-    <!--        <if test="measure_type != null and measure_type   != '' ">measure_type,</if>-->
-    <!--        <if test="measure_relation != null and measure_relation != '' ">measure_relation,</if>-->
-    <!--        <if test="measure_name != null and measure_name != ''">measure_name,</if>-->
-    <!--        <if test="measure_number != null and measure_number != ''">measure_number,</if>-->
-    <!--        <if test="radius != null and radius != ''">radius,</if>-->
-    <!--        <if test="mean_distance != null and mean_distance != ''">mean_distance,</if>-->
-    <!--        <if test="max_distance != null and max_distance != ''">max_distance,</if>-->
-    <!--        <if test="min_distance != null and min_distance != ''">min_distance,</if>-->
-    <!--        <if test="inner_angle != null and inner_angle != ''">inner_angle,</if>-->
-    <!--        <if test="exterior_angle != null and exterior_angle != ''">exterior_angle,</if>-->
-    <!--        <if test="annotation_type != null and annotation_type != ''">annotation_type,</if>-->
-    <!--        <if test="center_point != null and center_point != ''">center_point,</if>-->
-    <!--        <if test="location_type != null and location_type != ''">location_type,</if>-->
-    <!--        <if test="create_by != null and create_by != ''">create_by,</if>-->
-    <!--        <if test="slide_id != null and slide_id != ''">slide_id,</if>-->
-    <!--        create_time-->
-    <!--        )values(-->
-    <!--        <if test="annotation_id != null and annotation_id != ''">#{annotation_id},</if>-->
-    <!--        <if test="area != null and area != ''">#{area},</if>-->
-    <!--        <if test="perimeter != null and perimeter != ''">#{perimeter},</if>-->
-    <!--        <if test="description != null and description != ''">#{description},</if>-->
-    <!--        <if test="category_id != null and category_id != ''">#{category_id},</if>-->
-    <!--        <if test="measure_full_name != null and measure_full_name != ''">#{measure_full_name},</if>-->
-    <!--        <if test="measure_type != null and measure_type != ''">#{measure_type},</if>-->
-    <!--        <if test="measure_relation != null and measure_relation != ''">#{measure_relation},</if>-->
-    <!--        <if test="measure_name != null and measure_name != ''">#{measure_name},</if>-->
-    <!--        <if test="measure_number != null and measure_number != ''">#{measure_number},</if>-->
-    <!--        <if test="radius != null and radius != ''">#{radius},</if>-->
-    <!--        <if test="mean_distance != null and mean_distance != ''">#{mean_distance},</if>-->
-    <!--        <if test="max_distance != null and max_distance != ''">#{max_distance},</if>-->
-    <!--        <if test="min_distance != null and min_distance != ''">#{min_distance},</if>-->
-    <!--        <if test="inner_angle != null and inner_angle != ''">#{inner_angle},</if>-->
-    <!--        <if test="exterior_angle != null and exterior_angle != ''">#{exterior_angle},</if>-->
-    <!--        <if test="annotation_type != null and annotation_type != ''">#{annotation_type},</if>-->
-    <!--        <if test="center_point != null and center_point != ''">#{center_point},</if>-->
-    <!--        <if test="location_type != null and location_type != ''">#{location_type},</if>-->
-    <!--        <if test="create_by != null and create_by != ''">#{create_by},</if>-->
-    <!--        <if test="slide_id != null and slide_id != ''">#{slide_id},</if>-->
-    <!--        sysdate()-->
-    <!--        )-->
-    <!--    </insert>-->
 
     <insert id="delete" parameterType="java.lang.String">
         delete
@@ -592,32 +537,6 @@
         where marking_id = #{markingId}
     </insert>
 
-    <!--    <update id="update" parameterType="cn.staitech.anno.domain.marking.Marking" useGeneratedKeys="true"-->
-    <!--            keyProperty="marking_id">-->
-    <!--        update tb_marking-->
-    <!--        <set>-->
-    <!--            <if test="area != null and area != ''">area = #{area},</if>-->
-    <!--            <if test="perimeter != null and perimeter != ''">perimeter = #{perimeter},</if>-->
-    <!--            <if test="description != null">description = #{description},</if>-->
-    <!--            <if test="category_id != null">category_id = #{category_id},</if>-->
-    <!--            <if test="measure_type != null and measure_type != ''">measure_type = #{measure_type},</if>-->
-    <!--            <if test="measure_full_name != null and measure_full_name != ''">measure_full_name = #{measure_full_name},-->
-    <!--            </if>-->
-    <!--            <if test="measure_relation != null and measure_relation != ''">measure_relation = #{measure_relation},</if>-->
-    <!--            <if test="measure_name != null and measure_name != ''">measure_name = #{measure_name},</if>-->
-    <!--            <if test="measure_number != null and measure_number != ''">measure_number = #{measure_number},</if>-->
-    <!--            <if test="radius != null and radius != ''">radius = #{radius},</if>-->
-    <!--            <if test="mean_distance != null and mean_distance != ''">mean_distance = #{mean_distance},</if>-->
-    <!--            <if test="max_distance != null and max_distance != ''">max_distance = #{max_distance},</if>-->
-    <!--            <if test="min_distance != null and min_distance != ''">min_distance = #{min_distance},</if>-->
-    <!--            <if test="inner_angle != null and inner_angle != ''">inner_angle = #{inner_angle},</if>-->
-    <!--            <if test="exterior_angle != null and exterior_angle != ''">exterior_angle = #{exterior_angle},</if>-->
-    <!--            <if test="annotation_type != null and annotation_type != ''">annotation_type = #{annotation_type},</if>-->
-    <!--            <if test="center_point != null and center_point != ''">center_point = #{center_point},</if>-->
-    <!--            <if test="location_type != null and location_type != ''">location_type = #{location_type}</if>-->
-    <!--        </set>-->
-    <!--        where marking_id = #{marking_id}-->
-    <!--    </update>-->
 
     <update id="updatePointCount" parameterType="cn.staitech.anno.vo.marking.Marking" useGeneratedKeys="true"
             keyProperty="marking_id">
@@ -629,4 +548,67 @@
         AND slide_id = #{slide_id}
         AND location_type = 'Point'
     </update>
+
+
+    <!-- 标签统计
+    SELECT m.project_id,p.project_name,m.create_by,u.nick_name,i.indicator_id,n.indicator_name,m.category_id,i.category_name,m.organization_id,COUNT(*) AS sums
+    FROM tb_marking_6 m
+    LEFT JOIN tb_pathological_indicator_category i ON m.category_id = i.category_id
+    LEFT JOIN tb_pathological_indicator n ON n.indicator_id = i.indicator_id
+    LEFT JOIN tb_project p ON p.project_id = m.project_id
+    LEFT JOIN sys_user u ON u.user_id = m.create_by
+    WHERE m.organization_id = 2
+        AND i.organization_id = 2
+        AND n.organization_id = 2
+        AND p.organization_id = 2
+        AND u.organization_id = 2
+        AND m.project_id IN(8,37,44,48,69)
+        AND m.create_by IN(47,64,68,51,2)
+        AND	m.category_id IN(0,1160,1163,1166,1168,1041,1043,1338,1283,1284,1285,1286)
+        AND i.indicator_id IN(1604,1502,1083,1077,0)
+    GROUP BY m.project_id,m.create_by,n.indicator_id,m.category_id,m.organization_id
+    ORDER BY m.project_id ASC,m.create_by ASC,n.indicator_id ASC,m.category_id ASC;
+    -->
+    <select id="selectMarkingStatistic" parameterType="cn.staitech.anno.vo.marking.MarkingStatisticSelectVO"
+            resultType="cn.staitech.anno.domain.MarkingStatistic">
+        SELECT
+        m.project_id,p.project_name,m.create_by,u.nick_name,i.indicator_id,n.indicator_name,m.category_id,i.category_name,m.organization_id,COUNT(*)
+        AS sums
+        FROM tb_marking_6 m
+        LEFT JOIN tb_pathological_indicator_category i ON m.category_id = i.category_id
+        LEFT JOIN tb_pathological_indicator n ON n.indicator_id = i.indicator_id
+        LEFT JOIN tb_project p ON p.project_id = m.project_id
+        LEFT JOIN sys_user u ON u.user_id = m.create_by
+        WHERE m.organization_id = #{organizationId}
+        AND i.organization_id = #{organizationId}
+        AND n.organization_id = #{organizationId}
+        AND p.organization_id = #{organizationId}
+        AND u.organization_id = #{organizationId}
+        <if test="projectIds != null and projectIds.size() >0 ">
+            AND m.project_id IN
+            <foreach item="projectId" collection="projectIds" separator="," open="(" close=")" index="">
+                #{categoryId, jdbcType=BIGINT}
+            </foreach>
+        </if>
+        <if test="createBys != null and createBys.size() >0 ">
+            AND m.create_by IN
+            <foreach item="createBy" collection="createBys" separator="," open="(" close=")" index="">
+                #{createBy, jdbcType=BIGINT}
+            </foreach>
+        </if>
+        <if test="categoryIds != null and categoryIds.size() >0 ">
+            AND m.category_id IN
+            <foreach item="categoryId" collection="categoryIds" separator="," open="(" close=")" index="">
+                #{categoryId, jdbcType=BIGINT}
+            </foreach>
+        </if>
+        <if test="indicatorIds != null and indicatorIds.size() >0 ">
+            AND i.indicator_id IN
+            <foreach item="indicatorId" collection="indicatorIds" separator="," open="(" close=")" index="">
+                #{indicatorId, jdbcType=BIGINT}
+            </foreach>
+        </if>
+        GROUP BY m.project_id,m.create_by,n.indicator_id,m.category_id,m.organization_id
+        ORDER BY m.project_id ASC,m.create_by ASC,n.indicator_id ASC,m.category_id ASC;
+    </select>
 </mapper>
