@@ -579,7 +579,9 @@
         LEFT JOIN tb_pathological_indicator n ON n.indicator_id = i.indicator_id
         LEFT JOIN tb_project p ON p.project_id = m.project_id
         LEFT JOIN sys_user u ON u.user_id = m.create_by
-        WHERE m.organization_id = #{organizationId}
+        WHERE
+        p.project_type = 1
+        AND m.organization_id = #{organizationId}
         AND i.organization_id = #{organizationId}
         AND n.organization_id = #{organizationId}
         AND p.organization_id = #{organizationId}
