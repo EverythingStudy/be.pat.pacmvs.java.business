@@ -247,26 +247,29 @@
                 AND p.project_id IN (select pm.project_id from tb_project_member as pm
                 where pm.user_id = #{userIds} and pm.organization_id = #{organizationId} )
             </if>
-            <if test="projectIdList != null">
+            <if test="projectIdList != null and projectIdList.size()>0">
                 AND p.project_id IN
                 <foreach collection="projectIdList" item="projectId" open="(" separator="," close=")">
                     #{projectId}
                 </foreach>
             </if>
-            <if test="statusList != null">
+            <if test="statusList != null and statusList.size()>0">
                 AND p.status IN
                 <foreach collection="statusList" item="status" open="(" separator="," close=")">
                     #{status}
                 </foreach>
             </if>
-            <if test="indicatorIdList != null">
+            <if test="indicatorIdList != null and indicatorIdList.size()>0">
                 AND p.indicator_id IN
                 <foreach collection="indicatorIdList" item="indicatorId" open="(" separator="," close=")">
                     #{indicatorId}
                 </foreach>
             </if>
-            <if test="userId != null">
-               AND p.create_by=#{userId}
+            <if test="userIdList != null and userIdList.size()>0">
+                AND p.create_by in
+                <foreach collection="userIdList" item="userId" open="(" separator="," close=")">
+                    #{userId}
+                </foreach>
             </if>
             <if test="description != null">
                 p.description like concat('%', #{description}, '%')

@@ -24,8 +24,8 @@ public class ProjectListIn extends Pager {
     @ApiModelProperty(value = "标签集id列表")
     private List<Long> indicatorIdList;
 
-    @ApiModelProperty(value = "创建者id")
-    private Long userId;
+    @ApiModelProperty(value = "创建者id列表")
+    private List<Long> userIdList;
 
     @ApiModelProperty(value = "描述")
     private String description;
