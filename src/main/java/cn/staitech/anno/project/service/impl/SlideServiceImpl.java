@@ -70,9 +70,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
 
     @Resource
     private ReviewMapper reviewMapper;
-    
-    @Resource
-    private SysUserMapper sysUserMapper;
 
     @Resource
     private ProjectService projectService;
@@ -97,8 +94,10 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         if (list != null && !list.isEmpty()) {
             list.forEach(slideVO -> {
                 Marking marking=Marking.builder().projectId(params.getProjectId().longValue()).slideId(slideVO.getSlideId()).categoryId(params.getAnnoCategory()).build();
-               List<Marking> markings=markingMapperV1.markingList(marking);
-               if (CollectionUtils.isNotEmpty(markings)){
+               // List<Marking> markings=markingMapperV1.markingList(marking);
+               // if (CollectionUtils.isNotEmpty(markings)){
+                // TODO: 优化->减少刷表操作
+               if (markingMapperV1.markingListCount(marking)>0){
                    slideIds.add(slideVO.getSlideId());
                    map.put(slideVO.getSlideId(), slideVO);
                }
