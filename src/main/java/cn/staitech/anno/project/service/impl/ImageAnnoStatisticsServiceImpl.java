@@ -112,8 +112,14 @@ implements ImageAnnoStatisticsService {
 					Long projectId = vo.getProjectId();
 					Long userId = vo.getCreateBy();
 					String key = projectId+"_"+userId;
-					int imageCount = vo.getImageCount();
-					int annoCount = vo.getAnnoCount();
+					Integer imageCount =  0;
+					if(null != vo.getImageCount()){
+						imageCount =  vo.getImageCount();
+					}
+					Integer annoCount =  0;
+					if(null != vo.getAnnoCount()){
+						annoCount =  vo.getAnnoCount();
+					}
 					imageCountMap.put(key, imageCount);
 					annoCountMap.put(key, annoCount);
 				}
@@ -219,8 +225,16 @@ implements ImageAnnoStatisticsService {
 					Long projectId = vo.getProjectId();
 					Long userId = vo.getCreateBy();
 					String key = projectId+"_"+userId;
-					int imageCount = vo.getImageCount();
-					int annoCount = vo.getAnnoCount();
+					Integer imageCount =  0;
+					if(null != vo.getImageCount()){
+						imageCount =  vo.getImageCount();
+					}
+					Integer annoCount =  0;
+					if(null != vo.getAnnoCount()){
+						annoCount =  vo.getAnnoCount();
+					}
+//					int imageCount = vo.getImageCount();
+//					int annoCount = vo.getAnnoCount();
 					imageCountMap.put(key, imageCount);
 					annoCountMap.put(key, annoCount);
 				}
