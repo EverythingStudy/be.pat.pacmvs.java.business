@@ -146,8 +146,10 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
             for(String labelCode:selectGeoJson.getLabelList()){
                 QueryWrapper<PathologicalIndicatorCategory> queryWrapper = new QueryWrapper<>();
                 queryWrapper.eq("structure_id", labelCode);
+                queryWrapper.eq("organization_id", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+                queryWrapper.eq("del_flag", 0);
                 PathologicalIndicatorCategory pathologicalIndicatorCategory = categoryMapper.selectOne(queryWrapper);
-
+                
                 if(pathologicalIndicatorCategory != null){
                     QueryWrapper<PathologicalIndicatorCategory> categoryQueryWrapper = new QueryWrapper<>();
                     categoryQueryWrapper.eq("category_code", pathologicalIndicatorCategory.getCategoryCode());

@@ -94,7 +94,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
                 String labelCode = featureObject.getJSONObject("properties").getString("label_code");
                 QueryWrapper<Structure> structureQueryWrapper = new QueryWrapper<>();
                 structureQueryWrapper.eq("structure_id", labelCode).eq("type", "ROE");
-
+                structureQueryWrapper.eq("organization_id", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
                 Structure structure = structureMapper.selectOne(structureQueryWrapper);
                 if (structure != null) {
                     // 获取geometry数据
