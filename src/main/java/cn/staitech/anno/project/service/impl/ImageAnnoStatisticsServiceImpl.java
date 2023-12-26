@@ -3,6 +3,7 @@ package cn.staitech.anno.project.service.impl;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,9 +17,11 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 
+import cn.hutool.json.JSONUtil;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.ProjectMember;
 import cn.staitech.anno.mapper.ProjectMemberMapper;
+import cn.staitech.anno.project.controller.ImageAnnoStatisticsController;
 import cn.staitech.anno.project.domain.Slide;
 import cn.staitech.anno.project.mapper.SlideMapperV1;
 import cn.staitech.anno.project.service.ImageAnnoStatisticsService;
@@ -33,13 +36,16 @@ import cn.staitech.anno.service.ProjectMemberService;
 import cn.staitech.anno.utils.Column;
 import cn.staitech.anno.utils.ExcelTool;
 import cn.staitech.common.core.domain.PageResponse;
+import cn.staitech.common.core.utils.DateUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author 86186
  * @description 针对表【tb_slide(tb_slide)】的数据库操作Service实现
  * @createDate 2023-09-13 17:21:03
  */
+@Slf4j
 @Service("SlideServiceImplV2")
 public class ImageAnnoStatisticsServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
 implements ImageAnnoStatisticsService {
@@ -183,6 +189,8 @@ implements ImageAnnoStatisticsService {
 			cn.staitech.system.api.domain.SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 			Long userId = sysUser.getUserId();
 			Long organizationId = sysUser.getOrganizationId();
+//			Long userId = 1L;
+//	    	Long organizationId = 1L;
 			//查询自己参与的项目列表
 			ProjectMember projectMember = new ProjectMember();
 			projectMember.setUserId(userId);
@@ -244,6 +252,9 @@ implements ImageAnnoStatisticsService {
 			for(ImageAnnoStatisticsVO asvo:list){
 				Long projectId = asvo.getProjectId();
 				Long userId = asvo.getUserId();
+				String status = asvo.getStatus();
+				String statusDesc = getPojectStatusDesc(status);
+				asvo.setStatusDesc(statusDesc);
 				String key = projectId+"_"+userId;
 				//切片数量处理
 				if(null !=imageCountMap && !imageCountMap.isEmpty()){
@@ -271,15 +282,37 @@ implements ImageAnnoStatisticsService {
 		
 		// 构造表头的每个列头 定义表头
         List<Map<String, String>> titleList = getTitleList(CommonConstant.SLIDE_COUNT_COLHEAD_KEY, CommonConstant.SLIDE_COUNT_COLHEAD_VALUE);
-        ExcelTool excelTool = new ExcelTool<>("图像标注统计导出", 20, 20);
+        ExcelTool excelTool = new ExcelTool<>(CommonConstant.SLIDE_COUNT_DATA_SEARCH_TITLE, 20, 20);
+        String currentTime = DateUtils.parseDateToStr("yyyyMMddHHmm", new Date());
         List<Column> titleData = excelTool.columnTransformer(titleList);
-        response.setContentType("application/vnd.ms-excel;charset=utf-8");
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		response.setHeader("Content-Disposition", "attachment; filename=" + java.net.URLEncoder.encode(CommonConstant.SLIDE_COUNT_DATA_SEARCH_TITLE, "UTF-8")+ currentTime+".xlsx");
         response.setCharacterEncoding("utf-8");
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("图像标注统计", "UTF-8") + CommonConstant.FILE_SUFFIX_XLSX);
+        response.setHeader("Content-Type","text/html;charset=utf-8");
+		response.setContentType("text/html;charset=utf-8");
+		if(CollectionUtils.isNotEmpty(list)){
+			log.info("图像标注导出数据==========================："+JSONUtil.toJsonStr(list));
+		}
         excelTool.exportExcel(titleData, list, response.getOutputStream(), true, false);
 		
 	}
 	
+	//状态:1待启动，2进行中，3暂停，4已完成
+	private String getPojectStatusDesc(String projectStatus){
+		String statusDesc = "";
+		if(projectStatus.equals("0")){
+			statusDesc = "待启动";
+		}else if(projectStatus.equals("1")){
+			statusDesc = "进行中";
+		}else if(projectStatus.equals("2")){
+			statusDesc = "待启动";
+		}else if(projectStatus.equals("3")){
+			statusDesc = "暂停";
+		}else if(projectStatus.equals("4")){
+			statusDesc = "已完成";
+		}
+		return statusDesc;
+	}
 	public List<Map<String, String>> getTitleList(String[] colHeadKey, String[] colHeadValue) {
         // 定义表头
         List<Map<String, String>> list = new ArrayList<>();
