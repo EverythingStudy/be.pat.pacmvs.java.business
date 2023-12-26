@@ -106,6 +106,7 @@ public class CommonConstant {
     /**
      * 图像标注统计
      */
+    public static final String SLIDE_COUNT_DATA_SEARCH_TITLE = "图像标注统计导出";
     public static final String[] SLIDE_COUNT_COLHEAD_KEY = {"项目名称", "用户", "图像数量", "标注总数", "项目状态"};
     public static final String[] SLIDE_COUNT_COLHEAD_VALUE = {"projectName", "nickName", "imageCount", "markingNum", "statusDesc"};
     
