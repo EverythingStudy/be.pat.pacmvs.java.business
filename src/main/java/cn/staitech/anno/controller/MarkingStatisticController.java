@@ -35,7 +35,6 @@ public class MarkingStatisticController {
 
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "智能标注-标注统计-用户标签统计-列表页")
-    @GetMapping("/list")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageNum", value = "当前记录起始索引", dataTypeClass = Integer.class, paramType = "query", example = "1"),
             @ApiImplicitParam(name = "pageSize", value = "每页显示记录数", dataTypeClass = Integer.class, paramType = "query", example = "10")})
