@@ -3,6 +3,7 @@ package cn.staitech.anno.project.service.impl;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import cn.staitech.anno.service.ProjectMemberService;
 import cn.staitech.anno.utils.Column;
 import cn.staitech.anno.utils.ExcelTool;
 import cn.staitech.common.core.domain.PageResponse;
+import cn.staitech.common.core.utils.DateUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
 
 /**
@@ -183,6 +185,8 @@ implements ImageAnnoStatisticsService {
 			cn.staitech.system.api.domain.SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 			Long userId = sysUser.getUserId();
 			Long organizationId = sysUser.getOrganizationId();
+//			Long userId = 1L;
+//	    	Long organizationId = 1L;
 			//查询自己参与的项目列表
 			ProjectMember projectMember = new ProjectMember();
 			projectMember.setUserId(userId);
@@ -271,11 +275,14 @@ implements ImageAnnoStatisticsService {
 		
 		// 构造表头的每个列头 定义表头
         List<Map<String, String>> titleList = getTitleList(CommonConstant.SLIDE_COUNT_COLHEAD_KEY, CommonConstant.SLIDE_COUNT_COLHEAD_VALUE);
-        ExcelTool excelTool = new ExcelTool<>("图像标注统计导出", 20, 20);
+        ExcelTool excelTool = new ExcelTool<>(CommonConstant.SLIDE_COUNT_DATA_SEARCH_TITLE, 20, 20);
+        String currentTime = DateUtils.parseDateToStr("yyyyMMddHHmm", new Date());
         List<Column> titleData = excelTool.columnTransformer(titleList);
-        response.setContentType("application/vnd.ms-excel;charset=utf-8");
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		response.setHeader("Content-Disposition", "attachment; filename=" + java.net.URLEncoder.encode(CommonConstant.SLIDE_COUNT_DATA_SEARCH_TITLE, "UTF-8")+ currentTime+".xlsx");
         response.setCharacterEncoding("utf-8");
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("图像标注统计", "UTF-8") + CommonConstant.FILE_SUFFIX_XLSX);
+        response.setHeader("Content-Type","text/html;charset=utf-8");
+		response.setContentType("text/html;charset=utf-8");
         excelTool.exportExcel(titleData, list, response.getOutputStream(), true, false);
 		
 	}
