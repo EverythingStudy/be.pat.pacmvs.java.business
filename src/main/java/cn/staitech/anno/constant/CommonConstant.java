@@ -134,7 +134,7 @@ public class CommonConstant {
      * 智能标注-标注统计-用户标签统计-excel导出
      */
     public static final String[] MARKING_STATISTICS_KEY = {"项目名称", "用户", "标签集", "标签", "标注总数"};
-    public static final String[] MARKING_STATISTICS_VALUE = {"projectName", "nickName", "indicatorName", "categoryName", "sums"};
+    public static final String[] MARKING_STATISTICS_VALUE = {"projectName", "nickName", "indicatorName", "categoryName", "markingNum"};
 
     private CommonConstant() {
         throw new IllegalStateException("CommonConstant class");
