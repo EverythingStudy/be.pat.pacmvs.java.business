@@ -596,7 +596,7 @@
         <if test="projectIds != null and projectIds.size() >0 ">
             AND m.project_id IN
             <foreach item="projectId" collection="projectIds" separator="," open="(" close=")" index="">
-                #{categoryId, jdbcType=BIGINT}
+                #{projectId, jdbcType=BIGINT}
             </foreach>
         </if>
         <if test="createBys != null and createBys.size() >0 ">
