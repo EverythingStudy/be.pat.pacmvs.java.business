@@ -9,6 +9,7 @@ import cn.staitech.anno.utils.ExcelTool;
 import cn.staitech.anno.utils.ExcelUtil;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.marking.MarkingStatisticSelectVO;
+import cn.staitech.common.security.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,7 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
      */
     @Override
     public List<MarkingStatistic> selectMarkingStatistic(MarkingStatisticSelectVO selectVO) {
+        selectVO.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         return markingMapper.selectMarkingStatistic(selectVO);
     }
 
@@ -51,6 +53,8 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
     public void execlExport(MarkingStatisticSelectVO selectVO, HttpServletResponse response) throws Exception {
         // 构造表头的每个列头 定义表头
         List<Map<String, String>> titleList = ExcelUtil.getTitleList(CommonConstant.MARKING_STATISTICS_KEY, CommonConstant.MARKING_STATISTICS_VALUE);
+
+        selectVO.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         List<MarkingStatistic> list = markingMapper.selectMarkingStatistic(selectVO);
 
         // 生成excel文件
