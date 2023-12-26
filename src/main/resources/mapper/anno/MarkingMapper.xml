@@ -586,11 +586,64 @@
         AND n.organization_id = #{organizationId}
         AND p.organization_id = #{organizationId}
         AND u.organization_id = #{organizationId}
+<!--        <if test="userId != null">-->
+<!--            AND m.project_id IN(-->
+<!--                SELECT DISTINCT project_id-->
+<!--                FROM tb_project_member-->
+<!--                WHERE user_id = #{userId}-->
+<!--            )-->
+<!--        </if>-->
+        <if test="projectIds != null and projectIds.size() >0 ">
+            AND m.project_id IN
+            <foreach item="projectId" collection="projectIds" separator="," open="(" close=")" index="">
+                #{projectId, jdbcType=BIGINT}
+            </foreach>
+        </if>
+        <if test="createBys != null and createBys.size() >0 ">
+            AND m.create_by IN
+            <foreach item="createBy" collection="createBys" separator="," open="(" close=")" index="">
+                #{createBy, jdbcType=BIGINT}
+            </foreach>
+        </if>
+        <if test="categoryIds != null and categoryIds.size() >0 ">
+            AND m.category_id IN
+            <foreach item="categoryId" collection="categoryIds" separator="," open="(" close=")" index="">
+                #{categoryId, jdbcType=BIGINT}
+            </foreach>
+        </if>
+        <if test="indicatorIds != null and indicatorIds.size() >0 ">
+            AND i.indicator_id IN
+            <foreach item="indicatorId" collection="indicatorIds" separator="," open="(" close=")" index="">
+                #{indicatorId, jdbcType=BIGINT}
+            </foreach>
+        </if>
+        GROUP BY m.project_id,m.create_by,n.indicator_id,m.category_id,m.organization_id
+        ORDER BY m.project_id ASC,m.create_by ASC,n.indicator_id ASC,m.category_id ASC
+    </select>
+
+
+    <select id="selectMarkingStatisticDetail" parameterType="cn.staitech.anno.vo.marking.MarkingStatisticSelectVO"
+            resultType="cn.staitech.anno.domain.MarkingStatistic">
+        SELECT
+        m.project_id,p.project_name,m.create_by,u.nick_name,i.indicator_id,n.indicator_name,m.category_id,i.category_name,m.organization_id,COUNT(*)
+        AS marking_num
+        FROM tb_marking m
+        LEFT JOIN tb_pathological_indicator_category i ON m.category_id = i.category_id
+        LEFT JOIN tb_pathological_indicator n ON n.indicator_id = i.indicator_id
+        LEFT JOIN tb_project p ON p.project_id = m.project_id
+        LEFT JOIN sys_user u ON u.user_id = m.create_by
+        WHERE
+        p.project_type = 1
+        AND m.organization_id = #{organizationId}
+        AND i.organization_id = #{organizationId}
+        AND n.organization_id = #{organizationId}
+        AND p.organization_id = #{organizationId}
+        AND u.organization_id = #{organizationId}
         <if test="userId != null">
             AND m.project_id IN(
-                SELECT DISTINCT project_id
-                FROM tb_project_member
-                WHERE user_id = #{userId}
+            SELECT DISTINCT project_id
+            FROM tb_project_member
+            WHERE user_id = #{userId}
             )
         </if>
         <if test="projectIds != null and projectIds.size() >0 ">
@@ -620,4 +673,6 @@
         GROUP BY m.project_id,m.create_by,n.indicator_id,m.category_id,m.organization_id
         ORDER BY m.project_id ASC,m.create_by ASC,n.indicator_id ASC,m.category_id ASC
     </select>
+
+
 </mapper>
