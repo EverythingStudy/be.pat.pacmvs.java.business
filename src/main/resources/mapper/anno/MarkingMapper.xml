@@ -590,7 +590,7 @@
             AND m.project_id IN(
                 SELECT DISTINCT project_id
                 FROM tb_project_member
-                WHERE user_id = 11;
+                WHERE user_id = #{userId};
             )
         </if>
         <if test="projectIds != null and projectIds.size() >0 ">
