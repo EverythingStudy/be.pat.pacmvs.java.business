@@ -2,7 +2,7 @@ package cn.staitech.anno.service;
 
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.labelprojectstatistics.*;
-import cn.staitech.anno.vo.labelprojectstatistics.ProjectListVO;
+import cn.staitech.anno.vo.labelprojectstatistics.ProjectListOut;
 import cn.staitech.common.core.domain.R;
 
 import javax.servlet.http.HttpServletResponse;
@@ -13,7 +13,7 @@ public interface LabelStatisticsService {
     /**
      * 获取项目列表
      * */
-    List<ProjectListVO> projectList();
+    List<ProjectListOut> projectList();
 
 
     /**

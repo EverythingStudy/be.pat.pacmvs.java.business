@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Data
-public class ProjectListVO {
+public class ProjectListOut {
     @ApiModelProperty(value = "项目id")
     private Long projectId;
 

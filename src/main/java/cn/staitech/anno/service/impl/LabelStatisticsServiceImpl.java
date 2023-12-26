@@ -9,7 +9,7 @@ import cn.staitech.anno.utils.ExcelTool;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.labelprojectstatistics.*;
-import cn.staitech.anno.vo.labelprojectstatistics.ProjectListVO;
+import cn.staitech.anno.vo.labelprojectstatistics.ProjectListOut;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.github.pagehelper.PageHelper;
@@ -35,7 +35,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
      * 获取项目列表
      * */
     @Override
-    public List<ProjectListVO> projectList(){
+    public List<ProjectListOut> projectList(){
         ProjectInVO projectInVO=ProjectInVO.builder().organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).userId(SecurityUtils.getUserId()).projectType("1").build();
         return labelStatisticsMapper.projectList(projectInVO);
     }

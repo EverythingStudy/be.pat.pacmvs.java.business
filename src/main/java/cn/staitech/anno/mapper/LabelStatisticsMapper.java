@@ -8,7 +8,7 @@ public interface LabelStatisticsMapper {
     /**
      * 获取项目列表
      * */
-   List<ProjectListVO> projectList(ProjectInVO project);
+   List<ProjectListOut> projectList(ProjectInVO project);
 
 
     /**
