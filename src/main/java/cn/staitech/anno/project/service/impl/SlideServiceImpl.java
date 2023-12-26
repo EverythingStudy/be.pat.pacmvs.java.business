@@ -105,9 +105,9 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
 //                map.put(slideVO.getSlideId(), slideVO);
             });
             List<Marking> annotationList = queryAnnotation(slideIds, params);
-            //if(!annotationList.isEmpty() && !map.isEmpty()) {
+            if(!annotationList.isEmpty() && !map.isEmpty()) {
                 handleAnnoList(annotationList, map);// TODO: wangfeng
-            //}
+            }
         }
         PageMaster<SlideVO> pageMaster = PageMaster.of(list);
         pageMaster.setTotal(page.getTotal());
@@ -348,11 +348,11 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
                 List<Marking> subs = map.get(key);
                 if (subs != null && !subs.isEmpty()) {
                     Map<Long, List<Marking>> categorys = subs.stream().collect(Collectors.groupingBy(Marking::getCategoryId));
-//                    if(categorys!=null && !categoryMap.isEmpty()) {
+                    if(categorys!=null && !categoryMap.isEmpty()) {
                         vo.setCategoryTypes(handleCategorys(categorys, categoryMap));//TODO
-//                    }else {
-//                        vo.setCategoryTypes("");
-//                    }
+                    }else {
+                        vo.setCategoryTypes("");
+                    }
                     Map<Long, List<Marking>> users = subs.stream().collect(Collectors.groupingBy(Marking::getCreateBy));
                     vo.setManualAnnoDetails(handleUsers(users, userMap));
                 }
