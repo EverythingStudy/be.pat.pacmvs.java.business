@@ -170,7 +170,7 @@
                     #{categoryId}
                 </foreach>
             </if>
-            and p.project_type=1 and p.status !=1
+            and p.project_type=1
         </where>
             order by p.project_id desc
     </select>
@@ -313,7 +313,7 @@
                     #{projectId}
                 </foreach>
             </if>
-            and p.project_type=1 and p.status !=1
+            and p.project_type=1
         </where>
         order by p.project_id desc
     </select>
