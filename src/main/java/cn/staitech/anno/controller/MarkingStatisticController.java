@@ -49,7 +49,7 @@ public class MarkingStatisticController {
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "智能标注-标注统计-用户标签统计-excel导出")
     @Log(title = "智能标注-标注统计-用户标签统计-excel导出", menu = "智能标注", subMenu = "标注统计", businessType = BusinessType.EXPORT)
-    @GetMapping("/export")
+    @PostMapping("/export")
     public void export(@Validated @RequestBody MarkingStatisticSelectVO selectVO, HttpServletResponse response) throws Exception {
         markingStatisticService.execlExport(selectVO, response);
     }
