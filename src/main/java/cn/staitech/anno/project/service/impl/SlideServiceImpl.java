@@ -294,13 +294,15 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         for (Map<String, String> catesMap : catesMapList) {
             for (PathologicalIndicatorCategory column : columns) {
             	if(null != catesMap && !catesMap.isEmpty()){
-            		if(catesMap.containsKey(String.valueOf(column.getCategoryId()))){
-            			String count = catesMap.get(String.valueOf(column.getCategoryId()));
-            			if (count == null) {
+            		if(null != column.getCategoryId()){
+            			if(catesMap.containsKey(String.valueOf(column.getCategoryId()))){
+            				String count = catesMap.get(String.valueOf(column.getCategoryId()));
+            				if (count == null) {
+            					catesMap.put(String.valueOf(column.getCategoryId()), "");
+            				}
+            			}else{
             				catesMap.put(String.valueOf(column.getCategoryId()), "");
             			}
-            		}else{
-            			catesMap.put(String.valueOf(column.getCategoryId()), "");
             		}
             	}
             }
