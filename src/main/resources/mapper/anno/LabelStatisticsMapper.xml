@@ -277,7 +277,7 @@
                 </foreach>
             </if>
             <if test="description != null">
-                p.description like concat('%', #{description}, '%')
+               AND p.description like concat('%', #{description}, '%')
             </if>
             <if test="projectType != null">
                AND p.project_type=#{projectType}
