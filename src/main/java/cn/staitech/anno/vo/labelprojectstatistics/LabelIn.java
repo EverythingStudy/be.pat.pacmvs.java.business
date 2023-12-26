@@ -14,10 +14,10 @@ import java.util.List;
 @Builder
 public class LabelIn {
     @ApiModelProperty(value = "项目id列表")
-    private List<Long> projectIdList;
+    private List<Long> projectIds;
 
     @ApiModelProperty(value = "标签集id列表")
-    private List<Long> indicatorIdList;
+    private List<Long> indicatorIds;
 
     @ApiModelProperty(value = "机构id",hidden = true)
     private Long organizationId;

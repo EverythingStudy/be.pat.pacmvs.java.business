@@ -36,7 +36,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
      * */
     @Override
     public List<ProjectListOut> projectList(){
-        ProjectInVO projectInVO=ProjectInVO.builder().organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).userId(SecurityUtils.getUserId()).projectType("1").build();
+        ProjectInVO projectInVO=ProjectInVO.builder().organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).userId(SecurityUtils.getUserId()).projectType("1").status(1).build();
         return labelStatisticsMapper.projectList(projectInVO);
     }
 
@@ -46,7 +46,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
     @Override
     public List<LabelSetOut> projectLabelSet(LabelSetIn labelSetIn){
         //没有项目参数时
-        if (CollectionUtils.isNotEmpty(labelSetIn.getProjectIdList())){
+        if (CollectionUtils.isNotEmpty(labelSetIn.getProjectIds())){
             return labelStatisticsMapper.projectLabelSet(labelSetIn);
         }
         labelSetIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
@@ -64,14 +64,14 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
         //无属性标签
         LabelOut labelOut=LabelOut.builder().categoryId(0L).categoryName(MessageSource.M("NO_ATTRIBUTE")).build();
         //只传项目id
-        if (CollectionUtils.isNotEmpty(labelIn.getProjectIdList()) && labelIn.getIndicatorIdList().isEmpty()){
+        if (CollectionUtils.isNotEmpty(labelIn.getProjectIds()) && labelIn.getIndicatorIds().isEmpty()){
             List<LabelOut> labelOuts=labelStatisticsMapper.labelList(labelIn);
             labelOuts.add(labelOut);
             return labelOuts;
         }
         //传项目id和标签集id 或只传标签集id
-        if (CollectionUtils.isNotEmpty(labelIn.getIndicatorIdList())){
-            labelIn.setProjectIdList(null);
+        if (CollectionUtils.isNotEmpty(labelIn.getIndicatorIds())){
+            labelIn.setProjectIds(null);
             List<LabelOut> labelOuts=labelStatisticsMapper.labelList(labelIn);
             labelOuts.add(labelOut);
             return labelOuts;
@@ -94,7 +94,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
             projectLabelIn.setUserId(SecurityUtils.getUserId());
         List<ProjectLabelOut> projectLabelOuts;
         //没有无属性标签的情况下
-        if (CollectionUtils.isNotEmpty(projectLabelIn.getCategoryIdList()) && !projectLabelIn.getCategoryIdList().contains(0L)){
+        if (CollectionUtils.isNotEmpty(projectLabelIn.getCategoryIds()) && !projectLabelIn.getCategoryIds().contains(0L)){
              projectLabelOuts=labelStatisticsMapper.projectLabelList(projectLabelIn);
         }else{
              projectLabelOuts=labelStatisticsMapper.projectLabelList(projectLabelIn);
@@ -123,7 +123,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
     @Override
     public List<ProjectCreateByOut>userList(LabelSetIn labelSetIn){
         //有项目信息的查询项目创建者信息
-        if (CollectionUtils.isNotEmpty(labelSetIn.getProjectIdList())){
+        if (CollectionUtils.isNotEmpty(labelSetIn.getProjectIds())){
             return labelStatisticsMapper.userList(labelSetIn);
         }
         //若未选项目，则下拉框包含该机构下所有用户
@@ -140,7 +140,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
         PageHelper.startPage(projectListIn.getPageNum(), projectListIn.getPageSize()).setReasonable(true);
         projectListIn.setProjectType("1");
         projectListIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-        projectListIn.setUserIds(SecurityUtils.getUserId());
+        projectListIn.setUsers(SecurityUtils.getUserId());
         List<ProjectLabelOut> itemList=labelStatisticsMapper.itemList(projectListIn);
         //循环添加图像数量和标注数
         for (ProjectLabelOut projectLabelOut:itemList){
@@ -160,11 +160,10 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
      * */
     @Override
     public void labelExport(ProjectLabelIn projectLabelIn,HttpServletResponse response) throws Exception{
-//        ProjectLabelIn projectLabelIn=new ProjectLabelIn();
         projectLabelIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         projectLabelIn.setUserId(SecurityUtils.getUserId());
         List<ProjectLabelOut> projectLabelOuts;
-        if (CollectionUtils.isNotEmpty(projectLabelIn.getCategoryIdList()) && !projectLabelIn.getCategoryIdList().contains(0L)){
+        if (CollectionUtils.isNotEmpty(projectLabelIn.getCategoryIds()) && !projectLabelIn.getCategoryIds().contains(0L)){
             projectLabelOuts=labelStatisticsMapper.projectLabelList(projectLabelIn);
         }else{
             projectLabelOuts=labelStatisticsMapper.projectLabelList(projectLabelIn);
@@ -212,10 +211,9 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
      * */
     @Override
     public void projectExport(ProjectListIn projectListIn,HttpServletResponse response) throws Exception{
-//        ProjectListIn projectListIn=new ProjectListIn();
         projectListIn.setProjectType("1");
         projectListIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-        projectListIn.setUserIds(SecurityUtils.getUserId());
+        projectListIn.setUsers(SecurityUtils.getUserId());
         List<ProjectLabelOut> itemList=labelStatisticsMapper.itemList(projectListIn);
         for (ProjectLabelOut projectLabelOut:itemList){
             projectLabelOut.setStatusName(Container.PROJECT_STATUS.get(projectLabelOut.getStatus()));

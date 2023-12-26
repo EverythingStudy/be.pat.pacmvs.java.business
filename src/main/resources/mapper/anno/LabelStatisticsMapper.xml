@@ -54,6 +54,9 @@
             <if test="projectType != null">
                 AND p.project_type=#{projectType}
             </if>
+            <if test="status != null">
+                AND p.status !=#{status}
+            </if>
             and p.del_flag=0
         </where>
     </select>
@@ -65,7 +68,7 @@
         SELECT a.indicator_id,a.indicator_name,a.indicator_name_en
         FROM tb_pathological_indicator as a
         <where>
-            <if test="projectIdList != null and projectIdList.size() >0 ">
+            <if test="projectIds != null and projectIds.size() >0 ">
                 AND a.indicator_id IN
                 (
                 SELECT
@@ -74,7 +77,7 @@
                 tb_project as p
                 WHERE
                 p.project_id IN
-                <foreach collection="projectIdList" item="projectId" open="(" separator="," close=")">
+                <foreach collection="projectIds" item="projectId" open="(" separator="," close=")">
                     #{projectId}
                 </foreach>
                 )
@@ -99,7 +102,7 @@
         select ic.category_id,ic.category_name from tb_pathological_indicator_category as ic left join
         tb_pathological_indicator as i on i.indicator_id=ic.indicator_id
         <where>
-            <if test="projectIdList != null and projectIdList.size()>0 ">
+            <if test="projectIds != null and projectIds.size()>0 ">
                 AND i.indicator_id IN
                 (
                 SELECT
@@ -108,15 +111,15 @@
                 tb_project as pa
                 WHERE
                 pa.project_id IN
-                <foreach collection="projectIdList" item="projectId" open="(" separator="," close=")">
+                <foreach collection="projectIds" item="projectId" open="(" separator="," close=")">
                     #{projectId}
                 </foreach>
                 and pa.project_type=1
                 )
             </if>
-            <if test="indicatorIdList != null and indicatorIdList.size()>0">
+            <if test="indicatorIds != null and indicatorIds.size()>0">
                 AND i.indicator_id IN
-                <foreach collection="indicatorIdList" item="indicatorId" open="(" separator="," close=")">
+                <foreach collection="indicatorIds" item="indicatorId" open="(" separator="," close=")">
                     #{indicatorId}
                 </foreach>
             </if>
@@ -152,21 +155,21 @@
                 AND p.project_id IN (select pm.project_id from tb_project_member as pm
                 where pm.user_id = #{userId} and pm.organization_id = #{organizationId} )
             </if>
-            <if test="projectIdList != null and projectIdList.size()>0 ">
+            <if test="projectIds != null and projectIds.size()>0 ">
                 AND p.project_id IN
-                <foreach collection="projectIdList" item="projectId" open="(" separator="," close=")">
+                <foreach collection="projectIds" item="projectId" open="(" separator="," close=")">
                     #{projectId}
                 </foreach>
             </if>
-            <if test="indicatorIdList != null and indicatorIdList.size()>0 ">
+            <if test="indicatorIds != null and indicatorIds.size()>0 ">
                 AND pi.indicator_id IN
-                <foreach collection="indicatorIdList" item="indicatorId" open="(" separator="," close=")">
+                <foreach collection="indicatorIds" item="indicatorId" open="(" separator="," close=")">
                     #{indicatorId}
                 </foreach>
             </if>
-            <if test="categoryIdList != null and categoryIdList.size()>0 ">
+            <if test="categoryIds != null and categoryIds.size()>0 ">
                 AND ic.category_id IN
-                <foreach collection="categoryIdList" item="categoryId" open="(" separator="," close=")">
+                <foreach collection="categoryIds" item="categoryId" open="(" separator="," close=")">
                     #{categoryId}
                 </foreach>
             </if>
@@ -214,11 +217,11 @@
             <if test="organizationId != null">
                 organization_id=#{organizationId}
             </if>
-            <if test="projectIdList != null and projectIdList.size()>0 ">
+            <if test="projectIds != null and projectIds.size()>0 ">
                 AND user_id IN (
                 select create_by from tb_project where
                 project_id IN
-                <foreach collection="projectIdList" item="projectId" open="(" separator="," close=")">
+                <foreach collection="projectIds" item="projectId" open="(" separator="," close=")">
                     #{projectId}
                 </foreach>
                 and del_flag=0
@@ -243,13 +246,13 @@
                     AND date_format(p.create_time,'%y%m%d') &lt;= date_format(#{createTimeParams.endTime},'%y%m%d')
                 </if>
             </if>
-            <if test="organizationId != null and userIds != null ">
+            <if test="organizationId != null and users != null ">
                 AND p.project_id IN (select pm.project_id from tb_project_member as pm
-                where pm.user_id = #{userIds} and pm.organization_id = #{organizationId} )
+                where pm.user_id = #{users} and pm.organization_id = #{organizationId} )
             </if>
-            <if test="projectIdList != null and projectIdList.size()>0">
+            <if test="projectIds != null and projectIds.size()>0">
                 AND p.project_id IN
-                <foreach collection="projectIdList" item="projectId" open="(" separator="," close=")">
+                <foreach collection="projectIds" item="projectId" open="(" separator="," close=")">
                     #{projectId}
                 </foreach>
             </if>
@@ -259,15 +262,15 @@
                     #{status}
                 </foreach>
             </if>
-            <if test="indicatorIdList != null and indicatorIdList.size()>0">
+            <if test="indicatorIds != null and indicatorIds.size()>0">
                 AND p.indicator_id IN
-                <foreach collection="indicatorIdList" item="indicatorId" open="(" separator="," close=")">
+                <foreach collection="indicatorIds" item="indicatorId" open="(" separator="," close=")">
                     #{indicatorId}
                 </foreach>
             </if>
-            <if test="userIdList != null and userIdList.size()>0">
+            <if test="userIds != null and userIds.size()>0">
                 AND p.create_by in
-                <foreach collection="userIdList" item="userId" open="(" separator="," close=")">
+                <foreach collection="userIds" item="userId" open="(" separator="," close=")">
                     #{userId}
                 </foreach>
             </if>
@@ -307,9 +310,9 @@
                 AND p.project_id IN (select pm.project_id from tb_project_member as pm
                 where pm.user_id = #{userId} and pm.organization_id = #{organizationId} )
             </if>
-            <if test="projectIdList != null and projectIdList.size()>0 ">
+            <if test="projectIds != null and projectIds.size()>0 ">
                 AND p.project_id IN
-                <foreach collection="projectIdList" item="projectId" open="(" separator="," close=")">
+                <foreach collection="projectIds" item="projectId" open="(" separator="," close=")">
                     #{projectId}
                 </foreach>
             </if>
