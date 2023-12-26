@@ -293,5 +293,30 @@
         </where>
     </select>
 
+    <!--标签统计中的项目信息-->
+    <select id="projectIdList" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ProjectLabelIn"
+            resultMap="projectLabelListResult">
+        select DISTINCT p.project_id,
+        p.project_name,
+        p.status
+        from tb_pathological_indicator_category as ic
+        left join tb_pathological_indicator as pi on ic.indicator_id = pi.indicator_id
+        left join tb_project as p on pi.indicator_id = p.indicator_id
+        <where>
+            <if test="organizationId != null and userId != null ">
+                AND p.project_id IN (select pm.project_id from tb_project_member as pm
+                where pm.user_id = #{userId} and pm.organization_id = #{organizationId} )
+            </if>
+            <if test="projectIdList != null and projectIdList.size()>0 ">
+                AND p.project_id IN
+                <foreach collection="projectIdList" item="projectId" open="(" separator="," close=")">
+                    #{projectId}
+                </foreach>
+            </if>
+            and p.project_type=1 and p.status !=1
+        </where>
+        order by p.project_id desc
+    </select>
+
 </mapper>
 

@@ -50,4 +50,9 @@ public interface LabelStatisticsMapper {
      * 查询图像数量
      * */
     ImageMarkingOut slideNum(ImageMarkingIn imageMarkingIn);
+
+    /**
+     * 标签统计中的项目信息
+     * */
+   List<ProjectLabelOut> projectIdList(ProjectLabelIn projectLabelIn);
 }

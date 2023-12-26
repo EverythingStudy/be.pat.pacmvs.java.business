@@ -60,19 +60,26 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
      * */
     @Override
     public List<LabelOut>labelList(LabelIn labelIn){
+        LabelOut labelOut=LabelOut.builder().categoryId(0L).categoryName(MessageSource.M("NO_ATTRIBUTE")).build();
         //只传项目id
         if (CollectionUtils.isNotEmpty(labelIn.getProjectIdList()) && labelIn.getIndicatorIdList().isEmpty()){
-            return labelStatisticsMapper.labelList(labelIn);
+            List<LabelOut> labelOuts=labelStatisticsMapper.labelList(labelIn);
+            labelOuts.add(labelOut);
+            return labelOuts;
         }
         //传项目id和标签集id 或只传标签集id
         if (CollectionUtils.isNotEmpty(labelIn.getIndicatorIdList())){
             labelIn.setProjectIdList(null);
-            return labelStatisticsMapper.labelList(labelIn);
+            List<LabelOut> labelOuts=labelStatisticsMapper.labelList(labelIn);
+            labelOuts.add(labelOut);
+            return labelOuts;
         }
         //不传项目id和标签集id
         labelIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         labelIn.setUserId(SecurityUtils.getUserId());
-        return labelStatisticsMapper.labelList(labelIn);
+        List<LabelOut> labelOuts=labelStatisticsMapper.labelList(labelIn);
+        labelOuts.add(labelOut);
+        return labelOuts;
     }
 
 
@@ -83,7 +90,17 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
     public List<ProjectLabelOut>projectLabelList(ProjectLabelIn projectLabelIn){
             projectLabelIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
             projectLabelIn.setUserId(SecurityUtils.getUserId());
-        List<ProjectLabelOut> projectLabelOuts=labelStatisticsMapper.projectLabelList(projectLabelIn);
+        List<ProjectLabelOut> projectLabelOuts;
+        if (CollectionUtils.isNotEmpty(projectLabelIn.getCategoryIdList()) && !projectLabelIn.getCategoryIdList().contains(0L)){
+             projectLabelOuts=labelStatisticsMapper.projectLabelList(projectLabelIn);
+        }else{
+             projectLabelOuts=labelStatisticsMapper.projectLabelList(projectLabelIn);
+            List<ProjectLabelOut>projectIdList=labelStatisticsMapper.projectIdList(projectLabelIn);
+            projectIdList.forEach(object -> {object.setCategoryId(0L);
+                object.setCategoryName(MessageSource.M("NO_ATTRIBUTE"));
+            });
+            projectLabelOuts.addAll(projectIdList);
+        }
         for (ProjectLabelOut projectLabelOut:projectLabelOuts){
             ImageMarkingIn imageMarkingIn= ImageMarkingIn.builder().projectId(projectLabelOut.getProjectId()).categoryId(projectLabelOut.getCategoryId()).annotationType("Measure").build();
             ImageMarkingOut imageOut=labelStatisticsMapper.imageNum(imageMarkingIn);
@@ -138,7 +155,17 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
         ProjectLabelIn projectLabelIn=new ProjectLabelIn();
         projectLabelIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         projectLabelIn.setUserId(SecurityUtils.getUserId());
-        List<ProjectLabelOut> projectLabelOuts=labelStatisticsMapper.projectLabelList(projectLabelIn);
+        List<ProjectLabelOut> projectLabelOuts;
+        if (CollectionUtils.isNotEmpty(projectLabelIn.getCategoryIdList()) && !projectLabelIn.getCategoryIdList().contains(0L)){
+            projectLabelOuts=labelStatisticsMapper.projectLabelList(projectLabelIn);
+        }else{
+            projectLabelOuts=labelStatisticsMapper.projectLabelList(projectLabelIn);
+            List<ProjectLabelOut>projectIdList=labelStatisticsMapper.projectIdList(projectLabelIn);
+            projectIdList.forEach(object -> {object.setCategoryId(0L);
+                object.setCategoryName(MessageSource.M("NO_ATTRIBUTE"));
+            });
+            projectLabelOuts.addAll(projectIdList);
+        }
         for (ProjectLabelOut projectLabelOut:projectLabelOuts){
             ImageMarkingIn imageMarkingIn= ImageMarkingIn.builder().projectId(projectLabelOut.getProjectId()).categoryId(projectLabelOut.getCategoryId()).annotationType("Measure").build();
             ImageMarkingOut imageOut=labelStatisticsMapper.imageNum(imageMarkingIn);
@@ -182,7 +209,6 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
         projectListIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         projectListIn.setUserIds(SecurityUtils.getUserId());
         List<ProjectLabelOut> itemList=labelStatisticsMapper.itemList(projectListIn);
-        log.info("数据："+itemList);
         for (ProjectLabelOut projectLabelOut:itemList){
             projectLabelOut.setStatusName(Container.PROJECT_STATUS.get(projectLabelOut.getStatus()));
             ImageMarkingIn imageMarkingIn= ImageMarkingIn.builder().projectId(projectLabelOut.getProjectId()).annotationType("Measure").build();
