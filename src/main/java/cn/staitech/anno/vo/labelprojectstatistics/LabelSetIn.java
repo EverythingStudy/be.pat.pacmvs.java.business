@@ -17,7 +17,7 @@ public class LabelSetIn {
      * 项目id列表
      * */
     @ApiModelProperty(value = "项目id列表")
-    private List<Long> projectIdList;
+    private List<Long> projectIds;
 
     @ApiModelProperty(value = "机构id",hidden = true)
     private Long organizationId;

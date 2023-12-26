@@ -24,4 +24,6 @@ public class ProjectInVO {
      * 项目类型（1标注，2评审，3标准验证集，4标准考核，6图像拼接，7算法预测）
      * */
     private String projectType;
+
+    private Integer status;
 }

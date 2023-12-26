@@ -16,16 +16,16 @@ import java.util.Map;
 @Builder
 public class ProjectListIn extends Pager {
     @ApiModelProperty(value = "项目id列表")
-    private List<Long> projectIdList;
+    private List<Long> projectIds;
 
     @ApiModelProperty(value = "项目状态列表")
     private List<Integer> statusList;
 
     @ApiModelProperty(value = "标签集id列表")
-    private List<Long> indicatorIdList;
+    private List<Long> indicatorIds;
 
     @ApiModelProperty(value = "创建者id列表")
-    private List<Long> userIdList;
+    private List<Long> userIds;
 
     @ApiModelProperty(value = "描述")
     private String description;
@@ -37,7 +37,7 @@ public class ProjectListIn extends Pager {
     private Long organizationId;
 
     @ApiModelProperty(value = "用户id",hidden = true)
-    private Long userIds;
+    private Long users;
 
     @ApiModelProperty(value = "项目类型",hidden = true)
     private String projectType;
