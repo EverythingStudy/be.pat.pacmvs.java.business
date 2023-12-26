@@ -3,7 +3,9 @@ package cn.staitech.anno.controller;
 import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.service.LabelStatisticsService;
 import cn.staitech.anno.utils.*;
+import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import cn.staitech.anno.vo.labelprojectstatistics.*;
+import cn.staitech.anno.vo.project.ProjectDelVO;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.system.api.domain.SysUser;
@@ -60,16 +62,29 @@ public class LabelStatisticsController {
     @ApiOperationSupport(author = "ZMJ")
     @ApiOperation(value = "标签统计")
     @PostMapping("/projectLabel")
-    public R<PageResponse<ProjectLabelOut>> projectLabel(@RequestBody ProjectLabelIn projectLabelIn){
-        PageResponse resp = new PageResponse();
-        PageUtils<ProjectLabelOut> page=new PageUtils<>(projectLabelIn.getPageNum(),projectLabelIn.getPageSize());
+    public R<PageMaster<ProjectLabelOut>> projectLabel(@RequestBody ProjectLabelIn projectLabelIn){
         List<ProjectLabelOut> projectLabelOuts=labelStatisticsService.projectLabelList(projectLabelIn);
-        page.doPage(projectLabelOuts);
-        resp.setTotal(page.getTotal());
-        resp.setList(page.getResults());
-        resp.setPages(page.getPages());
-        return R.ok(resp);
+        ProjectDelVO projectDelVO=ProjectUtils.pagingLabel(projectLabelIn);
+        int pageSize = projectDelVO.getPageSize();
+        int pageNum = projectDelVO.getPageNum();
+        boolean flag1 = projectDelVO.getFlag();
+        List<ProjectLabelOut> result = projectDelVO.getResultList();
+        for (int i = pageNum * pageSize; i < pageNum * pageSize + pageSize; i++) {
+            if (i <  projectLabelOuts.size()) {
+                result.add( projectLabelOuts.get(i));
+            }
+        }
+        PageMaster<ProjectLabelOut> pageMaster = new PageMaster<>(result);
+        if (flag1) {
+            pageNum++;
+        }
+        pageMaster.setPageNum(pageNum);
+        pageMaster.setPageSize(pageSize);
+        pageMaster.setTotal(projectLabelOuts.size());
+        return R.ok(pageMaster);
+
     }
+
 
     @ApiOperationSupport(author = "ZMJ")
     @ApiOperation(value = "标签统计导出")
