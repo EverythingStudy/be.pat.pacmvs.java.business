@@ -124,7 +124,12 @@ public class CommonConstant {
     public static final String[] LABEL_STATISTICS_KEY = {"项目名称", "标签集", "标签", "图像数量", "标注总数", "项目状态"};
     public static final String[] LABEL_STATISTICS_VALUE = {"projectName", "indicatorName", "categoryName", "imageNum", "markingNum", "statusName"};
 
+    /**
+     * 项目统计表头
+     * */
+    public static final String[] PROJECT_STATISTICS_KEY = {"项目名称", "图像数量", "标注总数","创建者","描述", "创建时间", "项目状态"};
 
+    public static final String[] PROJECT_STATISTICS_VALUE = {"projectName", "imageNum", "markingNum","userName","description","createTime", "statusName"};
 
     private CommonConstant() {
         throw new IllegalStateException("CommonConstant class");

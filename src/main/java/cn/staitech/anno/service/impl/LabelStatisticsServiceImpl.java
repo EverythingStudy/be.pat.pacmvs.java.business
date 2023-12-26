@@ -6,6 +6,7 @@ import cn.staitech.anno.mapper.LabelStatisticsMapper;
 import cn.staitech.anno.service.LabelStatisticsService;
 import cn.staitech.anno.utils.Column;
 import cn.staitech.anno.utils.ExcelTool;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.labelprojectstatistics.*;
 import cn.staitech.anno.vo.labelprojectstatistics.ProjectListVO;
@@ -85,9 +86,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
         List<ProjectLabelOut> projectLabelOuts=labelStatisticsMapper.projectLabelList(projectLabelIn);
         for (ProjectLabelOut projectLabelOut:projectLabelOuts){
             ImageMarkingIn imageMarkingIn= ImageMarkingIn.builder().projectId(projectLabelOut.getProjectId()).categoryId(projectLabelOut.getCategoryId()).annotationType("Measure").build();
-            log.info("数据："+imageMarkingIn);
             ImageMarkingOut imageOut=labelStatisticsMapper.imageNum(imageMarkingIn);
-            log.info("数据2："+imageOut);
             projectLabelOut.setImageNum(imageOut.getImageNum().toString());
             ImageMarkingOut markingOut=labelStatisticsMapper.markingNum(imageMarkingIn);
             projectLabelOut.setMarkingNum(markingOut.getMarkingNum().toString());
@@ -130,28 +129,21 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
     @Override
     public void labelExport(HttpServletResponse response) throws Exception{
         ProjectLabelIn projectLabelIn=new ProjectLabelIn();
-        projectLabelIn.setOrganizationId(1L);
-//        projectLabelIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-//        projectLabelIn.setUserId(SecurityUtils.getUserId());
-        projectLabelIn.setUserId(27L);
+        projectLabelIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        projectLabelIn.setUserId(SecurityUtils.getUserId());
         List<ProjectLabelOut> projectLabelOuts=labelStatisticsMapper.projectLabelList(projectLabelIn);
-        log.info("数据："+ projectLabelOuts);
-        for (ProjectLabelOut projectLabelOut:projectLabelOuts){
-            projectLabelOut.setStatusName(Container.PROJECT_STATUS.get(projectLabelOut.getStatus()));
-        }
-
         for (ProjectLabelOut projectLabelOut:projectLabelOuts){
             ImageMarkingIn imageMarkingIn= ImageMarkingIn.builder().projectId(projectLabelOut.getProjectId()).categoryId(projectLabelOut.getCategoryId()).annotationType("Measure").build();
             ImageMarkingOut imageOut=labelStatisticsMapper.imageNum(imageMarkingIn);
             projectLabelOut.setImageNum(imageOut.getImageNum().toString());
             ImageMarkingOut markingOut=labelStatisticsMapper.markingNum(imageMarkingIn);
             projectLabelOut.setMarkingNum(markingOut.getMarkingNum().toString());
+            projectLabelOut.setStatusName(Container.PROJECT_STATUS.get(projectLabelOut.getStatus()));
         }
 
         // 构造表头的每个列头 定义表头
         List<Map<String, String>> titleList = getTitleList(CommonConstant.LABEL_STATISTICS_KEY, CommonConstant.LABEL_STATISTICS_VALUE);
-//        ExcelTool excelTool = new ExcelTool<>(MessageSource.M("EXCEL_FILE_PATH"), 20, 20);
-        ExcelTool excelTool = new ExcelTool<>("文件路径", 20, 20);
+        ExcelTool excelTool = new ExcelTool<>(MessageSource.M("EXCEL_FILE_PATH"), 20, 20);
         List<Column> titleData = excelTool.columnTransformer(titleList);
         response.setContentType("application/vnd.ms-excel;charset=utf-8");
         response.setCharacterEncoding("utf-8");
@@ -170,6 +162,33 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
             list.add(map);
         }
         return list;
+    }
+
+
+    /**
+     * 标签导出
+     * */
+    @Override
+    public void projectExport(HttpServletResponse response) throws Exception{
+        ProjectListIn projectListIn=new ProjectListIn();
+        projectListIn.setProjectType("1");
+        projectListIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        projectListIn.setUserIds(SecurityUtils.getUserId());
+        List<ProjectLabelOut> itemList=labelStatisticsMapper.itemList(projectListIn);
+        for (ProjectLabelOut projectLabelOut:itemList){
+            projectLabelOut.setStatusName(Container.PROJECT_STATUS.get(projectLabelOut.getStatus()));
+        }
+
+        // 构造表头的每个列头 定义表头
+        List<Map<String, String>> titleList = getTitleList(CommonConstant.PROJECT_STATISTICS_KEY, CommonConstant.PROJECT_STATISTICS_VALUE);
+        ExcelTool excelTool = new ExcelTool<>(MessageSource.M("EXCEL_FILE_PATH"), 20, 20);
+        List<Column> titleData = excelTool.columnTransformer(titleList);
+        response.setContentType("application/vnd.ms-excel;charset=utf-8");
+        response.setCharacterEncoding("utf-8");
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(String.valueOf(System.currentTimeMillis()), "UTF-8") + CommonConstant.FILE_SUFFIX_XLSX);
+        excelTool.exportExcel(titleData,itemList, response.getOutputStream(), true, false);
+
+
     }
 
 

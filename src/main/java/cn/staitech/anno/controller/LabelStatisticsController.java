@@ -110,5 +110,12 @@ public class LabelStatisticsController {
         return itemList;
     }
 
+    @ApiOperationSupport(author = "ZMJ")
+    @ApiOperation(value = "项目统计导出")
+    @GetMapping("/projectExport")
+    public void projectExport(HttpServletResponse response) throws Exception {
+        labelStatisticsService.projectExport(response);
+    }
+
 
 }

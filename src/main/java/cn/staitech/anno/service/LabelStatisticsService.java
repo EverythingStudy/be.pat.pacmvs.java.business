@@ -46,4 +46,9 @@ public interface LabelStatisticsService {
      * 标签导出
      * */
     void labelExport(HttpServletResponse response)throws Exception;
+
+    /**
+     * 项目导出
+     * */
+    void projectExport(HttpServletResponse response)throws Exception;
 }
