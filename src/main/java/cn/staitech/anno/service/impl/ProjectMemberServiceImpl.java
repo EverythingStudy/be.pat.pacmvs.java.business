@@ -186,6 +186,7 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 //			Long userId = 1L;
 //	    	Long organizationId = 1L;
 			
+			
 			//查询自己参与的项目列表
 			projectMember.setUserId(userId);
 			projectMember.setOrganizationId(organizationId);

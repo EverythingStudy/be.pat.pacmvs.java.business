@@ -50,4 +50,6 @@ public interface ProjectMemberMapper {
     List<ImageAnnoStatisticsVO> getImageCount(ProjectMemberQuery query);
     
     List<ProjectUserAnnoStatisticsVO> getProjectUserAnnoStatistics(ProjectMemberQuery query);
+    List<ProjectUserAnnoStatisticsVO> getProjectUserAnnoStatistics1(ProjectMemberQuery query);
+    List<ProjectUserAnnoStatisticsVO> getProjectUserAnnoStatistics2(ProjectMemberQuery query);
 }
