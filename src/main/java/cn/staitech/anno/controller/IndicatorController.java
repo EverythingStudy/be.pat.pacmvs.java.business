@@ -1,5 +1,27 @@
 package cn.staitech.anno.controller;
 
+import static cn.staitech.common.security.utils.SecurityUtils.isAdmin;
+
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.Organ;
@@ -11,7 +33,11 @@ import cn.staitech.anno.service.ProjectService;
 import cn.staitech.anno.service.StructureService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
-import cn.staitech.anno.vo.indicator.*;
+import cn.staitech.anno.vo.indicator.IndicatorAddVO;
+import cn.staitech.anno.vo.indicator.IndicatorGetVO;
+import cn.staitech.anno.vo.indicator.IndicatorListVO;
+import cn.staitech.anno.vo.indicator.IndicatorReviseVO;
+import cn.staitech.anno.vo.indicator.IndicatorVO;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
@@ -20,23 +46,12 @@ import cn.staitech.common.security.annotation.Logical;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.SneakyThrows;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.Resource;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static cn.staitech.common.security.utils.SecurityUtils.isAdmin;
 
 
 /**
@@ -131,8 +146,8 @@ public class IndicatorController extends BaseController {
             }
 
 
-            MapConstant.ORGAN_MAP = selectMap();
-            MapConstant.ORGAN_MAP_EN = selectMapEn();
+            MapConstant.ORGAN_MAP = structureService.selectMap();
+            MapConstant.ORGAN_MAP_EN = structureService.selectMapEn();
             MapConstant.STRUCTURE_MAP = structureService.selectMap();
             MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
         }
@@ -301,8 +316,8 @@ public class IndicatorController extends BaseController {
             }
 
 
-            MapConstant.ORGAN_MAP = selectMap();
-            MapConstant.ORGAN_MAP_EN = selectMapEn();
+            MapConstant.ORGAN_MAP = structureService.selectMap();
+            MapConstant.ORGAN_MAP_EN = structureService.selectMapEn();
             MapConstant.STRUCTURE_MAP = structureService.selectMap();
             MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
         }
@@ -403,21 +418,4 @@ public class IndicatorController extends BaseController {
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
-    public Map<String, String> selectMap() {
-        return select(false);
-    }
-
-    public Map<String, String> selectMapEn() {
-        return select(true);
-    }
-
-    public Map<String, String> select(boolean en) {
-        List<Organ> list = organMapper.selectList();
-        if (en) {
-            // wangfeng20231222
-            return list.stream().collect(Collectors.toMap(item -> item.getOrganizationId() + item.getSpeciesCode() + item.getOrganId(), Organ::getNameEn));
-        } else {
-            return list.stream().collect(Collectors.toMap(item -> item.getOrganizationId() + item.getSpeciesCode() + item.getOrganId(), Organ::getName));
-        }
-    }
 }
