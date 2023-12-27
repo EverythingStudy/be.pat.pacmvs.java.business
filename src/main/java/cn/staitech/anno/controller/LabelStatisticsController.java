@@ -37,8 +37,8 @@ public class LabelStatisticsController {
     @ApiOperationSupport(author = "ZMJ")
     @ApiOperation(value = "下拉框---项目列表")
     @PostMapping("/projectList")
-    public R<List<ProjectListOut>> projectLists(){
-        List<ProjectListOut> projectList=labelStatisticsService.projectList();
+    public R<List<ProjectListOut>> projectLists(@RequestBody ImageMarkingIn imageMarkingIn){
+        List<ProjectListOut> projectList=labelStatisticsService.projectList(imageMarkingIn);
         return R.ok(projectList);
     }
 

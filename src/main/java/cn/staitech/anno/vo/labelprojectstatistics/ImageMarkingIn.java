@@ -1,5 +1,6 @@
 package cn.staitech.anno.vo.labelprojectstatistics;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,15 +14,21 @@ public class ImageMarkingIn {
     /**
      * 项目id
      * */
+    @ApiModelProperty(value = "项目id",hidden = true)
     private Long projectId;
 
     /**
      * 标签id
      * */
+    @ApiModelProperty(value = "标签id",hidden = true)
     private Long categoryId;
 
     /**
      * 标注类别
      * */
+    @ApiModelProperty(value = "标注类别",hidden = true)
     private String annotationType;
+
+    @ApiModelProperty(value = "项目状态")
+    private Integer status;
 }
