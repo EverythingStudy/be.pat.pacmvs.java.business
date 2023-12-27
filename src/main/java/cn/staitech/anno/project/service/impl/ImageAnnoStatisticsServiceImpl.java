@@ -241,7 +241,9 @@ implements ImageAnnoStatisticsService {
 			partUserList = Arrays.asList(partUsers);
 		}else{
 			ImageAnnoUserQueryIn query = new ImageAnnoUserQueryIn();
-			query.setProjectIds(null);
+			//赋值项目id
+			Long[] projectIdArray = pIds.toArray(new Long[0]);
+			query.setProjectIds(projectIdArray);
 			List<ProjectPartUserVO> queryList = projectMemberService.getUserList(query);
 			if(CollectionUtils.isNotEmpty(queryList)){
 				for(ProjectPartUserVO p:queryList){
