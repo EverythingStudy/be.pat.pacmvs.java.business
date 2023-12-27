@@ -625,7 +625,7 @@
                 AND category_id = #{category_id}
             </if>
             <if test="create_by != null">
-                AND m.create_by = #{create_by}
+                AND create_by = #{create_by}
             </if>
             <if test="slide_id != null">
                 AND slide_id = #{slide_id}

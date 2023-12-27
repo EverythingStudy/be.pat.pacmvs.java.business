@@ -319,7 +319,7 @@
 			t3.nick_name,
 			t2.`status` ,
 			<!-- 状态:1待启动，2进行中，3暂停，4已完成 -->
-			case t2.`status`
+			case 
 			 when t2.`status` = 1 then '待启动'
 			 when t2.`status` = 2 then '进行中'
 			 when t2.`status` = 3 then '暂停'
