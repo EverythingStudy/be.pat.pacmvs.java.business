@@ -309,8 +309,8 @@ implements ImageAnnoStatisticsService {
 				Long projectId = asvo.getProjectId();
 				Long userId = asvo.getUserId();
 				String status = asvo.getStatus();
-				String statusDesc = getPojectStatusDesc(status);
-				asvo.setStatusDesc(statusDesc);
+				//String statusDesc = getPojectStatusDesc(status);
+				//asvo.setStatusDesc(statusDesc);
 				String key = projectId+"_"+userId;
 				//切片数量处理
 				if(null !=imageCountMap && !imageCountMap.isEmpty()){
@@ -354,7 +354,7 @@ implements ImageAnnoStatisticsService {
 	}
 	
 	//状态:1待启动，2进行中，3暂停，4已完成
-	private String getPojectStatusDesc(String projectStatus){
+	/*private String getPojectStatusDesc(String projectStatus){
 		String statusDesc = "";
 		if(projectStatus.equals("0")){
 			statusDesc = "待启动";
@@ -368,7 +368,7 @@ implements ImageAnnoStatisticsService {
 			statusDesc = "已完成";
 		}
 		return statusDesc;
-	}
+	}*/
 	public List<Map<String, String>> getTitleList(String[] colHeadKey, String[] colHeadValue) {
         // 定义表头
         List<Map<String, String>> list = new ArrayList<>();
