@@ -88,6 +88,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
                 }
 //                slideIds.add(slideVO.getSlideId());
 //                map.put(slideVO.getSlideId(), slideVO);
+
             });
             List<Marking> annotationList = queryAnnotation(slideIds, params);
             handleAnnoList(annotationList, map);
