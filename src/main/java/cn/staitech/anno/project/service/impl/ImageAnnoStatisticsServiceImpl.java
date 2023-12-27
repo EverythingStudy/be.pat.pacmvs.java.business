@@ -113,7 +113,7 @@ implements ImageAnnoStatisticsService {
 			Map<String,Integer>  imageCountMap = new HashMap<>();
 			Map<String,Integer>  annoCountMap = new HashMap<>();
 			//查询项目人员标注图片数量和标注数量
-			List<ProjectUserAnnoStatisticsVO> annCountList = projectMemberMapper.getProjectUserAnnoStatistics(partQuery);
+			/*List<ProjectUserAnnoStatisticsVO> annCountList = projectMemberMapper.getProjectUserAnnoStatistics(partQuery);
 			if(CollectionUtils.isNotEmpty(annCountList)){
 				for(ProjectUserAnnoStatisticsVO vo:annCountList){
 					Long projectId = vo.getProjectId();
@@ -130,9 +130,9 @@ implements ImageAnnoStatisticsService {
 					imageCountMap.put(key, imageCount);
 					annoCountMap.put(key, annoCount);
 				}
-			}
+			}*/
 			//查询项目人员标注图片数量和标注数量
-			/*List<ProjectUserAnnoStatisticsVO> annCountList = projectMemberMapper.getProjectUserAnnoStatistics1(partQuery);
+			List<ProjectUserAnnoStatisticsVO> annCountList = projectMemberMapper.getProjectUserAnnoStatistics1(partQuery);
 			if(CollectionUtils.isNotEmpty(annCountList)){
 				for(ProjectUserAnnoStatisticsVO vo:annCountList){
 					Long projectId = vo.getProjectId();
@@ -144,10 +144,10 @@ implements ImageAnnoStatisticsService {
 					}
 					imageCountMap.put(key, imageCount);
 				}
-			}*/
+			}
 			
 			
-			/*List<ProjectUserAnnoStatisticsVO> annCountList2 = projectMemberMapper.getProjectUserAnnoStatistics2(partQuery);
+			List<ProjectUserAnnoStatisticsVO> annCountList2 = projectMemberMapper.getProjectUserAnnoStatistics2(partQuery);
 			if(CollectionUtils.isNotEmpty(annCountList2)){
 				for(ProjectUserAnnoStatisticsVO vo:annCountList2){
 					Long projectId = vo.getProjectId();
@@ -159,7 +159,7 @@ implements ImageAnnoStatisticsService {
 					}
 					annoCountMap.put(key, annoCount);
 				}
-			}*/
+			}
 
 			//赋值
 			for(ImageAnnoStatisticsVO asvo:dataList){
@@ -257,7 +257,7 @@ implements ImageAnnoStatisticsService {
 			Map<String,Integer>  imageCountMap = new HashMap<>();
 			Map<String,Integer>  annoCountMap = new HashMap<>();
 			//查询项目人员标注图片数量和标注数量
-			/*List<ProjectUserAnnoStatisticsVO> annCountList = projectMemberMapper.getProjectUserAnnoStatistics1(partQuery);
+			List<ProjectUserAnnoStatisticsVO> annCountList = projectMemberMapper.getProjectUserAnnoStatistics1(partQuery);
 			if(CollectionUtils.isNotEmpty(annCountList)){
 				for(ProjectUserAnnoStatisticsVO vo:annCountList){
 					Long projectId = vo.getProjectId();
@@ -284,8 +284,8 @@ implements ImageAnnoStatisticsService {
 					}
 					annoCountMap.put(key, annoCount);
 				}
-			}*/
-			List<ProjectUserAnnoStatisticsVO> annCountList = projectMemberMapper.getProjectUserAnnoStatistics(partQuery);
+			}
+			/*List<ProjectUserAnnoStatisticsVO> annCountList = projectMemberMapper.getProjectUserAnnoStatistics(partQuery);
 			if(CollectionUtils.isNotEmpty(annCountList)){
 				for(ProjectUserAnnoStatisticsVO vo:annCountList){
 					Long projectId = vo.getProjectId();
@@ -302,7 +302,7 @@ implements ImageAnnoStatisticsService {
 					imageCountMap.put(key, imageCount);
 					annoCountMap.put(key, annoCount);
 				}
-			}
+			}*/
 
 			//赋值
 			for(ImageAnnoStatisticsVO asvo:list){
