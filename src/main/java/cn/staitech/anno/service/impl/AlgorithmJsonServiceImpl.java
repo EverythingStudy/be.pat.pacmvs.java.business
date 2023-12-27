@@ -58,6 +58,7 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
 
     @Resource
     private RemoteLabelService remoteLabelService;
+    
     @Resource
     private StructureService structureService;
 
@@ -143,18 +144,18 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
         // 判断传入列表不为空
         if (selectGeoJson.getLabelList().size() > 0) {
             // 根据labelCode查询标签详情
-            for(String labelCode:selectGeoJson.getLabelList()){
+            for (String labelCode : selectGeoJson.getLabelList()) {
                 QueryWrapper<PathologicalIndicatorCategory> queryWrapper = new QueryWrapper<>();
                 queryWrapper.eq("structure_id", labelCode);
                 queryWrapper.eq("organization_id", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
                 queryWrapper.eq("del_flag", 0);
                 PathologicalIndicatorCategory pathologicalIndicatorCategory = categoryMapper.selectOne(queryWrapper);
-                
-                if(pathologicalIndicatorCategory != null){
+
+                if (pathologicalIndicatorCategory != null) {
                     QueryWrapper<PathologicalIndicatorCategory> categoryQueryWrapper = new QueryWrapper<>();
                     categoryQueryWrapper.eq("category_code", pathologicalIndicatorCategory.getCategoryCode());
                     List<PathologicalIndicatorCategory> pathologicalIndicatorCategoryList = categoryMapper.selectList(categoryQueryWrapper);
-                    for(PathologicalIndicatorCategory pathologicalIndicatorCategory1:pathologicalIndicatorCategoryList){
+                    for (PathologicalIndicatorCategory pathologicalIndicatorCategory1 : pathologicalIndicatorCategoryList) {
                         labelList.add(pathologicalIndicatorCategory1.getStructureId());
                     }
                 }
@@ -215,25 +216,19 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
         JSONArray labelInfoLists = new JSONArray();
         // 对标注区域和考核区域进行筛选,只选择code为RO的标签
         if (labelInfoList.size() > 0) {
-            for (Object i : labelInfoList) {
-                JSONObject labelInfos = JSONObject.parseObject(JSONObject.toJSONString(i));
-                String labelCode = labelInfos.getString("label_code");
-                // 根据主键查询详情
-                /*Structure structure = structureMapper.selectById(labelCode);
-                if (structure != null) {
-                    if (!Objects.equals(structure.getType(), "ROE")) {
-                        // 查询结果
-                        labelInfoLists.add(labelInfos);
-                    }
-                }*/
-                List<Structure> structureList = structureService.getListByStructureId(labelCode);
+        	for (Object i : labelInfoList) {
+        		JSONObject labelInfos = JSONObject.parseObject(JSONObject.toJSONString(i));
+        		String labelCode = labelInfos.getString("label_code");
+        		// 根据主键查询详情
+        		//Structure structure = structureMapper.selectById(labelCode);
+        		List<Structure> structureList = structureService.getListByStructureId(labelCode);
         		if(CollectionUtils.isNotEmpty(structureList)){
         				if (!Objects.equals(structureList.get(0).getType(), "ROE")) {
         					// 查询结果
         					labelInfoLists.add(labelInfos);
         				}
         		}
-            }
+        	}
         }
         // 封装数据
         SelectGeoJsonList selectGeoJsonList = new SelectGeoJsonList();

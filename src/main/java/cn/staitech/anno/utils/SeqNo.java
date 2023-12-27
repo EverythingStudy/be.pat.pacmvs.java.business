@@ -28,6 +28,5 @@ public class SeqNo {
         //位数不够，前面补0
         DecimalFormat df = new DecimalFormat(format);
         return df.format(increment);
-
     }
 }

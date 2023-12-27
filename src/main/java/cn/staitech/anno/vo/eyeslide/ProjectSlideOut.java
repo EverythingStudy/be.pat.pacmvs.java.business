@@ -15,7 +15,7 @@ public class ProjectSlideOut extends Image {
     @ApiModelProperty(value = "图片名称")
     private String imageName;
 
-    @ApiModelProperty(value ="文件夹名称")
+    @ApiModelProperty(value = "文件夹名称")
     private String folderName;
 
     @ApiModelProperty(value = "状态（0校验通过，1校验不通过）")

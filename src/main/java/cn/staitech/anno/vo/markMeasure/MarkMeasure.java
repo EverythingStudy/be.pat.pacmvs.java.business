@@ -1,19 +1,16 @@
 package cn.staitech.anno.vo.markMeasure;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import java.util.Date;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -27,15 +24,15 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName(value = "tb_mark_measure", autoResultMap = true)
-@ApiModel(value="MarkMeasure对象",  description="标注测量表")
+@ApiModel(value = "MarkMeasure对象", description = "标注测量表")
 public class MarkMeasure implements Serializable {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "主键自增id")
     @TableId(value = "mark_measure_id", type = IdType.INPUT)
     private String mark_measure_id;
-    
+
     @ApiModelProperty(value = "标注id")
     private String annotation_id;
 
@@ -128,7 +125,7 @@ public class MarkMeasure implements Serializable {
 
     @ApiModelProperty(value = "机构ID")
     private Long organization_id;
-    
+
     @ApiModelProperty(value = "注类型(AI表示AI算出的标注，Draw表示前端绘制的标注，Measure表示测量工具数据)")
     private String annotation_type;
 

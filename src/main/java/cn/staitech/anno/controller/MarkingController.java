@@ -6,8 +6,8 @@ import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
-import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
+import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.slide.SlideSelectBy;
 import cn.staitech.common.core.domain.PageResponse;
@@ -57,7 +57,7 @@ public class MarkingController {
         if (!Optional.ofNullable(slideId).isPresent()) {
             return R.fail(MessageSource.M("ARGUMENT_INVALID"));
         }
-        return R.ok(markingService.selectList(slideId,pageNum,pageSize,measureFullName));
+        return R.ok(markingService.selectList(slideId, pageNum, pageSize, measureFullName));
     }
 
 
@@ -97,10 +97,6 @@ public class MarkingController {
 //    }
 
 
-
-
-
-
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "添加标注")
     @PostMapping("/intelligentAnno/insert")
@@ -129,6 +125,7 @@ public class MarkingController {
     /**
      * TODO:
      * 2
+     *
      * @param req
      * @return
      * @throws Exception
@@ -143,6 +140,7 @@ public class MarkingController {
 
     /**
      * 1
+     *
      * @param req
      * @return
      * @throws Exception
@@ -179,7 +177,7 @@ public class MarkingController {
     @ApiOperation(value = "标注测量excel导出")
     @GetMapping("/export")
     public void export(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId, HttpServletResponse response) throws Exception {
-        markingService.execlExport(slideId,response);
+        markingService.execlExport(slideId, response);
     }
 
     @ApiOperationSupport(author = "gjt")

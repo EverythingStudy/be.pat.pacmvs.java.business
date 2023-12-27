@@ -43,7 +43,7 @@ public class TopicController {
         // 组织ID
         Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
         QueryWrapper<Topic> qw = new QueryWrapper();
-        qw.eq(!SysUser.isAdmin(SecurityUtils.getUserId()),"organization_id", organizationId)
+        qw.eq(!SysUser.isAdmin(SecurityUtils.getUserId()), "organization_id", organizationId)
                 .eq("project_type_id", projectTypeId)
                 .orderByDesc("topic_id");
         List<Topic> list = topicService.list(qw);

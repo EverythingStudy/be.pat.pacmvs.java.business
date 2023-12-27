@@ -20,6 +20,9 @@ public class PathologicalIndicatorCategoryVO {
     @ApiModelProperty(required = true, value = "结构名称")
     private String structureName;
 
+    @ApiModelProperty(required = true, value = "结构名称")
+    private String structureName;
+
     @NotBlank(message = "{StatisticCategoryListOutVO.rgb.isnull}")
     @ApiModelProperty(required = true, value = "颜色RBG值")
     private String rgb;

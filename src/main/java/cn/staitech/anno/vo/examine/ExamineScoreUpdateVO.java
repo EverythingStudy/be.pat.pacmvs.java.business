@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class ExamineScoreUpdateVO {
     @ApiModelProperty(value = "评分id")
-    @NotNull(message="{ExamineScoreUpdateVO.examineScoreId.isnull}")
+    @NotNull(message = "{ExamineScoreUpdateVO.examineScoreId.isnull}")
     private Long examineScoreId;
 
     @ApiModelProperty(value = "考核状态（1通过，2不通过）")

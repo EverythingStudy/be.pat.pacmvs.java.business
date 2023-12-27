@@ -21,7 +21,7 @@ public class SlideDescriptionVO {
     @Size(min = 0, max = 50, message = "{SlideUpdateVO.description.length}")
     @ApiModelProperty(value = "描述")
     private String description;
-    
+
     /**
      * 备注
      */

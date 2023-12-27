@@ -1,9 +1,8 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.Species;
-import cn.staitech.anno.vo.Species.InsertSpeciesVO;
+import cn.staitech.anno.vo.species.InsertSpeciesVO;
 import cn.staitech.common.core.domain.R;
-
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.Map;
@@ -19,6 +18,6 @@ public interface SpeciesService extends IService<Species> {
     Map<String, String> selectMap();
 
     Map<String, String> selectMapEn();
-    
+
     R<Species> add(InsertSpeciesVO req);
 }

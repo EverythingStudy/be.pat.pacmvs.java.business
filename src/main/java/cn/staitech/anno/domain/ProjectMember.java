@@ -1,6 +1,7 @@
 package cn.staitech.anno.domain;
 
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -49,4 +50,7 @@ public class ProjectMember implements Serializable {
     private Date updateTime;
     @ApiModelProperty(value = "机构ID")
     private Long organizationId;
+    @TableField(exist = false)
+    @ApiModelProperty(required = true, value = "项目id列表")
+    private Long[] projectIds;
 }

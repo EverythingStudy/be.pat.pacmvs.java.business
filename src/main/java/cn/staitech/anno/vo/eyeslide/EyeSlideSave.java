@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class EyeSlideSave {
-    @ApiModelProperty(value = "项目id",required = true)
+    @ApiModelProperty(value = "项目id", required = true)
     @NotNull(message = "项目id")
     private Long projectId;
 

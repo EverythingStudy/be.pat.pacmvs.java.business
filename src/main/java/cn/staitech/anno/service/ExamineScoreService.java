@@ -38,12 +38,12 @@ public interface ExamineScoreService extends IService<ExamineScore> {
 
     /**
      * 人工评分
-     * */
+     */
     int manualScoring(ExamineScoreUpdateVO examineScoreUpdateVO);
 
     /**
      * 批量算法评分
-     * */
+     */
     int BatchAlgorithm(ExamineScoreBathVO examineScoreBathVO);
 
 }

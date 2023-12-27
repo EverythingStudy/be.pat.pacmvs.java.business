@@ -6,18 +6,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * 
-* @ClassName: RestTemplateConfig
-* @Description:
-* @author wanglibei
-* @date 2023年8月24日
-* @version V1.0
+ * @author wanglibei
+ * @version V1.0
+ * @ClassName: RestTemplateConfig
+ * @Description:
+ * @date 2023年8月24日
  */
 @Configuration
-public class RestTemplateConfig { 
+public class RestTemplateConfig {
 
     @Bean
-    RestTemplate restTemplate(){
+    RestTemplate restTemplate() {
         return new RestTemplate();
     }
 }

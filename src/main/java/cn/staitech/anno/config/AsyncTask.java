@@ -37,7 +37,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.rmi.RemoteException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -71,30 +70,6 @@ public class AsyncTask {
     private SysUserMapper userMapper;
     @Resource
     private MarkingMapperV1 markingMapperV1;
-
-    /**
-     * 异步删除文件
-     *
-     * @param file
-     * @throws InterruptedException
-     */
-    @Async
-    public void deleteFileTask(File file) throws InterruptedException {
-        long startTime = System.currentTimeMillis();
-        AtomicInteger count = new AtomicInteger(0);
-        for (; ; ) {
-            Thread.sleep(1000);
-            if (file.exists() && file.delete()) {
-                long endTime = System.currentTimeMillis();
-                log.info("[{}] async delete file success:{},cost {} ms,cas count:{}", Thread.currentThread().getName(), file.getAbsolutePath(), endTime - startTime, count.getAndIncrement());
-                break;
-            }
-            if (count.getAndIncrement() > 5000) {
-                break;
-            }
-        }
-    }
-
 
     @SneakyThrows
     @Async
@@ -208,7 +183,7 @@ public class AsyncTask {
                     JsonFactory jfs = new MappingJsonFactory();
                     JsonParser jpr = jfs.createParser(newBfs);
                     //存放标注者id
-                    Set<String> userIdList=new HashSet<>();
+                    Set<String> userIdList = new HashSet<>();
                     JsonToken currents;
                     currents = jpr.nextToken();
                     //循环获取json中用户信息
@@ -232,10 +207,10 @@ public class AsyncTask {
                         }
                     }
                     //删除json中标注者的标注数据
-                    for(String user:userIdList){
+                    for (String user : userIdList) {
                         QueryWrapper<Marking> markingQueryWrapperBy = new QueryWrapper<>();
                         markingQueryWrapperBy.eq("create_by", user);
-                         markingQueryWrapperBy.eq("slide_id", slide.getSlideId());
+                        markingQueryWrapperBy.eq("slide_id", slide.getSlideId());
                         markingMapperV1.delete(markingQueryWrapperBy);
                     }
                     // 查询切片详情

@@ -28,7 +28,7 @@ public class SysUserController {
     @ApiOperation(value = "根据用户id查询用户列表")
     @PostMapping("/selectUserIdList")
     public R<List<cn.staitech.anno.project.domain.SysUser>> selectUserIdList(@RequestBody SelectUserIdListIn req) {
-        if(req.getUserIdList().size() < 1){
+        if (req.getUserIdList().size() < 1) {
             return R.ok(new ArrayList<>());
         }
         QueryWrapper<cn.staitech.anno.project.domain.SysUser> sysUserQueryWrapper = new QueryWrapper<>();

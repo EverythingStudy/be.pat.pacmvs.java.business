@@ -65,9 +65,8 @@ public class ParseJsonUtil {
         return resp;
     }
 
-    public static void main(String[] args) throws IOException {
-        String url = "D:/2.0json/20230728112533212_2320.svs_1_116001-116111-116F00-116156-116008-11601E-11601F-116009-116155-11600C-116154_1696840876185.json";
-
-        parseJson(url, 0);
-    }
+//    public static void main(String[] args) throws IOException {
+//        String url = "D:/2.0json/20230728112533212_2320.svs_1_116001-116111-116F00-116156-116008-11601E-11601F-116009-116155-11600C-116154_1696840876185.json";
+//        parseJson(url, 0);
+//    }
 }

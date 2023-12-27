@@ -1,9 +1,8 @@
 package cn.staitech.anno.vo.files.in;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 
@@ -13,7 +12,7 @@ import javax.validation.constraints.NotNull;
  * @Description: 文件上传VO
  */
 @Data
-public class FileUploadVO{
+public class FileUploadVO {
     @ApiModelProperty(value = "业务类型(1原始切片，2预测图片，3切片信息表CSV，4:json压缩包(zip)")
     private Integer businessType;
 

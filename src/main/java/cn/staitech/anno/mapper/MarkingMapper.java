@@ -1,10 +1,12 @@
 package cn.staitech.anno.mapper;
 
+import cn.staitech.anno.domain.MarkingStatistic;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.JsonExport;
 import cn.staitech.anno.vo.geojson.Properties;
 import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
+import cn.staitech.anno.vo.marking.MarkingStatisticSelectVO;
 import cn.staitech.anno.vo.marking.PointCount;
 import cn.staitech.anno.vo.slide.SlideRes;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -37,7 +39,7 @@ public interface MarkingMapper extends BaseMapper<Marking> {
      */
     List<Features> selectLists(Long slideId);
 
-    List<Features> selectFilterCategoryLists(Map<String,Object> map);
+    List<Features> selectFilterCategoryLists(Map<String, Object> map);
 
 
     /**
@@ -88,28 +90,6 @@ public interface MarkingMapper extends BaseMapper<Marking> {
      */
     List<PointCount> selectCategoryCountList(Long slideId);
 
-//    /**
-//     * 根据主键查询详情信息
-//     * @param markingId 标注id
-//     * @return true || false
-//     */
-//    Marking selectById(Long markingId);
-
-    /**
-     * 添加标注
-     * @param marking 标注数据
-     * @return true || false
-     */
-//    int insert(Marking marking);
-
-    /**
-     * 删除标注
-     * @param marking 标注数据
-     * @return true || false
-     */
-//    int update(Marking marking);
-
-
     /**
      * 更新标注点数
      *
@@ -126,5 +106,19 @@ public interface MarkingMapper extends BaseMapper<Marking> {
      */
     int delete(String markingId);
 
+    /**
+     * 标签统计
+     *
+     * @param selectVO
+     * @return
+     */
+    List<MarkingStatistic> selectMarkingStatistic(MarkingStatisticSelectVO selectVO);
 
+    /**
+     * 标签统计 - count
+     *
+     * @param marking
+     * @return
+     */
+    Long selectMarkingNum(cn.staitech.anno.vo.marking.Marking marking);
 }

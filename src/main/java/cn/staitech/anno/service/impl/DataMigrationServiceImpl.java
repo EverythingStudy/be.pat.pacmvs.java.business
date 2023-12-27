@@ -1,38 +1,17 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.domain.DataMigration;
-import cn.staitech.anno.domain.ExamineScore;
-import cn.staitech.anno.domain.Image;
-import cn.staitech.anno.domain.QuestionBank;
-import cn.staitech.anno.domain.RecentlyVisited;
-import cn.staitech.anno.mapper.AlgorithmAssessmentMapper;
-import cn.staitech.anno.mapper.AlgorithmJsonMapper;
-import cn.staitech.anno.mapper.ExamineScoreMapper;
-import cn.staitech.anno.mapper.FilesMapper;
-import cn.staitech.anno.mapper.ImageMapper;
-import cn.staitech.anno.mapper.ProjectMapper;
-import cn.staitech.anno.mapper.QuestionBankMapper;
-import cn.staitech.anno.mapper.RecentlyVisitedMapper;
-import cn.staitech.anno.mapper.SlideMapper;
-import cn.staitech.anno.mapper.SysUserMapper;
+import cn.staitech.anno.domain.*;
+import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.mapper.MarkingMapperV1;
 import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.project.service.MarkingServiceV1;
-import cn.staitech.anno.service.AlgorithmAssessmentService;
-import cn.staitech.anno.service.AlgorithmJsonService;
-import cn.staitech.anno.service.DataMigrationService;
-import cn.staitech.anno.service.ExamineScoreService;
-import cn.staitech.anno.service.FilesService;
-import cn.staitech.anno.service.IQuestionBankService;
-import cn.staitech.anno.service.ImageService;
-import cn.staitech.anno.service.RecentlyVisitedService;
+import cn.staitech.anno.service.*;
 import cn.staitech.anno.utils.StatisticListUtils;
 import cn.staitech.anno.vo.algorithm.AlgorithmAssessment;
 import cn.staitech.anno.vo.algorithm.AlgorithmJson;
 import cn.staitech.anno.vo.files.Files;
-import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.StringUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -56,59 +35,54 @@ import java.util.List;
 @Slf4j
 public class DataMigrationServiceImpl implements DataMigrationService {
     @Resource
+    SysUserMapper sysUserMapper;
+    @Resource
+    ProjectMapperV1 projectMapperV1;
+    @Resource
     private ImageMapper imageMapper;
     @Autowired
     private ImageService imageService;
-
     @Resource
     private AlgorithmAssessmentMapper algorithmAssessmentMapper;
     @Autowired
     private AlgorithmAssessmentService algorithmAssessmentService;
-
     @Resource
     private ProjectMapper projectMapper;
-
     @Resource
     private AlgorithmJsonMapper algorithmJsonMapper;
     @Autowired
     private AlgorithmJsonService algorithmJsonService;
-
     @Resource
     private SlideMapper slideMapper;
-
     @Resource
     private ExamineScoreMapper examineScoreMapper;
     @Autowired
     private ExamineScoreService examineScoreService;
-
     @Resource
     private FilesMapper filesMapper;
     @Autowired
     private FilesService filesService;
-
-
     @Resource
     private MarkingMapperV1 markingMapperV1;
     @Autowired
     private MarkingServiceV1 markingServiceV1;
-
     @Resource
     private QuestionBankMapper questionBankMapper;
     @Resource
     private IQuestionBankService iquestionBankService;
-
     @Resource
     private RecentlyVisitedMapper recentlyVisitedMapper;
     @Autowired
     private RecentlyVisitedService recentlyVisitedService;
 
-
-    @Resource
-    SysUserMapper sysUserMapper;
-
-    @Resource
-    ProjectMapperV1 projectMapperV1;
-
+    public static void main(String[] args) {
+        String s = "/home/pat_saas/Slides/TEST123456/20230725153323334_1978.tif";
+        String replace = s.replace("/home/pat_saas", "/home/pat_saas/" + StatisticListUtils.getFourNumberNoSlide(25L));
+        System.out.println(replace);
+        String s2 = "/file/statics/thumbnail/20231108/259/0.jpg";
+        String re = s2.replace("/file/statics", "/file/statics/" + StatisticListUtils.getFourNumber(26L));
+        System.out.println(re);
+    }
 
     @Override
     public int imageData() {
@@ -257,7 +231,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
             if (markings.size() > 0) {
                 markings.forEach(e -> {
                     Project project = projectMapperV1.selectById(e.getProjectId());
-                    if (StringUtils.isNotEmpty(e.getImageUrl())&& !ObjectUtils.isEmpty(project)) {
+                    if (StringUtils.isNotEmpty(e.getImageUrl()) && !ObjectUtils.isEmpty(project)) {
                         e.setImageUrl(e.getImageUrl().replace("/home/pat_saas", "/home/pat_saas/" + StatisticListUtils.getFourNumberNoSlide(project.getOrganizationId())));
                     }
                 });
@@ -327,15 +301,5 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         dataMigration.setRecentlyVisitedData(recentlyVisitedData());
 
         return dataMigration;
-    }
-
-
-    public static void main(String[] args) {
-        String s = "/home/pat_saas/Slides/TEST123456/20230725153323334_1978.tif";
-        String replace = s.replace("/home/pat_saas", "/home/pat_saas/" + StatisticListUtils.getFourNumberNoSlide(25L));
-        System.out.println(replace);
-        String s2 = "/file/statics/thumbnail/20231108/259/0.jpg";
-        String re = s2.replace("/file/statics", "/file/statics/" + StatisticListUtils.getFourNumber(26L));
-        System.out.println(re);
     }
 }

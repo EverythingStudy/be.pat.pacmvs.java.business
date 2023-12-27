@@ -1,7 +1,6 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.DataMigration;
-import cn.staitech.common.core.domain.R;
 
 /**
  * @Author wudi
@@ -9,15 +8,22 @@ import cn.staitech.common.core.domain.R;
  * @desc 数据迁移
  */
 public interface DataMigrationService {
-     int imageData();
-     int assessmentData();
-     int algorithmJsonData();
-     int examineScoreData();
-     int filesData();
-     int markingData();
-     int questionBankData();
-     int recentlyVisitedData();
+    int imageData();
 
-     DataMigration otherMarking();
+    int assessmentData();
+
+    int algorithmJsonData();
+
+    int examineScoreData();
+
+    int filesData();
+
+    int markingData();
+
+    int questionBankData();
+
+    int recentlyVisitedData();
+
+    DataMigration otherMarking();
 
 }

@@ -2,6 +2,7 @@ package cn.staitech.anno.vo.project;
 
 import cn.staitech.anno.vo.eyeslide.EyeProjectSlideOut;
 import cn.staitech.anno.vo.image.out.ImageListOutVO;
+import cn.staitech.anno.vo.labelprojectstatistics.ProjectLabelOut;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -30,4 +31,7 @@ public class ProjectDelVO {
 
     @ApiModelProperty(value = "", hidden = true)
     private List<ImageListOutVO> results;
+
+    @ApiModelProperty(value = "", hidden = true)
+    private List<ProjectLabelOut> resultList;
 }

@@ -1,10 +1,8 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.Image;
-import cn.staitech.anno.vo.image.in.ImageListVO;
 import cn.staitech.anno.vo.image.in.ImageTopicBatchIdsVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -48,16 +46,6 @@ public interface ImageMapper extends BaseMapper<Image> {
      */
     Image selectById(Long imageId);
 
-
-    /**
-     * 查询图像列表 - 通过 projectId 查询
-     *
-     * @param projectId
-     * @return
-     */
-    List<ImageListVO> selectImageListByPorjectId(Long projectId);
-
-
     /**
      * 通过图片ID查询切片
      *
@@ -65,7 +53,6 @@ public interface ImageMapper extends BaseMapper<Image> {
      * @return
      */
     Integer selectSlideCountByImageId(Long imageId);
-
 
     /**
      * 标注组选片入口预览图像列表
@@ -98,5 +85,4 @@ public interface ImageMapper extends BaseMapper<Image> {
      * @return
      */
     int deleteById(Long imageId);
-
 }

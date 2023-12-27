@@ -15,6 +15,7 @@ public interface RecentlyVisitedService extends IService<RecentlyVisited> {
 
     /**
      * 查询用户的最近访问
+     *
      * @return List
      */
     List<RecentlyVisitedSelectVO> selectList();

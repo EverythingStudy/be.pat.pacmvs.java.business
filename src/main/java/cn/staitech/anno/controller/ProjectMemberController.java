@@ -1,7 +1,8 @@
 package cn.staitech.anno.controller;
 
 import cn.staitech.anno.domain.ProjectMember;
-import cn.staitech.anno.domain.RecentlyVisited;import cn.staitech.anno.project.domain.Project;
+import cn.staitech.anno.domain.RecentlyVisited;
+import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.service.ProjectMemberService;
 import cn.staitech.anno.service.RecentlyVisitedService;

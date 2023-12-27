@@ -49,7 +49,7 @@ public class Structure {
      */
     @ApiModelProperty(value = "脏器ID", required = true)
     private String organId;
-    
+
     @ApiModelProperty(value = "RO：结构类型  ROA:标注区域 ROE:考核区域", required = true)
     private String type;
 

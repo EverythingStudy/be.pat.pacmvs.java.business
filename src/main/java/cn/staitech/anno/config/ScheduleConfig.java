@@ -7,13 +7,12 @@ import org.springframework.stereotype.Component;
 
 /**
  * 读取定时任务相关配置
- *
  */
 @Data
 @Component
 @ConfigurationProperties(prefix = "schedule")
 public class ScheduleConfig {
     private String cron;
-    
+
 }
 

@@ -1,10 +1,9 @@
 package cn.staitech.anno.service;
 
+import cn.staitech.anno.domain.AlgorithmModel;
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import cn.staitech.anno.domain.AlgorithmModel;
-
-public interface AlgorithmModelService extends IService<AlgorithmModel>{
+public interface AlgorithmModelService extends IService<AlgorithmModel> {
 
 //    /**
 //     * 查询算法

@@ -20,6 +20,7 @@ public interface ImageService extends IService<Image> {
 
     /**
      * 切片状态列表
+     *
      * @return
      */
     List<ImageStatus> status();
@@ -72,8 +73,15 @@ public interface ImageService extends IService<Image> {
      */
     List<Image> selectImageAnnotationList(Image image);
 
-    List<Long> deleteBatchIds(ImageBatchIdsVO ids) throws InterruptedException;
+    List<Long> deleteBatchIds(ImageBatchIdsVO ids) throws Exception;
 
     int updateById(ImageUpdateVO vo) throws Exception;
 
+    /**
+     * 检查是否存在否合条件的记录
+     *
+     * @param image
+     * @return
+     */
+    boolean exists(Image image) throws Exception;
 }

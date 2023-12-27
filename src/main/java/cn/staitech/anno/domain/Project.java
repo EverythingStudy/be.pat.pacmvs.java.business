@@ -162,7 +162,7 @@ public class Project extends BaseEntity {
     @TableField(exist = false)
     @ApiModelProperty(value = "品系名称")
     private String productSeries;
-    
+
     @TableField(exist = false)
     @ApiModelProperty(value = "eye项目类型")
     private Integer[] projectTypeArray;
@@ -183,27 +183,28 @@ public class Project extends BaseEntity {
 
     @ApiModelProperty(value = "病理组织id")
     private Long tissueId;
-    
+
     @TableField(exist = false)
     @ApiModelProperty(value = "病理组织名称")
     private String tissueName;
-    
+
     @TableField(exist = false)
     @ApiModelProperty(value = "病理组织英文名称")
     private String tissueNameEn;
-    
+
     @TableField(exist = false)
     @ApiModelProperty(value = "算法模型名称")
     private String modelName;
-    
+
     @TableField(exist = false)
     @ApiModelProperty(value = "算法模型英文名称")
     private String modelNameEn;
-    
+
     @TableField(exist = false)
     @ApiModelProperty(value = "项目参与人")
     private Long partUserId;
 
+    @TableField(exist = false)
     @ApiModelProperty(value = "创建者名称")
     @TableField(exist = false)
     private String userName;

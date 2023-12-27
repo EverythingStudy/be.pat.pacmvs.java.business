@@ -7,12 +7,12 @@ package cn.staitech.anno.constant;
  */
 public class CommonConstant {
 
-	 /**
+    /**
      * system
      */
-	
-	public static final String SYS_USER = "SYS_USER_";
-	public static final Long SYS_USER_CACHE_HOURS = 7L;
+
+    public static final String SYS_USER = "SYS_USER_";
+    public static final Long SYS_USER_CACHE_HOURS = 7L;
     /**
      * cache key
      */
@@ -36,21 +36,7 @@ public class CommonConstant {
     public static final String HEADER = "Content-Disposition";
     public static final Integer NOT_START_REVIEW = 0;
     public static final Integer SUBMIT_REVIEW = 3;
-    /**
-     * Project
-     */
-    public static final String NONE = "none";
-    public static final String REGIONS = "regions";
-    public static final String REGION_ATTRIBUTES = "region_attributes";
-    public static final String BONE_MARROW = "bone_marrow";
-    public static final String SHAPE_ATTRIBUTES = "shape_attributes";
-    public static final String ALL_POINTS_X = "all_points_x";
-    public static final String ALL_POINTS_Y = "all_points_y";
-    public static final String NAME = "name";
-    public static final String POLYGON_WITH_HOLES = "polygon_with_holes";
-    public static final String CHILDREN_CNTS = "children_cnts";
-    public static final String VIA_IMG_METADATA = "_via_img_metadata";
-    public static final String LOGIN_TOKEN_KEY = "login_tokens:";
+
     /**
      * Annotation
      */
@@ -69,22 +55,19 @@ public class CommonConstant {
     public static final String ANNO_MARKING = "ANNO_MARKING_";
     public static final Long MARKING_CACHE_HOURS = 24L;
     public static final String ANNO_TYPE_DRAW = "Draw";
-    public static final String ANNO_TYPE_AI = "AI";
     public static final String ANNO_TYPE_MEASURE = "Measure";
 
-
-    
     /**
      * 上传下载限制
      */
     public static final double UPLOAD_FILE_LIMIT = 300;
     public static final double DOWN_FILE_LIMIT = 300;
-    
+
     /**
      * Viewer
      */
     public static final Double MICRON = 0.26;
-    
+
     /**
      * structure
      */
@@ -94,10 +77,7 @@ public class CommonConstant {
     public static final Integer STRUCTURE_ROA_GROUP_NUMBER = 1;
     public static final Integer STRUCTURE_ROE_GROUP_NUMBER = 2;
     public static final Integer STRUCTURE_RO_GROUP_NUMBER = 3;
-    //5L：天津血研所
-    public static final Long[] ORGANIZATION_ID = {5L};
 
-    
     /**
      * Statistic
      */
@@ -105,16 +85,7 @@ public class CommonConstant {
     public static final int THIRTY_ONE_DAY = 31;
     public static final int ONE_YEAR = 366;
     public static final int THREE_YEAR = 1096;
-    /**
-     * Special Role
-     */
-    public static final String RESP = "resp";
-    public static final String ANNO = "anno";
-    public static final String READ = "read";
-    public static final Long[] RESPONSIBLE_MENU = {1001L, 1002L, 1003L, 1004L, 1005L, 1006L, 1007L, 1008L, 1009L, 1010L, 1011L, 1012L, 1013L, 1014L, 1015L, 1016L, 1017L, 1018L, 1019L, 1020L, 1021L, 1022L, 1023L, 1024L, 1025L, 1026L, 1027L, 1028L, 1029L};
-    public static final Long[] ANNOTATOR_MENU = {1001L, 1003L, 1004L, 1008L, 1009L, 1010L, 1011L, 1012L, 1013L, 1014L, 1015L};
-    public static final Long[] READER_MENU = {1002L, 1005L, 1006L, 1007L, 1016L, 1017L, 1018L, 1019L, 1020L, 1021L, 1022L, 1023L, 1024L, 1025L, 1026L, 1027L, 1028L, 1029L};
-    public static final String[] SPECIAL_ROLE_TYPE = new String[]{"专题负责人", "标注员", "普通阅片员"};
+
     /**
      * ProjectRole:构造3个默认项目角色类型：1、项目代表；2、项目管理者；3、项目贡献者
      */
@@ -131,6 +102,15 @@ public class CommonConstant {
      */
     public static final String[] MEASURE_COLHEAD_KEY = {"名称", "周长/长度", "面积", "内角", "外角", "平均间距", "最小间距", "最大间距", "总数", "测量人", "创建时间"};
     public static final String[] MEASURE_COLHEAD_VALUE = {"measure_full_name", "perimeter", "area", "inner_angle", "exterior_angle", "mean_distance", "min_distance", "max_distance", "point_count", "annotation_owner", "create_time"};
+    
+    /**
+     * 图像标注统计
+     */
+    public static final String SLIDE_COUNT_DATA_SEARCH_TITLE = "图像标注统计导出";
+    public static final String[] SLIDE_COUNT_COLHEAD_KEY = {"项目名称", "用户", "图像数量", "标注总数", "项目状态"};
+    public static final String[] SLIDE_COUNT_COLHEAD_VALUE = {"projectName", "nickName", "imageCount", "markingNum", "statusDesc"};
+    
+    
     /**
      * Excel表头 - Export
      */
@@ -145,6 +125,26 @@ public class CommonConstant {
     public static final String ANNOTATION_CATEGORY = "标注类别";
     public static final String USER = "成员";
     public static final String SLIDE = "图像";
+
+
+    /**
+     * 标注统计表头
+     */
+    public static final String[] LABEL_STATISTICS_KEY = {"项目名称", "标签集", "标签", "图像数量", "标注总数", "项目状态"};
+    public static final String[] LABEL_STATISTICS_VALUE = {"projectName", "indicatorName", "categoryName", "imageNum", "markingNum", "statusName"};
+
+    /**
+     * 项目统计表头
+     */
+    public static final String[] PROJECT_STATISTICS_KEY = {"项目名称", "图像数量", "标注总数", "创建者", "描述", "创建时间", "项目状态"};
+    public static final String[] PROJECT_STATISTICS_VALUE = {"projectName", "imageNum", "markingNum", "userName", "description", "createTime", "statusName"};
+
+    /**
+     * 智能标注-标注统计-用户标签统计-excel导出
+     */
+    public static final String[] MARKING_STATISTICS_KEY = {"项目名称", "用户", "标签集", "标签", "标注总数"};
+    public static final String[] MARKING_STATISTICS_VALUE = {"projectName", "nickName", "indicatorName", "categoryName", "markingNum"};
+
     private CommonConstant() {
         throw new IllegalStateException("CommonConstant class");
     }

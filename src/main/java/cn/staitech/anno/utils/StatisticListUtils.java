@@ -17,7 +17,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.text.NumberFormat;
@@ -424,6 +423,32 @@ public class StatisticListUtils {
     }
 
     /**
+     * 机构数字格式化
+     *
+     * @param number
+     * @return C012
+     */
+    public static String getFourNumberNoSlide(Long number) {
+        NumberFormat formatter = NumberFormat.getNumberInstance();
+        formatter.setMinimumIntegerDigits(3);
+        formatter.setGroupingUsed(false);
+        return "C" + formatter.format(number);
+    }
+
+    /**
+     * 数字格式化
+     *
+     * @param number
+     * @return C012\Slides
+     */
+    public static String getFourNumber(Long number) {
+        NumberFormat formatter = NumberFormat.getNumberInstance();
+        formatter.setMinimumIntegerDigits(3);
+        formatter.setGroupingUsed(false);
+        return "C" + formatter.format(number) + "/Slides";
+    }
+
+    /**
      * 判断startTime、endTime值，并返回日期差
      *
      * @param statisticList 细分筛选查询入参
@@ -580,31 +605,6 @@ public class StatisticListUtils {
         StatisticListUtils.statisticListDateOut(statisticList, statisticListRep, resp,
                 statisticCategoryDictLabel, statisticDimensionDictLabel, daysBetween);
         return statisticListRep;
-    }
-
-    /**
-     * 机构数字格式化
-     * @param number
-     * @return C012
-     */
-    public static String getFourNumberNoSlide(Long number){
-        NumberFormat formatter = NumberFormat.getNumberInstance();
-        formatter.setMinimumIntegerDigits(3);
-        formatter.setGroupingUsed(false);
-        return "C"+formatter.format(number);
-    }
-
-
-    /**
-     * 数字格式化
-     * @param number
-     * @return C012\Slides
-     */
-    public static String getFourNumber(Long number){
-        NumberFormat formatter = NumberFormat.getNumberInstance();
-        formatter.setMinimumIntegerDigits(3);
-        formatter.setGroupingUsed(false);
-        return "C"+formatter.format(number)+ "/Slides";
     }
 
 

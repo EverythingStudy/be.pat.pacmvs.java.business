@@ -23,8 +23,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cn.staitech.anno.constant.CommonConstant.THREE_YEAR;
 import static cn.staitech.anno.aspect.LogFileAspect.response;
+import static cn.staitech.anno.constant.CommonConstant.THREE_YEAR;
+
 @Service
 @Slf4j
 public class StatisticServiceImpl implements StatisticService {
@@ -379,6 +380,7 @@ public class StatisticServiceImpl implements StatisticService {
 
     /**
      * 切片维度
+     *
      * @param req
      * @throws IOException
      */
@@ -404,8 +406,8 @@ public class StatisticServiceImpl implements StatisticService {
         //表格数据
         List<List<Object>> datas = new ArrayList<>();
 
-        if(!CollectionUtils.isEmpty(projectOutList)){
-            projectOutList.forEach(e->{
+        if (!CollectionUtils.isEmpty(projectOutList)) {
+            projectOutList.forEach(e -> {
                 List<Object> temp = new ArrayList<>();
                 temp.add(e.getSlideId());
                 temp.add(e.getImageName());
@@ -413,8 +415,8 @@ public class StatisticServiceImpl implements StatisticService {
                 temp.add(e.getProjectName());
                 temp.add(e.getDescription());
                 temp.add(e.getMarkingTotal());
-                if(!CollectionUtils.isEmpty(categoryList)){
-                    categoryList.forEach(category->{
+                if (!CollectionUtils.isEmpty(categoryList)) {
+                    categoryList.forEach(category -> {
                         int i = statisticMapper.countSlideByProject(e.getSlideId(), category.getCategoryId());
                         temp.add(i);
                     });
@@ -425,16 +427,17 @@ public class StatisticServiceImpl implements StatisticService {
 
         ExcelWriter head = EasyExcel.write(response.getOutputStream()).build();
         WriteSheet mb1 = EasyExcel.writerSheet(0, "项目切片数据").head(header).registerWriteHandler(new SimpleColumnWidthStyleStrategy(32)).build();
-        head.write(datas,mb1);
+        head.write(datas, mb1);
         head.finish();
     }
 
     /**
      * 参与者维度
+     *
      * @param req
      */
     @Override
-    public void exportOrderMember(ExportOrderProjectIn req) throws IOException{
+    public void exportOrderMember(ExportOrderProjectIn req) throws IOException {
         log.info("标注统计参与者维度导出接口开始！");
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("utf-8");
@@ -455,21 +458,21 @@ public class StatisticServiceImpl implements StatisticService {
         //表格数据
         List<List<Object>> datas = new ArrayList<>();
 
-        if(!CollectionUtils.isEmpty(projectOuts)){
-            projectOuts.forEach(e->{
+        if (!CollectionUtils.isEmpty(projectOuts)) {
+            projectOuts.forEach(e -> {
                 List<Object> temp = new ArrayList<>();
                 temp.add("saas2.0");
                 temp.add(e.getProjectName());
                 temp.add(e.getUserName());
                 temp.add(e.getMarkingTotal());
-                temp.add(e.getNotReviewed()!=null?e.getNotReviewed():0);
-                temp.add(e.getReviewed()!=null?e.getReviewed():0);
-                if(!CollectionUtils.isEmpty(categoryList)){
-                    categoryList.forEach(category->{
+                temp.add(e.getNotReviewed() != null ? e.getNotReviewed() : 0);
+                temp.add(e.getReviewed() != null ? e.getReviewed() : 0);
+                if (!CollectionUtils.isEmpty(categoryList)) {
+                    categoryList.forEach(category -> {
                         CountMembersByProjecOut projecOuts = statisticMapper.countMembersByProject(e.getProjectId(), e.getUserId(), category.getCategoryId());
                         temp.add(projecOuts.getMarkingTotal());
-                        temp.add(projecOuts.getNotReviewed()!=null?e.getNotReviewed():0);
-                        temp.add(projecOuts.getReviewed()!=null?e.getReviewed():0);
+                        temp.add(projecOuts.getNotReviewed() != null ? e.getNotReviewed() : 0);
+                        temp.add(projecOuts.getReviewed() != null ? e.getReviewed() : 0);
                     });
                 }
                 datas.add(temp);
@@ -478,12 +481,13 @@ public class StatisticServiceImpl implements StatisticService {
 
         ExcelWriter head = EasyExcel.write(response.getOutputStream()).build();
         WriteSheet mb1 = EasyExcel.writerSheet(0, "项目切片数据").head(header).registerWriteHandler(new SimpleColumnWidthStyleStrategy(32)).build();
-        head.write(datas,mb1);
+        head.write(datas, mb1);
         head.finish();
     }
 
     /**
      * 创建表头
+     *
      * @param categoryList
      * @return
      */
@@ -507,10 +511,10 @@ public class StatisticServiceImpl implements StatisticService {
         List<String> cellContain5 = new ArrayList<>();
         cellContain5.add("图像标注总数");
         header.add(cellContain5);
-        if(!CollectionUtils.isEmpty(categoryList)){
-            categoryList.forEach(e->{
-               List<String> objects = new ArrayList<>();
-                objects.add(e.getCategoryName()+"数量");
+        if (!CollectionUtils.isEmpty(categoryList)) {
+            categoryList.forEach(e -> {
+                List<String> objects = new ArrayList<>();
+                objects.add(e.getCategoryName() + "数量");
                 header.add(objects);
             });
         }
@@ -541,18 +545,18 @@ public class StatisticServiceImpl implements StatisticService {
         cellContain5.add("all总数");
         cellContain5.add("复核后");
         header.add(cellContain5);
-        if(!CollectionUtils.isEmpty(categoryList)){
-            categoryList.forEach(e->{
+        if (!CollectionUtils.isEmpty(categoryList)) {
+            categoryList.forEach(e -> {
                 List<String> objects1 = new ArrayList<>();
-                objects1.add(e.getCategoryName()+"总数");
+                objects1.add(e.getCategoryName() + "总数");
                 objects1.add("总数");
                 header.add(objects1);
                 List<String> objects2 = new ArrayList<>();
-                objects2.add(e.getCategoryName()+"总数");
+                objects2.add(e.getCategoryName() + "总数");
                 objects2.add("复核前");
                 header.add(objects2);
                 List<String> objects3 = new ArrayList<>();
-                objects3.add(e.getCategoryName()+"总数");
+                objects3.add(e.getCategoryName() + "总数");
                 objects3.add("复核后");
                 header.add(objects3);
             });

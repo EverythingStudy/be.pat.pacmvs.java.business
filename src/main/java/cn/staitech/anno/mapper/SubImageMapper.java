@@ -1,9 +1,9 @@
 package cn.staitech.anno.mapper;
 
+import cn.staitech.anno.domain.SubImage;
 import cn.staitech.anno.vo.image.ImageRelVO;
 import cn.staitech.anno.vo.organization.SysOrganizationAuthorization;
 import cn.staitech.anno.vo.slide.SubImageVO;
-import cn.staitech.anno.domain.SubImage;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;

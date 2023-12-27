@@ -3,8 +3,14 @@ package cn.staitech.anno.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.constant.Container;
-import cn.staitech.anno.domain.*;
-import cn.staitech.anno.mapper.*;
+import cn.staitech.anno.domain.Project;
+import cn.staitech.anno.domain.RecentlyVisited;
+import cn.staitech.anno.domain.Slide;
+import cn.staitech.anno.domain.SlideAnnotationResult;
+import cn.staitech.anno.mapper.ProjectMapper;
+import cn.staitech.anno.mapper.QuestionProjectRelMapper;
+import cn.staitech.anno.mapper.RecentlyVisitedMapper;
+import cn.staitech.anno.mapper.SlideMapper;
 import cn.staitech.anno.service.ProjectService;
 import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
@@ -17,7 +23,6 @@ import cn.staitech.anno.vo.question.out.GetQuestionListOut;
 import cn.staitech.anno.vo.slide.SlideCategoryProcessFlagVO;
 import cn.staitech.anno.vo.statistic.StatisticProjectListOutVO;
 import cn.staitech.common.security.utils.SecurityUtils;
-import com.alibaba.nacos.client.config.utils.ContentUtils;
 import com.alibaba.nacos.common.utils.CollectionUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -387,9 +392,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         List<Long> idList = request.getProjectIds();
         AtomicInteger processCount = new AtomicInteger(0);
         for (Long projectId : idList) {
-            List<Slide> slideList=slideMapper.getProjectInformation(projectId);
+            List<Slide> slideList = slideMapper.getProjectInformation(projectId);
             //判断是否有关联的slide
-            if (CollectionUtil.isNotEmpty(slideList)){
+            if (CollectionUtil.isNotEmpty(slideList)) {
                 return -1;
             }
             Project project = new Project();
@@ -399,9 +404,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             QueryWrapper queryWrapper = new QueryWrapper<>(project);
 
             Project delProject = getOne(queryWrapper);
-            if (Objects.equals(delProject.getProjectType(), "4")){
-                List<GetQuestionListOut> getQuestionListOuts=questionProjectRelMapper.selectListByProject(projectId);
-                if (CollectionUtils.isNotEmpty(getQuestionListOuts)){
+            if (Objects.equals(delProject.getProjectType(), "4")) {
+                List<GetQuestionListOut> getQuestionListOuts = questionProjectRelMapper.selectListByProject(projectId);
+                if (CollectionUtils.isNotEmpty(getQuestionListOuts)) {
                     return -1;
                 }
             }

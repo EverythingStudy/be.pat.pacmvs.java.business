@@ -4,7 +4,7 @@ import java.text.NumberFormat;
 
 public class OrganizationUtils {
 
-    public static String geNumber(Long organizationId){
+    public static String geNumber(Long organizationId) {
         NumberFormat formatter = NumberFormat.getNumberInstance();
         formatter.setMinimumIntegerDigits(3);
         formatter.setGroupingUsed(false);

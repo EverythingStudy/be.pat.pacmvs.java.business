@@ -11,10 +11,10 @@ public class CustomizationIdUtils {
     private static final String LABEL_NAME = "labelname";
     private static final String MEASURE_NAME = "measure_name";
 
-    public static void main(String[] args) {
-        String res = AI + LABEL_NAME + MillisDefaultZone() + RandomNumbers();
-        System.out.println(res);
-    }
+//    public static void main(String[] args) {
+//        String res = AI + LABEL_NAME + MillisDefaultZone() + RandomNumbers();
+//        System.out.println(res);
+//    }
 
     public static String getAiId() {
         return AI + LABEL_NAME + MillisDefaultZone() + RandomNumbers();

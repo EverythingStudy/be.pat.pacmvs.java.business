@@ -1,8 +1,8 @@
 package cn.staitech.anno.service.remote;
 
 import cn.staitech.anno.vo.predictionInfo.in.PredictionInfoVO;
+import cn.staitech.anno.vo.special.AlgorithmCutImageVO;
 import cn.staitech.anno.vo.special.SpecialImage;
-import cn.staitech.anno.vo.specialimageanno.AlgorithmCutImageVO;
 import cn.staitech.common.core.constant.SecurityConstants;
 import cn.staitech.common.core.domain.R;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -27,8 +27,8 @@ public interface SlideImageService {
 
     @PostMapping("/slideNotice/batchAddSpecialImage")
     R batchAddSpecialImage(List<SpecialImage> list, @RequestHeader(SecurityConstants.FROM_SOURCE) String source);
-    
+
     @PostMapping("/predictionImage/uploadImage")
-    R uploadImage(@RequestBody PredictionInfoVO predictionInfoVO,@RequestHeader (SecurityConstants.FROM_SOURCE) String source);
+    R uploadImage(@RequestBody PredictionInfoVO predictionInfoVO, @RequestHeader(SecurityConstants.FROM_SOURCE) String source);
 
 }

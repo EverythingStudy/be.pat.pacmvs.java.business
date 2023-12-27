@@ -8,6 +8,6 @@ public interface PathologicalTissueService {
 
     /**
      * 查询项目类型下的病理组织和算法模型
-     * */
+     */
     List<PathologicalTissueVO> selectByPrimaryKey(Long projectTypeId);
 }

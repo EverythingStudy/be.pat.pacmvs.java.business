@@ -13,8 +13,8 @@ import java.io.Serializable;
  */
 @Data
 public class ImageCsvListVO extends ImageCsv implements Serializable {
-	
-	@ApiModelProperty(value = "文件夹名称")
+
+    @ApiModelProperty(value = "文件夹名称")
     private String folderName;
 
     @ApiModelProperty(value = "预测缩略图url")
@@ -25,7 +25,7 @@ public class ImageCsvListVO extends ImageCsv implements Serializable {
 
     @ApiModelProperty(value = "碎片状态默认为0校验通过，1校验不通过")
     private String eyeMent;
-    
+
     @ApiModelProperty(value = "文件夹url")
     private String folderUrl;
 }

@@ -10,6 +10,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.TimeZone;
@@ -21,6 +22,7 @@ import java.util.TimeZone;
  * @EnableFeignClients 此注解报错：Field remoteLogService in cn.staitech.common.log.service.AsyncLogService required a bean of
  * type 'cn.staitech.system.api.RemoteLogService' that could not be found.
  */
+@EnableRetry
 @EnableCustomConfig
 @EnableCustomSwagger2
 @EnableRyFeignClients

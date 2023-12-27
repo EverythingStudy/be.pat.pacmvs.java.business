@@ -2,8 +2,6 @@ package cn.staitech.anno.vo.project;
 
 import cn.staitech.common.core.annotation.Excel;
 import cn.staitech.common.core.web.domain.BaseEntity;
-
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -203,19 +201,19 @@ public class ProjectListVO extends BaseEntity {
 
     /**
      * 算法模型id
-     * */
+     */
     @ApiModelProperty(value = "算法模型id")
     private Long modelId;
 
     /**
      * 算法模型名称
-     * */
+     */
     @ApiModelProperty(value = "算法模型名称")
     private String modelName;
 
     /**
      * 算法模型名称en
-     * */
+     */
     @ApiModelProperty(value = "算法模型名称en")
     private String modelNameEn;
 
@@ -224,10 +222,9 @@ public class ProjectListVO extends BaseEntity {
 
     @ApiModelProperty(value = "病理组织名称")
     private String tissueName;
-    
+
     @ApiModelProperty(value = "病理组织英文名称")
     private String tissueNameEn;
-    
 
 
 }

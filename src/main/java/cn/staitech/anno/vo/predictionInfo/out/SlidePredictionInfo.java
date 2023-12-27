@@ -12,7 +12,7 @@ import lombok.Data;
  * @since 2023-11-02
  */
 @Data
-public class SlidePredictionInfo{
+public class SlidePredictionInfo {
 
 
     @ApiModelProperty(value = "切片预测ID")
@@ -23,13 +23,13 @@ public class SlidePredictionInfo{
 
     @ApiModelProperty(value = "图像ID")
     private Long imageId;
-    
+
     @ApiModelProperty(value = "图像名称")
     private String imageName;
-    
+
     @ApiModelProperty(value = "缩略图地址")
     private String thumbUrl;
-    
+
     @ApiModelProperty(value = "图像地址")
     private String imagePath;
 
@@ -38,17 +38,16 @@ public class SlidePredictionInfo{
 
     @ApiModelProperty(value = "是否是主图默认为2，1是，2否")
     private String mainImage;
-    
-    
+
+
     @ApiModelProperty(value = "描述")
     private String description;
 
     @ApiModelProperty(value = "机构ID")
     private Long organizationId;
-    
+
     @ApiModelProperty(name = "项目ID")
     private Long projectId;
-
 
 
 }

@@ -1,6 +1,5 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.config.AsyncTask;
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.Image;
@@ -9,8 +8,8 @@ import cn.staitech.anno.domain.SlidePrediction;
 import cn.staitech.anno.mapper.ImageMapper;
 import cn.staitech.anno.mapper.SlidePredictionMapper;
 import cn.staitech.anno.service.ImageService;
+import cn.staitech.anno.service.RetryService;
 import cn.staitech.anno.service.SlideService;
-import cn.staitech.anno.service.SysOrganizationService;
 import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
@@ -19,11 +18,14 @@ import cn.staitech.anno.vo.image.in.*;
 import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +44,7 @@ import static cn.staitech.common.security.utils.SecurityUtils.isAdmin;
  * 切片列表（原图像）服务层实现
  *
  * @author wangfeng
- * @date 2023/06/01
+ * @date 2023/12/20
  */
 @Slf4j
 @Service
@@ -52,11 +54,9 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
     @Resource
     private SlideService slideService;
     @Resource
-    private SysOrganizationService sysOrganizationService;
-    @Resource
-    private AsyncTask asyncTask;
-    @Resource
     private SlidePredictionMapper slidePredictionMapper;
+    @Resource
+    private RetryService retryService;
 
     /**
      * 切片状态列表 .
@@ -105,12 +105,10 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
             PageMaster pageMaster = new PageMaster<>(list);
             return pageMaster;
         });
-        // 异步查询所有的机构Map
-        CompletableFuture<Map<Long, String>> mapFuture = CompletableFuture.supplyAsync(() -> sysOrganizationService.selectMap());
 
         PageMaster<Image> pageMaster = listFuture.get();
         List<Image> list = pageMaster.getList();
-        Map<Long, String> map = mapFuture.get();
+
         // response List
         List<ImageListOutVO> respList = new ArrayList<>();
 
@@ -140,9 +138,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                 }
 
                 // 匹配机构名称
-                if (map.containsKey(in.getOrganizationId())) {
-                    out.setOrganizationName(map.get(in.getOrganizationId()));
-                }
+                out.setOrganizationName(MapConstant.getOrganizationName(in.getOrganizationId()));
 
                 // 图片类型
                 if (bizType == 7) {
@@ -216,12 +212,10 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
             PageMaster pageMaster = new PageMaster<>(list);
             return pageMaster;
         });
-        // 异步查询所有的机构Map
-        CompletableFuture<Map<Long, String>> mapFuture = CompletableFuture.supplyAsync(() -> sysOrganizationService.selectMap());
 
         PageMaster<Image> pageMaster = listFuture.get();
         List<Image> list = pageMaster.getList();
-        Map<Long, String> map = mapFuture.get();
+
         // response List
         List<ImageListOutVO> respList = new ArrayList<>();
 
@@ -251,10 +245,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                 }
 
                 // 匹配机构名称
-                if (map.containsKey(in.getOrganizationId())) {
-                    out.setOrganizationName(map.get(in.getOrganizationId()));
-                }
-
+                out.setOrganizationName(MapConstant.getOrganizationName(in.getOrganizationId()));
 
                 if (vo.getChoiceState() == null) {
                     // 查询选中状态
@@ -289,17 +280,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         //清除分页缓存
         PageHelper.clearPage();
         return resp;
-    }
-
-
-    /**
-     * 查询图像列表 - 通过 projectId 查询
-     *
-     * @param projectId
-     * @return
-     */
-    public List<ImageListVO> selectImageListByPorjectId(Long projectId) {
-        return imageMapper.selectImageListByPorjectId(projectId);
     }
 
     /**
@@ -356,7 +336,8 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
      * @return
      */
     @Override
-    public List<Long> deleteBatchIds(ImageBatchIdsVO ids) throws InterruptedException {
+    public List<Long> deleteBatchIds(ImageBatchIdsVO ids) throws Exception {
+        Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
         // 不可删除的列表
         List<Long> forbidIds = new ArrayList<>();
         for (Long imageId : ids.getImageIdList()) {
@@ -373,23 +354,24 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
                 String imagePath = image.getImagePath().trim();
 
                 // 若为空串,只删除SQL记录,跳出
-                if (imagePath.isEmpty()) {
+                if (StringUtils.isEmpty(imagePath)) {
                     imageMapper.deleteById(imageId);
                     continue;
                 }
 
-                // 查询相同路径的图像数量
+                // 查询当前机构下相同路径的图像数量
                 QueryWrapper<Image> imageQueryWrapper = new QueryWrapper<>();
                 imageQueryWrapper.eq("image_path", image.getImagePath().trim());
+                imageQueryWrapper.eq("organization_id", organizationId);
                 List<Image> imageList = imageMapper.selectList(imageQueryWrapper);
 
-                // 只有一条记录,SQL记录和文件全删除
-                if (imageList.size() == 1) {
-                    asyncTask.deleteFileTask(new File(image.getImagePath()));
-                    asyncTask.deleteFileTask(new File(image.getImageUrl()));
-                }
-
+                // 删除SQL记录
                 imageMapper.deleteById(imageId);
+
+                // 如果只有一条记录,删除文件
+                if (imageList.size() == 1) {
+                    removeImageFile(image);
+                }
             }
         }
         return forbidIds;
@@ -412,4 +394,44 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         return imageMapper.updateById(image);
     }
 
+    /**
+     * 检查是否存在符合条件的记录
+     *
+     * @param image
+     * @return
+     */
+    @Override
+    public boolean exists(Image image) throws Exception {
+        LambdaQueryWrapper<Image> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.select(Image::getImageId);
+        queryWrapper.eq(Image::getMd5, image.getMd5());
+        queryWrapper.eq(Image::getOrganizationId, image.getOrganizationId());
+        queryWrapper.orderByDesc(Image::getImageId);
+        queryWrapper.last("limit 1");
+        return this.baseMapper.selectOne(queryWrapper) != null;
+    }
+
+    /**
+     * 异步删除切片物理文件
+     *
+     * @param image
+     * @throws Exception
+     */
+    @Async
+    private void removeImageFile(Image image) throws Exception {
+        retryService.deleteFileRetry(new File(image.getImagePath()));
+
+        if (StringUtils.isNotEmpty(image.getImageUrl())) {
+            retryService.deleteFileRetry(new File(image.getImageUrl()));
+        }
+        if (StringUtils.isNotEmpty(image.getThumbUrl())) {
+            retryService.deleteFileRetry(new File(image.getThumbUrl().replace("/file/statics", "/home/pat_saas")));
+        }
+        if (StringUtils.isNotEmpty(image.getMacroUrl())) {
+            retryService.deleteFileRetry(new File(image.getMacroUrl().replace("/file/statics", "/home/pat_saas")));
+        }
+        if (StringUtils.isNotEmpty(image.getLabelUrl())) {
+            retryService.deleteFileRetry(new File(image.getLabelUrl().replace("/file/statics", "/home/pat_saas")));
+        }
+    }
 }
