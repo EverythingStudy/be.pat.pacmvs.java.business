@@ -61,7 +61,7 @@ public class ImageAnnoStatisticsController {
     //@RequiresPermissions("smartAnno:project:slice:export")
     @ApiOperation(value = "标注统计-图像标注统计导出")
     @PostMapping("/exportImageAnnoStatistics")
-    public void exportImageAnnoStatistics(SlideQueryIn req, HttpServletResponse response) throws Exception {
+    public void exportImageAnnoStatistics(@RequestBody SlideQueryIn req, HttpServletResponse response) throws Exception {
     	imageAnnoStatisticsService.slideAnnoStatisticsExport(req,response);
     }
     
