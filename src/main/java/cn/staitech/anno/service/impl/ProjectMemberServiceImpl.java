@@ -183,7 +183,7 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 	    	cn.staitech.system.api.domain.SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 			Long userId = sysUser.getUserId();
 			Long organizationId = sysUser.getOrganizationId();
-//			Long userId = 1L;
+//			Long userId = 39L;
 //	    	Long organizationId = 1L;
 			
 			
