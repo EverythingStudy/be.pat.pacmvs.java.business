@@ -63,8 +63,12 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
      * @return
      */
     @Override
-    public List<Organ> getOrganBySpeciesId(String speciesId) {
-        List<Organ> list = organMapper.getOrganBySpeciesId(speciesId);
+    public List<Organ> getOrganBySpeciesId(String speciesCode) {
+		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+		Organ organQ = new Organ();
+		organQ.setOrganizationId(organizationId);
+		organQ.setSpeciesCode(speciesCode);
+        List<Organ> list = organMapper.getOrganBySpeciesId(organQ);
         for (Organ organ : list) {
             // 中英文
             if (LanguageUtils.isEn()) {
@@ -77,9 +81,12 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
     public Map<String, String> select(boolean en) {
         List<Organ> list = organMapper.selectList();
         if (en) {
-            return list.stream().collect(Collectors.toMap(item -> item.getSpeciesCode().concat(item.getOrganId()), Organ::getNameEn));
+			// 20231222wangfeng
+            // return list.stream().collect(Collectors.toMap(item -> item.getSpeciesCode().concat(item.getOrganId()), Organ::getNameEn));
+            return list.stream().collect(Collectors.toMap(item -> item.getOrganizationId().toString() + item.getSpeciesCode() + item.getOrganId(), Organ::getNameEn));
         } else {
-            return list.stream().collect(Collectors.toMap(item -> item.getSpeciesCode().concat(item.getOrganId()), Organ::getName));
+            // return list.stream().collect(Collectors.toMap(item -> item.getSpeciesCode().concat(item.getOrganId()), Organ::getName));
+            return list.stream().collect(Collectors.toMap(item -> item.getOrganizationId().toString() + item.getSpeciesCode() + item.getOrganId(), Organ::getName));
         }
     }
 

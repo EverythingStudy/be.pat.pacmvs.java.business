@@ -132,8 +132,8 @@ public class IndicatorController extends BaseController {
             }
 
 
-            MapConstant.ORGAN_MAP = selectMap();
-            MapConstant.ORGAN_MAP_EN = selectMapEn();
+            MapConstant.ORGAN_MAP = structureService.selectMap();
+            MapConstant.ORGAN_MAP_EN = structureService.selectMapEn();
             MapConstant.STRUCTURE_MAP = structureService.selectMap();
             MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
         }
@@ -301,8 +301,8 @@ public class IndicatorController extends BaseController {
             }
 
 
-            MapConstant.ORGAN_MAP = selectMap();
-            MapConstant.ORGAN_MAP_EN = selectMapEn();
+            MapConstant.ORGAN_MAP = structureService.selectMap();
+            MapConstant.ORGAN_MAP_EN = structureService.selectMapEn();
             MapConstant.STRUCTURE_MAP = structureService.selectMap();
             MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
         }
@@ -402,20 +402,4 @@ public class IndicatorController extends BaseController {
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
-    public Map<String, String> selectMap() {
-        return select(false);
-    }
-
-    public Map<String, String> selectMapEn() {
-        return select(true);
-    }
-
-    public Map<String, String> select(boolean en) {
-        List<Organ> list = organMapper.selectList();
-        if (en) {
-            return list.stream().collect(Collectors.toMap(item -> item.getSpeciesCode().concat(item.getOrganId()), Organ::getNameEn));
-        } else {
-            return list.stream().collect(Collectors.toMap(item -> item.getSpeciesCode().concat(item.getOrganId()), Organ::getName));
-        }
-    }
 }

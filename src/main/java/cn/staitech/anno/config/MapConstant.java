@@ -28,8 +28,8 @@ public class MapConstant {
     public static Map<Long, String> ROUND_MAP_EN;
     public static Map<String, String> PROJECT_TYPE_MAP;
     public static Map<String, String> PROJECT_TYPE_MAP_EN;
-    public static Map<Integer, String> PRODUCT_SERIES_MAP;
-    public static Map<Integer, String> PRODUCT_SERIES_MAP_EN;
+    public static Map<String, String> PRODUCT_SERIES_MAP;
+    public static Map<String, String> PRODUCT_SERIES_MAP_EN;
     public static Map<String, String> ORGAN_MAP;
     public static Map<String, String> ORGAN_MAP_EN;
     public static Map<String, String> STRUCTURE_MAP;
@@ -72,10 +72,10 @@ public class MapConstant {
      * @param topicId
      * @return
      */
-    public static String getSpeciesName(String topicId) {
-        if (SPECIES_MAP.containsKey(topicId)) {
+    public static String getSpeciesName(String organizationIdAddSpeciesId) {
+        if (SPECIES_MAP.containsKey(organizationIdAddSpeciesId)) {
 
-            return SPECIES_MAP.get(topicId);
+            return SPECIES_MAP.get(organizationIdAddSpeciesId);
         }
         return "";
     }
@@ -83,13 +83,13 @@ public class MapConstant {
     /**
      * 获取种属名称 - EN
      *
-     * @param topicId
+     * @param organizationIdAddSpeciesId organizationId+speciesId
      * @return
      */
-    public static String getSpeciesNameEn(String topicId) {
-        if (SPECIES_MAP_EN.containsKey(topicId)) {
+    public static String getSpeciesNameEn(String organizationIdAddSpeciesId) {
+        if (SPECIES_MAP_EN.containsKey(organizationIdAddSpeciesId)) {
 
-            return SPECIES_MAP_EN.get(topicId);
+            return SPECIES_MAP_EN.get(organizationIdAddSpeciesId);
         }
         return "";
     }
@@ -163,12 +163,12 @@ public class MapConstant {
     /**
      * 获取品系名称
      *
-     * @param productSeriesId
+     * @param organizationIdAddSpeciesIdAddoductSeriesId OrganizationId + SpeciesId + ProductSeriesId
      * @return
      */
-    public static String getProductSeries(Integer productSeriesId) {
-        if (PRODUCT_SERIES_MAP.containsKey(productSeriesId)) {
-            return PRODUCT_SERIES_MAP.get(productSeriesId);
+    public static String getProductSeries(String organizationIdAddSpeciesIdAddoductSeriesId) {
+        if (PRODUCT_SERIES_MAP.containsKey(organizationIdAddSpeciesIdAddoductSeriesId)) {
+            return PRODUCT_SERIES_MAP.get(organizationIdAddSpeciesIdAddoductSeriesId);
         }
         return "";
     }
@@ -176,12 +176,12 @@ public class MapConstant {
     /**
      * 获取品系名称 - en
      *
-     * @param productSeriesId
+     * @param organizationIdAddSpeciesIdAddoductSeriesId OrganizationId + SpeciesId + ProductSeriesId
      * @return
      */
-    public static String getProductSeriesEn(Integer productSeriesId) {
-        if (PRODUCT_SERIES_MAP_EN.containsKey(productSeriesId)) {
-            return PRODUCT_SERIES_MAP_EN.get(productSeriesId);
+    public static String getProductSeriesEn(String organizationIdAddSpeciesIdAddoductSeriesId) {
+        if (PRODUCT_SERIES_MAP_EN.containsKey(organizationIdAddSpeciesIdAddoductSeriesId)) {
+            return PRODUCT_SERIES_MAP_EN.get(organizationIdAddSpeciesIdAddoductSeriesId);
         }
         return "";
     }
@@ -189,12 +189,12 @@ public class MapConstant {
     /**
      * 获取脏器名称
      *
-     * @param speciesIdConnectOrganId
+     * @param organizationIdSpeciesCodeOrganId organizationId + speciesCode + organId
      * @return
      */
-    public static String getOrgan(String speciesIdConnectOrganId) {
-        if (ORGAN_MAP.containsKey(speciesIdConnectOrganId)) {
-            return ORGAN_MAP.get(speciesIdConnectOrganId);
+    public static String getOrgan(String organizationIdSpeciesCodeOrganId) {
+        if (ORGAN_MAP.containsKey(organizationIdSpeciesCodeOrganId)) {
+            return ORGAN_MAP.get(organizationIdSpeciesCodeOrganId);
         }
         return "";
     }
@@ -202,12 +202,12 @@ public class MapConstant {
     /**
      * 获取脏器名称 - en
      *
-     * @param speciesIdConnectOrganId
+     * @param organizationIdSpeciesCodeOrganId organizationId + speciesCode + organId
      * @return
      */
-    public static String getOrganEn(String speciesIdConnectOrganId) {
-        if (ORGAN_MAP_EN.containsKey(speciesIdConnectOrganId)) {
-            return ORGAN_MAP_EN.get(speciesIdConnectOrganId);
+    public static String getOrganEn(String organizationIdSpeciesCodeOrganId) {
+        if (ORGAN_MAP_EN.containsKey(organizationIdSpeciesCodeOrganId)) {
+            return ORGAN_MAP_EN.get(organizationIdSpeciesCodeOrganId);
         }
         return "";
     }
@@ -215,12 +215,12 @@ public class MapConstant {
     /**
      * 获取结构名称
      *
-     * @param structureId
+     * @param organizationIdSpeciesIdOrganIdStructureId OrganizationId + SpeciesId + OrganId + StructureId
      * @return
      */
-    public static String getStructureName(String structureId) {
-        if (STRUCTURE_MAP.containsKey(structureId)) {
-            return STRUCTURE_MAP.get(structureId);
+    public static String getStructureName(String organizationIdSpeciesIdOrganIdStructureId) {
+        if (STRUCTURE_MAP.containsKey(organizationIdSpeciesIdOrganIdStructureId)) {
+            return STRUCTURE_MAP.get(organizationIdSpeciesIdOrganIdStructureId);
         }
         return "";
     }
@@ -228,12 +228,12 @@ public class MapConstant {
     /**
      * 获取结构名称 - en
      *
-     * @param structureId
+     * @param organizationIdSpeciesIdOrganIdStructureId OrganizationId + SpeciesId + OrganId + StructureId
      * @return
      */
-    public static String getStructureNameEn(String structureId) {
-        if (STRUCTURE_MAP_EN.containsKey(structureId)) {
-            return STRUCTURE_MAP_EN.get(structureId);
+    public static String getStructureNameEn(String organizationIdSpeciesIdOrganIdStructureId) {
+        if (STRUCTURE_MAP_EN.containsKey(organizationIdSpeciesIdOrganIdStructureId)) {
+            return STRUCTURE_MAP_EN.get(organizationIdSpeciesIdOrganIdStructureId);
         }
         return "";
     }

@@ -176,6 +176,7 @@
     <select id="selectProjectById" parameterType="java.lang.Long" resultMap="ProjectMessage">
         <include refid="selectProjectVo"/>
         where p.project_id = #{projectId}
+        limit 0,1;
     </select>
 
     <select id="selectProjectByName" parameterType="string" resultMap="ProjectResult">
@@ -235,15 +236,15 @@
         a.tissue_name,
         a.tissue_name_en
         from tb_project p
-        left join sys_user u on p.create_by = u.user_id
-        left join tb_pathological_indicator i on p.indicator_id = i.indicator_id
-        left join tb_product_series ps on p.product_series_id = ps.product_series_id
-        left join sys_organization org on p.organization_id = org.organization_id
-        left join aipre_algorithm_model m on p.model_id=m.model_id
-        left join aipre_pathological_tissue a on p.tissue_id=a.tissue_id
-        <if test="partUserId != null">
-            left join tb_project_member b on p.project_id = b.project_id
-        </if>
+                 left join sys_user u on p.create_by = u.user_id
+                 left join tb_pathological_indicator i on p.indicator_id = i.indicator_id 
+                 left join tb_product_series ps on p.product_series_id = ps.product_series_id
+                 left join sys_organization org on p.organization_id = org.organization_id
+                 left join aipre_algorithm_model m on p.model_id=m.model_id
+                 left join aipre_pathological_tissue a on p.tissue_id=a.tissue_id
+                 <if test="partUserId != null">
+                 	left join tb_project_member b on p.project_id = b.project_id
+                  </if>
         <where>
             <if test="projectName != null and projectName != ''">
                 AND p.project_name like concat('%', #{projectName}, '%')
@@ -263,7 +264,7 @@
                 <!-- 组织机构ID -->
                 AND p.organization_id = #{organizationId}
             </if>
-            <!-- <if test="organizationId != null">
+           <!--  <if test="organizationId != null">
                 AND i.organization_id = #{organizationId}
             </if> -->
             <if test="organizationId != null">
