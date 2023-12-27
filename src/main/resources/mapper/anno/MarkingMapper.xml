@@ -561,13 +561,19 @@
         LEFT JOIN tb_project p ON m.project_id = p.project_id
         LEFT JOIN sys_user u ON m.user_id = u.user_id
         LEFT JOIN tb_pathological_indicator i ON p.indicator_id = i.indicator_id
-        LEFT JOIN tb_pathological_indicator_category c ON c.indicator_id = i.indicator_id
+        LEFT JOIN (
+            SELECT DISTINCT category_id,indicator_id,category_name
+            FROM tb_pathological_indicator_category
+            UNION
+            SELECT DISTINCT 0 as category_id,indicator_id,'无属性' as category_name
+            FROM tb_pathological_indicator
+            WHERE organization_id = #{organizationId}
+        ) AS c ON c.indicator_id = i.indicator_id
         WHERE p.project_type = 1
         AND m.organization_id = #{organizationId}
         AND p.organization_id = #{organizationId}
         AND u.organization_id = #{organizationId}
         AND i.organization_id = #{organizationId}
-        AND c.organization_id = #{organizationId}
         AND p.project_name IS NOT NULL
         <choose>
             <when test="projectIds != null and projectIds.size() >0 ">
@@ -579,13 +585,13 @@
             <otherwise>
                 <if test="userId != null">
                     AND p.project_id IN(
-                    SELECT project_id
-                    FROM tb_project
-                    WHERE organization_id = #{organizationId} AND project_type =1 AND project_id IN(
-                    SELECT DISTINCT project_id
-                    FROM tb_project_member
-                    WHERE user_id = #{userId}
-                    )
+                        SELECT project_id
+                        FROM tb_project
+                        WHERE organization_id = #{organizationId} AND project_type =1 AND project_id IN(
+                            SELECT DISTINCT project_id
+                            FROM tb_project_member
+                            WHERE user_id = #{userId}
+                        )
                     )
                 </if>
             </otherwise>
