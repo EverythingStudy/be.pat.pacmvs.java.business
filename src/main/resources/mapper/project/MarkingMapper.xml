@@ -60,9 +60,9 @@
         from tb_marking_tmp
     </select>
 
-    <select id="markingList" parameterType="cn.staitech.anno.project.domain.Marking" resultMap="BaseResultMap">
+    <select id="markingList" parameterType="cn.staitech.anno.project.domain.Marking" resultType="int">
         select
-        annotation_id
+       count(*)
         from tb_marking
         <where>
             <if test="slideId != null">

@@ -81,8 +81,8 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         if (list != null && !list.isEmpty()) {
             list.forEach(slideVO -> {
                 Marking marking = Marking.builder().projectId(params.getProjectId().longValue()).slideId(slideVO.getSlideId()).categoryId(params.getAnnoCategory()).build();
-                List<Marking> markings = markingMapperV1.markingList(marking);
-                if (CollectionUtils.isNotEmpty(markings)) {
+                Integer num = markingMapperV1.markingList(marking);
+                if (num>0) {
                     slideIds.add(slideVO.getSlideId());
                     map.put(slideVO.getSlideId(), slideVO);
                 }
