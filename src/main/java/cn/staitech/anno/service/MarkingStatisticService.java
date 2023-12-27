@@ -1,6 +1,7 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.MarkingStatistic;
+import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.marking.MarkingStatisticSelectVO;
 
 import javax.servlet.http.HttpServletResponse;
@@ -19,7 +20,7 @@ public interface MarkingStatisticService {
      * @param selectVO
      * @return
      */
-    List<MarkingStatistic> selectMarkingStatistic(MarkingStatisticSelectVO selectVO);
+    PageMaster<MarkingStatistic> selectMarkingStatistic(MarkingStatisticSelectVO selectVO);
 
     /**
      * 标签统计 - 导出execl
