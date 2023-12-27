@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -26,4 +28,6 @@ public class ProjectInVO {
     private String projectType;
 
     private Integer status;
+
+    private List<Integer> statusList;
 }

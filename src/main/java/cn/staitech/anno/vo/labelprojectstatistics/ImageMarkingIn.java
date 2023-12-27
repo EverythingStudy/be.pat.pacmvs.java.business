@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,6 +31,6 @@ public class ImageMarkingIn {
     @ApiModelProperty(value = "标注类别",hidden = true)
     private String annotationType;
 
-    @ApiModelProperty(value = "项目状态")
-    private Integer status;
+    @ApiModelProperty(value = "项目状态列表(要排除的状态)")
+    private List<Integer> statusList;
 }

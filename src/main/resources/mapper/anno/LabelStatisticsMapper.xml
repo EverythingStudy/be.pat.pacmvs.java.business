@@ -56,8 +56,11 @@
             <if test="projectType != null">
                 AND p.project_type=#{projectType}
             </if>
-            <if test="status != null">
-                AND p.status !=#{status}
+            <if test="statusList != null and statusList.size()>0">
+                AND p.status NOT IN
+                <foreach collection="statusList" item="status" open="(" separator="," close=")">
+                    #{status}
+                </foreach>
             </if>
             and p.del_flag=0
         </where>
