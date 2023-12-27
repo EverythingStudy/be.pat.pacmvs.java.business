@@ -342,13 +342,19 @@ implements ImageAnnoStatisticsService {
 		// 构造表头的每个列头 定义表头
         List<Map<String, String>> titleList = getTitleList(CommonConstant.SLIDE_COUNT_COLHEAD_KEY, CommonConstant.SLIDE_COUNT_COLHEAD_VALUE);
         ExcelTool excelTool = new ExcelTool<>(CommonConstant.SLIDE_COUNT_DATA_SEARCH_TITLE, 20, 20);
-        String currentTime = DateUtils.parseDateToStr("yyyyMMddHHmm", new Date());
         List<Column> titleData = excelTool.columnTransformer(titleList);
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        String currentTime = DateUtils.parseDateToStr("yyyyMMddHHmm", new Date());
+        
+        /*response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 		response.setHeader("Content-Disposition", "attachment; filename=" + java.net.URLEncoder.encode(CommonConstant.SLIDE_COUNT_DATA_SEARCH_TITLE, "UTF-8")+ currentTime+".xlsx");
         response.setCharacterEncoding("utf-8");
         response.setHeader("Content-Type","text/html;charset=utf-8");
-		response.setContentType("text/html;charset=utf-8");
+		response.setContentType("text/html;charset=utf-8");*/
+        response.setContentType("application/vnd.ms-excel;charset=utf-8");
+        response.setCharacterEncoding("utf-8");
+        response.setHeader("Content-Disposition", "attachment;filename=" + java.net.URLEncoder.encode(CommonConstant.SLIDE_COUNT_DATA_SEARCH_TITLE, "UTF-8") + java.net.URLEncoder.encode(currentTime, "UTF-8"));
+      
+		
 		/*if(CollectionUtils.isNotEmpty(list)){
 			log.info("图像标注导出数据==========================："+JSONUtil.toJsonStr(list));
 		}*/
