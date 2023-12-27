@@ -26,7 +26,7 @@ public class MarkingStatistic {
     private Long projectId;
 
     @ApiModelProperty(value = "创建人", required = true)
-    private Long createBy;
+    private Long userId;
 
     @ApiModelProperty(value = "标签集", required = true)
     private Long indicatorId;

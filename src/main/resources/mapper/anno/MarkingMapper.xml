@@ -551,51 +551,34 @@
 
 
     <!-- 标签统计
-    SELECT m.project_id,p.project_name,m.create_by,u.nick_name,i.indicator_id,n.indicator_name,m.category_id,i.category_name,m.organization_id,COUNT(*) AS sums
-    FROM tb_marking_6 m
-    LEFT JOIN tb_pathological_indicator_category i ON m.category_id = i.category_id
-    LEFT JOIN tb_pathological_indicator n ON n.indicator_id = i.indicator_id
-    LEFT JOIN tb_project p ON p.project_id = m.project_id
-    LEFT JOIN sys_user u ON u.user_id = m.create_by
-    WHERE m.organization_id = 2
-        AND i.organization_id = 2
-        AND n.organization_id = 2
-        AND p.organization_id = 2
-        AND u.organization_id = 2
-        AND m.project_id IN(8,37,44,48,69)
-        AND m.create_by IN(47,64,68,51,2)
-        AND	m.category_id IN(0,1160,1163,1166,1168,1041,1043,1338,1283,1284,1285,1286)
-        AND i.indicator_id IN(1604,1502,1083,1077,0)
-    GROUP BY m.project_id,m.create_by,n.indicator_id,m.category_id,m.organization_id
-    ORDER BY m.project_id ASC,m.create_by ASC,n.indicator_id ASC,m.category_id ASC;
+    SELECT m.project_id,p.project_name,m.user_id,u.nick_name,i.indicator_id,i.indicator_name,c.category_id,c.category_name FROM tb_project_member m LEFT JOIN tb_project p ON m.project_id = p.project_id LEFT JOIN sys_user u ON m.user_id = u.user_id LEFT JOIN tb_pathological_indicator i ON p.indicator_id = i.indicator_id LEFT JOIN tb_pathological_indicator_category c ON c.indicator_id = i.indicator_id WHERE p.project_type = 1 AND m.organization_id = 1 AND p.organization_id = 1 AND u.organization_id = 1 AND i.organization_id = 1 AND c.organization_id = 1 AND p.project_name IS NOT NULL AND p.project_id IN ( 119 , 144 , 277 , 304 ) AND m.user_id IN ( 11 ) AND i.indicator_id IN ( 1108 ) AND c.category_id IN ( 1560 )
     -->
     <select id="selectMarkingStatistic" parameterType="cn.staitech.anno.vo.marking.MarkingStatisticSelectVO"
             resultType="cn.staitech.anno.domain.MarkingStatistic">
         SELECT
-        m.project_id,p.project_name,m.create_by,u.nick_name,i.indicator_id,n.indicator_name,m.category_id,i.category_name,m.organization_id,COUNT(*)
-        AS marking_num
-        FROM tb_marking m
-        LEFT JOIN tb_pathological_indicator_category i ON m.category_id = i.category_id
-        LEFT JOIN tb_pathological_indicator n ON n.indicator_id = i.indicator_id
-        LEFT JOIN tb_project p ON p.project_id = m.project_id
-        LEFT JOIN sys_user u ON u.user_id = m.create_by
-        WHERE
-        p.project_type = 1
+        m.project_id,p.project_name,m.user_id,u.nick_name,i.indicator_id,i.indicator_name,c.category_id,c.category_name
+        FROM tb_project_member m
+        LEFT JOIN tb_project p ON m.project_id = p.project_id
+        LEFT JOIN sys_user u ON m.user_id = u.user_id
+        LEFT JOIN tb_pathological_indicator i ON p.indicator_id = i.indicator_id
+        LEFT JOIN tb_pathological_indicator_category c ON c.indicator_id = i.indicator_id
+        WHERE p.project_type = 1
         AND m.organization_id = #{organizationId}
-        AND i.organization_id = #{organizationId}
-        AND n.organization_id = #{organizationId}
         AND p.organization_id = #{organizationId}
         AND u.organization_id = #{organizationId}
+        AND i.organization_id = #{organizationId}
+        AND c.organization_id = #{organizationId}
+        AND p.project_name IS NOT NULL
         <choose>
             <when test="projectIds != null and projectIds.size() >0 ">
-                AND m.project_id IN
+                AND p.project_id IN
                 <foreach item="projectId" collection="projectIds" separator="," open="(" close=")" index="">
                     #{projectId, jdbcType=BIGINT}
                 </foreach>
             </when>
             <otherwise>
                 <if test="userId != null">
-                    AND m.project_id IN(
+                    AND p.project_id IN(
                     SELECT project_id
                     FROM tb_project
                     WHERE organization_id = #{organizationId} AND project_type =1 AND project_id IN(
@@ -608,15 +591,9 @@
             </otherwise>
         </choose>
         <if test="createBys != null and createBys.size() >0 ">
-            AND m.create_by IN
+            AND m.user_id IN
             <foreach item="createBy" collection="createBys" separator="," open="(" close=")" index="">
                 #{createBy, jdbcType=BIGINT}
-            </foreach>
-        </if>
-        <if test="categoryIds != null and categoryIds.size() >0 ">
-            AND m.category_id IN
-            <foreach item="categoryId" collection="categoryIds" separator="," open="(" close=")" index="">
-                #{categoryId, jdbcType=BIGINT}
             </foreach>
         </if>
         <if test="indicatorIds != null and indicatorIds.size() >0 ">
@@ -625,62 +602,43 @@
                 #{indicatorId, jdbcType=BIGINT}
             </foreach>
         </if>
-        GROUP BY m.project_id,m.create_by,n.indicator_id,m.category_id,m.organization_id
-        ORDER BY m.project_id ASC,m.create_by ASC,n.indicator_id ASC,m.category_id ASC
-    </select>
-
-
-    <select id="selectMarkingStatisticDetail" parameterType="cn.staitech.anno.vo.marking.MarkingStatisticSelectVO"
-            resultType="cn.staitech.anno.domain.MarkingStatistic">
-        SELECT
-        m.project_id,p.project_name,m.create_by,u.nick_name,i.indicator_id,n.indicator_name,m.category_id,i.category_name,m.organization_id,COUNT(*)
-        AS marking_num
-        FROM tb_marking m
-        LEFT JOIN tb_pathological_indicator_category i ON m.category_id = i.category_id
-        LEFT JOIN tb_pathological_indicator n ON n.indicator_id = i.indicator_id
-        LEFT JOIN tb_project p ON p.project_id = m.project_id
-        LEFT JOIN sys_user u ON u.user_id = m.create_by
-        WHERE
-        p.project_type = 1
-        AND m.organization_id = #{organizationId}
-        AND i.organization_id = #{organizationId}
-        AND n.organization_id = #{organizationId}
-        AND p.organization_id = #{organizationId}
-        AND u.organization_id = #{organizationId}
-        <if test="userId != null">
-            AND m.project_id IN(
-            SELECT DISTINCT project_id
-            FROM tb_project_member
-            WHERE user_id = #{userId}
-            )
-        </if>
-        <if test="projectIds != null and projectIds.size() >0 ">
-            AND m.project_id IN
-            <foreach item="projectId" collection="projectIds" separator="," open="(" close=")" index="">
-                #{projectId, jdbcType=BIGINT}
-            </foreach>
-        </if>
-        <if test="createBys != null and createBys.size() >0 ">
-            AND m.create_by IN
-            <foreach item="createBy" collection="createBys" separator="," open="(" close=")" index="">
-                #{createBy, jdbcType=BIGINT}
-            </foreach>
-        </if>
         <if test="categoryIds != null and categoryIds.size() >0 ">
-            AND m.category_id IN
+            AND c.category_id IN
             <foreach item="categoryId" collection="categoryIds" separator="," open="(" close=")" index="">
                 #{categoryId, jdbcType=BIGINT}
             </foreach>
         </if>
-        <if test="indicatorIds != null and indicatorIds.size() >0 ">
-            AND i.indicator_id IN
-            <foreach item="indicatorId" collection="indicatorIds" separator="," open="(" close=")" index="">
-                #{indicatorId, jdbcType=BIGINT}
-            </foreach>
-        </if>
-        GROUP BY m.project_id,m.create_by,n.indicator_id,m.category_id,m.organization_id
-        ORDER BY m.project_id ASC,m.create_by ASC,n.indicator_id ASC,m.category_id ASC
     </select>
 
-
+    <!--
+    标签id  Long category_id
+    创建者 Long create_by
+    切片id Long slide_id
+    更新者 Long update_by
+    项目id Long project_id
+    机构ID Long organization_id
+    -->
+    <select id="selectMarkingNum" parameterType="cn.staitech.anno.vo.marking.Marking" resultType="java.lang.Long">
+        select count(*) from tb_marking
+        <where>
+            <if test="category_id != null">
+                AND category_id = #{category_id}
+            </if>
+            <if test="create_by != null">
+                AND m.create_by = #{create_by}
+            </if>
+            <if test="slide_id != null">
+                AND slide_id = #{slide_id}
+            </if>
+            <if test="update_by != null">
+                AND update_by = #{update_by}
+            </if>
+            <if test="project_id != null">
+                AND project_id = #{project_id}
+            </if>
+            <if test="organization_id != null">
+                AND organization_id = #{organization_id}
+            </if>
+        </where>
+    </select>
 </mapper>

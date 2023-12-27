@@ -113,4 +113,12 @@ public interface MarkingMapper extends BaseMapper<Marking> {
      * @return
      */
     List<MarkingStatistic> selectMarkingStatistic(MarkingStatisticSelectVO selectVO);
+
+    /**
+     * 标签统计 - count
+     *
+     * @param marking
+     * @return
+     */
+    Long selectMarkingNum(cn.staitech.anno.vo.marking.Marking marking);
 }

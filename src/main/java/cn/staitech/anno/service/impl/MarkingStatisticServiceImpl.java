@@ -8,6 +8,7 @@ import cn.staitech.anno.utils.Column;
 import cn.staitech.anno.utils.ExcelTool;
 import cn.staitech.anno.utils.ExcelUtil;
 import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingStatisticSelectVO;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -39,9 +40,14 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
     @Override
     public List<MarkingStatistic> selectMarkingStatistic(MarkingStatisticSelectVO selectVO) {
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-        selectVO.setOrganizationId(sysUser.getOrganizationId());
+        Long organizationId = sysUser.getOrganizationId();
+
+        selectVO.setOrganizationId(organizationId);
         selectVO.setUserId(sysUser.getUserId());
-        return markingMapper.selectMarkingStatistic(selectVO);
+        List<MarkingStatistic> list = markingMapper.selectMarkingStatistic(selectVO);
+        list = setCount(list, organizationId);
+
+        return list;
     }
 
 
@@ -55,9 +61,12 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
     @Override
     public void execlExport(MarkingStatisticSelectVO selectVO, HttpServletResponse response) throws Exception {
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-        selectVO.setOrganizationId(sysUser.getOrganizationId());
+        Long organizationId = sysUser.getOrganizationId();
+
+        selectVO.setOrganizationId(organizationId);
         selectVO.setUserId(sysUser.getUserId());
         List<MarkingStatistic> list = markingMapper.selectMarkingStatistic(selectVO);
+        list = setCount(list, organizationId);
 
         // 构造表头的每个列头 定义表头
         List<Map<String, String>> titleList = ExcelUtil.getTitleList(CommonConstant.MARKING_STATISTICS_KEY, CommonConstant.MARKING_STATISTICS_VALUE);
@@ -67,5 +76,24 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("utf-8");
         excelTool.exportExcel(titleData, list, response.getOutputStream(), true, false);
+    }
+
+    /**
+     * 更新记录数
+     *
+     * @param list
+     * @param organizationId
+     * @return
+     */
+    public List<MarkingStatistic> setCount(List<MarkingStatistic> list, Long organizationId) {
+        for (MarkingStatistic markingStatistic : list) {
+            Marking marking = new Marking();
+            marking.setCategory_id(Long.valueOf(markingStatistic.getCategoryId()));
+            marking.setCreate_by(markingStatistic.getUserId());
+            marking.setProject_id(markingStatistic.getProjectId());
+            marking.setOrganization_id(organizationId);
+            markingStatistic.setMarkingNum(markingMapper.selectMarkingNum(marking));
+        }
+        return list;
     }
 }
