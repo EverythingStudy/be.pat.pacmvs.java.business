@@ -35,8 +35,8 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
      * 获取项目列表
      * */
     @Override
-    public List<ProjectListOut> projectList(){
-        ProjectInVO projectInVO=ProjectInVO.builder().organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).userId(SecurityUtils.getUserId()).projectType("1").status(1).build();
+    public List<ProjectListOut> projectList(ImageMarkingIn imageMarkingIn){
+        ProjectInVO projectInVO=ProjectInVO.builder().organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).userId(SecurityUtils.getUserId()).projectType("1").status(imageMarkingIn.getStatus()).build();
         return labelStatisticsMapper.projectList(projectInVO);
     }
 

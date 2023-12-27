@@ -13,7 +13,7 @@ public interface LabelStatisticsService {
     /**
      * 获取项目列表
      * */
-    List<ProjectListOut> projectList();
+    List<ProjectListOut> projectList(ImageMarkingIn imageMarkingIn);
 
 
     /**
