@@ -596,12 +596,13 @@
             <otherwise>
                 <if test="userId != null">
                     AND m.project_id IN(
-                        SELECT project_id
-                        FROM tb_project
-                        WHERE organization_id = #{organizationId} AND project_type =1 AND project_id IN(
-                        SELECT DISTINCT project_id
-                        FROM tb_project_member
-                        WHERE user_id =  #{userId}
+                    SELECT project_id
+                    FROM tb_project
+                    WHERE organization_id = #{organizationId} AND project_type =1 AND project_id IN(
+                    SELECT DISTINCT project_id
+                    FROM tb_project_member
+                    WHERE user_id = #{userId}
+                    )
                     )
                 </if>
             </otherwise>
