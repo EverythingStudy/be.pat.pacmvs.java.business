@@ -80,15 +80,8 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         Map<Long, SlideVO> map = new HashMap<>();
         if (list != null && !list.isEmpty()) {
             list.forEach(slideVO -> {
-                Marking marking = Marking.builder().projectId(params.getProjectId().longValue()).slideId(slideVO.getSlideId()).categoryId(params.getAnnoCategory()).build();
-                Integer num = markingMapperV1.markingList(marking);
-                if (num>0) {
-                    slideIds.add(slideVO.getSlideId());
-                    map.put(slideVO.getSlideId(), slideVO);
-                }
-//                slideIds.add(slideVO.getSlideId());
-//                map.put(slideVO.getSlideId(), slideVO);
-
+                slideIds.add(slideVO.getSlideId());
+                map.put(slideVO.getSlideId(), slideVO);
             });
             List<Marking> annotationList = queryAnnotation(slideIds, params);
             handleAnnoList(annotationList, map);
@@ -313,9 +306,9 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         if (CollectionUtils.isNotEmpty(slideIds)) {
             queryWrapper.in("slide_id", slideIds);
         }
-//        if (params.getAnnoCategory() != null) {
-//            queryWrapper.eq("category_id", params.getAnnoCategory());
-//        }
+        if (params.getAnnoCategory() != null) {
+            queryWrapper.eq("category_id", params.getAnnoCategory());
+        }
         if (params.getAnnoUser() != null) {
             queryWrapper.eq("create_by", params.getAnnoUser());
         }

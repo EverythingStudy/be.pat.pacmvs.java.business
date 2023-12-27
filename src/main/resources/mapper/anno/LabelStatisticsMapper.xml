@@ -44,7 +44,7 @@
 
     <!--查询项目-->
     <select id="projectList" resultMap="projectResult" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ProjectInVO">
-        select p.project_name,p.project_id from tb_project as p left join tb_project_member as m on
+        select DISTINCT p.project_id ,p.project_name from tb_project as p left join tb_project_member as m on
         p.project_id=m.project_id
         <where>
             <if test="organizationId != null">
