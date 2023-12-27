@@ -76,4 +76,19 @@
             </if>
         </where>
     </select>
+
+    <select id="markingListCount" parameterType="cn.staitech.anno.project.domain.Marking" resultType="java.lang.Long">
+        select count(*) from tb_marking
+        <where>
+            <if test="slideId != null">
+                AND slide_id = #{slideId}
+            </if>
+            <if test="categoryId != null">
+                AND category_id = #{categoryId}
+            </if>
+            <if test="projectId != null">
+                AND project_id = #{projectId}
+            </if>
+        </where>
+    </select>
 </mapper>

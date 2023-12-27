@@ -132,7 +132,7 @@
         s.ai_analyzed,
         s.ai_check,
         <!-- case when r.review_count >2 then '2' else '1' end as review_status, -->
-        case when r3.review_count >2 then '2' else '1' end as review_status,
+        case when  r3.review_count >2 then '2'    else '1' end as review_status,
         t5.self_review_status,
         r.score,
         s.image_id,
@@ -180,10 +180,8 @@
                 from tb_review t group by t.slide_id) r on s.slide_id = r.slide_id
             </otherwise>
         </choose>
-        left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score from
-        tb_review t3 group by t3.slide_id) r3 on s.slide_id = r3.slide_id
-        LEFT JOIN (select t2.slide_id as review_slide_id,t2.self_review_status from tb_review t2 where t2.create_by =
-        #{params.currentUser} GROUP BY t2.slide_id,t2.self_review_status)t5 ON t5.review_slide_id = s.slide_id
+         left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score from tb_review t3  group by t3.slide_id) r3 on s.slide_id = r3.slide_id
+         LEFT JOIN (select t2.slide_id as review_slide_id,t2.self_review_status from tb_review t2 where  t2.create_by = #{params.currentUser} GROUP BY t2.slide_id,t2.self_review_status)t5   ON  	t5.review_slide_id = s.slide_id
         <where>
             <if test="params.imageCode != null ">
                 AND m.image_name like CONCAT('%',#{params.imageCode},'%')
@@ -219,56 +217,5 @@
             </if>
         </where>
         order by s.slide_id desc
-    </select>
-    
-    <select id="getSlides" resultType="cn.staitech.anno.project.vo.SlideVO"
-            parameterType="cn.staitech.anno.project.vo.SlideQueryIn">
-        select s.*, i.thumb_url, i.image_name as image_code
-        from tb_slide s
-        left join tb_image i on s.image_id = i.image_id
-        <where>
-            <if test="params.projectId!= null">
-                AND s.project_id = #{params.projectId}
-            </if>
-            <if test="params.userId!= null">
-                AND s.create_by = #{params.userId}
-            </if>
-            <if test="params.imageCode!= null">
-                AND i.image_name like CONCAT('%',#{params.imageCode},'%')
-            </if>
-            <if test="params.remark!= null">
-                AND s.remark like CONCAT('%',#{params.remark},'%')
-            </if>
-            <if test="params.status!= null">
-                AND s.status = #{params.status}
-            </if>
-            <if test="params.annoUser!= null">
-                AND EXISTS(select u.slide_id from tb_slide_attr u where u.slide_id = s.slide_id and u.attr_type = '1'
-                and u.attr_id = #{params.annoUser})
-            </if>
-            <if test="params.annoCategory!= null">
-                AND EXISTS(select c.slide_id from tb_slide_attr c where c.slide_id = s.slide_id and c.attr_type = '2'
-                and c.attr_id = #{params.annoCategory})
-            </if>
-            <if test="params.createTimeParams != null and params.createTimeParams.beginTime != null">
-                and date_format(s.create_time,'%y%m%d') &gt;= date_format(#{params.createTimeParams.beginTime},'%y%m%d')
-            </if>
-            <if test="params.createTimeParams != null and params.createTimeParams.endTime != null">
-                and date_format(s.create_time,'%y%m%d') &lt;= date_format(#{params.createTimeParams.endTime},'%y%m%d')
-            </if>
-            <if test="params.updateTimeParams != null and params.updateTimeParams.beginTime != null">
-                and date_format(s.update_time,'%y%m%d') &gt;= date_format(#{params.updateTimeParams.beginTime},'%y%m%d')
-            </if>
-            <if test="params.updateTimeParams != null and params.updateTimeParams.endTime != null">
-                and date_format(s.update_time,'%y%m%d') &lt;= date_format(#{params.updateTimeParams.endTime},'%y%m%d')
-            </if>
-            <if test="projectIds != null and projectIds.length > 0">
-			       AND   s.project_id IN
-			                <foreach collection="projectIds" item="item" separator="," open="("  close=")">
-			                    #{item}
-			                </foreach>
-			</if>
-        </where>
-        order by s.update_time desc
     </select>
 </mapper>

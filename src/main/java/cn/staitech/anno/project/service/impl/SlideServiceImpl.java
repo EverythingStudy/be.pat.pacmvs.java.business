@@ -84,7 +84,9 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
                 map.put(slideVO.getSlideId(), slideVO);
             });
             List<Marking> annotationList = queryAnnotation(slideIds, params);
-            handleAnnoList(annotationList, map);
+            if(!annotationList.isEmpty() && !map.isEmpty()) {
+                handleAnnoList(annotationList, map);// TODO: wangfeng
+            }
         }
         PageMaster<SlideVO> pageMaster = PageMaster.of(list);
         pageMaster.setTotal(page.getTotal());
@@ -269,10 +271,18 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         // 补全数据行缺失字段
         /*for (Map<String, String> catesMap : catesMapList) {
             for (PathologicalIndicatorCategory column : columns) {
-                String count = catesMap.get(String.valueOf(column.getCategoryId()));
-                if (count == null) {
-                    catesMap.put(String.valueOf(column.getCategoryId()), "");
-                }
+            	if(null != catesMap && !catesMap.isEmpty()){
+            		if(null != column.getCategoryId()){
+            			if(catesMap.containsKey(String.valueOf(column.getCategoryId()))){
+            				String count = catesMap.get(String.valueOf(column.getCategoryId()));
+            				if (count == null) {
+            					catesMap.put(String.valueOf(column.getCategoryId()), "");
+            				}
+            			}else{
+            				catesMap.put(String.valueOf(column.getCategoryId()), "");
+            			}
+            		}
+            	}
             }
         }*/
         for (Map<String, String> catesMap : catesMapList) {
@@ -334,7 +344,11 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
                 List<Marking> subs = map.get(key);
                 if (subs != null && !subs.isEmpty()) {
                     Map<Long, List<Marking>> categorys = subs.stream().collect(Collectors.groupingBy(Marking::getCategoryId));
-                    vo.setCategoryTypes(handleCategorys(categorys, categoryMap));
+                    if(categorys!=null && !categoryMap.isEmpty()) {
+                        vo.setCategoryTypes(handleCategorys(categorys, categoryMap));//TODO
+                    }else {
+                        vo.setCategoryTypes("");
+                    }
                     Map<Long, List<Marking>> users = subs.stream().collect(Collectors.groupingBy(Marking::getCreateBy));
                     vo.setManualAnnoDetails(handleUsers(users, userMap));
                 }

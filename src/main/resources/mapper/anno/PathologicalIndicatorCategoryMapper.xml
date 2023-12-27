@@ -59,9 +59,8 @@
         <result column="name_en" jdbcType="VARCHAR" property="nameEn"/>
         <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="category_code" jdbcType="VARCHAR" property="categoryCode"/>
-        <result column="group_number" jdbcType="INTEGER" property="groupNumber"/>
-        <result column="category_type" jdbcType="INTEGER" property="categoryType"/>
-
+        <result column="group_number" jdbcType="INTEGER"  property="groupNumber"/>
+        <result column="category_type" jdbcType="INTEGER"  property="categoryType"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -278,15 +277,12 @@
         WHERE indicator_id = #{indicatorId}
     </select>
 
-    <select id="selectIndicatorList" parameterType="java.lang.Long"
-            resultType="cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo">
+    <select id="selectIndicatorList" parameterType="cn.staitech.anno.project.domain.Project" resultType="cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo">
         SELECT p.*
         FROM tb_pathological_indicator_category as p
-        WHERE indicator_id = #{indicatorId}
-          AND p.del_flag = "0"
-        order by p.order_number desc, p.group_number desc
+        WHERE indicator_id = #{indicatorId} AND organization_id = #{organizationId} AND p.del_flag = "0"
+        order by p.order_number desc,p.group_number desc
     </select>
-
 
     <select id="selectGeoLabel" parameterType="java.lang.Long" resultMap="GeoLabelResult">
         SELECT category_name as label_name,
@@ -354,6 +350,9 @@
         </if>
         <if test="structureIds != null  and categoryName != ''">
             AND structure_id like concat(#{structureIds}, '%')
+        </if>
+        <if test="organizationId != null">
+            AND organization_id = #{organizationId}
         </if>
         <if test="organizationId != null">
             AND organization_id = #{organizationId}
@@ -495,7 +494,8 @@
         p1.organ_id,
         p1.category_code,
         p1.group_number,
-        p1.category_type
+        p1.category_type,
+        p1.organization_id
         FROM
         (
         SELECT
@@ -514,15 +514,13 @@
         idc.organ_id,
         p.category_code,
         p.group_number,
-        p.category_type
+        p.category_type,
+        p.organization_id
         FROM
         tb_pathological_indicator_category AS p
         LEFT JOIN tb_pathological_indicator AS idc ON p.indicator_id = idc.indicator_id
         LEFT JOIN sys_user AS s ON p.create_by = s.user_id
         <where>
-            <if test="categoryName != null and categoryName != ''">
-                AND p.category_name like concat('%', #{categoryName}, '%')
-            </if>
             <if test="structureId != null">
                 AND p.structure_id =#{structureId}
             </if>
@@ -532,10 +530,17 @@
             <if test="categoryCode != null">
                 AND p.category_code = #{categoryCode}
             </if>
+
             <if test="structureName != null and structureName != ''">
-                AND p.structure_name like concat('%', #{structureName}, '%')
+                AND p.category_name like concat('%', #{structureName}, '%')
             </if>
-            <if test="params != null">
+            <if test="organizationId != null">
+                AND p.organization_id = #{organizationId}
+            </if>
+            <if test="organizationId != null">
+                AND idc.organization_id = #{organizationId}
+            </if>
+            <if test="createTimeParams != null">
                 <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
                     <!-- 开始时间检索 -->
                     AND date_format(p.create_time,'%y%m%d') &gt;= date_format(#{createTimeParams.beginTime},'%y%m%d')
@@ -545,13 +550,14 @@
                     AND date_format(p.create_time,'%y%m%d') &lt;= date_format(#{createTimeParams.endTime},'%y%m%d')
                 </if>
             </if>
-            and p.del_flag=0
+            AND p.del_flag=0 AND p.organization_id = idc.organization_id
         </where>
         ) p1
         LEFT JOIN tb_structure p2 ON p1.species_id = p2.species_id
         AND p1.organ_id = p2.organ_id
         AND p1.structure_id = p2.structure_id
-        ORDER BY p1.category_code, type_number ASC
+        AND p1.organization_id = p2.organization_id
+        ORDER BY	p1.category_code,	type_number ASC
     </select>
 
     <select id="selectLabelNum" parameterType="java.lang.Long" resultType="java.lang.Integer">

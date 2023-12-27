@@ -39,6 +39,6 @@ public class IndicatorReviseVO {
     private String organName;
     @ApiModelProperty(value = "number")
     private String number;
-
-
+    
+    
 }

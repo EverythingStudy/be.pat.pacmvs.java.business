@@ -77,15 +77,16 @@ class StructureServiceImpl extends ServiceImpl<StructureMapper, Structure> imple
     public Map<String, String> select(boolean en) {
         List<Structure> list = structureMapper.selectList(new Structure());
         if (en) {
+            // 20231222
             return list.stream().collect(
                     HashMap::new,
-                    (m, node) -> m.put(node.getStructureId(), node.getNameEn()),
+                    (m, node) -> m.put(node.getOrganizationId().toString() + node.getSpeciesId() + node.getOrganId() + node.getStructureId(), node.getNameEn()),
                     HashMap::putAll
             );
         } else {
             return list.stream().collect(
                     HashMap::new,
-                    (m, node) -> m.put(node.getStructureId(), node.getName()),
+                    (m, node) -> m.put(node.getOrganizationId().toString() + node.getSpeciesId() + node.getOrganId() + node.getStructureId(), node.getName()),
                     HashMap::putAll
             );
         }
