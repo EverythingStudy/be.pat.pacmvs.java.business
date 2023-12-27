@@ -113,7 +113,7 @@ implements ImageAnnoStatisticsService {
 			Map<String,Integer>  imageCountMap = new HashMap<>();
 			Map<String,Integer>  annoCountMap = new HashMap<>();
 			//查询项目人员标注图片数量和标注数量
-			/*List<ProjectUserAnnoStatisticsVO> annCountList = projectMemberMapper.getProjectUserAnnoStatistics(partQuery);
+			List<ProjectUserAnnoStatisticsVO> annCountList = projectMemberMapper.getProjectUserAnnoStatistics(partQuery);
 			if(CollectionUtils.isNotEmpty(annCountList)){
 				for(ProjectUserAnnoStatisticsVO vo:annCountList){
 					Long projectId = vo.getProjectId();
@@ -130,9 +130,9 @@ implements ImageAnnoStatisticsService {
 					imageCountMap.put(key, imageCount);
 					annoCountMap.put(key, annoCount);
 				}
-			}*/
+			}
 			//查询项目人员标注图片数量和标注数量
-			List<ProjectUserAnnoStatisticsVO> annCountList = projectMemberMapper.getProjectUserAnnoStatistics1(partQuery);
+			/*List<ProjectUserAnnoStatisticsVO> annCountList = projectMemberMapper.getProjectUserAnnoStatistics1(partQuery);
 			if(CollectionUtils.isNotEmpty(annCountList)){
 				for(ProjectUserAnnoStatisticsVO vo:annCountList){
 					Long projectId = vo.getProjectId();
@@ -144,10 +144,10 @@ implements ImageAnnoStatisticsService {
 					}
 					imageCountMap.put(key, imageCount);
 				}
-			}
+			}*/
 			
 			
-			List<ProjectUserAnnoStatisticsVO> annCountList2 = projectMemberMapper.getProjectUserAnnoStatistics2(partQuery);
+			/*List<ProjectUserAnnoStatisticsVO> annCountList2 = projectMemberMapper.getProjectUserAnnoStatistics2(partQuery);
 			if(CollectionUtils.isNotEmpty(annCountList2)){
 				for(ProjectUserAnnoStatisticsVO vo:annCountList2){
 					Long projectId = vo.getProjectId();
@@ -159,7 +159,7 @@ implements ImageAnnoStatisticsService {
 					}
 					annoCountMap.put(key, annoCount);
 				}
-			}
+			}*/
 
 			//赋值
 			for(ImageAnnoStatisticsVO asvo:dataList){
@@ -309,8 +309,8 @@ implements ImageAnnoStatisticsService {
 				Long projectId = asvo.getProjectId();
 				Long userId = asvo.getUserId();
 				String status = asvo.getStatus();
-				//String statusDesc = getPojectStatusDesc(status);
-				//asvo.setStatusDesc(statusDesc);
+				String statusDesc = getPojectStatusDesc(status);
+				asvo.setStatusDesc(statusDesc);
 				String key = projectId+"_"+userId;
 				//切片数量处理
 				if(null !=imageCountMap && !imageCountMap.isEmpty()){
@@ -346,15 +346,15 @@ implements ImageAnnoStatisticsService {
         response.setCharacterEncoding("utf-8");
         response.setHeader("Content-Type","text/html;charset=utf-8");
 		response.setContentType("text/html;charset=utf-8");
-		if(CollectionUtils.isNotEmpty(list)){
+		/*if(CollectionUtils.isNotEmpty(list)){
 			log.info("图像标注导出数据==========================："+JSONUtil.toJsonStr(list));
-		}
+		}*/
         excelTool.exportExcel(titleData, list, response.getOutputStream(), true, false);
 		
 	}
 	
 	//状态:1待启动，2进行中，3暂停，4已完成
-	/*private String getPojectStatusDesc(String projectStatus){
+	private String getPojectStatusDesc(String projectStatus){
 		String statusDesc = "";
 		if(projectStatus.equals("0")){
 			statusDesc = "待启动";
@@ -368,7 +368,7 @@ implements ImageAnnoStatisticsService {
 			statusDesc = "已完成";
 		}
 		return statusDesc;
-	}*/
+	}
 	public List<Map<String, String>> getTitleList(String[] colHeadKey, String[] colHeadValue) {
         // 定义表头
         List<Map<String, String>> list = new ArrayList<>();
