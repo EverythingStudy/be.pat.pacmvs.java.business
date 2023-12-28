@@ -65,7 +65,7 @@ implements ImageAnnoStatisticsService {
 		//初始化项目id和人员处理
 		Long[] projectIds = req.getProjectIds();
 		List<Long> pIds = new ArrayList<>();
-		if(projectIds != null){
+		if(projectIds != null && projectIds.length >0){
 			pIds =  Arrays.asList(projectIds);
 		}else{
 			//赋值所有参与的项目
@@ -91,7 +91,7 @@ implements ImageAnnoStatisticsService {
 		//参与人员
 		Long[] partUsers = req.getCreateBys();
 		List<Long> partUserList = new ArrayList<>();
-		if (partUsers != null) {
+		if (partUsers != null && partUsers.length> 0) {
 			partUserList = Arrays.asList(partUsers);
 		}else{
 			ImageAnnoUserQueryIn query = new ImageAnnoUserQueryIn();
@@ -213,7 +213,7 @@ implements ImageAnnoStatisticsService {
 		//初始化项目id和人员处理
 		Long[] projectIds = req.getProjectIds();
 		List<Long> pIds = new ArrayList<>();
-		if(projectIds != null){
+		if(projectIds != null && projectIds.length> 0){
 			pIds =  Arrays.asList(projectIds);
 		}else{
 			//赋值所有参与的项目
@@ -238,7 +238,7 @@ implements ImageAnnoStatisticsService {
 		//参与人员
 		Long[] partUsers = req.getCreateBys();
 		List<Long> partUserList = new ArrayList<>();
-		if (partUsers != null) {
+		if (partUsers != null && partUsers.length> 0) {
 			partUserList = Arrays.asList(partUsers);
 		}else{
 			ImageAnnoUserQueryIn query = new ImageAnnoUserQueryIn();
