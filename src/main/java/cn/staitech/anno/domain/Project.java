@@ -206,6 +206,5 @@ public class Project extends BaseEntity {
 
     @TableField(exist = false)
     @ApiModelProperty(value = "创建者名称")
-    @TableField(exist = false)
     private String userName;
 }
