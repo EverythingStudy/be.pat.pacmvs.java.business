@@ -105,12 +105,23 @@ public class PathologicalController {
         String structureId = vo.getStructureId();
 
         // 查询Indicator信息
-        Indicator indicator = indicatorService.selectIndicatorsById(indicatorId);
+        
+        Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+        Long currentUserId = SecurityUtils.getLoginUser().getSysUser().getUserId();
+//        Indicator indicator = indicatorService.selectIndicatorsById(indicatorId);
+        Indicator indicatorQuery = new Indicator();
+        indicatorQuery.setIndicatorId(indicatorId);
+        indicatorQuery.setOrganizationId(organizationId);
+        indicatorQuery.setDelFlag(0);
+        // 查询结构指标是否存在
+        Indicator indicator =  new Indicator();
+        List<Indicator> indicatorList = indicatorService.selectIndicator(indicatorQuery);
+        if(CollectionUtils.isNotEmpty(indicatorList)){
+        	indicator = indicatorList.get(0);
+        }
         if (indicator == null) {
             return R.fail(MessageSource.M("INDICATOR_ABSENT"));
         }
-        Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-        Long currentUserId = SecurityUtils.getLoginUser().getSysUser().getUserId();
 //		Long organizationId = 1L;
 //		Long currentUserId = 1L;
         //验证结构是否已经存在
@@ -329,6 +340,7 @@ public class PathologicalController {
     @PutMapping("/edit")
     public R<String> edit(@Validated @RequestBody PathologicalIndicatorCategory category) {
         String structureId = category.getStructureId();
+        Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
         //标签类型 0:下拉筛选标签；1:自定义标签
         Integer categoryType = category.getCategoryType();
         if (null == categoryType) {
@@ -339,7 +351,19 @@ public class PathologicalController {
         }
 
         // 查询Indicator信息
-        Indicator indicator = indicatorService.selectIndicatorsById(category.getIndicatorId());
+        
+//        Indicator indicator = indicatorService.selectIndicatorsById(category.getIndicatorId());
+        Indicator indicatorQuery = new Indicator();
+        indicatorQuery.setIndicatorId(category.getIndicatorId());
+        indicatorQuery.setOrganizationId(organizationId);
+        indicatorQuery.setDelFlag(0);
+        // 查询结构指标是否存在
+        Indicator indicator =  new Indicator();
+        List<Indicator> indicatorList = indicatorService.selectIndicator(indicatorQuery);
+        if(CollectionUtils.isNotEmpty(indicatorList)){
+        	indicator = indicatorList.get(0);
+        }
+       
         if (indicator == null) {
             return R.fail(MessageSource.M("INDICATOR_ABSENT"));
         }
@@ -347,7 +371,7 @@ public class PathologicalController {
         //确认下原来的structure_id信息
         PathologicalIndicatorCategory sourcePic = pathologicalIndicatorCategoryService.selectByPrimaryKey(category.getCategoryId());
         //验证结构是否已经存在  		BeanUtils.copyProperties(category, targetCategory);
-        Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+       
         PathologicalIndicatorCategory categoryS = new PathologicalIndicatorCategory();
         categoryS.setStructureId(category.getStructureId());
         categoryS.setIndicatorId(category.getIndicatorId());

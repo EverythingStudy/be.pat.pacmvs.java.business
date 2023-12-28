@@ -209,6 +209,7 @@ public class IndicatorController extends BaseController {
         Indicator indicatorQuery = new Indicator();
         indicatorQuery.setOrganizationId(organizationId);
         indicatorQuery.setIndicatorId(indicatorId);
+        indicatorQuery.setDelFlag(0);
         List<Indicator> list  = indicatorService.selectIndicator(indicatorQuery);
         IndicatorVO indicatorVo = new IndicatorVO();
         if(CollectionUtils.isNotEmpty(list)){

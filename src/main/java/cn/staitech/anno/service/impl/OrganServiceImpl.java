@@ -95,6 +95,7 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
         //校验脏器名称是否已经重复
         QueryWrapper<Organ> queryNameWrapper = new QueryWrapper<>();
         queryNameWrapper.eq("name", req.getName());
+        queryNameWrapper.eq("organization_id", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         List<Organ> nameList = organMapper.selectList(queryNameWrapper);
         if (CollectionUtils.isNotEmpty(nameList)) {
             return R.fail(MessageSource.M("InsertOrganVO.NAME.EXIST"));
@@ -103,6 +104,7 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
         //校验脏器编码 是否已经重复
         QueryWrapper<Organ> queryOrganIdWrapper = new QueryWrapper<>();
         queryOrganIdWrapper.eq("organ_id", req.getOrganId());
+        queryOrganIdWrapper.eq("organization_id", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         List<Organ> organWrapperList = organMapper.selectList(queryOrganIdWrapper);
         if (CollectionUtils.isNotEmpty(organWrapperList)) {
             return R.fail(MessageSource.M("InsertOrganVO.ORGANID.EXIST"));
