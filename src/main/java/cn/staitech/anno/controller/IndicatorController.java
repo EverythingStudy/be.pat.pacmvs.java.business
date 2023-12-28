@@ -228,12 +228,18 @@ public class IndicatorController extends BaseController {
         if (!Optional.ofNullable(indicatorGetVO.getIndicatorId()).isPresent()) {
             return R.fail(MessageSource.M("INDICATOR_ID_NOTNULL"));
         }
-        Integer num = indicatorService.selectIndicatorCountInProject(indicatorGetVO.getIndicatorId().longValue());
+        
+        Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+        Indicator indicator = new Indicator();
+        indicator.setOrganizationId(organizationId);
+        indicator.setIndicatorId(indicatorGetVO.getIndicatorId().longValue());
+        Integer num = indicatorService.selectIndicatorCountByIndicator(indicator);
+//        Integer num = indicatorService.selectIndicatorCountInProject(indicatorGetVO.getIndicatorId().longValue());
         if (num > 0) {
             return R.fail(MessageSource.M("ALREADY_BOUND_NO_DEL"));
         }
         //删除标注类别
-        PathologicalIndicatorCategory Pathological = PathologicalIndicatorCategory.builder().indicatorId(indicatorGetVO.getIndicatorId().longValue()).delFlag(1).build();
+        PathologicalIndicatorCategory Pathological = PathologicalIndicatorCategory.builder().indicatorId(indicatorGetVO.getIndicatorId().longValue()).organizationId(organizationId).delFlag(1).build();
         pathologicalService.updateByPrimaryKeySelective(Pathological);
         //删除病理指标
         indicatorService.delIndicator(indicatorGetVO.getIndicatorId().longValue());
@@ -250,7 +256,12 @@ public class IndicatorController extends BaseController {
     @PutMapping("/edit")
     public R<Integer> edit(@Validated @RequestBody IndicatorReviseVO req) {
         // 和项目绑定的不能修改
-        Integer num = indicatorService.selectIndicatorCountInProject(req.getIndicatorId().longValue());
+//        Integer num = indicatorService.selectIndicatorCountInProject(req.getIndicatorId().longValue());
+    	Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+        Indicator indicatorQuery = new Indicator();
+        indicatorQuery.setOrganizationId(organizationId);
+        indicatorQuery.setIndicatorId(req.getIndicatorId().longValue());
+        Integer num = indicatorService.selectIndicatorCountByIndicator(indicatorQuery);
         if (num > 0) {
             return R.fail(MessageSource.M("ALREADY_BOUND"));
         }
@@ -263,11 +274,11 @@ public class IndicatorController extends BaseController {
 
 
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-        Long organizationId = sysUser.getOrganizationId();
         //		Long organizationId = 1L;
         Indicator indicator = new Indicator();
         indicator.setSpeciesId(req.getSpeciesId());
         indicator.setOrganId(req.getOrganId());
+        indicator.setOrganizationId(organizationId);
         indicator.setDelFlag(0);
         // 查询结构指标是否存在
         List<Indicator> indicatorList = indicatorService.selectIndicator(indicator);
@@ -343,7 +354,12 @@ public class IndicatorController extends BaseController {
     @ApiOperation(value = "病理指标查重接口", notes = "ZMJ")
     @GetMapping("/check")
     public R<Integer> checkEdit(@RequestParam @ApiParam(name = "indicatorId", value = "病理指标id", required = true) Long indicatorId) {
-        Integer num = indicatorService.selectIndicatorCountInProject(indicatorId);
+        Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+        Indicator indicator = new Indicator();
+        indicator.setOrganizationId(organizationId);
+        indicator.setIndicatorId(indicatorId);
+//        Integer num = indicatorService.selectIndicatorCountInProject(indicatorId);
+        Integer num = indicatorService.selectIndicatorCountByIndicator(indicator);
         if (0 < num) {
             return R.fail(MessageSource.M("ALREADY_BOUND"));
         }

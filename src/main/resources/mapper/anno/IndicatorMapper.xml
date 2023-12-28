@@ -291,4 +291,12 @@
         from tb_project
         where del_flag!=1 and indicator_id=#{indicatorId}
     </select>
+    
+    <select id="selectIndicatorCountByIndicator" parameterType="cn.staitech.anno.domain.Indicator" resultType="java.lang.Integer">
+        select count(*)
+        from tb_project
+        where del_flag!=1 
+        and indicator_id=#{indicatorId}
+        and organization_id = #{organizationId}
+    </select>
 </mapper>
