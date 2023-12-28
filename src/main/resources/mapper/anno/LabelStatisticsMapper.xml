@@ -225,7 +225,8 @@
             <if test="projectIds != null and projectIds.size()>0 ">
                 AND user_id IN (
                 select create_by from tb_project where
-                project_id IN
+                project_type = '1'
+                and project_id IN
                 <foreach collection="projectIds" item="projectId" open="(" separator="," close=")">
                     #{projectId}
                 </foreach>
@@ -239,7 +240,12 @@
 				FROM
 					tb_project_member m2 
 				WHERE
-					m2.project_id IN ( SELECT m1.project_id FROM tb_project_member m1 WHERE m1.user_id = #{currentUserId} )
+					m2.project_id IN ( 
+					SELECT m1.project_id FROM tb_project_member m1 
+					left join tb_project p1 on m1.project_id = p1.project_id
+					WHERE m1.user_id = #{currentUserId} 
+					and p1.project_type = '1'
+					)
                 )
             </if>
             AND del_flag=0
@@ -337,4 +343,3 @@
     </select>
 
 </mapper>
-
