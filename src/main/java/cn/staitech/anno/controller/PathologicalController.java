@@ -520,7 +520,13 @@ public class PathologicalController {
         BeanUtils.copyProperties(category, targetCategoryRoe);
 
         // 获取structureName
-        String structureName = structureService.getById(category.getStructureId()).getName();
+        //String structureName = structureService.getById(category.getStructureId()).getName();
+        List<Structure> structureList = structureService.getListByStructureId(category.getStructureId());
+        String structureName = "";
+        if(CollectionUtils.isNotEmpty(structureList)){
+        	Structure structure = structureList.get(0);
+        	structureName = structure.getName();
+        }
         // 生成categoryName
         String categoryName = indicator.getIndicatorName() + structureName;
         category.setCategoryName(categoryName);
@@ -584,7 +590,13 @@ public class PathologicalController {
             String newNum = newStructureId;
 
             // 获取structureName
-            String structureName = structureService.getById(newStructureId).getName();
+            //String structureName = structureService.getById(newStructureId).getName();
+            List<Structure> structureList = structureService.getListByStructureId(newStructureId);
+            String structureName = "";
+            if(CollectionUtils.isNotEmpty(structureList)){
+            	Structure structure = structureList.get(0);
+            	structureName = structure.getName();
+            }
             // 生成categoryName
             String categoryName = indicator.getIndicatorName() + structureName;
 
