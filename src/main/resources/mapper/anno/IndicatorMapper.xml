@@ -268,8 +268,8 @@
             <if test="delFlag !=null">
                 and del_flag = #{delFlag}
             </if>
-            <if test="organizationId !=null"> 
-                and organization_id = #{organizationId}
+            <if test="indicatorId !=null"> 
+                and indicator_id = #{indicatorId}
             </if>
         </where>
     </select>
