@@ -608,6 +608,15 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
         eyeProjectSlideOut.setEyeMent("1");
         List<EyeProjectSlideOut> listVOS = slideMapper.eyeProjectFolder(eyeProjectSlideOut);
         for (EyeProjectSlideOut slideOut : listVOS) {
+        	//add 主图确认查询
+        	  QueryWrapper<SlidePrediction> queryWrapper = new QueryWrapper<>();
+              queryWrapper.eq("slide_id", slideOut.getSlideId()).eq("del_flag", "0").eq("main_image", "1");
+              List<SlidePrediction> spList = slidePredictionService.list(queryWrapper);
+              String alreadyMainImage = "0";
+              if (CollectionUtils.isNotEmpty(spList)) {
+            	  alreadyMainImage = "1";
+              }
+              slideOut.setMainImage(alreadyMainImage);
             if (LanguageUtils.isEn()) {
                 slideOut.setReason(Container.EYE_PROMPT_MAP_EN.get(Integer.valueOf(slideOut.getPrompt())));
             } else {
