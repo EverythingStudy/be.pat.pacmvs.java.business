@@ -232,6 +232,16 @@
                 and del_flag=0
                 )
             </if>
+             <if test="currentUserId != null and currentUserId !=''">
+                and user_id IN(
+                	SELECT
+					m2.user_id 
+				FROM
+					tb_project_member m2 
+				WHERE
+					m2.project_id IN ( SELECT m1.project_id FROM tb_project_member m1 WHERE m1.user_id = #{currentUserId} )
+                )
+            </if>
             AND del_flag=0
         </where>
     </select>

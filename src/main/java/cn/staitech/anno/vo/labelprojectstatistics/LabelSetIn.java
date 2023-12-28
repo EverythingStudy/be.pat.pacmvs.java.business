@@ -24,4 +24,7 @@ public class LabelSetIn {
 
     @ApiModelProperty(value = "用户id",hidden = true)
     private Long userId;
+    
+    @ApiModelProperty(value = "当前用户id",hidden = true)
+    private Long currentUserId;
 }

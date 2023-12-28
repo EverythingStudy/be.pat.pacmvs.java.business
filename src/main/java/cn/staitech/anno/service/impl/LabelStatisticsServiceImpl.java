@@ -128,6 +128,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
         }
         //若未选项目，则下拉框包含该机构下所有用户
         labelSetIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        labelSetIn.setCurrentUserId(SecurityUtils.getLoginUser().getSysUser().getUserId());
         return labelStatisticsMapper.userList(labelSetIn);
     }
 
