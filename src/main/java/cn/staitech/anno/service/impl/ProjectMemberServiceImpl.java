@@ -179,21 +179,17 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 		List<SysUser> list =  new ArrayList<SysUser>();
 		Long[] projectId = query.getProjectIds();
 		ProjectMember projectMember = new ProjectMember();
-		if(null == projectId){
-	    	cn.staitech.system.api.domain.SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+		if(null != projectId && projectId.length >0){
+			projectMember.setProjectIds(projectId);
+			list = projectMemberMapper.getUserListByProjectId(projectMember);
+		}else{
+			cn.staitech.system.api.domain.SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 			Long userId = sysUser.getUserId();
 			Long organizationId = sysUser.getOrganizationId();
-//			Long userId = 39L;
-//	    	Long organizationId = 1L;
-			
-			
 			//查询自己参与的项目列表
 			projectMember.setUserId(userId);
 			projectMember.setOrganizationId(organizationId);
 			list = projectMemberMapper.getUserListAll(projectMember);
-		}else{
-			projectMember.setProjectIds(projectId);
-			list = projectMemberMapper.getUserListByProjectId(projectMember);
 		}
 		
 		List<ProjectPartUserVO> retList =  new ArrayList<ProjectPartUserVO>();
