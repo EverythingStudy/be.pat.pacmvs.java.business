@@ -828,12 +828,20 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                             slideMapper.eyeUpdateFolder(slides);
                         } else {
                             //获取最小的图片名称
-                            String minImageName = Collections.min(imageName);
+                            /*String minImageName = Collections.min(imageName);
                             for (Long key : imageIdList.keySet()) {
                                 if (imageIdList.get(key).equals(minImageName)) {
                                     SlidePrediction slidePrediction = SlidePrediction.builder().slideId(slide.getSlideId()).imageId(key).mainImage("1").build();
                                     slideMapper.eyeUpdateMainImage(slidePrediction);
                                 }
+                            }*/
+                        }
+                      //获取最小的图片名称
+                        String minImageName = Collections.min(imageName);
+                        for (Long key : imageIdList.keySet()) {
+                            if (imageIdList.get(key).equals(minImageName)) {
+                                SlidePrediction slidePrediction = SlidePrediction.builder().slideId(slide.getSlideId()).imageId(key).mainImage("1").build();
+                                slideMapper.eyeUpdateMainImage(slidePrediction);
                             }
                         }
                     }
