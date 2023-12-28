@@ -2,6 +2,10 @@ package cn.staitech.anno.service;
 
 
 import cn.staitech.anno.domain.ProjectMember;
+import cn.staitech.anno.project.domain.SysUser;
+import cn.staitech.anno.project.vo.ImageAnnoUserQueryIn;
+import cn.staitech.anno.project.vo.ProjectPartUserVO;
+import cn.staitech.anno.project.vo.SelectProjectVO;
 
 import java.util.List;
 
@@ -80,5 +84,9 @@ public interface ProjectMemberService {
      * @return 参数配置信息
      */
     List<ProjectMember> selectProject(ProjectMember projectMember);
+    
+    public List<SelectProjectVO> getProjectListByPM(ProjectMember projectMember);
+    
+    public List<ProjectPartUserVO> getUserList(ImageAnnoUserQueryIn query);
 
 }

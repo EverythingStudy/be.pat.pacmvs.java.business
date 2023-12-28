@@ -91,13 +91,6 @@ public class SnowFlakeGenerateIdWorker {
         this.datacenterId = datacenterId;
     }
 
-    public static void main(String[] args) {
-        SnowFlakeGenerateIdWorker snowFlakeGenerateIdWorker = new SnowFlakeGenerateIdWorker(0L, 0L);
-        String id = snowFlakeGenerateIdWorker.generateNextId();
-        System.out.println(id);
-
-    }
-
     /**
      * 获得下一个ID (该方法是线程安全的) .
      *
@@ -174,4 +167,10 @@ public class SnowFlakeGenerateIdWorker {
         return System.currentTimeMillis();
     }
 
+//    public static void main(String[] args) {
+//        SnowFlakeGenerateIdWorker snowFlakeGenerateIdWorker = new SnowFlakeGenerateIdWorker(0L, 0L);
+//        String id = snowFlakeGenerateIdWorker.generateNextId();
+//        System.out.println(id);
+//
+//    }
 }

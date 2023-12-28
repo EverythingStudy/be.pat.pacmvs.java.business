@@ -10,18 +10,17 @@ import cn.staitech.anno.vo.predictionInfo.out.SlidePredictionOut;
 import cn.staitech.common.core.domain.R;
 
 /**
- * 
-* @ClassName: AlgorithmPredictionService
-* @Description:算法预测
-* @author wanglibei
-* @date 2023年11月2日
-* @version V1.0
+ * @author wanglibei
+ * @version V1.0
+ * @ClassName: AlgorithmPredictionService
+ * @Description:算法预测
+ * @date 2023年11月2日
  */
-public interface AlgorithmPredictionService{
+public interface AlgorithmPredictionService {
 
-    R startPrediction(StartPredictionIn req,Project project);
+    R startPrediction(StartPredictionIn req, Project project);
 
     SlidePredictionOut getOriginalSlideList(SlidePredictionIn req);
 
-	PageMaster<ImageCsvListVO> slidePageList(SlideImagePagerVO request);
+    PageMaster<ImageCsvListVO> slidePageList(SlideImagePagerVO request);
 }

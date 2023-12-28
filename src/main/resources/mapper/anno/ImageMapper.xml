@@ -138,59 +138,6 @@
         from tb_image
     </sql>
 
-
-    <!-- 根据项目ID查所有对应的图片 -->
-    <select id="selectImageListByPorjectId" parameterType="Long" resultMap="ImageSlide">
-        select
-        i.image_id,
-        i.image_name,
-        i.image_url,
-        i.image_path,
-        i.thumb_url,
-        i.macro_url,
-        i.label_url,
-        i.format,
-        i.width,
-        i.height,
-        i.depth,
-        i.size,
-        i.global_size,
-        i.resolving_power,
-        i.tile_count_list,
-        i.level_count,
-        i.chunk_total,
-        i.md5,
-        i.resolution_x,
-        i.resolution_y,
-        i.source_lens,
-        i.create_by,
-        i.create_time,
-        i.update_by,
-        i.update_time,
-        i.topic_id,
-        i.topic_name,
-        i.status,
-        i.organization_id,
-        i.round_id,
-        i.biz_type,
-        i.source,
-        i.folder_id,
-        s.slide_id,
-        s.human_annotation_total,
-        s.description,
-        u.nick_name
-        from tb_slide s
-        left join tb_image i on i.image_id = s.image_id
-        left join sys_user u on i.create_by = u.user_id
-        <where>
-            <if test="projectId != null and projectId != ''">
-                and s.project_id = #{projectId}
-            </if>
-        </where>
-        order by
-        s.update_time desc
-    </select>
-
     <!--查询单个图像信息-->
     <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
         <include refid="selectImageVo"/>

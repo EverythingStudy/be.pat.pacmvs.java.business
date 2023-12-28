@@ -35,12 +35,12 @@ public class SysUserServiceImpl implements SysUserService {
 
     /**
      * 根据机构ID查询用户列表
-     * */
+     */
     @Override
-    public List<SysUser> userList(){
-        SysUser sysUser=new SysUser();
-        Long organizationId=SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-        if (!SysUser.isAdmin(SecurityUtils.getUserId())){
+    public List<SysUser> userList() {
+        SysUser sysUser = new SysUser();
+        Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+        if (!SysUser.isAdmin(SecurityUtils.getUserId())) {
             sysUser.setOrganizationId(organizationId);
         }
         return userMapper.userList(sysUser);

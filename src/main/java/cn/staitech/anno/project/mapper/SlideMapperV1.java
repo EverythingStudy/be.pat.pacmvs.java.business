@@ -21,6 +21,8 @@ public interface SlideMapperV1 extends BaseMapper<Slide> {
     IPage<ReviewSlideVO> pageReviewSlide(@Param("page") Page page, @Param("params") ReviewSlideIn params);
 
     List<SlideExportVO> querySlides(@Param("params") SlideQueryIn params);
+    
+    List<SlideVO> getSlides(@Param("params") SlideQueryIn params);
 }
 
 

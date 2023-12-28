@@ -59,18 +59,18 @@ public class ImageCsvGetPagerVO extends Pager implements Serializable {
      */
     @ApiModelProperty(value = "病变程度1")
     private String lesionDegree;
-    
+
     /**
      * 文件名称
      */
     private String folderName;
-    
-    
+
+
     /**
      * AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败
      */
     private Integer aiAnalyzed;
-    
+
 
     /**
      * reviewRoundId
@@ -81,6 +81,6 @@ public class ImageCsvGetPagerVO extends Pager implements Serializable {
     @ApiModelProperty("请求参数（开始和结束时间）")
     private Map<String, Object> createTimeParams;
 
-    @ApiModelProperty(value = "碎片状态(默认为0校验通过，1校验不通过)",hidden = true)
+    @ApiModelProperty(value = "碎片状态(默认为0校验通过，1校验不通过)", hidden = true)
     private String eyeMent;
 }

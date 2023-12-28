@@ -349,7 +349,10 @@
             AND structure_id = #{structureId,jdbcType=VARCHAR}
         </if>
         <if test="structureIds != null  and categoryName != ''">
-            AND structure_id  like  concat(#{structureIds}, '%')
+            AND structure_id like concat(#{structureIds}, '%')
+        </if>
+        <if test="organizationId != null">
+            AND organization_id = #{organizationId}
         </if>
         <if test="organizationId != null">
             AND organization_id = #{organizationId}
@@ -421,8 +424,9 @@
     </select>
 
 
-    <select id="selectProjectListFilter" parameterType="java.lang.Long" resultType="cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo">
-        SELECT i.*,s.type
+    <select id="selectProjectListFilter" parameterType="java.lang.Long"
+            resultType="cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo">
+        SELECT i.*, s.type
         FROM tb_pathological_indicator_category AS i
                  LEFT JOIN tb_structure AS s ON s.structure_id = i.structure_id
         WHERE i.indicator_id = #{indicatorId}
@@ -563,20 +567,17 @@
     </select>
 
     <select id="selectLabelNumByStructureId" parameterType="java.lang.String" resultType="java.lang.Integer">
-        SELECT
-            cc
-        FROM
-            (
-                SELECT
-                    organ_id,
-                    count( 1 ) cc
-                FROM
-                    ( SELECT t2.organ_id, t1.structure_id FROM tb_pathological_indicator_category t1 LEFT JOIN tb_structure t2 ON t1.structure_id = t2.structure_id ) p
-                GROUP BY
-                    organ_id
-                ORDER BY
-                    organ_id
-            ) m
-                RIGHT JOIN ( SELECT t2.organ_id FROM tb_pathological_indicator_category t1 LEFT JOIN tb_structure t2 ON t1.structure_id = t2.structure_id WHERE t2.structure_id = #{structureId} ) n ON m.organ_id = n.organ_id
+        SELECT cc
+        FROM (SELECT organ_id,
+                     count(1) cc
+              FROM (SELECT t2.organ_id, t1.structure_id
+                    FROM tb_pathological_indicator_category t1
+                             LEFT JOIN tb_structure t2 ON t1.structure_id = t2.structure_id) p
+              GROUP BY organ_id
+              ORDER BY organ_id) m
+                 RIGHT JOIN (SELECT t2.organ_id
+                             FROM tb_pathological_indicator_category t1
+                                      LEFT JOIN tb_structure t2 ON t1.structure_id = t2.structure_id
+                             WHERE t2.structure_id = #{structureId}) n ON m.organ_id = n.organ_id
     </select>
 </mapper>

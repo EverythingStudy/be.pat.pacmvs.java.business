@@ -147,7 +147,6 @@
     </resultMap>
 
 
-
     <sql id="selectByIdVo">
         SELECT slide_id,
                project_id,
@@ -408,7 +407,7 @@
             <if test="description != null">
                 description = #{description},
             </if>
-             <if test="remark != null">
+            <if test="remark != null">
                 remark = #{remark},
             </if>
             <if test="updateBy != null and updateBy != ''">
@@ -675,7 +674,7 @@
             <if test="imageName != null">
                 AND m.image_name LIKE CONCAT('%', #{imageName}, '%')
             </if>
-             <if test="aiAnalyzed != null">
+            <if test="aiAnalyzed != null">
                 AND s.ai_analyzed = #{aiAnalyzed}
             </if>
 
@@ -903,21 +902,22 @@
     </update>
 
     <!--眼科-项目图片-->
-    <select id="eyeProjectSlide" parameterType="cn.staitech.anno.vo.eyeslide.EyeProjectSlideIn" resultType="cn.staitech.anno.vo.eyeslide.EyeProjectSlideOut">
+    <select id="eyeProjectSlide" parameterType="cn.staitech.anno.vo.eyeslide.EyeProjectSlideIn"
+            resultType="cn.staitech.anno.vo.eyeslide.EyeProjectSlideOut">
         SELECT
-			p.slide_id,
-			p.image_id,
-			i.thumb_url,
-			i.image_name,
-			p.main_image,
-			af.folder_name,
-			s.eye_ment 
-		FROM
-		aipre_slide_prediction AS p
-		LEFT JOIN tb_slide AS s ON p.slide_id = s.slide_id
-		LEFT JOIN tb_image AS i ON p.image_id = i.image_id
-		LEFT JOIN aipre_folder AS af ON s.folder_id = af.folder_id
-		<where>
+        p.slide_id,
+        p.image_id,
+        i.thumb_url,
+        i.image_name,
+        p.main_image,
+        af.folder_name,
+        s.eye_ment
+        FROM
+        aipre_slide_prediction AS p
+        LEFT JOIN tb_slide AS s ON p.slide_id = s.slide_id
+        LEFT JOIN tb_image AS i ON p.image_id = i.image_id
+        LEFT JOIN aipre_folder AS af ON s.folder_id = af.folder_id
+        <where>
             <if test="projectId != null">
                 AND s.project_id = #{projectId}
             </if>
@@ -935,11 +935,22 @@
     </select>
 
     <!--眼科-查询项目文件夹-->
-    <select id="eyeProjectFolder" parameterType="cn.staitech.anno.vo.eyeslide.EyeProjectSlideIn" resultType="cn.staitech.anno.vo.eyeslide.EyeProjectSlideOut">
-        select f.folder_name,s.eye_ment,s.slide_id,s.prompt from tb_slide as s left join aipre_folder as f on s.folder_id=f.folder_id
+    <select id="eyeProjectFolder" parameterType="cn.staitech.anno.vo.eyeslide.EyeProjectSlideIn"
+            resultType="cn.staitech.anno.vo.eyeslide.EyeProjectSlideOut">
+        select 
+	        f.folder_name,
+	        s.eye_ment,
+	        s.slide_id,
+	        s.prompt 
+        from tb_slide as s 
+        left join aipre_folder as f         on    s.folder_id=f.folder_id
+        LEFT JOIN tb_image AS i ON s.image_id = i.image_id
         <where>
             <if test="projectId != null">
                 AND s.project_id = #{projectId}
+            </if>
+            <if test="imageName != null">
+                AND i.image_name LIKE CONCAT('%', #{imageName}, '%')
             </if>
             <if test="folderName != null">
                 AND f.folder_name LIKE CONCAT('%', #{folderName}, '%')
@@ -953,11 +964,15 @@
 
     <!--眼科-查询是否有算法结果-->
     <select id="algorithmResult" parameterType="java.lang.Long" resultType="int">
-        select count(*) from tb_slide where project_id=#{proejctId} and (ai_analyzed=2 or ai_analyzed=3)
+        select count(*)
+        from tb_slide
+        where project_id = #{proejctId}
+          and (ai_analyzed = 2 or ai_analyzed = 3)
     </select>
 
     <!--眼科-查询要添加的数据-->
-    <select id="eyeFolder" parameterType="cn.staitech.anno.vo.eyeslide.EyeSaveSlide" resultType="cn.staitech.anno.vo.eyeslide.ProjectSlideOut">
+    <select id="eyeFolder" parameterType="cn.staitech.anno.vo.eyeslide.EyeSaveSlide"
+            resultType="cn.staitech.anno.vo.eyeslide.ProjectSlideOut">
         select distinct f.folder_id
         from aipre_folder as f
         left join tb_files as i on f.files_id = i.files_id
@@ -992,7 +1007,9 @@
 
     <!--眼科-查询图片信息-->
     <select id="eyeFolderSlide" parameterType="java.lang.Long" resultType="cn.staitech.anno.domain.Image">
-        select image_id,substring_index( image_name, '.',1) AS image_name from tb_image where folder_id=#{folderId}
+        select image_id, substring_index(image_name, '.', 1) AS image_name
+        from tb_image
+        where folder_id = #{folderId}
     </select>
 
     <!--眼科-添加slide-->
@@ -1089,7 +1106,9 @@
 
     <!--眼科——查询图片错误原因-->
     <select id="errorReason" parameterType="java.lang.Long" resultType="cn.staitech.anno.vo.eyeslide.EyeErrorReasonOut">
-        select prompt from tb_slide where slide_id=#{slideId}
+        select prompt
+        from tb_slide
+        where slide_id = #{slideId}
     </select>
 
     <!--眼科-删除-->
@@ -1101,7 +1120,9 @@
 
     <!--查询已添加的文件-->
     <select id="addedFolder" parameterType="java.lang.Long" resultMap="BaseResultMap">
-        select folder_id from tb_slide where project_id=#{projectId}
+        select folder_id
+        from tb_slide
+        where project_id = #{projectId}
     </select>
 
     <!--眼科-更新审核状态-->
@@ -1123,7 +1144,9 @@
 
     <!--眼科-查新文件夹状态-->
     <select id="selectFolderMent" parameterType="java.lang.Long" resultType="cn.staitech.anno.domain.Slide">
-        select folder_id,prompt,slide_id,eye_ment,status from tb_slide where slide_id=#{slideId}
+        select folder_id, prompt, slide_id, eye_ment, status
+        from tb_slide
+        where slide_id = #{slideId}
     </select>
 
 </mapper>

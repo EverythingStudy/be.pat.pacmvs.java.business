@@ -39,6 +39,10 @@ import static cn.staitech.anno.constant.CommonConstant.GLIDE_LINE;
 @Slf4j
 @Service
 public class FileUploadServiceImpl implements FileUploadService {
+    private final String basePath = "/home/pat_saas";
+    private final String zipPath = "/Upload/json/zip";
+    private final String uploadPath = File.separator + "Upload";
+
     @Resource
     private TopicService topicService;
     @Resource
@@ -49,11 +53,6 @@ public class FileUploadServiceImpl implements FileUploadService {
     private FilesProcessService filesProcessService;
     @Resource
     private AlgorithmAssessmentService algorithmAssessmentService;
-    private final String basePath = "/home/pat_saas";
-    private final String zipPath = "/Upload/json/zip";
-
-    private final String uploadPath = File.separator + "Upload";
-
 
     /**
      * @param fileUrl  上传文件路径
@@ -117,7 +116,6 @@ public class FileUploadServiceImpl implements FileUploadService {
      * @throws IOException
      */
     @Override
-//    @Transactional(rollbackFor = Exception.class)
     public Files uploadAndProcessBusiness(FileUploadVO fileUploadVO) throws Exception {
 
         Files files = new Files();
@@ -151,49 +149,16 @@ public class FileUploadServiceImpl implements FileUploadService {
 
         String fileName = fileUploadVO.getFileName();
         // 获取文件的后缀名
-        String suffixName = fileName.substring(fileName.lastIndexOf("."));
+        String suffixName = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
         // 文件名称
         String filePath = dirPath + File.separator + fileName;
-
-
-        // ZIP重复上传重命名逻辑
-/*        if (businessType == 6) {
-            if (Objects.equals(fileUploadVO.getTopicName(), "")) {
-                throw new Exception(MessageSource.M("ARGUMENT_INVALID_NOT_FIND_TOPIC"));
-            }
-            String topicName = files.getTopicName();
-            Long topicId = files.getTopicId();
-
-            String filesName = fileUploadVO.getFileName();
-            // 定义文件夹名称
-            // String path = basePath + File.separator + "Slides" + File.separator + topicName + File.separator + filesName;
-            String path = dirPath + File.separator + filesName;
-            // 重复文件重命名规则
-            QueryWrapper<Files> filesQueryWrapper = new QueryWrapper<>();
-            filesQueryWrapper.eq("topic_id", topicId);
-            filesQueryWrapper.likeRight("files_name", filesName.substring(0, filesName.lastIndexOf(".")));
-
-            List<Files> filesList = filesService.list(filesQueryWrapper);
-            if (filesList.size() > 0) {
-                String pathPre = path.substring(0, path.lastIndexOf(CommonConstant.FILE_SUFFIX));
-                String pathEnd = path.substring(path.lastIndexOf(CommonConstant.FILE_SUFFIX));
-                int index = filesList.size();
-                path = pathPre + "(" + index + ")" + pathEnd;
-                filesName = filesName.substring(0, filesName.lastIndexOf(CommonConstant.FILE_SUFFIX)) + "(" + index + ")" + suffixName;
-
-                filePath = path;
-                fileName = filesName;
-            }
-
-        }*/
-
 
         // (真实存入)拷贝+
         File file = new File(filePath);
         if (!file.exists()) {
             fileUploadVO.getMultipartFile().transferTo(Paths.get(filePath));
         } else {
-            // 删除文件
+            // 先删除原文件，再存
             file.delete();
             fileUploadVO.getMultipartFile().transferTo(Paths.get(filePath));
         }
@@ -382,7 +347,6 @@ public class FileUploadServiceImpl implements FileUploadService {
     public boolean zipCheck(String zipUrl, Long projectId) throws Exception {
         boolean tag = true;
         File file1 = new File(zipUrl);
-        //        try {
         //zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
         //必须指明读取的各式，不然会存在问题
         ZipFile zipFile = new ZipFile(file1, Charset.forName("gbk"));
@@ -408,10 +372,6 @@ public class FileUploadServiceImpl implements FileUploadService {
             }
             zp.closeEntry();
         }
-        //        } catch (Exception e) {
-        //            throw new Exception("json文件解析失败");
-        //        }
-        //        return true;
         return tag;
     }
 
@@ -439,19 +399,6 @@ public class FileUploadServiceImpl implements FileUploadService {
                 topicId = topic.getTopicId();
                 // 定义文件夹名称
                 path = basePath + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()) + "/Slides" + File.separator + topicName + File.separator + fileUploadVO.getFileName();
-                // 重复文件重命名规则
-/*                QueryWrapper<Files> filesQueryWrapper = new QueryWrapper<>();
-                filesQueryWrapper.eq("topic_id", topicId);
-                filesQueryWrapper.likeRight("files_name", filesName.substring(0, filesName.lastIndexOf(".")));
-
-                List<Files> filesList = filesService.list(filesQueryWrapper);
-                if (filesList.size() > 0) {
-                    String pathPre = path.substring(0, path.lastIndexOf(CommonConstant.FILE_SUFFIX));
-                    String pathEnd = path.substring(path.lastIndexOf(CommonConstant.FILE_SUFFIX));
-                    int index = filesList.size();
-                    path = pathPre + "(" + index + ")" + pathEnd;
-                    filesName = filesName.substring(0, filesName.lastIndexOf(CommonConstant.FILE_SUFFIX)) + "(" + index + ")" + suffixName;
-                }*/
                 break;
         }
         // 创建文件

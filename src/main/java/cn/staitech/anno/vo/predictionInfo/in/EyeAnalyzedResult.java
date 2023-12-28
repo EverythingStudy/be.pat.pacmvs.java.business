@@ -4,24 +4,21 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 
-* @ClassName: EyeAnalyzedResult
-* @Description:
-* @author wanglibei
-* @date 2023年11月8日
-* @version V1.0
+ * @author wanglibei
+ * @version V1.0
+ * @ClassName: EyeAnalyzedResult
+ * @Description:
+ * @date 2023年11月8日
  */
 @Data
-public class EyeAnalyzedResult{
+public class EyeAnalyzedResult {
 
 
     @ApiModelProperty(value = "切片ID")
     private Long slidePredictionId;
-    
+
     @ApiModelProperty(value = "ai分析状态")
     private Integer aiAnalyzed;
-    
-
 
 
 }

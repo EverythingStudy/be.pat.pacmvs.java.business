@@ -33,7 +33,10 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static cn.staitech.common.security.utils.SecurityUtils.isAdmin;
@@ -111,7 +114,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                     log.error(exception.toString());
                     throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
                 }
-                if(urlPath != null && !"".equals(urlPath)){
+                if (urlPath != null && !"".equals(urlPath)) {
                     String[] pathList = urlPath.split(",");
                     for (String path : pathList) {
                         String jsonName = StringUtils.substringAfterLast(path, File.separator);
@@ -131,7 +134,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
             }
         }
         //插入题库表
-        if(resp.size() > 0){
+        if (resp.size() > 0) {
             QuestionBankServiceImpl bean = SpringUtils.getBean(QuestionBankServiceImpl.class);
             List<Long> questionBankList = new ArrayList<>();
             for (QuestionBank questionBank : resp) {
@@ -171,7 +174,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                 } catch (Exception ex) {
                     throw new RuntimeException(MessageSource.M("ERROR_GENERATE_JSON"));
                 }
-                if(urlPath != null && !"".equals(urlPath)){
+                if (urlPath != null && !"".equals(urlPath)) {
                     String[] pathList = urlPath.split(",");
                     for (String path : pathList) {
                         String jsoName = StringUtils.substringAfterLast(path, File.separator);
@@ -191,7 +194,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                 }
             }
         }
-        if(questionBanks.size() > 0){
+        if (questionBanks.size() > 0) {
             List<Long> questionBankList = new ArrayList<>();
             for (QuestionBank questionBank : questionBanks) {
                 baseMapper.insert(questionBank);

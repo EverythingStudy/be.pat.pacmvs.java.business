@@ -72,6 +72,5 @@ public class AlgorithmJsonController {
     public R<SelectGeoJsonList> selectUserAndLabelList(@RequestBody SelectGeoJson selectGeoJson) throws Exception {
         return R.ok(algorithmJsonService.selectUserAndLabelList(selectGeoJson));
     }
-
 }
 

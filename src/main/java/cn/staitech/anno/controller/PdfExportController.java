@@ -44,14 +44,12 @@ import java.util.List;
 @RequestMapping("/pdf")
 public class PdfExportController {
 
+    private final String baseDir = "/home/pat_saas";
+    private final String pdfFileUrl = "/Data/pdfFile/";
     @Resource
     private ProjectService projectService;
     @Resource
     private ExaminationService reviewService;
-
-    private final String baseDir = "/home/pat_saas";
-
-    private final String pdfFileUrl = "/Data/pdfFile/";
 
     public File pdfAddress() {
         Date date = new Date();

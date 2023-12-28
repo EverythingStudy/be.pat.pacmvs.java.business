@@ -99,6 +99,9 @@ public interface IndicatorService {
      * 查询专题在项目表中的数量
      */
     Integer selectIndicatorCountInProject(Long indicatorId);
+    
+    
+    Integer selectIndicatorCountByIndicator(Indicator indicator);
 
     /**
      * 查询指标列表
@@ -107,7 +110,7 @@ public interface IndicatorService {
      * @return 结果
      */
     List<Indicator> selectIndicatorInformation(Indicator indicator);
-    
+
     int saveCheck(IndicatorAddVO req);
 
 }

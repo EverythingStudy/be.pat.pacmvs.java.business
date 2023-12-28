@@ -304,7 +304,6 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
         response.setCharacterEncoding("utf-8");
         response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(projectName, "UTF-8") + CommonConstant.FILE_SUFFIX_XLSX);
         excelTool.exportExcel(titleData, assessmentExportOutList, response.getOutputStream(), true, false);
-//
     }
 
     public List<Map<String, String>> getTitleList(String[] colHeadKey, String[] colHeadValue) {

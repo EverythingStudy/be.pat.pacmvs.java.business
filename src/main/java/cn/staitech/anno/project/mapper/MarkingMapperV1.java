@@ -15,7 +15,7 @@ public interface MarkingMapperV1 extends BaseMapper<Marking> {
 
     List<Marking> selectMarkings();
 
-    List<Marking>markingList(Marking marking);
+    Integer markingList(Marking marking);
 
     Long markingListCount(Marking marking);
 

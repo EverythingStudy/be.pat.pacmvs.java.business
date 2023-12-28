@@ -4,10 +4,13 @@ import cn.staitech.anno.domain.Airepost;
 import cn.staitech.anno.mapper.AirepostMapper;
 import cn.staitech.anno.service.AirepostService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,6 +19,7 @@ import java.util.List;
  * @author wangfeng
  * @date 2023-11-10
  */
+@Slf4j
 @Service
 public class AirepostServiceImpl extends ServiceImpl<AirepostMapper, Airepost> implements AirepostService {
     @Resource
@@ -45,16 +49,24 @@ public class AirepostServiceImpl extends ServiceImpl<AirepostMapper, Airepost> i
      * @param airepost Airepost
      * @return Airepost
      */
+
     @Override
     public boolean reset(Airepost airepost) {
         List<Airepost> list = airepostMapper.selectAirepostList(airepost);
-        for (Airepost obj : list) {
-            obj.setCenterX(obj.getInitCenterX());
-            obj.setCenterY(obj.getInitCenterY());
-            obj.setLevel(obj.getInitLevel());
-            obj.setRotation(0);
-            obj.setVisible(true);
+        if (CollectionUtils.isNotEmpty(list)) {
+            List<Airepost> tmpList = new ArrayList<>(list.size());
+            for (Airepost obj : list) {
+                Airepost result = new Airepost();
+                result.setReportUuid(obj.getReportUuid());
+                result.setCenterX(obj.getInitCenterX());
+                result.setCenterY(obj.getInitCenterY());
+                result.setLevel(obj.getInitLevel());
+                result.setRotation(0);
+                result.setVisible(true);
+                tmpList.add(result);
+            }
+            return updateBatchById(tmpList);
         }
-        return updateBatchById(list);
+        return false;
     }
 }

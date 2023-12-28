@@ -80,7 +80,7 @@ public class SlidePredictionController {
         //判断当前角色是否为admin或者超级管理员
         if (!SysUser.isAdmin(SecurityUtils.getUserId())) {
 //            project.setCreateBy(SecurityUtils.getUserId());
-        	project.setPartUserId(SecurityUtils.getUserId());
+            project.setPartUserId(SecurityUtils.getUserId());
         }
         //项目列表来源于项目管理模块的项目类型为算法检测和图像拼接的项目,除了系统管理员外，每个用户只能看到自己参与的项目
         //项目类型:1标注2评审3标准训练集  6图像拼接  7算法预测
@@ -107,8 +107,8 @@ public class SlidePredictionController {
         SlidePredictionOut out = algorithmPredictionService.getOriginalSlideList(req);
         return R.ok(out);
     }
-    
-    
+
+
     /**
      * 修改备注接口
      */
@@ -148,7 +148,7 @@ public class SlidePredictionController {
         slidePrediction.setUpdateTime(DateUtil.date());
         slidePredictionService.updateById(slidePrediction);
         //改为非主图
-        if (CollectionUtils.isNotEmpty(list)){
+        if (CollectionUtils.isNotEmpty(list)) {
             slidePrediction.setSlidePredictionId(list.get(0).getSlidePredictionId());
             slidePrediction.setMainImage("2");
             slidePredictionService.updateById(slidePrediction);

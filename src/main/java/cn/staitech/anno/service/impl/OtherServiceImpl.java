@@ -54,7 +54,7 @@ public class OtherServiceImpl implements OtherService {
                 JSONObject markingJsonObject = new JSONObject();
                 markingJsonObject.put("examine_score_id", examineScoreId);
                 markingJsonObject.put("user_id", examineScoreBy.getCreateBy());
-                List<JSONObject> jsonObjects=new ArrayList<>();
+                List<JSONObject> jsonObjects = new ArrayList<>();
                 jsonObjects.add(markingJsonObject);
 //                JSONObject jsonObjectList=new JSONObject();
 //                jsonObjectList.put("dataList",jsonObjects);

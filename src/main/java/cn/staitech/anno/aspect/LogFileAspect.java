@@ -1,6 +1,5 @@
 package cn.staitech.anno.aspect;
 
-import com.alibaba.fastjson.JSONObject;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;

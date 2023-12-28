@@ -23,18 +23,6 @@ public class PdfFontUtil {
         return paragraph;
     }
 
-    //    /**
-    //     * 图片样式
-    //     */
-    //    public static Image getImage (String imgPath, float width, float height) throws Exception {
-    //        Image image = Image.getInstance(imgPath);
-    //        image.setAlignment(Image.MIDDLE);
-    //        if (width > 0 && height > 0){
-    //            image.scaleAbsolute(width, height);
-    //        }
-    //        return image ;
-    //    }
-
     /**
      * 表格生成
      */
@@ -56,12 +44,6 @@ public class PdfFontUtil {
         table.setSplitLate(false);
         return table;
     }
-    /**
-     * 表格内容
-     */
-    //    public static PdfPCell getPdfPCell (Phrase phrase){
-    //        return new PdfPCell (phrase) ;
-    //    }
 
     /**
      * 表格内容带样式

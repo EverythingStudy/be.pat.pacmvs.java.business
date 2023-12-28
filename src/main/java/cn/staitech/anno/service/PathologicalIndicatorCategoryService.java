@@ -27,7 +27,7 @@ public interface PathologicalIndicatorCategoryService {
      * @return 标签信息
      */
     String updateByPrimaryKeySelective(PathologicalIndicatorCategory Pathological);
-    
+
     /**
      * 修改标签信息(结构、标注、考核同步)
      *
@@ -139,11 +139,11 @@ public interface PathologicalIndicatorCategoryService {
      * 查询标签在标注中的使用数量
      */
     Integer selectLabelNum(Long categoryId);
-    
+
     /**
      * 查询标签所属脏器系统内已有标签数量
      */
     Integer selectLabelNumByStructureId(String structureId);
-    
+
     void handlerCouponsUserStatusTimeOutToExpired(List<Long> list) throws ParseException;
 }

@@ -1,9 +1,9 @@
 package cn.staitech.anno.controller;
 
 import cn.staitech.anno.domain.DataMigration;
+import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.project.mapper.MarkingMapperV1;
 import cn.staitech.anno.project.service.MarkingServiceV1;
-import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.service.DataMigrationService;
 import cn.staitech.common.core.domain.R;
 import com.github.pagehelper.Page;
@@ -31,7 +31,6 @@ public class DataMigrationController {
     private MarkingMapperV1 markingMapperV1;
     @Autowired
     private MarkingServiceV1 markingServiceV1;
-
     @Autowired
     private DataMigrationService dataMigrationService;
 
@@ -78,17 +77,12 @@ public class DataMigrationController {
 
     @GetMapping("/markingData")
     public R markingData() {
-
-
         return R.ok(dataMigrationService.markingData());
     }
 
     @GetMapping("/otherMarking")
     public R otherMarking() {
-
         DataMigration dataMigration = dataMigrationService.otherMarking();
-
-
         return R.ok(dataMigration);
     }
 }

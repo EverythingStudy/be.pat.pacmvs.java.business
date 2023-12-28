@@ -1,13 +1,21 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.domain.ProjectMember;
-import cn.staitech.anno.mapper.ProjectMemberMapper;
-import cn.staitech.anno.service.ProjectMemberService;
-import cn.staitech.common.security.utils.SecurityUtils;
-import org.springframework.stereotype.Service;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Resource;
-import java.util.List;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.stereotype.Service;
+
+import cn.staitech.anno.domain.ProjectMember;
+import cn.staitech.anno.mapper.ProjectMemberMapper;
+import cn.staitech.anno.project.domain.SysUser;
+import cn.staitech.anno.project.vo.ImageAnnoUserQueryIn;
+import cn.staitech.anno.project.vo.ProjectPartUserVO;
+import cn.staitech.anno.project.vo.SelectProjectVO;
+import cn.staitech.anno.service.ProjectMemberService;
+import cn.staitech.common.security.utils.SecurityUtils;
 
 /**
  * 项目 服务层实现
@@ -159,5 +167,42 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
     public List<ProjectMember> selectProject(ProjectMember projectMember) {
         return projectMemberMapper.selectProject(projectMember);
     }
+
+	@Override
+	public List<SelectProjectVO> getProjectListByPM(ProjectMember projectMember) {
+		List<SelectProjectVO> list = projectMemberMapper.getProjectListByPM(projectMember);
+		return list;
+	}
+
+	@Override
+	public List<ProjectPartUserVO> getUserList(ImageAnnoUserQueryIn query) {
+		List<SysUser> list =  new ArrayList<SysUser>();
+		Long[] projectId = query.getProjectIds();
+		ProjectMember projectMember = new ProjectMember();
+		if(null != projectId && projectId.length >0){
+			projectMember.setProjectIds(projectId);
+			list = projectMemberMapper.getUserListByProjectId(projectMember);
+		}else{
+			cn.staitech.system.api.domain.SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+			Long userId = sysUser.getUserId();
+			Long organizationId = sysUser.getOrganizationId();
+			//查询自己参与的项目列表
+			projectMember.setUserId(userId);
+			projectMember.setOrganizationId(organizationId);
+			list = projectMemberMapper.getUserListAll(projectMember);
+		}
+		
+		List<ProjectPartUserVO> retList =  new ArrayList<ProjectPartUserVO>();
+		if(CollectionUtils.isNotEmpty(list)){
+			for(SysUser user:list){
+				ProjectPartUserVO vo = new ProjectPartUserVO();
+				vo.setUserId(user.getUserId());
+				vo.setNickName(user.getNickName());
+				vo.setUserName(user.getUserName());
+				retList.add(vo);
+			}
+		}
+		return retList;
+	}
 
 }

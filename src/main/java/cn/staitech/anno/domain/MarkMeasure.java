@@ -1,17 +1,16 @@
 package cn.staitech.anno.domain;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.util.Date;
 
 
 /**
@@ -25,10 +24,10 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @TableName("tb_mark_measure")
-@ApiModel(value="MarkMeasure对象", description="标注测量表")
+@ApiModel(value = "MarkMeasure对象", description = "标注测量表")
 public class MarkMeasure implements Serializable {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "主键自增id")
     @TableId(value = "mark_measure_id", type = IdType.AUTO)
@@ -120,7 +119,7 @@ public class MarkMeasure implements Serializable {
 
     @ApiModelProperty(value = "机构ID")
     private Long organizationId;
-    
+
     @ApiModelProperty(value = "标注类型(AI表示AI算出的标注，Draw表示前端绘制的标注，Measure表示测量工具数据)")
     private String annotationType;
 

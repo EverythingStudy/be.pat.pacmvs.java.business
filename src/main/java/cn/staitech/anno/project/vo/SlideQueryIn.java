@@ -55,4 +55,10 @@ public class SlideQueryIn {
     private Integer pageNum;
 
     private Integer pageSize;
+    
+    @ApiModelProperty("项目ID")
+    private Long[] projectIds;
+    
+    @ApiModelProperty("参与人员ID")
+    private Long[] createBys;
 }

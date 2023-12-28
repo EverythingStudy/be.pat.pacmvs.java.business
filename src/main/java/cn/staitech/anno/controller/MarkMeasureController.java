@@ -1,24 +1,5 @@
 package cn.staitech.anno.controller;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.alibaba.fastjson.JSONObject;
-
 import cn.staitech.anno.service.MarkMeasureService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.geojson.Features;
@@ -30,11 +11,16 @@ import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import com.alibaba.fastjson.JSONObject;
+import io.swagger.annotations.*;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * <p>
@@ -52,7 +38,7 @@ public class MarkMeasureController {
     @Resource
     private MarkMeasureService markMeasureService;
 
-    
+
     @ApiOperation(value = "获取测量列表")
     @GetMapping("/list")
     public R<PageResponse<MarkingSelectListVO>> list(
@@ -63,11 +49,10 @@ public class MarkMeasureController {
         if (!Optional.ofNullable(slideId).isPresent()) {
             return R.fail(MessageSource.M("ARGUMENT_INVALID"));
         }
-        return R.ok(markMeasureService.list(slideId,pageNum,pageSize,measureFullName));
+        return R.ok(markMeasureService.list(slideId, pageNum, pageSize, measureFullName));
     }
 
 
-    
     @ApiOperation(value = "获取GeoJson数据")
     @GetMapping("/getDataList")
     public R<List<Features>> getDataList(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) throws Exception {
@@ -78,7 +63,6 @@ public class MarkMeasureController {
     }
 
 
-    
     @ApiOperation(value = "添加测量")
     @PostMapping("/add")
     public R<String> add(@Validated @RequestBody ViewAddIn req) throws Exception {
@@ -86,7 +70,7 @@ public class MarkMeasureController {
         return R.ok(markingId, MessageSource.M("OPERATE_SUCCEED"));
     }
 
-    
+
     @ApiOperation(value = "删除测量")
     @ApiImplicitParams({@ApiImplicitParam(name = "markingId", value = "标注id", required = true, dataType = "Long", paramType = "query")})
     @DeleteMapping("/del")
@@ -95,7 +79,7 @@ public class MarkMeasureController {
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
-    
+
     @ApiOperation(value = "更新测量")
     @PutMapping("/update")
     public R<String> update(@Validated @RequestBody MarkingUpdateIn req) throws Exception {
@@ -103,7 +87,7 @@ public class MarkMeasureController {
         return R.ok(req.getMarking_id(), MessageSource.M("OPERATE_SUCCEED"));
     }
 
-    
+
     @ApiOperation(value = "合并、裁剪轮廓")
     @PutMapping("/updateOperation")
     public R<JSONObject> updateOperation(@Validated @RequestBody UpdateOperationIn req) throws Exception {
@@ -111,7 +95,7 @@ public class MarkMeasureController {
         return R.ok(geoJson, MessageSource.M("OPERATE_SUCCEED"));
     }
 
-    
+
     @ApiOperation(value = "合并、裁剪轮廓校验")
     @PutMapping("/operationCheck")
     public R<Double> operationCheck(@Validated @RequestBody UpdateOperationIn req) throws Exception {
@@ -124,10 +108,9 @@ public class MarkMeasureController {
     @ApiOperation(value = "标注测量excel导出")
     @GetMapping("/export")
     public void export(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId, HttpServletResponse response) throws Exception {
-        markMeasureService.execlExport(slideId,response);
+        markMeasureService.execlExport(slideId, response);
     }
 
-    
 
 }
 

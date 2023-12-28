@@ -78,7 +78,7 @@ public class Container {
             .put(4, "Done")
             .build();
 
-    
+
     /**
      * 单审状态
      */
@@ -88,13 +88,13 @@ public class Container {
             .build();
 
     /**
-     *  单审状态 - EN
+     * 单审状态 - EN
      */
     public static final Map<Integer, String> SELF_REVIEW_STATUS_EN = new ImmutableMap.Builder<Integer, String>()
-    		.put(1, "Unreviewed")
+            .put(1, "Unreviewed")
             .put(2, "Reviewed")
             .build();
-    
+
     /**
      * 颜色类型
      */
@@ -151,9 +151,9 @@ public class Container {
      * 眼科-提示语
      */
     public static final Map<Integer, String> EYE_PROMPT_MAP = new ImmutableMap.Builder<Integer, String>()
-            .put(1, "算法要求最小图片数量为5张。请删除后重新上传")
+            .put(1, "文件夹图片仅支持5张，请调整后启动拼接。")
             .put(2, "因图像命名不符合要求，未识别到主图，请在原始切片中手动设置主图")
-            .put(3, "算法要求最小图片数量为7张。请删除后重新上传")
+            .put(3, "文件夹图片仅支持7张，请调整后启动拼接")
             .build();
 
 
@@ -161,9 +161,9 @@ public class Container {
      * 眼科-提示语-en
      */
     public static final Map<Integer, String> EYE_PROMPT_MAP_EN = new ImmutableMap.Builder<Integer, String>()
-            .put(1, "算法要求最小图片数量为5张。请删除后重新上传en")
+            .put(1, "文件夹图片仅支持5张，请调整后启动拼接。")
             .put(2, "因图像命名不符合要求，未识别到主图，请在原始切片中手动设置主图en")
-            .put(3, "算法要求最小图片数量为7张。请删除后重新上传en")
+            .put(3, "文件夹图片仅支持7张，请调整后启动拼接")
             .build();
     /**
      * 眼科ZIP压缩包解压后可解析的图像文件

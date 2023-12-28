@@ -171,11 +171,14 @@
         left join tb_image m on m.image_id = s.image_id
         <choose>
             <when test="params.createBy != null">
-        	 	 left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score  from tb_review t where t.create_by =  #{params.createBy} group by t.slide_id) r on s.slide_id = r.slide_id
-        	</when>
-        	<otherwise>
-        		 left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score from tb_review t  group by t.slide_id) r on s.slide_id = r.slide_id
-             </otherwise>
+                left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score
+                from tb_review t where t.create_by = #{params.createBy} group by t.slide_id) r on s.slide_id =
+                r.slide_id
+            </when>
+            <otherwise>
+                left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score
+                from tb_review t group by t.slide_id) r on s.slide_id = r.slide_id
+            </otherwise>
         </choose>
          left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score from tb_review t3  group by t3.slide_id) r3 on s.slide_id = r3.slide_id
          LEFT JOIN (select t2.slide_id as review_slide_id,t2.self_review_status from tb_review t2 where  t2.create_by = #{params.currentUser} GROUP BY t2.slide_id,t2.self_review_status)t5   ON  	t5.review_slide_id = s.slide_id
@@ -192,7 +195,7 @@
             <if test="params.score != null ">
                 AND r.score like CONCAT('%',#{params.score},'%')
             </if>
-            	<!-- 自评审状态：1未评审，2已评审 -->
+            <!-- 自评审状态：1未评审，2已评审 -->
             <if test="params.selfReviewStatus != null and params.selfReviewStatus != ''  and  params.selfReviewStatus == 1">
                 AND t5.self_review_status is null
             </if>

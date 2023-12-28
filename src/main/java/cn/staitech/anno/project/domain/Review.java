@@ -165,7 +165,7 @@ public class Review implements Serializable {
      */
     @ApiModelProperty("轮次名称")
     private String roundName;
-    
+
     @ApiModelProperty(value = "评审状态 默认1：未审 2：已审")
     private String selfReviewStatus;
 

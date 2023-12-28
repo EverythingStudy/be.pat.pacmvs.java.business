@@ -29,4 +29,6 @@ public class IndicatorVO {
     private String createBy;
     @ApiModelProperty(value = "关联的项目")
     private List<Project> projectVo;
+    @ApiModelProperty(value = "标签类型 0:下拉筛选标签；1:自定义标签")
+    private Integer indicatorType;
 }

@@ -3,7 +3,6 @@ package cn.staitech.anno.controller.Gzip;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -64,10 +63,6 @@ public class CompressUtils {
 //        }
 //        return out.toByteArray();
 //    }
-
-
-
-
     public static byte[] compressData(String str, String encoding) {
         if (str == null || str.length() == 0) {
             return null;

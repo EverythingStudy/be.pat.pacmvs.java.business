@@ -18,5 +18,4 @@ public class ProjectSlideDel {
     private List<Long> slideIdList;
 
 
-
 }

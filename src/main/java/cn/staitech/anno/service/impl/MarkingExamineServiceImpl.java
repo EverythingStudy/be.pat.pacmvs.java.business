@@ -1,6 +1,9 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.domain.*;
+import cn.staitech.anno.domain.MarkingExamine;
+import cn.staitech.anno.domain.QuestionBank;
+import cn.staitech.anno.domain.QuestionProjectRel;
+import cn.staitech.anno.domain.Structure;
 import cn.staitech.anno.mapper.MarkingExamineMapper;
 import cn.staitech.anno.mapper.QuestionBankMapper;
 import cn.staitech.anno.mapper.QuestionProjectRelMapper;
@@ -95,6 +98,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
                 QueryWrapper<Structure> structureQueryWrapper = new QueryWrapper<>();
                 structureQueryWrapper.eq("structure_id", labelCode).eq("type", "ROE");
                 structureQueryWrapper.eq("organization_id", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+
                 Structure structure = structureMapper.selectOne(structureQueryWrapper);
                 if (structure != null) {
                     // 获取geometry数据
@@ -218,7 +222,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         if (!Optional.ofNullable(markingExamineBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
-        Marking marking = MarkingUtils.updateVerify(markingExamineBy.getGeometry(),req.getGeometry(),req.getOperation(),req.getCheck(), req.getResolution());
+        Marking marking = MarkingUtils.updateVerify(markingExamineBy.getGeometry(), req.getGeometry(), req.getOperation(), req.getCheck(), req.getResolution());
         JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(marking.getMarkingId()));
         MarkingExamine markingExamine = new MarkingExamine();
         markingExamine.setGeometry(jsonObject);
@@ -244,7 +248,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         if (!Optional.ofNullable(markingExamineBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
-        return MarkingUtils.updateOperationVerify(markingExamineBy.getGeometry(),req.getGeometry(),req.getOperation());
+        return MarkingUtils.updateOperationVerify(markingExamineBy.getGeometry(), req.getGeometry(), req.getOperation());
     }
 
     public JSONObject getAnnotation(String fileUrl) {

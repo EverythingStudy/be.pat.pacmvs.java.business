@@ -181,6 +181,7 @@ public interface SlideMapper extends BaseMapper<Slide> {
      * @return
      */
     IPage<SlideReportVO> pageSlideStatistics(@Param("page") Page page, @Param("params") Map params);
+
     /**
      * 切片报表分页查询
      *
@@ -201,81 +202,81 @@ public interface SlideMapper extends BaseMapper<Slide> {
 
     /**
      * 眼科选择图片查询
-     * */
+     */
     List<ImageListOutVO> eyeSlideList(EyeSlideIn eyeSlideIn);
 
     /**
      * 删除文件夹下的图片
-     * */
+     */
     int updateByPrimaryKeySelective(SlidePrediction slidePrediction);
 
     /**
      * 眼科项目图片
-     * */
-    List<EyeProjectSlideOut>eyeProjectSlide(EyeProjectSlideOut eyeProjectSlideOut);
+     */
+    List<EyeProjectSlideOut> eyeProjectSlide(EyeProjectSlideOut eyeProjectSlideOut);
 
     /**
      * 查询项目文件夹
-     * */
+     */
     List<EyeProjectSlideOut> eyeProjectFolder(EyeProjectSlideOut eyeProjectSlideOut);
 
     /**
      * 眼科-查询是否有算法结果
-     * */
+     */
     int algorithmResult(Long projectId);
 
     /**
      * 眼科-查询要添加的数据
-     * */
+     */
     List<ProjectSlideOut> eyeFolder(EyeSaveSlide eyeSaveSlide);
 
     /**
      * 眼科-查询图片信息
-     * */
+     */
     List<Image> eyeFolderSlide(Long folderId);
 
     /**
      * 眼科-添加slide
-     * */
+     */
     int eyeInsertSlide(Slide slide);
 
     /**
      * 眼科添加碎片
-     * */
+     */
     int eyeInsert(List<SlidePrediction> slideList);
 
     /**
      * 眼科-更新文件夹状态
-     * */
+     */
     int eyeUpdateFolder(Slide slide);
 
     /**
      * 更新添加主图
-     * */
+     */
     int eyeUpdateMainImage(SlidePrediction slidePrediction);
 
     /**
      * 眼科——查询图片错误原因
-     * */
+     */
     EyeErrorReasonOut errorReason(Long slideId);
 
     /**
      * 眼科-删除文件夹下的图片
-     * */
+     */
     int eyeDeleteImage(Long slideId);
 
     /**
      * 查询已添加的文件
-     * */
-    List<Slide>addedFolder(Long projectId);
+     */
+    List<Slide> addedFolder(Long projectId);
 
     /**
      * 眼科-更新审核状态
-     * */
+     */
     int updateMent(Slide slide);
 
     /**
      * 眼科-查新文件夹状态
-     * */
+     */
     Slide selectFolderMent(Long slideId);
 }

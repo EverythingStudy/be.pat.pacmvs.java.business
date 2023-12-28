@@ -156,27 +156,26 @@ public class ExamineScoreController {
 
     /**
      * 人工评分
-     * */
+     */
     @ApiOperationSupport(author = "zmj")
     @ApiOperation(value = "人工评分")
     @PutMapping("/manualScoring")
-    public R<String> manualScoring(@RequestBody @Validated ExamineScoreUpdateVO examineScoreUpdateVO){
+    public R<String> manualScoring(@RequestBody @Validated ExamineScoreUpdateVO examineScoreUpdateVO) {
         examineScoreService.manualScoring(examineScoreUpdateVO);
         return R.ok();
     }
 
     /**
      * 批量算法评分
-     * */
+     */
     @ApiOperationSupport(author = "zmj")
     @ApiOperation(value = "批量算法评分")
     @PutMapping("/batchAlgorithm")
-    public R<String> BatchAlgorithm(@RequestBody ExamineScoreBathVO examineScoreBathVO){
+    public R<String> BatchAlgorithm(@RequestBody ExamineScoreBathVO examineScoreBathVO) {
         examineScoreService.BatchAlgorithm(examineScoreBathVO);
 
         return R.ok();
     }
-
 
 
 }

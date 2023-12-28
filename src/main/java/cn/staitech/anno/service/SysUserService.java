@@ -21,6 +21,6 @@ public interface SysUserService {
 
     /**
      * 根据机构ID查询用户列表
-     * */
+     */
     List<SysUser> userList();
 }

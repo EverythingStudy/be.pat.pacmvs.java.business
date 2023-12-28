@@ -13,5 +13,5 @@ import java.util.List;
 @Data
 public class ExportOrderProjectIn {
     @ApiModelProperty(value = "项目主键id列表")
-    List <Long> projectList;
+    List<Long> projectList;
 }

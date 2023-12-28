@@ -9,7 +9,6 @@ import cn.staitech.anno.vo.imagecsv.ImageCsvGetPagerVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
 import cn.staitech.anno.vo.project.ProjectListOutVO;
-import cn.staitech.anno.vo.project.ProjectStatisticsVO;
 import cn.staitech.anno.vo.slide.*;
 import cn.staitech.anno.vo.statistic.StatisticSlideListInVO;
 import cn.staitech.anno.vo.statistic.StatisticSlideListOutVO;
@@ -206,46 +205,45 @@ public interface SlideService extends IService<Slide> {
     SlideSelectBy pageImageCsvListVOBy(Long slideId);
 
 
-
     /**
      * 删除项目切片
-     * */
+     */
     R deleteProjectImage(ProjectSlideDel projectSlideDel);
 
     /**
      * 眼科-查询是否有算法结果
-     * */
+     */
     int algorithmResult(Long projectId);
 
     /**
      * 眼科项目图片
-     * */
+     */
     PageMaster<EyeProjectSlideOut> eyeProjectSlide(EyeProjectSlideIn request);
 
     /**
      * 眼科选择图片查询
-     * */
+     */
     PageMaster<ImageListOutVO> eyeImage(EyeSlideIn eyeSlideIn);
 
     /**
      * 眼科-查询要添加的数据
-     * */
+     */
     R eyeFolder(EyeSaveSlide eyeSaveSlide);
 
     /**
      * 眼科——查询图片错误原因
-     * */
+     */
     EyeErrorReasonOut errorReason(Long slideId);
 
 
     /**
      * 眼科-更新审核状态
-     * */
+     */
     int updateMent(Slide slide);
 
     /**
      * 眼科-查新文件夹状态
-     * */
+     */
     Slide selectFolderMent(Long slideId);
 
     /**

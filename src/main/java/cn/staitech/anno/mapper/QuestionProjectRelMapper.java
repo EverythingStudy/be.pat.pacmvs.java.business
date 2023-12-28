@@ -29,6 +29,6 @@ public interface QuestionProjectRelMapper extends BaseMapper<QuestionProjectRel>
 
     /**
      * 批量添加考核选片
-     * */
+     */
     int examineInsert(List<QuestionProjectRel> questionProjectRelList);
 }
