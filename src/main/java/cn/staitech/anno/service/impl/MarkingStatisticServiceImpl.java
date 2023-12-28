@@ -4,14 +4,12 @@ import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.MarkingStatistic;
 import cn.staitech.anno.mapper.MarkingMapper;
 import cn.staitech.anno.service.MarkingStatisticService;
-import cn.staitech.anno.utils.Column;
-import cn.staitech.anno.utils.ExcelTool;
-import cn.staitech.anno.utils.ExcelUtil;
-import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.utils.*;
 import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingStatisticSelectVO;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
+import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -38,16 +36,22 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
      * @return
      */
     @Override
-    public List<MarkingStatistic> selectMarkingStatistic(MarkingStatisticSelectVO selectVO) {
+    public PageMaster<MarkingStatistic> selectMarkingStatistic(MarkingStatisticSelectVO selectVO) {
+        PageHelper.startPage(selectVO.getPageNum(), selectVO.getPageSize()).setReasonable(true);
+
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
         Long organizationId = sysUser.getOrganizationId();
 
         selectVO.setOrganizationId(organizationId);
         selectVO.setUserId(sysUser.getUserId());
+
         List<MarkingStatistic> list = markingMapper.selectMarkingStatistic(selectVO);
         list = setCount(list, organizationId);
 
-        return list;
+        PageMaster<MarkingStatistic> pageMaster = new PageMaster<>(list);
+        //清除分页缓存
+        PageHelper.clearPage();
+        return pageMaster;
     }
 
 
@@ -66,6 +70,7 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
         selectVO.setOrganizationId(organizationId);
         selectVO.setUserId(sysUser.getUserId());
         List<MarkingStatistic> list = markingMapper.selectMarkingStatistic(selectVO);
+
         list = setCount(list, organizationId);
 
         // 构造表头的每个列头 定义表头

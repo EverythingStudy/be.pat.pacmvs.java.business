@@ -13,7 +13,10 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -41,8 +44,7 @@ public class MarkingStatisticController {
     @Log(title = "智能标注-标注统计-用户标签统计-列表页", menu = "智能标注", subMenu = "标注统计", businessType = BusinessType.QUERY)
     @PostMapping("/list")
     public R<PageMaster<MarkingStatistic>> list(@Validated @RequestBody MarkingStatisticSelectVO selectVO) {
-        PageMaster pageMaster = new PageMaster<>(markingStatisticService.selectMarkingStatistic(selectVO));
-        return R.ok(pageMaster);
+        return R.ok(markingStatisticService.selectMarkingStatistic(selectVO));
     }
 
     @ApiOperationSupport(author = "wangfeng")

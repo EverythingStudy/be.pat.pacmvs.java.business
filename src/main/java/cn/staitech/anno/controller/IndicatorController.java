@@ -1,5 +1,27 @@
 package cn.staitech.anno.controller;
 
+import static cn.staitech.common.security.utils.SecurityUtils.isAdmin;
+
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.Organ;
@@ -11,7 +33,11 @@ import cn.staitech.anno.service.ProjectService;
 import cn.staitech.anno.service.StructureService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
-import cn.staitech.anno.vo.indicator.*;
+import cn.staitech.anno.vo.indicator.IndicatorAddVO;
+import cn.staitech.anno.vo.indicator.IndicatorGetVO;
+import cn.staitech.anno.vo.indicator.IndicatorListVO;
+import cn.staitech.anno.vo.indicator.IndicatorReviseVO;
+import cn.staitech.anno.vo.indicator.IndicatorVO;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
@@ -20,23 +46,12 @@ import cn.staitech.common.security.annotation.Logical;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.SneakyThrows;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.Resource;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static cn.staitech.common.security.utils.SecurityUtils.isAdmin;
 
 
 /**
@@ -78,7 +93,6 @@ public class IndicatorController extends BaseController {
 
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
         Long organizationId = sysUser.getOrganizationId();
-//				Long organizationId = 1L;
         Indicator indicator = new Indicator();
         indicator.setSpeciesId(req.getSpeciesId());
         indicator.setOrganId(req.getOrganId());
@@ -139,8 +153,9 @@ public class IndicatorController extends BaseController {
         }
 
         if (indicatorType == 0) {
-            indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
-            indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
+            // 20231222wangfeng
+            indicator.setIndicatorName(MapConstant.getOrgan(organizationId + req.getSpeciesId() + req.getOrganId()));
+            indicator.setIndicatorNameEn(MapConstant.getOrganEn(organizationId + req.getSpeciesId() + req.getOrganId()));
         } else {
             indicator.setIndicatorName(req.getOrganName());
             indicator.setIndicatorNameEn(req.getOrganName());
@@ -308,8 +323,8 @@ public class IndicatorController extends BaseController {
         }
 
         if (indicatorType == 0) {
-            indicator.setIndicatorName(MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId())));
-            indicator.setIndicatorNameEn(MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId())));
+            indicator.setIndicatorName(MapConstant.getOrgan(organizationId + req.getSpeciesId() + req.getOrganId()));
+            indicator.setIndicatorNameEn(MapConstant.getOrganEn(organizationId + req.getSpeciesId() + req.getOrganId()));
         } else {
             indicator.setIndicatorName(req.getOrganName());
             indicator.setIndicatorNameEn(req.getOrganName());
@@ -317,7 +332,6 @@ public class IndicatorController extends BaseController {
         }
         indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
         indicator.setCreateBy(sysUser.getUserId());
-        //		indicator.setCreateBy(1L);
 
         req.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
         // 修改病理指标
@@ -360,6 +374,7 @@ public class IndicatorController extends BaseController {
     //	@PostMapping("/save")
     public R<String> save(@Validated @RequestBody IndicatorAddVO req) {
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+        Long organizationId = sysUser.getOrganizationId();
         int saveCheck = indicatorService.saveCheck(req);
         if (saveCheck != 0) {
             if (saveCheck == 1) {
@@ -375,20 +390,21 @@ public class IndicatorController extends BaseController {
         Indicator indicator = new Indicator();
         indicator.setSpeciesId(req.getSpeciesId());
         indicator.setOrganId(req.getOrganId());
-        indicator.setOrganizationId(sysUser.getOrganizationId());
+        indicator.setOrganizationId(organizationId);
         indicator.setDelFlag(0);
         // 查询结构指标是否存在
         List<Indicator> indicatorList = indicatorService.selectIndicator(indicator);
         if (!indicatorList.isEmpty()) {
             return R.fail(MessageSource.M("INDICATOR_EXIST"));
         }
-
-        String indicatorName = MapConstant.getOrgan(req.getSpeciesId().concat(req.getOrganId()));
+        // 20231222wangfeng
+        String indicatorName = MapConstant.getOrgan(organizationId + req.getSpeciesId() + req.getOrganId());
         if (StringUtils.isEmpty(indicatorName)) {
             indicatorName = req.getOrganName();
         }
         indicator.setIndicatorName(indicatorName);
-        String indicatorNameEn = MapConstant.getOrganEn(req.getSpeciesId().concat(req.getOrganId()));
+        // 20231222wangfeng
+        String indicatorNameEn = MapConstant.getOrganEn(organizationId + req.getSpeciesId() + req.getOrganId());
         if (StringUtils.isEmpty(indicatorNameEn)) {
             indicatorNameEn = req.getOrganName();
         }
@@ -396,7 +412,7 @@ public class IndicatorController extends BaseController {
         indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
         indicator.setCreateBy(sysUser.getUserId());
         //20231107wd结构指标关联机构
-        indicator.setOrganizationId(sysUser.getOrganizationId());
+        indicator.setOrganizationId(organizationId);
         //添加结构指标
         indicatorService.insertIndicator(indicator);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));

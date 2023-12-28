@@ -1,7 +1,6 @@
 package cn.staitech.anno.vo.marking;
 
 
-import cn.staitech.anno.domain.Pager;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -14,7 +13,7 @@ import java.util.List;
  * @Description: 标注统计查询VO
  */
 @Data
-public class MarkingStatisticSelectVO extends Pager implements Serializable {
+public class MarkingStatisticSelectVO implements Serializable {
     @ApiModelProperty(value = "项目ID")
     private List<Long> projectIds;
 
@@ -33,4 +32,7 @@ public class MarkingStatisticSelectVO extends Pager implements Serializable {
     @ApiModelProperty(value = "当前登录用户ID", hidden = true, required = true)
     private Long userId;
 
+    private Integer pageNum = 0;
+
+    private Integer pageSize = 10;
 }
