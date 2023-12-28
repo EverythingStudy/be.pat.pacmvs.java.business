@@ -205,14 +205,21 @@ public class IndicatorController extends BaseController {
     public R<IndicatorVO> getInfo(
             @RequestParam @ApiParam(name = "indicatorId", value = "病理指标id", required = true) Long indicatorId) {
         // 获取病理信息
-        Indicator indicator = indicatorService.selectIndicatorsById(indicatorId);
+    	Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+        Indicator indicatorQuery = new Indicator();
+        indicatorQuery.setOrganizationId(organizationId);
+        indicatorQuery.setIndicatorId(indicatorId);
+        List<Indicator> list  = indicatorService.selectIndicator(indicatorQuery);
         IndicatorVO indicatorVo = new IndicatorVO();
-        if (indicator != null) {
-            // 浅拷贝
-            BeanUtils.copyProperties(indicator, indicatorVo);
+        if(CollectionUtils.isNotEmpty(list)){
+        	Indicator indicator = list.get(0);
+        	if (indicator != null) {
+        		// 浅拷贝
+        		BeanUtils.copyProperties(indicator, indicatorVo);
+        	}
+        	//添加关联项目
+        	indicatorVo.setProjectVo(projectService.selectProjectInfo(indicatorId));
         }
-        //添加关联项目
-        indicatorVo.setProjectVo(projectService.selectProjectInfo(indicatorId));
         return R.ok(indicatorVo);
     }
 
