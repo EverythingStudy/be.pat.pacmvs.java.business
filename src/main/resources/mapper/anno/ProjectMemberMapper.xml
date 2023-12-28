@@ -302,6 +302,7 @@
 		FROM
 			tb_project_member t2
 			LEFT JOIN sys_user t3 ON t2.user_id = t3.user_id
+			LEFT JOIN tb_project t4 ON t4.project_id = t2.project_id
 		<where>
 			<if test="projectIds != null and projectIds.length > 0">
 			       AND   t2.project_id IN
@@ -309,6 +310,7 @@
 			                    #{item}
 			                </foreach>
 			</if>
+			 and t4.project_type = '1' 
 		</where>
     </select>
     
