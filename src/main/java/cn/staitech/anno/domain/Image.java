@@ -173,4 +173,7 @@ public class Image extends BaseEntity {
     @ApiModelProperty(value = "创建人")
     @TableField(exist = false)
     private String nickName;
+    @ApiModelProperty(value = "文件夹名称")
+    @TableField(exist = false)
+    private String folderName;
 }
