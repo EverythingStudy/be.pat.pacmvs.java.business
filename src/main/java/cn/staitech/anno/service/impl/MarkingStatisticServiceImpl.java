@@ -9,12 +9,14 @@ import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingStatisticSelectVO;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -69,9 +71,26 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
 
         selectVO.setOrganizationId(organizationId);
         selectVO.setUserId(sysUser.getUserId());
-        List<MarkingStatistic> list = markingMapper.selectMarkingStatistic(selectVO);
 
-        list = setCount(list, organizationId);
+        List<MarkingStatistic> list = new ArrayList<>();
+
+        // TODO:分页->线程池异步
+        int pageSize = 10;
+        int i = 1;
+        // 总记录条数
+        int sum = 0;
+        while (true) {
+            Page<cn.staitech.anno.project.domain.Marking> page = PageHelper.startPage(i, pageSize);
+            List<MarkingStatistic> listPerPage = markingMapper.selectMarkingStatistic(selectVO);
+            if (listPerPage.size() > 0) {
+                listPerPage = setCount(listPerPage, organizationId);
+                list.addAll(listPerPage);
+                sum += listPerPage.size();
+                i++;
+            } else {
+                break;
+            }
+        }
 
         // 构造表头的每个列头 定义表头
         List<Map<String, String>> titleList = ExcelUtil.getTitleList(CommonConstant.MARKING_STATISTICS_KEY, CommonConstant.MARKING_STATISTICS_VALUE);
