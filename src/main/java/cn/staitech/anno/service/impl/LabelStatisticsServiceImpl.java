@@ -1,6 +1,7 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.constant.CommonConstant;
+import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.mapper.LabelStatisticsMapper;
 import cn.staitech.anno.service.LabelStatisticsService;
 import cn.staitech.anno.utils.Column;
@@ -203,6 +204,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
         //查询图像数量
         List<ImageMarkingOut> imageNums=labelStatisticsMapper.imageNums(imageMarkingIn);
         for (ProjectLabelOut projectLabelOut:projectLabelOuts){
+            projectLabelOut.setStatusName(Container.PROJECT_STATUS.get(projectLabelOut.getStatus()));
             projectLabelOut.setMarkingNum("0");
             projectLabelOut.setImageNum("0");
             //添加标注数量
@@ -268,6 +270,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
             ImageMarkingIn imageIn= ImageMarkingIn.builder().projectId(projectLabelOut.getProjectId()).build();
             ImageMarkingOut imageOut=labelStatisticsMapper.slideNum(imageIn);
             projectLabelOut.setImageNum(imageOut.getImageNum().toString());
+            projectLabelOut.setStatusName(Container.PROJECT_STATUS.get(projectLabelOut.getStatus()));
         }
 
         // 构造表头的每个列头 定义表头

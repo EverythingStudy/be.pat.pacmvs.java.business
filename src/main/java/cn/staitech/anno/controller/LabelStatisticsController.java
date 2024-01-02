@@ -114,11 +114,4 @@ public class LabelStatisticsController {
         labelStatisticsService.projectExport(projectListIn,response);
     }
 
-//    @ApiOperationSupport(author = "ZMJ")
-//    @ApiOperation(value = "数量")
-//    @PostMapping("/num")
-//    public R<List<ImageMarkingOut>> num(@RequestBody ImageMarkingIn imageMarkingIn){
-//        List<ImageMarkingOut> imageMarkingOuts=labelStatisticsService.markingNums(imageMarkingIn);
-//        return R.ok(imageMarkingOuts);
-//    }
 }
