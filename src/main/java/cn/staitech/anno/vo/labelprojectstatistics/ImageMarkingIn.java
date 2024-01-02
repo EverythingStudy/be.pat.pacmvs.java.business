@@ -33,4 +33,13 @@ public class ImageMarkingIn {
 
     @ApiModelProperty(value = "项目状态列表(要排除的状态)")
     private List<Integer> statusList;
+
+    @ApiModelProperty(value = "项目id",hidden = true)
+    private List<Long> projectIds;
+
+    /**
+     * 标签id
+     * */
+    @ApiModelProperty(value = "标签id",hidden = true)
+    private List<Long> categoryIds;
 }

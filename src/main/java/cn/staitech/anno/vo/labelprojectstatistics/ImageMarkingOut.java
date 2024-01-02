@@ -24,4 +24,10 @@ public class ImageMarkingOut {
      * 项目id
      * */
     private Long projectId;
+
+    private Long categoryId;
+
+    private Long indicatorId;
+
+    private Long slideId;
 }

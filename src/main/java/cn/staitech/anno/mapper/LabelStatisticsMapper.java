@@ -26,15 +26,15 @@ public interface LabelStatisticsMapper {
      * */
     List<ProjectLabelOut>projectLabelList(ProjectLabelIn projectLabelIn);
 
-    /**
-     * 查询图像数量
-     * */
-    ImageMarkingOut imageNum(ImageMarkingIn imageMarkingIn);
-
-    /**
-     * 查询标注数量
-     * */
-    ImageMarkingOut markingNum(ImageMarkingIn imageMarkingIn);
+//    /**
+//     * 查询图像数量
+//     * */
+//    ImageMarkingOut imageNum(ImageMarkingIn imageMarkingIn);
+//
+//    /**
+//     * 查询标注数量
+//     * */
+//    ImageMarkingOut markingNum(ImageMarkingIn imageMarkingIn);
 
     /**
      * 项目创建者
@@ -55,4 +55,19 @@ public interface LabelStatisticsMapper {
      * 标签统计中的项目信息
      * */
    List<ProjectLabelOut> projectIdList(ProjectLabelIn projectLabelIn);
+
+    /**
+     * 查询标注数量
+     * */
+    List<ImageMarkingOut>markingNums(ImageMarkingIn imageMarkingIn);
+
+    /**
+     * 查询图像数量
+     * */
+    List<ImageMarkingOut>imageNums(ImageMarkingIn imageMarkingIn);
+
+    /**
+     * 项目统计-查询标注数
+     * */
+    List<ImageMarkingOut> projectMarking(ImageMarkingIn imageMarkingIn);
 }

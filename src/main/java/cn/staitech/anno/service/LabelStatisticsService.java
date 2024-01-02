@@ -51,4 +51,7 @@ public interface LabelStatisticsService {
      * 项目导出
      * */
     void projectExport(ProjectListIn projectListIn,HttpServletResponse response)throws Exception;
+
+
+//    List<ImageMarkingOut>markingNums(ImageMarkingIn imageMarkingIn);
 }
