@@ -75,7 +75,7 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
         List<MarkingStatistic> list = new ArrayList<>();
 
         // TODO:分页->线程池异步
-        int pageSize = 10;
+        int pageSize = 1000;
         int i = 1;
         // 总记录条数
         int sum = 0;
