@@ -90,7 +90,6 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
      * */
     @Override
     public R<PageMaster<ProjectLabelOut>>projectLabelList(ProjectLabelIn projectLabelIn){
-        PageHelper.startPage(projectLabelIn.getPageNum(), projectLabelIn.getPageSize()).setReasonable(true);
         projectLabelIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         projectLabelIn.setUserId(SecurityUtils.getUserId());
         ProjectInVO projectInVO=ProjectInVO.builder().organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).userId(SecurityUtils.getUserId()).projectType("1").build();
@@ -102,6 +101,8 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
         //标签id列表
         List<Long> categoryIdList= labelOuts.stream().map(LabelOut::getCategoryId).collect(Collectors.toList());
         categoryIdList.add(0L);
+
+        PageHelper.startPage(projectLabelIn.getPageNum(), projectLabelIn.getPageSize()).setReasonable(true);
         List<ProjectLabelOut> projectLabelOuts=labelStatisticsMapper.projectLabelList(projectLabelIn);
         //查询标注数
         ImageMarkingIn imageMarkingIn= ImageMarkingIn.builder().projectIds(projectIdList).categoryIds(categoryIdList).build();
