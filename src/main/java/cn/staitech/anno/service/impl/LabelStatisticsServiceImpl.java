@@ -89,7 +89,8 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
      * 查询项目标签
      * */
     @Override
-    public List<ProjectLabelOut>projectLabelList(ProjectLabelIn projectLabelIn){
+    public R<PageMaster<ProjectLabelOut>>projectLabelList(ProjectLabelIn projectLabelIn){
+        PageHelper.startPage(projectLabelIn.getPageNum(), projectLabelIn.getPageSize()).setReasonable(true);
         projectLabelIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         projectLabelIn.setUserId(SecurityUtils.getUserId());
         ProjectInVO projectInVO=ProjectInVO.builder().organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).userId(SecurityUtils.getUserId()).projectType("1").build();
@@ -123,7 +124,8 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
                }
            }
        }
-        return projectLabelOuts;
+        PageMaster<ProjectLabelOut> pageMaster = new PageMaster<>(projectLabelOuts);
+        return R.ok(pageMaster);
     }
 
 

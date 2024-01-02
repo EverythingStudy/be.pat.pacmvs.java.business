@@ -63,29 +63,8 @@ public class LabelStatisticsController {
     @ApiOperation(value = "标签统计")
     @PostMapping("/projectLabel")
     public R<PageMaster<ProjectLabelOut>> projectLabel(@RequestBody ProjectLabelIn projectLabelIn){
-        PageHelper.startPage(projectLabelIn.getPageNum(),projectLabelIn.getPageSize()).setReasonable(true);
-        List<ProjectLabelOut> projectLabelOuts=labelStatisticsService.projectLabelList(projectLabelIn);
-        PageMaster<ProjectLabelOut> pageMaster = new PageMaster<>(projectLabelOuts);
-        return R.ok(pageMaster);
-//        ProjectDelVO projectDelVO=ProjectUtils.pagingLabel(projectLabelIn);
-//        int pageSize = projectDelVO.getPageSize();
-//        int pageNum = projectDelVO.getPageNum();
-//        boolean flag1 = projectDelVO.getFlag();
-//        List<ProjectLabelOut> result = projectDelVO.getResultList();
-//        for (int i = pageNum * pageSize; i < pageNum * pageSize + pageSize; i++) {
-//            if (i <  projectLabelOuts.size()) {
-//                result.add( projectLabelOuts.get(i));
-//            }
-//        }
-//        PageMaster<ProjectLabelOut> pageMaster = new PageMaster<>(result);
-//        if (flag1) {
-//            pageNum++;
-//        }
-//        pageMaster.setPageNum(pageNum);
-//        pageMaster.setPageSize(pageSize);
-//        pageMaster.setTotal(projectLabelOuts.size());
-//        return R.ok(pageMaster);
-
+        R<PageMaster<ProjectLabelOut>> projectLabelOuts=labelStatisticsService.projectLabelList(projectLabelIn);
+        return projectLabelOuts;
     }
 
 

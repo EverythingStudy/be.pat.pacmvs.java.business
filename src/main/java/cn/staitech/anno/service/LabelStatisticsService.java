@@ -29,7 +29,7 @@ public interface LabelStatisticsService {
     /**
      * 查询项目标签
      * */
-   List<ProjectLabelOut> projectLabelList(ProjectLabelIn projectLabelIn);
+    R<PageMaster<ProjectLabelOut>> projectLabelList(ProjectLabelIn projectLabelIn);
 
     /**
      * 项目创建者
