@@ -73,9 +73,11 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
         selectVO.setOrganizationId(organizationId);
         selectVO.setUserId(sysUser.getUserId());
 
-
         // 获取总记录数
         long total = markingMapper.selectMarkingStatisticTotal(selectVO);
+        if (total == 0) {
+            return;
+        }
 
         // 分页->线程池异步处理
         ExecutorService executorService = new ThreadPoolExecutor(
