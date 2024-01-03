@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 标注 - 标签统计
@@ -75,7 +73,9 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
         selectVO.setOrganizationId(organizationId);
         selectVO.setUserId(sysUser.getUserId());
 
-        List<MarkingStatistic> list = new ArrayList<>();
+
+        // 获取总记录数
+        long total = markingMapper.selectMarkingStatisticTotal(selectVO);
 
         // TODO:分页->线程池异步
         ExecutorService executorService = new ThreadPoolExecutor(
@@ -92,30 +92,27 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
                 },
                 new ThreadPoolExecutor.DiscardOldestPolicy());
 
-        AtomicBoolean flag = new AtomicBoolean(true);
-
         int pageSize = 1000;
-        AtomicInteger i = new AtomicInteger(1);
-        // 总记录条数
-        AtomicInteger sum = new AtomicInteger();
-        // 遍历所有记录条数
-        while (flag.get()) {
+
+        int totalPages = (int) (total / pageSize);
+
+        List<MarkingStatistic> list = new ArrayList<>((int) total);
+
+        // 遍历所有页码
+        for (int i = 0; i <= totalPages; i++) {
+            final int pageNum = i + 1;
 
             executorService.execute(() -> {
                 try {
                     // 获取指定页码的数据
-                    Page<cn.staitech.anno.project.domain.Marking> page = PageHelper.startPage(i.get(), pageSize);
-                    List<MarkingStatistic> listPerPage = markingMapper.selectMarkingStatistic(selectVO);
+                    Page<cn.staitech.anno.project.domain.Marking> page = PageHelper.startPage(pageNum, pageSize);
+                    List<MarkingStatistic> currentPageRecords = markingMapper.selectMarkingStatistic(selectVO);
 
                     synchronized (this) {
                         // 将数据添加到最终结果集中（这里list为共享变量）
-                        if (listPerPage.size() > 0) {
-                            listPerPage = setCount(listPerPage, organizationId);
-                            list.addAll(listPerPage);
-                            sum.addAndGet(listPerPage.size());
-                            i.getAndIncrement();
-                        } else {
-                            flag.set(false);
+                        if (currentPageRecords.size() > 0) {
+                            currentPageRecords = setCount(currentPageRecords, organizationId);
+                            list.addAll(currentPageRecords);
                         }
                     }
                 } catch (Exception e) {

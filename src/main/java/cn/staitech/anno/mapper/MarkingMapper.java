@@ -112,6 +112,14 @@ public interface MarkingMapper extends BaseMapper<Marking> {
      * @param selectVO
      * @return
      */
+    long selectMarkingStatisticTotal(MarkingStatisticSelectVO selectVO);
+
+    /**
+     * 标签统计
+     *
+     * @param selectVO
+     * @return
+     */
     List<MarkingStatistic> selectMarkingStatistic(MarkingStatisticSelectVO selectVO);
 
     /**

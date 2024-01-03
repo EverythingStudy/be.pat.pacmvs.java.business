@@ -550,6 +550,69 @@
     </update>
 
 
+    <!-- 标签统计总数 -->
+    <select id="selectMarkingStatisticTotal" parameterType="cn.staitech.anno.vo.marking.MarkingStatisticSelectVO"  resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM tb_project_member m
+        LEFT JOIN tb_project p ON m.project_id = p.project_id
+        LEFT JOIN sys_user u ON m.user_id = u.user_id
+        LEFT JOIN tb_pathological_indicator i ON p.indicator_id = i.indicator_id
+        LEFT JOIN (
+        SELECT DISTINCT category_id,indicator_id,category_name
+        FROM tb_pathological_indicator_category
+        UNION
+        SELECT DISTINCT 0 as category_id,indicator_id,'无属性' as category_name
+        FROM tb_pathological_indicator
+        WHERE organization_id = #{organizationId}
+        ) AS c ON c.indicator_id = i.indicator_id
+        WHERE p.project_type = 1
+        AND m.organization_id = #{organizationId}
+        AND p.organization_id = #{organizationId}
+        AND u.organization_id = #{organizationId}
+        AND i.organization_id = #{organizationId}
+        AND p.project_name IS NOT NULL
+        <choose>
+            <when test="projectIds != null and projectIds.size() >0 ">
+                AND p.project_id IN
+                <foreach item="projectId" collection="projectIds" separator="," open="(" close=")" index="">
+                    #{projectId, jdbcType=BIGINT}
+                </foreach>
+            </when>
+            <otherwise>
+                <if test="userId != null">
+                    AND p.project_id IN(
+                    SELECT project_id
+                    FROM tb_project
+                    WHERE organization_id = #{organizationId} AND project_type =1 AND project_id IN(
+                    SELECT DISTINCT project_id
+                    FROM tb_project_member
+                    WHERE user_id = #{userId}
+                    )
+                    )
+                </if>
+            </otherwise>
+        </choose>
+        <if test="createBys != null and createBys.size() >0 ">
+            AND m.user_id IN
+            <foreach item="createBy" collection="createBys" separator="," open="(" close=")" index="">
+                #{createBy, jdbcType=BIGINT}
+            </foreach>
+        </if>
+        <if test="indicatorIds != null and indicatorIds.size() >0 ">
+            AND i.indicator_id IN
+            <foreach item="indicatorId" collection="indicatorIds" separator="," open="(" close=")" index="">
+                #{indicatorId, jdbcType=BIGINT}
+            </foreach>
+        </if>
+        <if test="categoryIds != null and categoryIds.size() >0 ">
+            AND c.category_id IN
+            <foreach item="categoryId" collection="categoryIds" separator="," open="(" close=")" index="">
+                #{categoryId, jdbcType=BIGINT}
+            </foreach>
+        </if>
+    </select>
+
+
     <!-- 标签统计
     SELECT m.project_id,p.project_name,m.user_id,u.nick_name,i.indicator_id,i.indicator_name,c.category_id,c.category_name FROM tb_project_member m LEFT JOIN tb_project p ON m.project_id = p.project_id LEFT JOIN sys_user u ON m.user_id = u.user_id LEFT JOIN tb_pathological_indicator i ON p.indicator_id = i.indicator_id LEFT JOIN tb_pathological_indicator_category c ON c.indicator_id = i.indicator_id WHERE p.project_type = 1 AND m.organization_id = 1 AND p.organization_id = 1 AND u.organization_id = 1 AND i.organization_id = 1 AND c.organization_id = 1 AND p.project_name IS NOT NULL AND p.project_id IN ( 119 , 144 , 277 , 304 ) AND m.user_id IN ( 11 ) AND i.indicator_id IN ( 1108 ) AND c.category_id IN ( 1560 )
     -->
