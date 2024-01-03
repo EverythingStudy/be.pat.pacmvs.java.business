@@ -77,7 +77,7 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
         // 获取总记录数
         long total = markingMapper.selectMarkingStatisticTotal(selectVO);
 
-        // TODO:分页->线程池异步
+        // 分页->线程池异步处理
         ExecutorService executorService = new ThreadPoolExecutor(
                 Runtime.getRuntime().availableProcessors(),
                 Runtime.getRuntime().availableProcessors() * 2,
@@ -93,7 +93,6 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
                 new ThreadPoolExecutor.DiscardOldestPolicy());
 
         int pageSize = 1000;
-
         int totalPages = (int) (total / pageSize);
 
         List<MarkingStatistic> list = new ArrayList<>((int) total);
@@ -101,7 +100,6 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
         // 遍历所有页码
         for (int i = 0; i <= totalPages; i++) {
             final int pageNum = i + 1;
-
             executorService.execute(() -> {
                 try {
                     // 获取指定页码的数据
