@@ -3,7 +3,7 @@
 <mapper namespace="cn.staitech2.anno.mapper.UserManualMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="cn.staitech2.anno.domain.UserManual">
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.UserManual">
         <id column="user_manual_id" property="userManualId" />
         <result column="user_manual_url" property="userManualUrl" />
         <result column="messages_type" property="messagesType" />

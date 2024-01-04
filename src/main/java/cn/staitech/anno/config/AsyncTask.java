@@ -10,13 +10,12 @@ import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.project.domain.Slide;
 import cn.staitech.anno.project.mapper.MarkingMapperV1;
 import cn.staitech.anno.project.mapper.SlideMapperV1;
+import cn.staitech.anno.project.mapper.SysUserMapperV1;
 import cn.staitech.anno.project.service.MarkingServiceV1;
 import cn.staitech.anno.project.service.SlideAttrService;
 import cn.staitech.anno.utils.GeometryUtil;
 import cn.staitech.anno.vo.geojson.Properties;
 import cn.staitech.anno.vo.slide.SlideRes;
-import cn.staitech.common.security.utils.SecurityUtils;
-import cn.staitech.system.api.domain.SysUser;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -28,6 +27,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.BufferedInputStream;
@@ -37,6 +37,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -71,11 +72,14 @@ public class AsyncTask {
     @Resource
     private MarkingMapperV1 markingMapperV1;
 
+    @Resource
+    private SysUserMapperV1 userMapperV1;
+
     @SneakyThrows
-    @Async
+    @Async("getAsyncExecutor")
     //TODO1 解析json过程中无法标注
-    //@Transactional
-    public void zipExport(String zipUrl, Long projectId) {
+    @Transactional
+    public Runnable zipExport(String zipUrl, Long projectId, Long organizationId) throws Exception {
         File file1 = new File(zipUrl);
 //        try {
         // 查询切片列表
@@ -113,8 +117,7 @@ public class AsyncTask {
                 if (size > 0) {
                     InputStream bf = zipFile.getInputStream(ze);
                     InputStream newBf = zipFile.getInputStream(ze);
-                    InputStream newBfs = zipFile.getInputStream(ze);
-                    parseJson(bf, newBf, slideResList, newBfs);
+                    parseJson(bf, newBf, slideResList, organizationId);
                     bf.close();
                 }
             }
@@ -124,17 +127,11 @@ public class AsyncTask {
 //            throw new Exception("json文件解析失败");
 //        }
 //        return true;
+        return null;
     }
 
 
-    /**
-     * 解析json文件流
-     *
-     * @param fileUrl      文件流
-     * @param slideResList 切片集合
-     * @throws Exception
-     */
-    public void parseJson(InputStream fileUrl, InputStream newBf, List<SlideRes> slideResList, InputStream newBfs) throws Exception {
+    public void parseJson(InputStream fileUrl, InputStream newBf, List<SlideRes> slideResList, Long organizationId) throws Exception {
         JsonFactory f = new MappingJsonFactory();
         JsonParser jp = f.createParser(fileUrl);
         JsonToken current;
@@ -143,84 +140,60 @@ public class AsyncTask {
             throw new RemoteException("json type error！");
         }
         String imageName = null;
-
+        List<Long> userIdList = new ArrayList<>();
         while (jp.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = jp.getCurrentName();
-            jp.nextToken();
+            current = jp.nextToken();
             // move from field name to field value
             if ("image".equals(fieldName)) {
                 JsonNode treeNode = jp.readValueAsTree();
                 imageName = treeNode.get("image_name").asText();
+            } else if ("features".equals(fieldName)) {
+                if (current == JsonToken.START_ARRAY) {
+                    while (jp.nextToken() != JsonToken.END_ARRAY) {
+                        String node = jp.readValueAsTree().toString();
+                        JSONObject featureObject = JSONObject.parseObject(node);
+                        // 获取属性和自定义字段
+                        JSONObject properties = featureObject.getJSONObject("properties");
+                        cn.staitech.anno.vo.geojson.Properties properties1 = JSONObject.toJavaObject(JSONObject.parseObject(JSONObject.toJSONString(properties)), Properties.class);
+                        if (!userIdList.contains(Long.valueOf(properties1.getAnnotation_owner()))) {
+                            userIdList.add(Long.valueOf(properties1.getAnnotation_owner()));
+                        }
+                    }
+                }
             } else {
                 jp.skipChildren();
             }
         }
         // 校验切片名称
-        fileNameContrast(imageName, slideResList, newBf, newBfs);
+        fileNameContrast(imageName, slideResList, newBf, userIdList, organizationId);
 
     }
 
-
-    public void fileNameContrast(String imageName, List<SlideRes> slideResList, InputStream newBf, InputStream newBfs) throws Exception {
+    public void fileNameContrast(String imageName, List<SlideRes> slideResList, InputStream newBf, List<Long> userIdList, Long organizationId) throws Exception {
         List<cn.staitech.anno.project.domain.Marking> markingList = new ArrayList<>();
         if (imageName != null) {
             for (SlideRes slide : slideResList) {
                 // 判断名称切片名称是否相同
-
                 if (Objects.equals(slide.getImageName(), imageName)) {
-//                    JsonFactory fs = new MappingJsonFactory();
-//                    JsonParser jps = fs.createParser(newBfs);
-//                    JSONObject jsonObject = JSONObject.parseObject(jps.readValueAsTree().toString());
-//                    // 删除当前切片中(json中用户的)所有标注
-//                    QueryWrapper<Marking> markingQueryWrapperBy = new QueryWrapper<>();
-//                    markingQueryWrapperBy.eq("slide_id", slide.getSlideId());
-//                    //获取json中用户信息
-//                    String name = jsonObject.getJSONObject("attribute").getString("author");
-//                    markingQueryWrapperBy.eq("annotation_owner", name);
-//                    //删除slideId下author的所有标注
-//                    markingMapperV1.delete(markingQueryWrapperBy);
-
-                    JsonFactory jfs = new MappingJsonFactory();
-                    JsonParser jpr = jfs.createParser(newBfs);
-                    //存放标注者id
-                    Set<String> userIdList = new HashSet<>();
-                    JsonToken currents;
-                    currents = jpr.nextToken();
-                    //循环获取json中用户信息
-                    while (jpr.nextToken() != JsonToken.END_OBJECT) {
-                        String fieldName = jpr.getCurrentName();
-                        // move from field name to field value
-                        currents = jpr.nextToken();
-                        if ("features".equals(fieldName)) {
-                            if (currents == JsonToken.START_ARRAY) {
-                                while (jpr.nextToken() != JsonToken.END_ARRAY) {
-                                    String node = jpr.readValueAsTree().toString();
-                                    JSONObject featureObject = JSONObject.parseObject(node);
-                                    // 获取属性和自定义字段
-                                    JSONObject properties = featureObject.getJSONObject("properties");
-                                    cn.staitech.anno.vo.geojson.Properties properties1 = JSONObject.toJavaObject(JSONObject.parseObject(JSONObject.toJSONString(properties)), Properties.class);
-                                    userIdList.add(properties1.getAnnotation_owner());
-                                }
-                            }
-                        } else {
-                            jpr.skipChildren();
-                        }
-                    }
-                    //删除json中标注者的标注数据
-                    for (String user : userIdList) {
-                        QueryWrapper<Marking> markingQueryWrapperBy = new QueryWrapper<>();
-                        markingQueryWrapperBy.eq("create_by", user);
-                        markingQueryWrapperBy.eq("slide_id", slide.getSlideId());
-                        markingMapperV1.delete(markingQueryWrapperBy);
-                    }
+                    QueryWrapper<Marking> markingQueryWrapperBy = new QueryWrapper<>();
+                    markingQueryWrapperBy.in("create_by", userIdList);
+                    markingQueryWrapperBy.eq("slide_id", slide.getSlideId());
+                    // 删除json文件中所有用户在切片中的轮廓数据
+                    markingMapperV1.delete(markingQueryWrapperBy);
+                    // 查询json文件中所有标注人员
+                    QueryWrapper<cn.staitech.anno.project.domain.SysUser> userQueryWrapper = new QueryWrapper<>();
+                    userQueryWrapper.in("user_id", userIdList);
+                    List<cn.staitech.anno.project.domain.SysUser> userList = userMapperV1.selectList(userQueryWrapper);
+                    // 将数据转化为map
+                    Map<Long, String> userMap = userList.stream().collect(Collectors.toMap(cn.staitech.anno.project.domain.SysUser::getUserId, cn.staitech.anno.project.domain.SysUser::getUserName));
                     // 查询切片详情
                     Slide slideBy = slideMapperV1.selectById(slide.getSlideId());
                     // 查询图片详情
                     Image image = imageMapper.selectById(slideBy.getImageId());
                     // 定义病理指标标签
                     Map<String, Long> categoryMap = new HashMap<>();
-                    // 定义用户列表
-                    List<Long> userByList = new ArrayList<>();
+                    // 定义标签map
                     Map<String, Object> objMap = null;
                     // 循环列表，对数据进行处理
                     JsonFactory f = new MappingJsonFactory();
@@ -236,14 +209,10 @@ public class AsyncTask {
                                 while (jp.nextToken() != JsonToken.END_ARRAY) {
                                     String node = jp.readValueAsTree().toString();
                                     JSONObject featureObject = JSONObject.parseObject(node);
-                                    objMap = writeMarking(slide.getSlideId(), featureObject, slideBy, image, categoryMap);
+                                    objMap = writeMarking(slide.getSlideId(), featureObject, slideBy, image, categoryMap, userMap, organizationId);
                                     cn.staitech.anno.project.domain.Marking marking = (cn.staitech.anno.project.domain.Marking) objMap.get("marking");
                                     // 添加至列表中
                                     markingList.add(marking);
-                                    // 获取用户列表
-                                    if (!userByList.contains(marking.getCreateBy())) {
-                                        userByList.add(marking.getCreateBy());
-                                    }
                                     // 将标签map进行赋值
                                     Object categoryNewMap = objMap.get("category");
                                     if (categoryNewMap != null) {
@@ -263,6 +232,7 @@ public class AsyncTask {
                     // 将剩余数据进行添加
                     if (markingList.size() > 0) {
                         markingServiceV1.saveBatch(markingList);
+                        markingList = new ArrayList<>();
                     }
                     // 获取标签列表
                     List<Long> categoryList = new ArrayList<>();
@@ -276,15 +246,14 @@ public class AsyncTask {
                         slideMapperV1.updateById(slideBy);
                     }
                     // 添加结束之后，更新标签信息
-                    slideAttrService.saveAnnoUsers(slide.getSlideId(), userByList);
+                    slideAttrService.saveAnnoUsers(slide.getSlideId(), userIdList);
                     slideAttrService.saveAnnoCategory(slide.getSlideId(), categoryList);
                 }
             }
         }
     }
 
-
-    public Map<String, Object> writeMarking(Long slideId, JSONObject featureObject, Slide slideBy, Image image, Map<String, Long> categoryMap) throws Exception {
+    public Map<String, Object> writeMarking(Long slideId, JSONObject featureObject, Slide slideBy, Image image, Map<String, Long> categoryMap, Map<Long, String> userMap, Long organizationId) throws Exception {
 
         Map<String, Object> map = new HashMap<>();
 
@@ -300,7 +269,7 @@ public class AsyncTask {
         if (!Objects.equals(properties1.getLabel_code(), "") && properties1.getLabel_code() != null) {
             Long categoryId = categoryMap.get(properties1.getLabel_code());
             if (categoryId == null) {
-                PathologicalIndicatorCategory pathologicalIndicatorCategory = pathologicalIndicatorCategoryMapper.selectProjectAndNumber(Long.valueOf(slideBy.getProjectId()), properties1.getLabel_code(), SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+                PathologicalIndicatorCategory pathologicalIndicatorCategory = pathologicalIndicatorCategoryMapper.selectProjectAndNumber(Long.valueOf(slideBy.getProjectId()), properties1.getLabel_code(), organizationId);
                 if (pathologicalIndicatorCategory != null) {
                     marking.setCategoryId(pathologicalIndicatorCategory.getCategoryId());
                     categoryMap.put(properties1.getLabel_code(), pathologicalIndicatorCategory.getCategoryId());
@@ -311,9 +280,8 @@ public class AsyncTask {
             }
         }
         // 根据用户id查询用户详情信息
-        SysUser user = userMapper.selectUserById(Long.valueOf(properties1.getAnnotation_owner()));
-        if (user != null) {
-            marking.setAnnotationOwner(user.getUserName());
+        if (userMap.get(Long.valueOf(properties1.getAnnotation_owner())) != null) {
+            marking.setAnnotationOwner(userMap.get(Long.valueOf(properties1.getAnnotation_owner())));
         }
         // 写入实体类
         marking.setAnnotationId(annotationId);
