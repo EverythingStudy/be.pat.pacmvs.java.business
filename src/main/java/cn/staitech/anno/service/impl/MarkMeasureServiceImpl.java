@@ -315,13 +315,13 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
-        Project project = projectMapperV1.selectById(markingBy.getProject_id());
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+        //Project project = projectMapperV1.selectById(markingBy.getProject_id());
 //		SysUser sysUser = userMapper.selectUserById(1L);
         //验证集项目中不能修改他人轮廓
-        if (!Objects.equals(markingBy.getCreate_by(), sysUser.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
+        /*if (!Objects.equals(markingBy.getCreate_by(), sysUser.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
             throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
-        }
+        }*/
 
 
         // 查询切片表中信息==》先走缓存
