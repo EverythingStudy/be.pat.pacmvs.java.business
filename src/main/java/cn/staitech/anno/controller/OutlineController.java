@@ -6,6 +6,7 @@ import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.project.service.MarkingServiceV1;
 import cn.staitech.anno.service.OutlineService;
 import cn.staitech.anno.utils.CustomizationIdUtils;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.outline.OutlineSelectVO;
 import cn.staitech.anno.vo.outline.OutlineStatistic;
 import cn.staitech.common.core.domain.R;
@@ -59,8 +60,7 @@ public class OutlineController {
             @ApiImplicitParam(name = "createBy", value = "创建者ID", required = true, dataType = "Long", paramType = "query")})
     public R clean(@RequestParam @ApiParam(name = "createBy", value = "创建者ID", required = true) Long createBy) {
         outlineService.removeAllBycreateBy(createBy);
-        return R.ok();
-        //    return R.ok(MessageSource.M("OPERATE_SUCCEED"));
+        return R.ok(MessageSource.M("OPERATE_SUCCEED"));
     }
 
 
@@ -78,17 +78,14 @@ public class OutlineController {
         outlineService.removeBycreateBySlideId(selectVO.getCreateBy(), selectVO.getSlideId());
 
         if (selectVO.getMinVal() != null && selectVO.getMaxVal() != null && (selectVO.getMinVal() > selectVO.getMaxVal())) {
-            // return R.fail(MessageSource.M("OUTLINE.ARGUEMENT.ERROR"));
-            return R.fail("筛选条件不符合规则！");
+            return R.fail(MessageSource.M("OUTLINE.ARGUEMENT.ERROR"));
         }
 
         List<Outline> list = outlineService.selectList(selectVO);
 
         if (CollectionUtils.isEmpty(list)) {
-            // return R.fail(MessageSource.M("OUTLINE.NORESULT"));
-            return R.fail("未查询到符合条件的记录！");
+            return R.fail(MessageSource.M("OUTLINE.NORESULT"));
         }
-
         // 查询业务类型：1面积(默认),2周长
         Integer bizType = selectVO.getBizType() != null ? selectVO.getBizType() : 1;
         return R.ok(outlineService.statistic(list, bizType));
@@ -105,15 +102,13 @@ public class OutlineController {
     @PostMapping("/save")
     public R save(@Validated @RequestBody OutlineSelectVO selectVO) {
         if (selectVO.getMinVal() != null && selectVO.getMaxVal() != null && (selectVO.getMinVal() > selectVO.getMaxVal())) {
-            // return R.fail(MessageSource.M("OUTLINE.ARGUEMENT.ERROR"));
-            return R.fail("筛选条件不符合规则！");
+            return R.fail(MessageSource.M("OUTLINE.ARGUEMENT.ERROR"));
         }
 
         List<Outline> list = outlineService.selectList(selectVO);
 
         if (CollectionUtils.isEmpty(list)) {
-            // return R.fail(MessageSource.M("OUTLINE.NORESULT"));
-            return R.fail("未查询到符合条件的记录！");
+            return R.fail(MessageSource.M("OUTLINE.NORESULT"));
         }
 
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
@@ -148,9 +143,6 @@ public class OutlineController {
             // 删除所有当前用户的记录
             outlineService.removeAllBycreateBy(selectVO.getCreateBy());
         }
-        return R.ok();
-        //    return R.ok(MessageSource.M("OPERATE_SUCCEED"));
+        return R.ok(MessageSource.M("OPERATE_SUCCEED"));
     }
-
-
 }
