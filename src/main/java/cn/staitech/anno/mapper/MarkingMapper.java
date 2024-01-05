@@ -49,6 +49,8 @@ public interface MarkingMapper extends BaseMapper<Marking> {
      * @return
      */
     List<Features> selectListBy(Long slideId);
+    
+    List<Features> selectListBy2(Map<String, Object> map);
 
 
     List<MarkingSelectListVO> selectUnionList(Map<String, Object> map);

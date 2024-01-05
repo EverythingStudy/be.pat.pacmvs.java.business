@@ -369,6 +369,30 @@
         <include refid="selectListBy"/>
         where slide_id = #{slideId}
     </select>
+    
+    
+    <select id="selectListBy2" parameterType="map" resultMap="featuresResult">
+        <include refid="selectListBy"/>
+        where slide_id = #{slideId}
+        <if test="createBy != null and createBy != ''">
+            and create_by = #{createBy}
+        </if>
+        <if test="otherCreateBy != null and otherCreateBy != ''">
+            and create_by != #{createBy}
+        </if>
+        <if test="organizationId != null">
+        	and category_id in (
+					SELECT
+					c2.category_id 
+				FROM
+					tb_pathological_indicator_category c2 
+				WHERE
+					c2.structure_id IN ( SELECT c1.structure_id FROM tb_structure c1 WHERE c1.organization_id =  #{organizationId} AND c1.type != 'RO' ) 
+					AND c2.del_flag = '0' 
+					AND c2.organization_id = #{organizationId} 		
+				)
+        </if>
+    </select>
 
 
     <select id="selectBy" parameterType="string" resultMap="propertiesResult">

@@ -56,7 +56,13 @@ public class CommonConstant {
     public static final Long MARKING_CACHE_HOURS = 24L;
     public static final String ANNO_TYPE_DRAW = "Draw";
     public static final String ANNO_TYPE_MEASURE = "Measure";
+    
+    /**
+     * review
+     */
 
+    public static final String NOT_EVALUATING = "不予评价";
+    
     /**
      * 上传下载限制
      */

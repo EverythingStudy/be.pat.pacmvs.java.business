@@ -50,6 +50,8 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
 import com.vividsolutions.jts.io.WKTReader;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -174,7 +176,30 @@ public class MarkingServiceImpl implements MarkingService {
         if (!Optional.ofNullable(slideBy).isPresent()) {
             throw new Exception(MessageSource.M("SLIDE_ABNORMAL_NO_INFORMATION"));
         }
-        return markingMapper.selectListBy(slideId);
+        Project project = projectMapperV1.selectById(slideBy.getProjectId());
+        //项目类型:1标注2评审3标准训练集
+        String projectType = project.getProjectType();
+        List<Features> list = new ArrayList<Features>();
+        if(projectType.equalsIgnoreCase("3")){
+        	//只查询自己标注的数据
+        	Map<String, Object> map = new HashMap<String, Object>();
+        	map.put("createBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
+        	List<Features> selfAnnoList = markingMapper.selectListBy2(map);
+        	if(CollectionUtils.isNotEmpty(selfAnnoList)){
+        		list.addAll(selfAnnoList);
+        	}
+        	//其它人ROA+ROE
+        	Map<String, Object> otherMap = new HashMap<String, Object>();
+        	otherMap.put("otherCreateBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
+        	otherMap.put("organizationId", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        	List<Features> otherAnnoList = markingMapper.selectListBy2(otherMap);
+        	if(CollectionUtils.isNotEmpty(otherAnnoList)){
+        		list.addAll(otherAnnoList);
+        	}
+        }else{
+        	list = markingMapper.selectListBy(slideId);
+        }
+        return list;
     }
 
     @Override

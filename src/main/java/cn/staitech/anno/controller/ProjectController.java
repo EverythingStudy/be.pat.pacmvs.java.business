@@ -159,6 +159,23 @@ public class ProjectController extends BaseController {
         return R.fail(MessageSource.M("OPERATE_ERROR"));
     }
 
+    @ApiOperation(value = "取消完成")
+    @Log(title = "取消完成", menu = "取消完成", subMenu = "取消完成", businessType = BusinessType.UPDATE)
+    @PostMapping("/cancelCompleted")
+    @Transactional(rollbackFor = Exception.class)
+    public R<String> cancelCompleted(@Validated @RequestBody UpdateProjectVO req) {
+        Project project = new Project();
+        BeanUtils.copyProperties(req, project);
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+        project.setUpdateBy(sysUser.getUserId());
+        project.setUpdateTime(new Date());
+        project.setOrganizationId(sysUser.getOrganizationId());
+        if (projectService.updateById(project)) {
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+        }
+        return R.fail(MessageSource.M("OPERATE_ERROR"));
+    }
+    
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "批量项目")
     @RequiresPermissions("projectConfig:projectList:remove")

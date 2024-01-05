@@ -3,6 +3,7 @@ package cn.staitech.anno.project.service.impl;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
+import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.mapper.SysUserMapper;
 import cn.staitech.anno.project.domain.*;
 import cn.staitech.anno.project.mapper.*;
@@ -104,15 +105,33 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         getBaseMapper().pageReviewSlide(page, params);
         List<ReviewSlideVO> list = page.getRecords();
         if (CollectionUtils.isNotEmpty(list)) {
-            for (ReviewSlideVO vo : list) {
-                if (StringUtils.isEmpty(vo.getSelfReviewStatus())) {
-                    vo.setSelfReviewStatus("1");
-                }
-            }
+        	for (ReviewSlideVO vo : list) {
+        		if (StringUtils.isEmpty(vo.getSelfReviewStatus())) {
+        			vo.setSelfReviewStatus("1");
+        		}
+        		//TODO 分数处理
+        		String score = vo.getScore();
+        		score = trans2Score(score);
+        		vo.setScore(score);	
+        	}
         }
         PageMaster<ReviewSlideVO> pageMaster = PageMaster.of(list);
         pageMaster.setTotal(page.getTotal());
         return pageMaster;
+    }
+    
+    
+    private String trans2Score(String score){
+    	StringBuffer buffer = new StringBuffer();
+    	 String[] scoreArray = score.split(":");
+    	 for(int i=0;i<scoreArray.length;i++){
+    		 String perScore = scoreArray[i];
+    		 if(perScore.equals(" -1")||perScore.equals("-1")){
+    			 perScore = perScore.replaceAll("-1", CommonConstant.NOT_EVALUATING);
+             }
+    		 buffer.append(perScore).append(":");
+    	 }
+    	 return buffer.toString();
     }
 
     private Integer getAnnoCount(Integer projectId) throws Exception {

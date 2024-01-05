@@ -141,8 +141,17 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
                 writer.write(header);
                 for (ReviewVO reviewVO : reviewVOS) {
                     projectName = reviewVO.getProjectName();
+                    //TODO
+                    String score = String.valueOf(reviewVO.getScore());
+                    if(score.equals("-1")){
+                    	score = score.replaceAll("-1", CommonConstant.NOT_EVALUATING);
+                    }else{
+                    	score = trans2Score(score);
+                    }
+                    
+                    
                     String[] body = new String[]{reviewVO.getProjectName(), reviewVO.getContent(), reviewVO.getRoundName(), reviewVO.getTopicName(),
-                            reviewVO.getGroupName(), reviewVO.getImageCode(), String.valueOf(reviewVO.getScore()), reviewVO.getDetails() + "\t",
+                            reviewVO.getGroupName(), reviewVO.getImageCode(), score, reviewVO.getDetails() + "\t",
                             reviewVO.getCreateName(), DateUtil.format(reviewVO.getCreateTime(), "yyyy-MM-dd HH:mm:ss") + "\t"};
                     writer.write(body);
                 }
@@ -284,8 +293,14 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
                             writer.write(header);
                             for (ReviewVO reviewVO : reviewVOS) {
                                 projectName = reviewVO.getProjectName();
+                                String score = String.valueOf(reviewVO.getScore());
+                                if(score.equals("-1")){
+                                	score = score.replaceAll("-1", CommonConstant.NOT_EVALUATING);
+                                }else{
+                                	score = trans2Score(score);
+                                }
                                 String[] body = new String[]{reviewVO.getProjectName(), reviewVO.getContent(), reviewVO.getRoundName(), reviewVO.getTopicName(),
-                                        reviewVO.getGroupName(), reviewVO.getImageCode(), String.valueOf(reviewVO.getScore()), reviewVO.getDetails(),
+                                        reviewVO.getGroupName(), reviewVO.getImageCode(), score, reviewVO.getDetails(),
                                         reviewVO.getCreateName(), DateUtil.format(reviewVO.getCreateTime(), "yyyy-MM-dd HH:mm:ss") + "\t"};
                                 writer.write(body);
                             }
@@ -309,5 +324,18 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
                 log.error(e.getMessage());
             }
         }
+    }
+    
+    private String trans2Score(String score){
+    	StringBuffer buffer = new StringBuffer();
+    	 String[] scoreArray = score.split(":");
+    	 for(int i=0;i<scoreArray.length;i++){
+    		 String perScore = scoreArray[i];
+    		 if(perScore.equals(" -1")||perScore.equals("-1")){
+    			 perScore = perScore.replaceAll("-1", CommonConstant.NOT_EVALUATING);
+             }
+    		 buffer.append(perScore).append(":");
+    	 }
+    	 return buffer.toString();
     }
 }
