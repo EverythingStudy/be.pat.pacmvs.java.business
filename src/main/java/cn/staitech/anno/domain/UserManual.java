@@ -33,7 +33,7 @@ public class UserManual implements Serializable {
     @ApiModelProperty(value = "用户手册地址")
     private String userManualUrl;
 
-    @ApiModelProperty(value = "语种类型 0:中文；1:英文")
+    @ApiModelProperty(value = "语种类型 1:中文；2:英文")
     private Integer messagesType;
 
     @ApiModelProperty(value = "组织机构ID")

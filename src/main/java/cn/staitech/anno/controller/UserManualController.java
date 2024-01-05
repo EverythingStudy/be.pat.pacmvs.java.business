@@ -47,9 +47,9 @@ public class UserManualController {
 		if (SecurityUtils.getLoginUser().getLanguage() != null) {
 			language = SecurityUtils.getLoginUser().getLanguage();
 		}
-		int messagesType = 0;
+		int messagesType = 1;
 		if ("en-us".equals(language)) {
-			messagesType = 1;
+			messagesType = 2;
 		}
 
 		//获取机构id
