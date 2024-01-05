@@ -183,6 +183,7 @@ public class MarkingServiceImpl implements MarkingService {
         if(projectType.equalsIgnoreCase("3")){
         	//只查询自己标注的数据
         	Map<String, Object> map = new HashMap<String, Object>();
+        	map.put("slideId", slideId);
         	map.put("createBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
         	List<Features> selfAnnoList = markingMapper.selectListBy2(map);
         	if(CollectionUtils.isNotEmpty(selfAnnoList)){
@@ -190,6 +191,7 @@ public class MarkingServiceImpl implements MarkingService {
         	}
         	//其它人ROA+ROE
         	Map<String, Object> otherMap = new HashMap<String, Object>();
+        	otherMap.put("slideId", slideId);
         	otherMap.put("otherCreateBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
         	otherMap.put("organizationId", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         	List<Features> otherAnnoList = markingMapper.selectListBy2(otherMap);
