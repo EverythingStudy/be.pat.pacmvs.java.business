@@ -13,6 +13,7 @@ import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.file.Chunk;
+import cn.staitech.anno.vo.project.CancelCompleteProjectVO;
 import cn.staitech.anno.vo.project.InsertProjectVO;
 import cn.staitech.anno.vo.project.ProjectListVO;
 import cn.staitech.anno.vo.project.UpdateProjectStatusVO;
@@ -163,17 +164,19 @@ public class ProjectController extends BaseController {
     @Log(title = "取消完成", menu = "取消完成", subMenu = "取消完成", businessType = BusinessType.UPDATE)
     @PostMapping("/cancelCompleted")
     @Transactional(rollbackFor = Exception.class)
-    public R<String> cancelCompleted(@Validated @RequestBody UpdateProjectVO req) {
-        Project project = new Project();
-        BeanUtils.copyProperties(req, project);
-        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-        project.setUpdateBy(sysUser.getUserId());
-        project.setUpdateTime(new Date());
-        project.setOrganizationId(sysUser.getOrganizationId());
-        if (projectService.updateById(project)) {
-            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
-        }
-        return R.fail(MessageSource.M("OPERATE_ERROR"));
+    public R<String> cancelCompleted(@Validated @RequestBody CancelCompleteProjectVO req) {
+    	Project project = new Project();
+    	BeanUtils.copyProperties(req, project);
+    	//        status 状态:1待启动，2进行中，3暂停，4已完成
+    	project.setStatus(2);
+    	SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+    	project.setUpdateBy(sysUser.getUserId());
+    	project.setUpdateTime(new Date());
+    	project.setOrganizationId(sysUser.getOrganizationId());
+    	if (projectService.updateById(project)) {
+    		return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+    	}
+    	return R.fail(MessageSource.M("OPERATE_ERROR"));
     }
     
     @ApiOperationSupport(author = "wangfeng")
