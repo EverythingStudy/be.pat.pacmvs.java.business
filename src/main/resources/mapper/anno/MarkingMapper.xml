@@ -373,15 +373,16 @@
     
     <select id="selectListBy2" parameterType="map" resultMap="featuresResult">
         <include refid="selectListBy"/>
-        where slide_id = #{slideId}
+        where t.slide_id = #{slideId}
         <if test="createBy != null and createBy != ''">
-            and create_by = #{createBy}
+            and t.create_by = #{createBy}
+                
         </if>
         <if test="otherCreateBy != null and otherCreateBy != ''">
-            and create_by != #{createBy}
+            and t.create_by != #{createBy}
         </if>
         <if test="organizationId != null">
-        	and category_id in (
+        	and t.category_id in (
 					SELECT
 					c2.category_id 
 				FROM
