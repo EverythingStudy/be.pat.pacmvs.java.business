@@ -2,15 +2,19 @@ package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.Outline;
 import cn.staitech.anno.mapper.OutlineMapper;
+import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.OutlineService;
+import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.outline.OutlineSelectVO;
 import cn.staitech.anno.vo.outline.OutlineStatistic;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +26,9 @@ import java.util.stream.Collectors;
  */
 @Service
 public class OutlineServiceImpl extends ServiceImpl<OutlineMapper, Outline> implements OutlineService {
+
+    @Resource
+    private MarkingService markingService;
 
     /**
      * 列表查询
@@ -65,6 +72,9 @@ public class OutlineServiceImpl extends ServiceImpl<OutlineMapper, Outline> impl
      */
     @Override
     public OutlineStatistic statistic(List<Outline> list, Integer bizType) {
+        // 查询业务类型：1面积(默认),2周长
+        bizType = bizType != null ? bizType : 1;
+
         // 平均值
         double average;
         // 标准偏差
@@ -146,6 +156,31 @@ public class OutlineServiceImpl extends ServiceImpl<OutlineMapper, Outline> impl
         queryWrapper.eq(Outline::getCreateBy, createBy);
         queryWrapper.ne(Outline::getSlideId, slideId);
         remove(queryWrapper);
+    }
+
+    /**
+     * 批量保存
+     *
+     * @param list
+     * @param categoryId
+     * @throws Exception
+     */
+    @Override
+    public void saveAll(List<Outline> list, Long categoryId) throws Exception {
+        // 逐一添加
+        for (Outline outline : list) {
+            ViewAddIn marking = new ViewAddIn();
+            marking.setCategory_id(categoryId);
+            marking.setGeometry(JSONObject.parseObject(outline.getGeometry()));
+            marking.setSlide_id(outline.getSlideId());
+            marking.setPerimeter(outline.getPerimeter().toString());
+            marking.setArea(outline.getArea().toString());
+            marking.setCreate_by(outline.getCreateBy());
+            markingService.insert(marking);
+        }
+
+        // 删除所有当前用户的记录
+        removeAllBycreateBy(categoryId);
     }
 }
 

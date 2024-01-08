@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -25,12 +26,12 @@ import java.util.stream.Collectors;
 @EnableScheduling
 public class OutlineTask {
 
+    private static final ConcurrentHashMap<Long, String> USER_TOKEN_MAP = new ConcurrentHashMap<>();
+
     @Resource
     private OutlineService outlineService;
-
     @Resource
     private SysUserService sysUserService;
-
     @Resource
     private RedisService redisService;
 
@@ -54,9 +55,24 @@ public class OutlineTask {
 
         // 查Redis中的token是否存在,若不存在则清空tb_outline中对应的数据
         for (SysUser user : sysUserList) {
+            Long userId = user.getUserId();
             String cacheObject = redisService.getCacheObject(CacheConstants.LOGIN_TOKEN_KEY + user.getUserName());
             if (Objects.isNull(cacheObject)) {
-                outlineService.removeAllBycreateBy(user.getUserId());
+                // 如果当前用户token失效,清空数据
+                outlineService.removeAllBycreateBy(userId);
+                // 清空对应Map
+                if (USER_TOKEN_MAP.containsKey(userId)) {
+                    USER_TOKEN_MAP.remove(userId);
+                }
+            } else {
+                // 如果当前用户登录,但Map中token与Redis中login_tokens不一致,也清空数据
+                String token = cacheObject.replaceFirst(CacheConstants.LOGIN_TOKEN_KEY, "");
+
+                if (USER_TOKEN_MAP.containsKey(userId) && USER_TOKEN_MAP.get(userId).equals(token)) {
+                    outlineService.removeAllBycreateBy(userId);
+                }
+                // 更新Map中的token
+                USER_TOKEN_MAP.put(userId, token);
             }
         }
     }

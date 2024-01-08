@@ -1,20 +1,13 @@
 package cn.staitech.anno.controller;
 
-import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Outline;
-import cn.staitech.anno.project.domain.Marking;
-import cn.staitech.anno.project.service.MarkingServiceV1;
 import cn.staitech.anno.service.OutlineService;
-import cn.staitech.anno.utils.CustomizationIdUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.outline.OutlineSelectVO;
 import cn.staitech.anno.vo.outline.OutlineStatistic;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
-import cn.staitech.common.security.utils.SecurityUtils;
-import cn.staitech.system.api.domain.SysUser;
-import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -22,8 +15,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -43,9 +34,6 @@ public class OutlineController {
     @Resource
     private OutlineService outlineService;
 
-    @Resource
-    private MarkingServiceV1 markingServiceV1;
-
     /**
      * Viewer-吸管-取消（删除所有当前用户的记录）
      * eg: /outline/clean?createBy=1
@@ -62,7 +50,6 @@ public class OutlineController {
         outlineService.removeAllBycreateBy(createBy);
         return R.ok(MessageSource.M("OPERATE_SUCCEED"));
     }
-
 
     /**
      * Viewer-吸管-数据表
@@ -86,9 +73,8 @@ public class OutlineController {
         if (CollectionUtils.isEmpty(list)) {
             return R.fail(MessageSource.M("OUTLINE.NORESULT"));
         }
-        // 查询业务类型：1面积(默认),2周长
-        Integer bizType = selectVO.getBizType() != null ? selectVO.getBizType() : 1;
-        return R.ok(outlineService.statistic(list, bizType));
+
+        return R.ok(outlineService.statistic(list, selectVO.getBizType()));
     }
 
     /**
@@ -100,7 +86,7 @@ public class OutlineController {
     @ApiOperation(value = "Viewer-吸管-保存为标注")
     @Log(title = "Viewer-吸管-保存为标注", menu = "Viewer-吸管-保存为标注", subMenu = "Viewer-吸管-保存为标注", businessType = BusinessType.INSERT)
     @PostMapping("/save")
-    public R save(@Validated @RequestBody OutlineSelectVO selectVO) {
+    public R save(@Validated @RequestBody OutlineSelectVO selectVO) throws Exception {
         if (selectVO.getMinVal() != null && selectVO.getMaxVal() != null && (selectVO.getMinVal() > selectVO.getMaxVal())) {
             return R.fail(MessageSource.M("OUTLINE.ARGUEMENT.ERROR"));
         }
@@ -111,38 +97,7 @@ public class OutlineController {
             return R.fail(MessageSource.M("OUTLINE.NORESULT"));
         }
 
-        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-        Long organizationId = sysUser.getOrganizationId();
-        String userName = sysUser.getUserName();
-
-        List<cn.staitech.anno.project.domain.Marking> markingList = new ArrayList<>(list.size());
-
-        for (Outline outline : list) {
-            cn.staitech.anno.project.domain.Marking marking = new Marking();
-
-            marking.setAnnotationId(CustomizationIdUtils.getSdId());
-            marking.setCategoryId(selectVO.getCategoryId());
-            marking.setGeometry(JSONObject.parseObject(outline.getGeometry()));
-            marking.setImageId(outline.getImageId());
-            marking.setSlideId(outline.getSlideId());
-            marking.setPerimeter(outline.getPerimeter().toString());
-            marking.setArea(outline.getArea().toString());
-            marking.setOrganizationId(organizationId);
-            marking.setProjectId(outline.getProjectId());
-            marking.setCreateBy(outline.getCreateBy());
-            marking.setCreateTime(new Date());
-            marking.setAnnotationOwner(userName);
-            marking.setAnnotationType(CommonConstant.ANNO_TYPE_DRAW);
-
-            // 添加至列表中
-            markingList.add(marking);
-        }
-
-        // 批量添加数据入库
-        if (markingServiceV1.saveBatch(markingList)) {
-            // 删除所有当前用户的记录
-            outlineService.removeAllBycreateBy(selectVO.getCreateBy());
-        }
+        outlineService.saveAll(list, selectVO.getCategoryId());
         return R.ok(MessageSource.M("OPERATE_SUCCEED"));
     }
 }

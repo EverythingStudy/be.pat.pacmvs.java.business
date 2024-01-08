@@ -46,5 +46,14 @@ public interface OutlineService extends IService<Outline> {
      * @param slideId  SlideID
      */
     void removeBycreateBySlideId(Long createBy, Long slideId);
+
+    /**
+     * 批量保存
+     *
+     * @param list
+     * @param categoryId
+     * @throws Exception
+     */
+    void saveAll(List<Outline> list, Long categoryId) throws Exception;
 }
 
