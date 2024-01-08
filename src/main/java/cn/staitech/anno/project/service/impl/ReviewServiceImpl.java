@@ -35,6 +35,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ibm.icu.text.SimpleDateFormat;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -327,15 +328,20 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
     }
     
     private String trans2Score(String score){
-    	StringBuffer buffer = new StringBuffer();
-    	 String[] scoreArray = score.split(":");
-    	 for(int i=0;i<scoreArray.length;i++){
-    		 String perScore = scoreArray[i];
-    		 if(perScore.equals(" -1")||perScore.equals("-1")){
-    			 perScore = perScore.replaceAll("-1", CommonConstant.NOT_EVALUATING);
-             }
-    		 buffer.append(perScore).append(":");
-    	 }
-    	 return buffer.toString();
+    	if(StringUtils.isNotEmpty(score)){
+    		StringBuffer buffer = new StringBuffer();
+    		String[] scoreArray = score.split(":");
+    		for(int i=0;i<scoreArray.length;i++){
+    			String perScore = scoreArray[i];
+    			if(perScore.equals(" -1")||perScore.equals("-1")){
+    				perScore = perScore.replaceAll("-1", CommonConstant.NOT_EVALUATING);
+    			}
+    			buffer.append(perScore).append(":");
+    		}
+    		String scoreStr = buffer.substring(0, buffer.length()-1).toString();
+    		return scoreStr;
+    	}else{
+    		return score;
+    	}
     }
 }

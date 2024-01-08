@@ -111,7 +111,9 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         		}
         		//TODO 分数处理
         		String score = vo.getScore();
-        		score = trans2Score(score);
+        		if(StringUtils.isNotEmpty(score)){
+        			score = trans2Score(score);
+        		}
         		vo.setScore(score);	
         	}
         }
@@ -128,10 +130,11 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
     		 String perScore = scoreArray[i];
     		 if(perScore.equals(" -1")||perScore.equals("-1")){
     			 perScore = perScore.replaceAll("-1", CommonConstant.NOT_EVALUATING);
-             }
+    		 }
     		 buffer.append(perScore).append(":");
     	 }
-    	 return buffer.toString();
+    	 String scoreStr = buffer.substring(0, buffer.length()-1).toString();
+    	 return scoreStr;
     }
 
     private Integer getAnnoCount(Integer projectId) throws Exception {
