@@ -111,7 +111,9 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         		}
         		//TODO 分数处理
         		String score = vo.getScore();
-        		score = trans2Score(score);
+        		if(StringUtils.isNotEmpty(score)){
+        			score = trans2Score(score);
+        		}
         		vo.setScore(score);	
         	}
         }
