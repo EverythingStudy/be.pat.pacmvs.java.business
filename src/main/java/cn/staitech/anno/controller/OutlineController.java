@@ -47,7 +47,7 @@ public class OutlineController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "createBy", value = "创建者ID", required = true, dataType = "Long", paramType = "query")})
     public R clean(@RequestParam @ApiParam(name = "createBy", value = "创建者ID", required = true) Long createBy) {
-        outlineService.removeAllBycreateBy(createBy);
+        outlineService.removeByCreateByAndToken(createBy, null);
         return R.ok(MessageSource.M("OPERATE_SUCCEED"));
     }
 

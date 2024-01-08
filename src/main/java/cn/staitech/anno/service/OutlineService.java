@@ -37,7 +37,7 @@ public interface OutlineService extends IService<Outline> {
      *
      * @param createBy 用户ID
      */
-    void removeAllBycreateBy(Long createBy);
+    void removeByCreateByAndToken(Long createBy, String token);
 
     /**
      * 异步删除当前用户、非当前slideId的记录

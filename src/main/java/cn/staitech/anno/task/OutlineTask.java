@@ -26,6 +26,9 @@ import java.util.stream.Collectors;
 @EnableScheduling
 public class OutlineTask {
 
+    /**
+     * Map<userId,token>
+     */
     private static final ConcurrentHashMap<Long, String> USER_TOKEN_MAP = new ConcurrentHashMap<>();
 
     @Resource
@@ -36,7 +39,7 @@ public class OutlineTask {
     private RedisService redisService;
 
     /**
-     * 清空token失效后tb_outline对应的数据：上一次执行完毕时间点后30秒再次执行
+     * 定时作协：清空token失效后tb_outline对应的数据，频率：上一次执行完毕时间点后30秒再次执行
      */
     @Scheduled(fixedDelay = 30000)
     public void clean() {
@@ -46,6 +49,9 @@ public class OutlineTask {
         queryWrapper.orderByAsc("create_by");
         List<Outline> createByList = outlineService.list(queryWrapper);
         List<Long> userIds = createByList.stream().map(Outline::getCreateBy).collect(Collectors.toList());
+        if (userIds.isEmpty()) {
+            return;
+        }
 
         // 查所有的用户名：user_name
         QueryWrapper<SysUser> sysUserQueryWrapper = new QueryWrapper<>();
@@ -58,16 +64,16 @@ public class OutlineTask {
             Long userId = user.getUserId();
             String cacheObject = redisService.getCacheObject(CacheConstants.LOGIN_TOKEN_KEY + user.getUserName());
             if (Objects.isNull(cacheObject)) {
-                // 如果当前用户token失效,清空数据
-                outlineService.removeAllBycreateBy(userId);
+                // 如果当前用户token失效,清空所有当前用户的数据
+                outlineService.removeByCreateByAndToken(userId, null);
                 // 清空对应Map
                 USER_TOKEN_MAP.remove(userId);
             } else {
-                // 如果当前用户登录,但Map中token与Redis中login_tokens不一致,也清空数据
+                // 如果当前用户登录,但Map中token与Redis中login_tokens不一致,清空非当前token的数据
                 String token = cacheObject.replaceFirst(CacheConstants.LOGIN_TOKEN_KEY, "");
 
                 if (USER_TOKEN_MAP.containsKey(userId) && USER_TOKEN_MAP.get(userId).equals(token)) {
-                    outlineService.removeAllBycreateBy(userId);
+                    outlineService.removeByCreateByAndToken(userId, token);
                 }
                 // 更新Map中的token
                 USER_TOKEN_MAP.put(userId, token);

@@ -9,8 +9,8 @@ import cn.staitech.anno.vo.outline.OutlineSelectVO;
 import cn.staitech.anno.vo.outline.OutlineStatistic;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -134,13 +134,17 @@ public class OutlineServiceImpl extends ServiceImpl<OutlineMapper, Outline> impl
      * 异步删除所有当前用户的记录
      *
      * @param createBy 用户ID
+     * @param token    用户token
      */
     @Async
     @Override
-    public void removeAllBycreateBy(Long createBy) {
-        Outline outline = new Outline();
-        outline.setCreateBy(createBy);
-        remove(new QueryWrapper<>(outline));
+    public void removeByCreateByAndToken(Long createBy, String token) {
+        LambdaQueryWrapper<Outline> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Outline::getCreateBy, createBy);
+        if (StringUtils.isEmpty(token)) {
+            queryWrapper.ne(Outline::getToken, token);
+        }
+        remove(queryWrapper);
     }
 
     /**
@@ -180,7 +184,7 @@ public class OutlineServiceImpl extends ServiceImpl<OutlineMapper, Outline> impl
         }
 
         // 删除所有当前用户的记录
-        removeAllBycreateBy(categoryId);
+        removeByCreateByAndToken(categoryId, null);
     }
 }
 

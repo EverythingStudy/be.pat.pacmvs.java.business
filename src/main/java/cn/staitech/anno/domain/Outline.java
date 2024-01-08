@@ -37,5 +37,7 @@ public class Outline extends Model<Outline> {
     private Double shortAxis;
     @ApiModelProperty(value = "标注数据")
     private String geometry;
+    @ApiModelProperty(value = "当前用户登录token ID")
+    private String token;
 }
 
