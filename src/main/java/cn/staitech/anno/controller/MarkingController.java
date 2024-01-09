@@ -232,7 +232,6 @@ public class MarkingController {
             return 1;
         });
             return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
-
     }
 
 
