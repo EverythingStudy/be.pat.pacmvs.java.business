@@ -26,6 +26,7 @@ import cn.staitech.anno.vo.annotation.BroadcastVO;
 import cn.staitech.anno.vo.geojson.Properties;
 import cn.staitech.anno.vo.geojson.*;
 import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
+import cn.staitech.anno.vo.geojson.in.RoiIn;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.marking.Marking;
@@ -1443,19 +1444,19 @@ public class MarkingServiceImpl implements MarkingService {
     roi包含排除
     */
     @Override
-    public List<String> roiContDel(List<ViewAddIn> viewAddIns) throws Exception {
-        Long slideId=viewAddIns.get(0).getSlide_id();
+    public List<String> roiContDel(RoiIn viewAddIns) throws Exception {
+        Long slideId=viewAddIns.getViewAddIns().get(0).getSlide_id();
         //查询slideId的所有标注
         List<Features> features=markingMapper.selectListBy(slideId);
         //要删除的markingId集合
         Set<String> markingIdDel=new HashSet<>();
         //包含的markingId集合
         Set<String> markingIdCont=new HashSet<>();
-        for (ViewAddIn viewAddIn:viewAddIns){
+        for (ViewAddIn viewAddIn:viewAddIns.getViewAddIns()){
             String roiLocation = WktUtil.jsonToWkt(viewAddIn.getGeometry());
            Geometry roiLocations=wktReader.read(roiLocation);
            //roi包含
-            if (Objects.equals(viewAddIn.getLocation_type(), "RoiCont")){
+            if (viewAddIns.getRoiStatus()==0){
                 for (Features features1:features){
                     String oldLocation = WktUtil.jsonToWkt(features1.getGeometry());
                     Geometry oldLocations=wktReader.read(oldLocation);
@@ -1478,7 +1479,7 @@ public class MarkingServiceImpl implements MarkingService {
                 }
             }
             //roi删除
-            if (Objects.equals(viewAddIn.getLocation_type(), "RoiDel")){
+            if (viewAddIns.getRoiStatus()==1){
                 for (Features features1:features){
                     String oldLocation = WktUtil.jsonToWkt(features1.getGeometry());
                     Geometry oldLocations=wktReader.read(oldLocation);

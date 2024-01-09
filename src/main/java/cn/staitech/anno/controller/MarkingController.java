@@ -6,6 +6,7 @@ import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
+import cn.staitech.anno.vo.geojson.in.RoiIn;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
@@ -211,12 +212,12 @@ public class MarkingController {
     @ApiOperationSupport(author = "zmj")
     @ApiOperation(value = "添加ROI轮廓")
     @PostMapping("/intelligentAnno/insertROI")
-    public R<String> addList(@Validated @RequestBody List<ViewAddIn> req) throws Exception {
-        if (CollectionUtils.isEmpty(req)){
+    public R<String> addList(@Validated @RequestBody RoiIn req) throws Exception {
+        if (CollectionUtils.isEmpty(req.getViewAddIns())){
             return R.fail(MessageSource.M("NO_DATA_TRANSFERRED"));
         }
         List<String>list=markingService.roiContDel(req);
-            for (ViewAddIn viewAddIn:req){
+            for (ViewAddIn viewAddIn:req.getViewAddIns()){
                 markingService.insert(viewAddIn);
             }
             //异步删除
