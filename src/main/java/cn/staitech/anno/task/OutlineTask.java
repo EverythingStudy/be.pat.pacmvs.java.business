@@ -72,7 +72,7 @@ public class OutlineTask {
                 // 如果当前用户登录,但Map中token与Redis中login_tokens不一致,清空非当前token的数据
                 String token = cacheObject.replaceFirst(CacheConstants.LOGIN_TOKEN_KEY, "");
 
-                if (USER_TOKEN_MAP.containsKey(userId) && USER_TOKEN_MAP.get(userId).equals(token)) {
+                if (USER_TOKEN_MAP.containsKey(userId) && !USER_TOKEN_MAP.get(userId).equals(token)) {
                     outlineService.removeByCreateByAndToken(userId, token);
                 }
                 // 更新Map中的token
