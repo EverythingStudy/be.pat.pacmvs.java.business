@@ -1,9 +1,12 @@
 package cn.staitech.anno.domain;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -35,8 +38,10 @@ public class Outline extends Model<Outline> {
     private Double longAxis;
     @ApiModelProperty(value = "短轴")
     private Double shortAxis;
+
     @ApiModelProperty(value = "标注数据")
-    private String geometry;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private JSONObject geometry;
     @ApiModelProperty(value = "当前用户登录token ID")
     private String token;
 }

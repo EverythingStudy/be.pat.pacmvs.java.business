@@ -5,15 +5,18 @@ import cn.staitech.anno.mapper.OutlineMapper;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.OutlineService;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
+import cn.staitech.anno.vo.outline.OutlineRoot;
 import cn.staitech.anno.vo.outline.OutlineSelectVO;
 import cn.staitech.anno.vo.outline.OutlineStatistic;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import cn.staitech.common.redis.service.RedisService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,11 +26,14 @@ import java.util.stream.Collectors;
  * @author wangfeng
  * @since 2024-01-04 10:55:03
  */
-@Service("OutlineServiceImpl")
-public class OutlineServiceImpl extends ServiceImpl<OutlineMapper, Outline> implements OutlineService {
+@Service("OutlineRedisServiceImpl")
+public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline> implements OutlineService {
 
     @Resource
     private MarkingService markingService;
+
+    @Resource
+    private RedisService redisService;
 
     /**
      * 列表查询
@@ -37,29 +43,49 @@ public class OutlineServiceImpl extends ServiceImpl<OutlineMapper, Outline> impl
      */
     @Override
     public List<Outline> selectList(OutlineSelectVO selectVO) {
+
+        Long createBy = selectVO.getCreateBy();
+        String rootKey = "OUTLINE_ROOT:" + createBy;
+        String listKey = "OUTLINE_LIST:" + createBy + "_";
+
+        OutlineRoot outlineRoot = redisService.getCacheObject(rootKey);
+        List<Outline> srcList = redisService.getCacheList(listKey + outlineRoot.getToken());
+
+        if (CollectionUtils.isEmpty(srcList)) {
+            return null;
+        }
+
         Double minVal = selectVO.getMinVal() != null ? selectVO.getMinVal() : 0.0;
 
-        LambdaQueryWrapper<Outline> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Outline::getProjectId, selectVO.getProjectId());
-        queryWrapper.eq(Outline::getImageId, selectVO.getImageId());
-        queryWrapper.eq(Outline::getSlideId, selectVO.getSlideId());
-        queryWrapper.eq(Outline::getCreateBy, selectVO.getCreateBy());
+        List<Outline> list;
 
         // 默认查询面积(面积1，周长2)
         if (selectVO.getBizType().equals(2)) {
-            queryWrapper.ge(Outline::getPerimeter, minVal);
             if (selectVO.getMaxVal() != null) {
-                queryWrapper.le(Outline::getPerimeter, selectVO.getMaxVal());
+                list = srcList.stream()
+                        .filter(outline -> outline.getPerimeter() > minVal)
+                        .filter(outline -> outline.getPerimeter() < selectVO.getMaxVal())
+                        .collect(Collectors.toList());
+            } else {
+                list = srcList.stream()
+                        .filter(outline -> outline.getPerimeter() > minVal)
+                        .collect(Collectors.toList());
             }
         } else {
-            queryWrapper.ge(Outline::getArea, minVal);
             if (selectVO.getMaxVal() != null) {
-                queryWrapper.le(Outline::getArea, selectVO.getMaxVal());
+                list = srcList.stream()
+                        .filter(outline -> outline.getArea() > minVal)
+                        .filter(outline -> outline.getArea() < selectVO.getMaxVal())
+                        .collect(Collectors.toList());
+            } else {
+                list = srcList.stream()
+                        .filter(outline -> outline.getArea() > minVal)
+                        .collect(Collectors.toList());
             }
         }
 
-        queryWrapper.orderByAsc(Outline::getOutlineId);
-        return list(queryWrapper);
+
+        return list;
     }
 
     /**
@@ -138,16 +164,28 @@ public class OutlineServiceImpl extends ServiceImpl<OutlineMapper, Outline> impl
     @Async
     @Override
     public void removeByCreateByAndToken(Long createBy, String token) {
-        LambdaQueryWrapper<Outline> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Outline::getCreateBy, createBy);
-        if (StringUtils.isEmpty(token)) {
-            queryWrapper.ne(Outline::getToken, token);
+        String rootKey = "OUTLINE_ROOT:" + createBy;
+        String listKey = "OUTLINE_LIST:" + createBy + "_";
+
+        OutlineRoot outlineRoot = redisService.getCacheObject(rootKey);
+
+        if (createBy > 0 && StringUtils.isEmpty(token)) {
+            // 清空当前用户非当前token的数据
+            // 当前用户所有数据的Key
+            Collection<String> keyCollection = redisService.keys(listKey + "*");
+            for (String keyStr : keyCollection) {
+                if (!keyStr.equals(listKey + outlineRoot.getToken())) {
+                    redisService.deleteObject(keyStr);
+                }
+            }
+        } else {
+            // 清空当前用户全部数据
+            redisService.deleteObject(listKey + "*");
         }
-        remove(queryWrapper);
     }
 
     /**
-     * 异步删除当前用户、非当前slideId的记录
+     * 异步删除所有当前用户、非当前slideId的记录
      *
      * @param createBy 用户ID
      * @param slideId  SlideID
@@ -155,10 +193,24 @@ public class OutlineServiceImpl extends ServiceImpl<OutlineMapper, Outline> impl
     @Async
     @Override
     public void removeBycreateBySlideId(Long createBy, Long slideId) {
-        LambdaQueryWrapper<Outline> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Outline::getCreateBy, createBy);
-        queryWrapper.ne(Outline::getSlideId, slideId);
-        remove(queryWrapper);
+        String rootKey = "OUTLINE_ROOT:" + createBy;
+        String listKey = "OUTLINE_LIST:" + createBy + "_";
+
+        OutlineRoot outlineRoot = redisService.getCacheObject(rootKey);
+
+        if (createBy > 0 && slideId > 0 && outlineRoot.getSlideId().equals(slideId)) {
+            // 清空当前用户非当前token的数据
+            // 当前用户所有数据的Key
+            Collection<String> keyCollection = redisService.keys(listKey + "*");
+            for (String keyStr : keyCollection) {
+                if (!keyStr.equals(listKey + outlineRoot.getToken())) {
+                    redisService.deleteObject(keyStr);
+                }
+            }
+        } else {
+            // 清空当前用户全部数据
+            redisService.deleteObject(listKey + "*");
+        }
     }
 
     /**

@@ -28,10 +28,10 @@ import java.util.List;
 @RestController
 @Validated
 @RestControllerAdvice
-@RequestMapping("/v2/outline")
-public class OutlineController {
+@RequestMapping("/outline")
+public class OutlineRedisController {
 
-    @Resource(name = "OutlineServiceImpl")
+    @Resource(name = "OutlineRedisServiceImpl")
     private OutlineService outlineService;
 
     /**

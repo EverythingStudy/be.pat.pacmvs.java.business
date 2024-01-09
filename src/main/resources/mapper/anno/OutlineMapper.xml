@@ -11,7 +11,8 @@
         <result property="perimeter" column="perimeter" jdbcType="NUMERIC"/>
         <result property="longAxis" column="long_axis" jdbcType="NUMERIC"/>
         <result property="shortAxis" column="short_axis" jdbcType="NUMERIC"/>
-        <result property="geometry" column="geometry" jdbcType="VARCHAR"/>
+        <result property="geometry" column="geometry"
+                typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
         <result property="token" column="token" jdbcType="VARCHAR"/>
     </resultMap>
 </mapper>

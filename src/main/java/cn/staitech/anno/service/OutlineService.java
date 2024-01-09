@@ -33,7 +33,7 @@ public interface OutlineService extends IService<Outline> {
     OutlineStatistic statistic(List<Outline> list, Integer bziType);
 
     /**
-     * 异步删除所有当前用户的记录
+     * 异步删除所有当前用户、非当前token的记录
      *
      * @param createBy 用户ID
      */
