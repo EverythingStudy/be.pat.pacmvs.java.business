@@ -10,6 +10,7 @@ import cn.staitech.anno.vo.outline.OutlineSelectVO;
 import cn.staitech.anno.vo.outline.OutlineStatistic;
 import cn.staitech.common.redis.service.RedisService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Async;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
  * @author wangfeng
  * @since 2024-01-04 10:55:03
  */
+@Slf4j
 @Service("OutlineRedisServiceImpl")
 public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline> implements OutlineService {
 
@@ -48,7 +50,9 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
         String rootKey = "OUTLINE_ROOT:" + createBy;
         String listKey = "OUTLINE_LIST:" + createBy + "_";
 
-        OutlineRoot outlineRoot = redisService.getCacheObject(rootKey);
+        com.alibaba.fastjson2.JSONObject object = redisService.getCacheObject(rootKey);
+        OutlineRoot outlineRoot = object.toJavaObject(OutlineRoot.class);
+
         List<Outline> srcList = redisService.getCacheList(listKey + outlineRoot.getToken());
 
         if (CollectionUtils.isEmpty(srcList)) {
@@ -167,7 +171,8 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
         String rootKey = "OUTLINE_ROOT:" + createBy;
         String listKey = "OUTLINE_LIST:" + createBy + "_";
 
-        OutlineRoot outlineRoot = redisService.getCacheObject(rootKey);
+        com.alibaba.fastjson2.JSONObject object = redisService.getCacheObject(rootKey);
+        OutlineRoot outlineRoot = object.toJavaObject(OutlineRoot.class);
 
         if (createBy > 0 && StringUtils.isEmpty(token)) {
             // 清空当前用户非当前token的数据
@@ -196,7 +201,8 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
         String rootKey = "OUTLINE_ROOT:" + createBy;
         String listKey = "OUTLINE_LIST:" + createBy + "_";
 
-        OutlineRoot outlineRoot = redisService.getCacheObject(rootKey);
+        com.alibaba.fastjson2.JSONObject object = redisService.getCacheObject(rootKey);
+        OutlineRoot outlineRoot = object.toJavaObject(OutlineRoot.class);
 
         if (createBy > 0 && slideId > 0 && outlineRoot.getSlideId().equals(slideId)) {
             // 清空当前用户非当前token的数据
