@@ -46,6 +46,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MappingJsonFactory;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
 import com.vividsolutions.jts.io.WKTReader;
@@ -1437,4 +1438,60 @@ public class MarkingServiceImpl implements MarkingService {
             }
         }
     }
+
+    /**
+    roi包含排除
+    */
+    @Override
+    public List<String> roiContDel(List<ViewAddIn> viewAddIns) throws Exception {
+        Long slideId=viewAddIns.get(0).getSlide_id();
+        //查询slideId的所有标注
+        List<Features> features=markingMapper.selectListBy(slideId);
+        //要删除的markingId集合
+        Set<String> markingIdDel=new HashSet<>();
+        //包含的markingId集合
+        Set<String> markingIdCont=new HashSet<>();
+        for (ViewAddIn viewAddIn:viewAddIns){
+            String roiLocation = WktUtil.jsonToWkt(viewAddIn.getGeometry());
+           Geometry roiLocations=wktReader.read(roiLocation);
+           //roi包含
+            if (Objects.equals(viewAddIn.getLocation_type(), "RoiCont")){
+                for (Features features1:features){
+                    String oldLocation = WktUtil.jsonToWkt(features1.getGeometry());
+                    Geometry oldLocations=wktReader.read(oldLocation);
+                    Geometry geometry=roiLocations.intersection(oldLocations);
+                    //判断是否不包含和相交
+                    if (!roiLocations.contains(oldLocations)){
+                        markingIdDel.add(features1.getProperties().get("marking_id").toString());
+
+                    }else{
+                        //有相交的部分
+                        if (!geometry.isEmpty()){
+                            //面积完全一样的添加到删除集合
+                            if(oldLocations.getArea() ==  roiLocations.getArea()){
+                                markingIdDel.add(features1.getProperties().get("marking_id").toString());
+                            }else{
+                                markingIdCont.add(features1.getProperties().get("marking_id").toString());
+                            }
+                        }
+                    }
+                }
+            }
+            //roi删除
+            if (Objects.equals(viewAddIn.getLocation_type(), "RoiDel")){
+                for (Features features1:features){
+                    String oldLocation = WktUtil.jsonToWkt(features1.getGeometry());
+                    Geometry oldLocations=wktReader.read(oldLocation);
+                    //判断是否包含和相交
+                    if (roiLocations.contains(oldLocations) || roiLocations.intersects(oldLocations)){
+                        markingIdDel.add(features1.getProperties().get("marking_id").toString());
+                    }
+                }
+            }
+        }
+        //选出要删除的markingId
+        List<String> listIds=markingIdDel.stream().filter(item->!markingIdCont.contains(item)).collect(Collectors.toList());
+        return listIds;
+    }
+
 }

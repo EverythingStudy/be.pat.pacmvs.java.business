@@ -26,7 +26,7 @@ public class ViewAddIn {
     @ApiModelProperty(value = "标注颜色id")
     private Long category_id;
 
-    @ApiModelProperty(value = "标注数据类型(LineString,Polygon,point,pc,p,L)")
+    @ApiModelProperty(value = "标注数据类型(LineString,Polygon,point,pc,p,L,RoiCont,RoiDel)")
     private String location_type;
 
     @ApiModelProperty(value = "描述")

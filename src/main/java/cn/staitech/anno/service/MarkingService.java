@@ -143,4 +143,10 @@ public interface MarkingService {
      * @return
      */
     void batchDelete(Long slideId);
+
+    /**
+    roi包含排除
+     */
+    List<String> roiContDel(List<ViewAddIn> viewAddIns) throws Exception;
+
 }
