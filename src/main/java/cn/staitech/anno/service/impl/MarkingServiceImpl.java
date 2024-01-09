@@ -34,6 +34,7 @@ import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.PointCount;
 import cn.staitech.anno.vo.slide.SlideRes;
 import cn.staitech.common.core.domain.PageResponse;
+import cn.staitech.common.core.domain.R;
 import cn.staitech.common.redis.service.RedisService;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -1445,21 +1446,31 @@ public class MarkingServiceImpl implements MarkingService {
     roi包含排除
     */
     @Override
-    public List<String> roiContDel(RoiIn viewAddIns) throws Exception {
+    public R<String> roiContDel(RoiIn viewAddIns) throws Exception {
         Long slideId=viewAddIns.getViewAddIns().get(0).getSlide_id();
         //查询slideId的所有标注
         List<Features> features=markingMapper.selectListBy(slideId);
+        List<String> markingIds;
         //roi包含
         if (viewAddIns.getRoiStatus()==0){
-            List<String> markingIdList=roiCont(viewAddIns,features);
-            return markingIdList;
+            markingIds=roiCont(viewAddIns,features);
+        }else{
+            markingIds=roiDel(viewAddIns,features);
         }
-        //roi删除
-        if (viewAddIns.getRoiStatus()==1){
-            List<String> markingIds=roiDel(viewAddIns,features);
-            return markingIds;
-        }
-        return null;
+        //添加
+        roiInsert(viewAddIns);
+        //异步删除
+        CompletableFuture<Integer> cf1 = CompletableFuture.supplyAsync(() -> {
+            for (String markingId:markingIds){
+                try {
+                    roiDelete(markingId);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            return 1;
+        });
+        return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
     }
 
     /**
@@ -1527,6 +1538,94 @@ public class MarkingServiceImpl implements MarkingService {
             }
         }
         return new ArrayList<>(markingIdDel);
+    }
+
+    /**
+     * 添加
+     * */
+    @Transactional(rollbackFor = Exception.class)
+    public void roiInsert(RoiIn viewAddIns) throws Exception {
+        for (ViewAddIn req:viewAddIns.getViewAddIns()){
+        if (req.getGeometry() != null) {
+            if (req.getGeometry().isEmpty()) {
+                throw new Exception("更新失败，轮廓数据不能为空");
+            } else {
+                MarkingUtils.addVerify(req.getGeometry());
+            }
+        }
+        //加slide缓存
+        cn.staitech.anno.project.domain.Slide slideBy = redisService.getCacheObject(CommonConstant.ANNO_SLIDE + req.getSlide_id());
+        if (null == slideBy) {
+            slideBy = slideMapperV1.selectById(req.getSlide_id());
+            redisService.setCacheObject(CommonConstant.ANNO_SLIDE + req.getSlide_id(), slideBy, CommonConstant.SLIDE_CACHE_HOURS, TimeUnit.HOURS);
+        }
+        if (slideBy == null) {
+            throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
+        }
+        Marking marking = trans2Marking(req);
+        // 获取规定的geoJson Id
+        String annotationId = CustomizationIdUtils.getSdId();
+        marking.setAnnotation_id(annotationId);
+        marking.setArea(req.getArea());
+        marking.setPerimeter(req.getPerimeter());
+        // 若未传入标注作者,使用当前登录用户为标注作者==>必传Create_by 无默认
+        marking.setCreate_by(req.getCreate_by());
+        marking.setAnnotation_type("Draw");
+        marking.setOrganization_id(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        marking.setCreate_time(new Date());
+        //加用户缓存
+        SysUser user = redisService.getCacheObject(CommonConstant.SYS_USER + req.getCreate_by());
+        if (null == user) {
+            user = userMapper.selectUserById(req.getCreate_by());
+            redisService.setCacheObject(CommonConstant.SYS_USER + req.getCreate_by(), user, CommonConstant.SYS_USER_CACHE_HOURS, TimeUnit.DAYS);
+        }
+        if (user != null) {
+            marking.setAnnotation_owner(user.getUserName());
+        }
+        marking.setProject_id(Long.valueOf(slideBy.getProjectId()));
+        // 添加数据库，添加后返回自增id
+        markingMapper.insert(marking);
+
+        Properties properties = markingMapper.selectBy(marking.getMarking_id());
+        Features features = MarkingUtils.socketData(annotationId, marking.getGeometry(), properties);
+        // 如果是点类型，返回点的总数并返回
+        List<PointCount> pointCountList = updatePoint(marking.getLocation_type(), marking);
+        BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, ADD_STATUS, features, pointCountList);
+
+        NioWebSocketHandler.sendAll(req.getSlide_id(), broadcastVO);
+
+        //TODO 多线程处理
+        annExecutor.submit(new AnnCountThread(1, slideBy, marking));
+        }
+    }
+
+    /**
+     * 删除
+     * */
+    @Transactional(rollbackFor = Exception.class)
+    public void roiDelete(String markingId) throws Exception {
+        if (!Optional.ofNullable(markingId).isPresent()) {
+            throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
+        }
+        Marking markingBy = markingMapper.selectById(markingId);
+        if (!Optional.ofNullable(markingBy).isPresent()) {
+            throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
+        }
+        Slide slide = slideMapperV1.selectById(markingBy.getSlide_id());
+        if (!Optional.ofNullable(slide).isPresent()) {
+            throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
+        }
+        Properties properties = markingMapper.selectBy(markingId);
+        Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), markingBy.getGeometry(), properties);
+        List<PointCount> pointCountList = updatePoint(markingBy.getLocation_type(), markingBy);
+        BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, DELETE_STATUS, features, pointCountList);
+
+        NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
+        int res = markingMapper.delete(markingId);
+        updateSLide(slide.getSlideId());
+        // 更新前数据
+        slideAttrService.removeAnnoUsers(slide.getSlideId(), Collections.singletonList(markingBy.getCreate_by()));
+        slideAttrService.removeAnnoCategory(slide.getSlideId(), Collections.singletonList(markingBy.getCategory_id()));
     }
 
 }

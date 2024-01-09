@@ -213,25 +213,10 @@ public class MarkingController {
         if (CollectionUtils.isEmpty(req.getViewAddIns())){
             return R.fail(MessageSource.M("NO_DATA_TRANSFERRED"));
         }
-        List<String>list=markingService.roiContDel(req);
-        if (list==null){
-            return R.fail(MessageSource.M("EYE_DATA_ERROR"));
+        if (!req.getRoiStatus().equals(1) && !req.getRoiStatus().equals(0)){
+            return R.fail(MessageSource.M("ARGUMENT_INVALID"));
         }
-            for (ViewAddIn viewAddIn:req.getViewAddIns()){
-                markingService.insert(viewAddIn);
-            }
-            //异步删除
-        CompletableFuture<Integer> cf1 = CompletableFuture.supplyAsync(() -> {
-            for (String markingId:list){
-                try {
-                    markingService.delete(markingId);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            return 1;
-        });
-            return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
+        return markingService.roiContDel(req);
     }
 
 

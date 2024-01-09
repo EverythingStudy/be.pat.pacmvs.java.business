@@ -11,6 +11,7 @@ import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.PointCount;
 import cn.staitech.anno.vo.slide.SlideRes;
 import cn.staitech.common.core.domain.PageResponse;
+import cn.staitech.common.core.domain.R;
 import cn.staitech.system.api.domain.SysUser;
 import com.alibaba.fastjson.JSONObject;
 
@@ -148,6 +149,6 @@ public interface MarkingService {
     /**
     roi包含排除
      */
-    List<String> roiContDel(RoiIn viewAddIns) throws Exception;
+    R<String> roiContDel(RoiIn viewAddIns) throws Exception;
 
 }
