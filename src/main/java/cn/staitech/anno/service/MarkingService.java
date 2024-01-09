@@ -3,6 +3,7 @@ package cn.staitech.anno.service;
 import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
+import cn.staitech.anno.vo.geojson.in.RoiIn;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.marking.Marking;
@@ -143,4 +144,10 @@ public interface MarkingService {
      * @return
      */
     void batchDelete(Long slideId);
+
+    /**
+    roi包含排除
+     */
+    List<String> roiContDel(RoiIn viewAddIns) throws Exception;
+
 }
