@@ -50,6 +50,7 @@ import com.fasterxml.jackson.databind.MappingJsonFactory;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import lombok.extern.slf4j.Slf4j;
 
@@ -1448,14 +1449,31 @@ public class MarkingServiceImpl implements MarkingService {
         Long slideId=viewAddIns.getViewAddIns().get(0).getSlide_id();
         //查询slideId的所有标注
         List<Features> features=markingMapper.selectListBy(slideId);
+        //roi包含
+        if (viewAddIns.getRoiStatus()==0){
+            List<String> markingIdList=roiCont(viewAddIns,features);
+            return markingIdList;
+        }
+        //roi删除
+        if (viewAddIns.getRoiStatus()==1){
+            List<String> markingIds=roiDel(viewAddIns,features);
+            return markingIds;
+        }
+        return null;
+    }
+
+    /**
+     * ROI包含
+     * */
+    public List<String> roiCont(RoiIn viewAddIns, List<Features> features) throws ParseException {
         //要删除的markingId集合
         Set<String> markingIdDel=new HashSet<>();
         //包含的markingId集合
         Set<String> markingIdCont=new HashSet<>();
         for (ViewAddIn viewAddIn:viewAddIns.getViewAddIns()){
             String roiLocation = WktUtil.jsonToWkt(viewAddIn.getGeometry());
-           Geometry roiLocations=wktReader.read(roiLocation);
-           //roi包含
+            Geometry roiLocations=wktReader.read(roiLocation);
+            //roi包含
             if (viewAddIns.getRoiStatus()==0){
                 for (Features features1:features){
                     String oldLocation = WktUtil.jsonToWkt(features1.getGeometry());
@@ -1478,6 +1496,24 @@ public class MarkingServiceImpl implements MarkingService {
                     }
                 }
             }
+        }
+        //选出要删除的markingId
+        List<String> listIds=markingIdDel.stream().filter(item->!markingIdCont.contains(item)).collect(Collectors.toList());
+        return listIds;
+
+    }
+
+
+    /**
+     * ROI删除
+     * */
+    public List<String> roiDel(RoiIn viewAddIns, List<Features> features) throws ParseException {
+        //要删除的markingId集合
+        Set<String> markingIdDel=new HashSet<>();
+        //包含的markingId集合
+        for (ViewAddIn viewAddIn:viewAddIns.getViewAddIns()){
+            String roiLocation = WktUtil.jsonToWkt(viewAddIn.getGeometry());
+            Geometry roiLocations=wktReader.read(roiLocation);
             //roi删除
             if (viewAddIns.getRoiStatus()==1){
                 for (Features features1:features){
@@ -1490,9 +1526,7 @@ public class MarkingServiceImpl implements MarkingService {
                 }
             }
         }
-        //选出要删除的markingId
-        List<String> listIds=markingIdDel.stream().filter(item->!markingIdCont.contains(item)).collect(Collectors.toList());
-        return listIds;
+        return new ArrayList<>(markingIdDel);
     }
 
 }

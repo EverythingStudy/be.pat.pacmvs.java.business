@@ -56,9 +56,6 @@ public class MarkingController {
     @Resource
     private SlideService slideService;
 
-    @Resource
-    private RedisTemplate redisTemplate;
-
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "获取标注列表")
     @GetMapping("/intelligentEvaluation/selectListBy")
@@ -217,6 +214,9 @@ public class MarkingController {
             return R.fail(MessageSource.M("NO_DATA_TRANSFERRED"));
         }
         List<String>list=markingService.roiContDel(req);
+        if (list==null){
+            return R.fail(MessageSource.M("EYE_DATA_ERROR"));
+        }
             for (ViewAddIn viewAddIn:req.getViewAddIns()){
                 markingService.insert(viewAddIn);
             }
