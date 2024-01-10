@@ -5,6 +5,7 @@ import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.thread.ExecutorBuilder;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Image;
+import cn.staitech.anno.domain.Outline;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.netty.websocket.NioWebSocketHandler;
@@ -57,6 +58,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -348,27 +350,30 @@ public class MarkingServiceImpl implements MarkingService {
     /**
      * 添加标注 - 吸管
      *
-     * @param req 标注数据
+     * @param outline 标注数据
      * @return true || false
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String insertOutline(ViewAddIn req,cn.staitech.anno.project.domain.Slide slide,SysUser user) throws Exception {
-        if (req.getGeometry() != null && !req.getGeometry().isEmpty()) {
-            MarkingUtils.addVerify(req.getGeometry());
+    public String insertOutline(Outline outline, cn.staitech.anno.project.domain.Slide slide, SysUser user, Long categoryId) throws Exception {
+        if (outline.getGeometry() != null && !outline.getGeometry().isEmpty()) {
+            MarkingUtils.addVerify(outline.getGeometry());
         }else{
             return "更新失败，轮廓数据不能为空";
         }
 
-        Marking marking = trans2Marking(req);
+        Marking marking = new Marking();
         marking.setAnnotation_id(CustomizationIdUtils.getSdId());
-        marking.setArea(req.getArea());
-        marking.setPerimeter(req.getPerimeter());
-        marking.setCreate_by(req.getCreate_by());
+        marking.setCategory_id(categoryId);
+        marking.setGeometry(outline.getGeometry());
+        marking.setSlide_id(outline.getSlideId());
+        marking.setArea(outline.getArea().toString());
+        marking.setPerimeter(outline.getPerimeter().toString());
+        marking.setCreate_by(outline.getCreateBy());
         marking.setAnnotation_type("Draw");
         marking.setOrganization_id(user.getOrganizationId());
-        marking.setCreate_time(new Date());
         marking.setAnnotation_owner(user.getUserName());
+        marking.setCreate_time(new Date());
         marking.setProject_id(Long.valueOf(slide.getProjectId()));
 
         // 添加数据库，添加后返回自增id
@@ -383,6 +388,7 @@ public class MarkingServiceImpl implements MarkingService {
      * reload
      * @param slideId 切片编号
      */
+    @Async
     @Override
     public void reload(Long slideId) {
         BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, RELOAD_STATUS, null, null);

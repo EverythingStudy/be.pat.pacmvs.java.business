@@ -1,5 +1,6 @@
 package cn.staitech.anno.service;
 
+import cn.staitech.anno.domain.Outline;
 import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
@@ -78,10 +79,10 @@ public interface MarkingService {
     /**
      * 添加标注 - 吸管
      *
-     * @param req 标注数据
+     * @param outline 标注数据
      * @return true || false
      */
-    String insertOutline(ViewAddIn req, cn.staitech.anno.project.domain.Slide slide,SysUser user) throws Exception;
+    String insertOutline(Outline outline, cn.staitech.anno.project.domain.Slide slide, SysUser user, Long categoryId) throws Exception;
 
 
     /**

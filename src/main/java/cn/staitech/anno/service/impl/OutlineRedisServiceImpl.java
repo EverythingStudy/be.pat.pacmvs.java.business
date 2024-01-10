@@ -6,7 +6,6 @@ import cn.staitech.anno.mapper.SysUserMapper;
 import cn.staitech.anno.project.mapper.SlideMapperV1;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.OutlineService;
-import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.outline.OutlineRoot;
 import cn.staitech.anno.vo.outline.OutlineSelectVO;
 import cn.staitech.anno.vo.outline.OutlineStatistic;
@@ -276,24 +275,16 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
 
         // 逐一添加
         for (Outline outline : list) {
-            ViewAddIn marking = new ViewAddIn();
-            marking.setCategory_id(categoryId);
-            marking.setGeometry(outline.getGeometry());
-            marking.setSlide_id(outline.getSlideId());
-            marking.setPerimeter(outline.getPerimeter().toString());
-            marking.setArea(outline.getArea().toString());
-            marking.setCreate_by(outline.getCreateBy());
             try {
-                markingService.insertOutline(marking, slide, user);
+                markingService.insertOutline(outline, slide, user, categoryId);
             } catch (Exception e) {
                 log.info("save marking error：{} {} {}", e, outline.getOutlineId(), outline.getGeometry());
             }
         }
-
-        // 删除所有当前用户的记录
-        removeByCreateByAndToken(createBy, null);
         // WebSocket广播
         markingService.reload(slideId);
+        // 删除所有当前用户的记录
+        removeByCreateByAndToken(createBy, null);
     }
 }
 
