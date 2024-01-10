@@ -1501,6 +1501,9 @@ public class MarkingServiceImpl implements MarkingService {
         }else{
             markingIds=roiDel(viewAddIns,features);
         }
+        if (markingIds.isEmpty()){
+            return R.ok(null,MessageSource.M("OPERATE_SUCCEED"));
+        }
         //异步删除
         CompletableFuture<Integer> cf1 = CompletableFuture.supplyAsync(() -> {
             Set<Long> categoryIds=new HashSet<>();
