@@ -626,13 +626,8 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
     public void process(Integer type, Slide slide, MarkMeasure marking) throws Exception {
 
         Long slideId = marking.getSlide_id();
-        String markIngId = marking.getMark_measure_id();
-        //String annotationId = marking.getAnnotation_id();
         Long createBy = marking.getCreate_by();
         Long categoryId = marking.getCategory_id();
-
-        //增加缓存
-        redisService.setCacheObject(CommonConstant.ANNO_MARKING + markIngId, marking, CommonConstant.MARKING_CACHE_HOURS, TimeUnit.HOURS);
 
         // 判断切片状态是否是未开始
         if (Objects.equals(slide.getStatus(), "1")) {
