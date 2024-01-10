@@ -210,7 +210,7 @@ public class MarkingController {
     @ApiOperation(value = "添加ROI轮廓")
     @PostMapping("/intelligentAnno/insertROI")
     public R<String> addList(@Validated @RequestBody RoiIn req) throws Exception {
-        if (CollectionUtils.isEmpty(req.getViewAddIns())){
+        if (CollectionUtils.isEmpty(req.getGeometryList())){
             return R.fail(MessageSource.M("NO_DATA_TRANSFERRED"));
         }
         if (!req.getRoiStatus().equals(1) && !req.getRoiStatus().equals(0)){
