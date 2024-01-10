@@ -1010,8 +1010,8 @@ public class MarkingServiceImpl implements MarkingService {
                         categoryList.addAll(categoryMap.values());
                     }
                     // 添加结束之后，更新标签信息
-                    slideAttrService.saveAnnoUsers(slide.getSlideId(), userByList);
-                    slideAttrService.saveAnnoCategory(slide.getSlideId(), categoryList);
+                    slideAttrService.saveAnnoUsers(slide.getSlideId(), userByList, SecurityUtils.getUserId());
+                    slideAttrService.saveAnnoCategory(slide.getSlideId(), categoryList, SecurityUtils.getUserId());
                 }
             }
         }
@@ -1229,11 +1229,11 @@ public class MarkingServiceImpl implements MarkingService {
             slideAttrService.removeAnnoUsers(slideId, Collections.singletonList(createBy));
             slideAttrService.removeAnnoCategory(slideId, Collections.singletonList(categoryId));
         }
-        slideAttrService.saveAnnoUsers(slideId, Collections.singletonList(createBy));
+        slideAttrService.saveAnnoUsers(slideId, Collections.singletonList(createBy), SecurityUtils.getUserId());
         if (categoryId != null) {
-            slideAttrService.saveAnnoCategory(slideId, Collections.singletonList(categoryId));
+            slideAttrService.saveAnnoCategory(slideId, Collections.singletonList(categoryId), SecurityUtils.getUserId());
         } else {
-            slideAttrService.saveAnnoCategory(slideId, new ArrayList<>());
+            slideAttrService.saveAnnoCategory(slideId, new ArrayList<>(), SecurityUtils.getUserId());
         }
     }
 

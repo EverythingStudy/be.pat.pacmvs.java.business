@@ -192,8 +192,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 if (!tag) {
                     throw new Exception(MessageSource.M("FILE_LIMIT"));
                 }
-                asyncTask.zipExport(files.getFilesPath(), fileUploadVO.getProjectId(), SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-
+                asyncTask.zipExport(files.getFilesPath(), fileUploadVO.getProjectId(), SecurityUtils.getLoginUser().getSysUser().getOrganizationId(), SecurityUtils.getUserId());
                 break;
 
             case 5:
@@ -310,7 +309,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                     if (!tag) {
                         throw new Exception(MessageSource.M("FILE_LIMIT"));
                     }
-                    asyncTask.zipExport(filesBy.getFilesPath(), chunk.getProjectId(), SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+                    asyncTask.zipExport(filesBy.getFilesPath(), chunk.getProjectId(), SecurityUtils.getLoginUser().getSysUser().getOrganizationId(), SecurityUtils.getUserId());
                     break;
                 case 5:
                     if (!Optional.ofNullable(chunk.getProjectId()).isPresent()) {

@@ -648,11 +648,11 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
             slideAttrService.removeAnnoUsers(slideId, Collections.singletonList(createBy));
             slideAttrService.removeAnnoCategory(slideId, Collections.singletonList(categoryId));
         }
-        slideAttrService.saveAnnoUsers(slideId, Collections.singletonList(createBy));
+        slideAttrService.saveAnnoUsers(slideId, Collections.singletonList(createBy), SecurityUtils.getUserId());
         if (categoryId != null) {
-            slideAttrService.saveAnnoCategory(slideId, Collections.singletonList(categoryId));
+            slideAttrService.saveAnnoCategory(slideId, Collections.singletonList(categoryId), SecurityUtils.getUserId());
         } else {
-            slideAttrService.saveAnnoCategory(slideId, new ArrayList<>());
+            slideAttrService.saveAnnoCategory(slideId, new ArrayList<>(), SecurityUtils.getUserId());
         }
     }
 
