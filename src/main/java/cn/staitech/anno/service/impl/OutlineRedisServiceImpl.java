@@ -9,6 +9,7 @@ import cn.staitech.anno.vo.outline.OutlineRoot;
 import cn.staitech.anno.vo.outline.OutlineSelectVO;
 import cn.staitech.anno.vo.outline.OutlineStatistic;
 import cn.staitech.common.redis.service.RedisService;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -52,6 +53,13 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
 
         com.alibaba.fastjson2.JSONObject object = redisService.getCacheObject(rootKey);
         OutlineRoot outlineRoot = object.toJavaObject(OutlineRoot.class);
+
+        // List<Object> srcListObj = redisService.getCacheList(listKey + outlineRoot.getToken());
+
+//        String srcListObj = redisService.getCacheObject(listKey + outlineRoot.getToken());
+//
+//        List<Outline> srcList = JSONObject.parseArray(srcListObj, Outline.class);
+
 
         List<Outline> srcList = redisService.getCacheList(listKey + outlineRoot.getToken());
 
