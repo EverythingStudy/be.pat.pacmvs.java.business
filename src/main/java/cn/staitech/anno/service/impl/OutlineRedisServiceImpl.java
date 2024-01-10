@@ -264,6 +264,7 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
      * @param list
      * @param selectVO
      */
+    @Async
     @Override
     public void saveAll(List<Outline> list, OutlineSelectVO selectVO) {
         Long categoryId = selectVO.getCategoryId();
