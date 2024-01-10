@@ -1604,10 +1604,6 @@ public class MarkingServiceImpl implements MarkingService {
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
-        Slide slide = slideMapperV1.selectById(markingBy.getSlide_id());
-        if (!Optional.ofNullable(slide).isPresent()) {
-            throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
-        }
         int res = markingMapper.delete(markingId);
         RoiIn roiIn= RoiIn.builder().categoryId(markingBy.getCategory_id()).createBy(markingBy.getCreate_by()).build();
         return roiIn;
