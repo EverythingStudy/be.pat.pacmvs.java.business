@@ -117,8 +117,6 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
                         .collect(Collectors.toList());
             }
         }
-
-
         return list;
     }
 
@@ -287,4 +285,3 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
         removeByCreateByAndToken(createBy, null);
     }
 }
-
