@@ -2,6 +2,8 @@ package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.Outline;
 import cn.staitech.anno.mapper.OutlineMapper;
+import cn.staitech.anno.mapper.SysUserMapper;
+import cn.staitech.anno.project.mapper.SlideMapperV1;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.OutlineService;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
@@ -9,6 +11,7 @@ import cn.staitech.anno.vo.outline.OutlineRoot;
 import cn.staitech.anno.vo.outline.OutlineSelectVO;
 import cn.staitech.anno.vo.outline.OutlineStatistic;
 import cn.staitech.common.redis.service.RedisService;
+import cn.staitech.system.api.domain.SysUser;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -32,12 +35,14 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service("OutlineRedisServiceImpl")
 public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline> implements OutlineService {
-
     @Resource
     private MarkingService markingService;
-
     @Resource
     private RedisService redisService;
+    @Resource
+    private SlideMapperV1 slideMapperV1;
+    @Resource
+    private SysUserMapper userMapper;
 
     /**
      * 列表查询
@@ -264,6 +269,10 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
         Long categoryId = selectVO.getCategoryId();
         Long createBy = selectVO.getCreateBy();
         Long slideId = selectVO.getSlideId();
+
+        cn.staitech.anno.project.domain.Slide slide = slideMapperV1.selectById(slideId);
+        SysUser user = userMapper.selectUserById(createBy);
+
         // 逐一添加
         for (Outline outline : list) {
             ViewAddIn marking = new ViewAddIn();
@@ -274,7 +283,7 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
             marking.setArea(outline.getArea().toString());
             marking.setCreate_by(outline.getCreateBy());
             try {
-                markingService.insertOutline(marking);
+                markingService.insertOutline(marking, slide, user);
             } catch (Exception e) {
                 log.info("save marking error：{} {} {}", e, outline.getOutlineId(), outline.getGeometry());
             }

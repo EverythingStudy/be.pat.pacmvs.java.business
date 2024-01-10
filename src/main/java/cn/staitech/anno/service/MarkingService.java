@@ -81,15 +81,15 @@ public interface MarkingService {
      * @param req 标注数据
      * @return true || false
      */
-    String insertOutline(ViewAddIn req) throws Exception;
+    String insertOutline(ViewAddIn req, cn.staitech.anno.project.domain.Slide slide,SysUser user) throws Exception;
 
 
     /**
      * reload
+     *
      * @param slideId 切片编号
      */
     void reload(Long slideId);
-
 
 
     /**
@@ -165,7 +165,7 @@ public interface MarkingService {
     void batchDelete(Long slideId);
 
     /**
-    roi包含排除
+     * roi包含排除
      */
     R<String> roiContDel(RoiIn viewAddIns) throws Exception;
 

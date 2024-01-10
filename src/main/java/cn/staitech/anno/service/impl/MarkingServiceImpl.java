@@ -231,15 +231,12 @@ public class MarkingServiceImpl implements MarkingService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String insert(ViewAddIn req) throws Exception {
-        //TODO  imageId projectId 前端出入可进一步优化
-        if (req.getGeometry() != null) {
-            if (req.getGeometry().isEmpty()) {
-                log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
-                return "更新失败，轮廓数据不能为空";
-            } else {
-                MarkingUtils.addVerify(req.getGeometry());
-            }
+        if (req.getGeometry() != null && !req.getGeometry().isEmpty()) {
+            MarkingUtils.addVerify(req.getGeometry());
+        }else{
+            return "更新失败，轮廓数据不能为空";
         }
+
         //加slide缓存
         cn.staitech.anno.project.domain.Slide slideBy = redisService.getCacheObject(CommonConstant.ANNO_SLIDE + req.getSlide_id());
         if (null == slideBy) {
@@ -288,7 +285,6 @@ public class MarkingServiceImpl implements MarkingService {
         // 若未传入标注作者,使用当前登录用户为标注作者==>必传Create_by 无默认
         marking.setCreate_by(req.getCreate_by());
         marking.setAnnotation_type("Draw");
-        marking.setOrganization_id(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         marking.setCreate_time(new Date());
         //加用户缓存
         SysUser user = redisService.getCacheObject(CommonConstant.SYS_USER + req.getCreate_by());
@@ -298,7 +294,10 @@ public class MarkingServiceImpl implements MarkingService {
         }
         if (user != null) {
             marking.setAnnotation_owner(user.getUserName());
+            marking.setOrganization_id(user.getOrganizationId());
         }
+
+
         // 查询
 //		int number = 1;
 //		QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
@@ -354,52 +353,29 @@ public class MarkingServiceImpl implements MarkingService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String insertOutline(ViewAddIn req) throws Exception {
-        //TODO  imageId projectId 前端出入可进一步优化
-        if (req.getGeometry() != null) {
-            if (req.getGeometry().isEmpty()) {
-                return "更新失败，轮廓数据不能为空";
-            } else {
-                MarkingUtils.addVerify(req.getGeometry());
-            }
-        }
-        // 加slide缓存
-        cn.staitech.anno.project.domain.Slide slideBy = redisService.getCacheObject(CommonConstant.ANNO_SLIDE + req.getSlide_id());
-        if (null == slideBy) {
-            slideBy = slideMapperV1.selectById(req.getSlide_id());
-            redisService.setCacheObject(CommonConstant.ANNO_SLIDE + req.getSlide_id(), slideBy, CommonConstant.SLIDE_CACHE_HOURS, TimeUnit.HOURS);
-        }
-        if (slideBy == null) {
-            return MessageSource.M("NO_SLIDE_DATA");
+    public String insertOutline(ViewAddIn req,cn.staitech.anno.project.domain.Slide slide,SysUser user) throws Exception {
+        if (req.getGeometry() != null && !req.getGeometry().isEmpty()) {
+            MarkingUtils.addVerify(req.getGeometry());
+        }else{
+            return "更新失败，轮廓数据不能为空";
         }
 
         Marking marking = trans2Marking(req);
-        // 获取规定的geoJson Id
         marking.setAnnotation_id(CustomizationIdUtils.getSdId());
         marking.setArea(req.getArea());
         marking.setPerimeter(req.getPerimeter());
-        // 若未传入标注作者,使用当前登录用户为标注作者==>必传Create_by 无默认
         marking.setCreate_by(req.getCreate_by());
         marking.setAnnotation_type("Draw");
-        marking.setOrganization_id(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        marking.setOrganization_id(user.getOrganizationId());
         marking.setCreate_time(new Date());
-        //加用户缓存
-        SysUser user = redisService.getCacheObject(CommonConstant.SYS_USER + req.getCreate_by());
-        if (null == user) {
-            user = userMapper.selectUserById(req.getCreate_by());
-            redisService.setCacheObject(CommonConstant.SYS_USER + req.getCreate_by(), user, CommonConstant.SYS_USER_CACHE_HOURS, TimeUnit.DAYS);
-        }
-        if (user != null) {
-            marking.setAnnotation_owner(user.getUserName());
-        }
-
-        marking.setProject_id(Long.valueOf(slideBy.getProjectId()));
+        marking.setAnnotation_owner(user.getUserName());
+        marking.setProject_id(Long.valueOf(slide.getProjectId()));
 
         // 添加数据库，添加后返回自增id
         markingMapper.insert(marking);
 
-        //TODO 多线程处理
-        annExecutor.submit(new AnnCountThread(1, slideBy, marking));
+        // 更新Slide状态及统计等
+        annExecutor.submit(new AnnCountThread(1, slide, marking));
         return marking.getMarking_id();
     }
 
