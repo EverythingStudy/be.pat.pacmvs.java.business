@@ -28,7 +28,7 @@ import java.util.List;
 @RestController
 @Validated
 @RestControllerAdvice
-@RequestMapping("/outline")
+@RequestMapping("/v2/outline")
 public class OutlineController {
 
     @Resource(name = "OutlineServiceImpl")

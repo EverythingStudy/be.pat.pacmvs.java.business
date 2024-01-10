@@ -9,17 +9,19 @@ import cn.staitech.anno.vo.outline.OutlineRoot;
 import cn.staitech.anno.vo.outline.OutlineSelectVO;
 import cn.staitech.anno.vo.outline.OutlineStatistic;
 import cn.staitech.common.redis.service.RedisService;
+import cn.staitech.common.security.utils.SecurityUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
@@ -52,19 +54,36 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
         String listKey = "OUTLINE_LIST:" + createBy + "_";
 
         com.alibaba.fastjson2.JSONObject object = redisService.getCacheObject(rootKey);
-        OutlineRoot outlineRoot = object.toJavaObject(OutlineRoot.class);
 
-        // List<Object> srcListObj = redisService.getCacheList(listKey + outlineRoot.getToken());
-
-//        String srcListObj = redisService.getCacheObject(listKey + outlineRoot.getToken());
-//
-//        List<Outline> srcList = JSONObject.parseArray(srcListObj, Outline.class);
-
-
-        List<Outline> srcList = redisService.getCacheList(listKey + outlineRoot.getToken());
-
-        if (CollectionUtils.isEmpty(srcList)) {
+        if (object.isEmpty()) {
             return null;
+        }
+
+        OutlineRoot outlineRoot = object.toJavaObject(OutlineRoot.class);
+        List<com.alibaba.fastjson2.JSONObject> srcJsonList = redisService.getCacheList(listKey + outlineRoot.getToken());
+
+        if (CollectionUtils.isEmpty(srcJsonList)) {
+            return null;
+        }
+
+        List<Outline> srcList = new ArrayList<>();
+
+        AtomicLong outlineId = new AtomicLong(1);
+        // 格式转换
+        for (com.alibaba.fastjson2.JSONObject jsonObject : srcJsonList) {
+            Outline outline = new Outline();
+            outline.setOutlineId(outlineId.getAndIncrement());
+            outline.setProjectId(selectVO.getProjectId());
+            outline.setImageId(selectVO.getImageId());
+            outline.setSlideId(selectVO.getSlideId());
+            outline.setCreateBy(selectVO.getCreateBy());
+            outline.setArea(Double.valueOf(jsonObject.getBigDecimal("area").toString()));
+            outline.setPerimeter(Double.valueOf(jsonObject.getBigDecimal("perimeter").toString()));
+            outline.setLongAxis(Double.valueOf(jsonObject.getBigDecimal("longAxis").toString()));
+            outline.setArea(Double.valueOf(jsonObject.getBigDecimal("shortAxis").toString()));
+            outline.setGeometry(JSONObject.parseObject(jsonObject.getString("geometry")));
+
+            srcList.add(outline);
         }
 
         Double minVal = selectVO.getMinVal() != null ? selectVO.getMinVal() : 0.0;
@@ -182,10 +201,14 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
         com.alibaba.fastjson2.JSONObject object = redisService.getCacheObject(rootKey);
         OutlineRoot outlineRoot = object.toJavaObject(OutlineRoot.class);
 
-        if (createBy > 0 && StringUtils.isEmpty(token)) {
+        // 当前用户所有数据的Key
+        Collection<String> keyCollection = redisService.keys(listKey + "*");
+        if (CollectionUtils.isEmpty(keyCollection)) {
+            return; // 没有符合条件的 key，不进行任何操作
+        }
+
+        if (token != null) {
             // 清空当前用户非当前token的数据
-            // 当前用户所有数据的Key
-            Collection<String> keyCollection = redisService.keys(listKey + "*");
             for (String keyStr : keyCollection) {
                 if (!keyStr.equals(listKey + outlineRoot.getToken())) {
                     redisService.deleteObject(keyStr);
@@ -193,7 +216,7 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
             }
         } else {
             // 清空当前用户全部数据
-            redisService.deleteObject(listKey + "*");
+            redisService.deleteObject(keyCollection);
         }
     }
 
@@ -212,10 +235,14 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
         com.alibaba.fastjson2.JSONObject object = redisService.getCacheObject(rootKey);
         OutlineRoot outlineRoot = object.toJavaObject(OutlineRoot.class);
 
-        if (createBy > 0 && slideId > 0 && outlineRoot.getSlideId().equals(slideId)) {
+        // 当前用户所有数据的Key
+        Collection<String> keyCollection = redisService.keys(listKey + "*");
+        if (CollectionUtils.isEmpty(keyCollection)) {
+            return; // 没有符合条件的 key，不进行任何操作
+        }
+
+        if (slideId != null && outlineRoot.getSlideId().equals(slideId)) {
             // 清空当前用户非当前token的数据
-            // 当前用户所有数据的Key
-            Collection<String> keyCollection = redisService.keys(listKey + "*");
             for (String keyStr : keyCollection) {
                 if (!keyStr.equals(listKey + outlineRoot.getToken())) {
                     redisService.deleteObject(keyStr);
@@ -223,7 +250,7 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
             }
         } else {
             // 清空当前用户全部数据
-            redisService.deleteObject(listKey + "*");
+            redisService.deleteObject(keyCollection);
         }
     }
 
@@ -245,11 +272,16 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
             marking.setPerimeter(outline.getPerimeter().toString());
             marking.setArea(outline.getArea().toString());
             marking.setCreate_by(outline.getCreateBy());
-            markingService.insert(marking);
+            try {
+                markingService.insert(marking);
+            } catch (Exception e) {
+                log.info("save marking error：{} {} {}", e, outline.getOutlineId(), outline.getGeometry());
+            }
         }
 
+        Long createBy = SecurityUtils.getLoginUser().getSysUser().getUserId();
         // 删除所有当前用户的记录
-        removeByCreateByAndToken(categoryId, null);
+        removeByCreateByAndToken(createBy, null);
     }
 }
 
