@@ -74,6 +74,24 @@ public interface MarkingService {
      */
     String insert(ViewAddIn req) throws Exception;
 
+
+    /**
+     * 添加标注 - 吸管
+     *
+     * @param req 标注数据
+     * @return true || false
+     */
+    String insertOutline(ViewAddIn req) throws Exception;
+
+
+    /**
+     * reload
+     * @param slideId 切片编号
+     */
+    void reload(Long slideId);
+
+
+
     /**
      * 删除标注
      *

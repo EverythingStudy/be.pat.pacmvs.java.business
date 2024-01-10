@@ -45,6 +45,7 @@ public class CommonConstant {
     public static final String ADD_STATUS = "add";
     public static final String UPDATE_STATUS = "update";
     public static final String DELETE_STATUS = "delete";
+    public static final String RELOAD_STATUS = "reload";
     public static final String CLEAN = "clean";
     public static final String UNION = "UNION";
     public static final String DIFFERENCE = "DIFFERENCE";

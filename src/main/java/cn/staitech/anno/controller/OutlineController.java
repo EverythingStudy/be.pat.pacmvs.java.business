@@ -97,7 +97,7 @@ public class OutlineController {
             return R.fail(MessageSource.M("OUTLINE.NORESULT"));
         }
 
-        outlineService.saveAll(list, selectVO.getCategoryId());
+        outlineService.saveAll(list, selectVO);
         return R.ok(MessageSource.M("OPERATE_SUCCEED"));
     }
 }

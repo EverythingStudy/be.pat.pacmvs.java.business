@@ -165,11 +165,12 @@ public class OutlineServiceImpl extends ServiceImpl<OutlineMapper, Outline> impl
      * 批量保存
      *
      * @param list
-     * @param categoryId
+     * @param selectVO
      * @throws Exception
      */
     @Override
-    public void saveAll(List<Outline> list, Long categoryId) throws Exception {
+    public void saveAll(List<Outline> list, OutlineSelectVO selectVO) throws Exception {
+        Long categoryId = selectVO.getCategoryId();
         // 逐一添加
         for (Outline outline : list) {
             ViewAddIn marking = new ViewAddIn();

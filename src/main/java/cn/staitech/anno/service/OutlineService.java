@@ -51,9 +51,9 @@ public interface OutlineService extends IService<Outline> {
      * 批量保存
      *
      * @param list
-     * @param categoryId
+     * @param selectVO
      * @throws Exception
      */
-    void saveAll(List<Outline> list, Long categoryId) throws Exception;
+    void saveAll(List<Outline> list, OutlineSelectVO selectVO) throws Exception;
 }
 

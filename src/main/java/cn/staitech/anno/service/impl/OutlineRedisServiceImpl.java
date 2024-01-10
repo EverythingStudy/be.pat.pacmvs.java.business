@@ -9,7 +9,6 @@ import cn.staitech.anno.vo.outline.OutlineRoot;
 import cn.staitech.anno.vo.outline.OutlineSelectVO;
 import cn.staitech.anno.vo.outline.OutlineStatistic;
 import cn.staitech.common.redis.service.RedisService;
-import cn.staitech.common.security.utils.SecurityUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -258,11 +257,13 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
      * 批量保存
      *
      * @param list
-     * @param categoryId
-     * @throws Exception
+     * @param selectVO
      */
     @Override
-    public void saveAll(List<Outline> list, Long categoryId) throws Exception {
+    public void saveAll(List<Outline> list, OutlineSelectVO selectVO) {
+        Long categoryId = selectVO.getCategoryId();
+        Long createBy = selectVO.getCreateBy();
+        Long slideId = selectVO.getSlideId();
         // 逐一添加
         for (Outline outline : list) {
             ViewAddIn marking = new ViewAddIn();
@@ -273,15 +274,16 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
             marking.setArea(outline.getArea().toString());
             marking.setCreate_by(outline.getCreateBy());
             try {
-                markingService.insert(marking);
+                markingService.insertOutline(marking);
             } catch (Exception e) {
                 log.info("save marking error：{} {} {}", e, outline.getOutlineId(), outline.getGeometry());
             }
         }
 
-        Long createBy = SecurityUtils.getLoginUser().getSysUser().getUserId();
         // 删除所有当前用户的记录
         removeByCreateByAndToken(createBy, null);
+        // WebSocket广播
+        markingService.reload(slideId);
     }
 }
 
