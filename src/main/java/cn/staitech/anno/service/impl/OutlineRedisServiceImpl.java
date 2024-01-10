@@ -98,23 +98,23 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
         if (selectVO.getBizType().equals(2)) {
             if (selectVO.getMaxVal() != null) {
                 list = srcList.stream()
-                        .filter(outline -> outline.getPerimeter() > minVal)
-                        .filter(outline -> outline.getPerimeter() < selectVO.getMaxVal())
+                        .filter(outline -> outline.getPerimeter() >= minVal)
+                        .filter(outline -> outline.getPerimeter() <= selectVO.getMaxVal())
                         .collect(Collectors.toList());
             } else {
                 list = srcList.stream()
-                        .filter(outline -> outline.getPerimeter() > minVal)
+                        .filter(outline -> outline.getPerimeter() >= minVal)
                         .collect(Collectors.toList());
             }
         } else {
             if (selectVO.getMaxVal() != null) {
                 list = srcList.stream()
-                        .filter(outline -> outline.getArea() > minVal)
-                        .filter(outline -> outline.getArea() < selectVO.getMaxVal())
+                        .filter(outline -> outline.getArea() >= minVal)
+                        .filter(outline -> outline.getArea() <= selectVO.getMaxVal())
                         .collect(Collectors.toList());
             } else {
                 list = srcList.stream()
-                        .filter(outline -> outline.getArea() > minVal)
+                        .filter(outline -> outline.getArea() >= minVal)
                         .collect(Collectors.toList());
             }
         }
