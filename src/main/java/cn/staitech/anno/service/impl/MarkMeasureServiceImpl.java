@@ -3,15 +3,16 @@ package cn.staitech.anno.service.impl;
 import cn.hutool.core.thread.ExecutorBuilder;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Image;
-import cn.staitech.anno.mapper.*;
+import cn.staitech.anno.mapper.ImageMapper;
+import cn.staitech.anno.mapper.MarkMeasureMapper;
+import cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper;
+import cn.staitech.anno.mapper.SysUserMapper;
 import cn.staitech.anno.netty.websocket.NioWebSocketHandler;
 import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.domain.Slide;
-import cn.staitech.anno.project.mapper.DownTaskMapper;
 import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.project.mapper.SlideMapperV1;
-import cn.staitech.anno.project.service.DownTaskService;
 import cn.staitech.anno.project.service.SlideAttrService;
 import cn.staitech.anno.service.FileService;
 import cn.staitech.anno.service.MarkMeasureService;
@@ -37,7 +38,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,15 +75,11 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
     @Resource
     private SlideMapperV1 slideMapperV1;
     @Resource
-    private SlideMapper slideMapper;
-    @Resource
     private SlideAttrService slideAttrService;
     @Resource
     private PathologicalIndicatorCategoryMapper pathologicalIndicatorCategoryMapper;
     @Resource
     private MarkMeasureMapper markMeasureMapper;
-
-
     @Resource
     private FileService fileService;
     @Resource
@@ -92,12 +88,7 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
     private SysUserMapper userMapper;
     @Resource
     private ProjectMapperV1 projectMapperV1;
-
     @Resource
-    private DownTaskMapper downTaskMapper;
-    @Resource
-    private DownTaskService downTaskService;
-    @Autowired
     private RedisService redisService;
 
     @Override
@@ -159,12 +150,13 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String insert(ViewAddIn req) throws Exception {
-        if (req.getGeometry() != null) {
-            if (req.getGeometry().isEmpty()) {
-                log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
-                return "更新失败，轮廓数据不能为空";
-            }
+        if (req.getGeometry() != null && !req.getGeometry().isEmpty()) {
+            MarkingUtils.addVerify(req.getGeometry());
+        }else{
+            log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
+            return "更新失败，轮廓数据不能为空";
         }
+
         //加slide缓存
         cn.staitech.anno.project.domain.Slide slideBy = redisService.getCacheObject(CommonConstant.ANNO_SLIDE + req.getSlide_id());
         if (null == slideBy) {

@@ -236,6 +236,7 @@ public class MarkingServiceImpl implements MarkingService {
         if (req.getGeometry() != null && !req.getGeometry().isEmpty()) {
             MarkingUtils.addVerify(req.getGeometry());
         }else{
+            log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
             return "更新失败，轮廓数据不能为空";
         }
 
