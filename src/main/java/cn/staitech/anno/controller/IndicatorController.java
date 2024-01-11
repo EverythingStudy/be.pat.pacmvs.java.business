@@ -358,12 +358,10 @@ public class IndicatorController extends BaseController {
         return R.ok(list);
     }
 
-    /**
-     * @SneakyThrows
-     * @ApiOperation(value = "添加结构指标-New")
-     * @Log(title = "添加结构指标", menu = "结构指标", subMenu = "结构指标", businessType = BusinessType.INSERT)
-     * @PostMapping("/save")
-     */
+    @SneakyThrows
+    @ApiOperation(value = "添加结构指标-New")
+    @Log(title = "添加结构指标", menu = "结构指标", subMenu = "结构指标", businessType = BusinessType.INSERT)
+    @PostMapping("/save")
     public R<String> save(@Validated @RequestBody IndicatorAddVO req) {
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
         Long organizationId = sysUser.getOrganizationId();
