@@ -7,7 +7,7 @@ import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.service.*;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.OrganizationUtils;
-import cn.staitech.anno.vo.files.in.FileUploadVO;
+import cn.staitech.anno.vo.files.FileUploadVO;
 import cn.staitech.common.security.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

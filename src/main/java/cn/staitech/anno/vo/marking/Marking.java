@@ -11,9 +11,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * <p>
- *
- * </p>
  *
  * @author gjt
  * @since 2023-09-14

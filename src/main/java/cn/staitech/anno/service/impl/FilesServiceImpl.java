@@ -15,7 +15,7 @@ import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.OrganizationUtils;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.domain.Files;
-import cn.staitech.anno.vo.files.in.FilesListVO;
+import cn.staitech.anno.vo.files.FilesListVO;
 import cn.staitech.common.core.utils.uuid.IdUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;

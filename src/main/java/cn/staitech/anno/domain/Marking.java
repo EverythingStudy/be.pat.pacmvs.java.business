@@ -152,6 +152,4 @@ public class Marking implements Serializable {
      */
     @TableField(typeHandler = JacksonTypeHandler.class)
     private Object geometry;
-
-
 }

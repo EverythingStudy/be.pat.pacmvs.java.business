@@ -1,6 +1,6 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.vo.files.in.FileUploadVO;
+import cn.staitech.anno.vo.files.FileUploadVO;
 
 public interface JsonFilesService  {
 

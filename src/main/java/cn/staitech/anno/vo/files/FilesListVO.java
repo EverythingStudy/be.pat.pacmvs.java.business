@@ -1,4 +1,4 @@
-package cn.staitech.anno.vo.files.in;
+package cn.staitech.anno.vo.files;
 
 import cn.staitech.anno.domain.Pager;
 import com.baomidou.mybatisplus.annotation.TableField;

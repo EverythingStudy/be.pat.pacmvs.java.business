@@ -3,7 +3,7 @@ package cn.staitech.anno.controller;
 import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.utils.StatisticListUtils;
-import cn.staitech.anno.vo.filepath.in.GetFilePathIn;
+import cn.staitech.anno.vo.filepath.GetFilePathIn;
 import cn.staitech.common.core.domain.R;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
