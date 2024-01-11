@@ -5,10 +5,8 @@ import cn.hutool.core.lang.Snowflake;
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Indicator;
-import cn.staitech.anno.domain.Organ;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.Structure;
-import cn.staitech.anno.mapper.OrganMapper;
 import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.project.service.MarkingServiceV1;
 import cn.staitech.anno.service.IndicatorService;
@@ -48,7 +46,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author wangfeng .
@@ -67,13 +64,8 @@ public class PathologicalController {
     private IndicatorService indicatorService;
     @Resource
     private MarkingServiceV1 markingServiceV1;
-
     @Resource
     private StructureService structureService;
-
-    @Resource
-    private OrganMapper organMapper;
-    
     @Resource
     private OrganService organService;
 
@@ -105,25 +97,24 @@ public class PathologicalController {
         String structureId = vo.getStructureId();
 
         // 查询Indicator信息
-        
+
         Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
         Long currentUserId = SecurityUtils.getLoginUser().getSysUser().getUserId();
-//        Indicator indicator = indicatorService.selectIndicatorsById(indicatorId);
         Indicator indicatorQuery = new Indicator();
         indicatorQuery.setIndicatorId(indicatorId);
         indicatorQuery.setOrganizationId(organizationId);
         indicatorQuery.setDelFlag(0);
         // 查询结构指标是否存在
-        Indicator indicator =  new Indicator();
+        Indicator indicator = new Indicator();
         List<Indicator> indicatorList = indicatorService.selectIndicator(indicatorQuery);
-        if(CollectionUtils.isNotEmpty(indicatorList)){
-        	indicator = indicatorList.get(0);
+        if (CollectionUtils.isNotEmpty(indicatorList)) {
+            indicator = indicatorList.get(0);
         }
         if (indicator == null) {
             return R.fail(MessageSource.M("INDICATOR_ABSENT"));
         }
-//		Long organizationId = 1L;
-//		Long currentUserId = 1L;
+
+
         //验证结构是否已经存在
         PathologicalIndicatorCategory categoryS = new PathologicalIndicatorCategory();
         categoryS.setIndicatorId(indicatorId);
@@ -146,14 +137,6 @@ public class PathologicalController {
             //校验structureId、structureName 是否已经存在
             String speciesId = indicator.getSpeciesId();
             String organId = indicator.getOrganId();
-			
-			/*QueryWrapper<Structure> querySidWrapper = new QueryWrapper<>();
-			querySidWrapper.eq("structure_id",structureId);
-			List<Map<String, Object>> sIdRList = structureService.listMaps(querySidWrapper);
-			if(CollectionUtils.isNotEmpty(sIdRList)){
-				return R.fail("STRUCTUREID EXIST");
-			}*/
-
 
             QueryWrapper<Structure> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("species_id", speciesId);
@@ -161,13 +144,11 @@ public class PathologicalController {
             queryWrapper.eq("structure_id", structureId);
             queryWrapper.eq("organization_id", organizationId);
             List<Map<String, Object>> sIdList = structureService.listMaps(queryWrapper);
-//			List<Structure>  sIdList2 = structureService.list(queryWrapper);
             if (CollectionUtils.isNotEmpty(sIdList)) {
                 return R.fail("STRUCTUREID EXIST");
             }
             queryWrapper.eq("structure_id", null);
             queryWrapper.eq("name", structureName);
-//			List<Structure>  sNameList = structureService.list(queryWrapper);
             List<Map<String, Object>> sNameList = structureService.listMaps(queryWrapper);
             if (CollectionUtils.isNotEmpty(sNameList)) {
                 return R.fail("STRUCTURENAME EXIST");
@@ -351,19 +332,17 @@ public class PathologicalController {
         }
 
         // 查询Indicator信息
-        
-//        Indicator indicator = indicatorService.selectIndicatorsById(category.getIndicatorId());
         Indicator indicatorQuery = new Indicator();
         indicatorQuery.setIndicatorId(category.getIndicatorId());
         indicatorQuery.setOrganizationId(organizationId);
         indicatorQuery.setDelFlag(0);
         // 查询结构指标是否存在
-        Indicator indicator =  new Indicator();
+        Indicator indicator = new Indicator();
         List<Indicator> indicatorList = indicatorService.selectIndicator(indicatorQuery);
-        if(CollectionUtils.isNotEmpty(indicatorList)){
-        	indicator = indicatorList.get(0);
+        if (CollectionUtils.isNotEmpty(indicatorList)) {
+            indicator = indicatorList.get(0);
         }
-       
+
         if (indicator == null) {
             return R.fail(MessageSource.M("INDICATOR_ABSENT"));
         }
@@ -371,7 +350,7 @@ public class PathologicalController {
         //确认下原来的structure_id信息
         PathologicalIndicatorCategory sourcePic = pathologicalIndicatorCategoryService.selectByPrimaryKey(category.getCategoryId());
         //验证结构是否已经存在  		BeanUtils.copyProperties(category, targetCategory);
-       
+
         PathologicalIndicatorCategory categoryS = new PathologicalIndicatorCategory();
         categoryS.setStructureId(category.getStructureId());
         categoryS.setIndicatorId(category.getIndicatorId());
@@ -419,7 +398,7 @@ public class PathologicalController {
             queryWrapper.eq("species_id", speciesId);
             queryWrapper.eq("structure_id", structureId);
             queryWrapper.eq("organization_id", organizationId);
-//			List<Structure>  sIdList = structureService.list(queryWrapper);
+
             List<Map<String, Object>> sIdList = structureService.listMaps(queryWrapper);
 
             if (CollectionUtils.isEmpty(sIdList)) {
@@ -469,7 +448,6 @@ public class PathologicalController {
                 st.setNameEn(category.getStructureName());
                 structureService.update(st, updateWrapper);
                 // ROA:标注区域
-//				String structureRoaName = category.getStructureName()+" "+CommonConstant.STRUCTURE_ROA;
                 String structureRoaId = category.getStructureId() + CommonConstant.STRUCTURE_ROA;
 
                 UpdateWrapper<Structure> updateROAWrapper = new UpdateWrapper<>();
@@ -508,8 +486,6 @@ public class PathologicalController {
         // 机构ID
         category.setOrganizationId(sysUser.getOrganizationId());
         category.setUpdateBy(sysUser.getUserId());
-        //		category.setUpdateBy(1L);
-        //		category.setOrganizationId(1L);
         category.setUpdateTime(new Date());
         // 生成完整编码
         category.setNumber(category.getStructureId());
@@ -519,32 +495,20 @@ public class PathologicalController {
         PathologicalIndicatorCategory targetCategoryRoe = new PathologicalIndicatorCategory();
         BeanUtils.copyProperties(category, targetCategoryRoe);
 
-        // 获取structureName
-        //String structureName = structureService.getById(category.getStructureId()).getName();
         List<Structure> structureList = structureService.getListByStructureId(category.getStructureId());
         String structureName = "";
-        if(CollectionUtils.isNotEmpty(structureList)){
-        	Structure structure = structureList.get(0);
-        	structureName = structure.getName();
+        if (CollectionUtils.isNotEmpty(structureList)) {
+            Structure structure = structureList.get(0);
+            structureName = structure.getName();
         }
         // 生成categoryName
         String categoryName = indicator.getIndicatorName() + structureName;
         category.setCategoryName(categoryName);
-
-
-        // 验证是否存在该条件的记录(排除自己)  A：必填项校验。B：结构编码在当前列表内不可重复；C：结构名称在当前列表内不可重复。D：图层顺序在当前列表内不可重复；E：颜色值在当前列表不可重复
-		/*List<PathologicalIndicatorCategory> list = pathologicalIndicatorCategoryService.selectIndicatorMessageForUpdate(category);
-		if (list.size() > 0) {
-			return R.fail(MessageSource.M("CATEGORY_NAME_EXIST"));
-		}*/
-
         category.setGroupNumber(CommonConstant.STRUCTURE_RO_GROUP_NUMBER);
 
         //修改标注类别信息
         String retStatus = pathologicalIndicatorCategoryService.updateByPrimaryKeySelective2(category);
         //查看当前结构是否只要结构编码
-        //		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-        //		boolean containsValue = Arrays.asList(CommonConstant.ORGANIZATION_ID).contains(organizationId);
         //TODO 另外考核区域和标注区域同样处理，structureId、number、categoryName需要单独处理，修改时候需要用自己的categoryId和indicatorId
         if (retStatus.equals("1")) {
             updateCategory(targetCategory, targetCategoryRoe, sourcePic, indicator);
@@ -593,9 +557,9 @@ public class PathologicalController {
             //String structureName = structureService.getById(newStructureId).getName();
             List<Structure> structureList = structureService.getListByStructureId(newStructureId);
             String structureName = "";
-            if(CollectionUtils.isNotEmpty(structureList)){
-            	Structure structure = structureList.get(0);
-            	structureName = structure.getName();
+            if (CollectionUtils.isNotEmpty(structureList)) {
+                Structure structure = structureList.get(0);
+                structureName = structure.getName();
             }
             // 生成categoryName
             String categoryName = indicator.getIndicatorName() + structureName;
@@ -722,28 +686,9 @@ public class PathologicalController {
         }
     }
 
-   /* public Map<String, String> selectMap() {
-        return select(false);
-    }
-
-    public Map<String, String> selectMapEn() {
-        return select(true);
-    }
-
-    public Map<String, String> select(boolean en) {
-        List<Organ> list = organMapper.selectList();
-        if (en) {
-            return list.stream().collect(Collectors.toMap(item -> item.getSpeciesCode().concat(item.getOrganId()), Organ::getNameEn));
-        } else {
-            return list.stream().collect(Collectors.toMap(item -> item.getSpeciesCode().concat(item.getOrganId()), Organ::getName));
-        }
-    }*/
-
-
     @PostMapping("/test")
     public R test() throws ParseException {
         List<Long> dataList = new ArrayList<>();
-        //		dataList.add(1638L);
         pathologicalIndicatorCategoryService.handlerCouponsUserStatusTimeOutToExpired(dataList);
         return R.ok();
     }
