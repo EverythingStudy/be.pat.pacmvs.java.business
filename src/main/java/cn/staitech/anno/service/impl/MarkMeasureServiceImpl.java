@@ -152,8 +152,8 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
     public String insert(ViewAddIn req) throws Exception {
         if (req.getGeometry() != null && !req.getGeometry().isEmpty()) {
             MarkingUtils.addVerify(req.getGeometry());
-        }else{
-            log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
+        } else {
+            log.info("标注数据异常:" + req.getGeometry());
             return "更新失败，轮廓数据不能为空";
         }
 
@@ -169,30 +169,9 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 
         MarkMeasure marking = trans2Marking(req);
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-//		SysUser sysUser = userMapper.selectUserById(1L);
 
         // 获取规定的geoJson Id
         String annotationId = CustomizationIdUtils.getSdId();
-//		Image image = getImageById(slideBy.getImageId().longValue());
-//		marking.setAnnotation_id(annotationId);
-//		if (req.getArea() != null) {
-//			Double area = 0.0;
-//			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
-//				area = new Double(req.getArea()) * Double.valueOf(image.getResolutionX()) * Double.valueOf(image.getResolutionX());
-//			}else{
-//				area = new Double(req.getArea()) * MICRON;
-//			}
-//			marking.setArea(String.valueOf(area));
-//		}
-//		if (req.getPerimeter() != null) {
-//			Double perimeter = 0.0;
-//			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
-//				perimeter = new Double(req.getPerimeter()) * Double.valueOf(image.getResolutionX());
-//			}else{
-//				perimeter = new Double(req.getPerimeter()) * MICRON;
-//			}
-//			marking.setPerimeter(String.valueOf(perimeter));
-//		}
         marking.setPerimeter(req.getPerimeter());
         marking.setArea(req.getArea());
         // 若未传入标注作者,使用当前登录用户为标注作者==>必传Create_by 无默认
@@ -223,8 +202,6 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
         marking.setNumber(number);
         marking.setProject_id(Long.valueOf(slideBy.getProjectId()));
 
-//		Snowflake snowflake = new Snowflake();
-//		String markMeasureId = snowflake.nextIdStr();
         String markMeasureId = IdUtils.randomUUID().replace("-", "");
         marking.setMark_measure_id(markMeasureId);
         // 添加数据库，添加后返回自增id
@@ -234,17 +211,11 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
         Features features = MarkingUtils.socketData(annotationId, marking.getGeometry(), properties);
         // 如果是点类型，返回点的总数并返回
         List<PointCount> pointCountList = updatePoint(marking.getLocation_type(), marking);
-//		BroadcastVO broadcastVO = SendMessage.sendOneMessagesByAnnoType(CommonConstant.ANNO_TYPE_MEASURE,ADD_STATUS, features);
         BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_MEASURE, ADD_STATUS, features, pointCountList);
-
         NioWebSocketHandler.sendAll(req.getSlide_id(), broadcastVO);
 
         annExecutor.submit(new AnnCountThread(1, slideBy, marking));
 
-        // 更新切片表中最新状态
-		/* updateSLide(marking.getSlide_id());
-        slideAttrService.saveAnnoUsers(req.getSlide_id(), Collections.singletonList(marking.getCreate_by()));
-        slideAttrService.saveAnnoCategory(req.getSlide_id(), Collections.singletonList(marking.getCategory_id()));*/
         return marking.getMark_measure_id();
     }
 
@@ -288,7 +259,6 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
         marking.setMark_measure_id(req.getMarking_id());
         marking.setUpdate_by(sysUser.getUserId());
         marking.setUpdate_time(new Date());
-        //markingMapperV1.updateById(marking);
         markMeasureMapper.updateById(marking);
         // 更新后查询数据并返回
         Properties properties = markMeasureMapper.selectBy(req.getMarking_id());
@@ -308,13 +278,6 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-        //Project project = projectMapperV1.selectById(markingBy.getProject_id());
-//		SysUser sysUser = userMapper.selectUserById(1L);
-        //验证集项目中不能修改他人轮廓
-        /*if (!Objects.equals(markingBy.getCreate_by(), sysUser.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
-            throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
-        }*/
-
 
         // 查询切片表中信息==》先走缓存
         Slide slide = redisService.getCacheObject(CommonConstant.ANNO_SLIDE + markingBy.getSlide_id());
@@ -343,33 +306,6 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
             marking.setAnnotation_update_owner(sysUser.getUserName());
         }
         marking.setUpdate_time(new Date());
-		/*if (req.getArea() != null && !"".equals(req.getArea())) {
-			Double area = new Double(req.getArea()) * MICRON;
-			marking.setArea(String.valueOf(area));
-		}
-		if (req.getPerimeter() != null && !"".equals(req.getPerimeter())) {
-			Double perimeter = new Double(req.getPerimeter()) * MICRON;
-			marking.setPerimeter(String.valueOf(perimeter));
-		}*/
-//		Image image = getImageById(slide.getImageId().longValue());
-//		if (req.getArea() != null) {
-//			Double area = 0.0;
-//			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
-//				area = new Double(req.getArea()) * Double.valueOf(image.getResolutionX()) * Double.valueOf(image.getResolutionX());
-//			}else{
-//				area = new Double(req.getArea()) * MICRON;
-//			}
-//			marking.setArea(String.valueOf(area));
-//		}
-//		if (req.getPerimeter() != null) {
-//			Double perimeter = 0.0;
-//			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
-//				perimeter = new Double(req.getPerimeter()) * Double.valueOf(image.getResolutionX());
-//			}else{
-//				perimeter = new Double(req.getPerimeter()) * MICRON;
-//			}
-//			marking.setPerimeter(String.valueOf(perimeter));
-//		}
         marking.setPerimeter(req.getPerimeter());
         marking.setArea(req.getArea());
         List<PointCount> pointCountList = updatePoint(markingBy.getLocation_type(), markingBy);
@@ -616,7 +552,6 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
     }
 
     public void process(Integer type, Slide slide, MarkMeasure marking) throws Exception {
-
         Long slideId = marking.getSlide_id();
         Long createBy = marking.getCreate_by();
         Long categoryId = marking.getCategory_id();
@@ -820,5 +755,4 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
             }
         }
     }
-
 }
