@@ -144,7 +144,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             case 5:
                 dirPath = dirPath + zipPath;
                 break;
-
+            default:
         }
 
         String fileName = fileUploadVO.getFileName();
@@ -226,6 +226,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 // 解析文件
                 filesService.submitTask(files);
                 break;
+            default:
         }
         return files;
     }
@@ -304,7 +305,6 @@ public class FileUploadServiceImpl implements FileUploadService {
                     if (!Optional.ofNullable(chunk.getProjectId()).isPresent()) {
                         throw new Exception(MessageSource.M("DISALLOW_NOT_PROJECT"));
                     }
-                    // markingService.zipExport(filesBy.getFilesPath(), chunk.getProjectId());
                     boolean tag = zipCheck(filesBy.getFilesPath(), chunk.getProjectId());
                     if (!tag) {
                         throw new Exception(MessageSource.M("FILE_LIMIT"));
@@ -337,6 +337,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                     // 解析文件
                     filesService.submitTask(filesBy);
                     break;
+                default:
             }
         }
         return "1";
@@ -399,6 +400,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 // 定义文件夹名称
                 path = basePath + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()) + "/Slides" + File.separator + topicName + File.separator + fileUploadVO.getFileName();
                 break;
+            default:
         }
         // 创建文件
         if (path != null) {

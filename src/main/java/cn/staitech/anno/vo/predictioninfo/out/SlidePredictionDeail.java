@@ -1,18 +1,17 @@
-package cn.staitech.anno.vo.predictionInfo.out;
+package cn.staitech.anno.vo.predictioninfo.out;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * <p>
- * 眼科切片预测表
- * </p>
- *
  * @author wanglibei
- * @since 2023-11-02
+ * @version V1.0
+ * @ClassName: SlidePredictionDeail
+ * @Description:
+ * @date 2023年11月7日
  */
 @Data
-public class SlidePredictionInfo {
+public class SlidePredictionDeail {
 
 
     @ApiModelProperty(value = "切片预测ID")
@@ -25,7 +24,7 @@ public class SlidePredictionInfo {
     private Long imageId;
 
     @ApiModelProperty(value = "图像名称")
-    private String imageName;
+    private String image_name;
 
     @ApiModelProperty(value = "缩略图地址")
     private String thumbUrl;

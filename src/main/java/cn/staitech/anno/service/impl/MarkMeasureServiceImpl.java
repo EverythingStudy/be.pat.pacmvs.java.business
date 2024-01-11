@@ -65,7 +65,7 @@ import static cn.staitech.anno.constant.CommonConstant.*;
 @Slf4j
 public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkMeasure> implements MarkMeasureService {
 
-    private static final ExecutorService annExecutor = ExecutorBuilder.create()
+    private static final ExecutorService ANN_EXECUTOR = ExecutorBuilder.create()
             .setCorePoolSize(Runtime.getRuntime().availableProcessors())
             .setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2)
             .setKeepAliveTime(0)
@@ -214,7 +214,7 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
         BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_MEASURE, ADD_STATUS, features, pointCountList);
         NioWebSocketHandler.sendAll(req.getSlide_id(), broadcastVO);
 
-        annExecutor.submit(new AnnCountThread(1, slideBy, marking));
+        ANN_EXECUTOR.submit(new AnnCountThread(1, slideBy, marking));
 
         return marking.getMark_measure_id();
     }
@@ -249,7 +249,6 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
         }
 
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-//		SysUser sysUser = userMapper.selectUserById(1L);
         Marking markingBys = MarkingUtils.updateVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation(), req.getCheck(), req.getResolution());
         JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(markingBys.getMarkingId()));
         MarkMeasure marking = new MarkMeasure();
@@ -333,12 +332,10 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
         Properties properties = markMeasureMapper.selectBy(marking.getMark_measure_id());
         Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), req.getGeometry(), properties);
         BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_MEASURE, UPDATE_STATUS, features, pointCountList);
-//		BroadcastVO broadcastVO = SendMessage.sendOneMessages1(UPDATE_STATUS, features);
-
         // 使用websocket发送数据
         NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
         MarkMeasure markingNew = markMeasureMapper.selectById(req.getMarking_id());
-        annExecutor.submit(new AnnCountThread(2, slide, markingNew));
+        ANN_EXECUTOR.submit(new AnnCountThread(2, slide, markingNew));
 
         return markingBy.getMark_measure_id();
     }
@@ -406,7 +403,6 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
         countDownLatch.await();
         cachedThreadPool.shutdown();
 
-
         // 查询项目详情
         JsonExport jsonExport = null;
         Project projectBy = projectMapperV1.selectById(slideBy.getProjectId());
@@ -461,7 +457,6 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
         }
         // 构建geoJson数据
         GeoJson geoJson = new GeoJson();
-
         List<Features> featuresList = new ArrayList<>(concurrentLinkedQueue);
         geoJson.setFeatures(featuresList);
         geoJson.setImage(image);

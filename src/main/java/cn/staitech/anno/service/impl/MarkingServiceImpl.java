@@ -87,13 +87,13 @@ import static cn.staitech.anno.constant.CommonConstant.*;
 public class MarkingServiceImpl implements MarkingService {
 
     // GeometryFactory工厂，参数一：数据精度 参数二空间参考系SAID
-    private static final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), 4326);
+    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), 4326);
     // 熟知文本WKT阅读器，可以将WKT文本转换为Geometry对象
-    private static final WKTReader wktReader = new WKTReader(geometryFactory);
+    private static final WKTReader WKT_READER = new WKTReader(GEOMETRY_FACTORY);
     private static final int BATCH_SIZE = 5000;
 
-    private static final ExecutorService executor = ExecutorBuilder.create().setCorePoolSize(Runtime.getRuntime().availableProcessors()).setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2).setKeepAliveTime(0).build();
-    private static final ExecutorService annExecutor = ExecutorBuilder.create()
+    private static final ExecutorService EXECUTOR = ExecutorBuilder.create().setCorePoolSize(Runtime.getRuntime().availableProcessors()).setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2).setKeepAliveTime(0).build();
+    private static final ExecutorService ANN_EXECUTOR = ExecutorBuilder.create()
             .setCorePoolSize(Runtime.getRuntime().availableProcessors())
             .setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2)
             .setKeepAliveTime(0)
@@ -185,7 +185,7 @@ public class MarkingServiceImpl implements MarkingService {
         //项目类型:1标注2评审3标准训练集
         String projectType = project.getProjectType();
         List<Features> list = new ArrayList<Features>();
-        if (projectType.equalsIgnoreCase("3")) {
+        if ("3".equalsIgnoreCase(projectType)) {
             //只查询自己标注的数据
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("slideId", slideId);
@@ -278,7 +278,7 @@ public class MarkingServiceImpl implements MarkingService {
         NioWebSocketHandler.sendAll(req.getSlide_id(), broadcastVO);
 
         // 多线程处理
-        annExecutor.submit(new AnnCountThread(1, slideBy, marking));
+        ANN_EXECUTOR.submit(new AnnCountThread(1, slideBy, marking));
 
         return marking.getMarking_id();
     }
@@ -317,7 +317,7 @@ public class MarkingServiceImpl implements MarkingService {
         markingMapper.insert(marking);
 
         // 更新Slide状态及统计等
-        annExecutor.submit(new AnnCountThread(1, slide, marking));
+        ANN_EXECUTOR.submit(new AnnCountThread(1, slide, marking));
         return marking.getMarking_id();
     }
 
@@ -412,7 +412,6 @@ public class MarkingServiceImpl implements MarkingService {
             throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
         }
         // 更新前数据
-        //BeanUtils.copyProperties(req, marking);
         Marking marking = updaeTrans2Marking(req);
         if (null != req.getUpdate_by()) {
             marking.setUpdate_by(req.getUpdate_by());
@@ -463,7 +462,7 @@ public class MarkingServiceImpl implements MarkingService {
         Marking markingNew = markingMapper.selectById(req.getMarking_id());
 
         // 多线程处理
-        annExecutor.submit(new AnnCountThread(2, slide, markingNew));
+        ANN_EXECUTOR.submit(new AnnCountThread(2, slide, markingNew));
 
         return markingBy.getMarking_id();
     }
@@ -535,8 +534,6 @@ public class MarkingServiceImpl implements MarkingService {
         }
         countDownLatch.await();
         cachedThreadPool.shutdown();
-
-        //        features.forEach(i -> i.setGeometry(GeometryUtil.updateYAxle(i.getGeometry())));
 
         // 查询项目详情
         JsonExport jsonExport = null;
@@ -641,7 +638,6 @@ public class MarkingServiceImpl implements MarkingService {
             // 查询标注路轮廓为ROE（标注考核）的标签
             Map<String, Object> categoryMap = new HashMap<>();
             categoryMap.put("categoryCode", category.getCategoryCode());
-//			categoryMap.put("organizationId", sysUser.getOrganizationId());
             PathologicalIndicatorCategory pathologicalIndicatorCategory = pathologicalIndicatorCategoryMapper.selectRoe(categoryMap);
             if (pathologicalIndicatorCategory != null) {
                 String fileUrl;
@@ -992,12 +988,12 @@ public class MarkingServiceImpl implements MarkingService {
             }).collect(Collectors.toList());
             // 执行任务
             // 查询所有的切片
-            executor.submit(new TaskThread(task, projectId, projectBy.getProjectName(), slideIdList, SecurityUtils.getLoginUser().getSysUser()));
+            EXECUTOR.submit(new TaskThread(task, projectId, projectBy.getProjectName(), slideIdList, SecurityUtils.getLoginUser().getSysUser()));
 
         } else {
             // 执行任务
             // 查询所有的切片
-            executor.submit(new TaskThread(task, projectId, projectBy.getProjectName(), slideIds, SecurityUtils.getLoginUser().getSysUser()));
+            EXECUTOR.submit(new TaskThread(task, projectId, projectBy.getProjectName(), slideIds, SecurityUtils.getLoginUser().getSysUser()));
         }
 
         return task;
@@ -1295,12 +1291,12 @@ public class MarkingServiceImpl implements MarkingService {
         Set<String> markingIdCont = new HashSet<>();
         for (JSONObject viewAddIn : viewAddIns.getGeometryList()) {
             String roiLocation = WktUtil.jsonToWkt(viewAddIn);
-            Geometry roiLocations = wktReader.read(roiLocation);
+            Geometry roiLocations = WKT_READER.read(roiLocation);
             //roi包含
             if (viewAddIns.getRoiStatus() == 0) {
                 for (Features features1 : features) {
                     String oldLocation = WktUtil.jsonToWkt(features1.getGeometry());
-                    Geometry oldLocations = wktReader.read(oldLocation);
+                    Geometry oldLocations = WKT_READER.read(oldLocation);
                     Geometry geometry = roiLocations.intersection(oldLocations);
                     //判断是否不包含和不相交
                     if (!roiLocations.contains(oldLocations) && !roiLocations.intersects(oldLocations)) {
@@ -1327,12 +1323,12 @@ public class MarkingServiceImpl implements MarkingService {
         //包含的markingId集合
         for (JSONObject viewAddIn : viewAddIns.getGeometryList()) {
             String roiLocation = WktUtil.jsonToWkt(viewAddIn);
-            Geometry roiLocations = wktReader.read(roiLocation);
+            Geometry roiLocations = WKT_READER.read(roiLocation);
             //roi删除
             if (viewAddIns.getRoiStatus() == 1) {
                 for (Features features1 : features) {
                     String oldLocation = WktUtil.jsonToWkt(features1.getGeometry());
-                    Geometry oldLocations = wktReader.read(oldLocation);
+                    Geometry oldLocations = WKT_READER.read(oldLocation);
                     //判断是否包含和相交
                     if (roiLocations.contains(oldLocations) || roiLocations.intersects(oldLocations)) {
                         markingIdDel.add(features1.getProperties().get("marking_id").toString());

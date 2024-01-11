@@ -14,9 +14,9 @@ import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.imagecsv.ImageCsvGetVO;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
-import cn.staitech.anno.vo.predictionInfo.in.*;
-import cn.staitech.anno.vo.predictionInfo.out.SlidePredictionInfo;
-import cn.staitech.anno.vo.predictionInfo.out.SlidePredictionOut;
+import cn.staitech.anno.vo.predictioninfo.in.*;
+import cn.staitech.anno.vo.predictioninfo.out.SlidePredictionInfo;
+import cn.staitech.anno.vo.predictioninfo.out.SlidePredictionOut;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -81,15 +81,11 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
     public R startPrediction(StartPredictionIn req, cn.staitech.anno.domain.Project project) {
         Long userId = SecurityUtils.getUserId();
         Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-        //		Long userId = 1L;
-        //		Long organizationId = 1L;
         //请求算法类型 0：启动算法 1：重算失败数据
         int type = req.getType();
         //算法模型id
         Long modelId = project.getModelId();
         AlgorithmModel algorithmModel = algorithmModelService.getById(modelId);
-
-
         ImageCsvGetVO request = new ImageCsvGetVO();
         request.setProjectId(project.getProjectId());
         //AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败'
@@ -121,7 +117,6 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
                 //排序 1：原始切片使用 （失败的放前面，imageName asc）2：算法使用(主图放前面、imageName asc)
                 spQuery.setOrderNumber(2);
                 List<SlidePredictionInfo> spList = slidePredictionMapper.getOriginalSlideList(spQuery);
-                //log.info("数据："+spList);
                 List<SlidePrediction> spcList = new ArrayList<>();
                 if (CollectionUtils.isNotEmpty(spList)) {
                     for (SlidePredictionInfo sInfo : spList) {
@@ -135,13 +130,11 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
                         pInfoList.add(pInfo);
                     }
                 }
-                //				ped.setSlidePredictionList(spList);
                 ped.setPredictionInfoList(pInfoList);
                 slideList.add(ped);
                 predictionData.setSlideList(slideList);
                 predictionData.setOrganizationId(organizationId);
                 predictionData.setUserId(userId);
-                //
                 String organizationNumber = geNumber(organizationId);
                 String folderPath = "";
                 if (StringUtils.isNotEmpty(vo.getFolderUrl())) {
@@ -160,8 +153,6 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
                     JSONObject jsonObject = new JSONObject(body);
                     Integer code = jsonObject.getInt("code");
                     if (code.equals(200)) {
-
-
                         //修改当前SlidePrediction分析状态为进行中
                         UpdateWrapper<SlidePrediction> updateWrapper = Wrappers.update();
                         // 修改条件为id=5的数据
@@ -185,7 +176,6 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
                         if (CollectionUtils.isNotEmpty(spcList)) {
                             slidePredictionService.updateBatchById(spcList);
                         }
-
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

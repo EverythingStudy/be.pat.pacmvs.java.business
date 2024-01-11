@@ -17,7 +17,7 @@ import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.annotation.LabelListVO;
 import cn.staitech.anno.vo.annotation.LabelVO;
-import cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo;
+import cn.staitech.anno.vo.indicator.PathologicalIndicatorCategoryOutVO;
 import cn.staitech.anno.vo.statistic.StatisticCategoryListInVO;
 import cn.staitech.anno.vo.statistic.StatisticCategoryListOutVO;
 import cn.staitech.common.core.utils.bean.BeanUtils;
@@ -215,17 +215,17 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
     }
 
     @Override
-    public List<PathologicalIndicatorCategoryOutVo> selectprojectList(Long projectId) {
+    public List<PathologicalIndicatorCategoryOutVO> selectprojectList(Long projectId) {
         Project project = projectMapperv1.selectById(projectId);
         if (project != null) {
             // 20231225wangfeng 查询条件添加机构ID
-            List<PathologicalIndicatorCategoryOutVo> list = pathologicalIndicatorCategoryMapper.selectIndicatorList(project);
+            List<PathologicalIndicatorCategoryOutVO> list = pathologicalIndicatorCategoryMapper.selectIndicatorList(project);
             Indicator indicator = indicatorMapper.selectIndicatorById(project.getIndicatorId());
             //根据IndicatorId 得到种属id,脏器id，organization_id+structure_id 去structure查询类型
             String organId = indicator.getOrganId();
             String speciesId = indicator.getSpeciesId();
             Long organizationId = project.getOrganizationId();
-            for (PathologicalIndicatorCategoryOutVo category : list) {
+            for (PathologicalIndicatorCategoryOutVO category : list) {
                 String structureId = category.getStructureId();
                 Structure structure = getStructure(organId, speciesId, organizationId, structureId);
                 if (null != structure) {
@@ -270,7 +270,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
     }
 
     @Override
-    public List<PathologicalIndicatorCategoryOutVo> selectProjectListFilter(Long projectId) {
+    public List<PathologicalIndicatorCategoryOutVO> selectProjectListFilter(Long projectId) {
         Project project = projectMapperv1.selectById(projectId);
         if (project != null) {
             return pathologicalIndicatorCategoryMapper.selectProjectListFilter(project.getIndicatorId());
@@ -350,11 +350,8 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
                 String isKey = entry.getKey();
                 Map<Integer, Long> parmValue = entry.getValue();
                 //处理数据
-                //Long indicatorId = Long.valueOf(isKey.split("_")[0]);
                 if (isKey.split("_").length == 2) {
                     String structureId = isKey.split("_")[1];
-
-
                     //type 1:结构指标 2：考试 3：标注
                     if (parmValue.containsKey(1)) {
                         PathologicalIndicatorCategory picVo = pathologicalIndicatorCategoryMapper.selectById(parmValue.get(1));
@@ -369,17 +366,14 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
                             category2.setCategoryId(parmValue.get(1));
                             category2.setGroupNumber(CommonConstant.STRUCTURE_RO_GROUP_NUMBER);
                             pathologicalIndicatorCategoryMapper.updateById(category2);
-
                             //其他两个请参考结构指标
                             //其他两个有则修改，没有加添加
                             String structureROEId = structureId + CommonConstant.STRUCTURE_ROE;
                             if (parmValue.containsKey(2)) {
                                 //考试修改
-                                //PathologicalIndicatorCategory picExamVo = pathologicalIndicatorCategoryMapper.selectById(parmValue.get(2));
                                 PathologicalIndicatorCategory picExamVo2 = new PathologicalIndicatorCategory();
                                 BeanUtils.copyProperties(picVo, picExamVo2);
                                 String structureName = "";
-                                // 获取structureName
                                 Structure structure = structureService.getOneStructure(indicator.getSpeciesId(), indicator.getOrganId(), structureROEId);
                                 if (structure != null) {
                                     structureName = structure.getName();
@@ -494,7 +488,6 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
                                 picJGVo.setCategoryId(null);
                                 picJGVo.setCategoryCode(categoryCode);
                                 picJGVo.setGroupNumber(CommonConstant.STRUCTURE_RO_GROUP_NUMBER);
-
                                 pathologicalIndicatorCategoryMapper.insert(picJGVo);
 
                                 String structureROEId = structureId + CommonConstant.STRUCTURE_ROE;
@@ -537,8 +530,6 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
                                         picExamVo2.setCategoryId(null);
                                         picExamVo2.setCategoryCode(categoryCode);
                                         picExamVo2.setGroupNumber(CommonConstant.STRUCTURE_ROE_GROUP_NUMBER);
-
-
                                         //add考试
                                         pathologicalIndicatorCategoryMapper.insertSelective(picExamVo2);
                                     }
@@ -553,7 +544,6 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
                             category2.setCategoryCode(categoryCode);
                             category2.setCategoryId(parmValue.get(2));
                             category2.setGroupNumber(CommonConstant.STRUCTURE_ROE_GROUP_NUMBER);
-
                             pathologicalIndicatorCategoryMapper.updateById(category2);
 
                             //type 1:结构指标 2：考试 3：标注

@@ -20,7 +20,7 @@ import cn.staitech.anno.vo.annotation.LabelListVO;
 import cn.staitech.anno.vo.annotation.LabelVO;
 import cn.staitech.anno.vo.indicator.IndicatorReviseVO;
 import cn.staitech.anno.vo.indicator.PathologicalIndicatorCategoryVO;
-import cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo;
+import cn.staitech.anno.vo.indicator.PathologicalIndicatorCategoryOutVO;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
@@ -97,7 +97,6 @@ public class PathologicalController {
         String structureId = vo.getStructureId();
 
         // 查询Indicator信息
-
         Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
         Long currentUserId = SecurityUtils.getLoginUser().getSysUser().getUserId();
         Indicator indicatorQuery = new Indicator();
@@ -113,7 +112,6 @@ public class PathologicalController {
         if (indicator == null) {
             return R.fail(MessageSource.M("INDICATOR_ABSENT"));
         }
-
 
         //验证结构是否已经存在
         PathologicalIndicatorCategory categoryS = new PathologicalIndicatorCategory();
@@ -275,9 +273,9 @@ public class PathologicalController {
     @ApiOperation(value = "根据项目查询结构指标列表", notes = "gjt")
     @Log(title = "配置标签-标签列表", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.QUERY)
     @GetMapping("/selectList")
-    public R<List<PathologicalIndicatorCategoryOutVo>> selectList(@RequestParam(value = "projectId") @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId) {
+    public R<List<PathologicalIndicatorCategoryOutVO>> selectList(@RequestParam(value = "projectId") @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId) {
         // 获取病理指标下的标注类别
-        List<PathologicalIndicatorCategoryOutVo> categoryList = pathologicalIndicatorCategoryService.selectprojectList(projectId);
+        List<PathologicalIndicatorCategoryOutVO> categoryList = pathologicalIndicatorCategoryService.selectprojectList(projectId);
         return R.ok(categoryList);
     }
 
@@ -285,9 +283,9 @@ public class PathologicalController {
     @ApiOperation(value = "根据项目查询结构指标列表(不包含标注区域)", notes = "gjt")
     @Log(title = "配置标签-标签列表", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.QUERY)
     @GetMapping("/selectListFilter")
-    public R<List<PathologicalIndicatorCategoryOutVo>> selectListFilter(@RequestParam(value = "projectId") @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId) {
+    public R<List<PathologicalIndicatorCategoryOutVO>> selectListFilter(@RequestParam(value = "projectId") @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId) {
         //获取病理指标下的标注类别
-        List<PathologicalIndicatorCategoryOutVo> categoryList = pathologicalIndicatorCategoryService.selectProjectListFilter(projectId);
+        List<PathologicalIndicatorCategoryOutVO> categoryList = pathologicalIndicatorCategoryService.selectProjectListFilter(projectId);
         return R.ok(categoryList);
     }
 
@@ -349,8 +347,6 @@ public class PathologicalController {
 
         //确认下原来的structure_id信息
         PathologicalIndicatorCategory sourcePic = pathologicalIndicatorCategoryService.selectByPrimaryKey(category.getCategoryId());
-        //验证结构是否已经存在  		BeanUtils.copyProperties(category, targetCategory);
-
         PathologicalIndicatorCategory categoryS = new PathologicalIndicatorCategory();
         categoryS.setStructureId(category.getStructureId());
         categoryS.setIndicatorId(category.getIndicatorId());
@@ -398,7 +394,6 @@ public class PathologicalController {
             queryWrapper.eq("species_id", speciesId);
             queryWrapper.eq("structure_id", structureId);
             queryWrapper.eq("organization_id", organizationId);
-
             List<Map<String, Object>> sIdList = structureService.listMaps(queryWrapper);
 
             if (CollectionUtils.isEmpty(sIdList)) {
@@ -481,7 +476,6 @@ public class PathologicalController {
             MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
         }
 
-
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
         // 机构ID
         category.setOrganizationId(sysUser.getOrganizationId());
@@ -510,7 +504,7 @@ public class PathologicalController {
         String retStatus = pathologicalIndicatorCategoryService.updateByPrimaryKeySelective2(category);
         //查看当前结构是否只要结构编码
         //TODO 另外考核区域和标注区域同样处理，structureId、number、categoryName需要单独处理，修改时候需要用自己的categoryId和indicatorId
-        if (retStatus.equals("1")) {
+        if ("1".equals(retStatus)) {
             updateCategory(targetCategory, targetCategoryRoe, sourcePic, indicator);
         }
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
@@ -554,7 +548,6 @@ public class PathologicalController {
             String newNum = newStructureId;
 
             // 获取structureName
-            //String structureName = structureService.getById(newStructureId).getName();
             List<Structure> structureList = structureService.getListByStructureId(newStructureId);
             String structureName = "";
             if (CollectionUtils.isNotEmpty(structureList)) {
@@ -613,12 +606,6 @@ public class PathologicalController {
         if (CollectionUtils.isNotEmpty(categoryList)) {
             for (PathologicalIndicatorCategory perCategory : categoryList) {
                 Long perCategoryId = perCategory.getCategoryId();
-                //查询标注是否关联标签
-				/*Integer num = pathologicalIndicatorCategoryService.selectLabelNum(perCategoryId);
-				if (0 < num) {
-					tag = false;
-					break;
-				}*/
                 // 查询标注数量，大于0不可删除
                 QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
                 markingQueryWrapper.eq("category_id", perCategoryId);

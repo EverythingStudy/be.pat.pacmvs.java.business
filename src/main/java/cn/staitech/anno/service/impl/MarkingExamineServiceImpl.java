@@ -130,15 +130,6 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         }
         MarkingExamine markingExamine = new MarkingExamine();
         BeanUtils.copyProperties(req, markingExamine);
-
-//        if (req.getArea() != null) {
-//            Double area = new Double(req.getArea()) * MICRON * MICRON;
-//            markingExamine.setArea(String.valueOf(area));
-//        }
-//        if (req.getPerimeter() != null) {
-//            Double perimeter = new Double(req.getPerimeter()) * MICRON;
-//            markingExamine.setPerimeter(String.valueOf(perimeter));
-//        }
         markingExamine.setPerimeter(req.getArea());
         markingExamine.setPerimeter(req.getPerimeter());
         markingExamine.setQuestionProjectId(req.getQuestion_project_id());
@@ -190,14 +181,6 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         MarkingExamine markingExamine = new MarkingExamine();
         BeanUtils.copyProperties(req, markingExamine);
         markingExamine.setUpdateTime(new Date());
-//        if (req.getArea() != null) {
-//            Double area = new Double(req.getArea()) * MICRON;
-//            markingExamine.setArea(String.valueOf(area));
-//        }
-//        if (req.getPerimeter() != null) {
-//            Double perimeter = new Double(req.getPerimeter()) * MICRON;
-//            markingExamine.setPerimeter(String.valueOf(perimeter));
-//        }
         markingExamine.setArea(req.getArea());
         markingExamine.setPerimeter(req.getPerimeter());
         markingExamine.setMarkingExamineId(req.getMarking_id());

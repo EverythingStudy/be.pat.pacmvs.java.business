@@ -64,7 +64,7 @@ import java.util.concurrent.ExecutorService;
 public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
         implements ReviewService {
 
-    private static final ExecutorService executor = ExecutorBuilder.create()
+    private static final ExecutorService EXECUTOR = ExecutorBuilder.create()
             .setCorePoolSize(1)
             .setMaxPoolSize(1)
             .setKeepAliveTime(0)
@@ -144,7 +144,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
                     projectName = reviewVO.getProjectName();
                     //TODO
                     String score = String.valueOf(reviewVO.getScore());
-                    if(score.equals("-1")){
+                    if("-1".equals(score)){
                     	score = score.replaceAll("-1", CommonConstant.NOT_EVALUATING);
                     }else{
                     	score = trans2Score(score);
@@ -191,7 +191,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
         Long userId = SecurityUtils.getUserId();
         DownTask task = DownTask.builder().code(snowflake.nextIdStr()).status(Constants.DOWN_STATE_RUNNING).createTime(new Date()).updateTime(new Date()).updateBy(userId).createBy(userId).build();
         downTaskMapper.insert(task);
-        executor.submit(new TaskThread(task, projectId, slideIds));
+        EXECUTOR.submit(new TaskThread(task, projectId, slideIds));
         return task;
     }
 
@@ -295,7 +295,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
                             for (ReviewVO reviewVO : reviewVOS) {
                                 projectName = reviewVO.getProjectName();
                                 String score = String.valueOf(reviewVO.getScore());
-                                if(score.equals("-1")){
+                                if("-1".equals(score)){
                                 	score = score.replaceAll("-1", CommonConstant.NOT_EVALUATING);
                                 }else{
                                 	score = trans2Score(score);
@@ -333,7 +333,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
     		String[] scoreArray = score.split(":");
     		for(int i=0;i<scoreArray.length;i++){
     			String perScore = scoreArray[i];
-    			if(perScore.equals(" -1")||perScore.equals("-1")){
+    			if(" -1".equals(perScore)|| "-1".equals(perScore)){
     				perScore = perScore.replaceAll("-1", CommonConstant.NOT_EVALUATING);
     			}
     			buffer.append(perScore).append(":");

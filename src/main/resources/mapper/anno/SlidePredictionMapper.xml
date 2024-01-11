@@ -172,8 +172,8 @@
         where slide_prediction_id = #{slidePredictionId,jdbcType=BIGINT}
     </update>
 
-    <select id="getOriginalSlideList" parameterType="cn.staitech.anno.vo.predictionInfo.in.SlidePredictionQuery"
-            resultType="cn.staitech.anno.vo.predictionInfo.out.SlidePredictionInfo">
+    <select id="getOriginalSlideList" parameterType="cn.staitech.anno.vo.predictioninfo.in.SlidePredictionQuery"
+            resultType="cn.staitech.anno.vo.predictioninfo.out.SlidePredictionInfo">
         SELECT
         t1.slide_prediction_id,
         t1.slide_id,
@@ -308,7 +308,7 @@
 
 
     <select id="getSlidePredictionList" parameterType="cn.staitech.anno.vo.imagecsv.ImageCsvGetVO"
-            resultType="cn.staitech.anno.vo.predictionInfo.in.EyeSlideResult">
+            resultType="cn.staitech.anno.vo.predictioninfo.in.EyeSlideResult">
         select e1.thumb_url prediction_thumb_url ,
         s4.slide_id,
         s4.ai_analyzed,
@@ -382,7 +382,7 @@
     </select>
 
 
-    <select id="getMainImageList" parameterType="cn.staitech.anno.vo.predictionInfo.in.EyeThumImageQuery"
+    <select id="getMainImageList" parameterType="cn.staitech.anno.vo.predictioninfo.in.EyeThumImageQuery"
             resultType="cn.staitech.anno.domain.Image">
         SELECT
         t2.thumb_url

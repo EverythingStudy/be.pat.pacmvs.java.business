@@ -262,14 +262,6 @@ public class FileUtils {
         //获取主要数据
         JSONArray features = parse.getJSONArray("features");
         features.add(marking);
-        //挨个遍历
-//        for (Object feature : features) {
-//            JSONObject featureObject = (JSONObject) feature;
-//            JSONObject properties = featureObject.getJSONObject("properties");
-//            JSONObject geometry = featureObject.getJSONObject("geometry");
-//            JSONArray coordinates = geometry.getJSONArray("coordinates");
-//        }
-        // 将文件写入json中
         return FileUtils.createJsonFile(parse, geojsonUrl);
     }
 
@@ -332,10 +324,6 @@ public class FileUtils {
                         } else if (status == 1) {
                             // 导出标注数据
                             String measure = properties.getString("measure_name");
-                            // 如果绘制标注为测量,判断是否不为间距测量和角度测量
-//                            if (measure == null) {
-//                                featuresList.add(featureObject);
-//                            }
                             if (!Objects.equals(measure, "CT") && !Objects.equals(measure, "AN")) {
                                 featuresList.add(featureObject);
                             }
@@ -345,15 +333,11 @@ public class FileUtils {
             }
         }
         // Fastjson循环引用
-//        JSON.toJSONString(featuresList, SerializerFeature.DisableCircularReferenceDetect);
         parse.put("features", featuresList);
         parse.put("type", "FeatureCollection");
         //获取主要数据
         return parse;
     }
-
-
-    // 导出用户人工绘制得json 除AI外
 
     /**
      * json 转 excel

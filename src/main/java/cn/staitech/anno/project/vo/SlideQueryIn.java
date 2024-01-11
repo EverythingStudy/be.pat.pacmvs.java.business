@@ -38,14 +38,6 @@ public class SlideQueryIn {
 
     private Long userId;
 
-    /*private Date saveStart;
-
-    private Date saveEnd;
-
-    private Date updateStart;
-
-    private Date updateEnd;*/
-
     @ApiModelProperty(value = "创建时间-查询入参")
     private TimeRangeIn createTimeParams;
 

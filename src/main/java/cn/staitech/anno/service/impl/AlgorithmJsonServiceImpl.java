@@ -220,7 +220,6 @@ public class AlgorithmJsonServiceImpl extends ServiceImpl<AlgorithmJsonMapper, A
         		JSONObject labelInfos = JSONObject.parseObject(JSONObject.toJSONString(i));
         		String labelCode = labelInfos.getString("label_code");
         		// 根据主键查询详情
-        		//Structure structure = structureMapper.selectById(labelCode);
         		List<Structure> structureList = structureService.getListByStructureId(labelCode);
         		if(CollectionUtils.isNotEmpty(structureList)){
         				if (!Objects.equals(structureList.get(0).getType(), "ROE")) {

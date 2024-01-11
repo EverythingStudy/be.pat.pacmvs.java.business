@@ -55,7 +55,7 @@ public class AsyncTask {
 
 
     private static final int BATCH_SIZE = 5000;
-    private static final ExecutorService executor = ExecutorBuilder.create().setCorePoolSize(
+    private static final ExecutorService EXECUTOR = ExecutorBuilder.create().setCorePoolSize(
                     Runtime.getRuntime()
                             .availableProcessors())
             .setMaxPoolSize(Runtime.getRuntime()
@@ -194,7 +194,7 @@ public class AsyncTask {
             for (SlideRes slide : slideResList) {
                 // 判断名称切片名称是否相同
                 if (Objects.equals(slide.getImageName(), imageName)) {
-                    executor.submit(new TaskThread(userIdList, slide.getSlideId(), newBf, organizationId, userId));
+                    EXECUTOR.submit(new TaskThread(userIdList, slide.getSlideId(), newBf, organizationId, userId));
                 }
             }
         }

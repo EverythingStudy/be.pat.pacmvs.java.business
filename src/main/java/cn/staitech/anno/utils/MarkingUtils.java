@@ -25,8 +25,8 @@ import java.util.Objects;
 
 @Slf4j
 public class MarkingUtils {
-    private static final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), 4326);
-    private static final WKTReader wktReader = new WKTReader(geometryFactory);
+    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), 4326);
+    private static final WKTReader WKT_READER = new WKTReader(GEOMETRY_FACTORY);
 
 
     public static Geometry addVerify(JSONObject location) throws Exception {
@@ -34,7 +34,7 @@ public class MarkingUtils {
         try {
             String oldLocation = WktUtil.jsonToWkt(location);
             // 使用WKT将字符串location转换为geometry对象
-            geometry = wktReader.read(oldLocation);
+            geometry = WKT_READER.read(oldLocation);
             // 获取geometry对象类型
             String geometryType = geometry.getGeometryType();
             // 判断location是否为混合类型
@@ -78,13 +78,13 @@ public class MarkingUtils {
             if (StringUtils.isNotBlank(operation)) {
                 Geometry geometry1;
                 try {
-                    geometry1 = wktReader.read(oldLocation);
+                    geometry1 = WKT_READER.read(oldLocation);
                 } catch (Exception e) {
                     throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
                 }
                 Geometry geometry2;
                 try {
-                    geometry2 = wktReader.read(newLocation);
+                    geometry2 = WKT_READER.read(newLocation);
                 } catch (Exception e) {
                     throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
                 }
@@ -117,9 +117,6 @@ public class MarkingUtils {
                     throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
                 }
 
-//            } else {
-//                throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
-//            }
                 // 使用新图形除以旧图形，获取新图形在旧图形中的占比
                 percentage = geometry2.getArea() / geometry1.getArea();
             }
@@ -152,8 +149,8 @@ public class MarkingUtils {
                 Geometry geometry1;
                 Geometry geometry2;
                 try {
-                    geometry1 = wktReader.read(oldLocation);
-                    geometry2 = wktReader.read(newLocation);
+                    geometry1 = WKT_READER.read(oldLocation);
+                    geometry2 = WKT_READER.read(newLocation);
                 } catch (Exception e) {
                     throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
                 }

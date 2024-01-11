@@ -535,13 +535,7 @@ public class ExcelTool<T> {
      */
     private void save(XSSFWorkbook workbook,
                       ServletOutputStream fOut) {
-  /*      File file = new File(filePath);
-        if (!file.getParentFile().exists()) {
-            file.getParentFile().mkdirs();
-        }*/
-//        FileOutputStream fOut = null;
         try {
-//            fOut = new FileOutputStream(file);
             workbook.write(fOut);
             fOut.flush();
         } catch (Exception e) {
@@ -663,7 +657,6 @@ public class ExcelTool<T> {
      */
     public void createHead(List<Column> listTpamscolumn, Sheet sheetCo, int rowIndex) {
         Row row = sheetCo.getRow(rowIndex);
-//        if(row == null)row = sheetCo.createRow(rowIndex);
         int len = listTpamscolumn.size();//当前行 有多少列
         for (int i = 0; i < len; i++) {//i是headers的索引，n是Excel的索引 多级表头
             Column tpamscolumn = listTpamscolumn.get(i);
@@ -678,8 +671,6 @@ public class ExcelTool<T> {
                 endC--;
             }
             Cell cell = row.getCell(c);
-//            if( null == cell)cell = row.createCell(c);
-
             XSSFRichTextString text = new XSSFRichTextString(tpamscolumn.getContent());
             cell.setCellStyle(this.styleHead); //设置表头样式
             cell.setCellValue(text);
@@ -870,7 +861,6 @@ public class ExcelTool<T> {
         InputStream is = new FileInputStream(file);
         Workbook workbook = WorkbookFactory.create(is);
         int sheetCount = sheetNum - 1; //workbook.getNumberOfSheets();//sheet 数量,可以只读取手动指定的sheet页
-        //int sheetCount1= workbook.getNumberOfSheets();
         Sheet sheet = workbook.getSheetAt(sheetCount); //读取第几个工作表sheet
         int rowNum = sheet.getLastRowNum();//有多少行
         for (int i = 1; i <= rowNum; i++) {
@@ -913,7 +903,6 @@ public class ExcelTool<T> {
         InputStream is = new FileInputStream(file);
         Workbook workbook = WorkbookFactory.create(is);
         int sheetCount = sheetNum - 1; //workbook.getNumberOfSheets();//sheet 数量,可以只读取手动指定的sheet页
-        //int sheetCount1= workbook.getNumberOfSheets();
         Sheet sheet = workbook.getSheetAt(sheetCount); //读取第几个工作表sheet
         int rowNum = sheet.getLastRowNum();//有多少行
         Row rowTitle = sheet.getRow(0);//第i行

@@ -1,4 +1,4 @@
-package cn.staitech.anno.vo.predictionInfo.in;
+package cn.staitech.anno.vo.predictioninfo.in;
 
 import cn.staitech.anno.domain.Pager;
 import io.swagger.annotations.ApiModelProperty;
@@ -20,8 +20,6 @@ import java.io.Serializable;
 @Setter
 @Data
 public class SlideImagePagerVO extends Pager implements Serializable {
-
-
     /**
      * @Fields serialVersionUID :
      */
@@ -39,30 +37,6 @@ public class SlideImagePagerVO extends Pager implements Serializable {
     private String imageName;
 
     /**
-     * 组别
-     */
-//    @ApiModelProperty(value = "组别")
-//    private String groupName;
-
-    /**
-     * 性别
-     */
-//    @ApiModelProperty(value = "性别")
-//    private String gender;
-
-    /**
-     * 病变类型1
-     */
-//    @ApiModelProperty(value = "病变类型1")
-//    private String lesionType;
-
-    /**
-     * 病变程度1
-     */
-//    @ApiModelProperty(value = "病变程度1")
-//    private String lesionDegree;
-
-    /**
      * 文件名称
      */
     @ApiModelProperty(value = "文件名称")
@@ -74,19 +48,5 @@ public class SlideImagePagerVO extends Pager implements Serializable {
      */
     @ApiModelProperty(value = "AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败")
     private Integer aiAnalyzed;
-
-
-    /**
-     * reviewRoundId
-     */
-//    @ApiModelProperty(value = "reviewRoundId")
-//    private Long reviewRoundId;
-
-//    @ApiModelProperty("请求参数（开始和结束时间）")
-//    private Map<String, Object> createTimeParams;
-
-
-//    @ApiModelProperty(value = "碎片状态(默认为0校验通过，1校验不通过)",hidden = true)
-//    private String eyeMent;
 }
 

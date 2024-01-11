@@ -1,4 +1,4 @@
-package cn.staitech.anno.vo.pathologicalIndicatorCategory;
+package cn.staitech.anno.vo.indicator;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -14,7 +14,7 @@ import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Data
-public class PathologicalIndicatorCategoryOutVo {
+public class PathologicalIndicatorCategoryOutVO {
 
     /**
      * 标注类别ID

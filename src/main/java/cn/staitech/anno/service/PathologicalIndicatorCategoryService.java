@@ -3,7 +3,7 @@ package cn.staitech.anno.service;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.vo.annotation.LabelListVO;
 import cn.staitech.anno.vo.annotation.LabelVO;
-import cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo;
+import cn.staitech.anno.vo.indicator.PathologicalIndicatorCategoryOutVO;
 import cn.staitech.anno.vo.statistic.StatisticCategoryListInVO;
 import cn.staitech.anno.vo.statistic.StatisticCategoryListOutVO;
 
@@ -131,9 +131,9 @@ public interface PathologicalIndicatorCategoryService {
      *
      * @param projectId 项目id
      */
-    List<PathologicalIndicatorCategoryOutVo> selectprojectList(Long projectId);
+    List<PathologicalIndicatorCategoryOutVO> selectprojectList(Long projectId);
 
-    List<PathologicalIndicatorCategoryOutVo> selectProjectListFilter(Long projectId);
+    List<PathologicalIndicatorCategoryOutVO> selectProjectListFilter(Long projectId);
 
     /**
      * 查询标签所属脏器系统内已有标签数量
