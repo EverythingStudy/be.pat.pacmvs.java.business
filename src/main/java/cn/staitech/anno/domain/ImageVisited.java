@@ -26,5 +26,4 @@ public class ImageVisited {
     @ApiModelProperty(value = "访问时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private String createTime;
-
 }

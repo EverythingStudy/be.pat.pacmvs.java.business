@@ -8,5 +8,4 @@ import java.util.List;
 public interface GeometryDocMapper extends ElasticsearchRepository<GeometryDoc, String> {
 
     List<GeometryDoc> findBySlideId(Long slideId);
-
 }

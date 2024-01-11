@@ -208,7 +208,7 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
         // 当前用户所有数据的Key
         Collection<String> keyCollection = redisService.keys(listKey + "*");
         if (CollectionUtils.isEmpty(keyCollection)) {
-            return; // 没有符合条件的 key，不进行任何操作
+            return;
         }
 
         if (token != null) {
@@ -242,7 +242,7 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
         // 当前用户所有数据的Key
         Collection<String> keyCollection = redisService.keys(listKey + "*");
         if (CollectionUtils.isEmpty(keyCollection)) {
-            return; // 没有符合条件的 key，不进行任何操作
+            return;
         }
 
         if (outlineRoot.getSlideId().equals(slideId)) {
