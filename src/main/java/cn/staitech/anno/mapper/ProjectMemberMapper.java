@@ -1,7 +1,6 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.ProjectMember;
-import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.domain.SysUser;
 import cn.staitech.anno.project.vo.ImageAnnoStatisticsVO;
 import cn.staitech.anno.project.vo.ProjectMemberQuery;
@@ -42,14 +41,18 @@ public interface ProjectMemberMapper {
 
 
     List<ProjectMember> selectProject(ProjectMember projectMember);
-    
+
     List<SelectProjectVO> getProjectListByPM(ProjectMember projectMember);
+
     List<SysUser> getUserListAll(ProjectMember projectMember);
+
     List<SysUser> getUserListByProjectId(ProjectMember projectMember);
-    
+
     List<ImageAnnoStatisticsVO> getImageCount(ProjectMemberQuery query);
-    
+
     List<ProjectUserAnnoStatisticsVO> getProjectUserAnnoStatistics(ProjectMemberQuery query);
+
     List<ProjectUserAnnoStatisticsVO> getProjectUserAnnoStatistics1(ProjectMemberQuery query);
+
     List<ProjectUserAnnoStatisticsVO> getProjectUserAnnoStatistics2(ProjectMemberQuery query);
 }

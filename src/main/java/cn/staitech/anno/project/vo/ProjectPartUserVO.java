@@ -15,13 +15,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProjectPartUserVO{
-    
-	 /**
+public class ProjectPartUserVO {
+
+    /**
      * 用户ID
      */
     private Long userId;
-    
+
     /**
      * 用户账号
      */
@@ -30,5 +30,5 @@ public class ProjectPartUserVO{
      * 用户姓名
      */
     private String nickName;
-    
+
 }

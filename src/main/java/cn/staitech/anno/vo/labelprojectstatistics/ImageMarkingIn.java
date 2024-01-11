@@ -15,31 +15,31 @@ import java.util.List;
 public class ImageMarkingIn {
     /**
      * 项目id
-     * */
-    @ApiModelProperty(value = "项目id",hidden = true)
+     */
+    @ApiModelProperty(value = "项目id", hidden = true)
     private Long projectId;
 
     /**
      * 标签id
-     * */
-    @ApiModelProperty(value = "标签id",hidden = true)
+     */
+    @ApiModelProperty(value = "标签id", hidden = true)
     private Long categoryId;
 
     /**
      * 标注类别
-     * */
-    @ApiModelProperty(value = "标注类别",hidden = true)
+     */
+    @ApiModelProperty(value = "标注类别", hidden = true)
     private String annotationType;
 
     @ApiModelProperty(value = "项目状态列表(要排除的状态)")
     private List<Integer> statusList;
 
-    @ApiModelProperty(value = "项目id",hidden = true)
+    @ApiModelProperty(value = "项目id", hidden = true)
     private List<Long> projectIds;
 
     /**
      * 标签id
-     * */
-    @ApiModelProperty(value = "标签id",hidden = true)
+     */
+    @ApiModelProperty(value = "标签id", hidden = true)
     private List<Long> categoryIds;
 }

@@ -1,18 +1,17 @@
 package cn.staitech.anno.vo.project;
 
-import java.io.Serializable;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
+
 
 /**
- * 
-* @ClassName: CancelCompleteProjectVO
-* @Description:
-* @author wanglibei
-* @date 2024年1月5日
-* @version V1.0
+ * @author wanglibei
+ * @version V1.0
+ * @ClassName: CancelCompleteProjectVO
+ * @Description:
+ * @date 2024年1月5日
  */
 @Data
 public class CancelCompleteProjectVO implements Serializable {

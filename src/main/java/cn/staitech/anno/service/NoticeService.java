@@ -17,6 +17,7 @@ public interface NoticeService {
 
     /**
      * 消息状态置为已读
+     *
      * @param req
      * @return
      */

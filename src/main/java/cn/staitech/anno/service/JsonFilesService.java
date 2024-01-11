@@ -2,7 +2,7 @@ package cn.staitech.anno.service;
 
 import cn.staitech.anno.vo.files.FileUploadVO;
 
-public interface JsonFilesService  {
+public interface JsonFilesService {
 
     void uploadAndProcessBusiness(FileUploadVO vo) throws Exception;
 

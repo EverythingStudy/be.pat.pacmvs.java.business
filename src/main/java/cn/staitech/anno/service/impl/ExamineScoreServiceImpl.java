@@ -393,6 +393,7 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
             e.printStackTrace();
         }
     }
+
     @Override
     public void updatePersonalFit(Long examineScoreId) {
         JSONObject markingJsonObject = new JSONObject();

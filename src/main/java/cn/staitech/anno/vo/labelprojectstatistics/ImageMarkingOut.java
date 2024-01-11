@@ -12,17 +12,17 @@ import lombok.NoArgsConstructor;
 public class ImageMarkingOut {
     /**
      * 图像数量
-     * */
+     */
     private Integer imageNum;
 
     /**
      * 标注数量
-     * */
+     */
     private Integer markingNum;
 
     /**
      * 项目id
-     * */
+     */
     private Long projectId;
 
     private Long categoryId;

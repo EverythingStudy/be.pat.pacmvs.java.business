@@ -4,7 +4,7 @@ import cn.hutool.core.collection.ConcurrentHashSet;
 import cn.staitech.anno.config.AsyncTask;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.constant.Container;
-import cn.staitech.anno.service.*;
+import cn.staitech.anno.service.JsonFilesService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.OrganizationUtils;
 import cn.staitech.anno.vo.files.FileUploadVO;
@@ -17,7 +17,8 @@ import javax.annotation.Resource;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -67,7 +68,7 @@ public class JsonFilesServiceImpl implements JsonFilesService {
             } else {
                 log.error("删除文件异常");
             }
-        }else {
+        } else {
             mergeFile(chunk, path, file);
         }
         return "1";

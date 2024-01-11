@@ -72,7 +72,7 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
      */
     List<GeoLabel> selectIndicatorIdList(Long indicatorId);
 
-    List<PathologicalIndicatorCategoryOutVO> selectIndicatorList(Project project );
+    List<PathologicalIndicatorCategoryOutVO> selectIndicatorList(Project project);
 
     GeoLabel selectGeoLabel(Long categoryId);
 

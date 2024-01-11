@@ -93,7 +93,7 @@ public interface IndicatorMapper {
      * 查询指标在项目表中的记录数量
      */
     Integer selectIndicatorCountInProject(Long indicatorId);
-    
+
     Integer selectIndicatorCountByIndicator(Indicator indicator);
 
 

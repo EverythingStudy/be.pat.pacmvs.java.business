@@ -1,10 +1,10 @@
 package cn.staitech.anno.controller;
 
+import cn.staitech.anno.domain.Files;
 import cn.staitech.anno.service.FileUploadService;
 import cn.staitech.anno.service.FilesService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
-import cn.staitech.anno.domain.Files;
 import cn.staitech.anno.vo.files.FileUploadNoVO;
 import cn.staitech.anno.vo.files.FileUploadVO;
 import cn.staitech.anno.vo.files.FilesListVO;

@@ -15,14 +15,12 @@ import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
-import cn.staitech.common.redis.service.RedisService;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -33,11 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 
 /**
@@ -210,15 +204,14 @@ public class MarkingController {
     @ApiOperation(value = "添加ROI轮廓")
     @PostMapping("/intelligentAnno/insertROI")
     public R<String> addList(@Validated @RequestBody RoiIn req) throws Exception {
-        if (CollectionUtils.isEmpty(req.getGeometryList())){
+        if (CollectionUtils.isEmpty(req.getGeometryList())) {
             return R.fail(MessageSource.M("NO_DATA_TRANSFERRED"));
         }
-        if (!req.getRoiStatus().equals(1) && !req.getRoiStatus().equals(0)){
+        if (!req.getRoiStatus().equals(1) && !req.getRoiStatus().equals(0)) {
             return R.fail(MessageSource.M("ARGUMENT_INVALID"));
         }
         return markingService.roiContDel(req);
     }
-
 
 
 }

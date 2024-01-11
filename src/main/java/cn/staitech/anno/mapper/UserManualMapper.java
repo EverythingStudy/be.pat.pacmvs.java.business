@@ -1,8 +1,7 @@
 package cn.staitech.anno.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import cn.staitech.anno.domain.UserManual;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * <p>

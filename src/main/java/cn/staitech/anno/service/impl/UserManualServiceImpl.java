@@ -1,12 +1,10 @@
 package cn.staitech.anno.service.impl;
 
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import cn.staitech.anno.domain.UserManual;
 import cn.staitech.anno.mapper.UserManualMapper;
 import cn.staitech.anno.service.UserManualService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
 
 /**
  * <p>

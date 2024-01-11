@@ -1,8 +1,7 @@
 package cn.staitech.anno.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-
 import cn.staitech.anno.domain.UserManual;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * <p>

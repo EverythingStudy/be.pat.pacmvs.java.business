@@ -19,9 +19,9 @@ public class LabelIn {
     @ApiModelProperty(value = "标签集id列表")
     private List<Long> indicatorIds;
 
-    @ApiModelProperty(value = "机构id",hidden = true)
+    @ApiModelProperty(value = "机构id", hidden = true)
     private Long organizationId;
 
-    @ApiModelProperty(value = "用户id",hidden = true)
+    @ApiModelProperty(value = "用户id", hidden = true)
     private Long userId;
 }

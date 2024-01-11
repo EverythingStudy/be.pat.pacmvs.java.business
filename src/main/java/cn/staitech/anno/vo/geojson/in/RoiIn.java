@@ -17,19 +17,19 @@ import java.util.List;
 @Data
 public class RoiIn {
 
-    @ApiModelProperty(value = "标注坐标列表",required = true)
+    @ApiModelProperty(value = "标注坐标列表", required = true)
     private List<JSONObject> geometryList;
 
-    @NotNull(message ="{MarkingJsonIn.status.notNull}" )
-    @ApiModelProperty(value ="0包含，1删除",required = true)
+    @NotNull(message = "{MarkingJsonIn.status.notNull}")
+    @ApiModelProperty(value = "0包含，1删除", required = true)
     private Integer roiStatus;
 
-    @ApiModelProperty(value = "切片ID",required = true)
+    @ApiModelProperty(value = "切片ID", required = true)
     @NotNull(message = "{SlidePredictionIn.slideId.isnull}")
     private Long slideId;
 
-    @ApiModelProperty(value = "标签id",hidden = true)
+    @ApiModelProperty(value = "标签id", hidden = true)
     private Long categoryId;
-    @ApiModelProperty(value = "创建者id",hidden = true)
+    @ApiModelProperty(value = "创建者id", hidden = true)
     private Long createBy;
 }

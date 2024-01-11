@@ -5,7 +5,6 @@ import cn.staitech.anno.project.domain.SlideAttr;
 import cn.staitech.anno.project.mapper.MarkingMapperV1;
 import cn.staitech.anno.project.mapper.SlideAttrMapper;
 import cn.staitech.anno.project.service.SlideAttrService;
-import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -105,7 +104,7 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
      * @return
      * @throws Exception
      */
-    private Boolean save(Long slideId, String attrType, List<Long> attrIds, List<SlideAttr> slideAttrs,Long userId) {
+    private Boolean save(Long slideId, String attrType, List<Long> attrIds, List<SlideAttr> slideAttrs, Long userId) {
         List<SlideAttr> resp = new ArrayList<>();
         Map<Long, SlideAttr> map = new HashMap<>(16);
         if (slideAttrs != null && !slideAttrs.isEmpty()) {

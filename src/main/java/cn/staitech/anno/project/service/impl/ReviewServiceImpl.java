@@ -144,13 +144,13 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
                     projectName = reviewVO.getProjectName();
                     //TODO
                     String score = String.valueOf(reviewVO.getScore());
-                    if("-1".equals(score)){
-                    	score = score.replaceAll("-1", CommonConstant.NOT_EVALUATING);
-                    }else{
-                    	score = trans2Score(score);
+                    if ("-1".equals(score)) {
+                        score = score.replaceAll("-1", CommonConstant.NOT_EVALUATING);
+                    } else {
+                        score = trans2Score(score);
                     }
-                    
-                    
+
+
                     String[] body = new String[]{reviewVO.getProjectName(), reviewVO.getContent(), reviewVO.getRoundName(), reviewVO.getTopicName(),
                             reviewVO.getGroupName(), reviewVO.getImageCode(), score, reviewVO.getDetails() + "\t",
                             reviewVO.getCreateName(), DateUtil.format(reviewVO.getCreateTime(), "yyyy-MM-dd HH:mm:ss") + "\t"};
@@ -250,6 +250,24 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
         return pageMaster;
     }
 
+    private String trans2Score(String score) {
+        if (StringUtils.isNotEmpty(score)) {
+            StringBuffer buffer = new StringBuffer();
+            String[] scoreArray = score.split(":");
+            for (int i = 0; i < scoreArray.length; i++) {
+                String perScore = scoreArray[i];
+                if (" -1".equals(perScore) || "-1".equals(perScore)) {
+                    perScore = perScore.replaceAll("-1", CommonConstant.NOT_EVALUATING);
+                }
+                buffer.append(perScore).append(":");
+            }
+            String scoreStr = buffer.substring(0, buffer.length() - 1);
+            return scoreStr;
+        } else {
+            return score;
+        }
+    }
+
     public class TaskThread implements Runnable {
         private final DownTask downTask;
         private final Long projectId;
@@ -295,10 +313,10 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
                             for (ReviewVO reviewVO : reviewVOS) {
                                 projectName = reviewVO.getProjectName();
                                 String score = String.valueOf(reviewVO.getScore());
-                                if("-1".equals(score)){
-                                	score = score.replaceAll("-1", CommonConstant.NOT_EVALUATING);
-                                }else{
-                                	score = trans2Score(score);
+                                if ("-1".equals(score)) {
+                                    score = score.replaceAll("-1", CommonConstant.NOT_EVALUATING);
+                                } else {
+                                    score = trans2Score(score);
                                 }
                                 String[] body = new String[]{reviewVO.getProjectName(), reviewVO.getContent(), reviewVO.getRoundName(), reviewVO.getTopicName(),
                                         reviewVO.getGroupName(), reviewVO.getImageCode(), score, reviewVO.getDetails(),
@@ -325,23 +343,5 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
                 log.error(e.getMessage());
             }
         }
-    }
-    
-    private String trans2Score(String score){
-    	if(StringUtils.isNotEmpty(score)){
-    		StringBuffer buffer = new StringBuffer();
-    		String[] scoreArray = score.split(":");
-    		for(int i=0;i<scoreArray.length;i++){
-    			String perScore = scoreArray[i];
-    			if(" -1".equals(perScore)|| "-1".equals(perScore)){
-    				perScore = perScore.replaceAll("-1", CommonConstant.NOT_EVALUATING);
-    			}
-    			buffer.append(perScore).append(":");
-    		}
-    		String scoreStr = buffer.substring(0, buffer.length()-1);
-    		return scoreStr;
-    	}else{
-    		return score;
-    	}
     }
 }

@@ -55,7 +55,7 @@ public class ProjectLabelOut {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
-    @ApiModelProperty(value ="状态",hidden = true)
+    @ApiModelProperty(value = "状态", hidden = true)
     private String statusName;
 
 }

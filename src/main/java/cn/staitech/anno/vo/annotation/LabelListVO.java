@@ -66,5 +66,5 @@ public class LabelListVO {
     private Integer groupNumber;
     @ApiModelProperty(value = "标签类型 0:下拉筛选标签；1:自定义标签")
     private Integer categoryType;
-    
+
 }

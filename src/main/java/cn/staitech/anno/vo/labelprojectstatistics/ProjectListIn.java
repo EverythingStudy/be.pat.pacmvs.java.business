@@ -33,13 +33,13 @@ public class ProjectListIn extends Pager {
     @ApiModelProperty(value = "创建时间")
     private Map<String, Object> createTimeParams;
 
-    @ApiModelProperty(value = "机构id",hidden = true)
+    @ApiModelProperty(value = "机构id", hidden = true)
     private Long organizationId;
 
-    @ApiModelProperty(value = "用户id",hidden = true)
+    @ApiModelProperty(value = "用户id", hidden = true)
     private Long users;
 
-    @ApiModelProperty(value = "项目类型",hidden = true)
+    @ApiModelProperty(value = "项目类型", hidden = true)
     private String projectType;
 
 }
