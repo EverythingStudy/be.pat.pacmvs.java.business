@@ -23,7 +23,7 @@ import cn.staitech.anno.vo.geojson.*;
 import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
-import cn.staitech.anno.vo.markMeasure.MarkMeasure;
+import cn.staitech.anno.domain.MarkMeasure;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.PointCount;
 import cn.staitech.common.core.domain.PageResponse;

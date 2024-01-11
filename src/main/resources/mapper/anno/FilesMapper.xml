@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.FilesMapper">
-    <resultMap id="BaseResultMap" type="cn.staitech.anno.vo.files.Files">
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.Files">
         <id property="filesId" column="files_id" jdbcType="BIGINT"/>
         <result property="filesName" column="files_name" jdbcType="VARCHAR"/>
         <result property="filesPath" column="files_path" jdbcType="VARCHAR"/>

@@ -1,4 +1,4 @@
-package cn.staitech.anno.vo.files;
+package cn.staitech.anno.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;

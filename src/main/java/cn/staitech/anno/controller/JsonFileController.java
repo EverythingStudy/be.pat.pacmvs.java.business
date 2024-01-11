@@ -2,7 +2,7 @@ package cn.staitech.anno.controller;
 
 import cn.staitech.anno.service.JsonFilesService;
 import cn.staitech.anno.utils.MessageSource;
-import cn.staitech.anno.vo.files.Files;
+import cn.staitech.anno.domain.Files;
 import cn.staitech.anno.vo.files.in.FileUploadNoVO;
 import cn.staitech.anno.vo.files.in.FileUploadVO;
 import cn.staitech.common.core.domain.R;

@@ -1,6 +1,6 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.vo.algorithm.AlgorithmJson;
+import cn.staitech.anno.domain.AlgorithmJson;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

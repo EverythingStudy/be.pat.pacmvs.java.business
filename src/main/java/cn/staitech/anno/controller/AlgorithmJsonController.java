@@ -3,7 +3,7 @@ package cn.staitech.anno.controller;
 
 import cn.staitech.anno.service.AlgorithmJsonService;
 import cn.staitech.anno.utils.MessageSource;
-import cn.staitech.anno.vo.algorithm.AlgorithmJson;
+import cn.staitech.anno.domain.AlgorithmJson;
 import cn.staitech.anno.vo.algorithm.in.SelectGeoJson;
 import cn.staitech.anno.vo.algorithm.out.SelectGeoJsonList;
 import cn.staitech.common.core.domain.R;

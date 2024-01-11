@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.staitech.anno.mapper.AlgorithmJsonMapper">
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="cn.staitech.anno.vo.algorithm.AlgorithmJson">
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.AlgorithmJson">
         <id column="algorithm_json_id" property="algorithmJsonId"/>
         <result column="algorithm_assessment_id" property="algorithmAssessmentId"/>
         <result column="slide_id" property="slideId"/>

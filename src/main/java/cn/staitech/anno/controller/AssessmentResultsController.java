@@ -3,7 +3,7 @@ package cn.staitech.anno.controller;
 
 import cn.staitech.anno.domain.AssessmentResults;
 import cn.staitech.anno.service.AssessmentResultsService;
-import cn.staitech.anno.vo.assessment.AssessmentResultsQueryIn;
+import cn.staitech.anno.vo.assessment.in.AssessmentResultsQueryIn;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import io.swagger.annotations.Api;

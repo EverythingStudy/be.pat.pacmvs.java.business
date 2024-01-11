@@ -3,7 +3,7 @@ package cn.staitech.anno.mapper;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.JsonExport;
 import cn.staitech.anno.vo.geojson.Properties;
-import cn.staitech.anno.vo.markMeasure.MarkMeasure;
+import cn.staitech.anno.domain.MarkMeasure;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.PointCount;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;

@@ -1,7 +1,6 @@
-package cn.staitech.anno.vo.algorithm;
+package cn.staitech.anno.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -20,15 +19,20 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("tb_algorithm_assessment")
-public class AlgorithmAssessment implements Serializable {
+@TableName("tb_algorithm_json")
+public class AlgorithmJson implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * 考核算法主键id
+     * 主键id
      */
-    @TableId(value = "algorithm_assessment_id", type = IdType.AUTO)
+    @TableId(value = "algorithm_json_id", type = IdType.AUTO)
+    private Long algorithmJsonId;
+
+    /**
+     * 考核算法主键
+     */
     private Long algorithmAssessmentId;
 
     /**
@@ -37,31 +41,19 @@ public class AlgorithmAssessment implements Serializable {
     private Long slideId;
 
     /**
-     * 缩略图地址
-     */
-    private String thumbUrl;
-
-    /**
-     * 标注类型id
-     */
-    private Long categoryId;
-
-    /**
-     * 标注类型名称
-     */
-    private String categoryName;
-
-    /**
      * 标注json名称
      */
-    private String annotationJsonName;
-
+    private String algorithmJsonName;
 
     /**
      * 标注json路径
      */
-    private String annotationJsonUrl;
+    private String algorithmJsonUrl;
 
+    /**
+     * 选中状态（0：未选中，1：已选中）
+     */
+    private String selectedStatus;
 
     /**
      * 创建者
@@ -86,24 +78,19 @@ public class AlgorithmAssessment implements Serializable {
     private Date updateTime;
 
     /**
-     * 项目id
-     */
-    private Long projectId;
-
-    /**
      * 删除标志（0：存在，1：删除）
      */
     private String delFlag;
 
+    /**
+     * 类型（0，考题json,1:算法json）
+     */
+    private String jsonType;
 
-    @ApiModelProperty(value = "切片编号")
-    private String imageName;
-
-    @ApiModelProperty(value = "文件名称")
-    private String fileName;
-
-    @ApiModelProperty(value = "标注类别")
-    private String categoryIds;
+    /**
+     * 轮次id
+     */
+    private String roundId;
 
 
 }

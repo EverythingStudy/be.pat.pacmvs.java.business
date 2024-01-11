@@ -9,7 +9,7 @@ import cn.staitech.anno.service.*;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.OrganizationUtils;
 import cn.staitech.anno.vo.file.FileNode;
-import cn.staitech.anno.vo.files.Files;
+import cn.staitech.anno.domain.Files;
 import cn.staitech.anno.vo.files.in.FileUploadVO;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;

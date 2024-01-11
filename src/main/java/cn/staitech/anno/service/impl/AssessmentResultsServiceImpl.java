@@ -6,7 +6,7 @@ import cn.staitech.anno.domain.SysOrganization;
 import cn.staitech.anno.mapper.AssessmentResultsMapper;
 import cn.staitech.anno.service.AssessmentResultsService;
 import cn.staitech.anno.utils.ExcludeEmptyQueryWrapper;
-import cn.staitech.anno.vo.assessment.AssessmentResultsQueryIn;
+import cn.staitech.anno.vo.assessment.in.AssessmentResultsQueryIn;
 import cn.staitech.common.core.domain.PageResponse;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.Page;

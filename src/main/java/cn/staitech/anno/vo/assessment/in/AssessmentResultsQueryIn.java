@@ -1,4 +1,4 @@
-package cn.staitech.anno.vo.assessment;
+package cn.staitech.anno.vo.assessment.in;
 
 import cn.staitech.anno.project.vo.TimeRangeIn;
 import io.swagger.annotations.ApiModelProperty;

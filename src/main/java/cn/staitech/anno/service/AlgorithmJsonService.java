@@ -1,6 +1,6 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.vo.algorithm.AlgorithmJson;
+import cn.staitech.anno.domain.AlgorithmJson;
 import cn.staitech.anno.vo.algorithm.in.SelectGeoJson;
 import cn.staitech.anno.vo.algorithm.out.SelectGeoJsonList;
 import com.alibaba.fastjson.JSONObject;

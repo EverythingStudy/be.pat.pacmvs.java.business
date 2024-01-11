@@ -4,7 +4,7 @@ import cn.staitech.anno.service.FileUploadService;
 import cn.staitech.anno.service.FilesService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
-import cn.staitech.anno.vo.files.Files;
+import cn.staitech.anno.domain.Files;
 import cn.staitech.anno.vo.files.in.FileUploadNoVO;
 import cn.staitech.anno.vo.files.in.FileUploadVO;
 import cn.staitech.anno.vo.files.in.FilesListVO;
