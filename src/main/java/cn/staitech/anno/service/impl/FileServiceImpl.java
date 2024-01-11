@@ -273,14 +273,8 @@ public class FileServiceImpl implements FileService {
         }
         //获取文件名
         String fileName = file.getOriginalFilename();
-        //获取文件的后缀名
-        String suffixName = fileName.substring(fileName.lastIndexOf("."));
-        //获取文件大小
-        int fileSize = (int) file.getSize();
         //文件路径
         String path = ZIP_URL + "\\" + fileName;
-        //文件存储路径:保存到数据库
-//        String filePath = date+"/"+fileName;
         java.io.File dest = new java.io.File(path);
         // 判断路径是否存在，如果不存在则创建
         if (!dest.getParentFile().exists()) {
@@ -297,28 +291,4 @@ public class FileServiceImpl implements FileService {
             throw new Exception(e.getMessage());
         }
     }
-
-
-    //    private static void merge(String dest, File files) {
-//        // TODO 自动生成的方法存根
-//        String filename = files.getName();
-//        filename = files.getName().substring(0, filename.lastIndexOf("-"));
-//        try {
-//            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(dest + File.separator + filename));
-//            BufferedInputStream bis = null;
-//            byte bytes[] = new byte[1024 * 1024];
-//            int len = -1;
-//            bis = new BufferedInputStream(new FileInputStream(files));
-//            while ((len = bis.read(bytes)) != -1) {
-//                bos.write(bytes, 0, len);
-//            }
-//        } catch (FileNotFoundException e) {
-//            // TODO 自动生成的 catch 块
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            // TODO 自动生成的 catch 块
-//            e.printStackTrace();
-//        }
-//    }
-
 }

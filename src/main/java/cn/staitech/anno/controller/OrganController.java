@@ -50,7 +50,12 @@ public class OrganController extends BaseController {
     }
 
 
-    //    @Log(title = "脏器增加", businessType = BusinessType.INSERT)
+    /**
+     * 脏器增加
+     * @param req
+     * @return
+     */
+    @Log(title = "脏器增加", businessType = BusinessType.INSERT)
     @ApiOperation(value = "脏器增加")
     @PostMapping("/add")
     public R<Organ> add(@RequestBody @Validated InsertOrganVO req) {

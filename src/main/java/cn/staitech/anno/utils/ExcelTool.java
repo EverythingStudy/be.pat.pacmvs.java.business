@@ -348,10 +348,9 @@ public class ExcelTool<T> {
 
     /**
      * 导出表格 无返回
-     *
      * @param listTpamscolumn 表头数据
-     * @param datas           行内数据
-     * @param 保存路径
+     * @param datas 行内数据
+     * @param fOut
      * @param flag
      * @param rowFlag
      * @throws Exception

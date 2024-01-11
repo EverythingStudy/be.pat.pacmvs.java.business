@@ -28,7 +28,7 @@ public class OutlineTask {
     /**
      * Map<userId,token>
      */
-    private static final ConcurrentHashMap<Long, String> USER_TOKEN_MAP = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Long, String> USER_TOKEN_MAP = new ConcurrentHashMap<>(16);
 
     @Resource(name = "OutlineServiceImpl")
     private OutlineService outlineService;
@@ -39,8 +39,9 @@ public class OutlineTask {
 
     /**
      * 定时任务：MySQL版 - 清空token失效后tb_outline对应的数据，频率：上一次执行完毕时间点后30秒再次执行
+     *
+     * @Scheduled(fixedDelay = 30000)
      */
-    // @Scheduled(fixedDelay = 30000)
     public void clean() {
         // 查tb_outline所有用户：create_by
         QueryWrapper<Outline> queryWrapper = new QueryWrapper<>();

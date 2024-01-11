@@ -104,7 +104,7 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
             pageNum = 0;
         }
 
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
         map.put("slideId", slideId);
         map.put("measureFullName", measureFullName);
         map.put("pageSize", pageSize);
@@ -146,7 +146,6 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
         return markMeasureMapper.selectListBy(slideId);
     }
 
-    //@Async
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String insert(ViewAddIn req) throws Exception {
@@ -267,7 +266,6 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
         return jsonObject;
     }
 
-    //@Async
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String update(MarkingUpdateIn req) throws Exception {

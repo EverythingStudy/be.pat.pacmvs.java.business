@@ -297,7 +297,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
         List<PathologicalIndicatorCategory> list = pathologicalIndicatorCategoryMapper.selectList(queryWrapper);
         if (CollectionUtils.isNotEmpty(list)) {
             //遍历所有数据，先按照structureId分组
-            Map<String, Map<Integer, Long>> resultMap = new HashMap<>();
+            Map<String, Map<Integer, Long>> resultMap = new HashMap<>(16);
             for (PathologicalIndicatorCategory category : list) {
                 Long categoryId = category.getCategoryId();
                 Long indicatorId = category.getIndicatorId();
@@ -325,7 +325,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
                     String structureKey = indicatorId + "_" + structureFather;
                     //存入resultMap
                     if (resultMap.isEmpty()) {
-                        Map<Integer, Long> parmMap = new HashMap<>();
+                        Map<Integer, Long> parmMap = new HashMap<>(16);
                         parmMap.put(type, categoryId);
                         resultMap.put(structureKey, parmMap);
                     } else {
@@ -337,7 +337,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
                             resultMap.put(structureKey, sourceMap);
                         } else {
                             //直接存
-                            Map<Integer, Long> parmMap = new HashMap<>();
+                            Map<Integer, Long> parmMap = new HashMap<>(16);
                             parmMap.put(type, categoryId);
                             resultMap.put(structureKey, parmMap);
                         }

@@ -11,7 +11,10 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
-@EnableAsync //对应的@Enable注解，最好写在属于自己的配置文件上，保持内聚性
+/**
+ * 对应的@Enable注解，最好写在属于自己的配置文件上，保持内聚性
+ */
+@EnableAsync
 @Configuration
 public class AsyncConfig implements AsyncConfigurer {
 
@@ -19,19 +22,28 @@ public class AsyncConfig implements AsyncConfigurer {
     @Bean("getAsyncExecutor")
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(Runtime.getRuntime().availableProcessors()); //核心线程数
-        executor.setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2);  //最大线程数
-        executor.setQueueCapacity(1000); //队列大小
-        executor.setKeepAliveSeconds(300); //线程最大空闲时间
-        executor.setThreadNamePrefix("file-Executor-"); // 指定用于新创建的线程名称的前缀。
-        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy()); // 拒绝策略
-
+        // 核心线程数
+        executor.setCorePoolSize(Runtime.getRuntime().availableProcessors());
+        // 最大线程数
+        executor.setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2);
+        // 队列大小
+        executor.setQueueCapacity(1000);
+        // 线程最大空闲时间
+        executor.setKeepAliveSeconds(300);
+        // 指定用于新创建的线程名称的前缀
+        executor.setThreadNamePrefix("file-Executor-");
+        // 拒绝策略
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         // 未进行初始化会报错报错： java.lang.IllegalStateException: ThreadPoolTaskExecutor not initialized
         executor.initialize();
         return executor;
     }
 
-    // 异常处理器
+    /**
+     * 异常处理器
+     *
+     * @return
+     */
     @Override
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
         return new SimpleAsyncUncaughtExceptionHandler();

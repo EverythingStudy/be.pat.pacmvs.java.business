@@ -36,8 +36,6 @@ public class ImageAnnoStatisticsController {
     @Resource
     private ProjectMemberService projectMemberService;
 
-
-    //@RequiresPermissions(value = {"smartAnno:project:slice", "smartAnnoInfo:slice"}, logical = Logical.OR)
     @ApiOperation(value = "标注统计-图像标注统计分页查询")
     @PostMapping("/page")
     public R<PageResponse<ImageAnnoStatisticsVO>> page(@RequestBody SlideQueryIn req) throws Exception {
@@ -45,16 +43,12 @@ public class ImageAnnoStatisticsController {
         return R.ok(resp);
     }
 
-
-    //@RequiresPermissions("smartAnno:project:slice:export")
     @ApiOperation(value = "标注统计-图像标注统计导出")
     @PostMapping("/exportImageAnnoStatistics")
     public void exportImageAnnoStatistics(@RequestBody SlideQueryIn req, HttpServletResponse response) throws Exception {
         imageAnnoStatisticsService.slideAnnoStatisticsExport(req, response);
     }
 
-
-    //@RequiresPermissions("smartAnno:project:slice:export")
     @ApiOperation(value = "项目列表")
     @PostMapping("/getProjectList")
     public R<List<SelectProjectVO>> getProjectList() throws Exception {
@@ -70,10 +64,9 @@ public class ImageAnnoStatisticsController {
         return R.ok(list);
     }
 
-    //@RequiresPermissions("smartAnno:project:slice:export")
     @ApiOperation(value = "项目成员列表")
     @PostMapping("/getUserList")
-    public R<List<ProjectPartUserVO>> getUserList(@RequestBody ImageAnnoUserQueryIn query) throws Exception {
+    public R<List<ProjectPartUserVO>> getUserList(@RequestBody ImageAnnoUserQueryIn query) {
         List<ProjectPartUserVO> list = projectMemberService.getUserList(query);
         return R.ok(list);
     }

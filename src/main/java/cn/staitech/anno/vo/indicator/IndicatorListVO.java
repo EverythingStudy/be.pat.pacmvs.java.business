@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.Map;
 
 /**
- * @author wangf
+ * @author wangfeng
  */
 @Data
 public class IndicatorListVO {
@@ -21,7 +21,6 @@ public class IndicatorListVO {
     private String speciesId;
     @ApiModelProperty(value = "脏器编码")
     private String organId;
-    //20231107wd_机构维度
     @ApiModelProperty(value = "机构ID")
     private Long organizationId;
     @ApiModelProperty("请求参数（开始和结束时间）")

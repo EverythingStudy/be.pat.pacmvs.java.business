@@ -16,22 +16,6 @@ import java.util.List;
 @Data
 public class EyeAlgorithmCallBackIn {
 
-
-    /*{
-        "aiAnalyResult":[
-            {
-                "aiAnalyzed":1,
-                "slidePredictionId":1
-            },
-            {
-                "aiAnalyzed":1,
-                "slidePredictionId":1
-            }
-        ],
-        "mergeImagePath":"/home/pat_saas/.......svs",
-        "aiAnalyzed":1,
-        "slideId":942
-    }*/
     @ApiModelProperty(value = "切片ID")
     @NotNull(message = "{EyeAlgorithmCallBackIn.slideId.isnull}")
     private Long slideId;
@@ -51,6 +35,4 @@ public class EyeAlgorithmCallBackIn {
 
     @ApiModelProperty(value = "分析结果")
     private List<EyeAnalyzedResult> aiAnalyResult;
-
-
 }

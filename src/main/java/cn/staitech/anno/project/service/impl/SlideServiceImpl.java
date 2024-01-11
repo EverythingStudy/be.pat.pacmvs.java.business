@@ -63,7 +63,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         queryWrapper.in("slide_id", slideIds);
         queryWrapper.select("slide_id", "group_concat(score separator '-') as score").groupBy("slide_id");
         List<Map<String, Object>> reviewList = reviewMapper.selectMaps(queryWrapper);
-        Map<Long, String> resp = new HashMap<>();
+        Map<Long, String> resp = new HashMap<>(16);
         reviewList.forEach(r -> {
             resp.put(Long.parseLong(r.get("slide_id").toString()), r.get("score").toString());
         });
@@ -74,7 +74,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         getBaseMapper().pageSlides(page, params);
         List<SlideVO> list = page.getRecords();
         List<Long> slideIds = new ArrayList<>();
-        Map<Long, SlideVO> map = new HashMap<>();
+        Map<Long, SlideVO> map = new HashMap<>(16);
         if (list != null && !list.isEmpty()) {
             list.forEach(slideVO -> {
                 slideIds.add(slideVO.getSlideId());
@@ -169,7 +169,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
             voList.add(SlideAnnoStatisticsVO.builder().statisticsType(MessageSource.M("MAN_ANNOTATION")).result(annotationList.size()).build());
             voList.add(SlideAnnoStatisticsVO.builder().statisticsType(MessageSource.M("RECHECK_ANNOTATION")).result(getAnnoCount(params.getProjectId())).build());
             List<PathologicalIndicatorCategory> pathologicalIndicatorCategoryList = pathologicalIndicatorCategoryMapperV1.selectList(Wrappers.query());
-            Map<Long, String> categoryMap = new HashMap<>();
+            Map<Long, String> categoryMap = new HashMap<>(16);
             for (PathologicalIndicatorCategory c : pathologicalIndicatorCategoryList) {
                 categoryMap.put(c.getCategoryId(), c.getCategoryName());
             }
@@ -202,7 +202,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
      */
     public void slideAnnoStatisticsExport(SlideQueryIn params) throws Exception {
         List<SlideExportVO> list = getBaseMapper().querySlides(params);
-        Map<Long, SlideExportVO> map = new HashMap<>();
+        Map<Long, SlideExportVO> map = new HashMap<>(16);
         List<Map<String, String>> catesMapList = new ArrayList<>();
         List<Long> slideIds = new ArrayList<>();
         if (list != null && !list.isEmpty()) {
@@ -247,20 +247,20 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
 
     private List<PathologicalIndicatorCategory> handleAnnoStatisticsExport(List<Marking> annotationList, Map<Long, SlideExportVO> slideExportVOMap, List<Map<String, String>> catesMapList) throws Exception {
         List<PathologicalIndicatorCategory> columns = new ArrayList<>();
-        Map<Long, Boolean> columnMap = new HashMap<>();
+        Map<Long, Boolean> columnMap = new HashMap<>(16);
         List<PathologicalIndicatorCategory> pathologicalIndicatorCategoryList = pathologicalIndicatorCategoryMapperV1.selectList(Wrappers.query());
-        Map<Long, PathologicalIndicatorCategory> categoryMap = new HashMap<>();
+        Map<Long, PathologicalIndicatorCategory> categoryMap = new HashMap<>(16);
         for (PathologicalIndicatorCategory c : pathologicalIndicatorCategoryList) {
             categoryMap.put(c.getCategoryId(), c);
         }
-        Map<Long, List<Marking>> map = new HashMap<>();
+        Map<Long, List<Marking>> map = new HashMap<>(16);
         if (annotationList != null && !annotationList.isEmpty()) {
             map = annotationList.stream().collect(Collectors.groupingBy(Marking::getSlideId));
         }
         for (Long slideKey : slideExportVOMap.keySet()) {
             /*for (Long slideKey : map.keySet()) {*/
             SlideExportVO vo = slideExportVOMap.get(slideKey);
-            Map<String, String> catesMap = new HashMap<>();
+            Map<String, String> catesMap = new HashMap<>(16);
             List<Marking> subs = map.get(slideKey);
             if (subs != null && !subs.isEmpty()) {
                 Map<Long, List<Marking>> categorys = subs.stream().collect(Collectors.groupingBy(Marking::getCategoryId));
@@ -331,12 +331,12 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
     private void handleAnnoList(List<Marking> annotationList, Map<Long, SlideVO> slideVOMap) throws Exception {
         if (annotationList != null && !annotationList.isEmpty()) {
             List<PathologicalIndicatorCategory> pathologicalIndicatorCategoryList = pathologicalIndicatorCategoryMapperV1.selectList(Wrappers.query());
-            Map<Long, String> categoryMap = new HashMap<>();
+            Map<Long, String> categoryMap = new HashMap<>(16);
             for (PathologicalIndicatorCategory c : pathologicalIndicatorCategoryList) {
                 categoryMap.put(c.getCategoryId(), c.getCategoryName());
             }
             List<SysUser> userList = sysUserMapperV1.selectList(Wrappers.query());
-            Map<Long, String> userMap = new HashMap<>();
+            Map<Long, String> userMap = new HashMap<>(16);
             for (SysUser u : userList) {
                 userMap.put(u.getUserId(), u.getUserName());
             }

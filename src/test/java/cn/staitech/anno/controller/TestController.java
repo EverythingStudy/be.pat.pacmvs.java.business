@@ -160,7 +160,7 @@ public class TestController {
 
     //Object转Map
 //    public static Map<String, Object> objectToMap(Object object){
-//        Map<String,Object> dataMap = new HashMap<>();
+//        Map<String,Object> dataMap = new HashMap<>(16);
 //        Class<?> clazz = object.getClass();
 //        for (Field field : clazz.getDeclaredFields()) {
 //            try {

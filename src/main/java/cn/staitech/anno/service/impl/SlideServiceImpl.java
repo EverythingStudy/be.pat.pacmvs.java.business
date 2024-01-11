@@ -678,7 +678,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                         //存储文件夹id
                         slideMapper.eyeInsertSlide(slide);
                         List<SlidePrediction> predictions = new ArrayList<>();
-                        Map<Long, String> imageIdList = new HashMap<>();
+                        Map<Long, String> imageIdList = new HashMap<>(16);
                         List<String> imageName = new ArrayList<>();
                         for (Image image : imageList) {
                             imageIdList.put(image.getImageId(), image.getImageName());
@@ -736,7 +736,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapper, Slide> implements
                         List<SlidePrediction> predictions = new ArrayList<>();
                         int testNum = 0;
                         //
-                        Map<Long, String> imageIdList = new HashMap<>();
+                        Map<Long, String> imageIdList = new HashMap<>(16);
                         List<String> imageName = new ArrayList<>();
                         for (Image image : imageList) {
                             imageIdList.put(image.getImageId(), image.getImageName());

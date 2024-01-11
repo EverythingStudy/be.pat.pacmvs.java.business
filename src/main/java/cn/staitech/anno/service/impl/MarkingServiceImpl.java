@@ -86,9 +86,13 @@ import static cn.staitech.anno.constant.CommonConstant.*;
 @Slf4j
 public class MarkingServiceImpl implements MarkingService {
 
-    // GeometryFactory工厂，参数一：数据精度 参数二空间参考系SAID
+    /**
+     * GeometryFactory工厂，参数一：数据精度 参数二空间参考系SAID
+     */
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), 4326);
-    // 熟知文本WKT阅读器，可以将WKT文本转换为Geometry对象
+    /**
+     * 熟知文本WKT阅读器，可以将WKT文本转换为Geometry对象
+     */
     private static final WKTReader WKT_READER = new WKTReader(GEOMETRY_FACTORY);
     private static final int BATCH_SIZE = 5000;
 
@@ -142,7 +146,7 @@ public class MarkingServiceImpl implements MarkingService {
             pageNum = 0;
         }
 
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
         map.put("slideId", slideId);
         map.put("measureFullName", measureFullName);
         map.put("pageSize", pageSize);
@@ -187,7 +191,7 @@ public class MarkingServiceImpl implements MarkingService {
         List<Features> list = new ArrayList<Features>();
         if ("3".equalsIgnoreCase(projectType)) {
             //只查询自己标注的数据
-            Map<String, Object> map = new HashMap<String, Object>();
+            Map<String, Object> map = new HashMap<String, Object>(16);
             map.put("slideId", slideId);
             map.put("createBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
             List<Features> selfAnnoList = markingMapper.selectListBy2(map);
@@ -195,7 +199,7 @@ public class MarkingServiceImpl implements MarkingService {
                 list.addAll(selfAnnoList);
             }
             //其它人ROA+ROE
-            Map<String, Object> otherMap = new HashMap<String, Object>();
+            Map<String, Object> otherMap = new HashMap<String, Object>(16);
             otherMap.put("slideId", slideId);
             otherMap.put("otherCreateBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
             otherMap.put("organizationId", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
@@ -389,7 +393,6 @@ public class MarkingServiceImpl implements MarkingService {
         return jsonObject;
     }
 
-    //@Async
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String update(MarkingUpdateIn req) throws Exception {
@@ -636,7 +639,7 @@ public class MarkingServiceImpl implements MarkingService {
 
         for (PathologicalIndicatorCategory category : categoryLists) {
             // 查询标注路轮廓为ROE（标注考核）的标签
-            Map<String, Object> categoryMap = new HashMap<>();
+            Map<String, Object> categoryMap = new HashMap<>(16);
             categoryMap.put("categoryCode", category.getCategoryCode());
             PathologicalIndicatorCategory pathologicalIndicatorCategory = pathologicalIndicatorCategoryMapper.selectRoe(categoryMap);
             if (pathologicalIndicatorCategory != null) {
@@ -662,7 +665,7 @@ public class MarkingServiceImpl implements MarkingService {
                 int markingCountRes = markingMapperV1.selectCount(markingQueryWrapper);
                 // 考核区域标签的数据大于0才可生成考题
                 if (markingCountRes > 0) {
-                    Map<String, Object> map = new HashMap<>();
+                    Map<String, Object> map = new HashMap<>(16);
                     map.put("slideId", slideId);
                     map.put("categoryIdList", categoryIdList);
                     List<Features> features = markingMapper.selectFilterCategoryLists(map);
@@ -830,7 +833,7 @@ public class MarkingServiceImpl implements MarkingService {
                     // 查询图片详情
                     Image image = imageMapper.selectById(slideBy.getImageId());
                     // 定义病理指标标签
-                    Map<String, Long> categoryMap = new HashMap<>();
+                    Map<String, Long> categoryMap = new HashMap<>(16);
                     // 定义用户列表
                     List<Long> userByList = new ArrayList<>();
                     Map<String, Object> objMap = null;
@@ -890,7 +893,7 @@ public class MarkingServiceImpl implements MarkingService {
 
     public Map<String, Object> writeMarking(Long slideId, JSONObject featureObject, Slide slideBy, Image image, Map<String, Long> categoryMap) {
 
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
 
         // 获取annotationId
         String annotationId = featureObject.getString("id");

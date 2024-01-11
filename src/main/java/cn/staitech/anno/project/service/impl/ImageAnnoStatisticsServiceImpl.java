@@ -92,8 +92,8 @@ public class ImageAnnoStatisticsServiceImpl extends ServiceImpl<SlideMapperV1, S
         List<ImageAnnoStatisticsVO> dataList = projectMemberMapper.getImageCount(partQuery);
 
         if (CollectionUtils.isNotEmpty(dataList)) {
-            Map<String, Integer> imageCountMap = new HashMap<>();
-            Map<String, Integer> annoCountMap = new HashMap<>();
+            Map<String, Integer> imageCountMap = new HashMap<>(16);
+            Map<String, Integer> annoCountMap = new HashMap<>(16);
 
             //查询项目人员标注图片数量和标注数量
             List<ProjectUserAnnoStatisticsVO> annCountList = projectMemberMapper.getProjectUserAnnoStatistics1(partQuery);
@@ -219,8 +219,8 @@ public class ImageAnnoStatisticsServiceImpl extends ServiceImpl<SlideMapperV1, S
 
         List<ImageAnnoStatisticsVO> list = projectMemberMapper.getImageCount(partQuery);
         if (CollectionUtils.isNotEmpty(list)) {
-            Map<String, Integer> imageCountMap = new HashMap<>();
-            Map<String, Integer> annoCountMap = new HashMap<>();
+            Map<String, Integer> imageCountMap = new HashMap<>(16);
+            Map<String, Integer> annoCountMap = new HashMap<>(16);
             //查询项目人员标注图片数量和标注数量
             List<ProjectUserAnnoStatisticsVO> annCountList = projectMemberMapper.getProjectUserAnnoStatistics1(partQuery);
             if (CollectionUtils.isNotEmpty(annCountList)) {

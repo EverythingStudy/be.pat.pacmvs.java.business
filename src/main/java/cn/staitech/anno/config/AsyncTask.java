@@ -110,15 +110,19 @@ public class AsyncTask {
         streamList.parallelStream().forEach(consumer);
     }
 
+    /**
+     * TODO:解析json过程中无法标注
+     * @param zipUrl
+     * @param projectId
+     * @param organizationId
+     * @param userId
+     * @return
+     * @throws Exception
+     */
     @SneakyThrows
     @Async("getAsyncExecutor")
-    //TODO1 解析json过程中无法标注
-//    @Transactional
-//    @Transactional(timeout = 10)
-    public Runnable zipExport(String zipUrl, Long projectId, Long organizationId, Long userId) throws Exception {
-        Long sTime = System.currentTimeMillis();
+    public Runnable zipExport(String zipUrl, Long projectId, Long organizationId, Long userId) {
         File file1 = new File(zipUrl);
-//        try {
         // 查询切片列表
         List<SlideRes> slideResList = slideMapper.selectImageList(projectId);
         //zip可以包含对个文件，如果只有一个文件，则只解析一个文件的，包含多个文件则分别解析
@@ -202,7 +206,7 @@ public class AsyncTask {
 
     public Map<String, Object> writeMarking(Long slideId, JSONObject featureObject, Slide slideBy, Image image, Map<String, Long> categoryMap, Map<Long, String> userMap, Long organizationId) throws Exception {
 
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
 
         // 获取annotationId
         String annotationId = featureObject.getString("id");
@@ -307,7 +311,7 @@ public class AsyncTask {
                 // 查询图片详情
                 Image image = imageMapper.selectById(slideBy.getImageId());
                 // 定义病理指标标签
-                Map<String, Long> categoryMap = new HashMap<>();
+                Map<String, Long> categoryMap = new HashMap<>(16);
                 // 定义标签map
                 Map<String, Object> objMap = null;
                 // 循环列表，对数据进行处理
@@ -371,6 +375,4 @@ public class AsyncTask {
             }
         }
     }
-
-
 }
