@@ -22,10 +22,7 @@
         <result column="category_code" property="categoryCode"/>
         <result column="group_number" property="groupNumber"/>
         <result column="category_type" property="categoryType"/>
-
-
     </resultMap>
-
 
     <resultMap type="cn.staitech.anno.vo.statistic.StatisticCategoryListOutVO"
                id="SysAnnotationCategoryStatisticResult">
@@ -436,36 +433,6 @@
 
 
     <select id="selectByIndicator" parameterType="cn.staitech.anno.vo.annotation.LabelVO" resultMap="BaseResult">
-        <!-- select
-        p.indicator_id,p.category_name,p.category_id,p.structure_id,p.rgb,p.hex,p.create_by,p.create_time,p.order_number,s.user_name,p.number,idc.species_id,idc.organ_id
-        from tb_pathological_indicator_category as p
-        left join tb_pathological_indicator as idc on p.indicator_id=idc.indicator_id
-        left join sys_user as s on p.create_by=s.user_id
-        <where>
-            <if test="categoryName != null and categoryName != ''">
-                AND p.category_name like concat('%', #{categoryName}, '%')
-            </if>
-            <if test="structureId != null">
-                AND p.structure_id =#{structureId}
-            </if>
-            <if test="indicatorId != null">
-                AND p.indicator_id =#{indicatorId}
-            </if>
-            <if test="structureName != null and structureName != ''">
-                AND p.structure_name like concat('%', #{structureName}, '%')
-            </if>
-            <if test="params != null">
-                <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
-                    开始时间检索
-                    AND date_format(p.create_time,'%y%m%d') &gt;= date_format(#{createTimeParams.beginTime},'%y%m%d')
-                </if>
-                <if test="createTimeParams.endTime != null and createTimeParams.endTime != ''">
-                    结束时间检索
-                    AND date_format(p.create_time,'%y%m%d') &lt;= date_format(#{createTimeParams.endTime},'%y%m%d')
-                </if>
-            </if>
-            and p.del_flag=0
-        </where> -->
         SELECT
         IFNULL( p2.`name`, '无关联' ) `name`,
         IFNULL( p2.name_en, 'Unrelated' ) name_en,
@@ -558,12 +525,6 @@
         AND p1.structure_id = p2.structure_id
         AND p1.organization_id = p2.organization_id
         ORDER BY	p1.category_code,	type_number ASC
-    </select>
-
-    <select id="selectLabelNum" parameterType="java.lang.Long" resultType="java.lang.Integer">
-        select count(*)
-        from tb_special_annotation
-        where category_id = #{categoryId}
     </select>
 
     <select id="selectLabelNumByStructureId" parameterType="java.lang.String" resultType="java.lang.Integer">

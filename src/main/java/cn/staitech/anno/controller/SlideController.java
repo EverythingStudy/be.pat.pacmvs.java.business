@@ -72,44 +72,6 @@ public class SlideController extends BaseController {
         }
     }
 
-
-    /**
-     * 批量删除组内切片
-     */
-    @RequiresPermissions("special:project:batchdel")
-    @Log(title = "项目配置批量删除", menu = "专题管理", subMenu = "项目配置", businessType = BusinessType.DELETE)
-    @ApiOperation(value = "批量删除组内切片")
-    @PostMapping("/updateBatchByCondition")
-    public R updateBatchByCondition(@RequestBody List<Slide> slideList) {
-        try {
-            List<Slide> list = new ArrayList<>();
-            //process_flag状态处理
-            for (Slide slide : slideList) {
-                QueryWrapper queryWrapper = Wrappers.query()
-                        .eq("process_flag", 0)
-                        .eq("is_delete", 0)
-                        .eq("group_id", slide.getGroupId())
-                        .eq("image_id", slide.getImageId())
-                        .eq("project_id", slide.getProjectId());
-                Slide s = slideService.getOne(queryWrapper);
-                if (s != null) {
-                    list.add(slide);
-                }
-            }
-            //需求要求，删除单条提示
-            if (slideList.size() == 1 && list.size() == 0) {
-                return R.fail(MessageSource.M("DELETE_FAILURE_SLIDE_USEING"));
-            }
-            if (!list.isEmpty()) {
-                slideService.updateBatchByCondition(list);
-            }
-            return R.ok();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return R.fail(e.getMessage());
-        }
-    }
-
     /**
      * 添加组内切片
      */
@@ -152,18 +114,6 @@ public class SlideController extends BaseController {
             slideService.updateDescription(slide);
         }
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
-    }
-
-    @ApiOperation(value = "查询组内切片报表摘要")
-    @PostMapping("/getSlideByProjectAndGroup")
-    public R<SlideReportSummaryVO> getSlideByProjectAndGroup(@RequestBody Map params) {
-        return slideService.querySlideByProjectAndGroup(params);
-    }
-
-    @ApiOperation(value = "组内切片报表分页查询")
-    @PostMapping("/pageSlideWithSubImage")
-    public R<PageMaster<SlideReportVO>> pageSlideWithSubImage(@RequestBody Map params) {
-        return slideService.pageSlideWithSubImage(params);
     }
 
     @ApiOperation(value = "切片导出json")

@@ -517,18 +517,6 @@
         AND location_type = "Point"
     </select>
 
-    <select id="selectSlideList" parameterType="long" resultMap="slideResult">
-        SELECT s.slide_id,
-               sub.image_name
-        FROM tb_special AS spe
-                 LEFT JOIN tb_project AS p ON spe.special_id = p.special_id
-                 LEFT JOIN tb_slide AS s ON s.project_id = p.project_id
-                 LEFT JOIN tb_sub_image AS sub ON s.image_id = sub.image_id
-        WHERE spe.special_id = #{specialId}
-          AND p.del_flag = 0
-          AND s.is_delete = 0
-    </select>
-
     <select id="selectCategoryCountList" parameterType="long" resultMap="pointCountResult">
         SELECT category_id,
                count(marking_id) AS point_count

@@ -17,7 +17,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 切片 服务层 .
@@ -137,26 +136,8 @@ public interface SlideService extends IService<Slide> {
      */
     int updateBatchByCondition(List<Slide> slideList);
 
-    /**
-     * 查询组内切片报表摘要
-     *
-     * @param params
-     * @return
-     */
-    R<SlideReportSummaryVO> querySlideByProjectAndGroup(Map params);
-
-    /**
-     * 组内切片报表分页查询
-     *
-     * @param params
-     * @return
-     */
-    R<PageMaster<SlideReportVO>> pageSlideWithSubImage(Map params);
 
     void jsonExport(List<Long> slideList, Long projectId, Integer status) throws Exception;
-
-
-    // =========================
 
     /**
      * 选片 - 添加标注切片（旧） .

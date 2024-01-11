@@ -3,7 +3,6 @@ package cn.staitech.anno.controller;
 import cn.staitech.anno.service.NoticeService;
 import cn.staitech.anno.vo.notice.in.NoticeChangeStatusIn;
 import cn.staitech.anno.vo.notice.out.NoticeListQueryOut;
-import cn.staitech.anno.vo.notice.out.NoticeQueryOut;
 import cn.staitech.common.core.domain.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -11,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @Author wudi
@@ -26,13 +24,7 @@ public class NoticeController {
     @Resource
     private NoticeService noticeService;
 
-    @GetMapping("/getNotice")
-    public R<List<NoticeQueryOut>> getNotice() {
-        List<NoticeQueryOut> resp = noticeService.getNotice();
-        return R.ok(resp);
-    }
-
-    @ApiOperation(value = "消息列表", notes = "新版")
+    @ApiOperation(value = "消息列表")
     @GetMapping("/getNoticeList")
     public R<NoticeListQueryOut> getNoticeList() {
         NoticeListQueryOut resp = noticeService.getNoticeList();

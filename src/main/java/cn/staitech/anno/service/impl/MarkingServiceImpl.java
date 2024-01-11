@@ -210,11 +210,6 @@ public class MarkingServiceImpl implements MarkingService {
     }
 
     @Override
-    public List<SlideRes> selectSlideList(Long specialId) {
-        return markingMapper.selectSlideList(specialId);
-    }
-
-    @Override
     public PointCount selectCategoryCount(Marking marking) {
         return markingMapper.selectCategoryCount(marking);
     }

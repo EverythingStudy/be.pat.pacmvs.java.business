@@ -79,18 +79,6 @@
         order by p.project_id desc
     </select>
 
-    <select id="selectSpecialId" parameterType="Long" resultType="java.lang.Integer">
-        select count(project_id)
-        from
-        tb_special
-        <where>
-            del_flag = 0
-            <if test="specialId != null and specialId != ''">
-                AND special_id = #{specialId}
-            </if>
-        </where>
-    </select>
-
     <select id="selectById" resultMap="ProjectMap">
         select project_id,
                project_name,
@@ -267,16 +255,4 @@
           and ai_analyzed<![CDATA[ <> ]]>2
           and project_id = #{projectId}
     </select>
-
-    <select id="selectSpecial" resultType="cn.staitech.anno.vo.project.out.CreateStatusOut">
-        select autocreate_status createStatus, result_desc resultDesc
-        from tb_special
-        where special_id = #{specialId}
-    </select>
-    <update id="updateSpecial">
-        update tb_special
-        set autocreate_status=1,
-            result_desc=#{resultDesc}
-        where special_id = #{specialId}
-    </update>
 </mapper>

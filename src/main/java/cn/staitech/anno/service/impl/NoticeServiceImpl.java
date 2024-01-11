@@ -2,12 +2,10 @@ package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.Notice;
 import cn.staitech.anno.mapper.NoticeMapper;
-import cn.staitech.anno.mapper.SystemDictMapper;
 import cn.staitech.anno.service.NoticeService;
 import cn.staitech.anno.vo.notice.in.NoticeChangeStatusIn;
 import cn.staitech.anno.vo.notice.out.NoticeListQueryOut;
-import cn.staitech.anno.vo.notice.out.NoticeQueryOut;
-import cn.staitech.anno.vo.notice.out.data.NoticeQueryOutData;
+import cn.staitech.anno.vo.notice.out.NoticeQueryOutData;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
@@ -21,7 +19,6 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -33,31 +30,8 @@ import java.util.stream.Collectors;
 public class NoticeServiceImpl implements NoticeService {
 
     private static final Logger log = LoggerFactory.getLogger(NoticeServiceImpl.class);
-
-    @Resource
-    private SystemDictMapper systemDictMapper;
     @Resource
     private NoticeMapper noticeMapper;
-
-    /**
-     * 消息获取
-     *
-     * @return
-     */
-    @Override
-    public List<NoticeQueryOut> getNotice() {
-        log.info("消息查询接口开始：");
-        Long userId = SecurityUtils.getUserId();
-        //创建响应
-        List<NoticeQueryOut> resp = new ArrayList<>();
-
-        List<NoticeQueryOut> resps = systemDictMapper.selectList(userId);
-        if (!CollectionUtils.isEmpty(resps)) {
-            Map<String, NoticeQueryOut> collect = resps.parallelStream().collect(Collectors.toMap(NoticeQueryOut::getSpecialNumber, Function.identity(), (c1, c2) -> c1.getExpireTime().after(c2.getExpireTime()) ? c1 : c2));
-            resp = new ArrayList<>(collect.values());
-        }
-        return resp;
-    }
 
     @Override
     public NoticeListQueryOut getNoticeList() {
@@ -96,7 +70,6 @@ public class NoticeServiceImpl implements NoticeService {
 
         }
         //公告消息
-
         return ret;
     }
 

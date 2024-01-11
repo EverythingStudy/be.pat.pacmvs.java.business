@@ -147,15 +147,10 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
     /**
      * 查询所有指标（除标注区域外）
      *
-     * @param projectId
+     * @param indicatorId
      * @return
      */
     List<PathologicalIndicatorCategoryOutVo> selectProjectListFilter(Long indicatorId);
-
-    /**
-     * 查询标签在标注中的使用数量
-     */
-    Integer selectLabelNum(Long categoryId);
 
     /**
      * 查询标签所属脏器系统内已有标签数量

@@ -1,4 +1,4 @@
-package cn.staitech.anno.vo.notice.out.data;
+package cn.staitech.anno.vo.notice.out;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

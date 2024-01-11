@@ -2,10 +2,7 @@ package cn.staitech.anno.service;
 
 import cn.staitech.anno.vo.notice.in.NoticeChangeStatusIn;
 import cn.staitech.anno.vo.notice.out.NoticeListQueryOut;
-import cn.staitech.anno.vo.notice.out.NoticeQueryOut;
 import cn.staitech.common.core.domain.R;
-
-import java.util.List;
 
 /**
  * @Author wudi
@@ -14,18 +11,13 @@ import java.util.List;
  */
 public interface NoticeService {
     /**
-     * @return 消息列表1.0
-     */
-    List<NoticeQueryOut> getNotice();
-
-    /**
      * @return 消息列表2.0
      */
     NoticeListQueryOut getNoticeList();
 
     /**
      * 消息状态置为已读
-     *
+     * @param req
      * @return
      */
     R changeStatus(NoticeChangeStatusIn req);

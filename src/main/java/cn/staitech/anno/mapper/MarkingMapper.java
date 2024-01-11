@@ -8,7 +8,6 @@ import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.MarkingStatisticSelectVO;
 import cn.staitech.anno.vo.marking.PointCount;
-import cn.staitech.anno.vo.slide.SlideRes;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;
@@ -24,8 +23,8 @@ public interface MarkingMapper extends BaseMapper<Marking> {
     /**
      * 查看当前切片下所有的切片
      *
-     * @param slideId 标注信息
-     * @return List<Slide>
+     * @param map
+     * @return
      */
     List<MarkingSelectListVO> selectList(Map<String, Object> map);
 
@@ -49,7 +48,7 @@ public interface MarkingMapper extends BaseMapper<Marking> {
      * @return
      */
     List<Features> selectListBy(Long slideId);
-    
+
     List<Features> selectListBy2(Map<String, Object> map);
 
 
@@ -67,14 +66,6 @@ public interface MarkingMapper extends BaseMapper<Marking> {
     JsonExport reviewJsonExportSelect(Long slideId);
 
     List<cn.staitech.anno.domain.PathologicalIndicatorCategory> selectCategory(Long slideId);
-
-    /**
-     * 根据专题查看当前专题下所有的切片
-     *
-     * @param specialId 标注信息
-     * @return List<Slide>
-     */
-    List<SlideRes> selectSlideList(Long specialId);
 
     /**
      * 根据切片id查询当前切片下当前标签的总数

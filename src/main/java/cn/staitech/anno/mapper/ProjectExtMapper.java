@@ -46,15 +46,6 @@ public interface ProjectExtMapper extends BaseMapper<ProjectPo> {
 
     List<ProjectExt> selectByProject(ProjectExt rojectExt);
 
-
-    /**
-     * 根据专题id查询关联的项目总数
-     *
-     * @param specialId 专题id
-     * @return 项目详情
-     */
-    int selectSpecialId(Long specialId);
-
     /**
      * 根据主键id查询项目详情
      *
@@ -88,21 +79,4 @@ public interface ProjectExtMapper extends BaseMapper<ProjectPo> {
      * @return 项目内切片还没有分析完成的数量
      */
     int countNotReady(Long projectId);
-
-    /**
-     * 查询状体
-     *
-     * @param specialId
-     * @return
-     */
-    CreateStatusOut selectSpecial(Long specialId);
-
-    /**
-     * 修改专题
-     *
-     * @return
-     */
-    int updateSpecial(@Param("specialId") Long specialId, @Param("resultDesc") Long resultDesc);
-
-
 }

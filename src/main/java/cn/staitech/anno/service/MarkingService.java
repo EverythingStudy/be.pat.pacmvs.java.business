@@ -10,7 +10,6 @@ import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.PointCount;
-import cn.staitech.anno.vo.slide.SlideRes;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.system.api.domain.SysUser;
@@ -33,15 +32,6 @@ public interface MarkingService {
     List<Features> selectListBy(Long slideId) throws Exception;
 
     double operationCheck(UpdateOperationIn req) throws Exception;
-
-
-    /**
-     * 根据专题查看当前专题下所有的切片
-     *
-     * @param specialId 标注信息
-     * @return List<Slide>
-     */
-    List<SlideRes> selectSlideList(Long specialId);
 
     /**
      * 根据切片id查询当前切片下当前标签的总数
