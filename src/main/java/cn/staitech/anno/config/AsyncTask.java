@@ -6,7 +6,6 @@ import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.mapper.ImageMapper;
 import cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper;
 import cn.staitech.anno.mapper.SlideMapper;
-import cn.staitech.anno.mapper.SysUserMapper;
 import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.project.domain.Slide;
 import cn.staitech.anno.project.mapper.MarkingMapperV1;
@@ -28,7 +27,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.BufferedInputStream;
@@ -57,6 +55,20 @@ public class AsyncTask {
 
 
     private static final int BATCH_SIZE = 5000;
+    private static final ExecutorService executor = ExecutorBuilder.create().setCorePoolSize(
+                    Runtime.getRuntime()
+                            .availableProcessors())
+            .setMaxPoolSize(Runtime.getRuntime()
+                    .availableProcessors() * 2)
+            .setKeepAliveTime(0)
+            .build();
+
+    /**
+     * 如果需要调整并发数目，修改下面方法的第二个参数即可
+     */
+    static {
+        System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", "4");
+    }
 
     @Resource
     private SlideMapperV1 slideMapperV1;
@@ -71,25 +83,32 @@ public class AsyncTask {
     @Resource
     private ImageMapper imageMapper;
     @Resource
-    private SysUserMapper userMapper;
-    @Resource
     private MarkingMapperV1 markingMapperV1;
-
     @Resource
     private SysUserMapperV1 userMapperV1;
 
-    @Resource
-    private AsyncConfig asyncConfig;
+    /**
+     * 插入方法
+     *
+     * @param list     插入数据集合
+     * @param consumer 消费型方法，直接使用 mapper::method 方法引用的方式
+     * @param <T>      插入的数据类型
+     */
+    public static <T> void insertData(List<T> list, Consumer<List<T>> consumer) {
+        if (list == null || list.size() < 1) {
+            return;
+        }
 
+        List<List<T>> streamList = new ArrayList<>();
 
-    private static final ExecutorService executor = ExecutorBuilder.create().setCorePoolSize(
-            Runtime.getRuntime()
-                    .availableProcessors())
-            .setMaxPoolSize(Runtime.getRuntime()
-                    .availableProcessors() * 2)
-            .setKeepAliveTime(0)
-            .build();
-
+        for (int i = 0; i < list.size(); i += BATCH_SIZE) {
+            int j = Math.min((i + BATCH_SIZE), list.size());
+            List<T> subList = list.subList(i, j);
+            streamList.add(subList);
+        }
+        // 并行流使用的并发数是 CPU 核心数，不能局部更改。全局更改影响较大，斟酌
+        streamList.parallelStream().forEach(consumer);
+    }
 
     @SneakyThrows
     @Async("getAsyncExecutor")
@@ -112,20 +131,7 @@ public class AsyncTask {
         //定义文件条目
         ZipEntry ze;
         Enumeration<? extends ZipEntry> zipEnum = zipFile.entries();
-        // 循环压缩包中解压内容==>TODO 增加文件大小的校验
-            /*while (zipEnum.hasMoreElements()) {
-                // 获取下一个元素
-                ze = zipEnum.nextElement();
-                if (!ze.isDirectory()) {
-                    long size = ze.getSize();
-                    //大小计算
-      		        double fileSizeInMB = (double) size / (1024 * 1024);
-                    if (fileSizeInMB >  CommonConstant.UPLOAD_FILE_LIMIT) {
-                    	throw new Exception(MessageSource.M("FILE_DOWNLOAD_ERROR"));
-                    }
-                }
-                zp.closeEntry();
-            }*/
+
         // 循环压缩包中解压内容
         while (zipEnum.hasMoreElements()) {
             // 获取下一个元素
@@ -141,17 +147,8 @@ public class AsyncTask {
             }
         }
         zp.closeEntry();
-
-
-
-//        zp.closeEntry();
-//        } catch (Exception e) {
-//            throw new Exception("json文件解析失败");
-//        }
-//        return true;
         return null;
     }
-
 
     public void parseJson(InputStream fileUrl, InputStream newBf, List<SlideRes> slideResList, Long organizationId, Long userId) throws Exception {
         JsonFactory f = new MappingJsonFactory();
@@ -192,7 +189,6 @@ public class AsyncTask {
 
     }
 
-
     void fileNameContrast(String imageName, List<SlideRes> slideResList, InputStream newBf, List<Long> userIdList, Long organizationId, Long userId) throws Exception {
         if (imageName != null) {
             for (SlideRes slide : slideResList) {
@@ -204,6 +200,63 @@ public class AsyncTask {
         }
     }
 
+    public Map<String, Object> writeMarking(Long slideId, JSONObject featureObject, Slide slideBy, Image image, Map<String, Long> categoryMap, Map<Long, String> userMap, Long organizationId) throws Exception {
+
+        Map<String, Object> map = new HashMap<>();
+
+        // 获取annotationId
+        String annotationId = featureObject.getString("id");
+        // 获取geometry数据
+        JSONObject geometry = featureObject.getJSONObject("geometry");
+        // 获取属性和自定义字段
+        JSONObject properties = featureObject.getJSONObject("properties");
+        cn.staitech.anno.vo.geojson.Properties properties1 = JSONObject.toJavaObject(JSONObject.parseObject(JSONObject.toJSONString(properties)), Properties.class);
+        cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
+        // 查询标签信息
+        if (!Objects.equals(properties1.getLabel_code(), "") && properties1.getLabel_code() != null) {
+            Long categoryId = categoryMap.get(properties1.getLabel_code());
+            if (categoryId == null) {
+                PathologicalIndicatorCategory pathologicalIndicatorCategory = pathologicalIndicatorCategoryMapper.selectProjectAndNumber(Long.valueOf(slideBy.getProjectId()), properties1.getLabel_code(), organizationId);
+                if (pathologicalIndicatorCategory != null) {
+                    marking.setCategoryId(pathologicalIndicatorCategory.getCategoryId());
+                    categoryMap.put(properties1.getLabel_code(), pathologicalIndicatorCategory.getCategoryId());
+                    map.put("category", categoryMap);
+                }
+            } else {
+                marking.setCategoryId(categoryId);
+            }
+        }
+        // 根据用户id查询用户详情信息
+        if (userMap.get(Long.valueOf(properties1.getAnnotation_owner())) != null) {
+            marking.setAnnotationOwner(userMap.get(Long.valueOf(properties1.getAnnotation_owner())));
+        }
+        // 写入实体类
+        marking.setAnnotationId(annotationId);
+        marking.setArea(properties1.getArea());
+        marking.setPerimeter(properties1.getPerimeter());
+        marking.setNumber(properties1.getNumber());
+        marking.setMeasureType(properties1.getMeasure_type());
+        marking.setMeasureRelation(properties1.getMeasure_relation());
+        marking.setMeasureName(properties1.getMeasure_name());
+        marking.setMeasureNumber(properties1.getMeasure_number());
+        marking.setRadius(properties1.getRadius());
+        marking.setMeanDistance(properties1.getMean_distance());
+        marking.setMaxDistance(properties1.getMax_distance());
+        marking.setMinDistance(properties1.getMin_distance());
+        marking.setInnerAngle(properties1.getInner_angle());
+        marking.setExteriorAngle(properties1.getExterior_angle());
+        marking.setAnnotationType(properties1.getAnnotation_type());
+        marking.setCenterPoint(properties1.getCenter_point());
+        marking.setProjectId(Long.valueOf(slideBy.getProjectId()));
+        marking.setImageId(Long.valueOf(slideBy.getImageId()));
+        marking.setImageUrl(image.getImageUrl());
+        marking.setCreateBy(Long.valueOf(properties1.getAnnotation_owner()));
+        marking.setGeometry(GeometryUtil.updateYAxle(geometry));
+        marking.setSlideId(slideId);
+        marking.setCreateTime(new Date());
+        map.put("marking", marking);
+        return map;
+    }
 
     class TaskThread implements Runnable {
 
@@ -211,7 +264,7 @@ public class AsyncTask {
         private final Long slideId;
         private final InputStream newBf;
         private final Long organizationId;
-        private Long userId;
+        private final Long userId;
 
         public TaskThread(List<Long> userIdList, Long slideId, InputStream newBf, Long organizationId, Long userId) {
             this.userIdList = userIdList;
@@ -240,7 +293,7 @@ public class AsyncTask {
                     int markingCount = markingMapperV1.selectCount(markingQueryWrapperBy);
                     double result = (double) markingCount / 2000;
                     int ceilNum = (int) Math.ceil(result);
-                    for(int i = 0;i < ceilNum;i++){
+                    for (int i = 0; i < ceilNum; i++) {
                         synchronized (this) {
                             markingQueryWrapperBy.last("limit 2000").orderByDesc("create_time");
                             markingMapperV1.delete(markingQueryWrapperBy);
@@ -317,100 +370,6 @@ public class AsyncTask {
                 System.out.println(e);
             }
         }
-    }
-
-
-
-
-    /**
-     * 如果需要调整并发数目，修改下面方法的第二个参数即可
-     */
-    static {
-        System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", "4");
-    }
-
-    /**
-     * 插入方法
-     *
-     * @param list     插入数据集合
-     * @param consumer 消费型方法，直接使用 mapper::method 方法引用的方式
-     * @param <T>      插入的数据类型
-     */
-    public static <T> void insertData(List<T> list, Consumer<List<T>> consumer) {
-        if (list == null || list.size() < 1) {
-            return;
-        }
-
-        List<List<T>> streamList = new ArrayList<>();
-
-        for (int i = 0; i < list.size(); i += BATCH_SIZE) {
-            int j = Math.min((i + BATCH_SIZE), list.size());
-            List<T> subList = list.subList(i, j);
-            streamList.add(subList);
-        }
-        // 并行流使用的并发数是 CPU 核心数，不能局部更改。全局更改影响较大，斟酌
-        streamList.parallelStream().forEach(consumer);
-    }
-
-
-
-
-    public Map<String, Object> writeMarking(Long slideId, JSONObject featureObject, Slide slideBy, Image image, Map<String, Long> categoryMap, Map<Long, String> userMap, Long organizationId) throws Exception {
-
-        Map<String, Object> map = new HashMap<>();
-
-        // 获取annotationId
-        String annotationId = featureObject.getString("id");
-        // 获取geometry数据
-        JSONObject geometry = featureObject.getJSONObject("geometry");
-        // 获取属性和自定义字段
-        JSONObject properties = featureObject.getJSONObject("properties");
-        cn.staitech.anno.vo.geojson.Properties properties1 = JSONObject.toJavaObject(JSONObject.parseObject(JSONObject.toJSONString(properties)), Properties.class);
-        cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
-        // 查询标签信息
-        if (!Objects.equals(properties1.getLabel_code(), "") && properties1.getLabel_code() != null) {
-            Long categoryId = categoryMap.get(properties1.getLabel_code());
-            if (categoryId == null) {
-                PathologicalIndicatorCategory pathologicalIndicatorCategory = pathologicalIndicatorCategoryMapper.selectProjectAndNumber(Long.valueOf(slideBy.getProjectId()), properties1.getLabel_code(), organizationId);
-                if (pathologicalIndicatorCategory != null) {
-                    marking.setCategoryId(pathologicalIndicatorCategory.getCategoryId());
-                    categoryMap.put(properties1.getLabel_code(), pathologicalIndicatorCategory.getCategoryId());
-                    map.put("category", categoryMap);
-                }
-            } else {
-                marking.setCategoryId(categoryId);
-            }
-        }
-        // 根据用户id查询用户详情信息
-        if (userMap.get(Long.valueOf(properties1.getAnnotation_owner())) != null) {
-            marking.setAnnotationOwner(userMap.get(Long.valueOf(properties1.getAnnotation_owner())));
-        }
-        // 写入实体类
-        marking.setAnnotationId(annotationId);
-        marking.setArea(properties1.getArea());
-        marking.setPerimeter(properties1.getPerimeter());
-        marking.setNumber(properties1.getNumber());
-        marking.setMeasureType(properties1.getMeasure_type());
-        marking.setMeasureRelation(properties1.getMeasure_relation());
-        marking.setMeasureName(properties1.getMeasure_name());
-        marking.setMeasureNumber(properties1.getMeasure_number());
-        marking.setRadius(properties1.getRadius());
-        marking.setMeanDistance(properties1.getMean_distance());
-        marking.setMaxDistance(properties1.getMax_distance());
-        marking.setMinDistance(properties1.getMin_distance());
-        marking.setInnerAngle(properties1.getInner_angle());
-        marking.setExteriorAngle(properties1.getExterior_angle());
-        marking.setAnnotationType(properties1.getAnnotation_type());
-        marking.setCenterPoint(properties1.getCenter_point());
-        marking.setProjectId(Long.valueOf(slideBy.getProjectId()));
-        marking.setImageId(Long.valueOf(slideBy.getImageId()));
-        marking.setImageUrl(image.getImageUrl());
-        marking.setCreateBy(Long.valueOf(properties1.getAnnotation_owner()));
-        marking.setGeometry(GeometryUtil.updateYAxle(geometry));
-        marking.setSlideId(slideId);
-        marking.setCreateTime(new Date());
-        map.put("marking", marking);
-        return map;
     }
 
 

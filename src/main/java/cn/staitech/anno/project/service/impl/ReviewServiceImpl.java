@@ -338,7 +338,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
     			}
     			buffer.append(perScore).append(":");
     		}
-    		String scoreStr = buffer.substring(0, buffer.length()-1).toString();
+    		String scoreStr = buffer.substring(0, buffer.length()-1);
     		return scoreStr;
     	}else{
     		return score;

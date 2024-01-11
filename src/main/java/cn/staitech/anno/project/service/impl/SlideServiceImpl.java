@@ -4,7 +4,6 @@ import cn.hutool.core.io.IoUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import cn.staitech.anno.constant.CommonConstant;
-import cn.staitech.anno.mapper.SysUserMapper;
 import cn.staitech.anno.project.domain.*;
 import cn.staitech.anno.project.mapper.*;
 import cn.staitech.anno.project.service.SlideService;
@@ -57,9 +56,6 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
     private ReviewMapper reviewMapper;
 
     @Resource
-    private SysUserMapper sysUserMapper;
-
-    @Resource
     private ProjectService projectService;
 
     public void reviewHandle(List<Long> slideIds) {
@@ -85,7 +81,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
                 map.put(slideVO.getSlideId(), slideVO);
             });
             List<Marking> annotationList = queryAnnotation(slideIds, params);
-            if(!annotationList.isEmpty() && !map.isEmpty()) {
+            if (!annotationList.isEmpty() && !map.isEmpty()) {
                 handleAnnoList(annotationList, map);// TODO: wangfeng
             }
         }
@@ -105,36 +101,36 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
         getBaseMapper().pageReviewSlide(page, params);
         List<ReviewSlideVO> list = page.getRecords();
         if (CollectionUtils.isNotEmpty(list)) {
-        	for (ReviewSlideVO vo : list) {
-        		if (StringUtils.isEmpty(vo.getSelfReviewStatus())) {
-        			vo.setSelfReviewStatus("1");
-        		}
-        		//TODO 分数处理
-        		String score = vo.getScore();
-        		if(StringUtils.isNotEmpty(score)){
-        			score = trans2Score(score);
-        		}
-        		vo.setScore(score);	
-        	}
+            for (ReviewSlideVO vo : list) {
+                if (StringUtils.isEmpty(vo.getSelfReviewStatus())) {
+                    vo.setSelfReviewStatus("1");
+                }
+                //TODO 分数处理
+                String score = vo.getScore();
+                if (StringUtils.isNotEmpty(score)) {
+                    score = trans2Score(score);
+                }
+                vo.setScore(score);
+            }
         }
         PageMaster<ReviewSlideVO> pageMaster = PageMaster.of(list);
         pageMaster.setTotal(page.getTotal());
         return pageMaster;
     }
-    
-    
-    private String trans2Score(String score){
-    	StringBuffer buffer = new StringBuffer();
-    	 String[] scoreArray = score.split(":");
-    	 for(int i=0;i<scoreArray.length;i++){
-    		 String perScore = scoreArray[i];
-    		 if(perScore.equals(" -1")||perScore.equals("-1")){
-    			 perScore = perScore.replaceAll("-1", CommonConstant.NOT_EVALUATING);
-    		 }
-    		 buffer.append(perScore).append(":");
-    	 }
-    	 String scoreStr = buffer.substring(0, buffer.length()-1).toString();
-    	 return scoreStr;
+
+
+    private String trans2Score(String score) {
+        StringBuffer buffer = new StringBuffer();
+        String[] scoreArray = score.split(":");
+        for (int i = 0; i < scoreArray.length; i++) {
+            String perScore = scoreArray[i];
+            if (perScore.equals(" -1") || perScore.equals("-1")) {
+                perScore = perScore.replaceAll("-1", CommonConstant.NOT_EVALUATING);
+            }
+            buffer.append(perScore).append(":");
+        }
+        String scoreStr = buffer.substring(0, buffer.length() - 1);
+        return scoreStr;
     }
 
     private Integer getAnnoCount(Integer projectId) throws Exception {
@@ -290,37 +286,21 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
             vo.setManualAnnoCount(subs == null ? 0 : subs.size());
             catesMapList.add(catesMap);
         }
-        // 补全数据行缺失字段
-        /*for (Map<String, String> catesMap : catesMapList) {
-            for (PathologicalIndicatorCategory column : columns) {
-            	if(null != catesMap && !catesMap.isEmpty()){
-            		if(null != column.getCategoryId()){
-            			if(catesMap.containsKey(String.valueOf(column.getCategoryId()))){
-            				String count = catesMap.get(String.valueOf(column.getCategoryId()));
-            				if (count == null) {
-            					catesMap.put(String.valueOf(column.getCategoryId()), "");
-            				}
-            			}else{
-            				catesMap.put(String.valueOf(column.getCategoryId()), "");
-            			}
-            		}
-            	}
-            }
-        }*/
+
         for (Map<String, String> catesMap : catesMapList) {
             for (PathologicalIndicatorCategory column : columns) {
-            	if(null != catesMap && !catesMap.isEmpty()){
-            		if(null != column.getCategoryId()){
-            			if(catesMap.containsKey(String.valueOf(column.getCategoryId()))){
-            				String count = catesMap.get(String.valueOf(column.getCategoryId()));
-            				if (count == null) {
-            					catesMap.put(String.valueOf(column.getCategoryId()), "");
-            				}
-            			}else{
-            				catesMap.put(String.valueOf(column.getCategoryId()), "");
-            			}
-            		}
-            	}
+                if (null != catesMap && !catesMap.isEmpty()) {
+                    if (null != column.getCategoryId()) {
+                        if (catesMap.containsKey(String.valueOf(column.getCategoryId()))) {
+                            String count = catesMap.get(String.valueOf(column.getCategoryId()));
+                            if (count == null) {
+                                catesMap.put(String.valueOf(column.getCategoryId()), "");
+                            }
+                        } else {
+                            catesMap.put(String.valueOf(column.getCategoryId()), "");
+                        }
+                    }
+                }
             }
         }
 
@@ -366,9 +346,9 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
                 List<Marking> subs = map.get(key);
                 if (subs != null && !subs.isEmpty()) {
                     Map<Long, List<Marking>> categorys = subs.stream().collect(Collectors.groupingBy(Marking::getCategoryId));
-                    if(categorys!=null && !categoryMap.isEmpty()) {
+                    if (categorys != null && !categoryMap.isEmpty()) {
                         vo.setCategoryTypes(handleCategorys(categorys, categoryMap));//TODO
-                    }else {
+                    } else {
                         vo.setCategoryTypes("");
                     }
                     Map<Long, List<Marking>> users = subs.stream().collect(Collectors.groupingBy(Marking::getCreateBy));
@@ -422,15 +402,7 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
     public boolean isProjectAmin(LoginUser user, Long projectId) {
         boolean isProjectAmin = false;
         Long userId = user.getUserid();
-    	/*List<SysRole> roleList = sysUserMapper.getRoleListByUserId(userId);
-    	List<Long> roleIdList = new ArrayList<>();
-    	//判断是否是项目管理员（22：项目管理所有权限）
-    	if(CollectionUtils.isNotEmpty(roleList)){
-    		for(SysRole role:roleList){
-    			roleIdList.add(role.getRoleId());
-    		}
-    		isProjectAmin = roleIdList.contains(22L);
-    	}*/
+
         //项目创建者就是项目管理员（不根据系统角色去判断）
         cn.staitech.anno.domain.Project project = projectService.selectPrimKey(projectId);
         if (userId.equals(project.getCreateBy())) {

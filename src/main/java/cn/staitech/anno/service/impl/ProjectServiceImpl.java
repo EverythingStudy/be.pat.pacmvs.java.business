@@ -362,11 +362,11 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             // 项目类型
             project.setProjectTypeName(MapConstant.getProjectTypeEn(projectType));
             // 种属
-            project.setSpeciesName(MapConstant.getSpeciesNameEn(project.getOrganizationId().toString() + project.getSpeciesId().toString()));
+            project.setSpeciesName(MapConstant.getSpeciesNameEn(project.getOrganizationId().toString() + project.getSpeciesId()));
             // 颜色类型
             project.setColorTypeName(Container.COLOR_TYPE_EN.get(project.getColorType()));
             // 品系
-            project.setProductSeries(MapConstant.getProductSeriesEn(project.getOrganizationId().toString() + project.getSpeciesId().toString() + project.getProductSeriesId().toString()));
+            project.setProductSeries(MapConstant.getProductSeriesEn(project.getOrganizationId().toString() + project.getSpeciesId() + project.getProductSeriesId().toString()));
             project.setStatusName(Container.PROJECT_STATUS_EN.get(project.getStatus()));
             // 标签类型
             project.setIndicatorName(project.getIndicatorNameEn());
@@ -374,11 +374,11 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             // 项目类型
             project.setProjectTypeName(MapConstant.getProjectType(projectType));
             // 种属
-            project.setSpeciesName(MapConstant.getSpeciesName(project.getOrganizationId().toString() + project.getSpeciesId().toString()));
+            project.setSpeciesName(MapConstant.getSpeciesName(project.getOrganizationId().toString() + project.getSpeciesId()));
             // 颜色类型
             project.setColorTypeName(Container.COLOR_TYPE.get(project.getColorType()));
             // 品系
-            project.setProductSeries(MapConstant.getProductSeries(project.getOrganizationId().toString() + project.getSpeciesId().toString() + project.getProductSeriesId().toString()));
+            project.setProductSeries(MapConstant.getProductSeries(project.getOrganizationId().toString() + project.getSpeciesId() + project.getProductSeriesId().toString()));
             project.setStatusName(Container.PROJECT_STATUS.get(project.getStatus()));
         }
         return project;
@@ -400,7 +400,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             Project project = new Project();
             project.setProjectId(projectId);
             // 只能删除项目状态是未启动的项目。
-//            project.setStatus(1);
+            // project.setStatus(1);
             QueryWrapper queryWrapper = new QueryWrapper<>(project);
 
             Project delProject = getOne(queryWrapper);

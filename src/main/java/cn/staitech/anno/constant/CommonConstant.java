@@ -23,19 +23,19 @@ public class CommonConstant {
     public static final String NUMBER_1 = "1";
     public static final String GLIDE_LINE = "_";
     public static final String FILE_SUFFIX = ".";
-    public static final String FILE_SUFFIX_DOCX = ".docx";
     public static final String FILE_SUFFIX_JSON = ".json";
     public static final String FILE_SUFFIX_TXT = ".txt";
     public static final String FILE_SUFFIX_XLSX = ".xlsx";
     public static final String PATH = "path";
     public static final String FILE_PATH = "annotation";
-    public static final String FILENAME = "filename";
     public static final String IMAGE_URL = "imageUrl";
     public static final String CHARACTER_SET_UTF8 = "UTF-8";
     public static final String CONTENT_TYPE = "application/json;charset=utf-8";
     public static final String HEADER = "Content-Disposition";
     public static final Integer NOT_START_REVIEW = 0;
     public static final Integer SUBMIT_REVIEW = 3;
+    public static final String REDIS_OUTLINE_ROOT = "OUTLINE_ROOT:";
+    public static final String REDIS_OUTLINE_LIST = "OUTLINE_LIST:";
 
     /**
      * Annotation
@@ -53,27 +53,20 @@ public class CommonConstant {
     public static final Long SLIDE_CACHE_HOURS = 24L;
     public static final String ANNO_IMAGE = "ANNO_IMAGE_";
     public static final Long IMAGE_CACHE_HOURS = 24L;
-    public static final String ANNO_MARKING = "ANNO_MARKING_";
-    public static final Long MARKING_CACHE_HOURS = 24L;
     public static final String ANNO_TYPE_DRAW = "Draw";
     public static final String ANNO_TYPE_MEASURE = "Measure";
-    
+
     /**
      * review
      */
 
     public static final String NOT_EVALUATING = "不予评价";
-    
+
     /**
      * 上传下载限制
      */
     public static final double UPLOAD_FILE_LIMIT = 300;
     public static final double DOWN_FILE_LIMIT = 300;
-
-    /**
-     * Viewer
-     */
-    public static final Double MICRON = 0.26;
 
     /**
      * structure
@@ -109,15 +102,15 @@ public class CommonConstant {
      */
     public static final String[] MEASURE_COLHEAD_KEY = {"名称", "周长/长度", "面积", "内角", "外角", "平均间距", "最小间距", "最大间距", "总数", "测量人", "创建时间"};
     public static final String[] MEASURE_COLHEAD_VALUE = {"measure_full_name", "perimeter", "area", "inner_angle", "exterior_angle", "mean_distance", "min_distance", "max_distance", "point_count", "annotation_owner", "create_time"};
-    
+
     /**
      * 图像标注统计
      */
     public static final String SLIDE_COUNT_DATA_SEARCH_TITLE = "图像标注统计导出";
     public static final String[] SLIDE_COUNT_COLHEAD_KEY = {"项目名称", "用户", "图像数量", "标注总数", "项目状态"};
     public static final String[] SLIDE_COUNT_COLHEAD_VALUE = {"projectName", "nickName", "imageCount", "markingNum", "statusDesc"};
-    
-    
+
+
     /**
      * Excel表头 - Export
      */

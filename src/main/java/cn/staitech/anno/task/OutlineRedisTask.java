@@ -12,6 +12,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import static cn.staitech.anno.constant.CommonConstant.REDIS_OUTLINE_LIST;
+import static cn.staitech.anno.constant.CommonConstant.REDIS_OUTLINE_ROOT;
+
 /**
  * 清空token失效后Redis对应的数据：上一次执行完毕时间点后30秒再次执行
  *
@@ -29,8 +32,8 @@ public class OutlineRedisTask {
      */
     @Scheduled(fixedDelay = 30000)
     public void clean() {
-        String rootKey = "OUTLINE_ROOT:";
-        String listKey = "OUTLINE_LIST:";
+        String rootKey = REDIS_OUTLINE_ROOT;
+        String listKey = REDIS_OUTLINE_LIST;
 
         // 在线用户map:<userId, token>
         Map<Long, String> loginMap = new HashMap<>(16);

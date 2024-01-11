@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+import static cn.staitech.anno.constant.CommonConstant.REDIS_OUTLINE_LIST;
+import static cn.staitech.anno.constant.CommonConstant.REDIS_OUTLINE_ROOT;
+
 /**
  * (Outline)表服务实现类
  *
@@ -53,8 +56,8 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
     public List<Outline> selectList(OutlineSelectVO selectVO) {
 
         Long createBy = selectVO.getCreateBy();
-        String rootKey = "OUTLINE_ROOT:" + createBy;
-        String listKey = "OUTLINE_LIST:" + createBy + "_";
+        String rootKey = REDIS_OUTLINE_ROOT + createBy;
+        String listKey = REDIS_OUTLINE_LIST + createBy + "_";
 
         com.alibaba.fastjson2.JSONObject object = redisService.getCacheObject(rootKey);
 
@@ -196,8 +199,8 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
     @Async
     @Override
     public void removeByCreateByAndToken(Long createBy, String token) {
-        String rootKey = "OUTLINE_ROOT:" + createBy;
-        String listKey = "OUTLINE_LIST:" + createBy + "_";
+        String rootKey = REDIS_OUTLINE_ROOT + createBy;
+        String listKey = REDIS_OUTLINE_LIST + createBy + "_";
 
         com.alibaba.fastjson2.JSONObject object = redisService.getCacheObject(rootKey);
         OutlineRoot outlineRoot = object.toJavaObject(OutlineRoot.class);
@@ -230,8 +233,8 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
     @Async
     @Override
     public void removeBycreateBySlideId(Long createBy, Long slideId) {
-        String rootKey = "OUTLINE_ROOT:" + createBy;
-        String listKey = "OUTLINE_LIST:" + createBy + "_";
+        String rootKey = REDIS_OUTLINE_ROOT + createBy;
+        String listKey = REDIS_OUTLINE_LIST + createBy + "_";
 
         com.alibaba.fastjson2.JSONObject object = redisService.getCacheObject(rootKey);
         OutlineRoot outlineRoot = object.toJavaObject(OutlineRoot.class);
@@ -242,7 +245,7 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
             return; // 没有符合条件的 key，不进行任何操作
         }
 
-        if (slideId != null && outlineRoot.getSlideId().equals(slideId)) {
+        if (outlineRoot.getSlideId().equals(slideId)) {
             // 清空当前用户非当前token的数据
             for (String keyStr : keyCollection) {
                 if (!keyStr.equals(listKey + outlineRoot.getToken())) {

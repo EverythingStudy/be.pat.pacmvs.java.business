@@ -2,7 +2,6 @@ package cn.staitech.anno.service;
 
 
 import cn.staitech.anno.domain.ProjectMember;
-import cn.staitech.anno.project.domain.SysUser;
 import cn.staitech.anno.project.vo.ImageAnnoUserQueryIn;
 import cn.staitech.anno.project.vo.ProjectPartUserVO;
 import cn.staitech.anno.project.vo.SelectProjectVO;
@@ -67,11 +66,9 @@ public interface ProjectMemberService {
      */
     ProjectMember getLoginUserProjectRoleType(Long projectId);
 
-
     /**
      * 检查登录用户是否匹配对应角色
-     *
-     * @param projectId 项目ID
+     * @param userRoleType
      * @param roleType
      * @return
      */
@@ -84,9 +81,9 @@ public interface ProjectMemberService {
      * @return 参数配置信息
      */
     List<ProjectMember> selectProject(ProjectMember projectMember);
-    
-    public List<SelectProjectVO> getProjectListByPM(ProjectMember projectMember);
-    
-    public List<ProjectPartUserVO> getUserList(ImageAnnoUserQueryIn query);
+
+    List<SelectProjectVO> getProjectListByPM(ProjectMember projectMember);
+
+    List<ProjectPartUserVO> getUserList(ImageAnnoUserQueryIn query);
 
 }
