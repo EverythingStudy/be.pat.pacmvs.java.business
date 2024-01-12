@@ -59,7 +59,7 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
     /**
      * 根据种属编号获取脏器列表
      *
-     * @param speciesId
+     * @param speciesCode
      * @return
      */
     @Override

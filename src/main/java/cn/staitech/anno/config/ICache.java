@@ -27,7 +27,7 @@ public interface ICache {
      * 添加字符串类型数据
      *
      * @param key
-     * @param delta
+     * @param value
      * @return
      */
     boolean setString(String key, String value);
@@ -44,16 +44,16 @@ public interface ICache {
      * 根据键删除值
      *
      * @param key
-     * @param delta
+     * @param key
      * @return
      */
     boolean delString(String key);
 
     /**
      * 添加hash
-     *
-     * @param key
-     * @param delta
+     * @param slideId
+     * @param userId
+     * @param userName
      * @return
      */
     boolean setHash(String slideId, Long userId, String userName);
@@ -85,7 +85,7 @@ public interface ICache {
     /**
      * 释放锁
      *
-     * @param req
+     * @param lockKey
      * @return
      */
     boolean release(String lockKey);

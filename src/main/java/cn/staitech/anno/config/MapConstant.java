@@ -69,7 +69,7 @@ public class MapConstant {
     /**
      * 获取种属名称
      *
-     * @param topicId
+     * @param organizationIdAddSpeciesId
      * @return
      */
     public static String getSpeciesName(String organizationIdAddSpeciesId) {
