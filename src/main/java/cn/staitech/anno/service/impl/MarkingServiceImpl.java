@@ -1267,13 +1267,8 @@ public class MarkingServiceImpl implements MarkingService {
             wrapper.in("marking_id",markingIds);
             markingMapperV1.delete(wrapper);
             for (String markingId : markingIds) {
-//                try {
-//                    roiDelete(markingId);
                     categoryIds.add(markingMap.get(markingId).getCategory_id());
                     createBys.add(markingMap.get(markingId).getCreate_by());
-//                } catch (Exception e) {
-//                    throw new RuntimeException(e);
-//                }
             }
             BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, RELOAD_STATUS, null, null);
             NioWebSocketHandler.sendAll(slideId, broadcastVO);
@@ -1346,16 +1341,6 @@ public class MarkingServiceImpl implements MarkingService {
         return new ArrayList<>(markingIdDel);
     }
 
-    /**
-     * 删除roi要删除的轮廓
-     */
-//    @Transactional(rollbackFor = Exception.class)
-//    public void roiDelete(String markingId) throws Exception {
-//        if (!Optional.ofNullable(markingId).isPresent()) {
-//            throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
-//        }
-//        markingMapper.delete(markingId);
-//    }
 
     class TaskGenerateJson implements Runnable {
 
