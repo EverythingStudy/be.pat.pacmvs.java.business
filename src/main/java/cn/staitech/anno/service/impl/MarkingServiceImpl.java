@@ -74,6 +74,7 @@ import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -1246,7 +1247,7 @@ public class MarkingServiceImpl implements MarkingService {
     public R<String> roiContDel(RoiIn viewAddIns) throws Exception {
         Long slideId = viewAddIns.getSlideId();
         //查询slideId的所有标注
-        List<Features> features = markingMapper.selectListBy(slideId);
+        List<Marking> features = markingMapper.roiMarking(slideId.intValue());
         List<String> markingIds;
         //roi包含
         if (viewAddIns.getRoiStatus() == 0) {
@@ -1257,15 +1258,16 @@ public class MarkingServiceImpl implements MarkingService {
         if (markingIds.isEmpty()) {
             return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
+        Map<String,Marking> markingMap=features.stream().collect(Collectors.toMap(Marking::getMarking_id, Function.identity()));
         //异步删除
         CompletableFuture<Integer> cf1 = CompletableFuture.supplyAsync(() -> {
             Set<Long> categoryIds = new HashSet<>();
             Set<Long> createBys = new HashSet<>();
             for (String markingId : markingIds) {
                 try {
-                    RoiIn roiIn = roiDelete(markingId);
-                    categoryIds.add(roiIn.getCategoryId());
-                    createBys.add(roiIn.getCreateBy());
+                    roiDelete(markingId);
+                    categoryIds.add(markingMap.get(markingId).getCategory_id());
+                    createBys.add(markingMap.get(markingId).getCreate_by());
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -1287,7 +1289,7 @@ public class MarkingServiceImpl implements MarkingService {
     /**
      * ROI包含选出要删除的markingId
      */
-    public List<String> roiCont(RoiIn viewAddIns, List<Features> features) throws ParseException {
+    public List<String> roiCont(RoiIn viewAddIns, List<Marking> features) throws ParseException {
         //要删除的markingId集合
         Set<String> markingIdDel = new HashSet<>();
         //包含的markingId集合
@@ -1297,16 +1299,15 @@ public class MarkingServiceImpl implements MarkingService {
             Geometry roiLocations = WKT_READER.read(roiLocation);
             //roi包含
             if (viewAddIns.getRoiStatus() == 0) {
-                for (Features features1 : features) {
+                for (Marking features1 : features) {
                     String oldLocation = WktUtil.jsonToWkt(features1.getGeometry());
                     Geometry oldLocations = WKT_READER.read(oldLocation);
-                    Geometry geometry = roiLocations.intersection(oldLocations);
                     //判断是否不包含和不相交
                     if (!roiLocations.contains(oldLocations) && !roiLocations.intersects(oldLocations)) {
-                        markingIdDel.add(features1.getProperties().get("marking_id").toString());
+                        markingIdDel.add(features1.getMarking_id());
                     } else {
                         //有相交的部分
-                        markingIdCont.add(features1.getProperties().get("marking_id").toString());
+                        markingIdCont.add(features1.getMarking_id());
                     }
                 }
             }
@@ -1320,7 +1321,7 @@ public class MarkingServiceImpl implements MarkingService {
     /**
      * ROI删除选出要删除的markingId
      */
-    public List<String> roiDel(RoiIn viewAddIns, List<Features> features) throws ParseException {
+    public List<String> roiDel(RoiIn viewAddIns, List<Marking> features) throws ParseException {
         //要删除的markingId集合
         Set<String> markingIdDel = new HashSet<>();
         //包含的markingId集合
@@ -1329,12 +1330,12 @@ public class MarkingServiceImpl implements MarkingService {
             Geometry roiLocations = WKT_READER.read(roiLocation);
             //roi删除
             if (viewAddIns.getRoiStatus() == 1) {
-                for (Features features1 : features) {
+                for (Marking features1 : features) {
                     String oldLocation = WktUtil.jsonToWkt(features1.getGeometry());
                     Geometry oldLocations = WKT_READER.read(oldLocation);
                     //判断是否包含和相交
                     if (roiLocations.contains(oldLocations) || roiLocations.intersects(oldLocations)) {
-                        markingIdDel.add(features1.getProperties().get("marking_id").toString());
+                        markingIdDel.add(features1.getMarking_id());
                     }
                 }
             }
@@ -1346,18 +1347,11 @@ public class MarkingServiceImpl implements MarkingService {
      * 删除roi要删除的轮廓
      */
     @Transactional(rollbackFor = Exception.class)
-    public RoiIn roiDelete(String markingId) throws Exception {
+    public void roiDelete(String markingId) throws Exception {
         if (!Optional.ofNullable(markingId).isPresent()) {
             throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }
-        Marking markingBy = markingMapper.roiMarking(markingId);
-
-        if (!Optional.ofNullable(markingBy).isPresent()) {
-            throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
-        }
-        int res = markingMapper.delete(markingId);
-        RoiIn roiIn = RoiIn.builder().categoryId(markingBy.getCategory_id()).createBy(markingBy.getCreate_by()).build();
-        return roiIn;
+        markingMapper.delete(markingId);
     }
 
     class TaskGenerateJson implements Runnable {

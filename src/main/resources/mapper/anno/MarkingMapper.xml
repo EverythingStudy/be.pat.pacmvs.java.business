@@ -27,6 +27,7 @@
         <result property="create_time" column="create_time"/>
         <result property="slide_id" column="slide_id"/>
         <result property="point_count" column="point_count"/>
+        <result property="geometry" column="geometry" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
     </resultMap>
 
 
@@ -725,7 +726,7 @@
     </select>
 
     <!--ROI查询-->
-    <select id="roiMarking" parameterType="java.lang.String" resultMap="markingResult">
-        select create_by,category_id from tb_marking where marking_id=#{markingId}
+    <select id="roiMarking" parameterType="java.lang.Integer" resultMap="markingResult">
+        select marking_id,geometry,create_by,category_id from tb_marking where slide_id=#{slideId}
     </select>
 </mapper>

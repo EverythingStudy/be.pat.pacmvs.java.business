@@ -126,5 +126,5 @@ public interface MarkingMapper extends BaseMapper<Marking> {
     /**
      * ROI查询
      * */
-    Marking roiMarking(String markingId);
+    List<Marking> roiMarking(Integer slideId);
 }
