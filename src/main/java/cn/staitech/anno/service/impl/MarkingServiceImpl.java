@@ -1350,7 +1350,8 @@ public class MarkingServiceImpl implements MarkingService {
         if (!Optional.ofNullable(markingId).isPresent()) {
             throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }
-        Marking markingBy = markingMapper.selectById(markingId);
+        Marking markingBy = markingMapper.roiMarking(markingId);
+
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }

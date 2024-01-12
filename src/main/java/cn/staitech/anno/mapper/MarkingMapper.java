@@ -122,4 +122,9 @@ public interface MarkingMapper extends BaseMapper<Marking> {
      * @return
      */
     Long selectMarkingNum(cn.staitech.anno.vo.marking.Marking marking);
+
+    /**
+     * ROI查询
+     * */
+    Marking roiMarking(String markingId);
 }

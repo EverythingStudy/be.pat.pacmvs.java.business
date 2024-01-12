@@ -723,4 +723,9 @@
             </if>
         </where>
     </select>
+
+    <!--ROI查询-->
+    <select id="roiMarking" parameterType="java.lang.String" resultMap="markingResult">
+        select create_by,category_id from tb_marking where marking_id=#{markingId}
+    </select>
 </mapper>
