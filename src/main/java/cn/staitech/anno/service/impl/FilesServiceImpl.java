@@ -341,7 +341,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                 // 删除英文空格
                 entryFileName = StringUtils.removeAll(entryFileName.trim(), "\\s");
                 // 删除中文全角空格
-                entryFileName = entryFileName.replaceAll("　", "");
+                // entryFileName = entryFileName.replaceAll("　", "");
 
                 // 排除没有扩展名的或不能提取扩展名的文件
                 if (!FileUtils.hasExtension(entryFileName)) {
