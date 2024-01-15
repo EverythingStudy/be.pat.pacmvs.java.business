@@ -293,7 +293,7 @@
             <if test="lesionDegree != null">
                 AND s.lesion_degree2 LIKE CONCAT('%', #{lesionDegree}, '%')
             </if>
-            <if test="slideIds.size() != 0 and slideIds != null ">
+            <if test="slideIds != null and slideIds.size() > 0">
                 and s.slide_id in
                 <foreach collection="slideIds" item="slideId" open="(" separator="," close=")">
                     #{slideId}
