@@ -35,6 +35,12 @@ public class RetryServiceImpl implements RetryService {
     public boolean deleteFileRetry(File file) throws Exception {
         if (file.exists()) {
             if (file.delete()) {
+                // 若父级文件夹为空也删除
+                String parentPath = file.getParent();
+                File parentDir = new File(parentPath);
+                if (parentDir.list().length == 0) {
+                    parentDir.delete();
+                }
                 return true;
             }
             throw new Exception("文件删除失败" + file.getAbsolutePath());

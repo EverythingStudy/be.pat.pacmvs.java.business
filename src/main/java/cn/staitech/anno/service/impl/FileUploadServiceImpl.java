@@ -129,6 +129,15 @@ public class FileUploadServiceImpl implements FileUploadService {
                     throw new Exception(MessageSource.M("ARGUMENT_INVALID_NOT_FIND_TOPIC"));
                 }
                 Integer projectTypeId = businessType == 6 ? 6 : 1;
+
+                // 眼科项目-专题、原文件名、解压的切片文件名删除空格
+                // 删除英文空格
+                fileUploadVO.setFileName(StringUtils.removeAll(fileUploadVO.getFileName().trim(), "\\s"));
+                fileUploadVO.setTopicName(StringUtils.removeAll(fileUploadVO.getTopicName().trim(), "\\s"));
+                // 删除中文全角空格
+                fileUploadVO.setFileName(fileUploadVO.getFileName().replaceAll("　", ""));
+                fileUploadVO.setTopicName(fileUploadVO.getTopicName().replaceAll("　", ""));
+
                 Topic topic = topicService.selectOne(fileUploadVO.getTopicName(), projectTypeId);
                 // 定义文件夹名称
                 dirPath = dirPath + File.separator + "Slides" + File.separator + topic.getTopicName();
@@ -233,6 +242,16 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     @Override
     public String mergeChunk(FileUploadVO chunk) throws Exception {
+        // 眼科项目-专题、原文件名、解压的切片文件名删除空格
+        if (chunk.getBusinessType().equals(6)) {
+            // 删除英文空格
+            chunk.setFileName(StringUtils.removeAll(chunk.getFileName().trim(), "\\s"));
+            chunk.setTopicName(StringUtils.removeAll(chunk.getTopicName().trim(), "\\s"));
+            // 删除中文全角空格
+            chunk.setFileName(chunk.getFileName().replaceAll("　", ""));
+            chunk.setTopicName(chunk.getTopicName().replaceAll("　", ""));
+        }
+
         log.info("chunk:{} {}", chunk.getUuid(), chunk.getFileName());
         // 查询文件是否存在
         QueryWrapper<Files> filesQueryWrapper = new QueryWrapper<>();

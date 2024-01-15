@@ -384,5 +384,14 @@ public class FileUtils {
         return wb;
     }
 
-
+    /**
+     * 判断文件是否有扩展名
+     *
+     * @param fileName 文件名
+     * @return
+     */
+    public static boolean hasExtension(String fileName) {
+        int dotIndex = fileName.lastIndexOf('.');
+        return dotIndex > 0 && dotIndex < fileName.length() - 1;
+    }
 }
