@@ -293,6 +293,12 @@
             <if test="lesionDegree != null">
                 AND s.lesion_degree2 LIKE CONCAT('%', #{lesionDegree}, '%')
             </if>
+            <if test="slideIds.size() != 0 and slideIds != null ">
+                and s.slide_id in
+                <foreach collection="slideIds" item="slideId" open="(" separator="," close=")">
+                    #{slideId}
+                </foreach>
+            </if>
             <if test="createTimeParams != null">
                 <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
                     <!-- 开始时间检索 -->

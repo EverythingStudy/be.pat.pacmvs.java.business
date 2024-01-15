@@ -1,9 +1,12 @@
 package cn.staitech.anno.service;
 
+import java.util.List;
+
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
 import cn.staitech.anno.vo.predictioninfo.in.SlideImagePagerVO;
+import cn.staitech.anno.vo.predictioninfo.in.SlideImageStatusrVO;
 import cn.staitech.anno.vo.predictioninfo.in.SlidePredictionIn;
 import cn.staitech.anno.vo.predictioninfo.in.StartPredictionIn;
 import cn.staitech.anno.vo.predictioninfo.out.SlidePredictionOut;
@@ -23,4 +26,6 @@ public interface AlgorithmPredictionService {
     SlidePredictionOut getOriginalSlideList(SlidePredictionIn req);
 
     PageMaster<ImageCsvListVO> slidePageList(SlideImagePagerVO request);
+    
+    List<ImageCsvListVO> getSlideStatusList(SlideImageStatusrVO  request);
 }

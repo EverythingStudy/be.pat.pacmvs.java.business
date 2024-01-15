@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -77,4 +78,9 @@ public class ImageCsvGetVO implements Serializable {
 
     @ApiModelProperty("请求参数（开始和结束时间）")
     private Map<String, Object> createTimeParams;
+    
+    /**
+     * 项目ID
+     */
+    private List<Long> slideIds;
 }

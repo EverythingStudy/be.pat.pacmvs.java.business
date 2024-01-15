@@ -14,6 +14,7 @@ import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
 import cn.staitech.anno.vo.predictioninfo.in.SetMainImageDataIn;
 import cn.staitech.anno.vo.predictioninfo.in.SlideImagePagerVO;
+import cn.staitech.anno.vo.predictioninfo.in.SlideImageStatusrVO;
 import cn.staitech.anno.vo.predictioninfo.in.SlidePredictionIn;
 import cn.staitech.anno.vo.predictioninfo.in.StartPredictionIn;
 import cn.staitech.anno.vo.predictioninfo.out.SlidePredictionOut;
@@ -172,5 +173,11 @@ public class SlidePredictionController {
         }
         R r = algorithmPredictionService.startPrediction(req, project);
         return r;
+    }
+    
+    @ApiOperation(value = "定时查询算法项目切片列表状态")
+    @PostMapping("/getSlideStatusList")
+    public R<List<ImageCsvListVO>> getSlideStatusList(@Validated @RequestBody SlideImageStatusrVO req) {
+        return R.ok(algorithmPredictionService.getSlideStatusList(req));
     }
 }

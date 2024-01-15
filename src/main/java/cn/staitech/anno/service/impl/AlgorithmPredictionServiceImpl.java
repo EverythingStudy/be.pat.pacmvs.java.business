@@ -145,7 +145,7 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
 
                 log.info("AI算法请求数据：{}", JSONUtil.toJsonStr(predictionData));
 
-                //TODO 请求算法接口
+                //请求算法接口
                 try {
                     ResponseEntity<String> resp = restTemplate.postForEntity(algorithmPredictionPath, predictionData, String.class);
                     String body = resp.getBody();
@@ -233,5 +233,27 @@ public class AlgorithmPredictionServiceImpl implements AlgorithmPredictionServic
         PageHelper.clearPage();
         return pageMaster;
     }
+
+	@Override
+	public List<ImageCsvListVO> getSlideStatusList(SlideImageStatusrVO request) {
+		ImageCsvGetVO imageCsvGetVO = new ImageCsvGetVO();
+        BeanUtil.copyProperties(request, imageCsvGetVO);
+        imageCsvGetVO.setEyeMent("0");
+        List<ImageCsvListVO> list = slidePredictionMapper.getImageCsvListVOList(imageCsvGetVO);
+        for (ImageCsvListVO vo : list) {
+            EyeThumImageQuery query = new EyeThumImageQuery();
+            Long slideId = vo.getSlideId();
+            query.setSlideId(slideId);
+            query.setMainImage("1");
+            query.setDelFlag("0");
+            List<Image> mainImageList = slidePredictionMapper.getMainImageList(query);
+            if (CollectionUtils.isNotEmpty(mainImageList)) {
+                vo.setPredictionThumbUrl(mainImageList.get(0).getThumbUrl());
+            } else {
+                vo.setPredictionThumbUrl("");
+            }
+        }
+        return list;
+	}
 
 }
