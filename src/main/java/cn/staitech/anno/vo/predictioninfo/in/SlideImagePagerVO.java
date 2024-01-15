@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author wanglibei
@@ -48,5 +49,8 @@ public class SlideImagePagerVO extends Pager implements Serializable {
      */
     @ApiModelProperty(value = "AI分析状态：0:待分析（初始状态）、1:AI分析中、2:AI分析成功、3:AI分析失败")
     private Integer aiAnalyzed;
+    
+    @ApiModelProperty(value = "切片ID列表")
+    private List<Long> slideIds;
 }
 
