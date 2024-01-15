@@ -333,9 +333,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile), Charset.forName("GBK"))) {
             ZipEntry entry = zis.getNextEntry();
             while (entry != null) {
-
                 String entryFileName = entry.getName();
-                // log.info("B-entryFileName: {}", entryFileName);
 
                 // 眼科项目-专题、原文件名、解压的切片文件名删除空格
                 // 删除英文空格
@@ -355,9 +353,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                     entry = zis.getNextEntry();
                     continue;
                 }
-
-                // log.info("A-entryFileName: {}", entryFileName);
-
+                
                 // String filePath = destDirRoot + "/" + entry.getName();
                 String filePath = destDirRoot + "/" + entryFileName;
 
@@ -375,6 +371,10 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                         while ((len = zis.read(buffer)) > 0) {
                             fos.write(buffer, 0, len);
                         }
+                    } catch (Exception e) {
+                        log.info("压缩包文件解压写入异常:{} {}", filePath, e);
+                        entry = zis.getNextEntry();
+                        continue;
                     }
                 }
                 entry = zis.getNextEntry();
@@ -383,7 +383,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         } catch (Exception e) {
             e.printStackTrace();
             log.info("解压异常:{}", zipFile.getAbsolutePath());
-            throw new Exception(MessageSource.M("ZIP_FILE_UNZIP_FAILURE"));
+            // throw new Exception(MessageSource.M("ZIP_FILE_UNZIP_FAILURE"));
         }
         return true;
     }
