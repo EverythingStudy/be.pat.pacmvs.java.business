@@ -399,8 +399,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             }
             Project project = new Project();
             project.setProjectId(projectId);
-            // 只能删除项目状态是未启动的项目。
-            // project.setStatus(1);
             QueryWrapper queryWrapper = new QueryWrapper<>(project);
 
             Project delProject = getOne(queryWrapper);

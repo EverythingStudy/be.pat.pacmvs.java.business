@@ -94,15 +94,7 @@
         </if>
     </select>
 
-
-    <select id="selectMinUpdateTime" parameterType="cn.staitech.anno.domain.RecentlyVisited"
-            resultMap="RecentlyVisitedResult">
-        SELECT *
-        FROM tb_recently_visited
-        ORDER BY update_time ASC LIMIT 1;
-    </select>
-
-    <select id="selectBy" parameterType="Long" resultMap="RecentlyVisitedResult">
+    <select id="selectBy" parameterType="java.lang.Long" resultMap="RecentlyVisitedResult">
         <include refid="selectBy"/>
         where s.slide_id = #{slideId}
     </select>
@@ -201,7 +193,7 @@
         )
     </insert>
 
-    <update id="update" parameterType="Long">
+    <update id="update" parameterType="java.lang.Long">
         update tb_recently_visited
         <set>
             create_time = sysdate(),

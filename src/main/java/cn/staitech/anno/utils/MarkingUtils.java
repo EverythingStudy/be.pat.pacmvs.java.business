@@ -181,8 +181,8 @@ public class MarkingUtils {
                 // 取出交集图形
                 if (check) {
                     if (geometry1.within(geometry2)) {
-                        // throw new AnnoException(AnnotationResponseConstant.UPDATE_ANNO_ERROR);
-                        throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));// 修改失败,请检查后输入
+                        // 修改失败,请检查后输入
+                        throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
                     }
                     // 校验标注不能过小，不能小于1000.0
 //                        if (geometry2.within(geometry1) && geometry2.getArea() < insideMaxArea) {

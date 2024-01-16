@@ -167,10 +167,4 @@ public class SnowFlakeGenerateIdWorker {
         return System.currentTimeMillis();
     }
 
-//    public static void main(String[] args) {
-//        SnowFlakeGenerateIdWorker snowFlakeGenerateIdWorker = new SnowFlakeGenerateIdWorker(0L, 0L);
-//        String id = snowFlakeGenerateIdWorker.generateNextId();
-//        System.out.println(id);
-//
-//    }
 }

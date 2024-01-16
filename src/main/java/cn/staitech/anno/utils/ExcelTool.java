@@ -21,14 +21,34 @@ import java.util.*;
  * @param <T>
  */
 public class ExcelTool<T> {
-
-    private XSSFWorkbook workbook;//excel 对象
-    private String title; //表格标题
-    private int colWidth = 20; //单元格宽度
-    private int rowHeight = 20;//单元格行高度
-    private XSSFCellStyle styleHead; //表头样式
-    private XSSFCellStyle styleBody; //主体样式
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //日期格式化,默认yyyy-MM-dd HH:mm:ss
+    /**
+     * excel 对象
+     */
+    private XSSFWorkbook workbook;
+    /**
+     * 表格标题
+     */
+    private String title;
+    /**
+     * 单元格宽度
+     */
+    private int colWidth = 20;
+    /**
+     * 单元格行高度
+     */
+    private int rowHeight = 20;
+    /**
+     * 表头样式
+     */
+    private XSSFCellStyle styleHead;
+    /**
+     * 主体样式
+     */
+    private XSSFCellStyle styleBody;
+    /**
+     * 日期格式化,默认yyyy-MM-dd HH:mm:ss
+     */
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     /**
      * 无参数 初始化 对象
@@ -84,32 +104,32 @@ public class ExcelTool<T> {
      * @param list
      */
     public static void setParm(List<Column> list, String rootid) {
-        int row = 0;//excel第几行
-        int rLen = 0; //excel 跨多少行
+        //excel第几行
+        int row = 0;
+        //excel 跨多少行
+        int rLen = 0;
         int totalRow = TreeTool.getMaxStep(list);
         int totalCol = TreeTool.getDownChilren(list, rootid);
         for (int i = 0; i < list.size(); i++) {
             Column poit = list.get(i);
-            int tree_step = TreeTool.getTreeStep(list, poit.getPid(), 0);//往上遍历tree
+            //往上遍历tree
+            int tree_step = TreeTool.getTreeStep(list, poit.getPid(), 0);
             poit.setTree_step(tree_step);
-            poit.setRow(tree_step);//设置第几行
+            //设置第几行
+            poit.setRow(tree_step);
             //判断是否有节点
             boolean hasCh = TreeTool.hasChild(list, poit);
             poit.setHasChilren(hasCh);
             if (hasCh) {
-                poit.setrLen(0);//设置跨多少行
+                //设置跨多少行
+                poit.setrLen(0);
             } else {
                 if (tree_step < totalRow) {
                     rLen = totalRow - tree_step;
                 }
                 poit.setrLen(rLen);
             }
-//            boolean flag=false;//控制只有root 节点才有总的行数信息
-//            if(rootid == null && rootid == poit.getId() )flag = true;
-//            if(rootid != null && rootid.equals(poit.getId()))flag = true;
-//            if(flag){
-//
-//            }
+
             poit.setTotalRow(totalRow);
             poit.setTotalCol(totalCol);
         }
@@ -348,8 +368,9 @@ public class ExcelTool<T> {
 
     /**
      * 导出表格 无返回
+     *
      * @param listTpamscolumn 表头数据
-     * @param datas 行内数据
+     * @param datas           行内数据
      * @param fOut
      * @param flag
      * @param rowFlag

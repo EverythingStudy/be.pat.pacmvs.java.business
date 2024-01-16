@@ -184,14 +184,6 @@
         </if>
     </select>
 
-    <select id="selectCategoryNum" parameterType="java.lang.Long" resultMap="SlideAnnotationResult">
-        select category_id, sum(sum) as sum
-        from tb_slide_annotation_result
-        where slide_id=#{slideId}
-        GROUP BY category_id
-        order by sum desc
-    </select>
-
     <select id="selectUpdateBy" parameterType="cn.staitech.anno.vo.project.ProjectInForImageVO"
             resultMap="SlideAnnotationResult">
         select DISTINCT a.update_by,sum(a.sum) as sum from tb_slide_annotation_result as a left join tb_slide as s
@@ -206,27 +198,5 @@
             and a.update_by!=0
         </where>
         group by update_by order by sum desc
-    </select>
-
-    <select id="selectAnnotationNum" parameterType="cn.staitech.anno.vo.project.ProjectInForImageVO"
-            resultMap="SlideAnnotationResult">
-        select distinct r.update_by,sum(r.sum) as sum from tb_slide as s left join tb_image as i on
-        s.image_id=i.image_id left join
-        tb_slide_annotation_result as r on s.slide_id=r.slide_id
-        <where>
-            <if test="projectId != null and projectId != '' ">
-                AND s.project_id = #{projectId}
-            </if>
-            <if test="processFlag != null and processFlag != '' ">
-                AND s.process_flag = #{processFlag}
-            </if>
-            <if test="imageName != null and imageName != '' ">
-                AND i.image_name = #{imageName}
-            </if>
-            <if test="slideId != null and slideId != '' ">
-                AND s.slide_id = #{slideId}
-            </if>
-        </where>
-        GROUP BY r.update_by
     </select>
 </mapper>

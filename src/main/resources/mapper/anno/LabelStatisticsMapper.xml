@@ -14,7 +14,6 @@
         <result property="indicatorNameEn" column="indicator_name_en"/>
     </resultMap>
 
-
     <resultMap type="cn.staitech.anno.vo.labelprojectstatistics.ProjectLabelOut" id="projectLabelListResult">
         <result property="indicatorId" column="indicator_id"/>
         <result property="indicatorName" column="indicator_name"/>
@@ -53,7 +52,8 @@
 
 
     <!--查询项目-->
-    <select id="projectList" resultMap="projectResult" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ProjectInVO">
+    <select id="projectList" resultMap="projectResult"
+            parameterType="cn.staitech.anno.vo.labelprojectstatistics.ProjectInVO">
         select DISTINCT p.project_id ,p.project_name from tb_project as p left join tb_project_member as m on
         p.project_id=m.project_id
         <where>
@@ -197,43 +197,12 @@
             </if>
             and p.project_type=1
         </where>
-            order by p.project_id desc
+        order by p.project_id desc
     </select>
 
-    <!--查询图像数量-->
-<!--    <select id="imageNum" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingIn" resultType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingOut">-->
-<!--        select count(distinct slide_id) as imageNum from tb_marking-->
-<!--        <where>-->
-<!--            <if test="projectId != null">-->
-<!--               AND project_id=#{projectId}-->
-<!--            </if>-->
-<!--            <if test="categoryId != null">-->
-<!--                AND category_id=#{categoryId}-->
-<!--            </if>-->
-<!--            <if test="annotationType != null">-->
-<!--                AND annotation_type !=#{annotationType}-->
-<!--            </if>-->
-<!--        </where>-->
-<!--    </select>-->
-
-    <!--查询标注数量-->
-<!--    <select id="markingNum" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingIn" resultType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingOut">-->
-<!--        select count(*) as markingNum from tb_marking-->
-<!--        <where>-->
-<!--            <if test="projectId != null">-->
-<!--                AND project_id=#{projectId}-->
-<!--            </if>-->
-<!--            <if test="categoryId != null">-->
-<!--                AND category_id=#{categoryId}-->
-<!--            </if>-->
-<!--            <if test="annotationType != null">-->
-<!--                AND annotation_type !=#{annotationType}-->
-<!--            </if>-->
-<!--        </where>-->
-<!--    </select>-->
-
     <!--项目创建者-->
-    <select id="userList" resultMap="userListResult" parameterType="cn.staitech.anno.vo.labelprojectstatistics.LabelSetIn">
+    <select id="userList" resultMap="userListResult"
+            parameterType="cn.staitech.anno.vo.labelprojectstatistics.LabelSetIn">
         select user_id,nick_name,user_name from sys_user
         <where>
             <if test="organizationId != null">
@@ -250,19 +219,19 @@
                 and del_flag=0
                 )
             </if>
-             <if test="currentUserId != null and currentUserId !=''">
+            <if test="currentUserId != null and currentUserId !=''">
                 and user_id IN(
-                	SELECT
-					m2.user_id 
-				FROM
-					tb_project_member m2 
-				WHERE
-					m2.project_id IN ( 
-					SELECT m1.project_id FROM tb_project_member m1 
-					left join tb_project p1 on m1.project_id = p1.project_id
-					WHERE m1.user_id = #{currentUserId} 
-					and p1.project_type = '1'
-					)
+                SELECT
+                m2.user_id
+                FROM
+                tb_project_member m2
+                WHERE
+                m2.project_id IN (
+                SELECT m1.project_id FROM tb_project_member m1
+                left join tb_project p1 on m1.project_id = p1.project_id
+                WHERE m1.user_id = #{currentUserId}
+                and p1.project_type = '1'
+                )
                 )
             </if>
             AND del_flag=0
@@ -271,8 +240,10 @@
 
 
     <!--查询项目-->
-    <select id="itemList" resultMap="projectLabelListResult" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ProjectListIn">
-        select p.project_id,p.project_name,u.nick_name,u.user_name,p.description,p.create_time,p.status from tb_project as p left join sys_user as u on u.user_id=p.create_by
+    <select id="itemList" resultMap="projectLabelListResult"
+            parameterType="cn.staitech.anno.vo.labelprojectstatistics.ProjectListIn">
+        select p.project_id,p.project_name,u.nick_name,u.user_name,p.description,p.create_time,p.status from tb_project
+        as p left join sys_user as u on u.user_id=p.create_by
         <where>
             <if test="createTimeParams != null">
                 <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
@@ -313,10 +284,10 @@
                 </foreach>
             </if>
             <if test="description != null">
-               AND p.description like concat('%', #{description}, '%')
+                AND p.description like concat('%', #{description}, '%')
             </if>
             <if test="projectType != null">
-               AND p.project_type=#{projectType}
+                AND p.project_type=#{projectType}
             </if>
             AND p.project_type=1 and p.status !=1
 
@@ -325,7 +296,8 @@
     </select>
 
     <!--查询图像数量-->
-    <select id="slideNum" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingIn" resultType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingOut">
+    <select id="slideNum" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingIn"
+            resultType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingOut">
         select count(slide_id) as imageNum from tb_slide
         <where>
             <if test="projectId != null">
@@ -360,16 +332,17 @@
     </select>
 
 
-
     <!--查询标注数量-->
-    <select id="markingNums" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingIn" resultMap="markingNumsResult">
+    <select id="markingNums" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingIn"
+            resultMap="markingNumsResult">
         SELECT
-            p.project_id as project_id,
-            (select c1.indicator_id from tb_project c1 where c1.project_id = p.project_id and c1.project_type=1 and c1.del_flag=0)  indicator_id,
-            p.category_id as category_id,
-            COUNT(*) as marking_num
+        p.project_id as project_id,
+        (select c1.indicator_id from tb_project c1 where c1.project_id = p.project_id and c1.project_type=1 and
+        c1.del_flag=0) indicator_id,
+        p.category_id as category_id,
+        COUNT(*) as marking_num
         FROM
-            tb_marking p
+        tb_marking p
         <where>
             <if test="projectIds != null and projectIds.size()>0 ">
                 AND p.project_id IN
@@ -386,18 +359,20 @@
             and p.annotation_type !='Measure'
         </where>
         GROUP BY
-            p.project_id,
-            indicator_id,
-            p.category_id
+        p.project_id,
+        indicator_id,
+        p.category_id
 
     </select>
 
 
     <!--查询图像数量-->
-    <select id="imageNums" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingIn" resultMap="markingNumsResult">
+    <select id="imageNums" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingIn"
+            resultMap="markingNumsResult">
         SELECT
         p.project_id as project_id,
-        (select c1.indicator_id from tb_project c1 where c1.project_id = p.project_id and c1.project_type=1 and c1.del_flag=0)  indicator_id,
+        (select c1.indicator_id from tb_project c1 where c1.project_id = p.project_id and c1.project_type=1 and
+        c1.del_flag=0) indicator_id,
         p.category_id as category_id,
         COUNT(DISTINCT(p.slide_id)) as image_num
         FROM
@@ -425,17 +400,18 @@
     </select>
 
     <!--查询项目标注数-->
-    <select id="projectMarking" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingIn" resultMap="markingNumsResult">
+    <select id="projectMarking" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingIn"
+            resultMap="markingNumsResult">
         select project_id,count(*) as marking_num from tb_marking
-    <where>
-        <if test="projectIds != null and projectIds.size()>0 ">
-            AND project_id IN
-            <foreach collection="projectIds" item="projectId" open="(" separator="," close=")">
-                #{projectId}
-            </foreach>
-        </if>
-        and annotation_type !='Measure'
-    </where>
+        <where>
+            <if test="projectIds != null and projectIds.size()>0 ">
+                AND project_id IN
+                <foreach collection="projectIds" item="projectId" open="(" separator="," close=")">
+                    #{projectId}
+                </foreach>
+            </if>
+            and annotation_type !='Measure'
+        </where>
         group by project_id
     </select>
 

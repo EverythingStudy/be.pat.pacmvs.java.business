@@ -673,7 +673,7 @@
     </select>
 
     <!--查询专题下项目的总数-->
-    <select id="selectProjectCount" parameterType="Long" resultType="int">
+    <select id="selectProjectCount" parameterType="java.lang.Long" resultType="int">
         select count(project_id)
         from tb_project
         <where>

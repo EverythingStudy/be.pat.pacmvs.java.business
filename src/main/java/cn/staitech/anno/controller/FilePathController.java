@@ -37,8 +37,6 @@ public class FilePathController {
 
     @PostMapping("/getFilePath")
     public R getFilePath(@RequestBody GetFilePathIn req) {
-        //String slidePath = "/home/pat_saas/Slides";
-        //String uploadPath = "/home/pat_saas/Upload";
         if (req.getProjectId() != null && req.getProjectId() != 0) {
             Project project = projectMapperV1.selectById(req.getProjectId());
             String fourNumber = StatisticListUtils.getFourNumberNoSlide(project.getOrganizationId());
@@ -54,15 +52,6 @@ public class FilePathController {
                 String replace = uploadPath.replace("/home/pat_saas", "/home/pat_saas/" + fourNumber);
                 return R.ok(replace);
             }
-
-
         }
-
     }
-
-/*    public static void main(String[] args) {
-        String fourNumber = StatisticListUtils.getFourNumberNoSlide(12L);
-        String replace = "/home/pat_saas/slides".replace("/home/pat_saas", "/home/pat_saas/" + fourNumber);
-        System.out.println(replace);
-    }*/
 }

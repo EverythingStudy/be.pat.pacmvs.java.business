@@ -13,21 +13,11 @@ import java.util.List;
  */
 @Data
 public class ConfirmSelectionIn {
-
-
+    
     @ApiModelProperty(value = "考题id")
     private List<Long> questionId;
 
     @ApiModelProperty(value = "项目id")
     @NotNull(message = "{ProjectRemoveIn.projectId.isnull}")
     private Long projectId;
-
-//    @ApiModelProperty(value = "切片编号")
-//    private String imageCode;
-//
-//    @ApiModelProperty(value = "json文件名称")
-//    private String jsonName;
-//
-//    @ApiModelProperty(value = "切片名称")
-//    private String imageName;
 }

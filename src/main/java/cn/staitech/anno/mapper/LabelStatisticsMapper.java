@@ -26,16 +26,6 @@ public interface LabelStatisticsMapper {
      */
     List<ProjectLabelOut> projectLabelList(ProjectLabelIn projectLabelIn);
 
-//    /**
-//     * 查询图像数量
-//     * */
-//    ImageMarkingOut imageNum(ImageMarkingIn imageMarkingIn);
-//
-//    /**
-//     * 查询标注数量
-//     * */
-//    ImageMarkingOut markingNum(ImageMarkingIn imageMarkingIn);
-
     /**
      * 项目创建者
      */
