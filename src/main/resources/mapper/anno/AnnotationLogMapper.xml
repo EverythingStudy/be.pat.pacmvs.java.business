@@ -55,7 +55,7 @@
     </sql>
 
 
-    <select id="selectAnnotationLogById" parameterType="Long" resultMap="AnnotationLogResult">
+    <select id="selectAnnotationLogById" parameterType="java.lang.Long" resultMap="AnnotationLogResult">
         <include refid="selectAnnotationLogVo"/>
         where annotation_id = #{annotationId}
         ORDER BY create_time_log desc

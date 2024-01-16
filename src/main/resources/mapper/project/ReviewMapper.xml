@@ -27,7 +27,7 @@
         <result property="roundName" column="round_name" jdbcType="VARCHAR"/>
         <result property="selfReviewStatus" column="self_review_status" jdbcType="VARCHAR"/>
     </resultMap>
-    <select id="exportReview" parameterType="Map" resultType="cn.staitech.anno.project.vo.ReviewVO">
+    <select id="exportReview" parameterType="java.util.Map" resultType="cn.staitech.anno.project.vo.ReviewVO">
         select r.score,r.details,r.create_name,r.create_time,p.project_name,i.image_name as image_code,rr.review_content
         as content,tr.round_name,g.group_name,tt.topic_name
         from tb_review r
