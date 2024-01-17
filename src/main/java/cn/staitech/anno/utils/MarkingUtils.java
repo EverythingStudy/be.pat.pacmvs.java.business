@@ -19,6 +19,8 @@ import org.geotools.geojson.GeoJSONUtil;
 import org.geotools.geojson.geom.GeometryJSON;
 
 import java.io.Reader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -353,6 +355,41 @@ public class MarkingUtils {
         JSONObject jsonObject = (JSONObject) JSON.toJSON(properties);
         features.setProperties(jsonObject);
         return features;
+    }
+
+    public static double precision(Double d) {
+        BigDecimal bd = new BigDecimal(d);
+        return bd.setScale(3, RoundingMode.DOWN).doubleValue();
+    }
+
+
+    public static JSONObject updatePrecision(JSONObject geometry) {
+        List<Object> lists = new ArrayList<>();
+        JSONArray coordinatesJsonArray1 = geometry.getJSONArray("coordinates");
+        String type = geometry.getString("type");
+        if (Objects.equals(type, "Polygon")) {
+            List<Object> list1 = new ArrayList<>();
+            for (Object i1 : coordinatesJsonArray1) {
+                List<Object> list2 = new ArrayList<>();
+                JSONArray jsonArray1 = JSONArray.parseArray(i1.toString());
+                for (Object i2 : jsonArray1) {
+                    JSONArray jsonArray2 = JSONArray.parseArray(i2.toString());
+                    List<Double> list = JSONObject.parseArray(jsonArray2.toJSONString(), Double.class);
+                    List<Double> newList = new ArrayList<>();
+                    double newX = precision(list.get(0));
+                    double newY = precision(list.get(1));
+                    newList.add(newX);
+                    newList.add(newY);
+                    list2.add(newList);
+                }
+                list1.add(list2);
+            }
+            lists.add(list1);
+        }
+        JSONObject geometryJson = new JSONObject();
+        geometryJson.put("type", type);
+        geometryJson.put("coordinates", lists.get(0));
+        return geometryJson;
     }
 
 

@@ -300,6 +300,9 @@ public class MarkingServiceImpl implements MarkingService {
     public String insertOutline(Outline outline, cn.staitech.anno.project.domain.Slide slide, SysUser user, Long categoryId) throws Exception {
         if (outline.getGeometry() != null && !outline.getGeometry().isEmpty()) {
             MarkingUtils.addVerify(outline.getGeometry());
+            // 精度保留3位小数
+            JSONObject jsonObject = MarkingUtils.updatePrecision(outline.getGeometry());
+            outline.setGeometry(jsonObject);
         } else {
             return "更新失败，轮廓数据不能为空";
         }
@@ -370,13 +373,13 @@ public class MarkingServiceImpl implements MarkingService {
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
-        Project project = projectMapperV1.selectById(markingBy.getProject_id());
 
         // 合并 - 校验飞点 TODO: MarkingUtils.updatePolygonPoint(jsonObject);
         cn.staitech.anno.project.domain.Marking markingBys = MarkingUtils.updateVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation(), req.getCheck(), req.getResolution());
-        JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(markingBys.getMarkingId()));
+        // 精度保留3位小数
+        JSONObject jsonObject = MarkingUtils.updatePrecision(JSONObject.parseObject(WktUtil.wktToJson(markingBys.getMarkingId())));
         // 校验合并后的图形是否正常
-        JSONObject geoJson = MarkingUtils.updatePoint(jsonObject);
+        MarkingUtils.updatePoint(jsonObject);
 
         cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
         marking.setGeometry(jsonObject);
@@ -1258,17 +1261,17 @@ public class MarkingServiceImpl implements MarkingService {
         if (markingIds.isEmpty()) {
             return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
-        Map<String,Marking> markingMap=features.stream().collect(Collectors.toMap(Marking::getMarking_id, Function.identity()));
+        Map<String, Marking> markingMap = features.stream().collect(Collectors.toMap(Marking::getMarking_id, Function.identity()));
         //异步删除
         CompletableFuture<Integer> cf1 = CompletableFuture.supplyAsync(() -> {
             Set<Long> categoryIds = new HashSet<>();
             Set<Long> createBys = new HashSet<>();
-            QueryWrapper<cn.staitech.anno.project.domain.Marking> wrapper=new QueryWrapper<>();
-            wrapper.in("marking_id",markingIds);
+            QueryWrapper<cn.staitech.anno.project.domain.Marking> wrapper = new QueryWrapper<>();
+            wrapper.in("marking_id", markingIds);
             markingMapperV1.delete(wrapper);
             for (String markingId : markingIds) {
-                    categoryIds.add(markingMap.get(markingId).getCategory_id());
-                    createBys.add(markingMap.get(markingId).getCreate_by());
+                categoryIds.add(markingMap.get(markingId).getCategory_id());
+                createBys.add(markingMap.get(markingId).getCreate_by());
             }
             BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, RELOAD_STATUS, null, null);
             NioWebSocketHandler.sendAll(slideId, broadcastVO);
