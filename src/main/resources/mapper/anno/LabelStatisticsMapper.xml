@@ -295,16 +295,6 @@
         order by p.project_id desc
     </select>
 
-    <!--查询图像数量-->
-    <select id="slideNum" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingIn"
-            resultType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingOut">
-        select count(slide_id) as imageNum from tb_slide
-        <where>
-            <if test="projectId != null">
-                AND project_id=#{projectId}
-            </if>
-        </where>
-    </select>
 
     <!--标签统计中的项目信息-->
     <select id="projectIdList" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ProjectLabelIn"
@@ -411,6 +401,21 @@
                 </foreach>
             </if>
             and annotation_type !='Measure'
+        </where>
+        group by project_id
+    </select>
+
+    <!--批量查询图像数量-->
+    <select id="listSlideNum" parameterType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingIn"
+            resultType="cn.staitech.anno.vo.labelprojectstatistics.ImageMarkingOut">
+        select project_id,count(slide_id) as imageNum from tb_slide
+        <where>
+            <if test="projectIds != null and projectIds.size()>0">
+                AND project_id IN
+                <foreach collection="projectIds" item="projectId" open="(" separator="," close=")">
+                    #{projectId}
+                </foreach>
+            </if>
         </where>
         group by project_id
     </select>

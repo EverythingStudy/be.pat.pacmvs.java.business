@@ -37,11 +37,6 @@ public interface LabelStatisticsMapper {
     List<ProjectLabelOut> itemList(ProjectListIn projectListIn);
 
     /**
-     * 查询图像数量
-     */
-    ImageMarkingOut slideNum(ImageMarkingIn imageMarkingIn);
-
-    /**
      * 标签统计中的项目信息
      */
     List<ProjectLabelOut> projectIdList(ProjectLabelIn projectLabelIn);
@@ -60,4 +55,9 @@ public interface LabelStatisticsMapper {
      * 项目统计-查询标注数
      */
     List<ImageMarkingOut> projectMarking(ImageMarkingIn imageMarkingIn);
+
+    /**
+     * 批量查询图像数量
+     * */
+    List<ImageMarkingOut>listSlideNum(ImageMarkingIn imageMarkingIn);
 }

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -156,6 +157,10 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
         projectListIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         projectListIn.setUsers(SecurityUtils.getUserId());
         List<ProjectLabelOut> itemList = labelStatisticsMapper.itemList(projectListIn);
+        List<Long> projectIds=itemList.stream().map(ProjectLabelOut::getProjectId).collect(Collectors.toList());
+        ImageMarkingIn imageMarkingIns= ImageMarkingIn.builder().projectIds(projectIds).build();
+        List<ImageMarkingOut> listSlideNum=labelStatisticsMapper.listSlideNum(imageMarkingIns);
+        Map<Long,ImageMarkingOut>listSlideMap=listSlideNum.stream().collect(Collectors.toMap(ImageMarkingOut::getProjectId,Function.identity()));
         ProjectInVO projectInVO = ProjectInVO.builder().organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).userId(SecurityUtils.getUserId()).projectType("1").build();
         List<ProjectListOut> projectList = labelStatisticsMapper.projectList(projectInVO);
         //项目id列表
@@ -163,17 +168,17 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
         //
         ImageMarkingIn imageMarkingIn = ImageMarkingIn.builder().projectIds(projectIdList).build();
         List<ImageMarkingOut> marking = labelStatisticsMapper.projectMarking(imageMarkingIn);
+        Map<Long,ImageMarkingOut> markingMap=marking.stream().collect(Collectors.toMap(ImageMarkingOut::getProjectId, Function.identity()));
         //循环添加图像数量和标注数
         for (ProjectLabelOut projectLabelOut : itemList) {
             projectLabelOut.setMarkingNum("0");
-            for (ImageMarkingOut markingOut : marking) {
-                if (projectLabelOut.getProjectId().equals(markingOut.getProjectId())) {
-                    projectLabelOut.setMarkingNum(markingOut.getMarkingNum().toString());
-                }
+            projectLabelOut.setImageNum("0");
+            if (markingMap.containsKey(projectLabelOut.getProjectId())){
+                projectLabelOut.setMarkingNum(markingMap.get(projectLabelOut.getProjectId()).getMarkingNum().toString());
             }
-            ImageMarkingIn imageIn = ImageMarkingIn.builder().projectId(projectLabelOut.getProjectId()).build();
-            ImageMarkingOut imageOut = labelStatisticsMapper.slideNum(imageIn);
-            projectLabelOut.setImageNum(imageOut.getImageNum().toString());
+            if (listSlideMap.containsKey(projectLabelOut.getProjectId())){
+                projectLabelOut.setImageNum(listSlideMap.get(projectLabelOut.getProjectId()).getImageNum().toString());
+            }
         }
         PageMaster<ProjectLabelOut> pageMaster = new PageMaster<>(itemList);
         return R.ok(pageMaster);
@@ -251,6 +256,10 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
         projectListIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         projectListIn.setUsers(SecurityUtils.getUserId());
         List<ProjectLabelOut> itemList = labelStatisticsMapper.itemList(projectListIn);
+        List<Long> projectIds=itemList.stream().map(ProjectLabelOut::getProjectId).collect(Collectors.toList());
+        ImageMarkingIn imageMarkingIns= ImageMarkingIn.builder().projectIds(projectIds).build();
+        List<ImageMarkingOut> listSlideNum=labelStatisticsMapper.listSlideNum(imageMarkingIns);
+        Map<Long,ImageMarkingOut>listSlideMap=listSlideNum.stream().collect(Collectors.toMap(ImageMarkingOut::getProjectId,Function.identity()));
         ProjectInVO projectInVO = ProjectInVO.builder().organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).userId(SecurityUtils.getUserId()).projectType("1").build();
         List<ProjectListOut> projectList = labelStatisticsMapper.projectList(projectInVO);
         //项目id列表
@@ -258,17 +267,17 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
         //
         ImageMarkingIn imageMarkingIn = ImageMarkingIn.builder().projectIds(projectIdList).build();
         List<ImageMarkingOut> marking = labelStatisticsMapper.projectMarking(imageMarkingIn);
+        Map<Long,ImageMarkingOut> markingMap=marking.stream().collect(Collectors.toMap(ImageMarkingOut::getProjectId, Function.identity()));
         //循环添加图像数量和标注数
         for (ProjectLabelOut projectLabelOut : itemList) {
             projectLabelOut.setMarkingNum("0");
-            for (ImageMarkingOut markingOut : marking) {
-                if (projectLabelOut.getProjectId().equals(markingOut.getProjectId())) {
-                    projectLabelOut.setMarkingNum(markingOut.getMarkingNum().toString());
-                }
+            projectLabelOut.setImageNum("0");
+            if (markingMap.containsKey(projectLabelOut.getProjectId())){
+                projectLabelOut.setMarkingNum(markingMap.get(projectLabelOut.getProjectId()).getMarkingNum().toString());
             }
-            ImageMarkingIn imageIn = ImageMarkingIn.builder().projectId(projectLabelOut.getProjectId()).build();
-            ImageMarkingOut imageOut = labelStatisticsMapper.slideNum(imageIn);
-            projectLabelOut.setImageNum(imageOut.getImageNum().toString());
+            if (listSlideMap.containsKey(projectLabelOut.getProjectId())){
+                projectLabelOut.setImageNum(listSlideMap.get(projectLabelOut.getProjectId()).getImageNum().toString());
+            }
             projectLabelOut.setStatusName(Container.PROJECT_STATUS.get(projectLabelOut.getStatus()));
         }
 
