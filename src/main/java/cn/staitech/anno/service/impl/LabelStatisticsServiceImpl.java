@@ -108,22 +108,20 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
         //查询标注数
         ImageMarkingIn imageMarkingIn = ImageMarkingIn.builder().projectIds(projectIdList).categoryIds(categoryIdList).build();
         List<ImageMarkingOut> markingNums = labelStatisticsMapper.markingNums(imageMarkingIn);
+        Map<String,ImageMarkingOut>markingNumsMap=markingNums.stream().collect(Collectors.toMap(ImageMarkingOut::getNum,Function.identity()));
         //查询图像数量
         List<ImageMarkingOut> imageNums = labelStatisticsMapper.imageNums(imageMarkingIn);
+        Map<String,ImageMarkingOut>imageNumsMap=imageNums.stream().collect(Collectors.toMap(ImageMarkingOut::getNum,Function.identity()));
         for (ProjectLabelOut projectLabelOut : projectLabelOuts) {
             projectLabelOut.setMarkingNum("0");
             projectLabelOut.setImageNum("0");
             //添加标注数量
-            for (ImageMarkingOut marking : markingNums) {
-                if (projectLabelOut.getProjectId().equals(marking.getProjectId()) && projectLabelOut.getCategoryId().equals(marking.getCategoryId())) {
-                    projectLabelOut.setMarkingNum(marking.getMarkingNum().toString());
-                }
+            if (markingNumsMap.containsKey(projectLabelOut.getNum())){
+                projectLabelOut.setMarkingNum(markingNumsMap.get(projectLabelOut.getNum()).getMarkingNum().toString());
             }
             //添加图像数量
-            for (ImageMarkingOut markingOut : imageNums) {
-                if (projectLabelOut.getProjectId().equals(markingOut.getProjectId()) && projectLabelOut.getCategoryId().equals(markingOut.getCategoryId())) {
-                    projectLabelOut.setImageNum(markingOut.getImageNum().toString());
-                }
+            if (imageNumsMap.containsKey(projectLabelOut.getNum())){
+                projectLabelOut.setImageNum(imageNumsMap.get(projectLabelOut.getNum()).getImageNum().toString());
             }
         }
         PageMaster<ProjectLabelOut> pageMaster = new PageMaster<>(projectLabelOuts);
@@ -205,23 +203,22 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
         //查询标注数
         ImageMarkingIn imageMarkingIn = ImageMarkingIn.builder().projectIds(projectIdList).categoryIds(categoryIdList).build();
         List<ImageMarkingOut> markingNums = labelStatisticsMapper.markingNums(imageMarkingIn);
+        Map<String,ImageMarkingOut>markingNumsMap=markingNums.stream().collect(Collectors.toMap(ImageMarkingOut::getNum,Function.identity()));
         //查询图像数量
         List<ImageMarkingOut> imageNums = labelStatisticsMapper.imageNums(imageMarkingIn);
+        Map<String,ImageMarkingOut>imageNumsMap=imageNums.stream().collect(Collectors.toMap(ImageMarkingOut::getNum,Function.identity()));
+
         for (ProjectLabelOut projectLabelOut : projectLabelOuts) {
             projectLabelOut.setStatusName(Container.PROJECT_STATUS.get(projectLabelOut.getStatus()));
             projectLabelOut.setMarkingNum("0");
             projectLabelOut.setImageNum("0");
             //添加标注数量
-            for (ImageMarkingOut marking : markingNums) {
-                if (projectLabelOut.getProjectId().equals(marking.getProjectId()) && projectLabelOut.getCategoryId().equals(marking.getCategoryId())) {
-                    projectLabelOut.setMarkingNum(marking.getMarkingNum().toString());
-                }
+            if (markingNumsMap.containsKey(projectLabelOut.getNum())){
+                projectLabelOut.setMarkingNum(markingNumsMap.get(projectLabelOut.getNum()).getMarkingNum().toString());
             }
             //添加图像数量
-            for (ImageMarkingOut markingOut : imageNums) {
-                if (projectLabelOut.getProjectId().equals(markingOut.getProjectId()) && projectLabelOut.getCategoryId().equals(markingOut.getCategoryId())) {
-                    projectLabelOut.setImageNum(markingOut.getImageNum().toString());
-                }
+            if (imageNumsMap.containsKey(projectLabelOut.getNum())){
+                projectLabelOut.setImageNum(imageNumsMap.get(projectLabelOut.getNum()).getImageNum().toString());
             }
         }
         List<Map<String, String>> titleList = getTitleList(CommonConstant.LABEL_STATISTICS_KEY, CommonConstant.LABEL_STATISTICS_VALUE);

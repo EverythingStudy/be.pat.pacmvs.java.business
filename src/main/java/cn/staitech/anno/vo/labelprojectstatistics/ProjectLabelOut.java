@@ -58,4 +58,7 @@ public class ProjectLabelOut {
     @ApiModelProperty(value = "状态", hidden = true)
     private String statusName;
 
+    @ApiModelProperty(value = "项目id和标签id组成的编号",hidden = true)
+    private String num;
+
 }

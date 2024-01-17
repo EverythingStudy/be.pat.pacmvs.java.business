@@ -30,4 +30,6 @@ public class ImageMarkingOut {
     private Long indicatorId;
 
     private Long slideId;
+
+    private String num;
 }

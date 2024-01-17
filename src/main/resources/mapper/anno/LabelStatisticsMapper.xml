@@ -26,6 +26,7 @@
         <result property="userName" column="user_name"/>
         <result property="description" column="description"/>
         <result property="createTime" column="create_time"/>
+        <result property="num" column="num"/>
     </resultMap>
 
     <resultMap type="cn.staitech.anno.vo.labelprojectstatistics.LabelOut" id="labelListResult">
@@ -47,6 +48,7 @@
         <result property="categoryId" column="category_id"/>
         <result property="markingNum" column="marking_num"/>
         <result property="imageNum" column="image_num"/>
+        <result property="num" column="num"/>
 
     </resultMap>
 
@@ -161,7 +163,8 @@
         ic.category_name,
         p.project_name,
         pi.indicator_name,
-        p.status
+        p.status,
+        concat(p.project_id,"_",ic.category_id) as num
         from (
         SELECT DISTINCT category_id,indicator_id,category_name
         FROM tb_pathological_indicator_category
@@ -330,7 +333,8 @@
         (select c1.indicator_id from tb_project c1 where c1.project_id = p.project_id and c1.project_type=1 and
         c1.del_flag=0) indicator_id,
         p.category_id as category_id,
-        COUNT(*) as marking_num
+        COUNT(*) as marking_num,
+        concat(p.project_id,"_",p.category_id) as num
         FROM
         tb_marking p
         <where>
@@ -364,7 +368,8 @@
         (select c1.indicator_id from tb_project c1 where c1.project_id = p.project_id and c1.project_type=1 and
         c1.del_flag=0) indicator_id,
         p.category_id as category_id,
-        COUNT(DISTINCT(p.slide_id)) as image_num
+        COUNT(DISTINCT(p.slide_id)) as image_num,
+        concat(p.project_id,"_",p.category_id) as num
         FROM
         tb_marking p
         <where>
