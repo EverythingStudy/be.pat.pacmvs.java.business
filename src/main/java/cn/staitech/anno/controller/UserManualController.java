@@ -94,20 +94,25 @@ public class UserManualController {
     	String onlyPath = "/home/staitech";
     	String onlyPathTotal = execBash(onlyPath);
     	System.out.println("onlyPathTotal："+onlyPathTotal);
-    	return R.ok();
+    	return R.ok(onlyPathTotal);
     }
     
     private String execBash(String path){
     	String result = "";
-    	String cmd = "df -h ";
+//    	df -h  /home/staitech | awk '{print $2,$3,$4,$6}'
+    	String cmd1 = "df -h ";
+    	String cmd2 = " | awk '{print $2,$3,$4,$6}'";
+    	String totalCmd = "";
     	if(StringUtils.isNotEmpty(path)){
-    		cmd = cmd +path;
+    		totalCmd = cmd1 +path+cmd2;
+    	}else{
+    		totalCmd = cmd1+cmd2;
     	}
-    	System.out.println("cmd-2："+cmd);
+    	System.out.println("totalCmd："+totalCmd);
     	StringBuffer sb = new StringBuffer();
     	try {
     		Process process;
-    		process = Runtime.getRuntime().exec(cmd);
+    		process = Runtime.getRuntime().exec(totalCmd);
 
     		BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
     		String line;
