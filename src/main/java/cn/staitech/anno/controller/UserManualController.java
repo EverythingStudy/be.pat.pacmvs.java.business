@@ -166,15 +166,17 @@ public class UserManualController {
 		String totalSize = "";
 		//原始大小
 		diskSize = diskSize.substring(0, diskSize.length()-1);
-		int totalIntT = 0;
+		Double totalIntT = 0.0;
 		if(type == 1){
 			//M转T
-			totalIntT = Integer.valueOf(diskSize) /1024/1024;
+			totalIntT = Double.valueOf(diskSize) /1024/1024;
 		}else if(type == 2){
 			//G转T
-			totalIntT = Integer.valueOf(diskSize) /1024;
+			totalIntT = Double.valueOf(diskSize) /1024;
 		}
-		totalSize = totalIntT+"T";
+		//#.00 表示两位小数  
+        DecimalFormat df = new DecimalFormat("#0.00");    
+		totalSize = df.format(totalIntT)+"T";
 		return totalSize;
 	}
 
