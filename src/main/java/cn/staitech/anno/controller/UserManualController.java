@@ -5,6 +5,8 @@ import cn.staitech.anno.service.UserManualService;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.redis.service.RedisService;
 import cn.staitech.common.security.utils.SecurityUtils;
+
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -94,7 +96,30 @@ public class UserManualController {
     	String onlyPath = "/home/staitech";
     	String onlyPathTotal = execBash(onlyPath);
     	System.out.println("onlyPathTotal："+onlyPathTotal);
-    	return R.ok(onlyPathTotal);
+    	JSONObject jsonobject = new JSONObject();
+    	if(StringUtils.isNotEmpty(onlyPathTotal)){
+    		String[] diskArray = onlyPathTotal.split("\n"); 
+    		System.out.println(diskArray[1]);
+    		String totalSize = diskArray[1].split("  ")[1];
+    		String hasUserSize = diskArray[1].split("  ")[2];
+    		String freeSize = diskArray[1].split("  ")[3];
+    		if(totalSize.endsWith("M")){
+    			//转换
+    			totalSize = trans2DiskSize(totalSize, 1);
+    			hasUserSize = trans2DiskSize(hasUserSize, 1);
+    			freeSize = trans2DiskSize(freeSize, 1);
+    		}else if(totalSize.endsWith("G")){
+    			//转换
+    			totalSize = trans2DiskSize(totalSize, 2);
+    			hasUserSize = trans2DiskSize(hasUserSize, 2);
+    			freeSize = trans2DiskSize(freeSize, 2);
+    		}
+
+    		jsonobject.put("totalSize", totalSize);
+    		jsonobject.put("hasUserSize", hasUserSize);
+    		jsonobject.put("freeSize", freeSize);
+    	}
+    	return R.ok(jsonobject);
     }
     
     private String execBash(String path){
@@ -125,5 +150,32 @@ public class UserManualController {
     	}
     	return result;
     }
+    
+    
+    /**
+	 * 
+	* @Title: trans2DiskSize
+	* @Description: 单位转换
+	* @param @param diskSize
+	* @param @param Type 1:M 2:G
+	* @param @return
+	* @return String
+	* @throws
+	 */
+	public static  String trans2DiskSize(String diskSize,int type){
+		String totalSize = "";
+		//原始大小
+		diskSize = diskSize.substring(0, diskSize.length()-1);
+		int totalIntT = 0;
+		if(type == 1){
+			//M转T
+			totalIntT = Integer.valueOf(diskSize) /1024/1024;
+		}else if(type == 2){
+			//G转T
+			totalIntT = Integer.valueOf(diskSize) /1024;
+		}
+		totalSize = totalIntT+"T";
+		return totalSize;
+	}
 
 }
