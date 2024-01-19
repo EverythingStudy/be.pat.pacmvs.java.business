@@ -2,6 +2,7 @@ package cn.staitech.anno.mapper;
 
 
 import cn.staitech.anno.vo.organization.OrganizationIdName;
+import cn.staitech.anno.vo.organization.SysConfigOut;
 
 import java.util.List;
 
@@ -16,4 +17,14 @@ public interface SysOrganizationMapper {
      * @return
      */
     List<OrganizationIdName> selectIdNameList();
+
+    /**
+     * ai拼接
+     * */
+    SysConfigOut aiMontage(String key);
+
+    /**
+     * 更新ai拼接
+     * */
+    int updateAiMontage(SysConfigOut sysConfigOut);
 }

@@ -5,14 +5,12 @@ import cn.staitech.anno.domain.ExamineScore;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.ProjectMember;
 import cn.staitech.anno.mapper.ExamineScoreMapper;
-import cn.staitech.anno.service.FileService;
-import cn.staitech.anno.service.MarkingService;
-import cn.staitech.anno.service.ProjectMemberService;
-import cn.staitech.anno.service.ProjectService;
+import cn.staitech.anno.service.*;
 import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.file.Chunk;
+import cn.staitech.anno.vo.organization.SysConfigOut;
 import cn.staitech.anno.vo.project.*;
 import cn.staitech.anno.vo.project.in.ProjectIdsVO;
 import cn.staitech.anno.vo.project.in.ProjectListQueryIn;
@@ -64,6 +62,9 @@ public class ProjectController extends BaseController {
     private FileService fileService;
     @Resource
     private MarkingService markingService;
+
+    @Resource
+    private SysOrganizationService sysOrganizationService;
 
     /**
      * 项目状态列表 .
@@ -248,4 +249,23 @@ public class ProjectController extends BaseController {
         markingService.zipExport(zipUrl, specialId);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
+
+    @ApiOperation(value = "AI拼接")
+    @GetMapping(value = "/aiMontage")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "configKey", value = "code", dataTypeClass = String.class, paramType = "query", example = "1")})
+    public R<SysConfigOut> aiMontage(@RequestParam("configKey") String configKey) {
+        SysConfigOut sysConfigOut=sysOrganizationService.aiMontage(configKey);
+        return R.ok(sysConfigOut);
+    }
+
+
+    @ApiOperation(value = "更新AI拼接")
+    @PostMapping("/updateAiMontage")
+    public R<String> updateAiMontage(@Validated @RequestBody SysConfigOut sysConfigOut) {
+       sysOrganizationService.updateAiMontage(sysConfigOut);
+        return R.ok(null,"修改成功");
+    }
+
+
 }

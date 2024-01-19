@@ -37,6 +37,11 @@
         <result property="organizationName" column="organization_name"/>
     </resultMap>
 
+    <resultMap type="cn.staitech.anno.vo.organization.SysConfigOut" id="aiMontageResult">
+        <result property="configKey" column="config_key"/>
+        <result property="configValue" column="config_value"/>
+    </resultMap>
+
     <sql id="selectBy">
         select organization_id
              , organization_name
@@ -57,4 +62,23 @@
         from sys_organization
         order by organization_id asc;
     </select>
+
+    <!--ai拼接-->
+    <select id="aiMontage" resultMap="aiMontageResult" parameterType="java.lang.String">
+        select config_key,config_value from sys_config where config_key =#{configKey}
+    </select>
+
+    <!--更新ai拼接-->
+    <update id="updateAiMontage" parameterType="cn.staitech.anno.vo.organization.SysConfigOut">
+        update sys_config
+        <set>
+            <if test="configValue != null">
+                config_value = #{configValue},
+            </if>
+            update_time = sysdate(),
+            update_by=#{updateBy}
+        </set>
+        where config_key = #{configKey}
+    </update>
+
 </mapper>

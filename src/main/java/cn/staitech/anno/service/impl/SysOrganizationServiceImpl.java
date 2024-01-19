@@ -4,6 +4,8 @@ package cn.staitech.anno.service.impl;
 import cn.staitech.anno.mapper.SysOrganizationMapper;
 import cn.staitech.anno.service.SysOrganizationService;
 import cn.staitech.anno.vo.organization.OrganizationIdName;
+import cn.staitech.anno.vo.organization.SysConfigOut;
+import cn.staitech.common.security.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -29,5 +31,24 @@ public class SysOrganizationServiceImpl implements SysOrganizationService {
         Map<Long, String> map = list.stream()
                 .collect(Collectors.toMap(OrganizationIdName::getOrganizationId, OrganizationIdName::getOrganizationName));
         return map;
+    }
+
+
+    /**
+     * ai拼接
+     * */
+    @Override
+    public SysConfigOut aiMontage(String key){
+        return organizationMapper.aiMontage(key);
+    }
+
+
+    /**
+     * 更新ai拼接
+     * */
+    @Override
+    public int updateAiMontage(SysConfigOut sysConfigOut){
+        sysConfigOut.setUpdateBy(SecurityUtils.getUserId());
+        return organizationMapper.updateAiMontage(sysConfigOut);
     }
 }
