@@ -86,7 +86,7 @@ public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline>
             outline.setArea(Double.valueOf(jsonObject.getBigDecimal("area").toString()));
             outline.setPerimeter(Double.valueOf(jsonObject.getBigDecimal("perimeter").toString()));
             outline.setLongAxis(Double.valueOf(jsonObject.getBigDecimal("longAxis").toString()));
-            outline.setArea(Double.valueOf(jsonObject.getBigDecimal("shortAxis").toString()));
+            outline.setShortAxis(Double.valueOf(jsonObject.getBigDecimal("shortAxis").toString()));
             outline.setGeometry(JSONObject.parseObject(jsonObject.getString("geometry")));
 
             srcList.add(outline);
