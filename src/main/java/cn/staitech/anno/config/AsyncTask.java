@@ -289,8 +289,8 @@ public class AsyncTask {
                 List<cn.staitech.anno.project.domain.SysUser> userList = userMapperV1.selectList(userQueryWrapper);
 
                 QueryWrapper<Marking> markingQueryWrapperBy = new QueryWrapper<>();
-                for (Long createBy : userIdList) {
-                    markingQueryWrapperBy.eq("create_by", createBy);
+//                for (Long createBy : userIdList) {
+                    markingQueryWrapperBy.in("create_by", userIdList);
                     markingQueryWrapperBy.eq("slide_id", slideId);
                     // 删除json文件中所有用户在切片中的轮廓数据
                     // 查询当前切片下的用户数量
@@ -303,7 +303,7 @@ public class AsyncTask {
                             markingMapperV1.delete(markingQueryWrapperBy);
                         }
                     }
-                }
+//                }
                 // 将数据转化为map
                 Map<Long, String> userMap = userList.stream().collect(Collectors.toMap(cn.staitech.anno.project.domain.SysUser::getUserId, cn.staitech.anno.project.domain.SysUser::getUserName));
                 // 查询切片详情

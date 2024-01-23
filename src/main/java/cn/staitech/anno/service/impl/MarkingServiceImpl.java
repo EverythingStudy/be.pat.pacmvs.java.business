@@ -388,6 +388,7 @@ public class MarkingServiceImpl implements MarkingService {
         marking.setMarkingId(req.getMarking_id());
         marking.setUpdateBy(SecurityUtils.getUserId());
         marking.setUpdateTime(new Date());
+        marking.setAnnotationUpdateOwner(SecurityUtils.getUsername());
         markingMapperV1.updateById(marking);
         // 更新后查询数据并返回
         Properties properties = markingMapper.selectBy(req.getMarking_id());
