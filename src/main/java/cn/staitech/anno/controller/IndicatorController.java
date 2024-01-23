@@ -4,8 +4,10 @@ import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.Organ;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
+import cn.staitech.anno.domain.RecentlyVisited;
 import cn.staitech.anno.mapper.OrganMapper;
 import cn.staitech.anno.service.IndicatorService;
+import cn.staitech.anno.service.OrganService;
 import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
 import cn.staitech.anno.service.ProjectService;
 import cn.staitech.anno.service.StructureService;
@@ -57,6 +59,10 @@ public class IndicatorController extends BaseController {
 
     @Resource
     private StructureService structureService;
+    
+    @Resource
+    private OrganService organService;
+    
 
     /**
      * 添加结构指标 2.0SAAS .
@@ -127,8 +133,8 @@ public class IndicatorController extends BaseController {
             }
 
 
-            MapConstant.ORGAN_MAP = structureService.selectMap();
-            MapConstant.ORGAN_MAP_EN = structureService.selectMapEn();
+            MapConstant.ORGAN_MAP = organService.selectMap();
+            MapConstant.ORGAN_MAP_EN = organService.selectMapEn();
             MapConstant.STRUCTURE_MAP = structureService.selectMap();
             MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
         }
@@ -228,6 +234,23 @@ public class IndicatorController extends BaseController {
         pathologicalService.updateByPrimaryKeySelective(Pathological);
         //删除病理指标
         indicatorService.delIndicator(indicatorGetVO.getIndicatorId().longValue());
+        Indicator indicatorOld = indicatorService.selectIndicatorsById(indicatorGetVO.getIndicatorId().longValue());
+        if(null != indicatorOld){
+        	//脏器id
+        	String organId = indicatorOld.getOrganId();
+        	//机构id
+        	Long baseOrganizationId = indicatorOld.getOrganizationId();
+        	//种属
+        	String speciesCode = indicatorOld.getSpeciesId();
+        	//删除脏器
+        	QueryWrapper<Organ> removeQueryWrapper = new QueryWrapper<>();
+        	removeQueryWrapper.eq("organ_id", organId).eq("organization_id", baseOrganizationId).eq("species_code", speciesCode);
+        	organService.remove(removeQueryWrapper);
+        }
+        MapConstant.ORGAN_MAP = organService.selectMap();
+        MapConstant.ORGAN_MAP_EN = organService.selectMapEn();
+        MapConstant.STRUCTURE_MAP = structureService.selectMap();
+        MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
@@ -305,8 +328,8 @@ public class IndicatorController extends BaseController {
                 organMapper.insert(organ);
             }
 
-            MapConstant.ORGAN_MAP = structureService.selectMap();
-            MapConstant.ORGAN_MAP_EN = structureService.selectMapEn();
+            MapConstant.ORGAN_MAP = organService.selectMap();
+            MapConstant.ORGAN_MAP_EN = organService.selectMapEn();
             MapConstant.STRUCTURE_MAP = structureService.selectMap();
             MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
         }
