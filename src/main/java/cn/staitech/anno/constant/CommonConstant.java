@@ -149,4 +149,12 @@ public class CommonConstant {
         throw new IllegalStateException("CommonConstant class");
     }
 
+
+    /**
+     * 项目内单图标签统计表头
+     */
+    public static final String[] PROJECT_IN_STATISTICS_KEY = {"图像名称", "标注人员", "标签", "标注数量", "图像状态"};
+
+    public static final String[] PROJECT_IN_STATISTICS_VALUE = {"imageName", "nickName", "categoryName", "markingNum", "statusName"};
+
 }
