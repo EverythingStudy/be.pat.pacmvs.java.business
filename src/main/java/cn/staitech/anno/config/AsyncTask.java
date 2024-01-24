@@ -268,7 +268,6 @@ public class AsyncTask {
                     // 将剩余数据进行添加
                     if (markingList.size() > 0) {
                         markingServiceV1.saveBatch(markingList);
-                        markingList = new ArrayList<>();
                     }
                     // 获取标签列表
                     List<Long> categoryList = new ArrayList<>();
@@ -279,7 +278,7 @@ public class AsyncTask {
                     if (Objects.equals(slideBy.getStatus(), "1")) {
                         // 更新切片表中状态至切片中
                         slideBy.setStatus("2");
-//                    slideMapperV1.updateById(slideBy);
+                    slideMapperV1.updateById(slideBy);
                     }
                     // 添加结束之后，更新标签信息
                     slideAttrService.saveAnnoUsers(slide.getSlideId(), userIdList, userId);
