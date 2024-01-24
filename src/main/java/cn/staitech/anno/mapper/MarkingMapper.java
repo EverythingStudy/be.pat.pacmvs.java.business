@@ -1,5 +1,6 @@
 package cn.staitech.anno.mapper;
 
+import cn.staitech.anno.domain.MarkMeasure;
 import cn.staitech.anno.domain.MarkingStatistic;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.JsonExport;
@@ -127,4 +128,13 @@ public interface MarkingMapper extends BaseMapper<Marking> {
      * ROI查询
      * */
     List<Marking> roiMarking(Integer slideId);
+
+
+
+    /**
+     * ROI对measure查询
+     * */
+    List<MarkMeasure>roiMeasure(Long slideId);
+
+    int delMeasure(List<String> list);
 }

@@ -5,6 +5,7 @@ import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.thread.ExecutorBuilder;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Image;
+import cn.staitech.anno.domain.MarkMeasure;
 import cn.staitech.anno.domain.Outline;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.mapper.*;
@@ -1253,29 +1254,53 @@ public class MarkingServiceImpl implements MarkingService {
         //查询slideId的所有标注
         List<Marking> features = markingMapper.roiMarking(slideId.intValue());
         List<String> markingIds;
+        //查询measure的标注信息
+        List<MarkMeasure> markMeasures=markingMapper.roiMeasure(slideId);
+        List<String> markingMeasureIds;
         //roi包含
         if (viewAddIns.getRoiStatus() == 0) {
             markingIds = roiCont(viewAddIns, features);
+            markingMeasureIds=roiMeasureCont(viewAddIns,markMeasures);
         } else {
             markingIds = roiDel(viewAddIns, features);
+            markingMeasureIds=roiMeasureDel(viewAddIns,markMeasures);
         }
-        if (markingIds.isEmpty()) {
+        if (markingIds.isEmpty() && markingMeasureIds.isEmpty()) {
             return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
+        //标注信息
         Map<String, Marking> markingMap = features.stream().collect(Collectors.toMap(Marking::getMarking_id, Function.identity()));
+        //测量信息
+        Map<String, MarkMeasure> markMeasureMap = markMeasures.stream().collect(Collectors.toMap(MarkMeasure::getMark_measure_id, Function.identity()));
         //异步删除
         CompletableFuture<Integer> cf1 = CompletableFuture.supplyAsync(() -> {
             Set<Long> categoryIds = new HashSet<>();
+            categoryIds.add(0L);
             Set<Long> createBys = new HashSet<>();
-            QueryWrapper<cn.staitech.anno.project.domain.Marking> wrapper = new QueryWrapper<>();
-            wrapper.in("marking_id", markingIds);
-            markingMapperV1.delete(wrapper);
-            for (String markingId : markingIds) {
-                categoryIds.add(markingMap.get(markingId).getCategory_id());
-                createBys.add(markingMap.get(markingId).getCreate_by());
+
+            if (CollectionUtils.isNotEmpty(markingIds)){
+                QueryWrapper<cn.staitech.anno.project.domain.Marking> wrapper = new QueryWrapper<>();
+                wrapper.in("marking_id", markingIds);
+                //删除标注
+                markingMapperV1.delete(wrapper);
+                //标注的createBy和categoryId
+                for (String markingId : markingIds) {
+                    categoryIds.add(markingMap.get(markingId).getCategory_id());
+                    createBys.add(markingMap.get(markingId).getCreate_by());
+                }
+            }
+            if (CollectionUtils.isNotEmpty(markingMeasureIds)){
+                //删除测量
+                markingMapper.delMeasure(markingMeasureIds);
+                //测量的createBy
+                for(String markMeasureId:markingMeasureIds){
+                    createBys.add(markMeasureMap.get(markMeasureId).getCreate_by());
+                }
             }
             BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, RELOAD_STATUS, null, null);
+            BroadcastVO measureBroadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_MEASURE, RELOAD_STATUS, null, null);
             NioWebSocketHandler.sendAll(slideId, broadcastVO);
+            NioWebSocketHandler.sendAll(slideId, measureBroadcastVO);
             updateSLide(slideId);
             try {
                 slideAttrService.removeAnnoUsers(slideId, new ArrayList<>(createBys));
@@ -1463,4 +1488,63 @@ public class MarkingServiceImpl implements MarkingService {
             }
         }
     }
+
+    /**
+     * ROI包含选出要删除的markingId
+     */
+    public List<String> roiMeasureCont(RoiIn viewAddIns,  List<MarkMeasure> features) throws ParseException {
+        //要删除的markingId集合
+        Set<String> markMeasureIdDel = new HashSet<>();
+        //包含的markingId集合
+        Set<String> markMeasureIdCont = new HashSet<>();
+        for (JSONObject viewAddIn : viewAddIns.getGeometryList()) {
+            String roiLocation = WktUtil.jsonToWkt(viewAddIn);
+            Geometry roiLocations = WKT_READER.read(roiLocation);
+            //roi包含
+            if (viewAddIns.getRoiStatus() == 0) {
+                for (MarkMeasure features1 : features) {
+                    String oldLocation = WktUtil.jsonToWkt(features1.getGeometry());
+                    Geometry oldLocations = WKT_READER.read(oldLocation);
+                    //判断是否不包含和不相交
+                    if (!roiLocations.contains(oldLocations) && !roiLocations.intersects(oldLocations)) {
+                        markMeasureIdDel.add(features1.getMark_measure_id());
+                    } else {
+                        //有相交的部分
+                        markMeasureIdCont.add(features1.getMark_measure_id());
+                    }
+                }
+            }
+        }
+        //选出要删除的markingId
+        List<String> listIds = markMeasureIdDel.stream().filter(item -> !markMeasureIdCont.contains(item)).collect(Collectors.toList());
+        return listIds;
+
+    }
+
+    /**
+     * ROI删除选出要删除的markingId
+     */
+    public List<String> roiMeasureDel(RoiIn viewAddIns, List<MarkMeasure> features) throws ParseException {
+        //要删除的markingId集合
+        Set<String> markMeasureIdDel = new HashSet<>();
+        //包含的markingId集合
+        for (JSONObject viewAddIn : viewAddIns.getGeometryList()) {
+            String roiLocation = WktUtil.jsonToWkt(viewAddIn);
+            Geometry roiLocations = WKT_READER.read(roiLocation);
+            //roi删除
+            if (viewAddIns.getRoiStatus() == 1) {
+                for (MarkMeasure features1 : features) {
+                    String oldLocation = WktUtil.jsonToWkt(features1.getGeometry());
+                    Geometry oldLocations = WKT_READER.read(oldLocation);
+                    //判断是否包含和相交
+                    if (roiLocations.contains(oldLocations) || roiLocations.intersects(oldLocations)) {
+                        markMeasureIdDel.add(features1.getMark_measure_id());
+                    }
+                }
+            }
+        }
+        return new ArrayList<>(markMeasureIdDel);
+    }
+
+
 }

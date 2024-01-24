@@ -112,6 +112,13 @@
         <result property="label_name" column="category_name"/>
     </resultMap>
 
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.MarkMeasure">
+        <id column="mark_measure_id" property="mark_measure_id"/>
+        <result property="geometry" column="geometry" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result column="create_by" property="create_by" />
+        <result column="category_id" property="category_id" />
+    </resultMap>
+
     <sql id="selectMarking">
         select marking_id
              , slide_id
@@ -729,4 +736,18 @@
     <select id="roiMarking" parameterType="java.lang.Integer" resultMap="markingResult">
         select marking_id,geometry,create_by,category_id from tb_marking where slide_id=#{slideId}
     </select>
+
+    <!--ROI对measure查询-->
+    <select id="roiMeasure" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select mark_measure_id,geometry,create_by,category_id from tb_mark_measure where slide_id=#{slideId}
+    </select>
+
+    <!--measure批量删除-->
+    <delete id="delMeasure" parameterType="java.util.List">
+        delete from tb_mark_measure where mark_measure_id in
+        <foreach item="item" collection="list" separator="," open="(" close=")" index="index">
+            #{item}
+        </foreach>
+    </delete>
+
 </mapper>
