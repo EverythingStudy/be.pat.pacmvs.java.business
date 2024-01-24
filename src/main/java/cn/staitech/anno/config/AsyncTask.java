@@ -112,6 +112,7 @@ public class AsyncTask {
 
     /**
      * TODO:解析json过程中无法标注
+     *
      * @param zipUrl
      * @param projectId
      * @param organizationId
@@ -198,7 +199,94 @@ public class AsyncTask {
             for (SlideRes slide : slideResList) {
                 // 判断名称切片名称是否相同
                 if (Objects.equals(slide.getImageName(), imageName)) {
-                    EXECUTOR.submit(new TaskThread(userIdList, slide.getSlideId(), newBf, organizationId, userId));
+                    List<cn.staitech.anno.project.domain.Marking> markingList = new ArrayList<>();
+                    QueryWrapper<cn.staitech.anno.project.domain.SysUser> userQueryWrapper = new QueryWrapper<>();
+                    userQueryWrapper.in("user_id", userIdList);
+                    List<cn.staitech.anno.project.domain.SysUser> userList = userMapperV1.selectList(userQueryWrapper);
+
+                    QueryWrapper<Marking> markingQueryWrapperBy = new QueryWrapper<>();
+                    markingQueryWrapperBy.in("create_by", userIdList);
+                    markingQueryWrapperBy.eq("slide_id", slide.getSlideId());
+                    // 删除json文件中所有用户在切片中的轮廓数据
+                    // 查询当前切片下的用户数量
+                    int markingCount = markingMapperV1.selectCount(markingQueryWrapperBy);
+                    double result = (double) markingCount / 2000;
+                    int ceilNum = (int) Math.ceil(result);
+                    for (int i = 0; i < ceilNum; i++) {
+                        synchronized (this) {
+                            markingQueryWrapperBy.last("limit 2000").orderByDesc("create_time");
+                            markingMapperV1.delete(markingQueryWrapperBy);
+                        }
+                    }
+                    // 将数据转化为map
+                    Map<Long, String> userMap = userList.stream().collect(Collectors.toMap(cn.staitech.anno.project.domain.SysUser::getUserId, cn.staitech.anno.project.domain.SysUser::getUserName));
+                    // 查询切片详情
+                    Slide slideBy = slideMapperV1.selectById(slide.getSlideId());
+                    // 查询图片详情
+                    Image image = imageMapper.selectById(slideBy.getImageId());
+                    // 定义病理指标标签
+                    Map<String, Long> categoryMap = new HashMap<>(16);
+                    // 定义标签map
+                    Map<String, Object> objMap = null;
+                    // 循环列表，对数据进行处理
+                    JsonFactory f = new MappingJsonFactory();
+                    JsonParser jp = f.createParser(newBf);
+                    JsonToken current;
+                    Long aTime = 0L;
+                    current = jp.nextToken();
+                    while (jp.nextToken() != JsonToken.END_OBJECT) {
+                        String fieldName = jp.getCurrentName();
+                        // move from field name to field value
+                        current = jp.nextToken();
+                        if ("features".equals(fieldName)) {
+                            if (current == JsonToken.START_ARRAY) {
+                                while (jp.nextToken() != JsonToken.END_ARRAY) {
+                                    String node = jp.readValueAsTree().toString();
+                                    JSONObject featureObject = JSONObject.parseObject(node);
+                                    objMap = writeMarking(slide.getSlideId(), featureObject, slideBy, image, categoryMap, userMap, organizationId);
+                                    cn.staitech.anno.project.domain.Marking marking = (cn.staitech.anno.project.domain.Marking) objMap.get("marking");
+                                    // 添加至列表中
+                                    markingList.add(marking);
+                                    // 将标签map进行赋值
+                                    Object categoryNewMap = objMap.get("category");
+                                    if (categoryNewMap != null) {
+                                        categoryMap = (Map<String, Long>) categoryNewMap;
+                                    }
+                                    // 添加数据入库
+
+                                    if (markingList.size() >= BATCH_SIZE) {
+                                        markingServiceV1.saveBatch(markingList);
+//                                    insertData(markingList,markingServiceV1::saveBatch);
+                                        markingList = new ArrayList<>();
+                                    }
+                                }
+                            }
+                        } else {
+                            jp.skipChildren();
+                        }
+                    }
+                    // 将剩余数据进行添加
+                    if (markingList.size() > 0) {
+                        markingServiceV1.saveBatch(markingList);
+                        markingList = new ArrayList<>();
+                    }
+                    // 获取标签列表
+                    List<Long> categoryList = new ArrayList<>();
+                    if (categoryMap.size() > 0) {
+                        categoryList.addAll(categoryMap.values());
+                    }
+                    // 更新切片表中状态
+                    if (Objects.equals(slideBy.getStatus(), "1")) {
+                        // 更新切片表中状态至切片中
+                        slideBy.setStatus("2");
+//                    slideMapperV1.updateById(slideBy);
+                    }
+                    // 添加结束之后，更新标签信息
+                    slideAttrService.saveAnnoUsers(slide.getSlideId(), userIdList, userId);
+                    slideAttrService.saveAnnoCategory(slide.getSlideId(), categoryList, userId);
+
+
+//                    EXECUTOR.submit(new TaskThread(userIdList, slide.getSlideId(), newBf, organizationId, userId));
                 }
             }
         }
@@ -290,19 +378,19 @@ public class AsyncTask {
 
                 QueryWrapper<Marking> markingQueryWrapperBy = new QueryWrapper<>();
 //                for (Long createBy : userIdList) {
-                    markingQueryWrapperBy.in("create_by", userIdList);
-                    markingQueryWrapperBy.eq("slide_id", slideId);
-                    // 删除json文件中所有用户在切片中的轮廓数据
-                    // 查询当前切片下的用户数量
-                    int markingCount = markingMapperV1.selectCount(markingQueryWrapperBy);
-                    double result = (double) markingCount / 2000;
-                    int ceilNum = (int) Math.ceil(result);
-                    for (int i = 0; i < ceilNum; i++) {
-                        synchronized (this) {
-                            markingQueryWrapperBy.last("limit 2000").orderByDesc("create_time");
-                            markingMapperV1.delete(markingQueryWrapperBy);
-                        }
+                markingQueryWrapperBy.in("create_by", userIdList);
+                markingQueryWrapperBy.eq("slide_id", slideId);
+                // 删除json文件中所有用户在切片中的轮廓数据
+                // 查询当前切片下的用户数量
+                int markingCount = markingMapperV1.selectCount(markingQueryWrapperBy);
+                double result = (double) markingCount / 2000;
+                int ceilNum = (int) Math.ceil(result);
+                for (int i = 0; i < ceilNum; i++) {
+                    synchronized (this) {
+                        markingQueryWrapperBy.last("limit 2000").orderByDesc("create_time");
+                        markingMapperV1.delete(markingQueryWrapperBy);
                     }
+                }
 //                }
                 // 将数据转化为map
                 Map<Long, String> userMap = userList.stream().collect(Collectors.toMap(cn.staitech.anno.project.domain.SysUser::getUserId, cn.staitech.anno.project.domain.SysUser::getUserName));
@@ -365,7 +453,7 @@ public class AsyncTask {
                 if (Objects.equals(slideBy.getStatus(), "1")) {
                     // 更新切片表中状态至切片中
                     slideBy.setStatus("2");
-                    slideMapperV1.updateById(slideBy);
+//                    slideMapperV1.updateById(slideBy);
                 }
                 // 添加结束之后，更新标签信息
                 slideAttrService.saveAnnoUsers(slideId, userIdList, userId);

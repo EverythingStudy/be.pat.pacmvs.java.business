@@ -387,7 +387,7 @@
                 
         </if>
         <if test="otherCreateBy != null and otherCreateBy != ''">
-            and t.create_by != #{createBy}
+            and t.create_by != #{otherCreateBy}
         </if>
         <if test="organizationId != null">
         	and t.category_id in (
