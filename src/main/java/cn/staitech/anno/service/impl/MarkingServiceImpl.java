@@ -1298,7 +1298,9 @@ public class MarkingServiceImpl implements MarkingService {
                 }
             }
             BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, RELOAD_STATUS, null, null);
+            BroadcastVO measureBroadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_MEASURE, RELOAD_STATUS, null, null);
             NioWebSocketHandler.sendAll(slideId, broadcastVO);
+            NioWebSocketHandler.sendAll(slideId, measureBroadcastVO);
             updateSLide(slideId);
             try {
                 slideAttrService.removeAnnoUsers(slideId, new ArrayList<>(createBys));
