@@ -27,7 +27,7 @@ public class RecentlyVisitedSelectVO {
     private String projectName;
 
     @ApiModelProperty(value = "项目类型(1标注,2评审,3标准训练集)")
-    private String projectType;
+    private Long projectType;
 
     @ApiModelProperty(value = "评审轮次id")
     private Long reviewRoundId;

@@ -99,12 +99,7 @@ public class MarkingServiceImpl implements MarkingService {
     private static final int BATCH_SIZE = 5000;
 
     private static final ExecutorService EXECUTOR = ExecutorBuilder.create().setCorePoolSize(Runtime.getRuntime().availableProcessors()).setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2).setKeepAliveTime(0).build();
-    private static final ExecutorService ANN_EXECUTOR = ExecutorBuilder.create()
-            .setCorePoolSize(Runtime.getRuntime().availableProcessors())
-            .setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2)
-            .setKeepAliveTime(0)
-            .setWorkQueue(new LinkedBlockingQueue<Runnable>(4096))
-            .build();
+    private static final ExecutorService ANN_EXECUTOR = ExecutorBuilder.create().setCorePoolSize(Runtime.getRuntime().availableProcessors()).setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2).setKeepAliveTime(0).setWorkQueue(new LinkedBlockingQueue<Runnable>(4096)).build();
 
     @Resource
     private SlideMapperV1 slideMapperV1;
@@ -190,12 +185,13 @@ public class MarkingServiceImpl implements MarkingService {
         Project project = projectMapperV1.selectById(slideBy.getProjectId());
         //项目类型:1标注2评审3标准训练集
         String projectType = project.getProjectType();
+        Long userId = SecurityUtils.getLoginUser().getSysUser().getUserId();
         List<Features> list = new ArrayList<Features>();
         if ("3".equalsIgnoreCase(projectType)) {
             //只查询自己标注的数据
             Map<String, Object> map = new HashMap<String, Object>(16);
             map.put("slideId", slideId);
-            map.put("createBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
+            map.put("createBy", userId);
             List<Features> selfAnnoList = markingMapper.selectListBy2(map);
             if (CollectionUtils.isNotEmpty(selfAnnoList)) {
                 list.addAll(selfAnnoList);
@@ -203,11 +199,20 @@ public class MarkingServiceImpl implements MarkingService {
             //其它人ROA+ROE
             Map<String, Object> otherMap = new HashMap<String, Object>(16);
             otherMap.put("slideId", slideId);
-            otherMap.put("otherCreateBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
+            otherMap.put("otherCreateBy", userId);
             otherMap.put("organizationId", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
             List<Features> otherAnnoList = markingMapper.selectListBy2(otherMap);
             if (CollectionUtils.isNotEmpty(otherAnnoList)) {
                 list.addAll(otherAnnoList);
+            }
+        } else if ("2".equalsIgnoreCase(projectType) && !project.getCreateBy().equals(userId)) {
+            //智能评审非项目创建者只查询自己标注的数据
+            Map<String, Object> map = new HashMap<String, Object>(16);
+            map.put("slideId", slideId);
+            map.put("createBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
+            List<Features> selfAnnoList = markingMapper.selectListBy2(map);
+            if (CollectionUtils.isNotEmpty(selfAnnoList)) {
+                list.addAll(selfAnnoList);
             }
         } else {
             list = markingMapper.selectListBy(slideId);

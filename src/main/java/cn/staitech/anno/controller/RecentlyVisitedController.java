@@ -6,18 +6,13 @@ import cn.staitech.anno.vo.recentlyvisited.RecentlyVisitedSelectVO;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,13 +33,14 @@ public class RecentlyVisitedController {
 
     @ApiOperation(value = "查询用户最近访问信息")
     @GetMapping("/selectList")
-    public R<List<RecentlyVisitedSelectVO>> selectList() {
-        return R.ok(recentlyVisitedService.selectList());
+    public R<List<RecentlyVisitedSelectVO>> selectList(@NotNull(message = "项目类型为空！") @RequestParam("projectType") @ApiParam(name = "projectType", value = "项目类型(1标注2评审3标准训练集)", required = true) Long projectType) {
+        return R.ok(recentlyVisitedService.selectList(projectType));
     }
 
     @ApiOperation(value = "访问viewer记录接口")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "slideId", value = "切片id", required = true, dataType = "Long", paramType = "query")})
+            @ApiImplicitParam(name = "slideId", value = "切片id", required = true, dataType = "Long", paramType = "query")
+    })
     @GetMapping("/visited")
     public R<String> add(Long slideId) {
         if (!Optional.ofNullable(slideId).isPresent()) {
