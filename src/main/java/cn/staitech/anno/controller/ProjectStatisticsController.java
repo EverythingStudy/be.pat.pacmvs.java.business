@@ -105,11 +105,18 @@ public class ProjectStatisticsController {
 
 
 
-//    @ApiOperation(value = "多标签统计")
-//    @PostMapping("/projectLabel")
-//    public R<List<ProjectLabelOut>> projectLabel(@Validated @RequestBody ProjectLabelIn projectLabelIn) {
-//        List<ProjectLabelOut> itemList = projectStatisticsService.projectLabel(projectLabelIn);
-//        return R.ok(itemList);
-//    }
+    @ApiOperation(value = "多标签统计")
+    @PostMapping("/projectLabel")
+    public R<List<ProjectLabelOut>> projectLabel(@Validated @RequestBody ProjectLabelIn projectLabelIn) {
+        List<ProjectLabelOut> itemList = projectStatisticsService.projectLabel(projectLabelIn);
+        return R.ok(itemList);
+    }
+
+
+    @ApiOperation(value = "多标签统计导出")
+    @PostMapping("/projectLabelExport")
+    public void projectLabelExport(@RequestBody ProjectLabelIn projectLabelIn,HttpServletResponse response) throws Exception{
+        projectStatisticsService.projectLabelExport(projectLabelIn,response);
+    }
 
 }

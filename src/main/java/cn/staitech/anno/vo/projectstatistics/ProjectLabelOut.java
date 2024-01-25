@@ -38,15 +38,9 @@ public class ProjectLabelOut {
     @ApiModelProperty(value = "当前标签标注图像数量")
     private Integer labelImageNum;
 
-    @ApiModelProperty(value = "编号2")
-    private String num2;
-
     @ApiModelProperty(value = "标注总数")
     private Integer markingTotal;
 
-    private String labelImageNums;
 
-    @ApiModelProperty(value = "编号3")
-    private String num3;
 
 }
