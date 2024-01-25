@@ -205,16 +205,18 @@ public class MarkingServiceImpl implements MarkingService {
             if (CollectionUtils.isNotEmpty(otherAnnoList)) {
                 list.addAll(otherAnnoList);
             }
-        } else if ("2".equalsIgnoreCase(projectType) && !project.getCreateBy().equals(userId)) {
-            //智能评审非项目创建者只查询自己标注的数据
-            Map<String, Object> map = new HashMap<String, Object>(16);
-            map.put("slideId", slideId);
-            map.put("createBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
-            List<Features> selfAnnoList = markingMapper.selectListBy2(map);
-            if (CollectionUtils.isNotEmpty(selfAnnoList)) {
-                list.addAll(selfAnnoList);
-            }
-        } else {
+        }
+//        else if ("2".equalsIgnoreCase(projectType) && !project.getCreateBy().equals(userId)) {
+//            //智能评审非项目创建者只查询自己标注的数据
+//            Map<String, Object> map = new HashMap<String, Object>(16);
+//            map.put("slideId", slideId);
+//            map.put("createBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
+//            List<Features> selfAnnoList = markingMapper.selectListBy2(map);
+//            if (CollectionUtils.isNotEmpty(selfAnnoList)) {
+//                list.addAll(selfAnnoList);
+//            }
+//        }
+        else {
             list = markingMapper.selectListBy(slideId);
         }
         return list;
