@@ -70,6 +70,8 @@ public class JsonFileController {
             return R.fail(MessageSource.M("ONLY_ZIP_FILE"));
         }
         fileUploadVO.setMultipartFile(file);
+        String fileName = fileUploadVO.getProjectId() + "_" + fileUploadVO.getFileName();
+        fileUploadVO.setFileName(fileName);
         String res = jsonfilesService.mergeChunk(fileUploadVO);
         if (Objects.equals(res, "1")) {
             return R.ok(MessageSource.M("FILE_SLIDE_UPLOAD_SUCCESS"));

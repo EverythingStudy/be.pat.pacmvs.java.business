@@ -32,14 +32,14 @@ public class RecentlyVisitedServiceImpl extends ServiceImpl<RecentlyVisitedMappe
 
 
     @Override
-    public List<RecentlyVisitedSelectVO> selectList(Long projectType) {
+    public List<RecentlyVisitedSelectVO> selectList() {
 
         RecentlyVisited recentlyVisited = new RecentlyVisited();
         recentlyVisited.setUserId(SecurityUtils.getUserId());
-        recentlyVisited.setProjectType(projectType);
         // 根据用户id查询所有的该用户的所有访问
         // 查询出时间不为空的数据
         List<RecentlyVisited> recentlyVisitedList = recentlyVisitedMapper.selectUpdateIsTrue(recentlyVisited);
+
         List<RecentlyVisitedSelectVO> recentlyVisitedSelectVOS = new ArrayList<>();
         // 判断用户为admin或者超级管理员
         if (SysUser.isAdmin(SecurityUtils.getUserId())) {
@@ -84,26 +84,26 @@ public class RecentlyVisitedServiceImpl extends ServiceImpl<RecentlyVisitedMappe
         projectMember.setUserId(SecurityUtils.getUserId());
         projectMember.setProjectId(req.getProjectId());
         ProjectMember projectMemberBy = projectMemberMapper.selectUserBy(projectMember);
-        // 用户在当前项目中，添加访问记录
         if (projectMemberBy != null) {
             long userId = SecurityUtils.getUserId();
             RecentlyVisited recentlyVisited = new RecentlyVisited();
             recentlyVisited.setUserId(userId);
             recentlyVisited.setProjectId(req.getProjectId());
-            // 添加时间根据用户id项目id和专题id查询表中 ，如果结果数量小于4  直接添加
+            // 添加时间根据用户id项目id和专题id查询表中 ，如果结果数量小于3  直接添加
             List<RecentlyVisited> recentlyVisitedLIst = recentlyVisitedMapper.selectLists(recentlyVisited);
             // 添加时将该专题下的更新时间清空
             recentlyVisited.setSlideId(slideId);
             recentlyVisitedMapper.updateTime(recentlyVisited);
-            // 根据用户项目切片查询记录,查询当前切片是否存在
+            // 根据用户项目切片查询记录
             RecentlyVisited recentlyVisitedQuery = recentlyVisitedMapper.selectQueryBy(recentlyVisited);
             // 判断数据是否存在
             if (recentlyVisitedQuery != null) {
                 // 如果存在,更新创建和更新时间即可
                 recentlyVisitedMapper.update(recentlyVisitedQuery.getRecentlyVisitedId());
             } else {
-                // 如果不存在，并且数据大于四条，根据项目和用户为条件删除时间最早的一条数据
-                if (recentlyVisitedLIst.size() > 4) {
+                // 如果不存在
+                if (recentlyVisitedLIst.size() > 3) {
+                    // 根据项目和用户为条件删除时间最早的一条数据
                     recentlyVisitedMapper.deleteMinCreateTime(recentlyVisited);
                 }
                 // 添加数据
@@ -111,7 +111,6 @@ public class RecentlyVisitedServiceImpl extends ServiceImpl<RecentlyVisitedMappe
                 recentlyVisitedMapper.insert(req);
             }
             // 添加之后根据用户和项目查询 如果大于十条，根据用户和项目删除数据
-            recentlyVisited.setProjectType(req.getProjectType());
             List<RecentlyVisited> recentlyVisitedList = recentlyVisitedMapper.selectSpecial(recentlyVisited);
             if (recentlyVisitedList.size() > 10) {
                 // 找出时间最小的一条数据

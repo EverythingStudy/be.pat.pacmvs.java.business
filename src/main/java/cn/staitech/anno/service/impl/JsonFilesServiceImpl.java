@@ -77,7 +77,7 @@ public class JsonFilesServiceImpl implements JsonFilesService {
             File file = new File(filesBy.getFilesPath());
             if (file.exists()) {
                 // 删除文件
-                res = file.delete();
+                file.delete();
             }
             // 将文件数量和文件id添加至map中
             if (!Container.FILE_MAP.containsKey(chunk.getUuid())) {
@@ -88,9 +88,7 @@ public class JsonFilesServiceImpl implements JsonFilesService {
                 Container.FILE_MAP.put(chunk.getUuid(), chunkSet);
             }
         }
-        if(res){
-            mergeFile(chunk, filesBy.getFilesPath());
-        }
+        mergeFile(chunk, filesBy.getFilesPath());
         return "1";
     }
 
@@ -180,30 +178,15 @@ public class JsonFilesServiceImpl implements JsonFilesService {
         String suffixName = filesName.substring(filesName.lastIndexOf(".") + 1);
 
         // 创建文件
-            File dir = new File(path);
-            if (!dir.exists()) {
-                if (!dir.mkdirs()) {
-                    log.error("创建文件异常");
-                }
+        File dir = new File(path);
+        if (!dir.exists()) {
+            if (!dir.mkdirs()) {
+                log.error("创建文件异常");
             }
+        }
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 
-        Files files = Files.builder()
-                .filesName(filesName)
-                .filesCode(fileUploadVO.getUuid())
-                .filesUrl(path)
-                .filesPath(path)
-                .format(suffixName)
-                .processFlag(1)
-                .deleteFlag(1)
-                .hostId(1)
-                .businessType(fileUploadVO.getBusinessType())
-                .topicId(topicId)
-                .topicName(topicName)
-                .createTime(new Date())
-                .organizationId(sysUser.getOrganizationId())
-                .createBy(sysUser.getUserId())
-                .build();
+        Files files = Files.builder().filesName(filesName).filesCode(fileUploadVO.getUuid()).filesUrl(path).filesPath(path).format(suffixName).processFlag(1).deleteFlag(1).hostId(1).businessType(fileUploadVO.getBusinessType()).topicId(topicId).topicName(topicName).createTime(new Date()).organizationId(sysUser.getOrganizationId()).createBy(sysUser.getUserId()).build();
         // 写入文件表中
         filesService.save(files);
         return files.getFilesId();
