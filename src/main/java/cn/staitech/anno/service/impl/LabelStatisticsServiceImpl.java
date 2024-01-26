@@ -291,7 +291,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 			queryWrapper.like("description", description);
 		}
 
-		if(!createTimeParams.isEmpty() && createTimeParams.containsKey("beginTime")&& createTimeParams.containsKey("endTime")){
+		if(null != createTimeParams && !createTimeParams.isEmpty() && createTimeParams.containsKey("beginTime")&& createTimeParams.containsKey("endTime")){
 			queryWrapper.between("project_create_time", createTimeParams.get("beginTime"), createTimeParams.get("endTime"));
 		}
 
@@ -493,7 +493,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 			queryWrapper.like("description", description);
 		}
 
-		if(!createTimeParams.isEmpty() && createTimeParams.containsKey("beginTime")&& createTimeParams.containsKey("endTime")){
+		if(null != createTimeParams && !createTimeParams.isEmpty() && createTimeParams.containsKey("beginTime")&& createTimeParams.containsKey("endTime")){
 			queryWrapper.between("project_create_time", createTimeParams.get("beginTime"), createTimeParams.get("endTime"));
 		}
 

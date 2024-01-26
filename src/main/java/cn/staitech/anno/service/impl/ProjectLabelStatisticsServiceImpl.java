@@ -92,6 +92,7 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 		QueryWrapper<Project> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("project_type", 1);
 		queryWrapper.eq("del_flag", 0);
+		queryWrapper.isNotNull("indicator_id");
 		// 测试 queryWrapper.eq("project_id", 551);
 		List<Project> projectList = projectMapper.selectList(queryWrapper);
 		//处理业务数据
