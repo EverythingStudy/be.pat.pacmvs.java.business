@@ -72,6 +72,13 @@ public class ProjectStatisticsServiceImpl implements ProjectStatisticsService {
      */
     @Override
     public List<ProjectLabelOut> projectLabel(ProjectLabelIn projectLabelIn) {
+        if (projectLabelIn.getCategoryIds()==null){
+            List<LabelOut> labelOuts = projectStatisticsMapper.label(projectLabelIn.getProjectId());
+            LabelOut labelOut = LabelOut.builder().categoryName("无属性").categoryId(0L).build();
+            labelOuts.add(labelOut);
+            List<Long>categoryIds=labelOuts.stream().map(LabelOut::getCategoryId).collect(Collectors.toList());
+            projectLabelIn.setCategoryIds(categoryIds);
+        }
         List<ProjectLabelOut> projectLabelOutList=projectStatisticsMapper.labelsNumber(projectLabelIn);
         //根据createBy求标注总数
         Map<Long, DoubleSummaryStatistics> maps = projectLabelOutList.stream().collect(Collectors.groupingBy(ProjectLabelOut::getCreateBy, Collectors.summarizingDouble(ProjectLabelOut::getMarkingNum)));
@@ -110,6 +117,13 @@ public class ProjectStatisticsServiceImpl implements ProjectStatisticsService {
      */
     @Override
     public R<PageMaster<ImageLabelOut>> imageLabel(ImageLabelIn imageLabelIn) {
+        if (imageLabelIn.getCategoryIds()==null){
+            List<LabelOut> labelOuts = projectStatisticsMapper.label(imageLabelIn.getProjectId());
+            LabelOut labelOut = LabelOut.builder().categoryName("无属性").categoryId(0L).build();
+            labelOuts.add(labelOut);
+            List<Long>categoryIds=labelOuts.stream().map(LabelOut::getCategoryId).collect(Collectors.toList());
+            imageLabelIn.setCategoryIds(categoryIds);
+        }
         PageHelper.startPage(imageLabelIn.getPageNum(), imageLabelIn.getPageSize()).setReasonable(true);
         List<ImageLabelOut> imageLabel = projectStatisticsMapper.imageLabel(imageLabelIn);
         PageMaster<ImageLabelOut> pageMaster = new PageMaster<>(imageLabel);
@@ -122,12 +136,13 @@ public class ProjectStatisticsServiceImpl implements ProjectStatisticsService {
      */
     @Override
     public void imageLabelExport(ImageLabelIn imageLabelIn, HttpServletResponse response) throws Exception {
-//        if (imageLabelIn.getUserIds().isEmpty()){
-//            //查询当前项目下的所有成员id
-//            List<labelingPersonnelOut> list=projectStatisticsMapper.labelingPersonnel(imageLabelIn.getProjectId());
-//            List<Long>userIds=list.stream().map(labelingPersonnelOut::getUserId).collect(Collectors.toList());
-//            imageLabelIn.setUserIds(userIds);
-//        }
+        if (imageLabelIn.getCategoryIds()==null){
+            List<LabelOut> labelOuts = projectStatisticsMapper.label(imageLabelIn.getProjectId());
+            LabelOut labelOut = LabelOut.builder().categoryName("无属性").categoryId(0L).build();
+            labelOuts.add(labelOut);
+            List<Long>categoryIds=labelOuts.stream().map(LabelOut::getCategoryId).collect(Collectors.toList());
+            imageLabelIn.setCategoryIds(categoryIds);
+        }
         List<ImageLabelOut> imageLabel = projectStatisticsMapper.imageLabel(imageLabelIn);
         for (ImageLabelOut imageLabelOut : imageLabel) {
             imageLabelOut.setStatusName(Constants.STATUS.get(imageLabelOut.getStatus()));
@@ -160,6 +175,13 @@ public class ProjectStatisticsServiceImpl implements ProjectStatisticsService {
      * */
     @Override
     public void projectLabelExport(ProjectLabelIn projectLabelIn,HttpServletResponse response)throws Exception{
+        if (projectLabelIn.getCategoryIds()==null){
+            List<LabelOut> labelOuts = projectStatisticsMapper.label(projectLabelIn.getProjectId());
+            LabelOut labelOut = LabelOut.builder().categoryName("无属性").categoryId(0L).build();
+            labelOuts.add(labelOut);
+            List<Long>categoryIds=labelOuts.stream().map(LabelOut::getCategoryId).collect(Collectors.toList());
+            projectLabelIn.setCategoryIds(categoryIds);
+        }
         List<ProjectLabelOut> projectLabelOutList=projectStatisticsMapper.labelsNumber(projectLabelIn);
         //根据createBy求标注总数
         Map<Long, DoubleSummaryStatistics> maps = projectLabelOutList.stream().collect(Collectors.groupingBy(ProjectLabelOut::getCreateBy, Collectors.summarizingDouble(ProjectLabelOut::getMarkingNum)));
