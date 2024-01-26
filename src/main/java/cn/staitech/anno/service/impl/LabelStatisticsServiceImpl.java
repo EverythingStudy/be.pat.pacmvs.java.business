@@ -192,7 +192,15 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 		List<ProjectLabelOut> retList = new ArrayList<>(); 
 		for (ProjectLabelStatistics statistics : list) {
 			ProjectLabelOut projectLabelOut = new ProjectLabelOut();
-			BeanUtils.copyProperties(statistics, projectLabelOut);
+			//BeanUtils.copyProperties(statistics, projectLabelOut);
+			projectLabelOut.setProjectName(statistics.getProjectName());
+			projectLabelOut.setImageNum(statistics.getImageNum()+"");
+			projectLabelOut.setMarkingNum(statistics.getMarkingNum()+"");
+			projectLabelOut.setStatus(statistics.getProjectStatus());
+			projectLabelOut.setCategoryId(statistics.getCategoryId());
+			projectLabelOut.setCategoryName(statistics.getCategoryName());
+			projectLabelOut.setIndicatorId(statistics.getIndicatorId());
+			projectLabelOut.setIndicatorName(statistics.getIndicatorName());
 			retList.add(projectLabelOut);
 		}
 		PageMaster<ProjectLabelOut> pageMaster = new PageMaster<>(retList);
@@ -402,7 +410,16 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 		List<ProjectLabelOut> retList = new ArrayList<>(); 
 		for (ProjectLabelStatistics statistics : list) {
 			ProjectLabelOut projectLabelOut = new ProjectLabelOut();
-			BeanUtils.copyProperties(statistics, projectLabelOut);
+//			BeanUtils.copyProperties(statistics, projectLabelOut);
+			projectLabelOut.setProjectName(statistics.getProjectName());
+			projectLabelOut.setImageNum(statistics.getImageNum()+"");
+			projectLabelOut.setMarkingNum(statistics.getMarkingNum()+"");
+			projectLabelOut.setStatus(statistics.getProjectStatus());
+			projectLabelOut.setStatusName(Container.PROJECT_STATUS.get(statistics.getProjectStatus()));
+			projectLabelOut.setCategoryId(statistics.getCategoryId());
+			projectLabelOut.setCategoryName(statistics.getCategoryName());
+			projectLabelOut.setIndicatorId(statistics.getIndicatorId());
+			projectLabelOut.setIndicatorName(statistics.getIndicatorName());
 			retList.add(projectLabelOut);
 		}
 		List<Map<String, String>> titleList = getTitleList(CommonConstant.LABEL_STATISTICS_KEY, CommonConstant.LABEL_STATISTICS_VALUE);
