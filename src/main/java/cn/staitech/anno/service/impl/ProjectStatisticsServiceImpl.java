@@ -217,8 +217,9 @@ public class ProjectStatisticsServiceImpl implements ProjectStatisticsService {
             //标注图象总数
             projectLabelOut.setImageNum((int)mapsImage.get(projectLabelOut.getCategoryId()).getSum());
         }
+        List<ProjectLabelOut> labelOutList=projectLabelOutList.stream().sorted(Comparator.comparing(ProjectLabelOut::getCategoryId).reversed()).collect(Collectors.toList());
         //根据标注总数排序
-        List<ProjectLabelOut> labelOuts=projectLabelOutList.stream().sorted(Comparator.comparing(ProjectLabelOut::getMarkingTotal).reversed()).collect(Collectors.toList());
+        List<ProjectLabelOut> labelOuts=labelOutList.stream().sorted(Comparator.comparing(ProjectLabelOut::getMarkingTotal).reversed()).collect(Collectors.toList());
 
 
         Map<Long,List<ProjectLabelOut>> labelOutsMap=labelOuts.stream().collect(Collectors.groupingBy(ProjectLabelOut::getCategoryId));
@@ -302,23 +303,32 @@ public class ProjectStatisticsServiceImpl implements ProjectStatisticsService {
         int lastRow;
         //从第二条开始
         Map<Integer, Integer> hbMap=new LinkedHashMap<>();
-        for(int i=1;i<labelOuts.size();i++){
+        for(int i=0;i<labelOuts.size();i++){
+            if(i != 0){
             boolean flag = !labelOuts.get(i).getCategoryId().equals(labelOuts.get(i-1).getCategoryId()) || i>=labelOuts.size()-1;
             if(flag){
                 //
                 if(i!=labelOuts.size() - 1){
                     lastRow=i;
                 }else{
-                    //i+1是因为前面的表头占了一行
-                    lastRow=i+1;
+                    if (i==1){
+                        //i+1是因为前面的表头占了一行
+                        lastRow=i+1;
+                    }else{
+                        lastRow=i;
+                    }
+
                 }
                 hbMap.put(firstRow,lastRow);
                 firstRow=i+1;
             }
-        }
+        }}
         System.out.println(hbMap);
         //有一行数据的不进行合并
         for(Map.Entry<Integer, Integer> e:hbMap.entrySet()){
+            if (Objects.equals(e.getKey(), e.getValue())){
+                continue;
+            }
             for(int i=0;i<=4;i++){
                 if (i==1||i==4){
                     CellRangeAddress region2=new CellRangeAddress(e.getKey(),e.getValue(),i,i);
