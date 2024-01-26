@@ -2,9 +2,11 @@ package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.MarkMeasure;
 import cn.staitech.anno.domain.MarkingStatistic;
+import cn.staitech.anno.project.vo.ImageAnnoStatisticsVO;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.JsonExport;
 import cn.staitech.anno.vo.geojson.Properties;
+import cn.staitech.anno.vo.labelprojectstatistics.ProjectLabelOut;
 import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.MarkingStatisticSelectVO;
@@ -137,4 +139,19 @@ public interface MarkingMapper extends BaseMapper<Marking> {
     List<MarkMeasure>roiMeasure(Long slideId);
 
     int delMeasure(List<String> list);
+    
+    List<ProjectLabelOut> getProjectCategoryMarkingNum(Long projectId);
+    List<ProjectLabelOut> getProjectCategoryImageNum(Long projectId);
+    
+    
+    List<ImageAnnoStatisticsVO> getProjectAnnoMarkingNum(Long projectId);
+    List<ImageAnnoStatisticsVO> getProjectAnnoImageNum(Long projectId);
+    
+    
+    List<MarkingStatistic> getProjectUserLabelMarkingNum(Long projectId);
+    
+    
+    List<ProjectLabelOut> getProjectMarkingNum(Long projectId);
+    List<ProjectLabelOut> getProjectImageNum(Long projectId);
+    
 }

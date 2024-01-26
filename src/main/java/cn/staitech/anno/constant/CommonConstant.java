@@ -55,7 +55,15 @@ public class CommonConstant {
     public static final Long IMAGE_CACHE_HOURS = 24L;
     public static final String ANNO_TYPE_DRAW = "Draw";
     public static final String ANNO_TYPE_MEASURE = "Measure";
-
+    
+    /**
+     * Statistics
+     */
+    public static final String STATISTICS_USER = "USER_";
+    public static final String STATISTICS_INDICATOR = "INDICATOR_";
+    public static final String STATISTICS_CATEGORY = "CATEGORY_";
+    public static final String INDICATOR_CATEGORY_All = "INDICATOR_CATEGORY_All";
+    
     /**
      * review
      */

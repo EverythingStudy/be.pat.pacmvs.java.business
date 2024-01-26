@@ -1,6 +1,7 @@
 package cn.staitech.anno.controller;
 
 import cn.staitech.anno.domain.UserManual;
+import cn.staitech.anno.service.ProjectLabelStatisticsService;
 import cn.staitech.anno.service.UserManualService;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.redis.service.RedisService;
@@ -44,7 +45,15 @@ public class UserManualController {
     @Resource
     private RedisService redisService;
 
-
+    @Resource
+	private ProjectLabelStatisticsService projectLabelStatisticsService;
+    
+    @ApiOperation(value = "生成项目统计数据", notes = "生成项目统计数据")
+    @GetMapping("/genData")
+    public R genData() {
+    	projectLabelStatisticsService.generateData();
+    	return R.ok();
+    }
     /**
      * 用户手册 .
      */

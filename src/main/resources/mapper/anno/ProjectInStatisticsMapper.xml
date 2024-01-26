@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.ProjectInStatisticsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.ProjectStatistics">
+        <id column="project_statistics_id" property="projectStatisticsId" />
+        <result column="project_id" property="projectId" />
+        <result column="project_name" property="projectName" />
+        <result column="indicator_id" property="indicatorId" />
+        <result column="indicator_name" property="indicatorName" />
+        <result column="project_status" property="projectStatus" />
+        <result column="description" property="description" />
+        <result column="project_create_by" property="projectCreateBy" />
+        <result column="create_nick_name" property="createNickName" />
+        <result column="project_create_time" property="projectCreateTime" />
+        <result column="image_num" property="imageNum" />
+        <result column="marking_num" property="markingNum" />
+        <result column="organization_id" property="organizationId" />
+        <result column="del_flag" property="delFlag" />
+        <result column="task_create_time" property="taskCreateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        project_statistics_id, project_id, project_name, indicator_id, indicator_name, project_status, description, project_create_by, create_nick_name, project_create_time, image_num, marking_num, organization_id, del_flag, task_create_time
+    </sql>
+
+</mapper>
