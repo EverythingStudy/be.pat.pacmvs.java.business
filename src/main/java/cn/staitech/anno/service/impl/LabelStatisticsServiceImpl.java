@@ -251,8 +251,10 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 		//        {"projectIds":[313,521,522,490],"statusList":["3","2"],"indicatorIds":[1145,1149],"userIds":[14],
 		//        "description":"fsfsfsfsf","createTimeParams":{"beginTime":"2024-01-15","endTime":"2024-02-21"},"pageNum":1,"pageSize":10,"total":9}
 
-		Long currentUserId = SecurityUtils.getUserId();
-		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+		/*Long currentUserId = SecurityUtils.getUserId();
+		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();*/
+		Long currentUserId = 39L;
+		Long organizationId = 1L;
 
 		List<Long> projectIds = new ArrayList<>();
 
@@ -303,7 +305,13 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 		List<ProjectLabelOut> retList = new ArrayList<>(); 
 		for (ProjectStatistics statistics : list) {
 			ProjectLabelOut projectLabelOut = new ProjectLabelOut();
-			BeanUtils.copyProperties(statistics, projectLabelOut);
+			projectLabelOut.setProjectName(statistics.getProjectName());
+			projectLabelOut.setImageNum(statistics.getImageNum()+"");
+			projectLabelOut.setMarkingNum(statistics.getMarkingNum()+"");
+			projectLabelOut.setNickName(statistics.getCreateNickName());
+			projectLabelOut.setDescription(statistics.getDescription());
+			projectLabelOut.setCreateTime(statistics.getProjectCreateTime());
+			projectLabelOut.setStatus(statistics.getProjectStatus());
 			retList.add(projectLabelOut);
 		}
 		PageMaster<ProjectLabelOut> pageMaster = new PageMaster<>(retList);
@@ -504,7 +512,13 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 		List<ProjectStatistics> list = projectStatisticsService.list(queryWrapper);
 		for (ProjectStatistics statistics : list) {
 			ProjectLabelOut projectLabelOut = new ProjectLabelOut();
-			BeanUtils.copyProperties(statistics, projectLabelOut);
+			projectLabelOut.setProjectName(statistics.getProjectName());
+			projectLabelOut.setImageNum(statistics.getImageNum()+"");
+			projectLabelOut.setMarkingNum(statistics.getMarkingNum()+"");
+			projectLabelOut.setNickName(statistics.getCreateNickName());
+			projectLabelOut.setDescription(statistics.getDescription());
+			projectLabelOut.setCreateTime(statistics.getProjectCreateTime());
+			projectLabelOut.setStatus(statistics.getProjectStatus());
 			itemList.add(projectLabelOut);
 		}
 
