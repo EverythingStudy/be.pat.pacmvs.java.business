@@ -145,7 +145,7 @@ public class CommonConstant {
      * 项目统计表头
      */
     public static final String[] PROJECT_STATISTICS_KEY = {"项目名称", "图像数量", "标注总数", "创建者", "描述", "创建时间", "项目状态"};
-    public static final String[] PROJECT_STATISTICS_VALUE = {"projectName", "imageNum", "markingNum", "userName", "description", "createTime", "statusName"};
+    public static final String[] PROJECT_STATISTICS_VALUE = {"projectName", "imageNum", "markingNum", "nickName", "description", "createTime", "statusName"};
 
     /**
      * 智能标注-标注统计-用户标签统计-excel导出

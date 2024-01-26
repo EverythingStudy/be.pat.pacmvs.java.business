@@ -18,6 +18,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 
 import cn.staitech.anno.constant.CommonConstant;
+import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.ProjectLabelStatistics;
 import cn.staitech.anno.domain.ProjectMember;
 import cn.staitech.anno.domain.ProjectStatistics;
@@ -519,6 +520,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 			projectLabelOut.setDescription(statistics.getDescription());
 			projectLabelOut.setCreateTime(statistics.getProjectCreateTime());
 			projectLabelOut.setStatus(statistics.getProjectStatus());
+			projectLabelOut.setStatusName(Container.PROJECT_STATUS.get(statistics.getProjectStatus()));
 			itemList.add(projectLabelOut);
 		}
 
