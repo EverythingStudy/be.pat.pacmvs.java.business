@@ -110,12 +110,6 @@ public class ProjectStatisticsServiceImpl implements ProjectStatisticsService {
      */
     @Override
     public R<PageMaster<ImageLabelOut>> imageLabel(ImageLabelIn imageLabelIn) {
-        if (imageLabelIn.getUserIds().isEmpty()){
-            //查询当前项目下的所有成员id
-            List<labelingPersonnelOut> list=projectStatisticsMapper.labelingPersonnel(imageLabelIn.getProjectId());
-            List<Long>userIds=list.stream().map(labelingPersonnelOut::getUserId).collect(Collectors.toList());
-            imageLabelIn.setUserIds(userIds);
-        }
         PageHelper.startPage(imageLabelIn.getPageNum(), imageLabelIn.getPageSize()).setReasonable(true);
         List<ImageLabelOut> imageLabel = projectStatisticsMapper.imageLabel(imageLabelIn);
         PageMaster<ImageLabelOut> pageMaster = new PageMaster<>(imageLabel);
@@ -128,12 +122,12 @@ public class ProjectStatisticsServiceImpl implements ProjectStatisticsService {
      */
     @Override
     public void imageLabelExport(ImageLabelIn imageLabelIn, HttpServletResponse response) throws Exception {
-        if (imageLabelIn.getUserIds().isEmpty()){
-            //查询当前项目下的所有成员id
-            List<labelingPersonnelOut> list=projectStatisticsMapper.labelingPersonnel(imageLabelIn.getProjectId());
-            List<Long>userIds=list.stream().map(labelingPersonnelOut::getUserId).collect(Collectors.toList());
-            imageLabelIn.setUserIds(userIds);
-        }
+//        if (imageLabelIn.getUserIds().isEmpty()){
+//            //查询当前项目下的所有成员id
+//            List<labelingPersonnelOut> list=projectStatisticsMapper.labelingPersonnel(imageLabelIn.getProjectId());
+//            List<Long>userIds=list.stream().map(labelingPersonnelOut::getUserId).collect(Collectors.toList());
+//            imageLabelIn.setUserIds(userIds);
+//        }
         List<ImageLabelOut> imageLabel = projectStatisticsMapper.imageLabel(imageLabelIn);
         for (ImageLabelOut imageLabelOut : imageLabel) {
             imageLabelOut.setStatusName(Constants.STATUS.get(imageLabelOut.getStatus()));
