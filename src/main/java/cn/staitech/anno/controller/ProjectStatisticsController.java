@@ -112,11 +112,24 @@ public class ProjectStatisticsController {
         return R.ok(itemList);
     }
 
+    @ApiOperation(value = "多用户统计")
+    @PostMapping("/projectUser")
+    public R<List<ProjectLabelOut>> projectUser(@Validated @RequestBody ProjectLabelIn projectLabelIn) {
+        List<ProjectLabelOut> itemList = projectStatisticsService.projectLabel(projectLabelIn);
+        return R.ok(itemList);
+    }
 
     @ApiOperation(value = "多标签统计导出")
     @PostMapping("/projectLabelExport")
     public void projectLabelExport(@RequestBody ProjectLabelIn projectLabelIn,HttpServletResponse response) throws Exception{
         projectStatisticsService.projectLabelExport(projectLabelIn,response);
     }
+
+    @ApiOperation(value = "多用户统计导出")
+    @PostMapping("/projectUserExport")
+    public void projectUserExport(@RequestBody ProjectLabelIn projectLabelIn,HttpServletResponse response) throws Exception{
+        projectStatisticsService.projectUserExport(projectLabelIn,response);
+    }
+
 
 }

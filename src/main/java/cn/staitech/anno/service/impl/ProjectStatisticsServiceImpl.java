@@ -100,6 +100,29 @@ public class ProjectStatisticsServiceImpl implements ProjectStatisticsService {
         return labelOuts;
     }
 
+    @Override
+    public List<ProjectLabelOut> projectUser(ProjectLabelIn projectLabelIn) {
+        List<ProjectLabelOut> projectLabelOutList=projectStatisticsMapper.labelsNumber(projectLabelIn);
+        //根据createBy求标注总数
+        Map<Long, DoubleSummaryStatistics> maps = projectLabelOutList.stream().collect(Collectors.groupingBy(ProjectLabelOut::getCategoryId, Collectors.summarizingDouble(ProjectLabelOut::getMarkingNum)));
+        List<ProjectLabelOut> projectImageNum=projectStatisticsMapper.labelImageNumber(projectLabelIn.getProjectId());
+        //根据createBy求图像总数
+        Map<Long, DoubleSummaryStatistics> mapsImage = projectImageNum.stream().collect(Collectors.groupingBy(ProjectLabelOut::getCategoryId, Collectors.summarizingDouble(ProjectLabelOut::getLabelImageNum)));
+        //根据createBy和categoryId组成的num生成map
+        Map<String,ProjectLabelOut> projectLabelOutMap=projectImageNum.stream().collect(Collectors.toMap(ProjectLabelOut::getNum,Function.identity()));
+        for (ProjectLabelOut projectLabelOut:projectLabelOutList){
+            //当前标签标注图象数量
+            projectLabelOut.setLabelImageNum(projectLabelOutMap.get(projectLabelOut.getNum()).getLabelImageNum());
+            //标注总数
+            projectLabelOut.setMarkingTotal((int)maps.get(projectLabelOut.getCategoryId()).getSum());
+            //标注图象总数
+            projectLabelOut.setImageNum((int)mapsImage.get(projectLabelOut.getCategoryId()).getSum());
+        }
+        //根据标注总数排序
+        List<ProjectLabelOut> labelOuts=projectLabelOutList.stream().sorted(Comparator.comparing(ProjectLabelOut::getMarkingTotal).reversed()).collect(Collectors.toList());
+        return labelOuts;
+    }
+
 
 
 
@@ -168,6 +191,160 @@ public class ProjectStatisticsServiceImpl implements ProjectStatisticsService {
         }
         return list;
     }
+
+
+    /**
+     * 多用户统计
+     * @param projectLabelIn
+     * @param response
+     * @throws Exception
+     */
+    @Override
+    public void projectUserExport(ProjectLabelIn projectLabelIn,HttpServletResponse response)throws Exception{
+        List<ProjectLabelOut> projectLabelOutList=projectStatisticsMapper.labelsNumber(projectLabelIn);
+        //根据createBy求标注总数
+        Map<Long, DoubleSummaryStatistics> maps = projectLabelOutList.stream().collect(Collectors.groupingBy(ProjectLabelOut::getCategoryId, Collectors.summarizingDouble(ProjectLabelOut::getMarkingNum)));
+        List<ProjectLabelOut> projectImageNum=projectStatisticsMapper.labelImageNumber(projectLabelIn.getProjectId());
+        //根据createBy求图像总数
+        Map<Long, DoubleSummaryStatistics> mapsImage = projectImageNum.stream().collect(Collectors.groupingBy(ProjectLabelOut::getCategoryId, Collectors.summarizingDouble(ProjectLabelOut::getLabelImageNum)));
+        //根据createBy和categoryId组成的num生成map
+        Map<String,ProjectLabelOut> projectLabelOutMap=projectImageNum.stream().collect(Collectors.toMap(ProjectLabelOut::getNum,Function.identity()));
+        for (ProjectLabelOut projectLabelOut:projectLabelOutList){
+            //当前标签标注图象数量
+            projectLabelOut.setLabelImageNum(projectLabelOutMap.get(projectLabelOut.getNum()).getLabelImageNum());
+            //标注总数
+            projectLabelOut.setMarkingTotal((int)maps.get(projectLabelOut.getCategoryId()).getSum());
+            //标注图象总数
+            projectLabelOut.setImageNum((int)mapsImage.get(projectLabelOut.getCategoryId()).getSum());
+        }
+        //根据标注总数排序
+        List<ProjectLabelOut> labelOuts=projectLabelOutList.stream().sorted(Comparator.comparing(ProjectLabelOut::getMarkingTotal).reversed()).collect(Collectors.toList());
+
+
+        Map<Long,List<ProjectLabelOut>> labelOutsMap=labelOuts.stream().collect(Collectors.groupingBy(ProjectLabelOut::getCategoryId));
+        List<ProjectLabelOut> labelsOut=new ArrayList<>();
+        for (Long key:labelOutsMap.keySet()){
+            ProjectLabelOut projectLabelOut=ProjectLabelOut.builder().categoryId(labelOutsMap.get(key).get(0).getCategoryId())
+                    .imageNum(labelOutsMap.get(key).get(0).getImageNum()).markingTotal(labelOutsMap.get(key).get(0).getMarkingTotal()).build();
+            labelsOut.add(projectLabelOut);
+        }
+
+        //创建poi导出数据对象
+        SXSSFWorkbook sxssfWorkbook=new SXSSFWorkbook();
+
+        //创建sheet页
+        SXSSFSheet sheet=sxssfWorkbook.createSheet("sheet1");
+        //创建表头
+        SXSSFRow headRow=sheet.createRow(0);
+
+        //设置样式
+        CellStyle style = sxssfWorkbook.createCellStyle();
+        style.setBorderTop(BorderStyle.THIN);//上边框
+        style.setBorderLeft(BorderStyle.THIN);//左边框
+        style.setBorderRight(BorderStyle.THIN);//右边框
+        style.setBorderBottom(BorderStyle.THIN);//下边框
+
+        //设置表头信息
+        Cell cellChannelId = headRow.createCell(0);
+        cellChannelId.setCellValue("标签");
+        cellChannelId.setCellStyle(style);
+
+        Cell cellName = headRow.createCell(1);
+        cellName.setCellValue("标签图像总数");
+        cellName.setCellStyle(style);
+
+        Cell cellType = headRow.createCell(2);
+        cellType.setCellValue("标注人员");
+        cellType.setCellStyle(style);
+
+        Cell cellContent= headRow.createCell(3);
+        cellContent.setCellValue("标注数量");
+        cellContent.setCellStyle(style);
+
+        Cell cellOutUrl = headRow.createCell(4);
+        cellOutUrl.setCellValue("标注总数");
+        cellOutUrl.setCellStyle(style);
+
+        Map<Long,ProjectLabelOut> outMap=labelsOut.stream().collect(Collectors.toMap(ProjectLabelOut::getCategoryId,Function.identity(),(key1, key2) -> key2));
+
+        Long categoryId=null;
+        //定义一个值，标记行数
+        int count=1;
+        for (ProjectLabelOut projectLabelOut:labelOuts){
+            SXSSFRow dataRow=sheet.createRow(count);
+            if (!projectLabelOut.getCategoryId().equals(categoryId)){
+                ProjectLabelOut labelOut=outMap.get(projectLabelOut.getCategoryId());
+                categoryId=projectLabelOut.getCategoryId();
+                Cell imageNum = dataRow.createCell(1);
+                imageNum.setCellValue(labelOut.getImageNum());
+                imageNum.setCellStyle(style);
+
+                Cell markTotal = dataRow.createCell(4);
+                markTotal.setCellValue(labelOut.getMarkingTotal());
+                markTotal.setCellStyle(style);
+            }
+            Cell markUser = dataRow.createCell(0);
+            markUser.setCellValue(projectLabelOut.getCategoryName());
+            markUser.setCellStyle(style);
+
+            Cell labels = dataRow.createCell(2);
+            labels.setCellValue(projectLabelOut.getNickName());
+            labels.setCellStyle(style);
+
+            Cell labelImageNum = dataRow.createCell(3);
+            labelImageNum.setCellValue(projectLabelOut.getMarkingNum());
+            labelImageNum.setCellStyle(style);
+            count++;
+        }
+
+        //筛选出合并行
+        int firstRow=1;
+        int lastRow;
+        //从第二条开始
+        Map<Integer, Integer> hbMap=new LinkedHashMap<>();
+        for(int i=1;i<labelOuts.size();i++){
+            boolean flag = !labelOuts.get(i).getCategoryId().equals(labelOuts.get(i-1).getCategoryId()) || i>=labelOuts.size()-1;
+            if(flag){
+                //
+                if(i!=labelOuts.size() - 1){
+                    lastRow=i;
+                }else{
+                    //i+1是因为前面的表头占了一行
+                    lastRow=i+1;
+                }
+                hbMap.put(firstRow,lastRow);
+                firstRow=i+1;
+            }
+        }
+        System.out.println(hbMap);
+        //有一行数据的不进行合并
+        for(Map.Entry<Integer, Integer> e:hbMap.entrySet()){
+            for(int i=0;i<=4;i++){
+                if (i==1||i==4){
+                    CellRangeAddress region2=new CellRangeAddress(e.getKey(),e.getValue(),i,i);
+                    sheet.addMergedRegion(region2);
+                    setBorderStyle(BorderStyle.THIN, region2, sheet);
+                }
+            }
+        }
+        // 下载导出
+        Long filename=System.currentTimeMillis();
+        // 设置头信息
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/vnd.ms-excel");
+        //一定要设置成xlsx格式
+        response.setHeader("Content-Disposition","attachment;filename="+ URLEncoder.encode(filename+".xlsx","UTF-8"));
+        //创建一个输出流
+        ServletOutputStream outputStream=response.getOutputStream();
+        //写入数据
+        sxssfWorkbook.write(outputStream);
+        // 关闭
+        outputStream.close();
+        sxssfWorkbook.close();
+
+
+    }
+
 
 
     /**

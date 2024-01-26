@@ -18,7 +18,7 @@ public interface RecentlyVisitedService extends IService<RecentlyVisited> {
      *
      * @return List
      */
-    List<RecentlyVisitedSelectVO> selectList();
+    List<RecentlyVisitedSelectVO> selectList(Long projectType);
 
 
     /**

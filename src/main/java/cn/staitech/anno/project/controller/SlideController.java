@@ -55,6 +55,12 @@ public class SlideController {
         return R.ok(slideService.getSlideAnnoStatistics(in));
     }
 
+    @ApiOperation(value = "多用户统计")
+    @PostMapping("/projectUserStatistics")
+    public R<List<ProjectStatisticsOut>> projectUserStatistics(@RequestBody ProjectStatisticsIn in) throws Exception {
+        return R.ok(slideService.projectUserStatistics(in));
+    }
+
     @RequiresPermissions("smartAnno:project:slice:export")
     @ApiOperation(value = "标注数据导出")
     @GetMapping("/slideAnnoStatisticsExport")

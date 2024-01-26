@@ -212,18 +212,16 @@ public class MarkingServiceImpl implements MarkingService {
             if (CollectionUtils.isNotEmpty(otherAnnoList)) {
                 list.addAll(otherAnnoList);
             }
-        }
-//        else if ("2".equalsIgnoreCase(projectType) && !project.getCreateBy().equals(userId)) {
-//            //智能评审非项目创建者只查询自己标注的数据
-//            Map<String, Object> map = new HashMap<String, Object>(16);
-//            map.put("slideId", slideId);
-//            map.put("createBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
-//            List<Features> selfAnnoList = markingMapper.selectListBy2(map);
-//            if (CollectionUtils.isNotEmpty(selfAnnoList)) {
-//                list.addAll(selfAnnoList);
-//            }
-//        }
-        else {
+        } else if ("2".equalsIgnoreCase(projectType) && !project.getCreateBy().equals(userId)) {
+            //智能评审非项目创建者只查询自己标注的数据
+            Map<String, Object> map = new HashMap<String, Object>(16);
+            map.put("slideId", slideId);
+            map.put("createBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
+            List<Features> selfAnnoList = markingMapper.selectListBy2(map);
+            if (CollectionUtils.isNotEmpty(selfAnnoList)) {
+                list.addAll(selfAnnoList);
+            }
+        } else {
             list = markingMapper.selectListBy(slideId);
         }
         return list;
@@ -1269,15 +1267,15 @@ public class MarkingServiceImpl implements MarkingService {
         List<Marking> features = markingMapper.roiMarking(slideId.intValue());
         List<String> markingIds;
         //查询measure的标注信息
-        List<MarkMeasure> markMeasures=markingMapper.roiMeasure(slideId);
+        List<MarkMeasure> markMeasures = markingMapper.roiMeasure(slideId);
         List<String> markingMeasureIds;
         //roi包含
         if (viewAddIns.getRoiStatus() == 0) {
             markingIds = roiCont(viewAddIns, features);
-            markingMeasureIds=roiMeasureCont(viewAddIns,markMeasures);
+            markingMeasureIds = roiMeasureCont(viewAddIns, markMeasures);
         } else {
             markingIds = roiDel(viewAddIns, features);
-            markingMeasureIds=roiMeasureDel(viewAddIns,markMeasures);
+            markingMeasureIds = roiMeasureDel(viewAddIns, markMeasures);
         }
         if (markingIds.isEmpty() && markingMeasureIds.isEmpty()) {
             return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
@@ -1292,7 +1290,7 @@ public class MarkingServiceImpl implements MarkingService {
             categoryIds.add(0L);
             Set<Long> createBys = new HashSet<>();
 
-            if (CollectionUtils.isNotEmpty(markingIds)){
+            if (CollectionUtils.isNotEmpty(markingIds)) {
                 QueryWrapper<cn.staitech.anno.project.domain.Marking> wrapper = new QueryWrapper<>();
                 wrapper.in("marking_id", markingIds);
                 //删除标注
@@ -1303,11 +1301,11 @@ public class MarkingServiceImpl implements MarkingService {
                     createBys.add(markingMap.get(markingId).getCreate_by());
                 }
             }
-            if (CollectionUtils.isNotEmpty(markingMeasureIds)){
+            if (CollectionUtils.isNotEmpty(markingMeasureIds)) {
                 //删除测量
                 markingMapper.delMeasure(markingMeasureIds);
                 //测量的createBy
-                for(String markMeasureId:markingMeasureIds){
+                for (String markMeasureId : markingMeasureIds) {
                     createBys.add(markMeasureMap.get(markMeasureId).getCreate_by());
                 }
             }
@@ -1574,7 +1572,7 @@ public class MarkingServiceImpl implements MarkingService {
     /**
      * ROI包含选出要删除的markingId
      */
-    public List<String> roiMeasureCont(RoiIn viewAddIns,  List<MarkMeasure> features) throws ParseException {
+    public List<String> roiMeasureCont(RoiIn viewAddIns, List<MarkMeasure> features) throws ParseException {
         //要删除的markingId集合
         Set<String> markMeasureIdDel = new HashSet<>();
         //包含的markingId集合

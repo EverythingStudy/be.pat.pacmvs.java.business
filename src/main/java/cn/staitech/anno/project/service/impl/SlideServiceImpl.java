@@ -21,16 +21,14 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.error.Mark;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -50,10 +48,22 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
     private HttpServletResponse httpServletResponse;
 
     @Resource
+    private SysUserMapperV1 userMapperV1;
+
+    @Resource
     private MarkingMapperV1 markingMapperV1;
 
     @Resource
+    private ProjectMemberMapperV1 projectMemberMapperV1;
+
+    @Resource
     private ReviewMapper reviewMapper;
+
+    @Resource
+    private SlideMapperV1 slideMapperV1;
+
+    @Resource
+    private ProjectMapperV1 projectMapperV1;
 
     @Resource
     private ProjectService projectService;
@@ -191,6 +201,99 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
             }
         }
         return voList;
+    }
+
+
+
+
+
+    @Override
+    public List<ProjectStatisticsOut> projectUserStatistics(ProjectStatisticsIn params) throws Exception{
+        cn.staitech.anno.project.domain.Project project = projectMapperV1.selectById(params.getProjectId());
+        QueryWrapper<PathologicalIndicatorCategory> pathologicalIndicatorCategoryQueryWrapper = new QueryWrapper<>();
+        pathologicalIndicatorCategoryQueryWrapper.select("category_id","category_name");
+        if(params.getCategoryList() != null && params.getCategoryList().size() > 0){
+            pathologicalIndicatorCategoryQueryWrapper.in("category_id", params.getCategoryList());
+        } else {
+            pathologicalIndicatorCategoryQueryWrapper.eq("indicator_id", project.getIndicatorId());
+        }
+        List<PathologicalIndicatorCategory> pathologicalIndicatorCategoryList = pathologicalIndicatorCategoryMapperV1.selectList(pathologicalIndicatorCategoryQueryWrapper);
+        List<Long> categoryList = pathologicalIndicatorCategoryList.stream().map(PathologicalIndicatorCategory::getCategoryId).collect(Collectors.toList());
+        Map<Long,String> categoryNameMap = pathologicalIndicatorCategoryList.stream().collect(Collectors.toMap(PathologicalIndicatorCategory::getCategoryId,PathologicalIndicatorCategory::getCategoryName));
+        QueryWrapper<ProjectMember> projectMemberQueryWrapper = new QueryWrapper<>();
+        projectMemberQueryWrapper.select("user_id","project_id");
+        if(params.getUserList() != null && params.getUserList().size() > 0){
+            projectMemberQueryWrapper.in("user_id",params.getUserList());
+        }else {
+            projectMemberQueryWrapper.eq("project_id", params.getProjectId());
+        }
+        List<ProjectMember> projectMembers = projectMemberMapperV1.selectList(projectMemberQueryWrapper);
+        List<Long> userList = projectMembers.stream().map(ProjectMember::getUserId).map(s -> (long) s).collect(Collectors.toList());
+        QueryWrapper<SysUser> sysUserQueryWrapper = new QueryWrapper<>();
+        sysUserQueryWrapper.select("user_id","user_name").in("user_id", userList);
+        List<SysUser> users = userMapperV1.selectList(sysUserQueryWrapper);
+        Map<Long,String> userMap = users.stream().collect(Collectors.toMap(SysUser::getUserId,SysUser::getUserName));
+        // 查询当前项目下所有的切片集合
+        QueryWrapper<Slide> slideQueryWrapper = new QueryWrapper<>();
+        slideQueryWrapper.eq("project_id",params.getProjectId());
+        List<Slide> slides = slideMapperV1.selectList(slideQueryWrapper);
+        List<Long> slideList = slides.stream().map(Slide::getSlideId).collect(Collectors.toList());
+        // 拥有标注的标签集合
+        Map<Long,Integer> categoryMap = new HashMap<>(16);
+        // 循环当前标签
+        for(Long categoryId:categoryList){
+            List<Long> slideHaveMarkingList = new ArrayList<>();
+            for(Long slideId:slideList){
+                QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
+                markingQueryWrapper.eq("category_id",categoryId).eq("slide_id",slideId).orderByDesc("create_time").last("LIMIT 1");
+                Marking marking = markingMapperV1.selectOne(markingQueryWrapper);
+                if(marking != null){
+                    slideHaveMarkingList.add(marking.getSlideId());
+                }
+            }
+            categoryMap.put(categoryId, slideHaveMarkingList.size());
+        }
+        Map<Long,Map<Long,Integer>> userSumMap = new HashMap<>();
+        for(Long userId:userList){
+            Map<Long,Integer> categoryCountMap = new HashMap<>();
+            for(Long categoryId:categoryList){
+                QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
+                markingQueryWrapper.select("slide_id").eq("category_id",categoryId).eq("create_by",userId).eq("project_id",params.getProjectId());
+                int count = markingMapperV1.selectCount(markingQueryWrapper);
+                if(count > 0){
+                    categoryCountMap.put(categoryId, count);
+                }
+            }
+            userSumMap.put(userId,categoryCountMap);
+        }
+        Map<Long,Integer> categoryCountNumMap = new HashMap<>(16);
+        for(Long categoryId:categoryList){
+            int categoryCount = 0;
+            for(Long userId:userList){
+                if(userSumMap.get(userId).get(categoryId) != null){
+                    categoryCount += userSumMap.get(userId).get(categoryId);
+                }
+            }
+            categoryCountNumMap.put(categoryId, categoryCount);
+        }
+        List<ProjectStatisticsOut> projectStatisticsOuts = new ArrayList<>();
+        for(Long categoryId:categoryList){
+            int totalCount = categoryCountNumMap.get(categoryId);
+            for(Long userId:userList){
+                Integer categoryImageNum = categoryMap.get(categoryId);
+                Integer markingCount = userSumMap.get(userId).get(categoryId);
+                if(categoryImageNum > 0 && totalCount > 0 && markingCount != null && markingCount > 0){
+                    ProjectStatisticsOut projectStatisticsOut = new ProjectStatisticsOut();
+                    projectStatisticsOut.setUserName(userMap.get(userId));
+                    projectStatisticsOut.setCategoryImageNum(categoryImageNum);
+                    projectStatisticsOut.setCategoryName(categoryNameMap.get(categoryId));
+                    projectStatisticsOut.setMarkingCount(markingCount);
+                    projectStatisticsOut.setMarkingSum(totalCount);
+                    projectStatisticsOuts.add(projectStatisticsOut);
+                }
+            }
+        }
+        return projectStatisticsOuts;
     }
 
     /**
