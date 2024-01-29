@@ -23,5 +23,60 @@
     <sql id="Base_Column_List">
         project_user_label_statistics_id, project_id, project_name, anno_user_id, anno_nick_name, indicator_id, indicator_name, category_id, category_name, marking_num, del_flag,organization_id, task_create_time
     </sql>
+    
+    <select id="getProjectUserLabelStatistics" parameterType="cn.staitech.anno.domain.ProjectUserLabelStatistics"
+		resultType="cn.staitech.anno.domain.MarkingStatistic">
+		SELECT 
+			t.project_user_label_statistics_id,
+			 t.project_id, 
+			 t.project_name,
+			 t.anno_user_id, 
+			 t.anno_nick_name nick_name, 
+			 t.indicator_id, 
+			 t.indicator_name, 
+			 t.category_id, 
+			 t.category_name, 
+			 t.marking_num, 
+			 t.del_flag,
+			 t.organization_id, 
+			 t.task_create_time
+		FROM tb_project_user_label_statistics t
+		<where>
+			<if test="projectIdList != null and projectIdList.size()>0 ">
+                AND t.project_id IN
+                <foreach collection="projectIdList" item="projectId" open="(" separator="," close=")">
+                    #{projectId}
+                </foreach>
+            </if>
+            <if test="indicatorIdList != null and indicatorIdList.size()>0 ">
+                AND t.indicator_id IN
+                <foreach collection="indicatorIdList" item="indicatorId" open="(" separator="," close=")">
+                    #{indicatorId}
+                </foreach>
+            </if>
+            <if test="projectAnnoUseridList != null and projectAnnoUseridList.size()>0 ">
+                AND t.anno_user_id IN
+                <foreach collection="projectAnnoUseridList" item="annoUserid" open="(" separator="," close=")">
+                    #{"annoUserid"}
+                </foreach>
+            </if>
+            <if test="categoryIdList != null and categoryIdList.size()>0 ">
+                AND t.category_id IN
+                <foreach collection="categoryIdList" item="categoryId" open="(" separator="," close=")">
+                    #{categoryId}
+                </foreach>
+            </if> 
+			
+			<if test="delFlag != null">
+				AND t.del_flag = #{delFlag}
+			</if>
+
+			<if test="organizationId != null">
+				AND t.organization_id = #{organizationId}
+			</if>
+
+		</where>
+		 ORDER BY	t.marking_num DESC
+	</select>
 
 </mapper>

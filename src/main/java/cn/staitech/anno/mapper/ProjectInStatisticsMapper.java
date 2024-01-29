@@ -1,7 +1,11 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.ProjectStatistics;
+import java.util.List;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import cn.staitech.anno.domain.ProjectStatistics;
+import cn.staitech.anno.vo.labelprojectstatistics.ProjectLabelOut;
 
 /**
  * <p>
@@ -12,5 +16,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2024-01-26
  */
 public interface ProjectInStatisticsMapper extends BaseMapper<ProjectStatistics> {
-
+	List<ProjectLabelOut> getProjectStatistics(ProjectStatistics projectStatistics);
 }

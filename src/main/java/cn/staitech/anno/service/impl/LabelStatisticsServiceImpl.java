@@ -11,22 +11,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 
 import cn.staitech.anno.constant.CommonConstant;
-import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.domain.ProjectLabelStatistics;
 import cn.staitech.anno.domain.ProjectMember;
 import cn.staitech.anno.domain.ProjectStatistics;
 import cn.staitech.anno.mapper.LabelStatisticsMapper;
+import cn.staitech.anno.mapper.ProjectInStatisticsMapper;
+import cn.staitech.anno.mapper.ProjectLabelStatisticsMapper;
 import cn.staitech.anno.project.vo.SelectProjectVO;
 import cn.staitech.anno.service.LabelStatisticsService;
-import cn.staitech.anno.service.ProjectInStatisticsService;
-import cn.staitech.anno.service.ProjectLabelStatisticsService;
 import cn.staitech.anno.service.ProjectMemberService;
 import cn.staitech.anno.utils.Column;
 import cn.staitech.anno.utils.ExcelTool;
@@ -54,11 +51,12 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 	@Resource
 	private LabelStatisticsMapper labelStatisticsMapper;
 	@Resource
-	private ProjectLabelStatisticsService projectLabelStatisticsService;
-	@Resource
-	private ProjectInStatisticsService projectStatisticsService;
+	private ProjectInStatisticsMapper projectInStatisticsMapper;
 	@Resource
 	private ProjectMemberService projectMemberService;
+	
+	@Resource
+	private ProjectLabelStatisticsMapper projectLabelStatisticsMapper;
 	/**
 	 * 获取项目列表
 	 */
@@ -117,7 +115,6 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 	 */
 	@Override
 	public R<PageMaster<ProjectLabelOut>> projectLabelList(ProjectLabelIn projectLabelIn) {
-		projectLabelIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
 		List<Long> projectIds = new ArrayList<>();
 		projectIds = projectLabelIn.getProjectIds();
 		List<Long> indicatorIds = projectLabelIn.getIndicatorIds();
@@ -126,52 +123,33 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
 		Long currentUserId = SecurityUtils.getUserId();
 
+
 		if(null == projectIds || CollectionUtils.isEmpty(projectIds)){
 			projectIds = getProjectIdStatistics(currentUserId, organizationId);
 		}
 
 		//查询
-		QueryWrapper<ProjectLabelStatistics> queryWrapper = new QueryWrapper<>();
-		queryWrapper.select("project_id, project_name,project_status,description,project_create_by,create_nick_name,project_create_time,indicator_id,indicator_name,category_id,category_name,image_num,marking_num");
+		ProjectLabelStatistics projectLabelStatistics = new ProjectLabelStatistics();
 		if(CollectionUtils.isNotEmpty(projectIds)){
-			queryWrapper.in("project_id", projectIds);
+			projectLabelStatistics.setProjectIdList(projectIds);
 		}
 
 		if(CollectionUtils.isNotEmpty(indicatorIds)){
-			queryWrapper.in("indicator_id", indicatorIds);
+			projectLabelStatistics.setIndicatorIdList(indicatorIds);
 		}
 
 		if(CollectionUtils.isNotEmpty(categoryIds)){
-			queryWrapper.in("category_id", categoryIds);
+			projectLabelStatistics.setCategoryIdList(categoryIds);
 		}
 
-
-
-		/*if(CollectionUtils.isNotEmpty(userIds)){
-        	queryWrapper.in("project_create_by", userIds);
-        }*/
-
-
-		queryWrapper.eq("organization_id", organizationId);
-		queryWrapper.eq("del_flag", 0);
-		queryWrapper.orderByDesc("marking_num");
-
-		List<ProjectLabelStatistics> list = projectLabelStatisticsService.list(queryWrapper);
-		List<ProjectLabelOut> retList = new ArrayList<>(); 
-		for (ProjectLabelStatistics statistics : list) {
-			ProjectLabelOut projectLabelOut = new ProjectLabelOut();
-			//BeanUtils.copyProperties(statistics, projectLabelOut);
-			projectLabelOut.setProjectName(statistics.getProjectName());
-			projectLabelOut.setImageNum(statistics.getImageNum()+"");
-			projectLabelOut.setMarkingNum(statistics.getMarkingNum()+"");
-			projectLabelOut.setStatus(statistics.getProjectStatus());
-			projectLabelOut.setCategoryId(statistics.getCategoryId());
-			projectLabelOut.setCategoryName(statistics.getCategoryName());
-			projectLabelOut.setIndicatorId(statistics.getIndicatorId());
-			projectLabelOut.setIndicatorName(statistics.getIndicatorName());
-			retList.add(projectLabelOut);
-		}
-		PageMaster<ProjectLabelOut> pageMaster = new PageMaster<>(retList);
+		projectLabelStatistics.setDelFlag("0");
+		projectLabelStatistics.setOrganizationId(organizationId);
+		
+		PageHelper.startPage(projectLabelIn.getPageNum(), projectLabelIn.getPageSize()).setReasonable(true);
+		List<ProjectLabelOut> list = new ArrayList<>();
+		list = projectLabelStatisticsMapper.getProjectLabelStatistics(projectLabelStatistics);
+		
+		PageMaster<ProjectLabelOut> pageMaster = new PageMaster<>(list);
 		return R.ok(pageMaster);
 	}
 
@@ -197,13 +175,12 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 	 */
 	@Override
 	public R<PageMaster<ProjectLabelOut>> itemList(ProjectListIn projectListIn) {
-		PageHelper.startPage(projectListIn.getPageNum(), projectListIn.getPageSize()).setReasonable(true);
 		//        {"projectIds":[313,521,522,490],"statusList":["3","2"],"indicatorIds":[1145,1149],"userIds":[14],
 		//        "description":"fsfsfsfsf","createTimeParams":{"beginTime":"2024-01-15","endTime":"2024-02-21"},"pageNum":1,"pageSize":10,"total":9}
 
 		Long currentUserId = SecurityUtils.getUserId();
 		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-		
+
 
 		List<Long> projectIds = new ArrayList<>();
 
@@ -220,50 +197,39 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 		}
 
 		//查询
-		QueryWrapper<ProjectStatistics> queryWrapper = new QueryWrapper<>();
-		queryWrapper.select("project_id, project_name,project_status,description,project_create_by,create_nick_name,project_create_time,image_num,marking_num");
+		ProjectStatistics projectStatistics = new ProjectStatistics();
 		if(CollectionUtils.isNotEmpty(projectIds)){
-			queryWrapper.in("project_id", projectIds);
+			projectStatistics.setProjectIdList(projectIds);
 		}
 
 		if(CollectionUtils.isNotEmpty(statusList)){
-			queryWrapper.in("project_status", statusList);
+			projectStatistics.setProjectStatusList(statusList);
 		}
 
 		if(CollectionUtils.isNotEmpty(indicatorIds)){
-			queryWrapper.in("indicator_id", indicatorIds);
+			projectStatistics.setIndicatorIdList(indicatorIds);
 		}
 
 		if(CollectionUtils.isNotEmpty(userIds)){
-			queryWrapper.in("project_create_by", userIds);
+			projectStatistics.setProjectCreateByList(userIds);
 		}
 
 		if(StringUtils.isNotEmpty(description)){
-			queryWrapper.like("description", description);
+			projectStatistics.setDescription(description);
 		}
 
 		if(null != createTimeParams && !createTimeParams.isEmpty() && createTimeParams.containsKey("beginTime")&& createTimeParams.containsKey("endTime")){
-			queryWrapper.between("project_create_time", createTimeParams.get("beginTime"), createTimeParams.get("endTime"));
+			projectStatistics.setCreateTimeParams(createTimeParams);
 		}
+		
+		projectStatistics.setOrganizationId(organizationId);
+		projectStatistics.setDelFlag("0");
+		
+		PageHelper.startPage(projectListIn.getPageNum(), projectListIn.getPageSize()).setReasonable(true);
 
-		queryWrapper.eq("organization_id", organizationId);
-		queryWrapper.eq("del_flag", 0);
-		queryWrapper.orderByDesc("marking_num");
-
-		List<ProjectStatistics> list = projectStatisticsService.list(queryWrapper);
-		List<ProjectLabelOut> retList = new ArrayList<>(); 
-		for (ProjectStatistics statistics : list) {
-			ProjectLabelOut projectLabelOut = new ProjectLabelOut();
-			projectLabelOut.setProjectName(statistics.getProjectName());
-			projectLabelOut.setImageNum(statistics.getImageNum()+"");
-			projectLabelOut.setMarkingNum(statistics.getMarkingNum()+"");
-			projectLabelOut.setNickName(statistics.getCreateNickName());
-			projectLabelOut.setDescription(statistics.getDescription());
-			projectLabelOut.setCreateTime(statistics.getProjectCreateTime());
-			projectLabelOut.setStatus(statistics.getProjectStatus());
-			retList.add(projectLabelOut);
-		}
-		PageMaster<ProjectLabelOut> pageMaster = new PageMaster<>(retList);
+		List<ProjectLabelOut> list =  new ArrayList<>();
+		list = projectInStatisticsMapper.getProjectStatistics(projectStatistics);
+		PageMaster<ProjectLabelOut> pageMaster = new PageMaster<>(list);
 		return R.ok(pageMaster);
 	}
 
@@ -273,9 +239,6 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 	 */
 	@Override
 	public void labelExport(ProjectLabelIn projectLabelIn, HttpServletResponse response) throws Exception {
-		projectLabelIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-		projectLabelIn.setUserId(SecurityUtils.getUserId());
-		//ProjectInVO projectInVO = ProjectInVO.builder().organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).userId(SecurityUtils.getUserId()).projectType("1").build();
 		List<Long> projectIds = new ArrayList<>();
 		projectIds = projectLabelIn.getProjectIds();
 		projectIds = projectLabelIn.getProjectIds();
@@ -291,47 +254,26 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 
 
 		//查询
-		QueryWrapper<ProjectLabelStatistics> queryWrapper = new QueryWrapper<>();
-		queryWrapper.select("project_id, project_name,project_status,description,project_create_by,create_nick_name,project_create_time,indicator_id,indicator_name,category_id,category_name,image_num,marking_num");
+		
+		ProjectLabelStatistics projectLabelStatistics = new ProjectLabelStatistics();
 		if(CollectionUtils.isNotEmpty(projectIds)){
-			queryWrapper.in("project_id", projectIds);
+			projectLabelStatistics.setProjectIdList(projectIds);
 		}
 
 		if(CollectionUtils.isNotEmpty(indicatorIds)){
-			queryWrapper.in("indicator_id", indicatorIds);
+			projectLabelStatistics.setIndicatorIdList(indicatorIds);
 		}
 
 		if(CollectionUtils.isNotEmpty(categoryIds)){
-			queryWrapper.in("category_id", categoryIds);
+			projectLabelStatistics.setCategoryIdList(categoryIds);
 		}
 
-
-
-		/*if(CollectionUtils.isNotEmpty(userIds)){
-        	queryWrapper.in("project_create_by", userIds);
-        }*/
-
-
-		queryWrapper.eq("organization_id", organizationId);
-		queryWrapper.eq("del_flag", 0);
-		queryWrapper.orderByDesc("marking_num");
-
-		List<ProjectLabelStatistics> list = projectLabelStatisticsService.list(queryWrapper);
-		List<ProjectLabelOut> retList = new ArrayList<>(); 
-		for (ProjectLabelStatistics statistics : list) {
-			ProjectLabelOut projectLabelOut = new ProjectLabelOut();
-//			BeanUtils.copyProperties(statistics, projectLabelOut);
-			projectLabelOut.setProjectName(statistics.getProjectName());
-			projectLabelOut.setImageNum(statistics.getImageNum()+"");
-			projectLabelOut.setMarkingNum(statistics.getMarkingNum()+"");
-			projectLabelOut.setStatus(statistics.getProjectStatus());
-			projectLabelOut.setStatusName(Container.PROJECT_STATUS.get(statistics.getProjectStatus()));
-			projectLabelOut.setCategoryId(statistics.getCategoryId());
-			projectLabelOut.setCategoryName(statistics.getCategoryName());
-			projectLabelOut.setIndicatorId(statistics.getIndicatorId());
-			projectLabelOut.setIndicatorName(statistics.getIndicatorName());
-			retList.add(projectLabelOut);
-		}
+		projectLabelStatistics.setDelFlag("0");
+		projectLabelStatistics.setOrganizationId(organizationId);
+		
+		List<ProjectLabelOut> list = new ArrayList<>();
+		list = projectLabelStatisticsMapper.getProjectLabelStatistics(projectLabelStatistics);
+		
 		List<Map<String, String>> titleList = getTitleList(CommonConstant.LABEL_STATISTICS_KEY, CommonConstant.LABEL_STATISTICS_VALUE);
 		ExcelTool excelTool = new ExcelTool<>(MessageSource.M("EXCEL_FILE_PATH"), 20, 20);
 		List<Column> titleData = excelTool.columnTransformer(titleList);
@@ -339,7 +281,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 		response.setCharacterEncoding("utf-8");
 		response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(String.valueOf(System.currentTimeMillis()), "UTF-8") + CommonConstant.FILE_SUFFIX_XLSX);
 		//        excelTool.exportExcel(titleData, projectLabelOuts, response.getOutputStream(), true, false);
-		excelTool.exportExcel(titleData, retList, response.getOutputStream(), true, false);
+		excelTool.exportExcel(titleData, list, response.getOutputStream(), true, false);
 
 	}
 
@@ -365,7 +307,6 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 		projectListIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
 		projectListIn.setUsers(SecurityUtils.getUserId());
 		
-		List<ProjectLabelOut> itemList = new ArrayList<>();
 
 		List<Long> projectIds = new ArrayList<>();
 		projectIds = projectListIn.getProjectIds();
@@ -383,49 +324,34 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 		}
 
 		//查询
-		QueryWrapper<ProjectStatistics> queryWrapper = new QueryWrapper<>();
-		queryWrapper.select("project_id, project_name,project_status,description,project_create_by,create_nick_name,project_create_time,image_num,marking_num");
+		ProjectStatistics projectStatistics = new ProjectStatistics();
 		if(CollectionUtils.isNotEmpty(projectIds)){
-			queryWrapper.in("project_id", projectIds);
+			projectStatistics.setProjectIdList(projectIds);
 		}
 
 		if(CollectionUtils.isNotEmpty(statusList)){
-			queryWrapper.in("project_status", statusList);
+			projectStatistics.setProjectStatusList(statusList);
 		}
 
 		if(CollectionUtils.isNotEmpty(indicatorIds)){
-			queryWrapper.in("indicator_id", indicatorIds);
+			projectStatistics.setIndicatorIdList(indicatorIds);
 		}
 
 		if(CollectionUtils.isNotEmpty(userIds)){
-			queryWrapper.in("project_create_by", userIds);
+			projectStatistics.setProjectCreateByList(userIds);
 		}
 
 		if(StringUtils.isNotEmpty(description)){
-			queryWrapper.like("description", description);
+			projectStatistics.setDescription(description);
 		}
 
 		if(null != createTimeParams && !createTimeParams.isEmpty() && createTimeParams.containsKey("beginTime")&& createTimeParams.containsKey("endTime")){
-			queryWrapper.between("project_create_time", createTimeParams.get("beginTime"), createTimeParams.get("endTime"));
+			projectStatistics.setCreateTimeParams(createTimeParams);
 		}
-
-		queryWrapper.eq("organization_id", organizationId);
-		queryWrapper.eq("del_flag", 0);
-		queryWrapper.orderByDesc("marking_num");
-
-		List<ProjectStatistics> list = projectStatisticsService.list(queryWrapper);
-		for (ProjectStatistics statistics : list) {
-			ProjectLabelOut projectLabelOut = new ProjectLabelOut();
-			projectLabelOut.setProjectName(statistics.getProjectName());
-			projectLabelOut.setImageNum(statistics.getImageNum()+"");
-			projectLabelOut.setMarkingNum(statistics.getMarkingNum()+"");
-			projectLabelOut.setNickName(statistics.getCreateNickName());
-			projectLabelOut.setDescription(statistics.getDescription());
-			projectLabelOut.setCreateTime(statistics.getProjectCreateTime());
-			projectLabelOut.setStatus(statistics.getProjectStatus());
-			projectLabelOut.setStatusName(Container.PROJECT_STATUS.get(statistics.getProjectStatus()));
-			itemList.add(projectLabelOut);
-		}
+		projectStatistics.setOrganizationId(organizationId);
+		projectStatistics.setDelFlag("0");
+		List<ProjectLabelOut> list =  new ArrayList<>();
+		list = projectInStatisticsMapper.getProjectStatistics(projectStatistics);
 
 		// 构造表头的每个列头 定义表头
 		List<Map<String, String>> titleList = getTitleList(CommonConstant.PROJECT_STATISTICS_KEY, CommonConstant.PROJECT_STATISTICS_VALUE);
@@ -434,7 +360,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 		response.setContentType("application/vnd.ms-excel;charset=utf-8");
 		response.setCharacterEncoding("utf-8");
 		response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(String.valueOf(System.currentTimeMillis()), "UTF-8") + CommonConstant.FILE_SUFFIX_XLSX);
-		excelTool.exportExcel(titleData, itemList, response.getOutputStream(), true, false);
+		excelTool.exportExcel(titleData, list, response.getOutputStream(), true, false);
 
 
 	}

@@ -2,7 +2,12 @@ package cn.staitech.anno.domain;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
@@ -71,6 +76,28 @@ public class ProjectStatistics implements Serializable {
 
     @ApiModelProperty(value = "任务创建时间")
     private Date taskCreateTime;
+    
+    @TableField(exist = false)
+    @ApiModelProperty(value = "项目id列表")
+    private List<Long> projectIdList;
+    
+    @TableField(exist = false)
+    @ApiModelProperty(value = "项目状态列表")
+    private List<Integer> projectStatusList;
+    
+    @TableField(exist = false)
+    @ApiModelProperty(value = "标签集id列表")
+    private List<Long> indicatorIdList;
+    
+    @TableField(exist = false)
+    @ApiModelProperty(value = "项目创建者id列表")
+    private List<Long> projectCreateByList;
+    
+    @TableField(exist = false)
+    @ApiModelProperty(value = "创建时间")
+    private Map<String, Object> createTimeParams;
+    
+    
 
 
 }

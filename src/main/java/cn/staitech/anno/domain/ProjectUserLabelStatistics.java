@@ -2,7 +2,11 @@ package cn.staitech.anno.domain;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+
 import java.util.Date;
+import java.util.List;
+
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
@@ -65,6 +69,28 @@ public class ProjectUserLabelStatistics implements Serializable {
     
     @ApiModelProperty(value = "机构id")
     private Long organizationId;
+    
+    @TableField(exist = false)
+    @ApiModelProperty(value = "项目id列表")
+    private List<Long> projectIdList;
+    
+    @TableField(exist = false)
+    @ApiModelProperty(value = "标签列表")
+    private List<Long> categoryIdList;
+    
+    @TableField(exist = false)
+    @ApiModelProperty(value = "标签集id列表")
+    private List<Long> indicatorIdList;
+    
+    @TableField(exist = false)
+    @ApiModelProperty(value = "项目创建者id列表")
+    private List<Long> projectCreateByList;
+    
+    @TableField(exist = false)
+    @ApiModelProperty(value = "项目标注人员列表")
+    private List<Long> projectAnnoUseridList;
+    
+    
 
 
 }
