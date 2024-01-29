@@ -78,24 +78,8 @@ implements ImageAnnoStatisticsService {
 		// 测试 project_id 551);
 		ProjectAnnoStatistics queryStatisticsVO = new ProjectAnnoStatistics();
 
-		//初始化项目id和人员处理
-		List<Long> pIds = new ArrayList<>();
-		if (null == pIds || CollectionUtils.isEmpty(pIds)){
-			//赋值所有参与的项目
 
-			//查询自己参与的项目列表
-			ProjectMember projectMember = new ProjectMember();
-			projectMember.setUserId(currentUserId);
-			projectMember.setOrganizationId(organizationId);
-			List<SelectProjectVO> list = projectMemberService.getProjectListByPM(projectMember);
-			if (CollectionUtils.isNotEmpty(list)) {
-				for (SelectProjectVO p : list) {
-					pIds.add(p.getProjectId());
-				}
-			}
-		}
-
-		queryStatisticsVO.setProjectIdList(pIds);
+		queryStatisticsVO.setProjectIdList(projectIds);
 
 		if(CollectionUtils.isNotEmpty(createBys)){
 			queryStatisticsVO.setProjectAnnoUseridList(createBys);
