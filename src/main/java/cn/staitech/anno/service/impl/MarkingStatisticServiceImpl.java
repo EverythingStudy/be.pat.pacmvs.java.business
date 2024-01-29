@@ -61,10 +61,10 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
 
         PageHelper.startPage(selectVO.getPageNum(), selectVO.getPageSize()).setReasonable(true);
 
-//        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-//        Long organizationId = sysUser.getOrganizationId();
-        Long organizationId = 1L;
-		Long currentUserId = 39L;
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+        Long organizationId = sysUser.getOrganizationId();
+        Long currentUserId =  sysUser.getUserId();
+
 
         List<Long> projectIds = selectVO.getProjectIds();
         List<Long> createBys = selectVO.getCreateBys();
