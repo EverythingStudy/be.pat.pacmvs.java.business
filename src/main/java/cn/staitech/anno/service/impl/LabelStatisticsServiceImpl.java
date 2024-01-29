@@ -118,38 +118,6 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 	@Override
 	public R<PageMaster<ProjectLabelOut>> projectLabelList(ProjectLabelIn projectLabelIn) {
 		projectLabelIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-		/*projectLabelIn.setUserId(SecurityUtils.getUserId());
-        ProjectInVO projectInVO = ProjectInVO.builder().organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).userId(SecurityUtils.getUserId()).projectType("1").build();
-        List<ProjectListOut> projectList = labelStatisticsMapper.projectList(projectInVO);
-        //项目id列表
-        List<Long> projectIdList = projectList.stream().map(ProjectListOut::getProjectId).collect(Collectors.toList());
-        LabelIn labelIn = LabelIn.builder().organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).userId(SecurityUtils.getUserId()).build();
-        List<LabelOut> labelOuts = labelStatisticsMapper.labelList(labelIn);
-        //标签id列表
-        List<Long> categoryIdList = labelOuts.stream().map(LabelOut::getCategoryId).collect(Collectors.toList());
-        categoryIdList.add(0L);
-
-        PageHelper.startPage(projectLabelIn.getPageNum(), projectLabelIn.getPageSize()).setReasonable(true);
-        List<ProjectLabelOut> projectLabelOuts = labelStatisticsMapper.projectLabelList(projectLabelIn);
-        //查询标注数
-        ImageMarkingIn imageMarkingIn = ImageMarkingIn.builder().projectIds(projectIdList).categoryIds(categoryIdList).build();
-        List<ImageMarkingOut> markingNums = labelStatisticsMapper.markingNums(imageMarkingIn);
-        Map<String,ImageMarkingOut>markingNumsMap=markingNums.stream().collect(Collectors.toMap(ImageMarkingOut::getNum,Function.identity()));
-        //查询图像数量
-        List<ImageMarkingOut> imageNums = labelStatisticsMapper.imageNums(imageMarkingIn);
-        Map<String,ImageMarkingOut>imageNumsMap=imageNums.stream().collect(Collectors.toMap(ImageMarkingOut::getNum,Function.identity()));
-        for (ProjectLabelOut projectLabelOut : projectLabelOuts) {
-            projectLabelOut.setMarkingNum("0");
-            projectLabelOut.setImageNum("0");
-            //添加标注数量
-            if (markingNumsMap.containsKey(projectLabelOut.getNum())){
-                projectLabelOut.setMarkingNum(markingNumsMap.get(projectLabelOut.getNum()).getMarkingNum().toString());
-            }
-            //添加图像数量
-            if (imageNumsMap.containsKey(projectLabelOut.getNum())){
-                projectLabelOut.setImageNum(imageNumsMap.get(projectLabelOut.getNum()).getImageNum().toString());
-            }
-        }*/
 		List<Long> projectIds = new ArrayList<>();
 		projectIds = projectLabelIn.getProjectIds();
 		List<Long> indicatorIds = projectLabelIn.getIndicatorIds();
@@ -158,7 +126,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
 		Long currentUserId = SecurityUtils.getUserId();
 
-		if(CollectionUtils.isEmpty(projectIds)){
+		if(null == projectIds || CollectionUtils.isEmpty(projectIds)){
 			projectIds = getProjectIdStatistics(currentUserId, organizationId);
 		}
 
@@ -186,7 +154,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 
 		queryWrapper.eq("organization_id", organizationId);
 		queryWrapper.eq("del_flag", 0);
-
+		queryWrapper.orderByDesc("marking_num");
 
 		List<ProjectLabelStatistics> list = projectLabelStatisticsService.list(queryWrapper);
 		List<ProjectLabelOut> retList = new ArrayList<>(); 
@@ -230,40 +198,12 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 	@Override
 	public R<PageMaster<ProjectLabelOut>> itemList(ProjectListIn projectListIn) {
 		PageHelper.startPage(projectListIn.getPageNum(), projectListIn.getPageSize()).setReasonable(true);
-		/*projectListIn.setProjectType("1");
-        projectListIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-        projectListIn.setUsers(SecurityUtils.getUserId());
-        List<ProjectLabelOut> itemList = labelStatisticsMapper.itemList(projectListIn);
-        List<Long> projectIds=itemList.stream().map(ProjectLabelOut::getProjectId).collect(Collectors.toList());
-        ImageMarkingIn imageMarkingIns= ImageMarkingIn.builder().projectIds(projectIds).build();
-        List<ImageMarkingOut> listSlideNum=labelStatisticsMapper.listSlideNum(imageMarkingIns);
-        Map<Long,ImageMarkingOut>listSlideMap=listSlideNum.stream().collect(Collectors.toMap(ImageMarkingOut::getProjectId,Function.identity()));
-        ProjectInVO projectInVO = ProjectInVO.builder().organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).userId(SecurityUtils.getUserId()).projectType("1").build();
-        List<ProjectListOut> projectList = labelStatisticsMapper.projectList(projectInVO);
-        //项目id列表
-        List<Long> projectIdList = projectList.stream().map(ProjectListOut::getProjectId).collect(Collectors.toList());
-        //
-        ImageMarkingIn imageMarkingIn = ImageMarkingIn.builder().projectIds(projectIdList).build();
-        List<ImageMarkingOut> marking = labelStatisticsMapper.projectMarking(imageMarkingIn);
-        Map<Long,ImageMarkingOut> markingMap=marking.stream().collect(Collectors.toMap(ImageMarkingOut::getProjectId, Function.identity()));
-        //循环添加图像数量和标注数
-        for (ProjectLabelOut projectLabelOut : itemList) {
-            projectLabelOut.setMarkingNum("0");
-            projectLabelOut.setImageNum("0");
-            if (markingMap.containsKey(projectLabelOut.getProjectId())){
-                projectLabelOut.setMarkingNum(markingMap.get(projectLabelOut.getProjectId()).getMarkingNum().toString());
-            }
-            if (listSlideMap.containsKey(projectLabelOut.getProjectId())){
-                projectLabelOut.setImageNum(listSlideMap.get(projectLabelOut.getProjectId()).getImageNum().toString());
-            }
-        }*/
 		//        {"projectIds":[313,521,522,490],"statusList":["3","2"],"indicatorIds":[1145,1149],"userIds":[14],
 		//        "description":"fsfsfsfsf","createTimeParams":{"beginTime":"2024-01-15","endTime":"2024-02-21"},"pageNum":1,"pageSize":10,"total":9}
 
-		/*Long currentUserId = SecurityUtils.getUserId();
-		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();*/
-		Long currentUserId = 39L;
-		Long organizationId = 1L;
+		Long currentUserId = SecurityUtils.getUserId();
+		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+		
 
 		List<Long> projectIds = new ArrayList<>();
 
@@ -275,7 +215,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 		Map<String, Object> createTimeParams = projectListIn.getCreateTimeParams();
 
 
-		if(CollectionUtils.isEmpty(projectIds)){
+		if(null == projectIds || CollectionUtils.isEmpty(projectIds)){
 			projectIds = getProjectIdStatistics(currentUserId, organizationId);
 		}
 
@@ -308,7 +248,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 
 		queryWrapper.eq("organization_id", organizationId);
 		queryWrapper.eq("del_flag", 0);
-
+		queryWrapper.orderByDesc("marking_num");
 
 		List<ProjectStatistics> list = projectStatisticsService.list(queryWrapper);
 		List<ProjectLabelOut> retList = new ArrayList<>(); 
@@ -335,37 +275,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 	public void labelExport(ProjectLabelIn projectLabelIn, HttpServletResponse response) throws Exception {
 		projectLabelIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
 		projectLabelIn.setUserId(SecurityUtils.getUserId());
-		ProjectInVO projectInVO = ProjectInVO.builder().organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).userId(SecurityUtils.getUserId()).projectType("1").build();
-		/*List<ProjectListOut> projectList = labelStatisticsMapper.projectList(projectInVO);
-        //项目id列表
-        List<Long> projectIdList = projectList.stream().map(ProjectListOut::getProjectId).collect(Collectors.toList());
-        LabelIn labelIn = LabelIn.builder().organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).userId(SecurityUtils.getUserId()).build();
-        List<LabelOut> labelOuts = labelStatisticsMapper.labelList(labelIn);
-        //标签id列表
-        List<Long> categoryIdList = labelOuts.stream().map(LabelOut::getCategoryId).collect(Collectors.toList());
-        categoryIdList.add(0L);
-        List<ProjectLabelOut> projectLabelOuts = labelStatisticsMapper.projectLabelList(projectLabelIn);
-        //查询标注数
-        ImageMarkingIn imageMarkingIn = ImageMarkingIn.builder().projectIds(projectIdList).categoryIds(categoryIdList).build();
-        List<ImageMarkingOut> markingNums = labelStatisticsMapper.markingNums(imageMarkingIn);
-        Map<String,ImageMarkingOut>markingNumsMap=markingNums.stream().collect(Collectors.toMap(ImageMarkingOut::getNum,Function.identity()));
-        //查询图像数量
-        List<ImageMarkingOut> imageNums = labelStatisticsMapper.imageNums(imageMarkingIn);
-        Map<String,ImageMarkingOut>imageNumsMap=imageNums.stream().collect(Collectors.toMap(ImageMarkingOut::getNum,Function.identity()));
-
-        for (ProjectLabelOut projectLabelOut : projectLabelOuts) {
-            projectLabelOut.setStatusName(Container.PROJECT_STATUS.get(projectLabelOut.getStatus()));
-            projectLabelOut.setMarkingNum("0");
-            projectLabelOut.setImageNum("0");
-            //添加标注数量
-            if (markingNumsMap.containsKey(projectLabelOut.getNum())){
-                projectLabelOut.setMarkingNum(markingNumsMap.get(projectLabelOut.getNum()).getMarkingNum().toString());
-            }
-            //添加图像数量
-            if (imageNumsMap.containsKey(projectLabelOut.getNum())){
-                projectLabelOut.setImageNum(imageNumsMap.get(projectLabelOut.getNum()).getImageNum().toString());
-            }
-        }*/
+		//ProjectInVO projectInVO = ProjectInVO.builder().organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).userId(SecurityUtils.getUserId()).projectType("1").build();
 		List<Long> projectIds = new ArrayList<>();
 		projectIds = projectLabelIn.getProjectIds();
 		projectIds = projectLabelIn.getProjectIds();
@@ -375,7 +285,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
 		Long currentUserId = SecurityUtils.getUserId();
 
-		if(CollectionUtils.isEmpty(projectIds)){
+		if(null == projectIds || CollectionUtils.isEmpty(projectIds)){
 			projectIds = getProjectIdStatistics(currentUserId, organizationId);
 		}
 
@@ -404,7 +314,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 
 		queryWrapper.eq("organization_id", organizationId);
 		queryWrapper.eq("del_flag", 0);
-
+		queryWrapper.orderByDesc("marking_num");
 
 		List<ProjectLabelStatistics> list = projectLabelStatisticsService.list(queryWrapper);
 		List<ProjectLabelOut> retList = new ArrayList<>(); 
@@ -454,31 +364,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 		projectListIn.setProjectType("1");
 		projectListIn.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
 		projectListIn.setUsers(SecurityUtils.getUserId());
-		/*List<ProjectLabelOut> itemList = labelStatisticsMapper.itemList(projectListIn);
-        List<Long> projectIds=itemList.stream().map(ProjectLabelOut::getProjectId).collect(Collectors.toList());
-        ImageMarkingIn imageMarkingIns= ImageMarkingIn.builder().projectIds(projectIds).build();
-        List<ImageMarkingOut> listSlideNum=labelStatisticsMapper.listSlideNum(imageMarkingIns);
-        Map<Long,ImageMarkingOut>listSlideMap=listSlideNum.stream().collect(Collectors.toMap(ImageMarkingOut::getProjectId,Function.identity()));
-        ProjectInVO projectInVO = ProjectInVO.builder().organizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()).userId(SecurityUtils.getUserId()).projectType("1").build();
-        List<ProjectListOut> projectList = labelStatisticsMapper.projectList(projectInVO);
-        //项目id列表
-        List<Long> projectIdList = projectList.stream().map(ProjectListOut::getProjectId).collect(Collectors.toList());
-        //
-        ImageMarkingIn imageMarkingIn = ImageMarkingIn.builder().projectIds(projectIdList).build();
-        List<ImageMarkingOut> marking = labelStatisticsMapper.projectMarking(imageMarkingIn);
-        Map<Long,ImageMarkingOut> markingMap=marking.stream().collect(Collectors.toMap(ImageMarkingOut::getProjectId, Function.identity()));
-        //循环添加图像数量和标注数
-        for (ProjectLabelOut projectLabelOut : itemList) {
-            projectLabelOut.setMarkingNum("0");
-            projectLabelOut.setImageNum("0");
-            if (markingMap.containsKey(projectLabelOut.getProjectId())){
-                projectLabelOut.setMarkingNum(markingMap.get(projectLabelOut.getProjectId()).getMarkingNum().toString());
-            }
-            if (listSlideMap.containsKey(projectLabelOut.getProjectId())){
-                projectLabelOut.setImageNum(listSlideMap.get(projectLabelOut.getProjectId()).getImageNum().toString());
-            }
-            projectLabelOut.setStatusName(Container.PROJECT_STATUS.get(projectLabelOut.getStatus()));
-        }*/
+		
 		List<ProjectLabelOut> itemList = new ArrayList<>();
 
 		List<Long> projectIds = new ArrayList<>();
@@ -492,7 +378,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
 		Long currentUserId = SecurityUtils.getUserId();
 
-		if(CollectionUtils.isEmpty(projectIds)){
+		if(null == projectIds || CollectionUtils.isEmpty(projectIds)){
 			projectIds = getProjectIdStatistics(currentUserId, organizationId);
 		}
 
@@ -525,7 +411,7 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 
 		queryWrapper.eq("organization_id", organizationId);
 		queryWrapper.eq("del_flag", 0);
-
+		queryWrapper.orderByDesc("marking_num");
 
 		List<ProjectStatistics> list = projectStatisticsService.list(queryWrapper);
 		for (ProjectStatistics statistics : list) {

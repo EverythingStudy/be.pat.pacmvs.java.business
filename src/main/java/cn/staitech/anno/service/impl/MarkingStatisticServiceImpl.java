@@ -1,25 +1,37 @@
 package cn.staitech.anno.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.MarkingStatistic;
+import cn.staitech.anno.domain.ProjectMember;
+import cn.staitech.anno.domain.ProjectUserLabelStatistics;
 import cn.staitech.anno.mapper.MarkingMapper;
+import cn.staitech.anno.project.vo.SelectProjectVO;
 import cn.staitech.anno.service.MarkingStatisticService;
-import cn.staitech.anno.utils.*;
+import cn.staitech.anno.service.ProjectMemberService;
+import cn.staitech.anno.service.ProjectUserLabelStatisticsService;
+import cn.staitech.anno.utils.Column;
+import cn.staitech.anno.utils.ExcelTool;
+import cn.staitech.anno.utils.ExcelUtil;
+import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingStatisticSelectVO;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.*;
 
 /**
  * 标注 - 标签统计
@@ -31,7 +43,10 @@ import java.util.concurrent.*;
 public class MarkingStatisticServiceImpl implements MarkingStatisticService {
     @Resource
     private MarkingMapper markingMapper;
-
+    @Resource
+	private ProjectUserLabelStatisticsService projectUserLabelStatisticsService;
+    @Resource
+	private ProjectMemberService projectMemberService;
     /**
      * 标签统计
      *
@@ -40,18 +55,62 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
      */
     @Override
     public PageMaster<MarkingStatistic> selectMarkingStatistic(MarkingStatisticSelectVO selectVO) {
+    	/*{"projectIds":[312,276,521,490,522,348,546],"createBys":[14,39,9,37,47,46],
+    	"indicatorIds":[1108,1139,1144,1149,1176,1158],"categoryIds":[1560,1562,1563,1561,1564,1565,1566,1567,1568,1937,2473],
+    	"pageNum":1,"pageSize":10,"total":2395}*/
+
         PageHelper.startPage(selectVO.getPageNum(), selectVO.getPageSize()).setReasonable(true);
 
-        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
-        Long organizationId = sysUser.getOrganizationId();
+//        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+//        Long organizationId = sysUser.getOrganizationId();
+        Long organizationId = 1L;
+		Long currentUserId = 39L;
 
-        selectVO.setOrganizationId(organizationId);
-        selectVO.setUserId(sysUser.getUserId());
+        List<Long> projectIds = selectVO.getProjectIds();
+        List<Long> createBys = selectVO.getCreateBys();
+        List<Long> indicatorIds = selectVO.getIndicatorIds();
+        List<Long> categoryIds =   selectVO.getCategoryIds();
+        
+        if(null == projectIds || CollectionUtils.isEmpty(projectIds)){
+			projectIds = getProjectIdStatistics(currentUserId, organizationId);
+		}
+        
+        QueryWrapper<ProjectUserLabelStatistics> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("project_id, project_name,anno_user_id,anno_nick_name,indicator_id,indicator_name,category_id,category_name,marking_num");
+		
+		if(CollectionUtils.isNotEmpty(projectIds)){
+			queryWrapper.in("project_id", projectIds);
+		}
+		if(CollectionUtils.isNotEmpty(createBys)){
+			queryWrapper.in("anno_user_id", createBys);
+		}
+		if(CollectionUtils.isNotEmpty(indicatorIds)){
+			queryWrapper.in("indicator_id", indicatorIds);
+		}
+		if(CollectionUtils.isNotEmpty(categoryIds)){
+			queryWrapper.in("category_id", categoryIds);
+		}
+		
+		queryWrapper.eq("del_flag", 0);
+		queryWrapper.eq("organization_id", organizationId);
+		queryWrapper.orderByDesc("marking_num");
+		List<ProjectUserLabelStatistics> queryList =  projectUserLabelStatisticsService.list(queryWrapper);
+		List<MarkingStatistic> retList = new ArrayList<>(); 
+		if (CollectionUtils.isNotEmpty(queryList)) {
+			for (ProjectUserLabelStatistics statistics : queryList) {
+				MarkingStatistic statisticsVO = new MarkingStatistic();
+				statisticsVO.setProjectName(statistics.getProjectName());
+				statisticsVO.setNickName(statistics.getAnnoNickName());
+				statisticsVO.setIndicatorName(statistics.getIndicatorName());
+				statisticsVO.setCategoryName(statistics.getCategoryName());
+				statisticsVO.setMarkingNum(statistics.getMarkingNum());
+				retList.add(statisticsVO);
+			}
+		}
+        /*List<MarkingStatistic> list = markingMapper.selectMarkingStatistic(selectVO);
+        list = setCount(list, organizationId);*/
 
-        List<MarkingStatistic> list = markingMapper.selectMarkingStatistic(selectVO);
-        list = setCount(list, organizationId);
-
-        PageMaster<MarkingStatistic> pageMaster = new PageMaster<>(list);
+        PageMaster<MarkingStatistic> pageMaster = new PageMaster<>(retList);
         //清除分页缓存
         PageHelper.clearPage();
         return pageMaster;
@@ -69,11 +128,9 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
     public void execlExport(MarkingStatisticSelectVO selectVO, HttpServletResponse response) throws Exception {
         SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
         Long organizationId = sysUser.getOrganizationId();
+        Long currentUserId = sysUser.getUserId();
 
-        selectVO.setOrganizationId(organizationId);
-        selectVO.setUserId(sysUser.getUserId());
-
-        // 获取总记录数
+       /* // 获取总记录数
         long total = markingMapper.selectMarkingStatisticTotal(selectVO);
         if (total == 0) {
             return;
@@ -124,7 +181,50 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
         // 关闭线程池
         executorService.shutdown();
         // 等待所有任务完成
-        executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);*/
+        
+        List<Long> projectIds = selectVO.getProjectIds();
+        List<Long> createBys = selectVO.getCreateBys();
+        List<Long> indicatorIds = selectVO.getIndicatorIds();
+        List<Long> categoryIds =   selectVO.getCategoryIds();
+        
+        if(null == projectIds || CollectionUtils.isEmpty(projectIds)){
+			projectIds = getProjectIdStatistics(currentUserId, organizationId);
+		}
+        
+        QueryWrapper<ProjectUserLabelStatistics> queryWrapper = new QueryWrapper<>();
+		queryWrapper.select("project_id, project_name,anno_user_id,anno_nick_name,indicator_id,indicator_name,category_id,category_name,marking_num");
+		
+		if(CollectionUtils.isNotEmpty(projectIds)){
+			queryWrapper.in("project_id", projectIds);
+		}
+		if(CollectionUtils.isNotEmpty(createBys)){
+			queryWrapper.in("anno_user_id", createBys);
+		}
+		if(CollectionUtils.isNotEmpty(indicatorIds)){
+			queryWrapper.in("indicator_id", indicatorIds);
+		}
+		if(CollectionUtils.isNotEmpty(categoryIds)){
+			queryWrapper.in("category_id", categoryIds);
+		}
+		
+		queryWrapper.eq("del_flag", 0);
+		queryWrapper.eq("organization_id", organizationId);
+		queryWrapper.orderByDesc("marking_num");
+		List<ProjectUserLabelStatistics> queryList =  projectUserLabelStatisticsService.list(queryWrapper);
+		
+		List<MarkingStatistic> retList = new ArrayList<>(); 
+		if (CollectionUtils.isNotEmpty(queryList)) {
+			for (ProjectUserLabelStatistics statistics : queryList) {
+				MarkingStatistic statisticsVO = new MarkingStatistic();
+				statisticsVO.setProjectName(statistics.getProjectName());
+				statisticsVO.setNickName(statistics.getAnnoNickName());
+				statisticsVO.setIndicatorName(statistics.getIndicatorName());
+				statisticsVO.setCategoryName(statistics.getCategoryName());
+				statisticsVO.setMarkingNum(statistics.getMarkingNum());
+				retList.add(statisticsVO);
+			}
+		}
 
         // 构造表头的每个列头 定义表头
         List<Map<String, String>> titleList = ExcelUtil.getTitleList(CommonConstant.MARKING_STATISTICS_KEY, CommonConstant.MARKING_STATISTICS_VALUE);
@@ -133,7 +233,7 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
         List<Column> titleData = excelTool.columnTransformer(titleList);
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("utf-8");
-        excelTool.exportExcel(titleData, list, response.getOutputStream(), true, false);
+        excelTool.exportExcel(titleData, retList, response.getOutputStream(), true, false);
     }
 
     /**
@@ -154,4 +254,19 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
         }
         return list;
     }
+    
+    private List<Long> getProjectIdStatistics(Long userId,Long organizationId){
+		//查询当前用户参与的所有项目
+		List<Long> projectIdList = new ArrayList<>();
+		ProjectMember projectMember = new ProjectMember();
+		projectMember.setUserId(userId);
+		projectMember.setOrganizationId(organizationId);
+		List<SelectProjectVO> list = projectMemberService.getProjectListByPM(projectMember);
+		if(CollectionUtils.isNotEmpty(list)){
+			for(SelectProjectVO vo:list){
+				projectIdList.add(vo.getProjectId());
+			}
+		}
+		return projectIdList;
+	}
 }
