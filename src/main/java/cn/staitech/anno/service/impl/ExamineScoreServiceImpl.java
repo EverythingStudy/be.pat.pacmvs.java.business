@@ -121,33 +121,6 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         remoteLabelService.Standard(markingJsonObject);
     }
 
-//    @Override
-//    public List<SelectExaminationListVO> selectExaminationList(Long projectId, String imageName) {
-//        QuestionBank questionBank = new QuestionBank();
-//        questionBank.setProjectId(projectId);
-//        questionBank.setCreateBy(SecurityUtils.getLoginUser().getSysUser().getUserId());
-//        questionBank.setImageName(imageName);
-//        // 根据项目查询
-//        QueryWrapper<QuestionProjectRel> queryWrapper = new QueryWrapper<>();
-//        queryWrapper.eq("project_id", projectId).eq("del_flag", '0');
-//        QuestionProjectRel questionProjectRel = questionProjectRelMapper.selectOne(queryWrapper);
-//        // 为空表示项目未添加切片
-//        if (questionProjectRel == null) {
-//            return new ArrayList<>();
-//        }
-//        QueryWrapper<ExamineScore> examineScoreQueryWrapper = new QueryWrapper<>();
-//        examineScoreQueryWrapper.eq("question_project_id", questionProjectRel.getQuestionProjectId()).eq("create_by", SecurityUtils.getLoginUser().getSysUser().getUserId());
-//        ExamineScore examineScoreBy = examineScoreMapper.selectOne(examineScoreQueryWrapper);
-//        List<SelectExaminationListVO> selectExaminationListVOS;
-//        if (examineScoreBy != null) {
-//            selectExaminationListVOS = examineScoreMapper.selectExaminationList(questionBank);
-//        } else {
-//            selectExaminationListVOS = examineScoreMapper.selectQuestionProjectList(questionProjectRel.getQuestionProjectId());
-//        }
-//        return selectExaminationListVOS;
-//    }
-
-
     @Override
     public List<SelectExaminationListVO> selectExaminationList(Long projectId, String imageName) {
         QuestionBank questionBank = new QuestionBank();
@@ -287,14 +260,6 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         examineScore.setExaminationGeojsonUrl(fileUrl);
         examineScore.setRealityNumber(Long.valueOf(markingCount));
         int res = examineScoreMapper.updateById(examineScore);
-
-
-        //算法
-//        JSONObject markingJsonObject = new JSONObject();
-//        markingJsonObject.put("examine_score_id", examineScore.getExamineScoreId());
-//        markingJsonObject.put("user_id", examineScoreBy.getCreateBy());
-//        remoteLabelService.marking(markingJsonObject);
-        // 更新当前评分记录
         return res;
     }
 
@@ -402,7 +367,6 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         }
     }
 
-
     @Override
     public void updatePersonalFit(Long examineScoreId) {
         JSONObject markingJsonObject = new JSONObject();
@@ -411,9 +375,6 @@ public class ExamineScoreServiceImpl extends ServiceImpl<ExamineScoreMapper, Exa
         markingJsonObject.put("user_id", examineScore.getCreateBy());
         List<JSONObject> jsonObjects = new ArrayList<>();
         jsonObjects.add(markingJsonObject);
-//        JSONObject jsonObjectList=new JSONObject();
-//        jsonObjectList.put("dataList",jsonObjects);
-//        remoteLabelService.marking(markingJsonObject);
         remoteLabelService.marking(jsonObjects);
     }
 

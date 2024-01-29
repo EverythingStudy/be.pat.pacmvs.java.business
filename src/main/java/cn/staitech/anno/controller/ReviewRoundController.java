@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/reviewRound")
 @Slf4j
 public class ReviewRoundController {
-    public static Map<Long, String> topicMap = new HashMap<>();
+    public static Map<Long, String> topicMap = new HashMap<>(16);
     @Resource
     private ReviewRoundService reviewRoundService;
     @Resource

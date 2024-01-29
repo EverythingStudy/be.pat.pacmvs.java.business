@@ -473,52 +473,6 @@
         group by s.group_id, s.project_id
     </select>
 
-    <!--组内切片报表分页查询-->
-    <select id="pageSlideWithSubImage" parameterType="java.util.Map"
-            resultType="cn.staitech.anno.vo.slide.SlideReportVO">
-        select m.*,
-        s.slide_id,
-        s.ai_analyzed,
-        s.ai_check,
-        case when g.gender = 0 then '雌' else '雄' end as gender
-        from tb_slide s
-        left join tb_sub_image m on m.image_id = s.image_id
-        left join tb_group g on s.group_id = g.group_id
-        <where>
-            s.is_delete = 0
-            <if test="params.aiAnalyzed != null and params.aiAnalyzed != ''">
-                AND s.ai_analyzed = #{params.aiAnalyzed}
-            </if>
-            <if test="params.aiCheck != null and params.aiCheck != ''">
-                AND s.ai_check = #{params.aiCheck}
-            </if>
-            <if test="params.groupId != null and params.groupId != ''">
-                AND s.group_id = #{params.groupId}
-            </if>
-            <if test="params.projectId != null and params.projectId != ''">
-                AND s.project_id = #{params.projectId}
-            </if>
-            <if test="params.specialId != null and params.specialId != ''">
-                AND m.special_id = #{params.specialId}
-            </if>
-            <if test="params.imageCode != null and params.imageCode != ''">
-                AND m.image_name LIKE CONCAT('%', #{params.imageCode}, '%')
-            </if>
-            <if test="params.parentImageCode != null and params.parentImageCode != ''">
-                AND m.parent_image_name LIKE CONCAT('%', #{params.parentImageCode}, '%')
-            </if>
-            <if test="params.visceraType != null and params.visceraType != ''">
-                AND m.viscera_type = #{params.visceraType}
-            </if>
-            <if test="params.accessTime != null and params.accessTime.beginTime != null and params.accessTime.beginTime != ''">
-                and date_format(m.create_time, '%y%m%d') &gt;= date_format(#{params.accessTime.beginTime}, '%y%m%d')
-            </if>
-            <if test="params.accessTime != null and params.accessTime.endTime != null and params.accessTime.endTime != ''">
-                and date_format(m.create_time, '%y%m%d') &lt;= date_format(#{params.accessTime.endTime}, '%y%m%d')
-            </if>
-        </where>
-    </select>
-
     <!--项目内切片统计-->
     <select id="pageSlideStatisticsByProject" parameterType="java.util.Map"
             resultType="cn.staitech.anno.vo.project.ProjectStatisticsVO">
@@ -552,68 +506,6 @@
             AND p.system_code = #{params.systemCode}
         </if>
         group by p.project_id
-    </select>
-
-    <!--切片报表分页查询-->
-    <select id="pageSlideStatistics" parameterType="java.util.Map"
-            resultType="cn.staitech.anno.vo.slide.SlideReportVO">
-        select m.*,
-        s.slide_id,
-        s.ai_analyzed,
-        s.ai_check,
-        p.project_name,
-        p.system_code,
-        case when g.gender = 0 then '雌' else '雄' end as gender,
-        p.viscus_code
-        from tb_slide s
-        left join tb_sub_image m on m.image_id = s.image_id
-        left join tb_group g on s.group_id = g.group_id
-        left join tb_project p on s.project_id = p.project_id
-        <where>
-            s.is_delete = 0
-            <if test="params.aiAnalyzed != null and params.aiAnalyzed != ''">
-                AND s.ai_analyzed = #{params.aiAnalyzed}
-            </if>
-            <if test="params.aiCheck != null and params.aiCheck != ''">
-                AND s.ai_check = #{params.aiCheck}
-            </if>
-            <if test="params.groupId != null and params.groupId != ''">
-                AND s.group_id = #{params.groupId}
-            </if>
-            <if test="params.projectName != null and params.projectName != ''">
-                AND p.project_name LIKE CONCAT('%', #{params.projectName}, '%')
-            </if>
-            <if test="params.viscusCode != null and params.viscusCode != ''">
-                AND p.viscus_code = #{params.viscusCode}
-            </if>
-            <if test="params.systemCode != null and params.systemCode != ''">
-                AND p.system_code = #{params.systemCode}
-            </if>
-            <if test="params.projectIds != null">
-                AND s.project_id in
-                <foreach item="projectId" collection="params.projectIds" separator="," open="(" close=")" index="">
-                    #{projectId, jdbcType=NUMERIC}
-                </foreach>
-            </if>
-            <if test="params.specialId != null and params.specialId != ''">
-                AND m.special_id = #{params.specialId}
-            </if>
-            <if test="params.imageCode != null and params.imageCode != ''">
-                AND m.image_name LIKE CONCAT('%', #{params.imageCode}, '%')
-            </if>
-            <if test="params.parentImageCode != null and params.parentImageCode != ''">
-                AND m.parent_image_name LIKE CONCAT('%', #{params.parentImageCode}, '%')
-            </if>
-            <if test="params.visceraType != null and params.visceraType != ''">
-                AND m.viscera_type = #{params.visceraType}
-            </if>
-            <if test="params.accessTime != null and params.accessTime.beginTime != null and params.accessTime.beginTime != ''">
-                and date_format(m.create_time, '%y%m%d') &gt;= date_format(#{params.accessTime.beginTime}, '%y%m%d')
-            </if>
-            <if test="params.accessTime != null and params.accessTime.endTime != null and params.accessTime.endTime != ''">
-                and date_format(m.create_time, '%y%m%d') &lt;= date_format(#{params.accessTime.endTime}, '%y%m%d')
-            </if>
-        </where>
     </select>
 
     <!--分页查询切片列表信息-->

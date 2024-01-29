@@ -15,16 +15,16 @@ import java.util.List;
 public class LabelSetIn {
     /**
      * 项目id列表
-     * */
+     */
     @ApiModelProperty(value = "项目id列表")
     private List<Long> projectIds;
 
-    @ApiModelProperty(value = "机构id",hidden = true)
+    @ApiModelProperty(value = "机构id", hidden = true)
     private Long organizationId;
 
-    @ApiModelProperty(value = "用户id",hidden = true)
+    @ApiModelProperty(value = "用户id", hidden = true)
     private Long userId;
-    
-    @ApiModelProperty(value = "当前用户id",hidden = true)
+
+    @ApiModelProperty(value = "当前用户id", hidden = true)
     private Long currentUserId;
 }

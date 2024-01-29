@@ -5,6 +5,8 @@ import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.thread.ExecutorBuilder;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.domain.Image;
+import cn.staitech.anno.domain.MarkMeasure;
+import cn.staitech.anno.domain.Outline;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.netty.websocket.NioWebSocketHandler;
@@ -26,6 +28,7 @@ import cn.staitech.anno.vo.annotation.BroadcastVO;
 import cn.staitech.anno.vo.geojson.Properties;
 import cn.staitech.anno.vo.geojson.*;
 import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
+import cn.staitech.anno.vo.geojson.in.RoiIn;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.marking.Marking;
@@ -33,6 +36,7 @@ import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.PointCount;
 import cn.staitech.anno.vo.slide.SlideRes;
 import cn.staitech.common.core.domain.PageResponse;
+import cn.staitech.common.core.domain.R;
 import cn.staitech.common.redis.service.RedisService;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -46,11 +50,15 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MappingJsonFactory;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,6 +75,7 @@ import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -79,19 +88,18 @@ import static cn.staitech.anno.constant.CommonConstant.*;
 @Slf4j
 public class MarkingServiceImpl implements MarkingService {
 
-    // GeometryFactory工厂，参数一：数据精度 参数二空间参考系SAID
-    private static final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), 4326);
-    // 熟知文本WKT阅读器，可以将WKT文本转换为Geometry对象
-    private static final WKTReader wktReader = new WKTReader(geometryFactory);
+    /**
+     * GeometryFactory工厂，参数一：数据精度 参数二空间参考系SAID
+     */
+    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), 4326);
+    /**
+     * 熟知文本WKT阅读器，可以将WKT文本转换为Geometry对象
+     */
+    private static final WKTReader WKT_READER = new WKTReader(GEOMETRY_FACTORY);
     private static final int BATCH_SIZE = 5000;
 
-    private static final ExecutorService executor = ExecutorBuilder.create().setCorePoolSize(Runtime.getRuntime().availableProcessors()).setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2).setKeepAliveTime(0).build();
-    private static final ExecutorService annExecutor = ExecutorBuilder.create()
-            .setCorePoolSize(Runtime.getRuntime().availableProcessors())
-            .setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2)
-            .setKeepAliveTime(0)
-            .setWorkQueue(new LinkedBlockingQueue<Runnable>(4096))
-            .build();
+    private static final ExecutorService EXECUTOR = ExecutorBuilder.create().setCorePoolSize(Runtime.getRuntime().availableProcessors()).setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2).setKeepAliveTime(0).build();
+    private static final ExecutorService ANN_EXECUTOR = ExecutorBuilder.create().setCorePoolSize(Runtime.getRuntime().availableProcessors()).setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2).setKeepAliveTime(0).setWorkQueue(new LinkedBlockingQueue<Runnable>(4096)).build();
 
     @Resource
     private SlideMapperV1 slideMapperV1;
@@ -135,7 +143,7 @@ public class MarkingServiceImpl implements MarkingService {
             pageNum = 0;
         }
 
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
         map.put("slideId", slideId);
         map.put("measureFullName", measureFullName);
         map.put("pageSize", pageSize);
@@ -174,12 +182,44 @@ public class MarkingServiceImpl implements MarkingService {
         if (!Optional.ofNullable(slideBy).isPresent()) {
             throw new Exception(MessageSource.M("SLIDE_ABNORMAL_NO_INFORMATION"));
         }
-        return markingMapper.selectListBy(slideId);
-    }
-
-    @Override
-    public List<SlideRes> selectSlideList(Long specialId) {
-        return markingMapper.selectSlideList(specialId);
+        Project project = projectMapperV1.selectById(slideBy.getProjectId());
+        //项目类型:1标注2评审3标准训练集
+        String projectType = project.getProjectType();
+        Long userId = SecurityUtils.getLoginUser().getSysUser().getUserId();
+        List<Features> list = new ArrayList<Features>();
+        if ("3".equalsIgnoreCase(projectType)) {
+            //只查询自己标注的数据
+            Map<String, Object> map = new HashMap<String, Object>(16);
+            map.put("slideId", slideId);
+            map.put("createBy", userId);
+            List<Features> selfAnnoList = markingMapper.selectListBy2(map);
+            if (CollectionUtils.isNotEmpty(selfAnnoList)) {
+                list.addAll(selfAnnoList);
+            }
+            //其它人ROA+ROE
+            Map<String, Object> otherMap = new HashMap<String, Object>(16);
+            otherMap.put("slideId", slideId);
+            otherMap.put("otherCreateBy", userId);
+            otherMap.put("organizationId", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+            List<Features> otherAnnoList = markingMapper.selectListBy2(otherMap);
+            if (CollectionUtils.isNotEmpty(otherAnnoList)) {
+                list.addAll(otherAnnoList);
+            }
+        }
+//        else if ("2".equalsIgnoreCase(projectType) && !project.getCreateBy().equals(userId)) {
+//            //智能评审非项目创建者只查询自己标注的数据
+//            Map<String, Object> map = new HashMap<String, Object>(16);
+//            map.put("slideId", slideId);
+//            map.put("createBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
+//            List<Features> selfAnnoList = markingMapper.selectListBy2(map);
+//            if (CollectionUtils.isNotEmpty(selfAnnoList)) {
+//                list.addAll(selfAnnoList);
+//            }
+//        }
+        else {
+            list = markingMapper.selectListBy(slideId);
+        }
+        return list;
     }
 
     @Override
@@ -197,20 +237,16 @@ public class MarkingServiceImpl implements MarkingService {
         return markingMapper.selectById(markingId);
     }
 
-
-    //@Async
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String insert(ViewAddIn req) throws Exception {
-        //TODO  imageId projectId 前端出入可进一步优化
-        if (req.getGeometry() != null) {
-            if (req.getGeometry().isEmpty()) {
-                log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
-                return "更新失败，轮廓数据不能为空";
-            } else {
-                MarkingUtils.addVerify(req.getGeometry());
-            }
+        if (req.getGeometry() != null && !req.getGeometry().isEmpty()) {
+            MarkingUtils.addVerify(req.getGeometry());
+        } else {
+            log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
+            return "更新失败，轮廓数据不能为空";
         }
+
         //加slide缓存
         cn.staitech.anno.project.domain.Slide slideBy = redisService.getCacheObject(CommonConstant.ANNO_SLIDE + req.getSlide_id());
         if (null == slideBy) {
@@ -221,45 +257,16 @@ public class MarkingServiceImpl implements MarkingService {
             return MessageSource.M("NO_SLIDE_DATA");
         }
 
-        //BeanUtils.copyProperties(req, marking);
         Marking marking = trans2Marking(req);
 
         // 获取规定的geoJson Id
         String annotationId = CustomizationIdUtils.getSdId();
         marking.setAnnotation_id(annotationId);
-		/*if (req.getArea() != null) {
-            Double area = new Double(req.getArea()) * MICRON;
-            marking.setArea(String.valueOf(area));
-        }
-        if (req.getPerimeter() != null) {
-            Double perimeter = new Double(req.getPerimeter()) * MICRON;
-            marking.setPerimeter(String.valueOf(perimeter));
-        }*/
-//		Image image = getImageById(slideBy.getImageId().longValue());
-//		if (req.getArea() != null) {
-//			Double area = 0.0;
-//			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
-//				area = new Double(req.getArea()) * Double.valueOf(image.getResolutionX()) * Double.valueOf(image.getResolutionX());
-//			}else{
-//				area = new Double(req.getArea()) * MICRON;
-//			}
-//			marking.setArea(String.valueOf(area));
-//		}
-//		if (req.getPerimeter() != null) {
-//			Double perimeter = 0.0;
-//			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
-//				perimeter = new Double(req.getPerimeter()) * Double.valueOf(image.getResolutionX());
-//			}else{
-//				perimeter = new Double(req.getPerimeter()) * MICRON;
-//			}
-//			marking.setPerimeter(String.valueOf(perimeter));
-//		}
         marking.setArea(req.getArea());
         marking.setPerimeter(req.getPerimeter());
         // 若未传入标注作者,使用当前登录用户为标注作者==>必传Create_by 无默认
         marking.setCreate_by(req.getCreate_by());
         marking.setAnnotation_type("Draw");
-        marking.setOrganization_id(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         marking.setCreate_time(new Date());
         //加用户缓存
         SysUser user = redisService.getCacheObject(CommonConstant.SYS_USER + req.getCreate_by());
@@ -269,31 +276,10 @@ public class MarkingServiceImpl implements MarkingService {
         }
         if (user != null) {
             marking.setAnnotation_owner(user.getUserName());
+            marking.setOrganization_id(user.getOrganizationId());
         }
-        // 查询
-//		int number = 1;
-//		QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
-        // 根据切片和测量轮廓名称查询最大值
-//		markingQueryWrapper.eq("slide_id", req.getSlide_id()).eq("measure_name", req.getMeasure_name()).orderByDesc("create_time").last("limit 1");
-//		Marking markingBy = markingMapper.selectOne(markingQueryWrapper);
-//		if (markingBy != null) {
-//			if (markingBy.getNumber() != null) {
-//				number += markingBy.getNumber();
-//			}
-//		}
-//		marking.setNumber(number);
-        marking.setProject_id(Long.valueOf(slideBy.getProjectId()));
-        //加image缓存
-		/*Image image = redisService.getCacheObject(CommonConstant.ANNO_IMAGE+slideBy.getImageId());
-		if(null == image){
-			image = imageMapper.selectById(slideBy.getImageId());
-			redisService.setCacheObject(CommonConstant.ANNO_IMAGE+slideBy.getImageId(), image, CommonConstant.IMAGE_CACHE_HOURS, TimeUnit.HOURS);
-		}
-		if (image != null) {
-			marking.setImage_id(image.getImageId());
-			marking.setImage_url(image.getImageUrl());
-		}*/
 
+        marking.setProject_id(Long.valueOf(slideBy.getProjectId()));
         // 添加数据库，添加后返回自增id
         markingMapper.insert(marking);
 
@@ -301,19 +287,66 @@ public class MarkingServiceImpl implements MarkingService {
         Features features = MarkingUtils.socketData(annotationId, marking.getGeometry(), properties);
         // 如果是点类型，返回点的总数并返回
         List<PointCount> pointCountList = updatePoint(marking.getLocation_type(), marking);
-        //        BroadcastVO broadcastVO = SendMessage.sendOneMessages(ADD_STATUS, features, pointCountList);
         BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, ADD_STATUS, features, pointCountList);
-
         NioWebSocketHandler.sendAll(req.getSlide_id(), broadcastVO);
 
-        //TODO 多线程处理
-        annExecutor.submit(new AnnCountThread(1, slideBy, marking));
+        // 多线程处理
+        ANN_EXECUTOR.submit(new AnnCountThread(1, slideBy, marking));
 
-        // 更新切片表中最新状态
-		/* updateSLide(marking.getSlide_id());
-        slideAttrService.saveAnnoUsers(req.getSlide_id(), Collections.singletonList(marking.getCreate_by()));
-        slideAttrService.saveAnnoCategory(req.getSlide_id(), Collections.singletonList(marking.getCategory_id()));*/
         return marking.getMarking_id();
+    }
+
+
+    /**
+     * 添加标注 - 吸管
+     *
+     * @param outline 标注数据
+     * @return true || false
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String insertOutline(Outline outline, cn.staitech.anno.project.domain.Slide slide, SysUser user, Long categoryId) throws Exception {
+        if (outline.getGeometry() != null && !outline.getGeometry().isEmpty()) {
+            MarkingUtils.addVerify(outline.getGeometry());
+            // 精度保留3位小数
+            JSONObject jsonObject = MarkingUtils.updatePrecision(outline.getGeometry());
+            outline.setGeometry(jsonObject);
+        } else {
+            return "更新失败，轮廓数据不能为空";
+        }
+
+        Marking marking = new Marking();
+        marking.setAnnotation_id(CustomizationIdUtils.getSdId());
+        marking.setCategory_id(categoryId);
+        marking.setGeometry(outline.getGeometry());
+        marking.setSlide_id(outline.getSlideId());
+        marking.setArea(outline.getArea().toString());
+        marking.setPerimeter(outline.getPerimeter().toString());
+        marking.setCreate_by(outline.getCreateBy());
+        marking.setAnnotation_type("Draw");
+        marking.setOrganization_id(user.getOrganizationId());
+        marking.setAnnotation_owner(user.getUserName());
+        marking.setCreate_time(new Date());
+        marking.setProject_id(Long.valueOf(slide.getProjectId()));
+
+        // 添加数据库，添加后返回自增id
+        markingMapper.insert(marking);
+
+        // 更新Slide状态及统计等
+        ANN_EXECUTOR.submit(new AnnCountThread(1, slide, marking));
+        return marking.getMarking_id();
+    }
+
+    /**
+     * reload
+     *
+     * @param slideId 切片编号
+     */
+    @Async
+    @Override
+    public void reload(Long slideId) {
+        BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, RELOAD_STATUS, null, null);
+        NioWebSocketHandler.sendAll(slideId, broadcastVO);
     }
 
 
@@ -331,11 +364,6 @@ public class MarkingServiceImpl implements MarkingService {
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
-        Project project = projectMapperV1.selectById(markingBy.getProject_id());
-        // 验证集项目中不能修改他人轮廓
-//		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
-//			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
-//		}
         return MarkingUtils.updateOperationVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation());
     }
 
@@ -353,16 +381,13 @@ public class MarkingServiceImpl implements MarkingService {
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
-        Project project = projectMapperV1.selectById(markingBy.getProject_id());
-        // 验证集项目中不能修改他人轮廓
-//		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
-//			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
-//		}
+
         // 合并 - 校验飞点 TODO: MarkingUtils.updatePolygonPoint(jsonObject);
         cn.staitech.anno.project.domain.Marking markingBys = MarkingUtils.updateVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation(), req.getCheck(), req.getResolution());
-        JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(markingBys.getMarkingId()));
+        // 精度保留3位小数
+        JSONObject jsonObject = MarkingUtils.updatePrecision(JSONObject.parseObject(WktUtil.wktToJson(markingBys.getMarkingId())));
         // 校验合并后的图形是否正常
-        JSONObject geoJson = MarkingUtils.updatePoint(jsonObject);
+        MarkingUtils.updatePoint(jsonObject);
 
         cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
         marking.setGeometry(jsonObject);
@@ -371,34 +396,28 @@ public class MarkingServiceImpl implements MarkingService {
         marking.setMarkingId(req.getMarking_id());
         marking.setUpdateBy(SecurityUtils.getUserId());
         marking.setUpdateTime(new Date());
+        marking.setAnnotationUpdateOwner(SecurityUtils.getUsername());
         markingMapperV1.updateById(marking);
         // 更新后查询数据并返回
         Properties properties = markingMapper.selectBy(req.getMarking_id());
         Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), marking.getGeometry(), properties);
-        // BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features);
         BroadcastVO broadcastVO = SendMessage.sendOneMessagesByAnnoType(CommonConstant.ANNO_TYPE_DRAW, UPDATE_STATUS, features);
         NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
         return jsonObject;
     }
 
-    //@Async
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String update(MarkingUpdateIn req) throws Exception {
-        // 查询标注表中信息==》先走缓存
-        //		Marking markingBy = redisService.getCacheObject(CommonConstant.ANNO_MARKING+req.getMarking_id());
         Marking markingBy = markingMapper.selectById(req.getMarking_id());
-        //		if(null == markingBy){
-        //			redisService.setCacheObject(CommonConstant.ANNO_MARKING+req.getMarking_id(), markingBy, CommonConstant.MARKING_CACHE_HOURS, TimeUnit.HOURS);
-        //		}
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
         Project project = projectMapperV1.selectById(markingBy.getProject_id());
         //验证集项目中不能修改他人轮廓
-//		if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
-//			throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
-//		}
+        if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
+            throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
+        }
         // 查询切片表中信息==》先走缓存
         Slide slide = redisService.getCacheObject(CommonConstant.ANNO_SLIDE + markingBy.getSlide_id());
         if (null == slide) {
@@ -409,7 +428,6 @@ public class MarkingServiceImpl implements MarkingService {
             throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
         }
         // 更新前数据
-        //BeanUtils.copyProperties(req, marking);
         Marking marking = updaeTrans2Marking(req);
         if (null != req.getUpdate_by()) {
             marking.setUpdate_by(req.getUpdate_by());
@@ -427,33 +445,6 @@ public class MarkingServiceImpl implements MarkingService {
             marking.setAnnotation_update_owner(SecurityUtils.getLoginUser().getSysUser().getUserName());
         }
         marking.setUpdate_time(new Date());
-		/*if (req.getArea() != null && !"".equals(req.getArea())) {
-			Double area = new Double(req.getArea()) * MICRON;
-			marking.setArea(String.valueOf(area));
-		}
-		if (req.getPerimeter() != null && !"".equals(req.getPerimeter())) {
-			Double perimeter = new Double(req.getPerimeter()) * MICRON;
-			marking.setPerimeter(String.valueOf(perimeter));
-		}*/
-//		Image image = getImageById(slide.getImageId().longValue());
-//		if (req.getArea() != null) {
-//			Double area = 0.0;
-//			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
-//				area = new Double(req.getArea()) * Double.valueOf(image.getResolutionX()) * Double.valueOf(image.getResolutionX());
-//			}else{
-//				area = new Double(req.getArea()) * MICRON;
-//			}
-//			marking.setArea(String.valueOf(area));
-//		}
-//		if (req.getPerimeter() != null) {
-//			Double perimeter = 0.0;
-//			if(null != image && StringUtils.isNotEmpty(image.getResolutionX())){
-//				perimeter = new Double(req.getPerimeter()) * Double.valueOf(image.getResolutionX());
-//			}else{
-//				perimeter = new Double(req.getPerimeter()) * MICRON;
-//			}
-//			marking.setPerimeter(String.valueOf(perimeter));
-//		}
         marking.setArea(req.getArea());
         marking.setPerimeter(req.getPerimeter());
         List<PointCount> pointCountList = updatePoint(markingBy.getLocation_type(), markingBy);
@@ -464,12 +455,6 @@ public class MarkingServiceImpl implements MarkingService {
                     log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
                     throw new Exception("更新失败，轮廓数据不能为空");
                 }
-                //				else{
-                //					// 将图形进行合并
-                //					String location = updateVerify(markingBy.getGeometry(),req.getGeometry(),req.getOperation());
-                //					JSONObject jsonObject = JSONObject.parseObject(location);
-                //					marking.setGeometry(jsonObject);
-                //				}
             } else {
                 log.info("标注数据异常:" + req + "------------------------------------------------->");
                 throw new Exception("修改标注数据异常，更新失败");
@@ -486,28 +471,14 @@ public class MarkingServiceImpl implements MarkingService {
         }
         Properties properties = markingMapper.selectBy(marking.getMarking_id());
         Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), req.getGeometry(), properties);
-        // BroadcastVO broadcastVO = SendMessage.sendOneMessages2(UPDATE_STATUS, features, pointCountList);
         BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, UPDATE_STATUS, features, pointCountList);
-
         // 使用websocket发送数据
         NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
 
-		/*// 更新切片表中数据
-        updateSLide(slide.getSlideId());
-        // 更新前数据
-        slideAttrService.removeAnnoUsers(slide.getSlideId(), Collections.singletonList(markingBy.getCreate_by()));
-        slideAttrService.removeAnnoCategory(slide.getSlideId(), Collections.singletonList(markingBy.getCategory_id()));
-        // 更新后数据
-        slideAttrService.saveAnnoUsers(slide.getSlideId(), Collections.singletonList(SecurityUtils.getUserId()));
-        if (req.getCategory_id() != null) {
-            slideAttrService.saveAnnoCategory(slide.getSlideId(), Collections.singletonList(req.getCategory_id()));
-        } else {
-            slideAttrService.saveAnnoCategory(slide.getSlideId(), new ArrayList<>());
-        }*/
-
-        //TODO 多线程处理
         Marking markingNew = markingMapper.selectById(req.getMarking_id());
-        annExecutor.submit(new AnnCountThread(2, slide, markingNew));
+
+        // 多线程处理
+        ANN_EXECUTOR.submit(new AnnCountThread(2, slide, markingNew));
 
         return markingBy.getMarking_id();
     }
@@ -535,9 +506,7 @@ public class MarkingServiceImpl implements MarkingService {
         Properties properties = markingMapper.selectBy(markingId);
         Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), markingBy.getGeometry(), properties);
         List<PointCount> pointCountList = updatePoint(markingBy.getLocation_type(), markingBy);
-        //        BroadcastVO broadcastVO = SendMessage.sendOneMessages(DELETE_STATUS, features, pointCountList);
         BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, DELETE_STATUS, features, pointCountList);
-
         NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
         int res = markingMapper.delete(markingId);
         updateSLide(slide.getSlideId());
@@ -581,8 +550,6 @@ public class MarkingServiceImpl implements MarkingService {
         }
         countDownLatch.await();
         cachedThreadPool.shutdown();
-
-        //        features.forEach(i -> i.setGeometry(GeometryUtil.updateYAxle(i.getGeometry())));
 
         // 查询项目详情
         JsonExport jsonExport = null;
@@ -685,12 +652,11 @@ public class MarkingServiceImpl implements MarkingService {
 
         for (PathologicalIndicatorCategory category : categoryLists) {
             // 查询标注路轮廓为ROE（标注考核）的标签
-            Map<String, Object> categoryMap = new HashMap<>();
+            Map<String, Object> categoryMap = new HashMap<>(16);
             categoryMap.put("categoryCode", category.getCategoryCode());
-//			categoryMap.put("organizationId", sysUser.getOrganizationId());
             PathologicalIndicatorCategory pathologicalIndicatorCategory = pathologicalIndicatorCategoryMapper.selectRoe(categoryMap);
             if (pathologicalIndicatorCategory != null) {
-                String fileUrl = null;
+                String fileUrl;
                 try {
                     fileUrl = fileService.createFiles(slideId, FILE_SUFFIX_JSON, category.getStructureId());
                 } catch (Exception e) {
@@ -712,7 +678,7 @@ public class MarkingServiceImpl implements MarkingService {
                 int markingCountRes = markingMapperV1.selectCount(markingQueryWrapper);
                 // 考核区域标签的数据大于0才可生成考题
                 if (markingCountRes > 0) {
-                    Map<String, Object> map = new HashMap<>();
+                    Map<String, Object> map = new HashMap<>(16);
                     map.put("slideId", slideId);
                     map.put("categoryIdList", categoryIdList);
                     List<Features> features = markingMapper.selectFilterCategoryLists(map);
@@ -880,7 +846,7 @@ public class MarkingServiceImpl implements MarkingService {
                     // 查询图片详情
                     Image image = imageMapper.selectById(slideBy.getImageId());
                     // 定义病理指标标签
-                    Map<String, Long> categoryMap = new HashMap<>();
+                    Map<String, Long> categoryMap = new HashMap<>(16);
                     // 定义用户列表
                     List<Long> userByList = new ArrayList<>();
                     Map<String, Object> objMap = null;
@@ -931,16 +897,16 @@ public class MarkingServiceImpl implements MarkingService {
                         categoryList.addAll(categoryMap.values());
                     }
                     // 添加结束之后，更新标签信息
-                    slideAttrService.saveAnnoUsers(slide.getSlideId(), userByList);
-                    slideAttrService.saveAnnoCategory(slide.getSlideId(), categoryList);
+                    slideAttrService.saveAnnoUsers(slide.getSlideId(), userByList, SecurityUtils.getUserId());
+                    slideAttrService.saveAnnoCategory(slide.getSlideId(), categoryList, SecurityUtils.getUserId());
                 }
             }
         }
     }
 
-    public Map<String, Object> writeMarking(Long slideId, JSONObject featureObject, Slide slideBy, Image image, Map<String, Long> categoryMap) throws Exception {
+    public Map<String, Object> writeMarking(Long slideId, JSONObject featureObject, Slide slideBy, Image image, Map<String, Long> categoryMap) {
 
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
 
         // 获取annotationId
         String annotationId = featureObject.getString("id");
@@ -1038,12 +1004,12 @@ public class MarkingServiceImpl implements MarkingService {
             }).collect(Collectors.toList());
             // 执行任务
             // 查询所有的切片
-            executor.submit(new TaskThread(task, projectId, projectBy.getProjectName(), slideIdList, SecurityUtils.getLoginUser().getSysUser()));
+            EXECUTOR.submit(new TaskThread(task, projectId, projectBy.getProjectName(), slideIdList, SecurityUtils.getLoginUser().getSysUser()));
 
         } else {
             // 执行任务
             // 查询所有的切片
-            executor.submit(new TaskThread(task, projectId, projectBy.getProjectName(), slideIds, SecurityUtils.getLoginUser().getSysUser()));
+            EXECUTOR.submit(new TaskThread(task, projectId, projectBy.getProjectName(), slideIds, SecurityUtils.getLoginUser().getSysUser()));
         }
 
         return task;
@@ -1055,7 +1021,6 @@ public class MarkingServiceImpl implements MarkingService {
         QueryWrapper<cn.staitech.anno.project.domain.Marking> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("slide_id", slideId);
         markingMapperV1.delete(queryWrapper);
-        // BroadcastVO broadcastVO = SendMessage.sendOneMessages(CLEAN, new Features());
         BroadcastVO broadcastVO = SendMessage.sendOneMessagesByAnnoType(CommonConstant.ANNO_TYPE_DRAW, CLEAN, new Features());
         NioWebSocketHandler.sendAll(slideId, broadcastVO);
     }
@@ -1097,7 +1062,6 @@ public class MarkingServiceImpl implements MarkingService {
     }
 
     /**
-     *
      * @param fileUrl
      * @param jsonString
      */
@@ -1128,13 +1092,8 @@ public class MarkingServiceImpl implements MarkingService {
     public void process(Integer type, Slide slide, Marking marking) throws Exception {
 
         Long slideId = marking.getSlide_id();
-        String markIngId = marking.getMarking_id();
-        // String annotationId = marking.getAnnotation_id();
         Long createBy = marking.getCreate_by();
         Long categoryId = marking.getCategory_id();
-
-        //增加缓存
-        redisService.setCacheObject(CommonConstant.ANNO_MARKING + markIngId, marking, CommonConstant.MARKING_CACHE_HOURS, TimeUnit.HOURS);
 
         // 判断切片状态是否是未开始
         if (Objects.equals(slide.getStatus(), "1")) {
@@ -1150,11 +1109,11 @@ public class MarkingServiceImpl implements MarkingService {
             slideAttrService.removeAnnoUsers(slideId, Collections.singletonList(createBy));
             slideAttrService.removeAnnoCategory(slideId, Collections.singletonList(categoryId));
         }
-        slideAttrService.saveAnnoUsers(slideId, Collections.singletonList(createBy));
+        slideAttrService.saveAnnoUsers(slideId, Collections.singletonList(createBy), SecurityUtils.getUserId());
         if (categoryId != null) {
-            slideAttrService.saveAnnoCategory(slideId, Collections.singletonList(categoryId));
+            slideAttrService.saveAnnoCategory(slideId, Collections.singletonList(categoryId), SecurityUtils.getUserId());
         } else {
-            slideAttrService.saveAnnoCategory(slideId, new ArrayList<>());
+            slideAttrService.saveAnnoCategory(slideId, new ArrayList<>(), SecurityUtils.getUserId());
         }
     }
 
@@ -1293,6 +1252,132 @@ public class MarkingServiceImpl implements MarkingService {
         return image;
     }
 
+    /**
+     * roi包含排除
+     */
+    @Override
+    public R<String> roiContDel(RoiIn viewAddIns) throws Exception {
+        Long slideId = viewAddIns.getSlideId();
+        //查询slideId的所有标注
+        List<Marking> features = markingMapper.roiMarking(slideId.intValue());
+        List<String> markingIds;
+        //查询measure的标注信息
+        List<MarkMeasure> markMeasures=markingMapper.roiMeasure(slideId);
+        List<String> markingMeasureIds;
+        //roi包含
+        if (viewAddIns.getRoiStatus() == 0) {
+            markingIds = roiCont(viewAddIns, features);
+            markingMeasureIds=roiMeasureCont(viewAddIns,markMeasures);
+        } else {
+            markingIds = roiDel(viewAddIns, features);
+            markingMeasureIds=roiMeasureDel(viewAddIns,markMeasures);
+        }
+        if (markingIds.isEmpty() && markingMeasureIds.isEmpty()) {
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+        }
+        //标注信息
+        Map<String, Marking> markingMap = features.stream().collect(Collectors.toMap(Marking::getMarking_id, Function.identity()));
+        //测量信息
+        Map<String, MarkMeasure> markMeasureMap = markMeasures.stream().collect(Collectors.toMap(MarkMeasure::getMark_measure_id, Function.identity()));
+        //异步删除
+        CompletableFuture<Integer> cf1 = CompletableFuture.supplyAsync(() -> {
+            Set<Long> categoryIds = new HashSet<>();
+            categoryIds.add(0L);
+            Set<Long> createBys = new HashSet<>();
+
+            if (CollectionUtils.isNotEmpty(markingIds)){
+                QueryWrapper<cn.staitech.anno.project.domain.Marking> wrapper = new QueryWrapper<>();
+                wrapper.in("marking_id", markingIds);
+                //删除标注
+                markingMapperV1.delete(wrapper);
+                //标注的createBy和categoryId
+                for (String markingId : markingIds) {
+                    categoryIds.add(markingMap.get(markingId).getCategory_id());
+                    createBys.add(markingMap.get(markingId).getCreate_by());
+                }
+            }
+            if (CollectionUtils.isNotEmpty(markingMeasureIds)){
+                //删除测量
+                markingMapper.delMeasure(markingMeasureIds);
+                //测量的createBy
+                for(String markMeasureId:markingMeasureIds){
+                    createBys.add(markMeasureMap.get(markMeasureId).getCreate_by());
+                }
+            }
+            BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, RELOAD_STATUS, null, null);
+            BroadcastVO measureBroadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_MEASURE, RELOAD_STATUS, null, null);
+            NioWebSocketHandler.sendAll(slideId, broadcastVO);
+            NioWebSocketHandler.sendAll(slideId, measureBroadcastVO);
+            updateSLide(slideId);
+            try {
+                slideAttrService.removeAnnoUsers(slideId, new ArrayList<>(createBys));
+                slideAttrService.removeAnnoCategory(slideId, new ArrayList<>(categoryIds));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return 1;
+        });
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+    }
+
+    /**
+     * ROI包含选出要删除的markingId
+     */
+    public List<String> roiCont(RoiIn viewAddIns, List<Marking> features) throws ParseException {
+        //要删除的markingId集合
+        Set<String> markingIdDel = new HashSet<>();
+        //包含的markingId集合
+        Set<String> markingIdCont = new HashSet<>();
+        for (JSONObject viewAddIn : viewAddIns.getGeometryList()) {
+            String roiLocation = WktUtil.jsonToWkt(viewAddIn);
+            Geometry roiLocations = WKT_READER.read(roiLocation);
+            //roi包含
+            if (viewAddIns.getRoiStatus() == 0) {
+                for (Marking features1 : features) {
+                    String oldLocation = WktUtil.jsonToWkt(features1.getGeometry());
+                    Geometry oldLocations = WKT_READER.read(oldLocation);
+                    //判断是否不包含和不相交
+                    if (!roiLocations.contains(oldLocations) && !roiLocations.intersects(oldLocations)) {
+                        markingIdDel.add(features1.getMarking_id());
+                    } else {
+                        //有相交的部分
+                        markingIdCont.add(features1.getMarking_id());
+                    }
+                }
+            }
+        }
+        //选出要删除的markingId
+        List<String> listIds = markingIdDel.stream().filter(item -> !markingIdCont.contains(item)).collect(Collectors.toList());
+        return listIds;
+
+    }
+
+    /**
+     * ROI删除选出要删除的markingId
+     */
+    public List<String> roiDel(RoiIn viewAddIns, List<Marking> features) throws ParseException {
+        //要删除的markingId集合
+        Set<String> markingIdDel = new HashSet<>();
+        //包含的markingId集合
+        for (JSONObject viewAddIn : viewAddIns.getGeometryList()) {
+            String roiLocation = WktUtil.jsonToWkt(viewAddIn);
+            Geometry roiLocations = WKT_READER.read(roiLocation);
+            //roi删除
+            if (viewAddIns.getRoiStatus() == 1) {
+                for (Marking features1 : features) {
+                    String oldLocation = WktUtil.jsonToWkt(features1.getGeometry());
+                    Geometry oldLocations = WKT_READER.read(oldLocation);
+                    //判断是否包含和相交
+                    if (roiLocations.contains(oldLocations) || roiLocations.intersects(oldLocations)) {
+                        markingIdDel.add(features1.getMarking_id());
+                    }
+                }
+            }
+        }
+        return new ArrayList<>(markingIdDel);
+    }
+
+
     class TaskGenerateJson implements Runnable {
 
 
@@ -1410,4 +1495,63 @@ public class MarkingServiceImpl implements MarkingService {
             }
         }
     }
+
+    /**
+     * ROI包含选出要删除的markingId
+     */
+    public List<String> roiMeasureCont(RoiIn viewAddIns,  List<MarkMeasure> features) throws ParseException {
+        //要删除的markingId集合
+        Set<String> markMeasureIdDel = new HashSet<>();
+        //包含的markingId集合
+        Set<String> markMeasureIdCont = new HashSet<>();
+        for (JSONObject viewAddIn : viewAddIns.getGeometryList()) {
+            String roiLocation = WktUtil.jsonToWkt(viewAddIn);
+            Geometry roiLocations = WKT_READER.read(roiLocation);
+            //roi包含
+            if (viewAddIns.getRoiStatus() == 0) {
+                for (MarkMeasure features1 : features) {
+                    String oldLocation = WktUtil.jsonToWkt(features1.getGeometry());
+                    Geometry oldLocations = WKT_READER.read(oldLocation);
+                    //判断是否不包含和不相交
+                    if (!roiLocations.contains(oldLocations) && !roiLocations.intersects(oldLocations)) {
+                        markMeasureIdDel.add(features1.getMark_measure_id());
+                    } else {
+                        //有相交的部分
+                        markMeasureIdCont.add(features1.getMark_measure_id());
+                    }
+                }
+            }
+        }
+        //选出要删除的markingId
+        List<String> listIds = markMeasureIdDel.stream().filter(item -> !markMeasureIdCont.contains(item)).collect(Collectors.toList());
+        return listIds;
+
+    }
+
+    /**
+     * ROI删除选出要删除的markingId
+     */
+    public List<String> roiMeasureDel(RoiIn viewAddIns, List<MarkMeasure> features) throws ParseException {
+        //要删除的markingId集合
+        Set<String> markMeasureIdDel = new HashSet<>();
+        //包含的markingId集合
+        for (JSONObject viewAddIn : viewAddIns.getGeometryList()) {
+            String roiLocation = WktUtil.jsonToWkt(viewAddIn);
+            Geometry roiLocations = WKT_READER.read(roiLocation);
+            //roi删除
+            if (viewAddIns.getRoiStatus() == 1) {
+                for (MarkMeasure features1 : features) {
+                    String oldLocation = WktUtil.jsonToWkt(features1.getGeometry());
+                    Geometry oldLocations = WKT_READER.read(oldLocation);
+                    //判断是否包含和相交
+                    if (roiLocations.contains(oldLocations) || roiLocations.intersects(oldLocations)) {
+                        markMeasureIdDel.add(features1.getMark_measure_id());
+                    }
+                }
+            }
+        }
+        return new ArrayList<>(markMeasureIdDel);
+    }
+
+
 }

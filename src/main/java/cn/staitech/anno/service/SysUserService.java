@@ -1,6 +1,7 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.system.api.domain.SysUser;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
  *
  * @author staitech
  */
-public interface SysUserService {
+public interface SysUserService extends IService<SysUser> {
 
     /**
      * 通过用户ID查询用户

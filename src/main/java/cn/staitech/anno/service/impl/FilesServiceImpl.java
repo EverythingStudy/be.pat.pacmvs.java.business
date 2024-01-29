@@ -3,6 +3,7 @@ package cn.staitech.anno.service.impl;
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.constant.Container;
+import cn.staitech.anno.domain.Files;
 import cn.staitech.anno.domain.Folder;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.mapper.FilesMapper;
@@ -10,12 +11,8 @@ import cn.staitech.anno.service.FilesService;
 import cn.staitech.anno.service.FolderService;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.TopicService;
-import cn.staitech.anno.utils.ImgPicCompression;
-import cn.staitech.anno.utils.MessageSource;
-import cn.staitech.anno.utils.OrganizationUtils;
-import cn.staitech.anno.utils.PageMaster;
-import cn.staitech.anno.vo.files.Files;
-import cn.staitech.anno.vo.files.in.FilesListVO;
+import cn.staitech.anno.utils.*;
+import cn.staitech.anno.vo.files.FilesListVO;
 import cn.staitech.common.core.utils.uuid.IdUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -23,6 +20,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -239,14 +237,9 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
     private void processFile(Long topicId, String topicName, Long filesId, Long createBy, Long organizationId, String destDirRootPath, File file) throws Exception {
         // INSERT INTO tb_image 源文件名示例：FCPM21-016-CAR20231213D001N1A1234567E01P02
         String fileName = file.getName();
-
         // 判断文件格式，非jpg,png排除
         String fileExt = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
         String tmpFileName = fileName.substring(0, fileName.lastIndexOf('.')).toLowerCase();
-        if (!Container.IMAGE_EXT_SET.contains(fileExt)) {
-            return;
-        }
-
         // 源文件绝对路径
         String sourcePath = file.getAbsolutePath();
 
@@ -340,8 +333,30 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile), Charset.forName("GBK"))) {
             ZipEntry entry = zis.getNextEntry();
             while (entry != null) {
-                // 处理ZIP重复不覆盖逻辑
-                String filePath = destDirRoot + "/" + entry.getName();
+                String entryFileName = entry.getName();
+
+                // 眼科项目-专题、原文件名、解压的切片文件名删除空格
+                // 删除英文空格
+                entryFileName = StringUtils.removeAll(entryFileName.trim(), "\\s");
+                // 删除中文全角空格
+                // entryFileName = entryFileName.replaceAll("　", "");
+
+                // 排除没有扩展名的或不能提取扩展名的文件
+                if (!FileUtils.hasExtension(entryFileName)) {
+                    entry = zis.getNextEntry();
+                    continue;
+                }
+
+                // 判断文件格式，非jpg,png排除
+                String fileExt = entryFileName.substring(entryFileName.lastIndexOf('.') + 1).toLowerCase();
+                if (!Container.IMAGE_EXT_SET.contains(fileExt)) {
+                    entry = zis.getNextEntry();
+                    continue;
+                }
+                
+                // String filePath = destDirRoot + "/" + entry.getName();
+                String filePath = destDirRoot + "/" + entryFileName;
+
                 File file = new File(filePath);
                 if (entry.isDirectory()) {
                     file.mkdirs();
@@ -356,6 +371,10 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                         while ((len = zis.read(buffer)) > 0) {
                             fos.write(buffer, 0, len);
                         }
+                    } catch (Exception e) {
+                        log.info("压缩包文件解压写入异常:{} {}", filePath, e);
+                        entry = zis.getNextEntry();
+                        continue;
                     }
                 }
                 entry = zis.getNextEntry();
@@ -364,7 +383,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         } catch (Exception e) {
             e.printStackTrace();
             log.info("解压异常:{}", zipFile.getAbsolutePath());
-            throw new Exception(MessageSource.M("ZIP_FILE_UNZIP_FAILURE"));
+            // throw new Exception(MessageSource.M("ZIP_FILE_UNZIP_FAILURE"));
         }
         return true;
     }

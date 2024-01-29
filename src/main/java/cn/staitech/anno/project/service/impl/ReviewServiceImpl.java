@@ -35,6 +35,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ibm.icu.text.SimpleDateFormat;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -63,7 +64,7 @@ import java.util.concurrent.ExecutorService;
 public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
         implements ReviewService {
 
-    private static final ExecutorService executor = ExecutorBuilder.create()
+    private static final ExecutorService EXECUTOR = ExecutorBuilder.create()
             .setCorePoolSize(1)
             .setMaxPoolSize(1)
             .setKeepAliveTime(0)
@@ -141,8 +142,17 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
                 writer.write(header);
                 for (ReviewVO reviewVO : reviewVOS) {
                     projectName = reviewVO.getProjectName();
+                    //TODO
+                    String score = String.valueOf(reviewVO.getScore());
+                    if ("-1".equals(score)) {
+                        score = score.replaceAll("-1", CommonConstant.NOT_EVALUATING);
+                    } else {
+                        score = trans2Score(score);
+                    }
+
+
                     String[] body = new String[]{reviewVO.getProjectName(), reviewVO.getContent(), reviewVO.getRoundName(), reviewVO.getTopicName(),
-                            reviewVO.getGroupName(), reviewVO.getImageCode(), String.valueOf(reviewVO.getScore()), reviewVO.getDetails() + "\t",
+                            reviewVO.getGroupName(), reviewVO.getImageCode(), score, reviewVO.getDetails() + "\t",
                             reviewVO.getCreateName(), DateUtil.format(reviewVO.getCreateTime(), "yyyy-MM-dd HH:mm:ss") + "\t"};
                     writer.write(body);
                 }
@@ -181,7 +191,7 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
         Long userId = SecurityUtils.getUserId();
         DownTask task = DownTask.builder().code(snowflake.nextIdStr()).status(Constants.DOWN_STATE_RUNNING).createTime(new Date()).updateTime(new Date()).updateBy(userId).createBy(userId).build();
         downTaskMapper.insert(task);
-        executor.submit(new TaskThread(task, projectId, slideIds));
+        EXECUTOR.submit(new TaskThread(task, projectId, slideIds));
         return task;
     }
 
@@ -240,6 +250,24 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
         return pageMaster;
     }
 
+    private String trans2Score(String score) {
+        if (StringUtils.isNotEmpty(score)) {
+            StringBuffer buffer = new StringBuffer();
+            String[] scoreArray = score.split(":");
+            for (int i = 0; i < scoreArray.length; i++) {
+                String perScore = scoreArray[i];
+                if (" -1".equals(perScore) || "-1".equals(perScore)) {
+                    perScore = perScore.replaceAll("-1", CommonConstant.NOT_EVALUATING);
+                }
+                buffer.append(perScore).append(":");
+            }
+            String scoreStr = buffer.substring(0, buffer.length() - 1);
+            return scoreStr;
+        } else {
+            return score;
+        }
+    }
+
     public class TaskThread implements Runnable {
         private final DownTask downTask;
         private final Long projectId;
@@ -284,8 +312,14 @@ public class ReviewServiceImpl extends ServiceImpl<ReviewMapper, Review>
                             writer.write(header);
                             for (ReviewVO reviewVO : reviewVOS) {
                                 projectName = reviewVO.getProjectName();
+                                String score = String.valueOf(reviewVO.getScore());
+                                if ("-1".equals(score)) {
+                                    score = score.replaceAll("-1", CommonConstant.NOT_EVALUATING);
+                                } else {
+                                    score = trans2Score(score);
+                                }
                                 String[] body = new String[]{reviewVO.getProjectName(), reviewVO.getContent(), reviewVO.getRoundName(), reviewVO.getTopicName(),
-                                        reviewVO.getGroupName(), reviewVO.getImageCode(), String.valueOf(reviewVO.getScore()), reviewVO.getDetails(),
+                                        reviewVO.getGroupName(), reviewVO.getImageCode(), score, reviewVO.getDetails(),
                                         reviewVO.getCreateName(), DateUtil.format(reviewVO.getCreateTime(), "yyyy-MM-dd HH:mm:ss") + "\t"};
                                 writer.write(body);
                             }

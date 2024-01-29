@@ -151,7 +151,7 @@
             </if>
             and i.del_flag=0
         </where>
-        order by i.create_time desc
+        order by i.indicator_id desc
     </select>
 
     <!--根据病理指标查询病理信息1-->

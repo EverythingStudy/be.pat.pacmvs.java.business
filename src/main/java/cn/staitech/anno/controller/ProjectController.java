@@ -5,18 +5,13 @@ import cn.staitech.anno.domain.ExamineScore;
 import cn.staitech.anno.domain.Project;
 import cn.staitech.anno.domain.ProjectMember;
 import cn.staitech.anno.mapper.ExamineScoreMapper;
-import cn.staitech.anno.service.FileService;
-import cn.staitech.anno.service.MarkingService;
-import cn.staitech.anno.service.ProjectMemberService;
-import cn.staitech.anno.service.ProjectService;
+import cn.staitech.anno.service.*;
 import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.file.Chunk;
-import cn.staitech.anno.vo.project.InsertProjectVO;
-import cn.staitech.anno.vo.project.ProjectListVO;
-import cn.staitech.anno.vo.project.UpdateProjectStatusVO;
-import cn.staitech.anno.vo.project.UpdateProjectVO;
+import cn.staitech.anno.vo.organization.SysConfigOut;
+import cn.staitech.anno.vo.project.*;
 import cn.staitech.anno.vo.project.in.ProjectIdsVO;
 import cn.staitech.anno.vo.project.in.ProjectListQueryIn;
 import cn.staitech.common.core.domain.R;
@@ -67,6 +62,9 @@ public class ProjectController extends BaseController {
     private FileService fileService;
     @Resource
     private MarkingService markingService;
+
+    @Resource
+    private SysOrganizationService sysOrganizationService;
 
     /**
      * 项目状态列表 .
@@ -159,6 +157,25 @@ public class ProjectController extends BaseController {
         return R.fail(MessageSource.M("OPERATE_ERROR"));
     }
 
+    @ApiOperation(value = "取消完成")
+    @Log(title = "取消完成", menu = "取消完成", subMenu = "取消完成", businessType = BusinessType.UPDATE)
+    @PostMapping("/cancelCompleted")
+    @Transactional(rollbackFor = Exception.class)
+    public R<String> cancelCompleted(@Validated @RequestBody CancelCompleteProjectVO req) {
+        Project project = new Project();
+        BeanUtils.copyProperties(req, project);
+        //        status 状态:1待启动，2进行中，3暂停，4已完成
+        project.setStatus(2);
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+        project.setUpdateBy(sysUser.getUserId());
+        project.setUpdateTime(new Date());
+        project.setOrganizationId(sysUser.getOrganizationId());
+        if (projectService.updateById(project)) {
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+        }
+        return R.fail(MessageSource.M("OPERATE_ERROR"));
+    }
+
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "批量项目")
     @RequiresPermissions("projectConfig:projectList:remove")
@@ -232,4 +249,23 @@ public class ProjectController extends BaseController {
         markingService.zipExport(zipUrl, specialId);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
+
+    @ApiOperation(value = "AI拼接")
+    @GetMapping(value = "/aiMontage")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "configKey", value = "code", dataTypeClass = String.class, paramType = "query", example = "1")})
+    public R<SysConfigOut> aiMontage(@RequestParam("configKey") String configKey) {
+        SysConfigOut sysConfigOut=sysOrganizationService.aiMontage(configKey);
+        return R.ok(sysConfigOut);
+    }
+
+
+    @ApiOperation(value = "更新AI拼接")
+    @PostMapping("/updateAiMontage")
+    public R<String> updateAiMontage(@Validated @RequestBody SysConfigOut sysConfigOut) {
+       sysOrganizationService.updateAiMontage(sysConfigOut);
+        return R.ok(null,"修改成功");
+    }
+
+
 }

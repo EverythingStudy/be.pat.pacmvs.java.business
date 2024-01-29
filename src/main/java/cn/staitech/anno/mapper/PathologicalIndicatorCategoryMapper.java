@@ -5,7 +5,7 @@ import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.vo.annotation.LabelListVO;
 import cn.staitech.anno.vo.annotation.LabelVO;
 import cn.staitech.anno.vo.geojson.GeoLabel;
-import cn.staitech.anno.vo.pathologicalIndicatorCategory.PathologicalIndicatorCategoryOutVo;
+import cn.staitech.anno.vo.indicator.PathologicalIndicatorCategoryOutVO;
 import cn.staitech.anno.vo.statistic.StatisticCategoryListInVO;
 import cn.staitech.anno.vo.statistic.StatisticCategoryListOutVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -72,7 +72,7 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
      */
     List<GeoLabel> selectIndicatorIdList(Long indicatorId);
 
-    List<PathologicalIndicatorCategoryOutVo> selectIndicatorList(Project project );
+    List<PathologicalIndicatorCategoryOutVO> selectIndicatorList(Project project);
 
     GeoLabel selectGeoLabel(Long categoryId);
 
@@ -147,15 +147,10 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
     /**
      * 查询所有指标（除标注区域外）
      *
-     * @param projectId
+     * @param indicatorId
      * @return
      */
-    List<PathologicalIndicatorCategoryOutVo> selectProjectListFilter(Long indicatorId);
-
-    /**
-     * 查询标签在标注中的使用数量
-     */
-    Integer selectLabelNum(Long categoryId);
+    List<PathologicalIndicatorCategoryOutVO> selectProjectListFilter(Long indicatorId);
 
     /**
      * 查询标签所属脏器系统内已有标签数量

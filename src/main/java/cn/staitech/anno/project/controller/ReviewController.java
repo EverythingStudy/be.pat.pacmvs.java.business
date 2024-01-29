@@ -104,25 +104,20 @@ public class ReviewController {
     @GetMapping("/downReview")
     public void csvExportReviewCurrent(@RequestParam(value = "slideId", required = false) @ApiParam(name = "slideId", value = "切片id") Long slideId,
                                        @RequestParam(value = "projectId", required = true) @ApiParam(name = "projectId", value = "项目id", required = true) Long projectId) throws Exception {
-//        List<Long> list = new ArrayList<>();
-//        if (slideId != null) {
-//            list.add(slideId);
-//        }
         reviewService.csvExportReviewCurrent(projectId, slideId);
     }
 
     @ApiOperation(value = "下载任务状态查询")
     @GetMapping("/queryDownTaskByCode")
-    public R<DownTask> queryDownTaskByCode(@RequestParam("code") @ApiParam(name = "code", value = "下载任务编码", required = true) String code) throws Exception {
+    public R<DownTask> queryDownTaskByCode(@RequestParam("code") @ApiParam(name = "code", value = "下载任务编码", required = true) String code) {
         DownTask downTask = downTaskService.getOne(Wrappers.query(DownTask.builder().code(code).build()));
         //任务状态：1、运行中，2、完成
-        if (null != downTask && downTask.getStatus().equals("2")) {
+        if (null != downTask && "2".equals(downTask.getStatus())) {
             //获取所有生成的json，计算总大小
             JSONObject jsonObjectPath = downTask.getPath();
             double totalFileSizeMB = 0.0;
             if (null != jsonObjectPath) {
                 for (Map.Entry<String, Object> entry : jsonObjectPath.entrySet()) {
-                    //String slideIdKey = entry.getKey();
                     Object value = entry.getValue();
                     Map<String, Object> slideFileMap = (Map<String, Object>) value;
                     if (null != slideFileMap && slideFileMap.containsKey("path")) {

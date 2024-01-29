@@ -1,19 +1,5 @@
 package cn.staitech.anno.service.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
-import cn.staitech.anno.domain.Organ;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import cn.staitech.anno.domain.Species;
 import cn.staitech.anno.mapper.SpeciesMapper;
 import cn.staitech.anno.service.SpeciesService;
@@ -31,7 +17,6 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 
 /**
  * @author: wangfeng
@@ -57,12 +42,9 @@ class SpeciesServiceImpl extends ServiceImpl<SpeciesMapper, Species> implements 
     public Map<String, String> select(boolean en) {
         List<Species> list = speciesMapper.selectList();
         if (en) {
-			// 20231222wangfeng
-            // return list.stream().collect(Collectors.toMap(Species::getSpeciesId, Species::getNameEn));
-            return list.stream().collect(Collectors.toMap(item->item.getOrganizationId().toString() + item.getSpeciesId().toString(), Species::getNameEn));
+            return list.stream().collect(Collectors.toMap(item -> item.getOrganizationId().toString() + item.getSpeciesId(), Species::getNameEn));
         } else {
-            // return list.stream().collect(Collectors.toMap(Species::getSpeciesId, Species::getName));
-			return list.stream().collect(Collectors.toMap(item->item.getOrganizationId().toString() + item.getSpeciesId().toString(), Species::getName));
+            return list.stream().collect(Collectors.toMap(item -> item.getOrganizationId().toString() + item.getSpeciesId(), Species::getName));
         }
     }
 
@@ -96,5 +78,4 @@ class SpeciesServiceImpl extends ServiceImpl<SpeciesMapper, Species> implements 
         }
         return R.fail(MessageSource.M("INSERT_FAILURE"));
     }
-
 }

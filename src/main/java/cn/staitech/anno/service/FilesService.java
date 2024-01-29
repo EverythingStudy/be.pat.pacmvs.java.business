@@ -1,8 +1,8 @@
 package cn.staitech.anno.service;
 
+import cn.staitech.anno.domain.Files;
 import cn.staitech.anno.utils.PageMaster;
-import cn.staitech.anno.vo.files.Files;
-import cn.staitech.anno.vo.files.in.FilesListVO;
+import cn.staitech.anno.vo.files.FilesListVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.concurrent.ExecutionException;

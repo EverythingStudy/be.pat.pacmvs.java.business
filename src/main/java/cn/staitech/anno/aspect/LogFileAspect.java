@@ -79,8 +79,6 @@ public class LogFileAspect {
         // 打印请求入参
         //Object[] res = filterParams(joinPoint.getArgs());
         //logger.info("Request Args   : {}", (JSONObject.toJSONString(res)));
-
-
     }
 
     /**

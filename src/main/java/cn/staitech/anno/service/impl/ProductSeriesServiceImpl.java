@@ -35,8 +35,6 @@ class ProductSeriesServiceImpl extends ServiceImpl<ProductSeriesMapper, ProductS
     public Map<String, String> select(boolean en) {
         List<ProductSeries> list = productSeriesMapper.selectList();
         if (en) {
-            // 20231222wangfeng
-            // return list.stream().collect(Collectors.toMap(ProductSeries::getProductSeriesId, ProductSeries::getNameEn));
             return list.stream().collect(Collectors.toMap(item -> item.getOrganizationId().toString() + item.getSpeciesId() + item.getProductSeriesId().toString(), ProductSeries::getNameEn));
         } else {
             return list.stream().collect(Collectors.toMap(item -> item.getOrganizationId().toString() + item.getSpeciesId() + item.getProductSeriesId().toString(), ProductSeries::getName));

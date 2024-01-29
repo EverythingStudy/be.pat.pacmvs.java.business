@@ -20,17 +20,7 @@
         , slide_id, image_id, ai_analyzed, description, organization_id,
     create_by, create_time, update_by, update_time, del_flag,main_image
     </sql>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from aipre_slide_prediction
-        where slide_prediction_id = #{slidePredictionId,jdbcType=BIGINT}
-    </select>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-        delete
-        from aipre_slide_prediction
-        where slide_prediction_id = #{slidePredictionId,jdbcType=BIGINT}
-    </delete>
+
     <insert id="insert" keyColumn="slide_prediction_id" keyProperty="slidePredictionId"
             parameterType="cn.staitech.anno.domain.SlidePrediction" useGeneratedKeys="true">
         insert into aipre_slide_prediction (slide_id, image_id, ai_analyzed,
@@ -43,137 +33,8 @@
                 #{delFlag,jdbcType=CHAR}, #{mainImage,jdbcType=CHAR})
     </insert>
 
-    <!--眼科-添加-->
-    <insert id="insertSelective" keyColumn="slide_prediction_id" keyProperty="slidePredictionId"
-            parameterType="cn.staitech.anno.domain.SlidePrediction" useGeneratedKeys="true">
-        insert into aipre_slide_prediction
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="slideId != null">
-                slide_id,
-            </if>
-            <if test="imageId != null">
-                image_id,
-            </if>
-            <if test="aiAnalyzed != null">
-                ai_analyzed,
-            </if>
-            <if test="description != null">
-                description,
-            </if>
-            <if test="organizationId != null">
-                organization_id,
-            </if>
-            <if test="createBy != null">
-                create_by,
-            </if>
-            <if test="createTime != null">
-                create_time,
-            </if>
-            <if test="updateBy != null">
-                update_by,
-            </if>
-            <if test="updateTime != null">
-                update_time,
-            </if>
-            <if test="delFlag != null">
-                del_flag,
-            </if>
-            <if test="mainImage != null">
-                main_image,
-            </if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="slideId != null">
-                #{slideId,jdbcType=BIGINT},
-            </if>
-            <if test="imageId != null">
-                #{imageId,jdbcType=BIGINT},
-            </if>
-            <if test="aiAnalyzed != null">
-                #{aiAnalyzed,jdbcType=SMALLINT},
-            </if>
-            <if test="description != null">
-                #{description,jdbcType=VARCHAR},
-            </if>
-            <if test="organizationId != null">
-                #{organizationId,jdbcType=BIGINT},
-            </if>
-            <if test="createBy != null">
-                #{createBy,jdbcType=BIGINT},
-            </if>
-            <if test="createTime != null">
-                #{createTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="updateBy != null">
-                #{updateBy,jdbcType=BIGINT},
-            </if>
-            <if test="updateTime != null">
-                #{updateTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="delFlag != null">
-                #{delFlag,jdbcType=CHAR},
-            </if>
-            <if test="mainImage != null">
-                #{mainImage,jdbcType=CHAR},
-            </if>
-        </trim>
-    </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="cn.staitech.anno.domain.SlidePrediction">
-        update aipre_slide_prediction
-        <set>
-            <if test="slideId != null">
-                slide_id = #{slideId,jdbcType=BIGINT},
-            </if>
-            <if test="imageId != null">
-                image_id = #{imageId,jdbcType=BIGINT},
-            </if>
-            <if test="aiAnalyzed != null">
-                ai_analyzed = #{aiAnalyzed,jdbcType=SMALLINT},
-            </if>
-            <if test="description != null">
-                description = #{description,jdbcType=VARCHAR},
-            </if>
-            <if test="organizationId != null">
-                organization_id = #{organizationId,jdbcType=BIGINT},
-            </if>
-            <if test="createBy != null">
-                create_by = #{createBy,jdbcType=BIGINT},
-            </if>
-            <if test="createTime != null">
-                create_time = #{createTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="updateBy != null">
-                update_by = #{updateBy,jdbcType=BIGINT},
-            </if>
-            <if test="updateTime != null">
-                update_time = #{updateTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="delFlag != null">
-                del_flag = #{delFlag,jdbcType=CHAR},
-            </if>
-            <if test="mainImage != null">
-                main_image = #{mainImage,jdbcType=CHAR},
-            </if>
-        </set>
-        where slide_prediction_id = #{slidePredictionId,jdbcType=BIGINT}
-    </update>
-    <update id="updateByPrimaryKey" parameterType="cn.staitech.anno.domain.SlidePrediction">
-        update aipre_slide_prediction
-        set slide_id        = #{slideId,jdbcType=BIGINT},
-            image_id        = #{imageId,jdbcType=BIGINT},
-            ai_analyzed     = #{aiAnalyzed,jdbcType=SMALLINT},
-            description     = #{description,jdbcType=VARCHAR},
-            organization_id = #{organizationId,jdbcType=BIGINT},
-            create_by       = #{createBy,jdbcType=BIGINT},
-            create_time     = #{createTime,jdbcType=TIMESTAMP},
-            update_by       = #{updateBy,jdbcType=BIGINT},
-            update_time     = #{updateTime,jdbcType=TIMESTAMP},
-            del_flag        = #{delFlag,jdbcType=CHAR}
-        where slide_prediction_id = #{slidePredictionId,jdbcType=BIGINT}
-    </update>
-
-    <select id="getOriginalSlideList" parameterType="cn.staitech.anno.vo.predictionInfo.in.SlidePredictionQuery"
-            resultType="cn.staitech.anno.vo.predictionInfo.out.SlidePredictionInfo">
+    <select id="getOriginalSlideList" parameterType="cn.staitech.anno.vo.predictioninfo.in.SlidePredictionQuery"
+            resultType="cn.staitech.anno.vo.predictioninfo.out.SlidePredictionInfo">
         SELECT
         t1.slide_prediction_id,
         t1.slide_id,
@@ -293,6 +154,12 @@
             <if test="lesionDegree != null">
                 AND s.lesion_degree2 LIKE CONCAT('%', #{lesionDegree}, '%')
             </if>
+            <if test="slideIds != null and slideIds.size() > 0">
+                and s.slide_id in
+                <foreach collection="slideIds" item="slideId" open="(" separator="," close=")">
+                    #{slideId}
+                </foreach>
+            </if>
             <if test="createTimeParams != null">
                 <if test="createTimeParams.beginTime != null and createTimeParams.beginTime != ''">
                     <!-- 开始时间检索 -->
@@ -308,7 +175,7 @@
 
 
     <select id="getSlidePredictionList" parameterType="cn.staitech.anno.vo.imagecsv.ImageCsvGetVO"
-            resultType="cn.staitech.anno.vo.predictionInfo.in.EyeSlideResult">
+            resultType="cn.staitech.anno.vo.predictioninfo.in.EyeSlideResult">
         select e1.thumb_url prediction_thumb_url ,
         s4.slide_id,
         s4.ai_analyzed,
@@ -382,7 +249,7 @@
     </select>
 
 
-    <select id="getMainImageList" parameterType="cn.staitech.anno.vo.predictionInfo.in.EyeThumImageQuery"
+    <select id="getMainImageList" parameterType="cn.staitech.anno.vo.predictioninfo.in.EyeThumImageQuery"
             resultType="cn.staitech.anno.domain.Image">
         SELECT
         t2.thumb_url
@@ -402,8 +269,5 @@
 
 
         </where>
-
     </select>
-
-
 </mapper>

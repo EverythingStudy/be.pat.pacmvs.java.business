@@ -33,7 +33,7 @@ public class RecentlyVisited {
     private Long projectId;
 
     @ApiModelProperty(value = "项目类型")
-    private String projectType;
+    private Long projectType;
 
     @ApiModelProperty(value = "项目名称")
     private String projectName;

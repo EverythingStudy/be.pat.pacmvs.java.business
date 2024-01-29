@@ -21,14 +21,34 @@ import java.util.*;
  * @param <T>
  */
 public class ExcelTool<T> {
-
-    private XSSFWorkbook workbook;//excel 对象
-    private String title; //表格标题
-    private int colWidth = 20; //单元格宽度
-    private int rowHeight = 20;//单元格行高度
-    private XSSFCellStyle styleHead; //表头样式
-    private XSSFCellStyle styleBody; //主体样式
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //日期格式化,默认yyyy-MM-dd HH:mm:ss
+    /**
+     * excel 对象
+     */
+    private XSSFWorkbook workbook;
+    /**
+     * 表格标题
+     */
+    private String title;
+    /**
+     * 单元格宽度
+     */
+    private int colWidth = 20;
+    /**
+     * 单元格行高度
+     */
+    private int rowHeight = 20;
+    /**
+     * 表头样式
+     */
+    private XSSFCellStyle styleHead;
+    /**
+     * 主体样式
+     */
+    private XSSFCellStyle styleBody;
+    /**
+     * 日期格式化,默认yyyy-MM-dd HH:mm:ss
+     */
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     /**
      * 无参数 初始化 对象
@@ -84,32 +104,32 @@ public class ExcelTool<T> {
      * @param list
      */
     public static void setParm(List<Column> list, String rootid) {
-        int row = 0;//excel第几行
-        int rLen = 0; //excel 跨多少行
+        //excel第几行
+        int row = 0;
+        //excel 跨多少行
+        int rLen = 0;
         int totalRow = TreeTool.getMaxStep(list);
         int totalCol = TreeTool.getDownChilren(list, rootid);
         for (int i = 0; i < list.size(); i++) {
             Column poit = list.get(i);
-            int tree_step = TreeTool.getTreeStep(list, poit.getPid(), 0);//往上遍历tree
+            //往上遍历tree
+            int tree_step = TreeTool.getTreeStep(list, poit.getPid(), 0);
             poit.setTree_step(tree_step);
-            poit.setRow(tree_step);//设置第几行
+            //设置第几行
+            poit.setRow(tree_step);
             //判断是否有节点
             boolean hasCh = TreeTool.hasChild(list, poit);
             poit.setHasChilren(hasCh);
             if (hasCh) {
-                poit.setrLen(0);//设置跨多少行
+                //设置跨多少行
+                poit.setrLen(0);
             } else {
                 if (tree_step < totalRow) {
                     rLen = totalRow - tree_step;
                 }
                 poit.setrLen(rLen);
             }
-//            boolean flag=false;//控制只有root 节点才有总的行数信息
-//            if(rootid == null && rootid == poit.getId() )flag = true;
-//            if(rootid != null && rootid.equals(poit.getId()))flag = true;
-//            if(flag){
-//
-//            }
+
             poit.setTotalRow(totalRow);
             poit.setTotalCol(totalCol);
         }
@@ -351,7 +371,7 @@ public class ExcelTool<T> {
      *
      * @param listTpamscolumn 表头数据
      * @param datas           行内数据
-     * @param 保存路径
+     * @param fOut
      * @param flag
      * @param rowFlag
      * @throws Exception
@@ -535,13 +555,7 @@ public class ExcelTool<T> {
      */
     private void save(XSSFWorkbook workbook,
                       ServletOutputStream fOut) {
-  /*      File file = new File(filePath);
-        if (!file.getParentFile().exists()) {
-            file.getParentFile().mkdirs();
-        }*/
-//        FileOutputStream fOut = null;
         try {
-//            fOut = new FileOutputStream(file);
             workbook.write(fOut);
             fOut.flush();
         } catch (Exception e) {
@@ -663,7 +677,6 @@ public class ExcelTool<T> {
      */
     public void createHead(List<Column> listTpamscolumn, Sheet sheetCo, int rowIndex) {
         Row row = sheetCo.getRow(rowIndex);
-//        if(row == null)row = sheetCo.createRow(rowIndex);
         int len = listTpamscolumn.size();//当前行 有多少列
         for (int i = 0; i < len; i++) {//i是headers的索引，n是Excel的索引 多级表头
             Column tpamscolumn = listTpamscolumn.get(i);
@@ -678,8 +691,6 @@ public class ExcelTool<T> {
                 endC--;
             }
             Cell cell = row.getCell(c);
-//            if( null == cell)cell = row.createCell(c);
-
             XSSFRichTextString text = new XSSFRichTextString(tpamscolumn.getContent());
             cell.setCellStyle(this.styleHead); //设置表头样式
             cell.setCellValue(text);
@@ -870,7 +881,6 @@ public class ExcelTool<T> {
         InputStream is = new FileInputStream(file);
         Workbook workbook = WorkbookFactory.create(is);
         int sheetCount = sheetNum - 1; //workbook.getNumberOfSheets();//sheet 数量,可以只读取手动指定的sheet页
-        //int sheetCount1= workbook.getNumberOfSheets();
         Sheet sheet = workbook.getSheetAt(sheetCount); //读取第几个工作表sheet
         int rowNum = sheet.getLastRowNum();//有多少行
         for (int i = 1; i <= rowNum; i++) {
@@ -913,7 +923,6 @@ public class ExcelTool<T> {
         InputStream is = new FileInputStream(file);
         Workbook workbook = WorkbookFactory.create(is);
         int sheetCount = sheetNum - 1; //workbook.getNumberOfSheets();//sheet 数量,可以只读取手动指定的sheet页
-        //int sheetCount1= workbook.getNumberOfSheets();
         Sheet sheet = workbook.getSheetAt(sheetCount); //读取第几个工作表sheet
         int rowNum = sheet.getLastRowNum();//有多少行
         Row rowTitle = sheet.getRow(0);//第i行

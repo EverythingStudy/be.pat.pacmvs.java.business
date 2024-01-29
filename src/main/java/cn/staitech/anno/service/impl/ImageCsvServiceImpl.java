@@ -1,11 +1,11 @@
 package cn.staitech.anno.service.impl;
 
+import cn.staitech.anno.domain.Files;
 import cn.staitech.anno.domain.ImageCsv;
 import cn.staitech.anno.mapper.ImageCsvMapper;
 import cn.staitech.anno.service.CsvParserService;
 import cn.staitech.anno.service.FilesProcessService;
 import cn.staitech.anno.service.ImageCsvService;
-import cn.staitech.anno.vo.files.Files;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

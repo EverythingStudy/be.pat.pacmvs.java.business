@@ -260,7 +260,6 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
 
         LambdaQueryWrapper<QuestionProjectRel> qw = new LambdaQueryWrapper<>();
         qw.eq(QuestionProjectRel::getProjectId, req.getProjectId());
-//        qw.eq(QuestionProjectRel::getQuestionId, req.getQuestionId());
         qw.eq(QuestionProjectRel::getDelFlag, CommonConstant.NUMBER_0);
         List<QuestionProjectRel> questionProjectRels = questionProjectRelMapper.selectList(qw);
         List<Long> questionIdList = questionProjectRels.stream().map(QuestionProjectRel::getQuestionId).collect(Collectors.toList());
@@ -275,46 +274,20 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
                 entity.setImageCode(questionBank.getImageCode());
                 entity.setJsonName(questionBank.getJsonName());
                 entity.setImageName(questionBank.getImageName());
-//                entity.setCreateBy(27L);
                 entity.setCreateBy(SecurityUtils.getUserId());
                 entity.setCreateName(SecurityUtils.getUsername());
-//                entity.setCreateName("zmj");
-//                entity.setCreateTime(new Date());
                 questionProjectRelList.add(entity);
-//                questionProjectRelMapper.insert(entity);
             }
         }
         if (CollectionUtil.isNotEmpty(questionProjectRelList)) {
             questionProjectRelMapper.examineInsert(questionProjectRelList);
         }
-
-//        if (!CollectionUtils.isEmpty(questionProjectRels)) {
-//            return R.fail(MessageSource.M("PROHIBIT_REPETITION"));
-//        }
-
-
-//        BeanUtils.copyProperties(req, entity);
-//        entity.setCreateBy(SecurityUtils.getUserId());
-//        entity.setCreateName(SecurityUtils.getUsername());
-//        entity.setCreateTime(new Date());
-//        questionProjectRelMapper.insert(entity);
-
         return R.ok();
-
     }
 
     @Override
     public R settingCompleted(SettingCompletedIn req) {
         log.info("考核选片-设置完成接口开始：");
-        /*List<Long> dataList = req.getDataList();
-        List<QuestionProjectRel> param = dataList.stream().map(e -> {
-            QuestionProjectRel questionProjectRel = new QuestionProjectRel();
-            questionProjectRel.setShouldMarks(req.getShouldMarks());
-            questionProjectRel.setQuestionProjectId(e);
-            return questionProjectRel;
-        }).collect(Collectors.toList());
-        iQuestionProjectRelService.updateBatchById(param);*/
-
         if (questionProjectRelMapper.countShouldMarks(req.getProjectId()) > 0) {
             questionProjectRelMapper.updateShouldMarks(req.getProjectId(), req.getShouldMarks());
         } else {
@@ -347,5 +320,4 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
 
         return R.ok();
     }
-
 }

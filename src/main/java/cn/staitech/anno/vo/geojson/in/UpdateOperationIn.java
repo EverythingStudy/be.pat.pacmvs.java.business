@@ -7,6 +7,9 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+/**
+ * @author .
+ */
 @Data
 public class UpdateOperationIn {
 
@@ -14,7 +17,6 @@ public class UpdateOperationIn {
     @ApiModelProperty(value = "标注id")
     private String marking_id;
 
-    //@NotNull(message = "{viewAddIn.createBy.notNull}")
     @ApiModelProperty(value = "标注作者(绘制者)")
     private Long update_by;
 
@@ -31,5 +33,4 @@ public class UpdateOperationIn {
 
     @ApiModelProperty(value = "分辨率")
     private String resolution;
-
 }

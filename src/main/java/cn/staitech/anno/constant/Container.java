@@ -17,7 +17,7 @@ public class Container {
     /**
      * FileUpload - 定义一个基于多线程 的 hashmap
      */
-    public static final ConcurrentHashMap<String, ConcurrentHashSet<Integer>> FILE_MAP = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, ConcurrentHashSet<Integer>> FILE_MAP = new ConcurrentHashMap<>(16);
 
     /**
      * Image - 原始切片 - 切片状态：0上传中、1上传失败、2解析中、3解析失败、4可用

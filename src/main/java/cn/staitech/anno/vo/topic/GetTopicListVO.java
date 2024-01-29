@@ -15,5 +15,4 @@ public class GetTopicListVO {
 
     @ApiModelProperty(value = "评审轮次ID", required = false, hidden = true)
     private Long reviewRoundId;
-
 }

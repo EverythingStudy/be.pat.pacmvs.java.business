@@ -3,7 +3,7 @@ package cn.staitech.anno.controller;
 import cn.staitech.anno.project.domain.Project;
 import cn.staitech.anno.project.mapper.ProjectMapperV1;
 import cn.staitech.anno.utils.StatisticListUtils;
-import cn.staitech.anno.vo.filepath.in.GetFilePathIn;
+import cn.staitech.anno.vo.filepath.GetFilePathIn;
 import cn.staitech.common.core.domain.R;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -37,8 +37,6 @@ public class FilePathController {
 
     @PostMapping("/getFilePath")
     public R getFilePath(@RequestBody GetFilePathIn req) {
-        //String slidePath = "/home/pat_saas/Slides";
-        //String uploadPath = "/home/pat_saas/Upload";
         if (req.getProjectId() != null && req.getProjectId() != 0) {
             Project project = projectMapperV1.selectById(req.getProjectId());
             String fourNumber = StatisticListUtils.getFourNumberNoSlide(project.getOrganizationId());
@@ -54,15 +52,6 @@ public class FilePathController {
                 String replace = uploadPath.replace("/home/pat_saas", "/home/pat_saas/" + fourNumber);
                 return R.ok(replace);
             }
-
-
         }
-
     }
-
-/*    public static void main(String[] args) {
-        String fourNumber = StatisticListUtils.getFourNumberNoSlide(12L);
-        String replace = "/home/pat_saas/slides".replace("/home/pat_saas", "/home/pat_saas/" + fourNumber);
-        System.out.println(replace);
-    }*/
 }

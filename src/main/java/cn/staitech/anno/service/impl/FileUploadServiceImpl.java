@@ -4,13 +4,13 @@ import cn.hutool.core.collection.ConcurrentHashSet;
 import cn.staitech.anno.config.AsyncTask;
 import cn.staitech.anno.constant.CommonConstant;
 import cn.staitech.anno.constant.Container;
+import cn.staitech.anno.domain.Files;
 import cn.staitech.anno.domain.Topic;
 import cn.staitech.anno.service.*;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.OrganizationUtils;
 import cn.staitech.anno.vo.file.FileNode;
-import cn.staitech.anno.vo.files.Files;
-import cn.staitech.anno.vo.files.in.FileUploadVO;
+import cn.staitech.anno.vo.files.FileUploadVO;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -129,6 +129,15 @@ public class FileUploadServiceImpl implements FileUploadService {
                     throw new Exception(MessageSource.M("ARGUMENT_INVALID_NOT_FIND_TOPIC"));
                 }
                 Integer projectTypeId = businessType == 6 ? 6 : 1;
+
+                // 眼科项目-专题、原文件名、解压的切片文件名删除空格
+                // 删除英文空格
+                fileUploadVO.setFileName(StringUtils.removeAll(fileUploadVO.getFileName().trim(), "\\s"));
+                fileUploadVO.setTopicName(StringUtils.removeAll(fileUploadVO.getTopicName().trim(), "\\s"));
+                // 删除中文全角空格
+                fileUploadVO.setFileName(fileUploadVO.getFileName().replaceAll("　", ""));
+                fileUploadVO.setTopicName(fileUploadVO.getTopicName().replaceAll("　", ""));
+
                 Topic topic = topicService.selectOne(fileUploadVO.getTopicName(), projectTypeId);
                 // 定义文件夹名称
                 dirPath = dirPath + File.separator + "Slides" + File.separator + topic.getTopicName();
@@ -144,7 +153,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             case 5:
                 dirPath = dirPath + zipPath;
                 break;
-
+            default:
         }
 
         String fileName = fileUploadVO.getFileName();
@@ -192,8 +201,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 if (!tag) {
                     throw new Exception(MessageSource.M("FILE_LIMIT"));
                 }
-
-                asyncTask.zipExport(files.getFilesPath(), fileUploadVO.getProjectId());
+                asyncTask.zipExport(files.getFilesPath(), fileUploadVO.getProjectId(), SecurityUtils.getLoginUser().getSysUser().getOrganizationId(), SecurityUtils.getUserId());
                 break;
 
             case 5:
@@ -227,12 +235,23 @@ public class FileUploadServiceImpl implements FileUploadService {
                 // 解析文件
                 filesService.submitTask(files);
                 break;
+            default:
         }
         return files;
     }
 
     @Override
     public String mergeChunk(FileUploadVO chunk) throws Exception {
+        // 眼科项目-专题、原文件名、解压的切片文件名删除空格
+        if (chunk.getBusinessType().equals(6)) {
+            // 删除英文空格
+            chunk.setFileName(StringUtils.removeAll(chunk.getFileName().trim(), "\\s"));
+            chunk.setTopicName(StringUtils.removeAll(chunk.getTopicName().trim(), "\\s"));
+            // 删除中文全角空格
+            chunk.setFileName(chunk.getFileName().replaceAll("　", ""));
+            chunk.setTopicName(chunk.getTopicName().replaceAll("　", ""));
+        }
+
         log.info("chunk:{} {}", chunk.getUuid(), chunk.getFileName());
         // 查询文件是否存在
         QueryWrapper<Files> filesQueryWrapper = new QueryWrapper<>();
@@ -305,12 +324,11 @@ public class FileUploadServiceImpl implements FileUploadService {
                     if (!Optional.ofNullable(chunk.getProjectId()).isPresent()) {
                         throw new Exception(MessageSource.M("DISALLOW_NOT_PROJECT"));
                     }
-                    // markingService.zipExport(filesBy.getFilesPath(), chunk.getProjectId());
                     boolean tag = zipCheck(filesBy.getFilesPath(), chunk.getProjectId());
                     if (!tag) {
                         throw new Exception(MessageSource.M("FILE_LIMIT"));
                     }
-                    asyncTask.zipExport(filesBy.getFilesPath(), chunk.getProjectId());
+                    asyncTask.zipExport(filesBy.getFilesPath(), chunk.getProjectId(), SecurityUtils.getLoginUser().getSysUser().getOrganizationId(), SecurityUtils.getUserId());
                     break;
                 case 5:
                     if (!Optional.ofNullable(chunk.getProjectId()).isPresent()) {
@@ -338,6 +356,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                     // 解析文件
                     filesService.submitTask(filesBy);
                     break;
+                default:
             }
         }
         return "1";
@@ -400,6 +419,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 // 定义文件夹名称
                 path = basePath + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()) + "/Slides" + File.separator + topicName + File.separator + fileUploadVO.getFileName();
                 break;
+            default:
         }
         // 创建文件
         if (path != null) {

@@ -1,0 +1,290 @@
+package cn.staitech.anno.service.impl;
+
+import cn.staitech.anno.domain.Outline;
+import cn.staitech.anno.mapper.OutlineMapper;
+import cn.staitech.anno.mapper.SysUserMapper;
+import cn.staitech.anno.project.mapper.SlideMapperV1;
+import cn.staitech.anno.service.MarkingService;
+import cn.staitech.anno.service.OutlineService;
+import cn.staitech.anno.vo.outline.OutlineRoot;
+import cn.staitech.anno.vo.outline.OutlineSelectVO;
+import cn.staitech.anno.vo.outline.OutlineStatistic;
+import cn.staitech.common.redis.service.RedisService;
+import cn.staitech.system.api.domain.SysUser;
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
+
+import static cn.staitech.anno.constant.CommonConstant.REDIS_OUTLINE_LIST;
+import static cn.staitech.anno.constant.CommonConstant.REDIS_OUTLINE_ROOT;
+
+/**
+ * (Outline)表服务实现类
+ *
+ * @author wangfeng
+ * @since 2024-01-04 10:55:03
+ */
+@Slf4j
+@Service("OutlineRedisServiceImpl")
+public class OutlineRedisServiceImpl extends ServiceImpl<OutlineMapper, Outline> implements OutlineService {
+    @Resource
+    private MarkingService markingService;
+    @Resource
+    private RedisService redisService;
+    @Resource
+    private SlideMapperV1 slideMapperV1;
+    @Resource
+    private SysUserMapper userMapper;
+
+    /**
+     * 列表查询
+     *
+     * @param selectVO
+     * @return
+     */
+    @Override
+    public List<Outline> selectList(OutlineSelectVO selectVO) {
+
+        Long createBy = selectVO.getCreateBy();
+        String rootKey = REDIS_OUTLINE_ROOT + createBy;
+        String listKey = REDIS_OUTLINE_LIST + createBy + "_";
+
+        com.alibaba.fastjson2.JSONObject object = redisService.getCacheObject(rootKey);
+
+        if (object.isEmpty()) {
+            return null;
+        }
+
+        OutlineRoot outlineRoot = object.toJavaObject(OutlineRoot.class);
+        List<com.alibaba.fastjson2.JSONObject> srcJsonList = redisService.getCacheList(listKey + outlineRoot.getToken());
+
+        if (CollectionUtils.isEmpty(srcJsonList)) {
+            return null;
+        }
+
+        List<Outline> srcList = new ArrayList<>();
+
+        AtomicLong outlineId = new AtomicLong(1);
+        // 格式转换
+        for (com.alibaba.fastjson2.JSONObject jsonObject : srcJsonList) {
+            Outline outline = new Outline();
+            outline.setOutlineId(outlineId.getAndIncrement());
+            outline.setProjectId(selectVO.getProjectId());
+            outline.setImageId(selectVO.getImageId());
+            outline.setSlideId(selectVO.getSlideId());
+            outline.setCreateBy(selectVO.getCreateBy());
+            outline.setArea(Double.valueOf(jsonObject.getBigDecimal("area").toString()));
+            outline.setPerimeter(Double.valueOf(jsonObject.getBigDecimal("perimeter").toString()));
+            outline.setLongAxis(Double.valueOf(jsonObject.getBigDecimal("longAxis").toString()));
+            outline.setShortAxis(Double.valueOf(jsonObject.getBigDecimal("shortAxis").toString()));
+            outline.setGeometry(JSONObject.parseObject(jsonObject.getString("geometry")));
+
+            srcList.add(outline);
+        }
+
+        Double minVal = selectVO.getMinVal() != null ? selectVO.getMinVal() : 0.0;
+
+        List<Outline> list;
+
+        // 默认查询面积(面积1，周长2)
+        if (selectVO.getBizType().equals(2)) {
+            if (selectVO.getMaxVal() != null) {
+                list = srcList.stream()
+                        .filter(outline -> outline.getPerimeter() >= minVal)
+                        .filter(outline -> outline.getPerimeter() <= selectVO.getMaxVal())
+                        .collect(Collectors.toList());
+            } else {
+                list = srcList.stream()
+                        .filter(outline -> outline.getPerimeter() >= minVal)
+                        .collect(Collectors.toList());
+            }
+        } else {
+            if (selectVO.getMaxVal() != null) {
+                list = srcList.stream()
+                        .filter(outline -> outline.getArea() >= minVal)
+                        .filter(outline -> outline.getArea() <= selectVO.getMaxVal())
+                        .collect(Collectors.toList());
+            } else {
+                list = srcList.stream()
+                        .filter(outline -> outline.getArea() >= minVal)
+                        .collect(Collectors.toList());
+            }
+        }
+        return list;
+    }
+
+    /**
+     * 统计
+     *
+     * @param list
+     * @param bizType
+     * @return
+     */
+    @Override
+    public OutlineStatistic statistic(List<Outline> list, Integer bizType) {
+        // 查询业务类型：1面积(默认),2周长
+        bizType = bizType != null ? bizType : 1;
+
+        // 平均值
+        double average;
+        // 标准偏差
+        Double standardDeviation;
+        // 总和
+        Double sum;
+        // 总个数
+        Integer total = list.size();
+        // 最小值
+        Double minValue;
+        // 最大值
+        Double maxValue;
+
+        List<Double> doubles;
+        // 默认查询面积
+        if (bizType.equals(2)) {
+            doubles = list.stream().map(Outline::getPerimeter).collect(Collectors.toList());
+        } else {
+            doubles = list.stream().map(Outline::getArea).collect(Collectors.toList());
+        }
+
+        // 对周长或面积求和、最小值、最大值
+        sum = doubles.stream().mapToDouble(num -> num).sum();
+        minValue = doubles.stream().mapToDouble(num -> num).min().getAsDouble();
+        maxValue = doubles.stream().mapToDouble(num -> num).max().getAsDouble();
+
+        // 平均值
+        average = sum / total;
+
+        // 对面积、周长求方差
+        double sumOfSquares = doubles.stream()
+                .mapToDouble(db -> Math.pow((db - average), 2))
+                .sum();
+
+        // 母体方差
+        double variance = sumOfSquares / total;
+        // 样本方差
+        // double variance = sumOfSquares / (total - 1);
+
+        // 标准差
+        standardDeviation = Math.sqrt(variance);
+
+        OutlineStatistic statistic = new OutlineStatistic();
+        statistic.setList(list);
+        statistic.setBizType(bizType);
+        statistic.setAverage(average);
+        statistic.setStandardDeviation(standardDeviation);
+        statistic.setSum(sum);
+        statistic.setTotal(total);
+        statistic.setMinValue(minValue);
+        statistic.setMaxValue(maxValue);
+
+        return statistic;
+    }
+
+    /**
+     * 异步删除所有当前用户、非当前token的记录
+     *
+     * @param createBy 用户ID
+     * @param token    用户token
+     */
+    @Async
+    @Override
+    public void removeByCreateByAndToken(Long createBy, String token) {
+        String rootKey = REDIS_OUTLINE_ROOT + createBy;
+        String listKey = REDIS_OUTLINE_LIST + createBy + "_";
+
+        com.alibaba.fastjson2.JSONObject object = redisService.getCacheObject(rootKey);
+        OutlineRoot outlineRoot = object.toJavaObject(OutlineRoot.class);
+
+        // 当前用户所有数据的Key
+        Collection<String> keyCollection = redisService.keys(listKey + "*");
+        if (CollectionUtils.isEmpty(keyCollection)) {
+            return;
+        }
+
+        if (token != null) {
+            // 清空当前用户非当前token的数据
+            for (String keyStr : keyCollection) {
+                if (!keyStr.equals(listKey + outlineRoot.getToken())) {
+                    redisService.deleteObject(keyStr);
+                }
+            }
+        } else {
+            // 清空当前用户全部数据
+            redisService.deleteObject(keyCollection);
+        }
+    }
+
+    /**
+     * 异步删除所有当前用户、非当前slideId的记录
+     *
+     * @param createBy 用户ID
+     * @param slideId  SlideID
+     */
+    @Async
+    @Override
+    public void removeBycreateBySlideId(Long createBy, Long slideId) {
+        String rootKey = REDIS_OUTLINE_ROOT + createBy;
+        String listKey = REDIS_OUTLINE_LIST + createBy + "_";
+
+        com.alibaba.fastjson2.JSONObject object = redisService.getCacheObject(rootKey);
+        OutlineRoot outlineRoot = object.toJavaObject(OutlineRoot.class);
+
+        // 当前用户所有数据的Key
+        Collection<String> keyCollection = redisService.keys(listKey + "*");
+        if (CollectionUtils.isEmpty(keyCollection)) {
+            return;
+        }
+
+        if (outlineRoot.getSlideId().equals(slideId)) {
+            // 清空当前用户非当前token的数据
+            for (String keyStr : keyCollection) {
+                if (!keyStr.equals(listKey + outlineRoot.getToken())) {
+                    redisService.deleteObject(keyStr);
+                }
+            }
+        } else {
+            // 清空当前用户全部数据
+            redisService.deleteObject(keyCollection);
+        }
+    }
+
+    /**
+     * 批量保存
+     *
+     * @param list
+     * @param selectVO
+     */
+    @Async
+    @Override
+    public void saveAll(List<Outline> list, OutlineSelectVO selectVO) {
+        Long categoryId = selectVO.getCategoryId();
+        Long createBy = selectVO.getCreateBy();
+        Long slideId = selectVO.getSlideId();
+
+        cn.staitech.anno.project.domain.Slide slide = slideMapperV1.selectById(slideId);
+        SysUser user = userMapper.selectUserById(createBy);
+
+        // 逐一添加
+        for (Outline outline : list) {
+            try {
+                markingService.insertOutline(outline, slide, user, categoryId);
+            } catch (Exception e) {
+                log.info("save marking error：{} {} {}", e, outline.getOutlineId(), outline.getGeometry());
+            }
+        }
+        // WebSocket广播
+        markingService.reload(slideId);
+        // 删除所有当前用户的记录
+        removeByCreateByAndToken(createBy, null);
+    }
+}

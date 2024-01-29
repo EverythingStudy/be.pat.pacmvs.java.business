@@ -56,9 +56,6 @@ public class OtherServiceImpl implements OtherService {
                 markingJsonObject.put("user_id", examineScoreBy.getCreateBy());
                 List<JSONObject> jsonObjects = new ArrayList<>();
                 jsonObjects.add(markingJsonObject);
-//                JSONObject jsonObjectList=new JSONObject();
-//                jsonObjectList.put("dataList",jsonObjects);
-//                remoteLabelService.marking(markingJsonObject);
                 remoteLabelService.marking(jsonObjects);
             }
         }

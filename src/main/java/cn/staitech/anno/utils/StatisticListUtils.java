@@ -606,6 +606,4 @@ public class StatisticListUtils {
                 statisticCategoryDictLabel, statisticDimensionDictLabel, daysBetween);
         return statisticListRep;
     }
-
-
 }

@@ -12,27 +12,27 @@ import java.util.concurrent.ConcurrentMap;
 
 public class ChannelSupervise {
 
-    public static final ConcurrentMap<Channel, Long> CHANNEL_MAP = new ConcurrentHashMap<>();
-    public static final ConcurrentMap<Channel, String> QUESTION_CHANNEL_MAP = new ConcurrentHashMap<>();
-    private static final ChannelGroup GlobalGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
-    private static final ConcurrentMap<String, ChannelId> ChannelMap = new ConcurrentHashMap();
+    public static final ConcurrentMap<Channel, Long> CHANNEL_MAP = new ConcurrentHashMap<>(16);
+    public static final ConcurrentMap<Channel, String> QUESTION_CHANNEL_MAP = new ConcurrentHashMap<>(16);
+    private static final ChannelGroup CHANNEL_GROUP = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+    private static final ConcurrentMap<String, ChannelId> CHANNEL_ID_MAP = new ConcurrentHashMap();
 
     public static void addChannel(Channel channel) {
-        GlobalGroup.add(channel);
-        ChannelMap.put(channel.id().asShortText(), channel.id());
+        CHANNEL_GROUP.add(channel);
+        CHANNEL_ID_MAP.put(channel.id().asShortText(), channel.id());
     }
 
     public static void removeChannel(Channel channel) {
-        GlobalGroup.remove(channel);
-        ChannelMap.remove(channel.id().asShortText());
+        CHANNEL_GROUP.remove(channel);
+        CHANNEL_ID_MAP.remove(channel.id().asShortText());
     }
 
     public static Channel findChannel(String id) {
-        return GlobalGroup.find(ChannelMap.get(id));
+        return CHANNEL_GROUP.find(CHANNEL_ID_MAP.get(id));
     }
 
     public static void send2All(TextWebSocketFrame tws) {
-        GlobalGroup.writeAndFlush(tws);
+        CHANNEL_GROUP.writeAndFlush(tws);
     }
 
     public static void addChannelTest(Channel channel, Long slideId) {

@@ -3,7 +3,7 @@
 <mapper namespace="cn.staitech.anno.mapper.MarkMeasureMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="cn.staitech.anno.vo.markMeasure.MarkMeasure">
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.MarkMeasure">
         <id column="mark_measure_id" property="mark_measure_id"/>
         <result column="annotation_id" property="annotation_id"/>
         <result column="project_id" property="project_id"/>

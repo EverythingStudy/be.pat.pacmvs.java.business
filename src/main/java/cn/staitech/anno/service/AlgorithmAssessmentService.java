@@ -1,6 +1,6 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.vo.algorithm.AlgorithmAssessment;
+import cn.staitech.anno.domain.AlgorithmAssessment;
 import cn.staitech.anno.vo.assessment.in.*;
 import cn.staitech.anno.vo.assessment.out.GetAssessmentListOut;
 import cn.staitech.common.core.domain.PageResponse;

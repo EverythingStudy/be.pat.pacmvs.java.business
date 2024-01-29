@@ -1,15 +1,17 @@
 package cn.staitech.anno.service;
 
+import cn.staitech.anno.domain.Outline;
 import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
+import cn.staitech.anno.vo.geojson.in.RoiIn;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.PointCount;
-import cn.staitech.anno.vo.slide.SlideRes;
 import cn.staitech.common.core.domain.PageResponse;
+import cn.staitech.common.core.domain.R;
 import cn.staitech.system.api.domain.SysUser;
 import com.alibaba.fastjson.JSONObject;
 
@@ -30,15 +32,6 @@ public interface MarkingService {
     List<Features> selectListBy(Long slideId) throws Exception;
 
     double operationCheck(UpdateOperationIn req) throws Exception;
-
-
-    /**
-     * 根据专题查看当前专题下所有的切片
-     *
-     * @param specialId 标注信息
-     * @return List<Slide>
-     */
-    List<SlideRes> selectSlideList(Long specialId);
 
     /**
      * 根据切片id查询当前切片下当前标签的总数
@@ -71,6 +64,24 @@ public interface MarkingService {
      * @return true || false
      */
     String insert(ViewAddIn req) throws Exception;
+
+
+    /**
+     * 添加标注 - 吸管
+     *
+     * @param outline 标注数据
+     * @return true || false
+     */
+    String insertOutline(Outline outline, cn.staitech.anno.project.domain.Slide slide, SysUser user, Long categoryId) throws Exception;
+
+
+    /**
+     * reload
+     *
+     * @param slideId 切片编号
+     */
+    void reload(Long slideId);
+
 
     /**
      * 删除标注
@@ -143,4 +154,10 @@ public interface MarkingService {
      * @return
      */
     void batchDelete(Long slideId);
+
+    /**
+     * roi包含排除
+     */
+    R<String> roiContDel(RoiIn viewAddIns) throws Exception;
+
 }

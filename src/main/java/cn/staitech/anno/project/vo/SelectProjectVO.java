@@ -9,8 +9,8 @@ import lombok.Data;
  * @date 2023/9/13 17:44:08
  */
 @Data
-public class SelectProjectVO{
-    
+public class SelectProjectVO {
+
     /**
      * 项目ID
      */

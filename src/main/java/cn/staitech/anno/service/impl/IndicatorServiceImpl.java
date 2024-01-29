@@ -244,8 +244,8 @@ public class IndicatorServiceImpl implements IndicatorService {
         return checkTag;
     }
 
-	@Override
-	public Integer selectIndicatorCountByIndicator(Indicator indicator) {
-		return indicatorMapper.selectIndicatorCountByIndicator(indicator);
-	}
+    @Override
+    public Integer selectIndicatorCountByIndicator(Indicator indicator) {
+        return indicatorMapper.selectIndicatorCountByIndicator(indicator);
+    }
 }

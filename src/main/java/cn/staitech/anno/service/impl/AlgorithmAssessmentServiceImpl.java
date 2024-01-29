@@ -1,6 +1,8 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.constant.CommonConstant;
+import cn.staitech.anno.domain.AlgorithmAssessment;
+import cn.staitech.anno.domain.AlgorithmJson;
 import cn.staitech.anno.domain.ParseJson;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.mapper.AlgorithmAssessmentMapper;
@@ -15,8 +17,6 @@ import cn.staitech.anno.service.AlgorithmJsonService;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.*;
-import cn.staitech.anno.vo.algorithm.AlgorithmAssessment;
-import cn.staitech.anno.vo.algorithm.AlgorithmJson;
 import cn.staitech.anno.vo.assessment.in.*;
 import cn.staitech.anno.vo.assessment.out.AssessmentExportOut;
 import cn.staitech.anno.vo.assessment.out.GetAssessmentListOut;

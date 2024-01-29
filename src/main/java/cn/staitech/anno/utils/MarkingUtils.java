@@ -19,14 +19,16 @@ import org.geotools.geojson.GeoJSONUtil;
 import org.geotools.geojson.geom.GeometryJSON;
 
 import java.io.Reader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Slf4j
 public class MarkingUtils {
-    private static final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), 4326);
-    private static final WKTReader wktReader = new WKTReader(geometryFactory);
+    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), 4326);
+    private static final WKTReader WKT_READER = new WKTReader(GEOMETRY_FACTORY);
 
 
     public static Geometry addVerify(JSONObject location) throws Exception {
@@ -34,7 +36,7 @@ public class MarkingUtils {
         try {
             String oldLocation = WktUtil.jsonToWkt(location);
             // 使用WKT将字符串location转换为geometry对象
-            geometry = wktReader.read(oldLocation);
+            geometry = WKT_READER.read(oldLocation);
             // 获取geometry对象类型
             String geometryType = geometry.getGeometryType();
             // 判断location是否为混合类型
@@ -78,13 +80,13 @@ public class MarkingUtils {
             if (StringUtils.isNotBlank(operation)) {
                 Geometry geometry1;
                 try {
-                    geometry1 = wktReader.read(oldLocation);
+                    geometry1 = WKT_READER.read(oldLocation);
                 } catch (Exception e) {
                     throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
                 }
                 Geometry geometry2;
                 try {
-                    geometry2 = wktReader.read(newLocation);
+                    geometry2 = WKT_READER.read(newLocation);
                 } catch (Exception e) {
                     throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
                 }
@@ -117,9 +119,6 @@ public class MarkingUtils {
                     throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
                 }
 
-//            } else {
-//                throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
-//            }
                 // 使用新图形除以旧图形，获取新图形在旧图形中的占比
                 percentage = geometry2.getArea() / geometry1.getArea();
             }
@@ -152,8 +151,8 @@ public class MarkingUtils {
                 Geometry geometry1;
                 Geometry geometry2;
                 try {
-                    geometry1 = wktReader.read(oldLocation);
-                    geometry2 = wktReader.read(newLocation);
+                    geometry1 = WKT_READER.read(oldLocation);
+                    geometry2 = WKT_READER.read(newLocation);
                 } catch (Exception e) {
                     throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
                 }
@@ -184,8 +183,8 @@ public class MarkingUtils {
                 // 取出交集图形
                 if (check) {
                     if (geometry1.within(geometry2)) {
-                        // throw new AnnoException(AnnotationResponseConstant.UPDATE_ANNO_ERROR);
-                        throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));// 修改失败,请检查后输入
+                        // 修改失败,请检查后输入
+                        throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
                     }
                     // 校验标注不能过小，不能小于1000.0
 //                        if (geometry2.within(geometry1) && geometry2.getArea() < insideMaxArea) {
@@ -356,6 +355,41 @@ public class MarkingUtils {
         JSONObject jsonObject = (JSONObject) JSON.toJSON(properties);
         features.setProperties(jsonObject);
         return features;
+    }
+
+    public static double precision(Double d) {
+        BigDecimal bd = new BigDecimal(d);
+        return bd.setScale(3, RoundingMode.DOWN).doubleValue();
+    }
+
+
+    public static JSONObject updatePrecision(JSONObject geometry) {
+        List<Object> lists = new ArrayList<>();
+        JSONArray coordinatesJsonArray1 = geometry.getJSONArray("coordinates");
+        String type = geometry.getString("type");
+        if (Objects.equals(type, "Polygon")) {
+            List<Object> list1 = new ArrayList<>();
+            for (Object i1 : coordinatesJsonArray1) {
+                List<Object> list2 = new ArrayList<>();
+                JSONArray jsonArray1 = JSONArray.parseArray(i1.toString());
+                for (Object i2 : jsonArray1) {
+                    JSONArray jsonArray2 = JSONArray.parseArray(i2.toString());
+                    List<Double> list = JSONObject.parseArray(jsonArray2.toJSONString(), Double.class);
+                    List<Double> newList = new ArrayList<>();
+                    double newX = precision(list.get(0));
+                    double newY = precision(list.get(1));
+                    newList.add(newX);
+                    newList.add(newY);
+                    list2.add(newList);
+                }
+                list1.add(list2);
+            }
+            lists.add(list1);
+        }
+        JSONObject geometryJson = new JSONObject();
+        geometryJson.put("type", type);
+        geometryJson.put("coordinates", lists.get(0));
+        return geometryJson;
     }
 
 

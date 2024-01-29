@@ -158,29 +158,12 @@ public interface SlideMapper extends BaseMapper<Slide> {
     SlideReportSummaryVO selectSlideByProjectAndGroup(@Param("params") Map params);
 
     /**
-     * 组内切片报表分页查询
-     *
-     * @param params
-     * @return
-     */
-    IPage<SlideReportVO> pageSlideWithSubImage(@Param("page") Page page, @Param("params") Map params);
-
-    /**
      * 项目内切片统计
      *
      * @param params
      * @return
      */
     IPage<ProjectStatisticsVO> pageSlideStatisticsByProject(@Param("page") Page page, @Param("params") Map params);
-
-    /**
-     * 切片报表分页查询
-     *
-     * @param page
-     * @param params
-     * @return
-     */
-    IPage<SlideReportVO> pageSlideStatistics(@Param("page") Page page, @Param("params") Map params);
 
     /**
      * 切片报表分页查询

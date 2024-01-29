@@ -11,11 +11,11 @@ import java.util.List;
  * @createDate 2023-09-14 13:12:56
  */
 public interface SlideAttrService extends IService<SlideAttr> {
-    Boolean saveAnnoUsers(Long slideId, List<Long> userIds) throws Exception;
+    Boolean saveAnnoUsers(Long slideId, List<Long> userIds, Long userId) throws Exception;
 
     Boolean removeAnnoUsers(Long slideId, List<Long> userIds) throws Exception;
 
-    Boolean saveAnnoCategory(Long slideId, List<Long> categoryIds) throws Exception;
+    Boolean saveAnnoCategory(Long slideId, List<Long> categoryIds, Long userId) throws Exception;
 
     Boolean removeAnnoCategory(Long slideId, List<Long> categoryIds) throws Exception;
 }

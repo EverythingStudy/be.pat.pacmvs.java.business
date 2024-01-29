@@ -5,7 +5,6 @@ import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.marking.MarkingStatisticSelectVO;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * 智能标注-标注统计-用户标签统计

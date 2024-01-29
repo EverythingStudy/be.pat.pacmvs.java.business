@@ -9,14 +9,17 @@ import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingStatisticSelectVO;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
 
 /**
  * 标注 - 标签统计
@@ -69,9 +72,59 @@ public class MarkingStatisticServiceImpl implements MarkingStatisticService {
 
         selectVO.setOrganizationId(organizationId);
         selectVO.setUserId(sysUser.getUserId());
-        List<MarkingStatistic> list = markingMapper.selectMarkingStatistic(selectVO);
 
-        list = setCount(list, organizationId);
+        // 获取总记录数
+        long total = markingMapper.selectMarkingStatisticTotal(selectVO);
+        if (total == 0) {
+            return;
+        }
+
+        // 分页->线程池异步处理
+        ExecutorService executorService = new ThreadPoolExecutor(
+                Runtime.getRuntime().availableProcessors(),
+                Runtime.getRuntime().availableProcessors() * 2,
+                // 空闲线程等待工作的超时时间
+                0,
+                TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>(4096),
+                new ThreadFactory() {
+                    public Thread newThread(Runnable r) {
+                        return new Thread(r, "标签统计 - 导出execl - " + r.hashCode());
+                    }
+                },
+                new ThreadPoolExecutor.DiscardOldestPolicy());
+
+        int pageSize = 1000;
+        int totalPages = (int) (total / pageSize);
+
+        List<MarkingStatistic> list = new ArrayList<>((int) total);
+
+        // 遍历所有页码
+        for (int i = 0; i <= totalPages; i++) {
+            final int pageNum = i + 1;
+            executorService.execute(() -> {
+                try {
+                    // 获取指定页码的数据
+                    Page<cn.staitech.anno.project.domain.Marking> page = PageHelper.startPage(pageNum, pageSize);
+                    List<MarkingStatistic> currentPageRecords = markingMapper.selectMarkingStatistic(selectVO);
+
+                    synchronized (this) {
+                        // 将数据添加到最终结果集中（这里list为共享变量）
+                        if (currentPageRecords.size() > 0) {
+                            currentPageRecords = setCount(currentPageRecords, organizationId);
+                            list.addAll(currentPageRecords);
+                        }
+                    }
+                } catch (Exception e) {
+                    log.error("Error occurred while fetching data from page {}", e);
+                }
+            });
+        }
+
+        // 关闭线程池
+        executorService.shutdown();
+        // 等待所有任务完成
+        executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 
         // 构造表头的每个列头 定义表头
         List<Map<String, String>> titleList = ExcelUtil.getTitleList(CommonConstant.MARKING_STATISTICS_KEY, CommonConstant.MARKING_STATISTICS_VALUE);

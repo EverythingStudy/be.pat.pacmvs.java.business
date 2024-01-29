@@ -8,10 +8,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import java.util.List;
 
 /**
- * <p>
  * Mapper 接口
- * </p>
- *
  * @author gjt
  * @since 2023-09-25
  */
@@ -28,7 +25,7 @@ public interface MarkingExamineMapper extends BaseMapper<MarkingExamine> {
     /**
      * 查询详情接口
      *
-     * @param questionProjectId
+     * @param markingExamine
      * @return
      */
     List<Features> selectLists(MarkingExamine markingExamine);
@@ -36,7 +33,7 @@ public interface MarkingExamineMapper extends BaseMapper<MarkingExamine> {
     /**
      * 查询详情接口(json)
      *
-     * @param questionProjectId
+     * @param markingExamine
      * @return
      */
     List<Features> selectListBy(MarkingExamine markingExamine);

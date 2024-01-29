@@ -30,9 +30,9 @@
 //@SpringBootTest(classes = StaiTechAnnoApplication.class)
 //@RunWith(SpringJUnit4ClassRunner.class)
 //public class MarkingTest {
-//    public static final ConcurrentHashMap<Long, ConcurrentHashMap<String, Marking>> MARKING_MAP = new ConcurrentHashMap<>();
+//    public static final ConcurrentHashMap<Long, ConcurrentHashMap<String, Marking>> MARKING_MAP = new ConcurrentHashMap<>(16);
 //
-//    public static final ConcurrentHashMap<String, Marking> SUB_MARKING_MAP = new ConcurrentHashMap<>();
+//    public static final ConcurrentHashMap<String, Marking> SUB_MARKING_MAP = new ConcurrentHashMap<>(16);
 //
 //    private static final int MAXIMUM_CAPACITY = 1 << 30;
 //    @Resource
@@ -136,7 +136,7 @@
 //            markingQueryWrapper.eq("slide_id", slideId);
 //            markingQueryWrapper.orderByAsc("marking_id");
 //            List<Marking> markingList = markingServiceV1.list(markingQueryWrapper);
-//            ConcurrentHashMap<String, Marking> markingMap = new ConcurrentHashMap<>();
+//            ConcurrentHashMap<String, Marking> markingMap = new ConcurrentHashMap<>(16);
 //            for (Marking marking : markingList) {
 //                markingMap.put(marking.getMarkingId(), marking);
 //            }

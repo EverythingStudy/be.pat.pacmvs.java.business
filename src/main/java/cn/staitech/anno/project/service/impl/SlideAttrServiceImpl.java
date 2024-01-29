@@ -5,7 +5,6 @@ import cn.staitech.anno.project.domain.SlideAttr;
 import cn.staitech.anno.project.mapper.MarkingMapperV1;
 import cn.staitech.anno.project.mapper.SlideAttrMapper;
 import cn.staitech.anno.project.service.SlideAttrService;
-import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -33,11 +32,10 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
     @Resource
     private MarkingMapperV1 markingMapperV1;
 
-    //@Transactional(rollbackFor = Exception.class)
     @Override
-    public Boolean saveAnnoUsers(Long slideId, List<Long> userIds) {
+    public Boolean saveAnnoUsers(Long slideId, List<Long> userIds, Long userId) {
         List<SlideAttr> slideAttrs = queryAttr(slideId, USER, userIds);
-        return save(slideId, USER, userIds, slideAttrs);
+        return save(slideId, USER, userIds, slideAttrs, userId);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -54,11 +52,10 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
         return true;
     }
 
-    //@Transactional(rollbackFor = Exception.class)
     @Override
-    public Boolean saveAnnoCategory(Long slideId, List<Long> categoryIds) {
+    public Boolean saveAnnoCategory(Long slideId, List<Long> categoryIds, Long userId) {
         List<SlideAttr> slideAttrs = queryAttr(slideId, CATEGORY, categoryIds);
-        return save(slideId, CATEGORY, categoryIds, slideAttrs);
+        return save(slideId, CATEGORY, categoryIds, slideAttrs, userId);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -105,9 +102,8 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
      * @return
      * @throws Exception
      */
-    private Boolean save(Long slideId, String attrType, List<Long> attrIds, List<SlideAttr> slideAttrs) {
+    private Boolean save(Long slideId, String attrType, List<Long> attrIds, List<SlideAttr> slideAttrs, Long userId) {
         List<SlideAttr> resp = new ArrayList<>();
-        Long userId = SecurityUtils.getUserId();
         Map<Long, SlideAttr> map = new HashMap<>(16);
         if (slideAttrs != null && !slideAttrs.isEmpty()) {
             slideAttrs.forEach(slideAttr -> {

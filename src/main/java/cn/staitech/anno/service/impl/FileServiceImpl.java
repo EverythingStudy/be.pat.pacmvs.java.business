@@ -33,8 +33,8 @@ import static cn.staitech.anno.constant.CommonConstant.GLIDE_LINE;
 @Service
 public class FileServiceImpl implements FileService {
 
-    private static final String pathUrl = "/home/pat_saas";
-    private static final String zipUrl = "/home/pat_saas/Data/zipFile/";
+    private static final String PATH_URL = "/home/pat_saas";
+    private static final String ZIP_URL = "/home/pat_saas/Data/zipFile/";
     String fileUrl = File.separator + "Data";
 
     @Resource
@@ -103,25 +103,19 @@ public class FileServiceImpl implements FileService {
     }
 
     private static Boolean merge1(Chunk chunk, File files, String dest) {
-//         TODO 自动生成的方法存根
         String filename = files.getName();
         filename = files.getName().substring(0, filename.lastIndexOf("-"));
         try (BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(files.toPath())); RandomAccessFile raf = new RandomAccessFile(new FileOutputStream(dest + File.separator + filename).toString(), "rw")) {
             int len = -1;
-            // byte[] buffer = new byte[1024*4];
             byte[] buffer = new byte[1024 * 4 * 10];
             // 指针移动到当前块开始写的位置，chunk.getChunkNumber()是指当前是第几块，减一后乘
             // 以每个块的大小 得到前面块的偏移量，即当前块的起始位置
             raf.seek((chunk.getChunkNumber()) * chunk.getChunkSize());
 
-            //log.info(" ---------------------------> seek:{}", (chunk.getChunkNumber()) * chunk.getChunkSize());
-            //把当前块的内容写入
-            // java.util.ConcurrentModificationException: null,并发修改异常
             while ((len = bis.read(buffer)) != -1) {
                 raf.write(buffer, 0, len);
             }
         } catch (IOException e) {
-
             return false;
         }
         return true;
@@ -147,7 +141,7 @@ public class FileServiceImpl implements FileService {
             slideFileName = slideMapper.slideFileName(slideId);
         }
         // 生成二级目录 (以机构名称命名)
-        String organizationFileName = pathUrl + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        String organizationFileName = PATH_URL + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         createFolder(organizationFileName);
         // 生成三级目录 (以机构下默认文件夹名称命名)
         String dataFileName = organizationFileName + fileUrl;
@@ -208,7 +202,7 @@ public class FileServiceImpl implements FileService {
             slideFileName = slideMapper.slideFileName(slideId);
         }
         // 生成二级目录 (以专题名称命名)
-        String twoFolderName = pathUrl + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()) + fileUrl + File.separator + slideFileName.getTopicName();
+        String twoFolderName = PATH_URL + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId()) + fileUrl + File.separator + slideFileName.getTopicName();
         createFolder(twoFolderName);
         // 生成三级目录 (以图片名称命名)
         String threeFolderName = twoFolderName + File.separator + slideFileName.getImageName();
@@ -247,33 +241,23 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public String mergeChunk(Chunk chunk) throws Exception {
-        // 切片名称
-        // 压缩包文件地址
-//        String zipUrl = "/home/uploadPath/zipFile/";
-
-
-        //切片文件夹
-        // 创建空文件夹
-        File zipFile = new File(zipUrl);
+        // 切片文件夹 - 创建空文件夹
+        File zipFile = new File(ZIP_URL);
         if (!zipFile.exists()) {
-            FileUtils.createFolder(zipUrl);
+            FileUtils.createFolder(ZIP_URL);
         }
 
-        String zipFIleUrl = zipUrl + chunk.getFileName();
+        String zipFIleUrl = ZIP_URL + chunk.getFileName();
         File file = new File(zipFIleUrl);
         if (!file.exists()) {
             FileUtils.createNewzip(zipFIleUrl);
         }
         try (InputStream fis = chunk.getFile().getInputStream(); RandomAccessFile raf = new RandomAccessFile(file, "rw")) {
             int len = -1;
-            // byte[] buffer = new byte[1024*4];
             byte[] buffer = new byte[1024 * 4 * 10];
             // 指针移动到当前块开始写的位置，chunk.getChunkNumber()是指当前是第几块，减一后乘
             // 以每个块的大小 得到前面块的偏移量，即当前块的起始位置
             raf.seek((chunk.getChunkNumber()) * chunk.getChunkSize());
-            //log.info(" ---------------------------> seek:{}", (chunk.getChunkNumber()) * chunk.getChunkSize());
-            //把当前块的内容写入
-            // java.util.ConcurrentModificationException: null,并发修改异常
             while ((len = fis.read(buffer)) != -1) {
                 raf.write(buffer, 0, len);
             }
@@ -289,14 +273,8 @@ public class FileServiceImpl implements FileService {
         }
         //获取文件名
         String fileName = file.getOriginalFilename();
-        //获取文件的后缀名
-        String suffixName = fileName.substring(fileName.lastIndexOf("."));
-        //获取文件大小
-        int fileSize = (int) file.getSize();
         //文件路径
-        String path = zipUrl + "\\" + fileName;
-        //文件存储路径:保存到数据库
-//        String filePath = date+"/"+fileName;
+        String path = ZIP_URL + "\\" + fileName;
         java.io.File dest = new java.io.File(path);
         // 判断路径是否存在，如果不存在则创建
         if (!dest.getParentFile().exists()) {
@@ -313,28 +291,4 @@ public class FileServiceImpl implements FileService {
             throw new Exception(e.getMessage());
         }
     }
-
-
-    //    private static void merge(String dest, File files) {
-//        // TODO 自动生成的方法存根
-//        String filename = files.getName();
-//        filename = files.getName().substring(0, filename.lastIndexOf("-"));
-//        try {
-//            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(dest + File.separator + filename));
-//            BufferedInputStream bis = null;
-//            byte bytes[] = new byte[1024 * 1024];
-//            int len = -1;
-//            bis = new BufferedInputStream(new FileInputStream(files));
-//            while ((len = bis.read(bytes)) != -1) {
-//                bos.write(bytes, 0, len);
-//            }
-//        } catch (FileNotFoundException e) {
-//            // TODO 自动生成的 catch 块
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            // TODO 自动生成的 catch 块
-//            e.printStackTrace();
-//        }
-//    }
-
 }

@@ -7,12 +7,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 
-* @ClassName: ImageAnnoUserQueryIn
-* @Description:
-* @author wanglibei
-* @date 2023年12月25日
-* @version V1.0
+ * @author wanglibei
+ * @version V1.0
+ * @ClassName: ImageAnnoUserQueryIn
+ * @Description:
+ * @date 2023年12月25日
  */
 @Data
 @Builder
@@ -20,9 +19,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ImageAnnoUserQueryIn {
 
-    
-	@ApiModelProperty(required = false, value = "projectIds 数组")
+
+    @ApiModelProperty(required = false, value = "projectIds 数组")
     private Long[] projectIds;
-    
+
 
 }

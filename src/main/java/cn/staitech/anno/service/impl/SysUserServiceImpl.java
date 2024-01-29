@@ -4,6 +4,7 @@ import cn.staitech.anno.mapper.SysUserMapper;
 import cn.staitech.anno.service.SysUserService;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,8 @@ import java.util.List;
  * @author staitech
  */
 @Service
-public class SysUserServiceImpl implements SysUserService {
+public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
+
     @Autowired
     private SysUserMapper userMapper;
 

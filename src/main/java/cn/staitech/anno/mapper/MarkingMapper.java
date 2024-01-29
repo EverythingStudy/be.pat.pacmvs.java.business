@@ -1,5 +1,6 @@
 package cn.staitech.anno.mapper;
 
+import cn.staitech.anno.domain.MarkMeasure;
 import cn.staitech.anno.domain.MarkingStatistic;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.JsonExport;
@@ -8,7 +9,6 @@ import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.MarkingStatisticSelectVO;
 import cn.staitech.anno.vo.marking.PointCount;
-import cn.staitech.anno.vo.slide.SlideRes;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;
@@ -24,8 +24,8 @@ public interface MarkingMapper extends BaseMapper<Marking> {
     /**
      * 查看当前切片下所有的切片
      *
-     * @param slideId 标注信息
-     * @return List<Slide>
+     * @param map
+     * @return
      */
     List<MarkingSelectListVO> selectList(Map<String, Object> map);
 
@@ -50,6 +50,8 @@ public interface MarkingMapper extends BaseMapper<Marking> {
      */
     List<Features> selectListBy(Long slideId);
 
+    List<Features> selectListBy2(Map<String, Object> map);
+
 
     List<MarkingSelectListVO> selectUnionList(Map<String, Object> map);
 
@@ -65,14 +67,6 @@ public interface MarkingMapper extends BaseMapper<Marking> {
     JsonExport reviewJsonExportSelect(Long slideId);
 
     List<cn.staitech.anno.domain.PathologicalIndicatorCategory> selectCategory(Long slideId);
-
-    /**
-     * 根据专题查看当前专题下所有的切片
-     *
-     * @param specialId 标注信息
-     * @return List<Slide>
-     */
-    List<SlideRes> selectSlideList(Long specialId);
 
     /**
      * 根据切片id查询当前切片下当前标签的总数
@@ -112,6 +106,14 @@ public interface MarkingMapper extends BaseMapper<Marking> {
      * @param selectVO
      * @return
      */
+    long selectMarkingStatisticTotal(MarkingStatisticSelectVO selectVO);
+
+    /**
+     * 标签统计
+     *
+     * @param selectVO
+     * @return
+     */
     List<MarkingStatistic> selectMarkingStatistic(MarkingStatisticSelectVO selectVO);
 
     /**
@@ -121,4 +123,18 @@ public interface MarkingMapper extends BaseMapper<Marking> {
      * @return
      */
     Long selectMarkingNum(cn.staitech.anno.vo.marking.Marking marking);
+
+    /**
+     * ROI查询
+     * */
+    List<Marking> roiMarking(Integer slideId);
+
+
+
+    /**
+     * ROI对measure查询
+     * */
+    List<MarkMeasure>roiMeasure(Long slideId);
+
+    int delMeasure(List<String> list);
 }

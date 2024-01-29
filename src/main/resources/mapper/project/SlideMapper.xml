@@ -171,12 +171,13 @@
         left join tb_image m on m.image_id = s.image_id
         <choose>
             <when test="params.createBy != null">
-                left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score
-                from tb_review t where t.create_by = #{params.createBy} group by t.slide_id) r on s.slide_id =
-                r.slide_id
+                <!-- left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score -->
+                left join (select slide_id,count(slide_id) as review_count, group_concat( review_people, ': ', score, ': ', details SEPARATOR '; ' ) AS score
+                from tb_review t where t.create_by = #{params.createBy} group by t.slide_id) r on s.slide_id =    r.slide_id
             </when>
             <otherwise>
-                left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score
+                <!-- left join (select slide_id,count(slide_id) as review_count, group_concat(score separator '-') as score -->
+                left join (select slide_id,count(slide_id) as review_count, group_concat( review_people, ': ', score, ': ', details SEPARATOR '; ' ) AS score
                 from tb_review t group by t.slide_id) r on s.slide_id = r.slide_id
             </otherwise>
         </choose>

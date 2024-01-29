@@ -12,11 +12,12 @@ import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.imagecsv.ImageCsvListVO;
-import cn.staitech.anno.vo.predictionInfo.in.SetMainImageDataIn;
-import cn.staitech.anno.vo.predictionInfo.in.SlideImagePagerVO;
-import cn.staitech.anno.vo.predictionInfo.in.SlidePredictionIn;
-import cn.staitech.anno.vo.predictionInfo.in.StartPredictionIn;
-import cn.staitech.anno.vo.predictionInfo.out.SlidePredictionOut;
+import cn.staitech.anno.vo.predictioninfo.in.SetMainImageDataIn;
+import cn.staitech.anno.vo.predictioninfo.in.SlideImagePagerVO;
+import cn.staitech.anno.vo.predictioninfo.in.SlideImageStatusrVO;
+import cn.staitech.anno.vo.predictioninfo.in.SlidePredictionIn;
+import cn.staitech.anno.vo.predictioninfo.in.StartPredictionIn;
+import cn.staitech.anno.vo.predictioninfo.out.SlidePredictionOut;
 import cn.staitech.anno.vo.project.ProjectListVO;
 import cn.staitech.anno.vo.project.in.ProjectListQueryIn;
 import cn.staitech.anno.vo.slide.SlideDescriptionVO;
@@ -79,7 +80,6 @@ public class SlidePredictionController {
         project.setOrganizationId(organizationId);
         //判断当前角色是否为admin或者超级管理员
         if (!SysUser.isAdmin(SecurityUtils.getUserId())) {
-//            project.setCreateBy(SecurityUtils.getUserId());
             project.setPartUserId(SecurityUtils.getUserId());
         }
         //项目列表来源于项目管理模块的项目类型为算法检测和图像拼接的项目,除了系统管理员外，每个用户只能看到自己参与的项目
@@ -100,14 +100,13 @@ public class SlidePredictionController {
     }
 
 
-    @ApiOperation(value = "查询原始切片列表")//
+    @ApiOperation(value = "查询原始切片列表")
     @RequiresPermissions(value = {"algorithmDetectionInfo:slice:checkSlicesDetail", "projectConfig:spliceImgConfig:checkSlicesDetail"}, logical = Logical.OR)
     @PostMapping("/originalSlideList")
     public R<SlidePredictionOut> getOriginalSlideList(@Validated @RequestBody SlidePredictionIn req) {
         SlidePredictionOut out = algorithmPredictionService.getOriginalSlideList(req);
         return R.ok(out);
     }
-
 
     /**
      * 修改备注接口
@@ -174,5 +173,11 @@ public class SlidePredictionController {
         }
         R r = algorithmPredictionService.startPrediction(req, project);
         return r;
+    }
+    
+    @ApiOperation(value = "定时查询算法项目切片列表状态")
+    @PostMapping("/getSlideStatusList")
+    public R<List<ImageCsvListVO>> getSlideStatusList(@Validated @RequestBody SlideImageStatusrVO req) {
+        return R.ok(algorithmPredictionService.getSlideStatusList(req));
     }
 }

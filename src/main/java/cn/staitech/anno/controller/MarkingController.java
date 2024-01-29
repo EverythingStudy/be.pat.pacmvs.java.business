@@ -6,6 +6,7 @@ import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
+import cn.staitech.anno.vo.geojson.in.RoiIn;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
@@ -18,6 +19,8 @@ import cn.staitech.common.security.utils.SecurityUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -35,6 +38,7 @@ import java.util.Optional;
  * @author gjt
  * @since 2023-09-14
  */
+@Slf4j
 @Api(value = "viewer", tags = "viewer页面")
 @RestController
 @RequestMapping("/marking")
@@ -194,6 +198,21 @@ public class MarkingController {
         markingService.batchDelete(slideId);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
+
+
+    @ApiOperationSupport(author = "zmj")
+    @ApiOperation(value = "添加ROI轮廓")
+    @PostMapping("/intelligentAnno/insertROI")
+    public R<String> addList(@Validated @RequestBody RoiIn req) throws Exception {
+        if (CollectionUtils.isEmpty(req.getGeometryList())) {
+            return R.fail(MessageSource.M("NO_DATA_TRANSFERRED"));
+        }
+        if (!req.getRoiStatus().equals(1) && !req.getRoiStatus().equals(0)) {
+            return R.fail(MessageSource.M("ARGUMENT_INVALID"));
+        }
+        return markingService.roiContDel(req);
+    }
+
 
 }
 

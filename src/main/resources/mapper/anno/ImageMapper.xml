@@ -198,9 +198,11 @@
         i.biz_type,
         i.`source`,
         i.folder_id,
-        u.nick_name
+        u.nick_name,
+        f.folder_name
         from tb_image i
         left join sys_user u on i.create_by = u.user_id
+        left join aipre_folder f on i.folder_id = f.folder_id
         <where>
             <if test="imageId != null">
                 <!-- 切片（图像）ID -->
