@@ -57,7 +57,7 @@
             <if test="projectAnnoUseridList != null and projectAnnoUseridList.size()>0 ">
                 AND t.anno_user_id IN
                 <foreach collection="projectAnnoUseridList" item="annoUserid" open="(" separator="," close=")">
-                    #{"annoUserid"}
+                    #{annoUserid}
                 </foreach>
             </if>
             <if test="categoryIdList != null and categoryIdList.size()>0 ">

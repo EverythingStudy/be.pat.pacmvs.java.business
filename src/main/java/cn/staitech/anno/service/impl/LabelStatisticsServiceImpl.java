@@ -120,9 +120,10 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 		List<Long> indicatorIds = projectLabelIn.getIndicatorIds();
 		List<Long> categoryIds = projectLabelIn.getCategoryIds();
 
-		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-		Long currentUserId = SecurityUtils.getUserId();
-
+//		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+//		Long currentUserId = SecurityUtils.getUserId();
+		        Long organizationId = 1L;
+		Long currentUserId = 39L;
 
 		if(null == projectIds || CollectionUtils.isEmpty(projectIds)){
 			projectIds = getProjectIdStatistics(currentUserId, organizationId);
@@ -178,9 +179,10 @@ public class LabelStatisticsServiceImpl implements LabelStatisticsService {
 		//        {"projectIds":[313,521,522,490],"statusList":["3","2"],"indicatorIds":[1145,1149],"userIds":[14],
 		//        "description":"fsfsfsfsf","createTimeParams":{"beginTime":"2024-01-15","endTime":"2024-02-21"},"pageNum":1,"pageSize":10,"total":9}
 
-		Long currentUserId = SecurityUtils.getUserId();
-		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-
+//		Long currentUserId = SecurityUtils.getUserId();
+//		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+		        Long organizationId = 1L;
+		Long currentUserId = 39L;
 
 		List<Long> projectIds = new ArrayList<>();
 

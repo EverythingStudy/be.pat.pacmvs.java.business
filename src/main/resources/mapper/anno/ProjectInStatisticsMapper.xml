@@ -61,7 +61,7 @@
             <if test="projectStatusList != null and projectStatusList.size()>0 ">
                 AND t.project_status IN
                 <foreach collection="projectStatusList" item="projectStatus" open="(" separator="," close=")">
-                    #{"projectStatus"}
+                    #{projectStatus}
                 </foreach>
             </if>
             <if test="indicatorIdList != null and indicatorIdList.size()>0 ">
