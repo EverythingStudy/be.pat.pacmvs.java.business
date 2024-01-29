@@ -36,7 +36,7 @@
 			t.project_name,
 			t.indicator_id,
 			t.indicator_name,
-			t.project_status,
+			t.project_status `status`,
 			<!-- 状态:1待启动，2进行中，3暂停，4已完成 -->
 			case 
 			 when t.`project_status` = 1 then '待启动'
