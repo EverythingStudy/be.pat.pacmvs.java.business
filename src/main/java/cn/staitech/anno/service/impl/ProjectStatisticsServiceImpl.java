@@ -15,7 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.streaming.SXSSFRow;
@@ -411,6 +413,8 @@ public class ProjectStatisticsServiceImpl implements ProjectStatisticsService {
         style.setBorderLeft(BorderStyle.THIN);//左边框
         style.setBorderRight(BorderStyle.THIN);//右边框
         style.setBorderBottom(BorderStyle.THIN);//下边框
+        style.setAlignment(HorizontalAlignment.CENTER); // 设置水平居中对齐
+        style.setVerticalAlignment(VerticalAlignment.CENTER); // 设置垂直居中对齐
 
         //设置表头信息
         Cell cellChannelId = headRow.createCell(0);
