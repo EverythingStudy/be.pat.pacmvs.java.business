@@ -99,16 +99,16 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 		if(CollectionUtils.isNotEmpty(projectList)){
 			try {
 				//tb_project_statistics处理
-				handlerProjectStatistics(projectList, currentDate);
-				Thread.sleep(5L);
+//				handlerProjectStatistics(projectList, currentDate);
+//				Thread.sleep(5L);
 				//tb_project_label_statistics处理
 				handlerProjectLabelStatistics(projectList, currentDate);
 				Thread.sleep(5L);
-				//tb_project_anno_statistics表处理
+				/*//tb_project_anno_statistics表处理
 				handlerProjectAnnoStatistics(projectList, currentDate);
 				Thread.sleep(5L);
 				//tb_project_user_label_statistics表处理
-				handlerProjectUserLabelStatistics(projectList, currentDate);
+				handlerProjectUserLabelStatistics(projectList, currentDate);*/
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -270,8 +270,8 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 	 */
 	private void handlerProjectLabelStatistics(List<Project> projectList,Date currentDate){
 		delData(1);
-		List<ProjectLabelStatistics> plsList = new ArrayList<>();
-		Map<String,String> map = new HashMap<>();
+		
+//		Map<String,String> map = new HashMap<>();
 		for(Project project:projectList){
 			Long projectId = project.getProjectId();
 			String projectName = project.getProjectName();
@@ -317,6 +317,7 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 
 
 			//遍历所有的标签集进行数据填充
+			List<ProjectLabelStatistics> plsList = new ArrayList<>();
 			if(!categImageNumMap.isEmpty() && categImageNumMap.size() >0){
 				for (Map.Entry<Long, String> entry : categImageNumMap.entrySet()) {
 					Long categoryP = entry.getKey();
@@ -349,7 +350,8 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 					projectLabelStatistics.setOrganizationId(organizationId);;
 					projectLabelStatistics.setTaskCreateTime(currentDate);
 					projectLabelStatistics.setDelFlag("0");
-					String key = projectId+"_"+indicatorId+"_"+categoryP+"_"+organizationId;
+					plsList.add(projectLabelStatistics);
+					/*String key = projectId+"_"+indicatorId+"_"+categoryP+"_"+organizationId;
 					if(!map.containsKey(key)){
 						map.put(key, key);
 						plsList.add(projectLabelStatistics);
@@ -358,12 +360,12 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 						saveBatch(plsList);
 						plsList = new ArrayList<>();
 						map = new HashMap<>();
-					}
+					}*/
 				}
-				//剩下的统一保存
-				if(CollectionUtils.isNotEmpty(plsList)){
-					saveBatch(plsList);
-				}
+			}
+			//剩下的统一保存
+			if(CollectionUtils.isNotEmpty(plsList)){
+				saveBatch(plsList);
 			}
 
 		}
