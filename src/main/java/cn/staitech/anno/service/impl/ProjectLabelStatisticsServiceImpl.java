@@ -240,6 +240,7 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 					projectStatistics.setDelFlag("0");
 					String key = projectIdP+"_"+indicatorId+"_"+organizationId;
 					if(!map.containsKey(key)){
+						map.put(key, key);
 						plsList.add(projectStatistics);
 					}
 					if(plsList.size() > 2000){
@@ -350,6 +351,7 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 					projectLabelStatistics.setDelFlag("0");
 					String key = projectId+"_"+indicatorId+"_"+categoryP+"_"+organizationId;
 					if(!map.containsKey(key)){
+						map.put(key, key);
 						plsList.add(projectLabelStatistics);
 					}
 					if(plsList.size() > 2000){
@@ -435,6 +437,7 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 					
 					String key = projectId+"_"+userIdP+"_"+organizationIdP;
 					if(!map.containsKey(key)){
+						map.put(key, key);
 						pasList.add(annoStatistics);
 					}
 					if(pasList.size() > 2000){
@@ -516,6 +519,7 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 					String key = projectId+"_"+userIdP+"_"+indicatorId+"_"+caid+"_"+organizationIdP;
 
 					if(!map.containsKey(key)){
+						map.put(key, key);
 						pusList.add(pulStatistics);
 					}
 					if(pusList.size() > 2000){
