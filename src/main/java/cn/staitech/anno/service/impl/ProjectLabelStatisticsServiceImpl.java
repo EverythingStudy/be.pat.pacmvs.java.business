@@ -99,16 +99,16 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 		if(CollectionUtils.isNotEmpty(projectList)){
 			try {
 				//tb_project_statistics处理
-//				handlerProjectStatistics(projectList, currentDate);
-//				Thread.sleep(5L);
+				handlerProjectStatistics(projectList, currentDate);
+				Thread.sleep(5L);
 				//tb_project_label_statistics处理
 				handlerProjectLabelStatistics(projectList, currentDate);
 				Thread.sleep(5L);
-				/*//tb_project_anno_statistics表处理
+				//tb_project_anno_statistics表处理
 				handlerProjectAnnoStatistics(projectList, currentDate);
 				Thread.sleep(5L);
 				//tb_project_user_label_statistics表处理
-				handlerProjectUserLabelStatistics(projectList, currentDate);*/
+				handlerProjectUserLabelStatistics(projectList, currentDate);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
