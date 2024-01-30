@@ -115,7 +115,7 @@ public class ProjectStatisticsController {
     @ApiOperation(value = "多用户统计")
     @PostMapping("/projectUser")
     public R<List<ProjectLabelOut>> projectUser(@Validated @RequestBody ProjectLabelIn projectLabelIn) {
-        List<ProjectLabelOut> itemList = projectStatisticsService.projectLabel(projectLabelIn);
+        List<ProjectLabelOut> itemList = projectStatisticsService.projectUser(projectLabelIn);
         return R.ok(itemList);
     }
 

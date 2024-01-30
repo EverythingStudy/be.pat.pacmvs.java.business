@@ -118,9 +118,9 @@ public class ProjectStatisticsServiceImpl implements ProjectStatisticsService {
             //标注图象总数
             projectLabelOut.setImageNum((int)mapsImage.get(projectLabelOut.getCategoryId()).getSum());
         }
+        List<ProjectLabelOut> labelOutList=projectLabelOutList.stream().sorted(Comparator.comparing(ProjectLabelOut::getCategoryId).reversed()).collect(Collectors.toList());
         //根据标注总数排序
-        List<ProjectLabelOut> labelOuts=projectLabelOutList.stream().sorted(Comparator.comparing(ProjectLabelOut::getMarkingTotal).reversed()).collect(Collectors.toList());
-        return labelOuts;
+        return labelOutList.stream().filter(s -> s.getCategoryId() != 0).sorted(Comparator.comparing(ProjectLabelOut::getMarkingTotal).reversed()).collect(Collectors.toList());
     }
 
 
@@ -219,7 +219,7 @@ public class ProjectStatisticsServiceImpl implements ProjectStatisticsService {
         }
         List<ProjectLabelOut> labelOutList=projectLabelOutList.stream().sorted(Comparator.comparing(ProjectLabelOut::getCategoryId).reversed()).collect(Collectors.toList());
         //根据标注总数排序
-        List<ProjectLabelOut> labelOuts=labelOutList.stream().sorted(Comparator.comparing(ProjectLabelOut::getMarkingTotal).reversed()).collect(Collectors.toList());
+        List<ProjectLabelOut> labelOuts=labelOutList.stream().filter(s -> s.getCategoryId() != 0).sorted(Comparator.comparing(ProjectLabelOut::getMarkingTotal).reversed()).collect(Collectors.toList());
 
 
         Map<Long,List<ProjectLabelOut>> labelOutsMap=labelOuts.stream().collect(Collectors.groupingBy(ProjectLabelOut::getCategoryId));

@@ -33,7 +33,7 @@ public class RecentlyVisitedController {
 
     @ApiOperation(value = "查询用户最近访问信息")
     @GetMapping("/selectList")
-    public R<List<RecentlyVisitedSelectVO>> selectList(@NotNull(message = "项目类型为空！") @RequestParam("projectType") @ApiParam(name = "projectType", value = "项目类型(1标注2评审3标准训练集)", required = true) Long projectType) {
+    public R<List<RecentlyVisitedSelectVO>> selectList(@RequestParam("projectType") @ApiParam(name = "projectType", value = "项目类型(1标注2评审3标准训练集)", required = true) Long projectType) {
         return R.ok(recentlyVisitedService.selectList(projectType));
     }
 

@@ -91,7 +91,7 @@ public class RecentlyVisitedServiceImpl extends ServiceImpl<RecentlyVisitedMappe
             recentlyVisited.setUserId(userId);
             recentlyVisited.setProjectId(req.getProjectId());
             // 添加时间根据用户id项目id和专题id查询表中 ，如果结果数量小于4  直接添加
-            List<RecentlyVisited> recentlyVisitedLIst = recentlyVisitedMapper.selectLists(recentlyVisited);
+            List<RecentlyVisited> recentlyVisitedList = recentlyVisitedMapper.selectLists(recentlyVisited);
             // 添加时将该专题下的更新时间清空
             recentlyVisited.setSlideId(slideId);
             recentlyVisitedMapper.updateTime(recentlyVisited);
@@ -103,7 +103,7 @@ public class RecentlyVisitedServiceImpl extends ServiceImpl<RecentlyVisitedMappe
                 recentlyVisitedMapper.update(recentlyVisitedQuery.getRecentlyVisitedId());
             } else {
                 // 如果不存在，并且数据大于四条，根据项目和用户为条件删除时间最早的一条数据
-                if (recentlyVisitedLIst.size() > 4) {
+                if (recentlyVisitedList.size() > 4) {
                     recentlyVisitedMapper.deleteMinCreateTime(recentlyVisited);
                 }
                 // 添加数据
@@ -112,10 +112,10 @@ public class RecentlyVisitedServiceImpl extends ServiceImpl<RecentlyVisitedMappe
             }
             // 添加之后根据用户和项目查询 如果大于十条，根据用户和项目删除数据
             recentlyVisited.setProjectType(req.getProjectType());
-            List<RecentlyVisited> recentlyVisitedList = recentlyVisitedMapper.selectSpecial(recentlyVisited);
-            if (recentlyVisitedList.size() > 10) {
+            List<RecentlyVisited> recentlyVisitedLists = recentlyVisitedMapper.selectSpecial(recentlyVisited);
+            if (recentlyVisitedLists.size() > 10) {
                 // 找出时间最小的一条数据
-                RecentlyVisited recentlyVisited1 = recentlyVisitedList.stream().min(Comparator.comparing(RecentlyVisited::getUpdateTime)).get();
+                RecentlyVisited recentlyVisited1 = recentlyVisitedLists.stream().min(Comparator.comparing(RecentlyVisited::getUpdateTime)).get();
                 recentlyVisited.setProjectId(recentlyVisited1.getProjectId());
                 recentlyVisited.setUserId(userId);
                 recentlyVisitedMapper.deleteMinCreateTime(recentlyVisited);
