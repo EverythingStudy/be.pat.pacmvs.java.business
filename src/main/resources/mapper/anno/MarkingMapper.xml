@@ -118,6 +118,50 @@
         <result column="create_by" property="create_by" />
         <result column="category_id" property="category_id" />
     </resultMap>
+    
+    <resultMap type="cn.staitech.anno.vo.labelprojectstatistics.ProjectLabelOut" id="categoryMarkingNum">
+        <result property="projectId" column="project_id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="markingNum" column="marking_num"/>
+    </resultMap>
+    
+    <resultMap type="cn.staitech.anno.vo.labelprojectstatistics.ProjectLabelOut" id="categoryImageNum">
+        <result property="projectId" column="project_id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="imageNum" column="image_num"/>
+    </resultMap>
+    
+    <resultMap type="cn.staitech.anno.vo.labelprojectstatistics.ProjectLabelOut" id="projectMarkingNum">
+        <result property="projectId" column="project_id"/>
+        <result property="markingNum" column="marking_num"/>
+    </resultMap>
+    
+    <resultMap type="cn.staitech.anno.vo.labelprojectstatistics.ProjectLabelOut" id="projectImageNum">
+        <result property="projectId" column="project_id"/>
+        <result property="imageNum" column="image_num"/>
+    </resultMap>
+    
+    
+    <resultMap type="cn.staitech.anno.project.vo.ImageAnnoStatisticsVO" id="projectAnnoMarkingNum">
+        <result property="projectId" column="project_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="markingNum" column="marking_num"/>
+    </resultMap>
+    
+    <resultMap type="cn.staitech.anno.project.vo.ImageAnnoStatisticsVO" id="projectAnnoImageNum">
+        <result property="projectId" column="project_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="imageCount" column="image_count"/>
+    </resultMap>
+    
+    
+    <resultMap type="cn.staitech.anno.domain.MarkingStatistic" id="projectUserLabelMarkingNum">
+        <result property="projectId" column="project_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="markingNum" column="marking_num"/>
+    </resultMap>
+    
 
     <sql id="selectMarking">
         select marking_id
@@ -749,5 +793,39 @@
             #{item}
         </foreach>
     </delete>
+    
+    <!-- 标签标注量统计 -->
+    <select id="getProjectCategoryMarkingNum" parameterType="java.lang.Long" resultMap="categoryMarkingNum">
+         select t.project_id,t.category_id,count(1) marking_num from tb_marking t where t.project_id = #{projectId} GROUP BY t.project_id,t.category_id
+    </select>
+    
+    <!-- 标签图像数量统计 -->
+    <select id="getProjectCategoryImageNum" parameterType="java.lang.Long" resultMap="categoryImageNum">
+          select t.project_id,t.category_id,count(DISTINCT(t.slide_id)) image_num from tb_marking t where t.project_id = #{projectId} GROUP BY t.project_id,t.category_id
+    </select>
+    
+    <select id="getProjectAnnoMarkingNum" parameterType="java.lang.Long" resultMap="projectAnnoMarkingNum">
+          select t.project_id,t.create_by user_id,count(t.annotation_id) marking_num from tb_marking t where t.project_id = #{projectId} GROUP BY t.project_id,t.create_by
+    </select>
+    
+    <select id="getProjectAnnoImageNum" parameterType="java.lang.Long" resultMap="projectAnnoImageNum">
+          select t.project_id,t.create_by user_id,count(DISTINCT(t.slide_id)) image_count from tb_marking t where t.project_id = #{projectId} GROUP BY t.project_id,t.create_by
+    </select>
+    
+    
+    <select id="getProjectUserLabelMarkingNum" parameterType="java.lang.Long" resultMap="projectUserLabelMarkingNum">
+          select t.project_id,t.create_by user_id,t.category_id,count(1) marking_num from tb_marking t where t.project_id = #{projectId} GROUP BY t.project_id,t.create_by,t.category_id
+    </select>
+    
+    <!-- 项目标注量统计 -->
+    <select id="getProjectMarkingNum" parameterType="java.lang.Long" resultMap="projectMarkingNum">
+         select t.project_id,count(1) marking_num from tb_marking t where t.project_id = #{projectId} GROUP BY t.project_id
+    </select>
+    
+    <!-- 项目图像数量统计 -->
+    <select id="getProjectImageNum" parameterType="java.lang.Long" resultMap="projectImageNum">
+          select t.project_id,count(DISTINCT(t.slide_id)) image_num from tb_marking t where t.project_id = #{projectId} GROUP BY t.project_id
+    </select>
+    
 
 </mapper>

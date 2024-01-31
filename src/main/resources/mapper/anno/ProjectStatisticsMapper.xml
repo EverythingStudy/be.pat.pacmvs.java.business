@@ -29,8 +29,7 @@
         <result property="nickName" column="nick_name"/>
         <result property="slideId" column="slide_id"/>
         <result property="num" column="num"/>
-        <result property="num2" column="num2"/>
-        <result property="num3" column="num3"/>
+        <result property="labelImageNum" column="label_image_num"/>
     </resultMap>
 
     <resultMap type="cn.staitech.anno.vo.projectstatistics.ProjectImageOut" id="projectImageResult">
@@ -74,61 +73,6 @@
           and p.project_id = #{projectId}
     </select>
 
-    <!--项目标签统计-->
-    <select id="projectLabel" parameterType="cn.staitech.anno.vo.projectstatistics.ProjectLabelIn"
-            resultMap="projectLabelResult">
-        SELECT
-        m.slide_id,
-        m.create_by,
-        m.category_id,
-        count(*) AS marking_num,
-        u.nick_name,
-        concat(m.category_id,"_",
-        m.create_by) as num,
-        concat(m.slide_id,"_",
-        m.create_by) as num2,
-        concat(m.slide_id,
-       "_",
-        m.category_id) as num3
-        FROM
-        tb_marking AS m
-        LEFT JOIN sys_user AS u ON u.user_id = m.create_by
-        LEFT JOIN (
-        SELECT DISTINCT ic.category_id,ic.indicator_id,ic.category_name
-        FROM tb_pathological_indicator_category as ic left join tb_structure as s on s.structure_id= ic.structure_id
-        <where>
-            <if test="categoryIds != null and categoryIds.size()>0 ">
-                AND ic.category_id IN
-                <foreach collection="categoryIds" item="categoryId" open="(" separator="," close=")">
-                    #{categoryId}
-                </foreach>
-            </if>
-            <if test="indicatorId != null">
-                AND ic.indicator_id =#{indicatorId}
-            </if>
-            and s.type='RO'
-        </where>
-        UNION
-        SELECT DISTINCT 0 as category_id,indicator_id,'无属性' as category_name
-        FROM tb_pathological_indicator
-        WHERE indicator_id = #{indicatorId}
-        ) AS pic ON pic.category_id = m.category_id
-        <where>
-            <if test="userIds != null and userIds.size()>0 ">
-                AND m.create_by IN
-                <foreach collection="userIds" item="userId" open="(" separator="," close=")">
-                    #{userId}
-                </foreach>
-            </if>
-            <if test="projectId != null">
-                AND m.project_id =#{projectId}
-            </if>
-        </where>
-        GROUP BY
-        m.create_by,
-        m.category_id,
-        m.slide_id
-    </select>
 
     <!--查询项目下的image-->
     <select id="projectImage" parameterType="java.lang.Long" resultMap="projectImageResult">
@@ -140,23 +84,24 @@
     </select>
 
     <!--单图标签统计-->
-    <select id="imageLabel" parameterType="cn.staitech.anno.vo.projectstatistics.ImageLabelIn" resultMap="imageLabelResult">
+    <select id="imageLabel" parameterType="cn.staitech.anno.vo.projectstatistics.ImageLabelIn"
+            resultMap="imageLabelResult">
         SELECT
-            m.slide_id,
-            m.create_by,
-            m.category_id,
-            IF(m.category_id=0,"无属性",pic.category_name) as category_name,
-            u.nick_name,
-            i.file_name as image_name,
-            i.image_id,
-            s.status,
-            count(*) AS marking_num
+        m.slide_id,
+        m.create_by,
+        m.category_id,
+        IF(m.category_id=0,"无属性",pic.category_name) as category_name,
+        u.nick_name,
+        i.file_name as image_name,
+        i.image_id,
+        s.status,
+        count(*) AS marking_num
         FROM
-            tb_marking AS m
-                LEFT JOIN tb_slide AS s ON s.slide_id = m.slide_id
-                LEFT JOIN tb_image AS i ON i.image_id = s.image_id
-                left join tb_pathological_indicator_category as pic on pic.category_id=m.category_id
-                left join sys_user as u on u.user_id=m.create_by
+        tb_marking AS m
+        LEFT JOIN tb_slide AS s ON s.slide_id = m.slide_id
+        LEFT JOIN tb_image AS i ON i.image_id = s.image_id
+        left join tb_pathological_indicator_category as pic on pic.category_id=m.category_id
+        left join sys_user as u on u.user_id=m.create_by
         <where>
             <if test="projectId != null">
                 AND m.project_id =#{projectId}
@@ -187,9 +132,48 @@
             </if>
         </where>
         GROUP BY
-            m.create_by,
-            m.category_id,
-            m.slide_id
+        m.create_by,
+        m.category_id,
+        m.slide_id
+        order by marking_num desc
+    </select>
+
+    <!--查询多标签统计标注数量-->
+    <select id="labelsNumber" parameterType="cn.staitech.anno.vo.projectstatistics.ProjectLabelIn"
+            resultMap="projectLabelResult">
+        select m.create_by,m.category_id,u.nick_name,IF(m.category_id=0,"无属性",pic.category_name) as
+        category_name,count(*) as marking_num,concat(m.create_by,"_",m.category_id) as num from tb_marking as m left
+        join sys_user as u on u.user_id=m.create_by left join tb_pathological_indicator_category as pic on
+        pic.category_id=m.category_id
+        <where>
+            <if test="projectId != null">
+                AND m.project_id =#{projectId}
+            </if>
+            <if test="categoryIds != null and categoryIds.size()>0 ">
+                AND m.category_id IN
+                <foreach collection="categoryIds" item="categoryId" open="(" separator="," close=")">
+                    #{categoryId}
+                </foreach>
+            </if>
+            <if test="userIds != null and userIds.size()>0 ">
+                AND m.create_by IN
+                <foreach collection="userIds" item="userId" open="(" separator="," close=")">
+                    #{userId}
+                </foreach>
+            </if>
+        </where>
+        group by m.create_by,m.category_id
+    </select>
+
+    <!--多标签统计当前标签标注图像数量-->
+    <select id="labelImageNumber" parameterType="java.lang.Long" resultMap="projectLabelResult">
+        select create_by,
+               category_id,
+               count(distinct slide_id)            as label_image_num,
+               concat(create_by, "_", category_id) as num
+        from tb_marking
+        where project_id = #{projectId}
+        group by create_by, category_id
     </select>
 
 

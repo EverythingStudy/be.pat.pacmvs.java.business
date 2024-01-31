@@ -97,6 +97,13 @@ public class MarkingServiceImpl implements MarkingService {
      */
     private static final WKTReader WKT_READER = new WKTReader(GEOMETRY_FACTORY);
     private static final int BATCH_SIZE = 5000;
+    
+    private static final String pathUrl = "/home/pat_saas";
+	String zipFileUrl =  File.separator + "zipFile";
+
+	String jsonFileUrl ="/file/statics";
+
+	String fileUrl =  File.separator + "zipFile";
 
     private static final ExecutorService EXECUTOR = ExecutorBuilder.create().setCorePoolSize(Runtime.getRuntime().availableProcessors()).setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2).setKeepAliveTime(0).build();
     private static final ExecutorService ANN_EXECUTOR = ExecutorBuilder.create().setCorePoolSize(Runtime.getRuntime().availableProcessors()).setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2).setKeepAliveTime(0).setWorkQueue(new LinkedBlockingQueue<Runnable>(4096)).build();
@@ -205,18 +212,16 @@ public class MarkingServiceImpl implements MarkingService {
             if (CollectionUtils.isNotEmpty(otherAnnoList)) {
                 list.addAll(otherAnnoList);
             }
-        }
-//        else if ("2".equalsIgnoreCase(projectType) && !project.getCreateBy().equals(userId)) {
-//            //智能评审非项目创建者只查询自己标注的数据
-//            Map<String, Object> map = new HashMap<String, Object>(16);
-//            map.put("slideId", slideId);
-//            map.put("createBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
-//            List<Features> selfAnnoList = markingMapper.selectListBy2(map);
-//            if (CollectionUtils.isNotEmpty(selfAnnoList)) {
-//                list.addAll(selfAnnoList);
-//            }
-//        }
-        else {
+        } else if ("2".equalsIgnoreCase(projectType) && !project.getCreateBy().equals(userId)) {
+            //智能评审非项目创建者只查询自己标注的数据
+            Map<String, Object> map = new HashMap<String, Object>(16);
+            map.put("slideId", slideId);
+            map.put("createBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
+            List<Features> selfAnnoList = markingMapper.selectListBy2(map);
+            if (CollectionUtils.isNotEmpty(selfAnnoList)) {
+                list.addAll(selfAnnoList);
+            }
+        } else {
             list = markingMapper.selectListBy(slideId);
         }
         return list;
@@ -1262,15 +1267,15 @@ public class MarkingServiceImpl implements MarkingService {
         List<Marking> features = markingMapper.roiMarking(slideId.intValue());
         List<String> markingIds;
         //查询measure的标注信息
-        List<MarkMeasure> markMeasures=markingMapper.roiMeasure(slideId);
+        List<MarkMeasure> markMeasures = markingMapper.roiMeasure(slideId);
         List<String> markingMeasureIds;
         //roi包含
         if (viewAddIns.getRoiStatus() == 0) {
             markingIds = roiCont(viewAddIns, features);
-            markingMeasureIds=roiMeasureCont(viewAddIns,markMeasures);
+            markingMeasureIds = roiMeasureCont(viewAddIns, markMeasures);
         } else {
             markingIds = roiDel(viewAddIns, features);
-            markingMeasureIds=roiMeasureDel(viewAddIns,markMeasures);
+            markingMeasureIds = roiMeasureDel(viewAddIns, markMeasures);
         }
         if (markingIds.isEmpty() && markingMeasureIds.isEmpty()) {
             return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
@@ -1285,7 +1290,7 @@ public class MarkingServiceImpl implements MarkingService {
             categoryIds.add(0L);
             Set<Long> createBys = new HashSet<>();
 
-            if (CollectionUtils.isNotEmpty(markingIds)){
+            if (CollectionUtils.isNotEmpty(markingIds)) {
                 QueryWrapper<cn.staitech.anno.project.domain.Marking> wrapper = new QueryWrapper<>();
                 wrapper.in("marking_id", markingIds);
                 //删除标注
@@ -1296,11 +1301,11 @@ public class MarkingServiceImpl implements MarkingService {
                     createBys.add(markingMap.get(markingId).getCreate_by());
                 }
             }
-            if (CollectionUtils.isNotEmpty(markingMeasureIds)){
+            if (CollectionUtils.isNotEmpty(markingMeasureIds)) {
                 //删除测量
                 markingMapper.delMeasure(markingMeasureIds);
                 //测量的createBy
-                for(String markMeasureId:markingMeasureIds){
+                for (String markMeasureId : markingMeasureIds) {
                     createBys.add(markMeasureMap.get(markMeasureId).getCreate_by());
                 }
             }
@@ -1419,6 +1424,7 @@ public class MarkingServiceImpl implements MarkingService {
         public void run() {
             try {
                 JSONObject jsonObject = new JSONObject();
+                Project project = projectMapperV1.selectById(projectId);
                 if (slideIds == null || slideIds.isEmpty()) {
                     QueryWrapper<Slide> queryWrapper = Wrappers.query();
                     queryWrapper.eq("project_id", projectId);
@@ -1427,7 +1433,6 @@ public class MarkingServiceImpl implements MarkingService {
 
                     slideIds = new ArrayList<>();
                     // 在标注类项目，切片列表页面，批量导出JSON时，去掉未交付的图片，不允许随时导出未交付的json
-                    Project project = projectMapperV1.selectById(projectId);
                     if (Objects.equals(project.getProjectType(), "1") && CollectionUtil.isNotEmpty(slideList)) {
                         List<Slide> slideLists = slideList.stream().filter(s -> Objects.equals(s.getStatus(), "7")).collect(Collectors.toList());
                         slideLists.forEach(slide -> {
@@ -1439,6 +1444,9 @@ public class MarkingServiceImpl implements MarkingService {
                         });
                     }
                 }
+                
+              //待压缩路径列表
+				List<String> srcfiles = new ArrayList<>();
                 if (slideIds != null && !slideIds.isEmpty()) {
                     for (Long slideId : slideIds) {
                         QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
@@ -1447,8 +1455,10 @@ public class MarkingServiceImpl implements MarkingService {
                         if (markingCount > 0) {
                             // 将文件生成在本地
                             String fileUrl = null;
+                            String fileOldUrl = "";
                             try {
                                 fileUrl = slideJsonExport(slideId, sysUser);
+                                fileOldUrl = fileUrl;
                                 fileUrl = fileUrl.replace(" ", "\\ ");
                             } catch (Exception e) {
                                 throw new RuntimeException(e);
@@ -1459,9 +1469,20 @@ public class MarkingServiceImpl implements MarkingService {
                             map.put(CommonConstant.PATH, fileUrl);
                             map.put(CommonConstant.IMAGE_URL, image.getImageUrl());
                             jsonObject.put(String.valueOf(slideId), map);
+                            boolean checkkExist = fileExists(fileOldUrl);
+							if(checkkExist){
+								srcfiles.add(fileOldUrl);
+							}else{
+								log.info("当前json-url无法找到，路径是："+fileOldUrl);
+							}
                         }
                     }
                 }
+                
+              //压缩处理
+				if(CollectionUtils.isNotEmpty(srcfiles)){
+					ZipFiles(project, srcfiles,downTask.getCode());
+				}
                 downTask.setProjectName(projectName);
                 downTask.setPath(jsonObject);
                 downTask.setProjectId(projectId);
@@ -1472,6 +1493,58 @@ public class MarkingServiceImpl implements MarkingService {
             }
         }
     }
+    
+    public void ZipFiles(Project project,List<String> srcfiles,String downCode){
+		String organizationFileName = pathUrl + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+		//生成二级目录 (以机构名称命名)
+		try {
+			createFolder(organizationFileName);
+			// 生成三级目录 (以机构下默认文件夹名称命名)
+			String dataFileName = organizationFileName + zipFileUrl;
+			createFolder(dataFileName);
+			// 生成四级目录 (以项目名称命名)
+			String projectFolderName = dataFileName + File.separator + project.getProjectId();
+			// 生成最终文件 (以项目名称命名)
+			createFolder(projectFolderName);
+			String zipPath = projectFolderName + File.separator + project.getProjectName()+"_"+System.currentTimeMillis()+".zip";
+			log.info("压缩文件地址1："+zipPath);
+			ZipGenerateUtils.ZipFiles(srcfiles, zipPath);
+			//redis存下载地址
+			zipPath = zipPath.replaceAll(pathUrl, jsonFileUrl);
+			log.info("压缩文件地址2："+zipPath);
+			String zipPathNew = zipPath.replaceAll("/home/pat_saas", "/file/statics");
+			log.info("压缩文件地址3："+zipPathNew);
+			//redis存下载地址
+			redisService.setCacheObject("zipDown_"+downCode, zipPathNew, 6L, TimeUnit.HOURS);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+
+		}
+	}
+    
+    private static Boolean fileExists(String filePath) throws Exception {
+		File file = new File(filePath);
+		boolean exists = file.exists();
+		if (exists) {
+			//log.info("文件存在");
+		} else {
+			log.info("文件不存在,文件名称："+filePath);
+		}
+		return exists;
+	}
+    
+    private static Boolean createFolder(String folder) throws Exception {
+		File file = new File(folder);
+		if (!file.exists() && !file.isDirectory()) {
+			if (file.mkdir()) {
+				return true;
+			} else {
+				throw new Exception(MessageSource.M("FILE_DOWNLOAD_ERROR"));
+			}
+		}
+		return true;
+	}
 
     class AnnCountThread implements Runnable {
         // type 1:标注保存  2：标注修改
@@ -1499,7 +1572,7 @@ public class MarkingServiceImpl implements MarkingService {
     /**
      * ROI包含选出要删除的markingId
      */
-    public List<String> roiMeasureCont(RoiIn viewAddIns,  List<MarkMeasure> features) throws ParseException {
+    public List<String> roiMeasureCont(RoiIn viewAddIns, List<MarkMeasure> features) throws ParseException {
         //要删除的markingId集合
         Set<String> markMeasureIdDel = new HashSet<>();
         //包含的markingId集合

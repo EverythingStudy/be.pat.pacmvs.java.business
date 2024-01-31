@@ -51,7 +51,14 @@ public class LabelStatisticsController {
         return R.ok(labelOuts);
     }
 
-
+    @ApiOperationSupport(author = "ZMJ")
+    @ApiOperation(value = "项目统计")
+    @PostMapping("/projectStatistics")
+    public R<PageMaster<ProjectLabelOut>> projectStatistics(@RequestBody ProjectListIn projectListIn) {
+        R<PageMaster<ProjectLabelOut>> itemList = labelStatisticsService.itemList(projectListIn);
+        return itemList;
+    }
+    
     @ApiOperationSupport(author = "ZMJ")
     @ApiOperation(value = "标签统计")
     @PostMapping("/projectLabel")
@@ -92,13 +99,7 @@ public class LabelStatisticsController {
     }
 
 
-    @ApiOperationSupport(author = "ZMJ")
-    @ApiOperation(value = "项目统计")
-    @PostMapping("/projectStatistics")
-    public R<PageMaster<ProjectLabelOut>> projectStatistics(@RequestBody ProjectListIn projectListIn) {
-        R<PageMaster<ProjectLabelOut>> itemList = labelStatisticsService.itemList(projectListIn);
-        return itemList;
-    }
+    
 
     @ApiOperationSupport(author = "ZMJ")
     @ApiOperation(value = "项目统计导出")

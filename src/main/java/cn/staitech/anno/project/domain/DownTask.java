@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -69,6 +71,10 @@ public class DownTask implements Serializable {
      * 项目id
      */
     private Long projectId;
+    
+    @ApiModelProperty(hidden = true, value = "zip路径地址")
+    @TableField(exist = false)
+    private String jsonZipPath;
 
     @Override
     public boolean equals(Object that) {
