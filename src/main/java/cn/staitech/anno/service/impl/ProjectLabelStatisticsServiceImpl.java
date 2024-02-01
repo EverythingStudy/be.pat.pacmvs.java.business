@@ -184,7 +184,7 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 			String createNickName = "";
 			if(null != userInformation){
 				createNickName = userInformation.getNickName();
-			}
+			
 			Long organizationId = userInformation.getOrganizationId();
 
 			//根据创建人查询昵称
@@ -254,6 +254,7 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 				}
 			}
 		}
+		}
 
 		//剩下的统一保存
 		if(CollectionUtils.isNotEmpty(plsList)){
@@ -287,7 +288,6 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 			String createNickName = "";
 			if(null != userInformation){
 				createNickName = userInformation.getNickName();
-			}
 			Long organizationId = userInformation.getOrganizationId();
 
 			//根据创建人查询昵称
@@ -374,6 +374,7 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 				}
 			}
 		}
+		}
 	}
 
 	/**
@@ -428,29 +429,30 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 					String nickName = "";
 					if(null != userInfo){
 						nickName = userInfo.getNickName();
-					}
-					annoStatistics.setAnnoNickName(nickName);
 
-					annoStatistics.setImageCount(Long.valueOf(imageCount));
-					Long markingNum = 0L;
-					if(annoCountMap.containsKey(userIdP)){
-						markingNum = Long.valueOf(annoCountMap.get(userIdP));
-					}
-					annoStatistics.setMarkingNum(markingNum);
-					Long organizationIdP = userInfo.getOrganizationId();
-					annoStatistics.setOrganizationId(organizationIdP);;
-					annoStatistics.setTaskCreateTime(currentDate);
-					annoStatistics.setDelFlag("0");
+						annoStatistics.setAnnoNickName(nickName);
 
-					String key = projectId+"_"+userIdP+"_"+organizationIdP;
-					if(!map.containsKey(key)){
-						map.put(key, key);
-						pasList.add(annoStatistics);
-					}
-					if(pasList.size() > 2000){
-						projectAnnoStatisticsService.saveBatch(pasList);
-						pasList = new ArrayList<>();
-						map = new HashMap<>();
+						annoStatistics.setImageCount(Long.valueOf(imageCount));
+						Long markingNum = 0L;
+						if(annoCountMap.containsKey(userIdP)){
+							markingNum = Long.valueOf(annoCountMap.get(userIdP));
+						}
+						annoStatistics.setMarkingNum(markingNum);
+						Long organizationIdP = userInfo.getOrganizationId();
+						annoStatistics.setOrganizationId(organizationIdP);;
+						annoStatistics.setTaskCreateTime(currentDate);
+						annoStatistics.setDelFlag("0");
+
+						String key = projectId+"_"+userIdP+"_"+organizationIdP;
+						if(!map.containsKey(key)){
+							map.put(key, key);
+							pasList.add(annoStatistics);
+						}
+						if(pasList.size() > 2000){
+							projectAnnoStatisticsService.saveBatch(pasList);
+							pasList = new ArrayList<>();
+							map = new HashMap<>();
+						}
 					}
 				}
 			}
@@ -502,38 +504,38 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 						String nickName = "";
 						if(null != userInfo){
 							nickName = userInfo.getNickName();
-						}
-						pulStatistics.setAnnoNickName(nickName);
-						pulStatistics.setMarkingNum(markingNum);
-						Long organizationIdP = userInfo.getOrganizationId();
-						pulStatistics.setOrganizationId(organizationIdP);
+							pulStatistics.setAnnoNickName(nickName);
+							pulStatistics.setMarkingNum(markingNum);
+							Long organizationIdP = userInfo.getOrganizationId();
+							pulStatistics.setOrganizationId(organizationIdP);
 
-						//标签
-						PathologicalIndicatorCategory category = getPathologicalIndicatorCategoryByCategoryId(Long.valueOf(caid));
-						String categoryName = "";
-						if(null != category){
-							categoryName = category.getCategoryName();
-						}
-						pulStatistics.setCategoryId(Long.valueOf(caid));
-						pulStatistics.setCategoryName(categoryName);
+							//标签
+							PathologicalIndicatorCategory category = getPathologicalIndicatorCategoryByCategoryId(Long.valueOf(caid));
+							String categoryName = "";
+							if(null != category){
+								categoryName = category.getCategoryName();
+							}
+							pulStatistics.setCategoryId(Long.valueOf(caid));
+							pulStatistics.setCategoryName(categoryName);
 
-						//查询标签的所属标签集
-						pulStatistics.setIndicatorId(indicatorId);
-						pulStatistics.setIndicatorName(indicatorName);
+							//查询标签的所属标签集
+							pulStatistics.setIndicatorId(indicatorId);
+							pulStatistics.setIndicatorName(indicatorName);
 
-						pulStatistics.setTaskCreateTime(currentDate);
-						pulStatistics.setDelFlag("0");
+							pulStatistics.setTaskCreateTime(currentDate);
+							pulStatistics.setDelFlag("0");
 
-						String key = projectId+"_"+userIdP+"_"+indicatorId+"_"+caid+"_"+organizationIdP;
+							String key = projectId+"_"+userIdP+"_"+indicatorId+"_"+caid+"_"+organizationIdP;
 
-						if(!map.containsKey(key)){
-							map.put(key, key);
-							pusList.add(pulStatistics);
-						}
-						if(pusList.size() > 2000){
-							projectUserLabelStatisticsService.saveBatch(pusList);
-							pusList = new ArrayList<>();
-							map = new HashMap<>();
+							if(!map.containsKey(key)){
+								map.put(key, key);
+								pusList.add(pulStatistics);
+							}
+							if(pusList.size() > 2000){
+								projectUserLabelStatisticsService.saveBatch(pusList);
+								pusList = new ArrayList<>();
+								map = new HashMap<>();
+							}
 						}
 					}
 				}
