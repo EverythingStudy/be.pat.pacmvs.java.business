@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -189,69 +190,71 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 			//根据创建人查询昵称
 			Long indicatorId = project.getIndicatorId();
 			Indicator indicatorInfo = getIndicatorByIndicatorId(indicatorId);
-			String indicatorName = indicatorInfo.getIndicatorName();
+			if(null !=  indicatorInfo && StringUtils.isNotEmpty(indicatorInfo.getIndicatorName())){
+				String indicatorName = indicatorInfo.getIndicatorName();
 
-			//查询当前项目下 标签集 的imageCount
-			List<ProjectLabelOut> imageStatisList = markingMapper.getProjectImageNum(projectId);
-			Map<Long,String> categImageNumMap = new HashMap<>();
-			if(CollectionUtils.isNotEmpty(imageStatisList)){
-				for(ProjectLabelOut imageS:imageStatisList){
-					String imageNum = imageS.getImageNum();
-					categImageNumMap.put(projectId, imageNum);
-				}
-			}
-
-
-			//查询当前项目下 标签集+标签 的annoCount
-			List<ProjectLabelOut> annoStatisList = markingMapper.getProjectMarkingNum(projectId);
-			Map<Long,String> markingNumMap = new HashMap<>();
-			if(CollectionUtils.isNotEmpty(annoStatisList)){
-				for(ProjectLabelOut imageS:annoStatisList){
-					String markingNum = imageS.getMarkingNum();
-					markingNumMap.put(projectId, markingNum);
-				}
-			}
-
-
-			//遍历所有的标签集进行数据填充
-			if(!categImageNumMap.isEmpty() && categImageNumMap.size() >0){
-				for (Map.Entry<Long, String> entry : categImageNumMap.entrySet()) {
-					Long projectIdP = entry.getKey();
-					String categImageNum = entry.getValue();
-					ProjectStatistics projectStatistics = new ProjectStatistics();
-					projectStatistics.setProjectId(projectIdP);
-					projectStatistics.setProjectName(projectName);
-					projectStatistics.setProjectStatus(status);
-					projectStatistics.setDescription(description);
-					projectStatistics.setProjectCreateBy(projectCreateBy);
-					projectStatistics.setCreateNickName(createNickName);
-					projectStatistics.setProjectCreateTime(projectCreateTime);
-					projectStatistics.setIndicatorId(indicatorId);
-					projectStatistics.setIndicatorName(indicatorName);
-
-					projectStatistics.setImageNum(Long.valueOf(categImageNum));
-					Long markingNum = 0L;
-					if(markingNumMap.containsKey(projectIdP)){
-						markingNum = Long.valueOf(markingNumMap.get(projectIdP));
+				//查询当前项目下 标签集 的imageCount
+				List<ProjectLabelOut> imageStatisList = markingMapper.getProjectImageNum(projectId);
+				Map<Long,String> categImageNumMap = new HashMap<>();
+				if(CollectionUtils.isNotEmpty(imageStatisList)){
+					for(ProjectLabelOut imageS:imageStatisList){
+						String imageNum = imageS.getImageNum();
+						categImageNumMap.put(projectId, imageNum);
 					}
-					projectStatistics.setMarkingNum(markingNum);
-					projectStatistics.setOrganizationId(organizationId);;
-					projectStatistics.setTaskCreateTime(currentDate);
-					projectStatistics.setDelFlag("0");
-					String key = projectIdP+"_"+indicatorId+"_"+organizationId;
-					if(!map.containsKey(key)){
-						map.put(key, key);
-						plsList.add(projectStatistics);
+				}
+
+
+				//查询当前项目下 标签集+标签 的annoCount
+				List<ProjectLabelOut> annoStatisList = markingMapper.getProjectMarkingNum(projectId);
+				Map<Long,String> markingNumMap = new HashMap<>();
+				if(CollectionUtils.isNotEmpty(annoStatisList)){
+					for(ProjectLabelOut imageS:annoStatisList){
+						String markingNum = imageS.getMarkingNum();
+						markingNumMap.put(projectId, markingNum);
 					}
-					if(plsList.size() > 2000){
-						projectStatisticsService.saveBatch(plsList);
-						plsList = new ArrayList<>();
-						map = new HashMap<>();
+				}
+
+
+				//遍历所有的标签集进行数据填充
+				if(!categImageNumMap.isEmpty() && categImageNumMap.size() >0){
+					for (Map.Entry<Long, String> entry : categImageNumMap.entrySet()) {
+						Long projectIdP = entry.getKey();
+						String categImageNum = entry.getValue();
+						ProjectStatistics projectStatistics = new ProjectStatistics();
+						projectStatistics.setProjectId(projectIdP);
+						projectStatistics.setProjectName(projectName);
+						projectStatistics.setProjectStatus(status);
+						projectStatistics.setDescription(description);
+						projectStatistics.setProjectCreateBy(projectCreateBy);
+						projectStatistics.setCreateNickName(createNickName);
+						projectStatistics.setProjectCreateTime(projectCreateTime);
+						projectStatistics.setIndicatorId(indicatorId);
+						projectStatistics.setIndicatorName(indicatorName);
+
+						projectStatistics.setImageNum(Long.valueOf(categImageNum));
+						Long markingNum = 0L;
+						if(markingNumMap.containsKey(projectIdP)){
+							markingNum = Long.valueOf(markingNumMap.get(projectIdP));
+						}
+						projectStatistics.setMarkingNum(markingNum);
+						projectStatistics.setOrganizationId(organizationId);;
+						projectStatistics.setTaskCreateTime(currentDate);
+						projectStatistics.setDelFlag("0");
+						String key = projectIdP+"_"+indicatorId+"_"+organizationId;
+						if(!map.containsKey(key)){
+							map.put(key, key);
+							plsList.add(projectStatistics);
+						}
+						if(plsList.size() > 2000){
+							projectStatisticsService.saveBatch(plsList);
+							plsList = new ArrayList<>();
+							map = new HashMap<>();
+						}
 					}
 				}
 			}
 		}
-		
+
 		//剩下的统一保存
 		if(CollectionUtils.isNotEmpty(plsList)){
 			projectStatisticsService.saveBatch(plsList);
@@ -270,8 +273,8 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 	 */
 	private void handlerProjectLabelStatistics(List<Project> projectList,Date currentDate){
 		delData(1);
-		
-//		Map<String,String> map = new HashMap<>();
+
+		//		Map<String,String> map = new HashMap<>();
 		for(Project project:projectList){
 			Long projectId = project.getProjectId();
 			String projectName = project.getProjectName();
@@ -290,68 +293,69 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 			//根据创建人查询昵称
 			Long indicatorId = project.getIndicatorId();
 			Indicator indicatorInfo = getIndicatorByIndicatorId(indicatorId);
-			String indicatorName = indicatorInfo.getIndicatorName();
+			if(null !=  indicatorInfo && StringUtils.isNotEmpty(indicatorInfo.getIndicatorName())){
+				String indicatorName = indicatorInfo.getIndicatorName();
 
-			//查询当前项目下 标签集+标签 的imageCount
-			List<ProjectLabelOut> imageStatisList = markingMapper.getProjectCategoryImageNum(projectId);
-			Map<Long,String> categImageNumMap = new HashMap<>();
-			if(CollectionUtils.isNotEmpty(imageStatisList)){
-				for(ProjectLabelOut imageS:imageStatisList){
-					Long categId = imageS.getCategoryId();
-					String imageNum = imageS.getImageNum();
-					categImageNumMap.put(categId, imageNum);
-				}
-			}
-
-
-			//查询当前项目下 标签集+标签 的annoCount
-			List<ProjectLabelOut> annoStatisList = markingMapper.getProjectCategoryMarkingNum(projectId);
-			Map<Long,String> categMarkingNumMap = new HashMap<>();
-			if(CollectionUtils.isNotEmpty(annoStatisList)){
-				for(ProjectLabelOut imageS:annoStatisList){
-					Long categId = imageS.getCategoryId();
-					String markingNum = imageS.getMarkingNum();
-					categMarkingNumMap.put(categId, markingNum);
-				}
-			}
-
-
-			//遍历所有的标签集进行数据填充
-			List<ProjectLabelStatistics> plsList = new ArrayList<>();
-			if(!categImageNumMap.isEmpty() && categImageNumMap.size() >0){
-				for (Map.Entry<Long, String> entry : categImageNumMap.entrySet()) {
-					Long categoryP = entry.getKey();
-					String categImageNum = entry.getValue();
-					ProjectLabelStatistics projectLabelStatistics = new ProjectLabelStatistics();
-					projectLabelStatistics.setProjectId(projectId);
-					projectLabelStatistics.setProjectName(projectName);
-					projectLabelStatistics.setProjectStatus(status);
-					projectLabelStatistics.setDescription(description);
-					projectLabelStatistics.setProjectCreateBy(projectCreateBy);
-					projectLabelStatistics.setCreateNickName(createNickName);
-					projectLabelStatistics.setProjectCreateTime(projectCreateTime);
-					projectLabelStatistics.setIndicatorId(indicatorId);
-					projectLabelStatistics.setIndicatorName(indicatorName);
-					projectLabelStatistics.setCategoryId(categoryP);
-
-					PathologicalIndicatorCategory category = getPathologicalIndicatorCategoryByCategoryId(categoryP);
-
-					String categoryName = "";
-					if(null != category){
-						categoryName = category.getCategoryName();
+				//查询当前项目下 标签集+标签 的imageCount
+				List<ProjectLabelOut> imageStatisList = markingMapper.getProjectCategoryImageNum(projectId);
+				Map<Long,String> categImageNumMap = new HashMap<>();
+				if(CollectionUtils.isNotEmpty(imageStatisList)){
+					for(ProjectLabelOut imageS:imageStatisList){
+						Long categId = imageS.getCategoryId();
+						String imageNum = imageS.getImageNum();
+						categImageNumMap.put(categId, imageNum);
 					}
-					projectLabelStatistics.setCategoryName(categoryName);
-					projectLabelStatistics.setImageNum(Long.valueOf(categImageNum));
-					Long markingNum = 0L;
-					if(categMarkingNumMap.containsKey(categoryP)){
-						markingNum = Long.valueOf(categMarkingNumMap.get(categoryP));
+				}
+
+
+				//查询当前项目下 标签集+标签 的annoCount
+				List<ProjectLabelOut> annoStatisList = markingMapper.getProjectCategoryMarkingNum(projectId);
+				Map<Long,String> categMarkingNumMap = new HashMap<>();
+				if(CollectionUtils.isNotEmpty(annoStatisList)){
+					for(ProjectLabelOut imageS:annoStatisList){
+						Long categId = imageS.getCategoryId();
+						String markingNum = imageS.getMarkingNum();
+						categMarkingNumMap.put(categId, markingNum);
 					}
-					projectLabelStatistics.setMarkingNum(markingNum);
-					projectLabelStatistics.setOrganizationId(organizationId);;
-					projectLabelStatistics.setTaskCreateTime(currentDate);
-					projectLabelStatistics.setDelFlag("0");
-					plsList.add(projectLabelStatistics);
-					/*String key = projectId+"_"+indicatorId+"_"+categoryP+"_"+organizationId;
+				}
+
+
+				//遍历所有的标签集进行数据填充
+				List<ProjectLabelStatistics> plsList = new ArrayList<>();
+				if(!categImageNumMap.isEmpty() && categImageNumMap.size() >0){
+					for (Map.Entry<Long, String> entry : categImageNumMap.entrySet()) {
+						Long categoryP = entry.getKey();
+						String categImageNum = entry.getValue();
+						ProjectLabelStatistics projectLabelStatistics = new ProjectLabelStatistics();
+						projectLabelStatistics.setProjectId(projectId);
+						projectLabelStatistics.setProjectName(projectName);
+						projectLabelStatistics.setProjectStatus(status);
+						projectLabelStatistics.setDescription(description);
+						projectLabelStatistics.setProjectCreateBy(projectCreateBy);
+						projectLabelStatistics.setCreateNickName(createNickName);
+						projectLabelStatistics.setProjectCreateTime(projectCreateTime);
+						projectLabelStatistics.setIndicatorId(indicatorId);
+						projectLabelStatistics.setIndicatorName(indicatorName);
+						projectLabelStatistics.setCategoryId(categoryP);
+
+						PathologicalIndicatorCategory category = getPathologicalIndicatorCategoryByCategoryId(categoryP);
+
+						String categoryName = "";
+						if(null != category){
+							categoryName = category.getCategoryName();
+						}
+						projectLabelStatistics.setCategoryName(categoryName);
+						projectLabelStatistics.setImageNum(Long.valueOf(categImageNum));
+						Long markingNum = 0L;
+						if(categMarkingNumMap.containsKey(categoryP)){
+							markingNum = Long.valueOf(categMarkingNumMap.get(categoryP));
+						}
+						projectLabelStatistics.setMarkingNum(markingNum);
+						projectLabelStatistics.setOrganizationId(organizationId);;
+						projectLabelStatistics.setTaskCreateTime(currentDate);
+						projectLabelStatistics.setDelFlag("0");
+						plsList.add(projectLabelStatistics);
+						/*String key = projectId+"_"+indicatorId+"_"+categoryP+"_"+organizationId;
 					if(!map.containsKey(key)){
 						map.put(key, key);
 						plsList.add(projectLabelStatistics);
@@ -361,13 +365,14 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 						plsList = new ArrayList<>();
 						map = new HashMap<>();
 					}*/
+					}
+				}
+
+				//剩下的统一保存
+				if(CollectionUtils.isNotEmpty(plsList)){
+					saveBatch(plsList);
 				}
 			}
-			//剩下的统一保存
-			if(CollectionUtils.isNotEmpty(plsList)){
-				saveBatch(plsList);
-			}
-
 		}
 	}
 
@@ -436,7 +441,7 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 					annoStatistics.setOrganizationId(organizationIdP);;
 					annoStatistics.setTaskCreateTime(currentDate);
 					annoStatistics.setDelFlag("0");
-					
+
 					String key = projectId+"_"+userIdP+"_"+organizationIdP;
 					if(!map.containsKey(key)){
 						map.put(key, key);
@@ -479,60 +484,62 @@ public class ProjectLabelStatisticsServiceImpl extends ServiceImpl<ProjectLabelS
 			//根据创建人查询昵称
 			Long indicatorId = project.getIndicatorId();
 			Indicator indicatorInfo = getIndicatorByIndicatorId(indicatorId);
-			String indicatorName = indicatorInfo.getIndicatorName();
+			if(null !=  indicatorInfo && StringUtils.isNotEmpty(indicatorInfo.getIndicatorName())){
+				String indicatorName = indicatorInfo.getIndicatorName();
 
-			//查询当前项目下所有用户标注+ 标签集+标签 的annoCount
-			List<MarkingStatistic> pulsList = markingMapper.getProjectUserLabelMarkingNum(projectId);
-			if(CollectionUtils.isNotEmpty(pulsList)){
-				for(MarkingStatistic ms:pulsList){
-					Long userIdP = ms.getUserId();
-					Long markingNum = ms.getMarkingNum();
-					String caid = ms.getCategoryId();
-					ProjectUserLabelStatistics pulStatistics = new ProjectUserLabelStatistics();
-					pulStatistics.setProjectId(projectId);
-					pulStatistics.setProjectName(projectName);
-					pulStatistics.setAnnoUserId(userIdP);
-					cn.staitech.anno.project.domain.SysUser userInfo = getSysUserByUserId(userIdP);
-					String nickName = "";
-					if(null != userInfo){
-						nickName = userInfo.getNickName();
-					}
-					pulStatistics.setAnnoNickName(nickName);
-					pulStatistics.setMarkingNum(markingNum);
-					Long organizationIdP = userInfo.getOrganizationId();
-					pulStatistics.setOrganizationId(organizationIdP);
+				//查询当前项目下所有用户标注+ 标签集+标签 的annoCount
+				List<MarkingStatistic> pulsList = markingMapper.getProjectUserLabelMarkingNum(projectId);
+				if(CollectionUtils.isNotEmpty(pulsList)){
+					for(MarkingStatistic ms:pulsList){
+						Long userIdP = ms.getUserId();
+						Long markingNum = ms.getMarkingNum();
+						String caid = ms.getCategoryId();
+						ProjectUserLabelStatistics pulStatistics = new ProjectUserLabelStatistics();
+						pulStatistics.setProjectId(projectId);
+						pulStatistics.setProjectName(projectName);
+						pulStatistics.setAnnoUserId(userIdP);
+						cn.staitech.anno.project.domain.SysUser userInfo = getSysUserByUserId(userIdP);
+						String nickName = "";
+						if(null != userInfo){
+							nickName = userInfo.getNickName();
+						}
+						pulStatistics.setAnnoNickName(nickName);
+						pulStatistics.setMarkingNum(markingNum);
+						Long organizationIdP = userInfo.getOrganizationId();
+						pulStatistics.setOrganizationId(organizationIdP);
 
-					//标签
-					PathologicalIndicatorCategory category = getPathologicalIndicatorCategoryByCategoryId(Long.valueOf(caid));
-					String categoryName = "";
-					if(null != category){
-						categoryName = category.getCategoryName();
-					}
-					pulStatistics.setCategoryId(Long.valueOf(caid));
-					pulStatistics.setCategoryName(categoryName);
+						//标签
+						PathologicalIndicatorCategory category = getPathologicalIndicatorCategoryByCategoryId(Long.valueOf(caid));
+						String categoryName = "";
+						if(null != category){
+							categoryName = category.getCategoryName();
+						}
+						pulStatistics.setCategoryId(Long.valueOf(caid));
+						pulStatistics.setCategoryName(categoryName);
 
-					//查询标签的所属标签集
-					pulStatistics.setIndicatorId(indicatorId);
-					pulStatistics.setIndicatorName(indicatorName);
+						//查询标签的所属标签集
+						pulStatistics.setIndicatorId(indicatorId);
+						pulStatistics.setIndicatorName(indicatorName);
 
-					pulStatistics.setTaskCreateTime(currentDate);
-					pulStatistics.setDelFlag("0");
+						pulStatistics.setTaskCreateTime(currentDate);
+						pulStatistics.setDelFlag("0");
 
-					String key = projectId+"_"+userIdP+"_"+indicatorId+"_"+caid+"_"+organizationIdP;
+						String key = projectId+"_"+userIdP+"_"+indicatorId+"_"+caid+"_"+organizationIdP;
 
-					if(!map.containsKey(key)){
-						map.put(key, key);
-						pusList.add(pulStatistics);
-					}
-					if(pusList.size() > 2000){
-						projectUserLabelStatisticsService.saveBatch(pusList);
-						pusList = new ArrayList<>();
-						map = new HashMap<>();
+						if(!map.containsKey(key)){
+							map.put(key, key);
+							pusList.add(pulStatistics);
+						}
+						if(pusList.size() > 2000){
+							projectUserLabelStatisticsService.saveBatch(pusList);
+							pusList = new ArrayList<>();
+							map = new HashMap<>();
+						}
 					}
 				}
 			}
 		}
-		
+
 		//剩下的统一保存
 		if(CollectionUtils.isNotEmpty(pusList)){
 			projectUserLabelStatisticsService.saveBatch(pusList);
