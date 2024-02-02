@@ -86,7 +86,13 @@ public class ProjectStatisticsServiceImpl implements ProjectStatisticsService {
         Map<Long, DoubleSummaryStatistics> maps = projectLabelOutList.stream().collect(Collectors.groupingBy(ProjectLabelOut::getCreateBy, Collectors.summarizingDouble(ProjectLabelOut::getMarkingNum)));
         List<ProjectLabelOut> projectImageNum=projectStatisticsMapper.labelImageNumber(projectLabelIn.getProjectId());
         //根据createBy求图像总数
-        Map<Long, DoubleSummaryStatistics> mapsImage = projectImageNum.stream().collect(Collectors.groupingBy(ProjectLabelOut::getCreateBy, Collectors.summarizingDouble(ProjectLabelOut::getLabelImageNum)));
+//        Map<Long, DoubleSummaryStatistics> mapsImage = projectImageNum.stream().collect(Collectors.groupingBy(ProjectLabelOut::getCreateBy, Collectors.summarizingDouble(ProjectLabelOut::getLabelImageNum)));
+        
+        //统计当前项目下每个人的标注数量
+        List<ProjectLabelOut> imageCountList = projectStatisticsMapper.getLabelImageNumber(projectLabelIn.getProjectId());
+       //根据createBy求图像总数
+        Map<Long,Integer> mapsImage = imageCountList.stream().collect(Collectors.toMap(ProjectLabelOut::getCreateBy,ProjectLabelOut::getLabelImageNum));
+
         //根据createBy和categoryId组成的num生成map
         Map<String,ProjectLabelOut> projectLabelOutMap=projectImageNum.stream().collect(Collectors.toMap(ProjectLabelOut::getNum,Function.identity()));
         for (ProjectLabelOut projectLabelOut:projectLabelOutList){
@@ -95,7 +101,7 @@ public class ProjectStatisticsServiceImpl implements ProjectStatisticsService {
             //标注总数
             projectLabelOut.setMarkingTotal((int)maps.get(projectLabelOut.getCreateBy()).getSum());
             //标注图象总数
-            projectLabelOut.setImageNum((int)mapsImage.get(projectLabelOut.getCreateBy()).getSum());
+            projectLabelOut.setImageNum((int)mapsImage.get(projectLabelOut.getCreateBy()));
         }
         //根据标注总数排序
         List<ProjectLabelOut> labelOuts=projectLabelOutList.stream().sorted(Comparator.comparing(ProjectLabelOut::getMarkingTotal).reversed()).collect(Collectors.toList());
@@ -376,7 +382,14 @@ public class ProjectStatisticsServiceImpl implements ProjectStatisticsService {
         Map<Long, DoubleSummaryStatistics> maps = projectLabelOutList.stream().collect(Collectors.groupingBy(ProjectLabelOut::getCreateBy, Collectors.summarizingDouble(ProjectLabelOut::getMarkingNum)));
         List<ProjectLabelOut> projectImageNum=projectStatisticsMapper.labelImageNumber(projectLabelIn.getProjectId());
         //根据createBy求图像总数
-        Map<Long, DoubleSummaryStatistics> mapsImage = projectImageNum.stream().collect(Collectors.groupingBy(ProjectLabelOut::getCreateBy, Collectors.summarizingDouble(ProjectLabelOut::getLabelImageNum)));
+//        Map<Long, DoubleSummaryStatistics> mapsImage = projectImageNum.stream().collect(Collectors.groupingBy(ProjectLabelOut::getCreateBy, Collectors.summarizingDouble(ProjectLabelOut::getLabelImageNum)));
+        
+      //统计当前项目下每个人的标注数量
+        List<ProjectLabelOut> imageCountList = projectStatisticsMapper.getLabelImageNumber(projectLabelIn.getProjectId());
+       //根据createBy求图像总数
+        Map<Long,Integer> mapsImage = imageCountList.stream().collect(Collectors.toMap(ProjectLabelOut::getCreateBy,ProjectLabelOut::getLabelImageNum));
+
+        
         //根据createBy和categoryId组成的num生成map
         Map<String,ProjectLabelOut> projectLabelOutMap=projectImageNum.stream().collect(Collectors.toMap(ProjectLabelOut::getNum,Function.identity()));
         for (ProjectLabelOut projectLabelOut:projectLabelOutList){
@@ -385,7 +398,7 @@ public class ProjectStatisticsServiceImpl implements ProjectStatisticsService {
             //标注总数
             projectLabelOut.setMarkingTotal((int)maps.get(projectLabelOut.getCreateBy()).getSum());
             //标注图象总数
-            projectLabelOut.setImageNum((int)mapsImage.get(projectLabelOut.getCreateBy()).getSum());
+            projectLabelOut.setImageNum((int)mapsImage.get(projectLabelOut.getCreateBy()));
         }
         //根据标注总数排序
         List<ProjectLabelOut> labelOuts=projectLabelOutList.stream().sorted(Comparator.comparing(ProjectLabelOut::getMarkingTotal).reversed()).collect(Collectors.toList());
