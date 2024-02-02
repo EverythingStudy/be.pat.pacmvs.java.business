@@ -180,7 +180,7 @@
     <select id="getLabelImageNumber" parameterType="java.lang.Long" resultMap="projectLabelResult">
         SELECT
 			m.create_by,
-			count( DISTINCT ( m.image_id ) ) as label_image_num 
+			count(DISTINCT( m.slide_id )) as label_image_num 
 		FROM
 			tb_marking m 
 		WHERE
