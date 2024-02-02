@@ -40,4 +40,9 @@ public interface ProjectStatisticsMapper {
      * 多标签统计当前标签标注图像数量
      * */
     List<ProjectLabelOut>labelImageNumber(Long projectId);
+    
+    /**
+    * 多标签统计当前项目下每个人的标注图像数量
+    * */
+   List<ProjectLabelOut> getLabelImageNumber(Long projectId);
 }

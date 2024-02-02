@@ -175,6 +175,19 @@
         where project_id = #{projectId}
         group by create_by, category_id
     </select>
+    
+    <!--多标签统计当前项目下每个人的标注图像数量-->
+    <select id="getLabelImageNumber" parameterType="java.lang.Long" resultMap="projectLabelResult">
+        SELECT
+			m.create_by,
+			count( DISTINCT ( m.image_id ) ) as label_image_num 
+		FROM
+			tb_marking m 
+		WHERE
+			m.project_id = #{projectId} 
+		GROUP BY
+			m.create_by
+    </select>
 
 
 </mapper>
