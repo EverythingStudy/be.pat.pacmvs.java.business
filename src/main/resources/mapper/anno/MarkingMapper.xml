@@ -423,8 +423,92 @@
     </select>
     
     
+    
+    <sql id="selectLabelsetList">
+        SELECT annotation_id,
+        geometry,
+        JSON_OBJECT(
+        "annotation_type",
+        t.annotation_type,
+        "marking_id",
+        t.marking_id,
+        "area",
+        t.area,
+        "perimeter",
+        t.perimeter,
+        "description",
+        t.description,
+        "category_id",
+        t.category_id,
+        "measure_type",
+        t.measure_type,
+        "measure_relation",
+        t.measure_relation,
+        "measure_name",
+        t.measure_name,
+        "measure_number",
+        t.measure_number,
+        "radius",
+        t.radius,
+        "mean_distance",
+        t.mean_distance,
+        "max_distance",
+        t.max_distance,
+        "min_distance",
+        t.min_distance,
+        "inner_angle",
+        t.inner_angle,
+        "exterior_angle",
+        t.exterior_angle,
+        "create_by",
+        t.create_by,
+        "create_time",
+        DATE_FORMAT(t.create_time, '%Y-%m-%d %H:%i:%s'),
+        "location_type",
+        t.location_type,
+        "slide_id",
+        t.slide_id,
+        "center_point",
+        t.center_point,
+        "point_count",
+        t.point_count,
+        "annotation_owner",
+        t.annotation_owner,
+        "label_color",
+        c.rgb,
+        "label_code",
+        c.number,
+        "number",
+        t.number,
+        "label_name",
+        c.category_name,
+        "measure_full_name",
+        <!-- CONCAT_WS("_", CONCAT(t.measure_name, t.number), c.category_name), -->
+        c.category_name,
+        "image_id",
+        t.image_id,
+        "update_by",
+        t.update_by,
+        "annotation_update_owner",
+        t.annotation_update_owner,
+        "project_id",
+        t.project_id
+        -- ,
+        -- "image_url",
+        -- t.image_url
+        ) AS properties,
+		c.structure_id,
+		c2.`organization_id`,
+		c2.`name`,
+		c2.type 
+        FROM tb_marking AS t
+        LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
+        LEFT JOIN tb_structure AS c2 ON  c.structure_id = c2.structure_id
+    </sql>
+    
+    
     <select id="selectListBy2" parameterType="map" resultMap="featuresResult">
-        <include refid="selectListBy"/>
+        <include refid="selectLabelsetList"/>
         where t.slide_id = #{slideId}
         <if test="createBy != null and createBy != ''">
             and t.create_by = #{createBy}
@@ -433,7 +517,7 @@
         <if test="otherCreateBy != null and otherCreateBy != ''">
             and t.create_by != #{otherCreateBy}
         </if>
-        <if test="organizationId != null">
+        <!-- <if test="organizationId != null">
         	and t.category_id in (
 					SELECT
 					c2.category_id 
@@ -444,6 +528,10 @@
 					AND c2.del_flag = '0' 
 					AND c2.organization_id = #{organizationId} 		
 				)
+        </if> -->
+        <if test="organizationId != null">
+        	AND c2.type != 'RO' 
+			AND c2.organization_id =  #{organizationId} 	
         </if>
     </select>
 
