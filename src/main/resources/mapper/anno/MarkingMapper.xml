@@ -777,13 +777,35 @@
     </select>
 
     <!--ROI查询-->
-    <select id="roiMarking" parameterType="java.lang.Integer" resultMap="markingResult">
-        select marking_id,geometry,create_by,category_id from tb_marking where slide_id=#{slideId}
+    <select id="roiMarking" parameterType="cn.staitech.anno.vo.geojson.in.RoiIn" resultMap="markingResult">
+        select marking_id,geometry,create_by,category_id from tb_marking
+        <where>
+            <if test="categoryIds != null and categoryIds.size()>0 ">
+                AND category_id in
+                <foreach collection="categoryIds" item="categoryId" open="(" separator="," close=")">
+                    #{categoryId}
+                </foreach>
+            </if>
+            <if test="createBy != null">
+                AND create_by = #{createBy}
+            </if>
+            <if test="slideId != null">
+                AND slide_id = #{slideId}
+            </if>
+        </where>
     </select>
 
     <!--ROI对measure查询-->
-    <select id="roiMeasure" parameterType="java.lang.Long" resultMap="BaseResultMap">
-        select mark_measure_id,geometry,create_by,category_id from tb_mark_measure where slide_id=#{slideId}
+    <select id="roiMeasure" parameterType="cn.staitech.anno.vo.geojson.in.RoiIn" resultMap="BaseResultMap">
+        select mark_measure_id,geometry,create_by,category_id from tb_mark_measure
+        <where>
+            <if test="createBy != null">
+                AND create_by = #{createBy}
+            </if>
+            <if test="slideId != null">
+                AND slide_id = #{slideId}
+            </if>
+        </where>
     </select>
 
     <!--measure批量删除-->

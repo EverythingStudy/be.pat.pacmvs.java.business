@@ -1263,11 +1263,12 @@ public class MarkingServiceImpl implements MarkingService {
     @Override
     public R<String> roiContDel(RoiIn viewAddIns) throws Exception {
         Long slideId = viewAddIns.getSlideId();
+        viewAddIns.setCreateBy(SecurityUtils.getUserId());
         //查询slideId的所有标注
-        List<Marking> features = markingMapper.roiMarking(slideId.intValue());
+        List<Marking> features = markingMapper.roiMarking(viewAddIns);
         List<String> markingIds;
         //查询measure的标注信息
-        List<MarkMeasure> markMeasures = markingMapper.roiMeasure(slideId);
+        List<MarkMeasure> markMeasures = markingMapper.roiMeasure(viewAddIns);
         List<String> markingMeasureIds;
         //roi包含
         if (viewAddIns.getRoiStatus() == 0) {
