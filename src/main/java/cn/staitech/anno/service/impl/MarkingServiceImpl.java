@@ -199,7 +199,7 @@ public class MarkingServiceImpl implements MarkingService {
             Map<String, Object> map = new HashMap<String, Object>(16);
             map.put("slideId", slideId);
             map.put("createBy", userId);
-            List<Features> selfAnnoList = markingMapper.selectListBy2(map);
+            List<Features> selfAnnoList = markingMapper.selectListMarking(map);
             if (CollectionUtils.isNotEmpty(selfAnnoList)) {
                 list.addAll(selfAnnoList);
             }
@@ -208,7 +208,7 @@ public class MarkingServiceImpl implements MarkingService {
             otherMap.put("slideId", slideId);
             otherMap.put("otherCreateBy", userId);
             otherMap.put("organizationId", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-            List<Features> otherAnnoList = markingMapper.selectListBy2(otherMap);
+            List<Features> otherAnnoList = markingMapper.selectListMarking(otherMap);
             if (CollectionUtils.isNotEmpty(otherAnnoList)) {
                 list.addAll(otherAnnoList);
             }
@@ -217,7 +217,7 @@ public class MarkingServiceImpl implements MarkingService {
             Map<String, Object> map = new HashMap<String, Object>(16);
             map.put("slideId", slideId);
             map.put("createBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
-            List<Features> selfAnnoList = markingMapper.selectListBy2(map);
+            List<Features> selfAnnoList = markingMapper.selectListMarking(map);
             if (CollectionUtils.isNotEmpty(selfAnnoList)) {
                 list.addAll(selfAnnoList);
             }

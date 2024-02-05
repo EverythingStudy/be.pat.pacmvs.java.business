@@ -507,7 +507,7 @@
     </sql>
     
     
-    <select id="selectListBy2" parameterType="map" resultMap="featuresResult">
+    <select id="selectListMarking" parameterType="map" resultMap="featuresResult">
         <include refid="selectLabelsetList"/>
         where t.slide_id = #{slideId}
         <if test="createBy != null and createBy != ''">
@@ -517,7 +517,7 @@
         <if test="otherCreateBy != null and otherCreateBy != ''">
             and t.create_by != #{otherCreateBy}
         </if>
-        <!-- <if test="organizationId != null">
+        <if test="organizationId != null">
         	and t.category_id in (
 					SELECT
 					c2.category_id 
@@ -528,7 +528,7 @@
 					AND c2.del_flag = '0' 
 					AND c2.organization_id = #{organizationId} 		
 				)
-        </if> -->
+        </if>
         <if test="organizationId != null">
         	AND c2.type != 'RO' 
 			AND c2.organization_id =  #{organizationId} 	
