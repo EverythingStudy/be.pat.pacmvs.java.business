@@ -500,7 +500,7 @@
 		c.structure_id,
 		c2.`organization_id`,
 		c2.`name`,
-		c2.type 
+		c2.type as structure_type
         FROM tb_marking AS t
         LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
         LEFT JOIN tb_structure AS c2 ON  c.structure_id = c2.structure_id
@@ -522,7 +522,7 @@
         	and c2.organization_id =  #{organizationId} 	
         </if>
         <if test="roaAndroeAnno != null and roaAndroeAnno.size() >0">  
-        	AND c2.type in  
+        	AND c2.structure_type in  
 			 <foreach collection="roaAndroeAnno" item="item" separator="," open="("  close=")">
 			      #{item}
 			 </foreach>			
