@@ -502,8 +502,8 @@
 		c2.`name`,
 		c2.type 
         FROM tb_marking AS t
-        LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
-        LEFT JOIN tb_structure AS c2 ON  c.structure_id = c2.structure_id
+        LEFT JOIN tb_pathological_indicator_category AS c1 ON t.category_id = c1.category_id
+        LEFT JOIN tb_structure AS c2 ON  c1.structure_id = c2.structure_id
     </sql>
     
     
@@ -512,27 +512,21 @@
         where t.slide_id = #{slideId}
         <if test="createBy != null and createBy != ''">
             and t.create_by = #{createBy}
-                
         </if>
         <if test="otherCreateBy != null and otherCreateBy != ''">
             and t.create_by != #{otherCreateBy}
         </if>
         <if test="organizationId != null">
-        	and t.category_id in (
-					SELECT
-					c2.category_id 
-				FROM
-					tb_pathological_indicator_category c2 
-				WHERE
-					c2.structure_id IN ( SELECT c1.structure_id FROM tb_structure c1 WHERE c1.organization_id =  #{organizationId} AND c1.type != 'RO' ) 
-					AND c2.del_flag = '0' 
-					AND c2.organization_id = #{organizationId} 		
-				)
+        	and t.organization_id =  #{organizationId} 	
+        	and c.organization_id =  #{organizationId} 	
+        	and c2.organization_id =  #{organizationId} 	
         </if>
-        <if test="organizationId != null">
-        	AND c2.type != 'RO' 
-			AND c2.organization_id =  #{organizationId} 	
-        </if>
+        <if test="roaAndroeAnno != null and roaAndroeAnno.size() >0">  
+        	AND c2.type in  
+			 <foreach collection="roaAndroeAnno" item="item" separator="," open="("  close=")">
+			      #{item.imageName}
+			 </foreach>			
+		</if>
     </select>
 
 
