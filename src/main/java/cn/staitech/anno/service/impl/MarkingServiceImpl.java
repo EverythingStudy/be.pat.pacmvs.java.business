@@ -194,7 +194,7 @@ public class MarkingServiceImpl implements MarkingService {
         String projectType = project.getProjectType();
         Long userId = SecurityUtils.getLoginUser().getSysUser().getUserId();
         List<Features> list = new ArrayList<Features>();
-        if ("3".equalsIgnoreCase(projectType)) {
+        if (Objects.equals(projectType, "3")) {	
             //只查询自己标注的数据
             Map<String, Object> map = new HashMap<String, Object>(16);
             map.put("slideId", slideId);
@@ -212,7 +212,7 @@ public class MarkingServiceImpl implements MarkingService {
             if (CollectionUtils.isNotEmpty(otherAnnoList)) {
                 list.addAll(otherAnnoList);
             }
-        } else if ("2".equalsIgnoreCase(projectType) && !project.getCreateBy().equals(userId)) {
+        } else if (Objects.equals(projectType, "2") && !project.getCreateBy().equals(userId)) {
             //智能评审非项目创建者只查询自己标注的数据
             Map<String, Object> map = new HashMap<String, Object>(16);
             map.put("slideId", slideId);
