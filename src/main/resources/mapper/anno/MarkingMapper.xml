@@ -522,7 +522,7 @@
         	and c2.organization_id =  #{organizationId} 	
         </if>
         <if test="roaAndroeAnno != null and roaAndroeAnno.size() >0">  
-        	AND c2.structure_type in  
+        	AND c2.type in  
 			 <foreach collection="roaAndroeAnno" item="item" separator="," open="("  close=")">
 			      #{item}
 			 </foreach>			
