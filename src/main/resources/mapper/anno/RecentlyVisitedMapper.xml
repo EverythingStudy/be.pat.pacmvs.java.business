@@ -57,6 +57,9 @@
         <if test="projectId != null">
             AND project_id = #{projectId}
         </if>
+        <if test="projectType != null">
+            AND project_type = #{projectType}
+        </if>
         order by create_time desc
     </select>
 
@@ -66,6 +69,9 @@
         where update_time is true
         <if test="userId != null">
             AND user_id = #{userId}
+        </if>
+        <if test="projectType != null">
+            AND project_type = #{projectType}
         </if>
         ORDER BY update_time desc
     </select>
@@ -91,6 +97,9 @@
         where update_time is not null
         <if test="userId != null">
             AND user_id = #{userId}
+        </if>
+        <if test="projectType != null">
+            AND project_type = #{projectType}
         </if>
     </select>
 

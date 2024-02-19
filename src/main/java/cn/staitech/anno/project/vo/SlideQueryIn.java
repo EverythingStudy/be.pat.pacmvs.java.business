@@ -1,5 +1,7 @@
 package cn.staitech.anno.project.vo;
 
+import java.util.List;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,8 +51,8 @@ public class SlideQueryIn {
     private Integer pageSize;
 
     @ApiModelProperty("项目ID")
-    private Long[] projectIds;
+    private List<Long> projectIds;
 
     @ApiModelProperty("参与人员ID")
-    private Long[] createBys;
+    private List<Long> createBys;
 }

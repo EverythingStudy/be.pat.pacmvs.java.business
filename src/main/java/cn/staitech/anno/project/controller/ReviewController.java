@@ -18,6 +18,7 @@ import cn.staitech.anno.vo.reviewround.ReviewRoundOutVO;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
+import cn.staitech.common.redis.service.RedisService;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.alibaba.fastjson.JSONObject;
@@ -28,6 +29,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,6 +65,9 @@ public class ReviewController {
     private SlideMapper slideMapper;
     @Resource
     private SlideService slideService;
+    
+    @Resource
+   	private RedisService redisService;
 
     @ApiOperation(value = "viewer新增评审")
     @PostMapping("/insertReview")
@@ -195,5 +201,20 @@ public class ReviewController {
             map = Container.SELF_REVIEW_STATUS;
         }
         return R.ok(map);
+    }
+    
+    @ApiOperation(value = "浏览器下载")
+    @GetMapping("/downloadData")
+    public R<DownTask> downloadData(@RequestParam("code") @ApiParam(name = "code", value = "下载任务编码", required = true) String code){
+    	log.info("浏览器下载："+code);
+    	DownTask downTask = downTaskService.getOne(Wrappers.query(DownTask.builder().code(code).build()));
+    	//任务状态：1、运行中，2、完成
+    		//获取zip地址
+    		String zipKey = "zipDown_"+code;
+    		String jsonZipPath = redisService.getCacheObject(zipKey);
+    		if(StringUtils.isNotEmpty(jsonZipPath)){
+    			downTask.setJsonZipPath(jsonZipPath);
+    		}
+    	return R.ok(downTask);
     }
 }

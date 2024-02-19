@@ -41,7 +41,7 @@ public class MarkingStatisticController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageNum", value = "当前记录起始索引", dataTypeClass = Integer.class, paramType = "query", example = "1"),
             @ApiImplicitParam(name = "pageSize", value = "每页显示记录数", dataTypeClass = Integer.class, paramType = "query", example = "10")})
-    @Log(title = "智能标注-标注统计-用户标签统计-列表页", menu = "智能标注", subMenu = "标注统计", businessType = BusinessType.QUERY)
+//    @Log(title = "智能标注-标注统计-用户标签统计-列表页", menu = "智能标注", subMenu = "标注统计", businessType = BusinessType.QUERY)
     @PostMapping("/list")
     public R<PageMaster<MarkingStatistic>> list(@Validated @RequestBody MarkingStatisticSelectVO selectVO) {
         return R.ok(markingStatisticService.selectMarkingStatistic(selectVO));
@@ -49,7 +49,7 @@ public class MarkingStatisticController {
 
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "智能标注-标注统计-用户标签统计-excel导出")
-    @Log(title = "智能标注-标注统计-用户标签统计-excel导出", menu = "智能标注", subMenu = "标注统计", businessType = BusinessType.EXPORT)
+//    @Log(title = "智能标注-标注统计-用户标签统计-excel导出", menu = "智能标注", subMenu = "标注统计", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(@Validated @RequestBody MarkingStatisticSelectVO selectVO, HttpServletResponse response) throws Exception {
         markingStatisticService.execlExport(selectVO, response);

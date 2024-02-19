@@ -16,6 +16,8 @@ public interface SlideService extends IService<Slide> {
 
     List<SlideAnnoStatisticsVO> getSlideAnnoStatistics(SlideQueryIn params) throws Exception;
 
+    List<ProjectStatisticsOut> projectUserStatistics(ProjectStatisticsIn params) throws Exception;
+
     void slideAnnoStatisticsExport(SlideQueryIn params) throws Exception;
 
     PageMaster<ReviewSlideVO> pageReviewSlide(Page page, ReviewSlideIn params);

@@ -22,11 +22,6 @@ public interface ProjectStatisticsMapper {
     List<LabelOut>label(Long projectId);
 
     /**
-     * 项目标签统计
-     * */
-    List<ProjectLabelOut>projectLabel(ProjectLabelIn projectLabelIn);
-
-    /**
      * 项目图像
      * */
     List<ProjectImageOut>projectImage(Long projectId);
@@ -35,4 +30,19 @@ public interface ProjectStatisticsMapper {
      * 单图标签统计
      * */
     List<ImageLabelOut>imageLabel(ImageLabelIn imageLabelIn);
+
+    /**
+     * 查询多标签统计标注数量
+     * */
+    List<ProjectLabelOut>labelsNumber(ProjectLabelIn projectLabelIn);
+
+    /**
+     * 多标签统计当前标签标注图像数量
+     * */
+    List<ProjectLabelOut>labelImageNumber(Long projectId);
+    
+    /**
+    * 多标签统计当前项目下每个人的标注图像数量
+    * */
+   List<ProjectLabelOut> getLabelImageNumber(Long projectId);
 }

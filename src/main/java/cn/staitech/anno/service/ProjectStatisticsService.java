@@ -25,9 +25,14 @@ public interface ProjectStatisticsService {
     List<LabelOut>label(Long projectId);
 
     /**
-     * 项目标签统计
+     * 多标签统计
      * */
     List<ProjectLabelOut>projectLabel(ProjectLabelIn projectLabelIn);
+
+    /**
+     * 多用户统计
+     * */
+    List<ProjectLabelOut>projectUser(ProjectLabelIn projectLabelIn);
 
 
     /**
@@ -45,6 +50,13 @@ public interface ProjectStatisticsService {
      * 单图标签统计导出
      * */
     void imageLabelExport(ImageLabelIn imageLabelIn,HttpServletResponse response)throws Exception;
+
+    /**
+     * 多标签统计导出
+     * */
+    void projectLabelExport(ProjectLabelIn projectLabelIn,HttpServletResponse response)throws Exception;
+
+    void projectUserExport(ProjectLabelIn projectLabelIn,HttpServletResponse response)throws Exception;
 
 
 }
