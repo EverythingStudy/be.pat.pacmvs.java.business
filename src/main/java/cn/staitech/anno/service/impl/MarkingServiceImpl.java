@@ -192,32 +192,42 @@ public class MarkingServiceImpl implements MarkingService {
         Project project = projectMapperV1.selectById(slideBy.getProjectId());
         //项目类型:1标注2评审3标准训练集
         String projectType = project.getProjectType();
+        Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
         Long userId = SecurityUtils.getLoginUser().getSysUser().getUserId();
         List<Features> list = new ArrayList<Features>();
-        if ("3".equalsIgnoreCase(projectType)) {
+        if (Objects.equals(projectType, "3")) {	
             //只查询自己标注的数据
             Map<String, Object> map = new HashMap<String, Object>(16);
             map.put("slideId", slideId);
             map.put("createBy", userId);
-            List<Features> selfAnnoList = markingMapper.selectListBy2(map);
+            map.put("organizationId", organizationId);
+            List<Features> selfAnnoList = markingMapper.selectListMarking(map);
             if (CollectionUtils.isNotEmpty(selfAnnoList)) {
                 list.addAll(selfAnnoList);
             }
             //其它人ROA+ROE
+            //标注类型 roa+roe
+            List<String> structureList = new ArrayList<String>();
+            structureList.add(CommonConstant.STRUCTURE_ROA);
+            structureList.add(CommonConstant.STRUCTURE_ROE);
+            
             Map<String, Object> otherMap = new HashMap<String, Object>(16);
             otherMap.put("slideId", slideId);
             otherMap.put("otherCreateBy", userId);
-            otherMap.put("organizationId", SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-            List<Features> otherAnnoList = markingMapper.selectListBy2(otherMap);
+            otherMap.put("organizationId", organizationId);
+            otherMap.put("roaAndroeAnno",structureList);
+            
+            List<Features> otherAnnoList = markingMapper.selectListMarking(otherMap);
             if (CollectionUtils.isNotEmpty(otherAnnoList)) {
                 list.addAll(otherAnnoList);
             }
-        } else if ("2".equalsIgnoreCase(projectType) && !project.getCreateBy().equals(userId)) {
+        } else if (Objects.equals(projectType, "2") && !project.getCreateBy().equals(userId)) {
             //智能评审非项目创建者只查询自己标注的数据
             Map<String, Object> map = new HashMap<String, Object>(16);
             map.put("slideId", slideId);
             map.put("createBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
-            List<Features> selfAnnoList = markingMapper.selectListBy2(map);
+            map.put("organizationId", organizationId);
+            List<Features> selfAnnoList = markingMapper.selectListMarking(map);
             if (CollectionUtils.isNotEmpty(selfAnnoList)) {
                 list.addAll(selfAnnoList);
             }
@@ -1263,27 +1273,28 @@ public class MarkingServiceImpl implements MarkingService {
     @Override
     public R<String> roiContDel(RoiIn viewAddIns) throws Exception {
         Long slideId = viewAddIns.getSlideId();
+        viewAddIns.setCreateBy(SecurityUtils.getUserId());
         //查询slideId的所有标注
-        List<Marking> features = markingMapper.roiMarking(slideId.intValue());
+        List<Marking> features = markingMapper.roiMarking(viewAddIns);
         List<String> markingIds;
         //查询measure的标注信息
-        List<MarkMeasure> markMeasures = markingMapper.roiMeasure(slideId);
+//        List<MarkMeasure> markMeasures = markingMapper.roiMeasure(viewAddIns);
         List<String> markingMeasureIds;
         //roi包含
         if (viewAddIns.getRoiStatus() == 0) {
             markingIds = roiCont(viewAddIns, features);
-            markingMeasureIds = roiMeasureCont(viewAddIns, markMeasures);
+//            markingMeasureIds = roiMeasureCont(viewAddIns, markMeasures);
         } else {
             markingIds = roiDel(viewAddIns, features);
-            markingMeasureIds = roiMeasureDel(viewAddIns, markMeasures);
+//            markingMeasureIds = roiMeasureDel(viewAddIns, markMeasures);
         }
-        if (markingIds.isEmpty() && markingMeasureIds.isEmpty()) {
+        if (markingIds.isEmpty()) {
             return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
         }
         //标注信息
         Map<String, Marking> markingMap = features.stream().collect(Collectors.toMap(Marking::getMarking_id, Function.identity()));
         //测量信息
-        Map<String, MarkMeasure> markMeasureMap = markMeasures.stream().collect(Collectors.toMap(MarkMeasure::getMark_measure_id, Function.identity()));
+//        Map<String, MarkMeasure> markMeasureMap = markMeasures.stream().collect(Collectors.toMap(MarkMeasure::getMark_measure_id, Function.identity()));
         //异步删除
         CompletableFuture<Integer> cf1 = CompletableFuture.supplyAsync(() -> {
             Set<Long> categoryIds = new HashSet<>();
@@ -1301,18 +1312,18 @@ public class MarkingServiceImpl implements MarkingService {
                     createBys.add(markingMap.get(markingId).getCreate_by());
                 }
             }
-            if (CollectionUtils.isNotEmpty(markingMeasureIds)) {
-                //删除测量
-                markingMapper.delMeasure(markingMeasureIds);
-                //测量的createBy
-                for (String markMeasureId : markingMeasureIds) {
-                    createBys.add(markMeasureMap.get(markMeasureId).getCreate_by());
-                }
-            }
+//            if (CollectionUtils.isNotEmpty(markingMeasureIds)) {
+//                //删除测量
+//                markingMapper.delMeasure(markingMeasureIds);
+//                //测量的createBy
+//                for (String markMeasureId : markingMeasureIds) {
+//                    createBys.add(markMeasureMap.get(markMeasureId).getCreate_by());
+//                }
+//            }
             BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, RELOAD_STATUS, null, null);
-            BroadcastVO measureBroadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_MEASURE, RELOAD_STATUS, null, null);
+//            BroadcastVO measureBroadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_MEASURE, RELOAD_STATUS, null, null);
             NioWebSocketHandler.sendAll(slideId, broadcastVO);
-            NioWebSocketHandler.sendAll(slideId, measureBroadcastVO);
+//            NioWebSocketHandler.sendAll(slideId, measureBroadcastVO);
             updateSLide(slideId);
             try {
                 slideAttrService.removeAnnoUsers(slideId, new ArrayList<>(createBys));
