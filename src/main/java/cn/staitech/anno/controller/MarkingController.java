@@ -5,11 +5,11 @@ import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.geojson.Features;
-import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
 import cn.staitech.anno.vo.geojson.in.RoiIn;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
-import cn.staitech.anno.vo.geojson.in.*;
+import cn.staitech.anno.vo.geojson.in.ViewAddInList;
+import cn.staitech.anno.vo.geojson.out.BatchResult;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.slide.SlideSelectBy;
 import cn.staitech.common.core.domain.PageResponse;
@@ -34,7 +34,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
-
 
 /**
  * @author gjt
@@ -123,7 +122,7 @@ public class MarkingController {
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "更新标注")
     @PutMapping("/intelligentAnno/update")
-    public R<String> update(@Validated @RequestBody MarkingUpdateIn req) throws Exception {
+    public R<String> update(@Validated @RequestBody ViewAddIn req) throws Exception {
         markingService.update(req);
         return R.ok(req.getMarking_id(), MessageSource.M("OPERATE_SUCCEED"));
     }
@@ -134,9 +133,9 @@ public class MarkingController {
     @PostMapping("/intelligentAnno/padding")
     public R<String> padding(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) String marking_id) throws Exception {
         int res = markingService.padding(marking_id);
-        if(res > 0){
+        if (res > 0) {
             return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
-        } else{
+        } else {
             return R.fail(null, MessageSource.M("OPERATE_ERROR"));
         }
     }
@@ -147,9 +146,9 @@ public class MarkingController {
     @PostMapping("/intelligentAnno/stickup")
     public R<String> stickup(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) String marking_id) {
         int res = markingService.stickup(marking_id);
-        if(res > 0){
+        if (res > 0) {
             return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
-        } else{
+        } else {
             return R.fail(null, MessageSource.M("OPERATE_ERROR"));
         }
     }
@@ -241,7 +240,6 @@ public class MarkingController {
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
-
     @ApiOperationSupport(author = "zmj")
     @ApiOperation(value = "添加ROI轮廓")
     @PostMapping("/intelligentAnno/insertROI")
@@ -255,7 +253,6 @@ public class MarkingController {
         return markingService.roiContDel(req);
     }
 
-
     /**
      * 轮廓合并
      *
@@ -267,21 +264,11 @@ public class MarkingController {
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "轮廓合并")
     @PostMapping("/intelligentAnno/batch")
-    public R<String> batch(@Validated @RequestBody MarkingUpdateInList list) throws Exception {
-
+    public R<BatchResult> batch(@Validated @RequestBody ViewAddInList list) {
         if (CollectionUtils.isEmpty(list.getList())) {
             return R.fail(MessageSource.M("ARGUMENT_INVALID"));
         }
-
-        for (MarkingUpdateIn updateIn : list.getList()) {
-            if (updateIn.getOperation().equals("UPDATE")) {
-                markingService.update(updateIn);
-            } else if (updateIn.getOperation().equals("DELETE")) {
-                markingService.delete(updateIn.getMarking_id());
-            }
-        }
-
-        return R.ok(MessageSource.M("OPERATE_SUCCEED"));
+        BatchResult result = markingService.batch(list.getList());
+        return R.ok(result, MessageSource.M("OPERATE_SUCCEED"));
     }
 }
-

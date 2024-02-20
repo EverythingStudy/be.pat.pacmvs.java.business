@@ -3,10 +3,10 @@ package cn.staitech.anno.service;
 import cn.staitech.anno.domain.Outline;
 import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.anno.vo.geojson.Features;
-import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
 import cn.staitech.anno.vo.geojson.in.RoiIn;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
+import cn.staitech.anno.vo.geojson.out.BatchResult;
 import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.PointCount;
@@ -89,7 +89,7 @@ public interface MarkingService {
      * @param marking 标注数据
      * @return true || false
      */
-    String update(MarkingUpdateIn marking) throws Exception;
+    String update(ViewAddIn marking) throws Exception;
 
     JSONObject updateOperation(UpdateOperationIn req) throws Exception;
 
@@ -176,4 +176,12 @@ public interface MarkingService {
      */
     R<String> roiContDel(RoiIn viewAddIns) throws Exception;
 
+
+    /**
+     * 批量处理
+     *
+     * @param list
+     * @return
+     */
+    BatchResult batch(List<ViewAddIn> list);
 }

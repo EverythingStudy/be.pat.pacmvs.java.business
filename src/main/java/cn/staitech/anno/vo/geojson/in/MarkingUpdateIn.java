@@ -13,6 +13,10 @@ public class MarkingUpdateIn {
     @ApiModelProperty(value = "标注id")
     private String marking_id;
 
+    @NotNull(message = "{MarkingDelIn.slideId.notNull}")
+    @ApiModelProperty(value = "切片id")
+    private Long slide_id;
+
     @ApiModelProperty(value = "标注作者(绘制者)")
     private Long update_by;
 
@@ -67,7 +71,7 @@ public class MarkingUpdateIn {
     @ApiModelProperty(value = "中心")
     private String center_point;
 
-    @ApiModelProperty(value = "要执行的操作(UNION:相交,DIFFERENCE:相差,UPDATE:修改,DELETE:删除,null)")
+    @ApiModelProperty(value = "要执行的操作(UNION:相交,DIFFERENCE:相差,UPDATE:修改,DELETE:删除,添加:INSERT,null)")
     private String operation;
 
 }

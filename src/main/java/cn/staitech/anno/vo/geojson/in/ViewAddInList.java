@@ -10,6 +10,6 @@ import java.util.List;
  * @author wangfeng
  */
 @Data
-public class MarkingUpdateInList {
-    private List<MarkingUpdateIn> list;
+public class ViewAddInList {
+    private List<ViewAddIn> list;
 }

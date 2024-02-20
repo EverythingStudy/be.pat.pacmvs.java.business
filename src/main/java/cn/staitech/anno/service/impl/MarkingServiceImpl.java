@@ -27,10 +27,11 @@ import cn.staitech.anno.utils.*;
 import cn.staitech.anno.vo.annotation.BroadcastVO;
 import cn.staitech.anno.vo.geojson.Properties;
 import cn.staitech.anno.vo.geojson.*;
-import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
 import cn.staitech.anno.vo.geojson.in.RoiIn;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
+import cn.staitech.anno.vo.geojson.out.BatchResult;
+import cn.staitech.anno.vo.geojson.out.Message;
 import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.PointCount;
@@ -97,17 +98,13 @@ public class MarkingServiceImpl implements MarkingService {
      */
     private static final WKTReader WKT_READER = new WKTReader(GEOMETRY_FACTORY);
     private static final int BATCH_SIZE = 5000;
-    
+
     private static final String pathUrl = "/home/pat_saas";
-	String zipFileUrl =  File.separator + "zipFile";
-
-	String jsonFileUrl ="/file/statics";
-
-	String fileUrl =  File.separator + "zipFile";
-
     private static final ExecutorService EXECUTOR = ExecutorBuilder.create().setCorePoolSize(Runtime.getRuntime().availableProcessors()).setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2).setKeepAliveTime(0).build();
     private static final ExecutorService ANN_EXECUTOR = ExecutorBuilder.create().setCorePoolSize(Runtime.getRuntime().availableProcessors()).setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2).setKeepAliveTime(0).setWorkQueue(new LinkedBlockingQueue<Runnable>(4096)).build();
-
+    String zipFileUrl = File.separator + "zipFile";
+    String jsonFileUrl = "/file/statics";
+    String fileUrl = File.separator + "zipFile";
     @Resource
     private SlideMapperV1 slideMapperV1;
     @Resource
@@ -136,6 +133,29 @@ public class MarkingServiceImpl implements MarkingService {
     private DownTaskService downTaskService;
     @Resource
     private RedisService redisService;
+
+    private static Boolean fileExists(String filePath) throws Exception {
+        File file = new File(filePath);
+        boolean exists = file.exists();
+        if (exists) {
+            //log.info("文件存在");
+        } else {
+            log.info("文件不存在,文件名称：" + filePath);
+        }
+        return exists;
+    }
+
+    private static Boolean createFolder(String folder) throws Exception {
+        File file = new File(folder);
+        if (!file.exists() && !file.isDirectory()) {
+            if (file.mkdir()) {
+                return true;
+            } else {
+                throw new Exception(MessageSource.M("FILE_DOWNLOAD_ERROR"));
+            }
+        }
+        return true;
+    }
 
     @Override
     public PageResponse<MarkingSelectListVO> selectList(Long slideId, Integer pageNum, Integer pageSize, String measureFullName) throws Exception {
@@ -195,7 +215,7 @@ public class MarkingServiceImpl implements MarkingService {
         Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
         Long userId = SecurityUtils.getLoginUser().getSysUser().getUserId();
         List<Features> list = new ArrayList<Features>();
-        if (Objects.equals(projectType, "3")) {	
+        if (Objects.equals(projectType, "3")) {
             //只查询自己标注的数据
             Map<String, Object> map = new HashMap<String, Object>(16);
             map.put("slideId", slideId);
@@ -210,13 +230,13 @@ public class MarkingServiceImpl implements MarkingService {
             List<String> structureList = new ArrayList<String>();
             structureList.add(CommonConstant.STRUCTURE_ROA);
             structureList.add(CommonConstant.STRUCTURE_ROE);
-            
+
             Map<String, Object> otherMap = new HashMap<String, Object>(16);
             otherMap.put("slideId", slideId);
             otherMap.put("otherCreateBy", userId);
             otherMap.put("organizationId", organizationId);
-            otherMap.put("roaAndroeAnno",structureList);
-            
+            otherMap.put("roaAndroeAnno", structureList);
+
             List<Features> otherAnnoList = markingMapper.selectListMarking(otherMap);
             if (CollectionUtils.isNotEmpty(otherAnnoList)) {
                 list.addAll(otherAnnoList);
@@ -311,7 +331,6 @@ public class MarkingServiceImpl implements MarkingService {
         return marking.getMarking_id();
     }
 
-
     /**
      * 添加标注 - 吸管
      *
@@ -363,7 +382,6 @@ public class MarkingServiceImpl implements MarkingService {
         BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, RELOAD_STATUS, null, null);
         NioWebSocketHandler.sendAll(slideId, broadcastVO);
     }
-
 
     /**
      * 首次校验：校验轮廓是否需要二次校验
@@ -423,7 +441,7 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String update(MarkingUpdateIn req) throws Exception {
+    public String update(ViewAddIn req) throws Exception {
         Marking markingBy = markingMapper.selectById(req.getMarking_id());
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
@@ -498,7 +516,6 @@ public class MarkingServiceImpl implements MarkingService {
         return markingBy.getMarking_id();
     }
 
-
     @Override
     public int updatePointCount(Marking marking) {
         return markingMapper.updatePointCount(marking);
@@ -532,7 +549,7 @@ public class MarkingServiceImpl implements MarkingService {
     }
 
     @Override
-    public int padding(String markingId) throws Exception{
+    public int padding(String markingId) throws Exception {
         Marking markingBy = markingMapper.selectById(markingId);
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
@@ -564,7 +581,6 @@ public class MarkingServiceImpl implements MarkingService {
         NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
         return res;
     }
-
 
     @Override
     public String slideJsonExport(Long slideId, SysUser sysUser) throws Exception {
@@ -1230,7 +1246,7 @@ public class MarkingServiceImpl implements MarkingService {
         return marking;
     }
 
-    private Marking updaeTrans2Marking(MarkingUpdateIn view) {
+    private Marking updaeTrans2Marking(ViewAddIn view) {
         Marking marking = new Marking();
         marking.setMarking_id(view.getMarking_id());
         if (null != view.getUpdate_by()) {
@@ -1428,6 +1444,129 @@ public class MarkingServiceImpl implements MarkingService {
         return new ArrayList<>(markingIdDel);
     }
 
+    public void ZipFiles(Project project, List<String> srcfiles, String downCode) {
+        String organizationFileName = pathUrl + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+        //生成二级目录 (以机构名称命名)
+        try {
+            createFolder(organizationFileName);
+            // 生成三级目录 (以机构下默认文件夹名称命名)
+            String dataFileName = organizationFileName + zipFileUrl;
+            createFolder(dataFileName);
+            // 生成四级目录 (以项目名称命名)
+            String projectFolderName = dataFileName + File.separator + project.getProjectId();
+            // 生成最终文件 (以项目名称命名)
+            createFolder(projectFolderName);
+            String zipPath = projectFolderName + File.separator + project.getProjectName() + "_" + System.currentTimeMillis() + ".zip";
+            log.info("压缩文件地址1：" + zipPath);
+            ZipGenerateUtils.ZipFiles(srcfiles, zipPath);
+            //redis存下载地址
+            zipPath = zipPath.replaceAll(pathUrl, jsonFileUrl);
+            log.info("压缩文件地址2：" + zipPath);
+            String zipPathNew = zipPath.replaceAll("/home/pat_saas", "/file/statics");
+            log.info("压缩文件地址3：" + zipPathNew);
+            //redis存下载地址
+            redisService.setCacheObject("zipDown_" + downCode, zipPathNew, 6L, TimeUnit.HOURS);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+
+        }
+    }
+
+    /**
+     * ROI包含选出要删除的markingId
+     */
+    public List<String> roiMeasureCont(RoiIn viewAddIns, List<MarkMeasure> features) throws ParseException {
+        //要删除的markingId集合
+        Set<String> markMeasureIdDel = new HashSet<>();
+        //包含的markingId集合
+        Set<String> markMeasureIdCont = new HashSet<>();
+        for (JSONObject viewAddIn : viewAddIns.getGeometryList()) {
+            String roiLocation = WktUtil.jsonToWkt(viewAddIn);
+            Geometry roiLocations = WKT_READER.read(roiLocation);
+            //roi包含
+            if (viewAddIns.getRoiStatus() == 0) {
+                for (MarkMeasure features1 : features) {
+                    String oldLocation = WktUtil.jsonToWkt(features1.getGeometry());
+                    Geometry oldLocations = WKT_READER.read(oldLocation);
+                    //判断是否不包含和不相交
+                    if (!roiLocations.contains(oldLocations) && !roiLocations.intersects(oldLocations)) {
+                        markMeasureIdDel.add(features1.getMark_measure_id());
+                    } else {
+                        //有相交的部分
+                        markMeasureIdCont.add(features1.getMark_measure_id());
+                    }
+                }
+            }
+        }
+        //选出要删除的markingId
+        List<String> listIds = markMeasureIdDel.stream().filter(item -> !markMeasureIdCont.contains(item)).collect(Collectors.toList());
+        return listIds;
+
+    }
+
+    /**
+     * ROI删除选出要删除的markingId
+     */
+    public List<String> roiMeasureDel(RoiIn viewAddIns, List<MarkMeasure> features) throws ParseException {
+        //要删除的markingId集合
+        Set<String> markMeasureIdDel = new HashSet<>();
+        //包含的markingId集合
+        for (JSONObject viewAddIn : viewAddIns.getGeometryList()) {
+            String roiLocation = WktUtil.jsonToWkt(viewAddIn);
+            Geometry roiLocations = WKT_READER.read(roiLocation);
+            //roi删除
+            if (viewAddIns.getRoiStatus() == 1) {
+                for (MarkMeasure features1 : features) {
+                    String oldLocation = WktUtil.jsonToWkt(features1.getGeometry());
+                    Geometry oldLocations = WKT_READER.read(oldLocation);
+                    //判断是否包含和相交
+                    if (roiLocations.contains(oldLocations) || roiLocations.intersects(oldLocations)) {
+                        markMeasureIdDel.add(features1.getMark_measure_id());
+                    }
+                }
+            }
+        }
+        return new ArrayList<>(markMeasureIdDel);
+    }
+
+    /**
+     * 批量处理
+     *
+     * @param list
+     * @return
+     */
+    public BatchResult batch(List<ViewAddIn> list) {
+        BatchResult result = new BatchResult();
+        for (ViewAddIn dto : list) {
+            try {
+                switch (dto.getOperation()) {
+                    case "INSERT":
+                        String markingIdIns = insert(dto);
+                        if (cn.staitech.common.core.utils.StringUtils.isNotEmpty(markingIdIns)) {
+                            result.getSuccess().add(new Message(markingIdIns, "true"));
+                        }
+                        break;
+                    case "DELETE":
+                        if (delete(dto.getMarking_id()) > 0) {
+                            result.getSuccess().add(new Message(dto.getMarking_id(), null));
+                            break;
+                        }
+                    case "UPDATE":
+                        String markingId = update(dto);
+                        if (cn.staitech.common.core.utils.StringUtils.isNotEmpty(markingId)) {
+                            result.getSuccess().add(new Message(markingId, "true"));
+                            break;
+                        }
+                    default:
+                }
+            } catch (Exception e) {
+                result.getFail().add(new Message(dto.getMarking_id(), e.getMessage()));
+                break;
+            }
+        }
+        return result;
+    }
 
     class TaskGenerateJson implements Runnable {
 
@@ -1490,9 +1629,9 @@ public class MarkingServiceImpl implements MarkingService {
                         });
                     }
                 }
-                
-              //待压缩路径列表
-				List<String> srcfiles = new ArrayList<>();
+
+                //待压缩路径列表
+                List<String> srcfiles = new ArrayList<>();
                 if (slideIds != null && !slideIds.isEmpty()) {
                     for (Long slideId : slideIds) {
                         QueryWrapper<Marking> markingQueryWrapper = new QueryWrapper<>();
@@ -1516,19 +1655,19 @@ public class MarkingServiceImpl implements MarkingService {
                             map.put(CommonConstant.IMAGE_URL, image.getImageUrl());
                             jsonObject.put(String.valueOf(slideId), map);
                             boolean checkkExist = fileExists(fileOldUrl);
-							if(checkkExist){
-								srcfiles.add(fileOldUrl);
-							}else{
-								log.info("当前json-url无法找到，路径是："+fileOldUrl);
-							}
+                            if (checkkExist) {
+                                srcfiles.add(fileOldUrl);
+                            } else {
+                                log.info("当前json-url无法找到，路径是：" + fileOldUrl);
+                            }
                         }
                     }
                 }
-                
-              //压缩处理
-				if(CollectionUtils.isNotEmpty(srcfiles)){
-					ZipFiles(project, srcfiles,downTask.getCode());
-				}
+
+                //压缩处理
+                if (CollectionUtils.isNotEmpty(srcfiles)) {
+                    ZipFiles(project, srcfiles, downTask.getCode());
+                }
                 downTask.setProjectName(projectName);
                 downTask.setPath(jsonObject);
                 downTask.setProjectId(projectId);
@@ -1539,58 +1678,6 @@ public class MarkingServiceImpl implements MarkingService {
             }
         }
     }
-    
-    public void ZipFiles(Project project,List<String> srcfiles,String downCode){
-		String organizationFileName = pathUrl + File.separator + OrganizationUtils.geNumber(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-		//生成二级目录 (以机构名称命名)
-		try {
-			createFolder(organizationFileName);
-			// 生成三级目录 (以机构下默认文件夹名称命名)
-			String dataFileName = organizationFileName + zipFileUrl;
-			createFolder(dataFileName);
-			// 生成四级目录 (以项目名称命名)
-			String projectFolderName = dataFileName + File.separator + project.getProjectId();
-			// 生成最终文件 (以项目名称命名)
-			createFolder(projectFolderName);
-			String zipPath = projectFolderName + File.separator + project.getProjectName()+"_"+System.currentTimeMillis()+".zip";
-			log.info("压缩文件地址1："+zipPath);
-			ZipGenerateUtils.ZipFiles(srcfiles, zipPath);
-			//redis存下载地址
-			zipPath = zipPath.replaceAll(pathUrl, jsonFileUrl);
-			log.info("压缩文件地址2："+zipPath);
-			String zipPathNew = zipPath.replaceAll("/home/pat_saas", "/file/statics");
-			log.info("压缩文件地址3："+zipPathNew);
-			//redis存下载地址
-			redisService.setCacheObject("zipDown_"+downCode, zipPathNew, 6L, TimeUnit.HOURS);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally {
-
-		}
-	}
-    
-    private static Boolean fileExists(String filePath) throws Exception {
-		File file = new File(filePath);
-		boolean exists = file.exists();
-		if (exists) {
-			//log.info("文件存在");
-		} else {
-			log.info("文件不存在,文件名称："+filePath);
-		}
-		return exists;
-	}
-    
-    private static Boolean createFolder(String folder) throws Exception {
-		File file = new File(folder);
-		if (!file.exists() && !file.isDirectory()) {
-			if (file.mkdir()) {
-				return true;
-			} else {
-				throw new Exception(MessageSource.M("FILE_DOWNLOAD_ERROR"));
-			}
-		}
-		return true;
-	}
 
     class AnnCountThread implements Runnable {
         // type 1:标注保存  2：标注修改
@@ -1614,63 +1701,5 @@ public class MarkingServiceImpl implements MarkingService {
             }
         }
     }
-
-    /**
-     * ROI包含选出要删除的markingId
-     */
-    public List<String> roiMeasureCont(RoiIn viewAddIns, List<MarkMeasure> features) throws ParseException {
-        //要删除的markingId集合
-        Set<String> markMeasureIdDel = new HashSet<>();
-        //包含的markingId集合
-        Set<String> markMeasureIdCont = new HashSet<>();
-        for (JSONObject viewAddIn : viewAddIns.getGeometryList()) {
-            String roiLocation = WktUtil.jsonToWkt(viewAddIn);
-            Geometry roiLocations = WKT_READER.read(roiLocation);
-            //roi包含
-            if (viewAddIns.getRoiStatus() == 0) {
-                for (MarkMeasure features1 : features) {
-                    String oldLocation = WktUtil.jsonToWkt(features1.getGeometry());
-                    Geometry oldLocations = WKT_READER.read(oldLocation);
-                    //判断是否不包含和不相交
-                    if (!roiLocations.contains(oldLocations) && !roiLocations.intersects(oldLocations)) {
-                        markMeasureIdDel.add(features1.getMark_measure_id());
-                    } else {
-                        //有相交的部分
-                        markMeasureIdCont.add(features1.getMark_measure_id());
-                    }
-                }
-            }
-        }
-        //选出要删除的markingId
-        List<String> listIds = markMeasureIdDel.stream().filter(item -> !markMeasureIdCont.contains(item)).collect(Collectors.toList());
-        return listIds;
-
-    }
-
-    /**
-     * ROI删除选出要删除的markingId
-     */
-    public List<String> roiMeasureDel(RoiIn viewAddIns, List<MarkMeasure> features) throws ParseException {
-        //要删除的markingId集合
-        Set<String> markMeasureIdDel = new HashSet<>();
-        //包含的markingId集合
-        for (JSONObject viewAddIn : viewAddIns.getGeometryList()) {
-            String roiLocation = WktUtil.jsonToWkt(viewAddIn);
-            Geometry roiLocations = WKT_READER.read(roiLocation);
-            //roi删除
-            if (viewAddIns.getRoiStatus() == 1) {
-                for (MarkMeasure features1 : features) {
-                    String oldLocation = WktUtil.jsonToWkt(features1.getGeometry());
-                    Geometry oldLocations = WKT_READER.read(oldLocation);
-                    //判断是否包含和相交
-                    if (roiLocations.contains(oldLocations) || roiLocations.intersects(oldLocations)) {
-                        markMeasureIdDel.add(features1.getMark_measure_id());
-                    }
-                }
-            }
-        }
-        return new ArrayList<>(markMeasureIdDel);
-    }
-
 
 }
