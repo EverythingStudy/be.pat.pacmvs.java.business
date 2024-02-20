@@ -3,8 +3,8 @@ package cn.staitech.anno.service;
 import cn.staitech.anno.domain.MarkingExamine;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
+import cn.staitech.anno.vo.geojson.out.BatchResult;
 import cn.staitech.anno.vo.marking.MarkingExamineInsertVO;
-import cn.staitech.anno.vo.marking.MarkingExamineUpdateVO;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -42,7 +42,7 @@ public interface MarkingExamineService extends IService<MarkingExamine> {
      * @param marking 标注数据
      * @return true || false
      */
-    Long update(MarkingExamineUpdateVO marking) throws Exception;
+    Long update(MarkingExamineInsertVO marking) throws Exception;
 
     /**
      * 合并、裁剪轮廓
@@ -60,4 +60,11 @@ public interface MarkingExamineService extends IService<MarkingExamine> {
      */
     int delete(Long markingExamineId) throws Exception;
 
+    /**
+     * 批量处理
+     *
+     * @param list
+     * @return
+     */
+    BatchResult batch(List<MarkingExamineInsertVO> list);
 }

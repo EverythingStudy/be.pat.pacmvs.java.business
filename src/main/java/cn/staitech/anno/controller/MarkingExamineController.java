@@ -4,13 +4,16 @@ import cn.staitech.anno.service.MarkingExamineService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
+import cn.staitech.anno.vo.geojson.out.BatchResult;
 import cn.staitech.anno.vo.marking.MarkingExamineInsertVO;
-import cn.staitech.anno.vo.marking.MarkingExamineUpdateVO;
+import cn.staitech.anno.vo.marking.MarkingExamineList;
 import cn.staitech.common.core.domain.R;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,7 +69,7 @@ public class MarkingExamineController {
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "更新标注")
     @PutMapping("/update")
-    public R<Long> update(@Validated @RequestBody MarkingExamineUpdateVO req) throws Exception {
+    public R<Long> update(@Validated @RequestBody MarkingExamineInsertVO req) throws Exception {
         markingExamineService.update(req);
         return R.ok(req.getMarking_id(), MessageSource.M("OPERATE_SUCCEED"));
     }
@@ -88,5 +91,22 @@ public class MarkingExamineController {
         double percentage = markingExamineService.operationCheck(req);
         return R.ok(percentage, MessageSource.M("OPERATE_SUCCEED"));
     }
-}
 
+    /**
+     * 批量操作
+     *
+     * @param list
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @ApiOperationSupport(author = "wangfeng")
+    @ApiOperation(value = "批量操作")
+    @PostMapping("/batch")
+    public R<BatchResult> batch(@Validated @RequestBody MarkingExamineList list) {
+        if (CollectionUtils.isEmpty(list.getList())) {
+            return R.fail(MessageSource.M("ARGUMENT_INVALID"));
+        }
+        BatchResult result = markingExamineService.batch(list.getList());
+        return R.ok(result, MessageSource.M("OPERATE_SUCCEED"));
+    }
+}

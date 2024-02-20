@@ -16,8 +16,9 @@ import cn.staitech.anno.vo.annotation.BroadcastVO;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.Properties;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
+import cn.staitech.anno.vo.geojson.out.BatchResult;
+import cn.staitech.anno.vo.geojson.out.Message;
 import cn.staitech.anno.vo.marking.MarkingExamineInsertVO;
-import cn.staitech.anno.vo.marking.MarkingExamineUpdateVO;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.alibaba.fastjson.JSONArray;
@@ -169,7 +170,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Long update(MarkingExamineUpdateVO req) throws Exception {
+    public Long update(MarkingExamineInsertVO req) throws Exception {
         // 查询标注表中信息
         MarkingExamine markingExamineBy = markingExamineMapper.selectById((req.getMarking_id()));
         if (!Optional.ofNullable(markingExamineBy).isPresent()) {
@@ -247,4 +248,41 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         return parse;
     }
 
+    /**
+     * 批量处理
+     *
+     * @param list
+     * @return
+     */
+    public BatchResult batch(List<MarkingExamineInsertVO> list) {
+        BatchResult result = new BatchResult();
+        for (MarkingExamineInsertVO dto : list) {
+            try {
+                switch (dto.getOperation()) {
+                    case "INSERT":
+                        Long markingIdIns = insert(dto);
+                        if (markingIdIns > 0) {
+                            result.getSuccess().add(new Message(markingIdIns.toString(), "true"));
+                        }
+                        break;
+                    case "DELETE":
+                        if (delete(dto.getMarking_id()) > 0) {
+                            result.getSuccess().add(new Message(dto.getMarking_id().toString(), null));
+                            break;
+                        }
+                    case "UPDATE":
+                        Long markingId = update(dto);
+                        if (markingId > 0) {
+                            result.getSuccess().add(new Message(markingId.toString(), "true"));
+                            break;
+                        }
+                    default:
+                }
+            } catch (Exception e) {
+                result.getFail().add(new Message(dto.getMarking_id().toString(), e.getMessage()));
+                break;
+            }
+        }
+        return result;
+    }
 }

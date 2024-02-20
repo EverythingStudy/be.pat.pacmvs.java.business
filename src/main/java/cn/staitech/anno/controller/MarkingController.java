@@ -254,15 +254,14 @@ public class MarkingController {
     }
 
     /**
-     * 轮廓合并
+     * 批量操作
      *
      * @param list
      * @return
-     * @throws Exception
      */
     @Transactional(rollbackFor = Exception.class)
     @ApiOperationSupport(author = "wangfeng")
-    @ApiOperation(value = "轮廓合并")
+    @ApiOperation(value = "批量操作")
     @PostMapping("/intelligentAnno/batch")
     public R<BatchResult> batch(@Validated @RequestBody ViewAddInList list) {
         if (CollectionUtils.isEmpty(list.getList())) {
