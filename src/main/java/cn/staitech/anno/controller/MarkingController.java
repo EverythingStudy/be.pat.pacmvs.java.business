@@ -230,9 +230,9 @@ public class MarkingController {
         }
 
         for (MarkingUpdateIn updateIn : list.getList()) {
-            if (updateIn.getOperation().equals("update")) {
+            if (updateIn.getOperation().equals("UPDATE")) {
                 markingService.update(updateIn);
-            } else if (updateIn.getOperation().equals("insert")) {
+            } else if (updateIn.getOperation().equals("DELETE")) {
                 markingService.delete(updateIn.getMarking_id());
             }
         }

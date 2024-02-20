@@ -67,7 +67,7 @@ public class MarkingUpdateIn {
     @ApiModelProperty(value = "中心")
     private String center_point;
 
-    @ApiModelProperty(value = "要执行的操作(UNION:相交,DIFFERENCE:相差,null)")
+    @ApiModelProperty(value = "要执行的操作(UNION:相交,DIFFERENCE:相差,UPDATE:修改,DELETE:删除,null)")
     private String operation;
 
 }
