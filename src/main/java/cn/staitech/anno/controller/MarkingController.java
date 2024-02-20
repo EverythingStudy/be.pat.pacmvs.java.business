@@ -5,10 +5,7 @@ import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.geojson.Features;
-import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
-import cn.staitech.anno.vo.geojson.in.RoiIn;
-import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
-import cn.staitech.anno.vo.geojson.in.ViewAddIn;
+import cn.staitech.anno.vo.geojson.in.*;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.slide.SlideSelectBy;
 import cn.staitech.common.core.domain.PageResponse;
@@ -21,6 +18,7 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -214,5 +212,32 @@ public class MarkingController {
     }
 
 
+    /**
+     * 轮廓合并
+     *
+     * @param list
+     * @return
+     * @throws Exception
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @ApiOperationSupport(author = "wangfeng")
+    @ApiOperation(value = "轮廓合并")
+    @PostMapping("/intelligentAnno/batch")
+    public R<String> batch(@Validated @RequestBody MarkingUpdateInList list) throws Exception {
+
+        if (CollectionUtils.isEmpty(list.getList())) {
+            return R.fail(MessageSource.M("ARGUMENT_INVALID"));
+        }
+
+        for (MarkingUpdateIn updateIn : list.getList()) {
+            if (updateIn.getOperation().equals("update")) {
+                markingService.update(updateIn);
+            } else if (updateIn.getOperation().equals("insert")) {
+                markingService.delete(updateIn.getMarking_id());
+            }
+        }
+
+        return R.ok(MessageSource.M("OPERATE_SUCCEED"));
+    }
 }
 
