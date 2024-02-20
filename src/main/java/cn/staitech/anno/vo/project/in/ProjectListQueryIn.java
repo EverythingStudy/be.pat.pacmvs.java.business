@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,7 +46,7 @@ public class ProjectListQueryIn extends Pager implements Serializable {
     @ApiModelProperty(value = "病理组织ID")
     private Long tissueId;
     @ApiModelProperty(value = "项目类型ID")
-    private String projectType;
+    private List<String> projectType;
 
     @ApiModelProperty(value = "描述")
     private String description;

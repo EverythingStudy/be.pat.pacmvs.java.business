@@ -289,9 +289,6 @@
             <if test="tissueId != null">
                 AND p.tissue_id = #{tissueId}
             </if>
-            <if test="projectType != null">
-                AND p.project_type = #{projectType}
-            </if>
             <if test="userName != null">
                 AND u.user_name like concat('%', #{userName}, '%')
             </if>
@@ -303,6 +300,12 @@
             <if test="projectTypeArray != null and projectTypeArray.length > 0">
                 AND p.project_type in
                 <foreach collection="projectTypeArray" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="projectTypeList != null and projectTypeList.size > 0">
+                AND p.project_type in
+                <foreach collection="projectTypeList" item="item" separator="," open="(" close=")">
                     #{item}
                 </foreach>
             </if>

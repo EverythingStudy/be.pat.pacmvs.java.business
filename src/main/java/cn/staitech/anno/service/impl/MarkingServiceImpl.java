@@ -532,6 +532,41 @@ public class MarkingServiceImpl implements MarkingService {
     }
 
     @Override
+    public int padding(String markingId) throws Exception{
+        Marking markingBy = markingMapper.selectById(markingId);
+        if (!Optional.ofNullable(markingBy).isPresent()) {
+            throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
+        }
+        JSONObject geometry = MarkingUtils.padding(markingBy.getGeometry());
+        Marking marking = new Marking();
+        marking.setMarking_id(markingId);
+        marking.setGeometry(geometry);
+        // 重新计算面积和周长
+        marking.setUpdate_time(new Date());
+        marking.setUpdate_by(SecurityUtils.getUserId());
+        marking.setAnnotation_update_owner(SecurityUtils.getUsername());
+        int res = markingMapper.updateById(marking);
+        Properties properties = markingMapper.selectBy(markingId);
+        Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), markingBy.getGeometry(), properties);
+        BroadcastVO broadcastVO = SendMessage.sendOneMessagesByAnnoType(CommonConstant.ANNO_TYPE_DRAW, UPDATE_STATUS, features);
+        NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
+        return res;
+    }
+
+    @Override
+    public int stickup(String markingId) {
+        Marking markingBy = markingMapper.selectById(markingId);
+        markingBy.setCreate_time(new Date());
+        int res = markingMapper.insert(markingBy);
+        Properties properties = markingMapper.selectBy(markingBy.getMarking_id());
+        Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), markingBy.getGeometry(), properties);
+        BroadcastVO broadcastVO = SendMessage.sendOneMessagesByAnnoType(CommonConstant.ANNO_TYPE_DRAW, ADD_STATUS, features);
+        NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
+        return res;
+    }
+
+
+    @Override
     public String slideJsonExport(Long slideId, SysUser sysUser) throws Exception {
         if (!Optional.ofNullable(slideId).isPresent()) {
             try {

@@ -5,6 +5,10 @@ import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.geojson.Features;
+import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
+import cn.staitech.anno.vo.geojson.in.RoiIn;
+import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
+import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.geojson.in.*;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.slide.SlideSelectBy;
@@ -123,6 +127,46 @@ public class MarkingController {
         markingService.update(req);
         return R.ok(req.getMarking_id(), MessageSource.M("OPERATE_SUCCEED"));
     }
+
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "填充标注")
+    @ApiImplicitParams({@ApiImplicitParam(name = "markingId", value = "标注id", required = true, dataType = "Long", paramType = "query")})
+    @PostMapping("/intelligentAnno/padding")
+    public R<String> padding(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) String marking_id) throws Exception {
+        int res = markingService.padding(marking_id);
+        if(res > 0){
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+        } else{
+            return R.fail(null, MessageSource.M("OPERATE_ERROR"));
+        }
+    }
+
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "复制/粘贴标注")
+    @ApiImplicitParams({@ApiImplicitParam(name = "markingId", value = "标注id", required = true, dataType = "Long", paramType = "query")})
+    @PostMapping("/intelligentAnno/stickup")
+    public R<String> stickup(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) String marking_id) {
+        int res = markingService.stickup(marking_id);
+        if(res > 0){
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+        } else{
+            return R.fail(null, MessageSource.M("OPERATE_ERROR"));
+        }
+    }
+
+//    @ApiOperationSupport(author = "gjt")
+//    @ApiOperation(value = "复制/粘贴标注")
+//    @ApiImplicitParams({@ApiImplicitParam(name = "markingId", value = "标注id", required = true, dataType = "Long", paramType = "query")})
+//    @PostMapping("/intelligentAnno/markingMerge")
+//    public R<String> markingMerge(@Validated @RequestBody MarkingMerge req) {
+//        int res = markingService.markingMerge(req);
+//        if(res > 0){
+//            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+//        } else{
+//            return R.fail(null, MessageSource.M("OPERATE_ERROR"));
+//        }
+//    }
+
 
     /**
      * TODO:

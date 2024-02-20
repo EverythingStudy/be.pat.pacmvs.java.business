@@ -301,6 +301,30 @@ public class MarkingUtils {
         return geometryJson;
     }
 
+
+    /**
+     * 剔除不规则点：
+     *
+     * @param geometry
+     * @return
+     */
+    public static JSONObject padding(JSONObject geometry) throws Exception {
+        JSONObject geometryJson = new JSONObject();
+        try {
+            JSONArray coordinatesJsonArray1 = geometry.getJSONArray("coordinates");
+            String type = geometry.getString("type");
+            if (Objects.equals(type, "Polygon")) {
+                List<Object> list = new ArrayList<>();
+                list.add(coordinatesJsonArray1.get(0));
+                geometryJson.put("type", type);
+                geometryJson.put("coordinates", list);
+            }
+        } catch (Exception e) {
+            throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
+        }
+        return geometryJson;
+    }
+
     /**
      * 剔除不规则点：剔除数值明显过大或过小的值，暂定踢除x,y中绝对值大于50000的点
      * 例如点存在科学记数法 (47713.255571202826, -6.989704038477149E14, NaN)

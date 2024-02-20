@@ -121,7 +121,7 @@ public class ProjectController extends BaseController {
         PageHelper.startPage(req.getPageNum(), req.getPageSize()).setReasonable(true);
         Project project = new Project();
         BeanUtils.copyProperties(req, project);
-
+        project.setProjectTypeList(req.getProjectType());
         // 机构层级
         if (req.getOrganizationId() == null || req.getOrganizationId() < 1) {
             if (!SysUser.isAdmin(SecurityUtils.getUserId())) {

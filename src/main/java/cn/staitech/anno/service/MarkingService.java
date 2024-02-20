@@ -110,6 +110,22 @@ public interface MarkingService {
     int delete(String markingId) throws Exception;
 
     /**
+     * 填充标注
+     *
+     * @param markingId 标注id
+     * @return true || false
+     */
+    int padding(String markingId) throws Exception;
+
+    /**
+     * 填充标注
+     *
+     * @param markingId 标注id
+     * @return true || false
+     */
+    int stickup(String markingId);
+
+    /**
      * 导出json数据
      *
      * @param slideId
