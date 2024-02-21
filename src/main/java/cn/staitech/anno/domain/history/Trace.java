@@ -3,6 +3,7 @@ package cn.staitech.anno.domain.history;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,5 +33,6 @@ public class Trace {
     public Trace(Long userId, String traceId) {
         this.userId = userId;
         this.traceId = traceId;
+        this.markingIds = new ArrayList<>();
     }
 }

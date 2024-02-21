@@ -336,7 +336,7 @@ public class MarkingServiceImpl implements MarkingService {
         BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, ADD_STATUS, features, pointCountList);
         NioWebSocketHandler.sendAll(req.getSlide_id(), broadcastVO);
 
-        // TODO:后续在线程池中处理
+        // TODO:后续在线程池中处理 判断是批处理，还是单独处理
         // 撤消,恢复历史记录
         historyService.put(user.getUserId());
         Trace trace = new Trace(user.getUserId(), req.getTraceId());
