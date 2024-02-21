@@ -60,6 +60,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
+import com.vividsolutions.jts.operation.overlay.OverlayOp;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -609,18 +610,36 @@ public class MarkingServiceImpl implements MarkingService {
     @Override
     public JSONObject markingMerge(MarkingMerge req) throws ParseException {
         QueryWrapper<cn.staitech.anno.project.domain.Marking> markingQueryWrapper = new QueryWrapper<>();
-        markingQueryWrapper.in("marking_id", req.getMarkingIdList());
+        markingQueryWrapper.in("marking_id", req.getMarkingIdList()).orderByAsc("create_time");
         List<cn.staitech.anno.project.domain.Marking> markingList = markingMapperV1.selectList(markingQueryWrapper);
         List<Geometry> geometryList = new ArrayList<>();
-        for (cn.staitech.anno.project.domain.Marking marking : markingList) {
+        for(cn.staitech.anno.project.domain.Marking marking:markingList){
             Geometry geometry = WKT_READER.read(WktUtil.jsonToWkt(marking.getGeometry()));
             geometryList.add(geometry);
         }
-        Geometry[] array2 = geometryList.toArray(new Geometry[geometryList.size()]);
-        Geometry json = MarkingUtils.unionGeometrys(array2);
-        return new JSONObject();
-
-
+        if(geometryList.size() > 0){
+            if(geometryList.size() == 1){
+                return markingList.get(0).getGeometry();
+            }
+            Geometry geometry = null;
+            for(int i = 0;i < geometryList.size();i++){
+                if(i == 0){
+                    geometry = geometryList.get(i);
+                }
+                Geometry geometryIntersection = geometry.intersection(geometryList.get(i));
+                if (geometryIntersection.isEmpty()) {
+                    return null;
+                }else {
+                    OverlayOp op = new OverlayOp(geometry, geometryList.get(i));
+                    int code = OverlayOp.UNION;
+                    geometry = op.getResultGeometry(code);
+//                    geometry = geometry.union(geometryList.get(i));
+                }
+            }
+            return JSONObject.parseObject(WktUtil.wktToJson(String.valueOf(geometry)));
+        } else {
+            return null;
+        }
     }
 
 

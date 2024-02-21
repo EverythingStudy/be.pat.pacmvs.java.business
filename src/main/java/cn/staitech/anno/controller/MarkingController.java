@@ -158,17 +158,11 @@ public class MarkingController {
     }
 
     @ApiOperationSupport(author = "gjt")
-    @ApiOperation(value = "复制/粘贴标注")
-    @ApiImplicitParams({@ApiImplicitParam(name = "markingId", value = "标注id", required = true, dataType = "Long", paramType = "query")})
+    @ApiOperation(value = "合并轮廓预览")
     @PostMapping("/intelligentAnno/markingMerge")
-    public R<String> markingMerge(@Validated @RequestBody MarkingMerge req) throws ParseException {
+    public R<JSONObject> markingMerge(@Validated @RequestBody MarkingMerge req) throws ParseException {
         JSONObject res = markingService.markingMerge(req);
-//        if(res > 0){
-//            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
-//        } else{
-//            return R.fail(null, MessageSource.M("OPERATE_ERROR"));
-//        }
-        return R.ok("ok");
+        return R.ok(res);
     }
 
 
