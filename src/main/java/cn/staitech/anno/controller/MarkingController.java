@@ -10,6 +10,7 @@ import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddInList;
 import cn.staitech.anno.vo.geojson.out.BatchResult;
+import cn.staitech.anno.vo.marking.MarkingMerge;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.slide.SlideSelectBy;
 import cn.staitech.common.core.domain.PageResponse;
@@ -19,6 +20,7 @@ import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import com.vividsolutions.jts.io.ParseException;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -128,8 +130,8 @@ public class MarkingController {
     }
 
     @ApiOperationSupport(author = "gjt")
-    @ApiOperation(value = "填充标注")
-    @ApiImplicitParams({@ApiImplicitParam(name = "markingId", value = "标注id", required = true, dataType = "Long", paramType = "query")})
+    @ApiOperation(value = "填充轮廓")
+    @ApiImplicitParams({@ApiImplicitParam(name = "marking_id", value = "标注id", required = true, dataType = "Long", paramType = "query")})
     @PostMapping("/intelligentAnno/padding")
     public R<String> padding(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) String marking_id) throws Exception {
         int res = markingService.padding(marking_id);
@@ -141,8 +143,8 @@ public class MarkingController {
     }
 
     @ApiOperationSupport(author = "gjt")
-    @ApiOperation(value = "复制/粘贴标注")
-    @ApiImplicitParams({@ApiImplicitParam(name = "markingId", value = "标注id", required = true, dataType = "Long", paramType = "query")})
+    @ApiOperation(value = "复制/粘贴轮廓")
+    @ApiImplicitParams({@ApiImplicitParam(name = "marking_id", value = "标注id", required = true, dataType = "Long", paramType = "query")})
     @PostMapping("/intelligentAnno/stickup")
     public R<String> stickup(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) String marking_id) {
         int res = markingService.stickup(marking_id);
@@ -153,18 +155,19 @@ public class MarkingController {
         }
     }
 
-//    @ApiOperationSupport(author = "gjt")
-//    @ApiOperation(value = "复制/粘贴标注")
-//    @ApiImplicitParams({@ApiImplicitParam(name = "markingId", value = "标注id", required = true, dataType = "Long", paramType = "query")})
-//    @PostMapping("/intelligentAnno/markingMerge")
-//    public R<String> markingMerge(@Validated @RequestBody MarkingMerge req) {
-//        int res = markingService.markingMerge(req);
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "复制/粘贴标注")
+    @ApiImplicitParams({@ApiImplicitParam(name = "markingId", value = "标注id", required = true, dataType = "Long", paramType = "query")})
+    @PostMapping("/intelligentAnno/markingMerge")
+    public R<String> markingMerge(@Validated @RequestBody MarkingMerge req) throws ParseException {
+        JSONObject res = markingService.markingMerge(req);
 //        if(res > 0){
 //            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
 //        } else{
 //            return R.fail(null, MessageSource.M("OPERATE_ERROR"));
 //        }
-//    }
+        return R.ok("ok");
+    }
 
 
     /**

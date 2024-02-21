@@ -33,6 +33,7 @@ import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.geojson.out.BatchResult;
 import cn.staitech.anno.vo.geojson.out.Message;
 import cn.staitech.anno.vo.marking.Marking;
+import cn.staitech.anno.vo.marking.MarkingMerge;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.PointCount;
 import cn.staitech.anno.vo.slide.SlideRes;
@@ -581,6 +582,27 @@ public class MarkingServiceImpl implements MarkingService {
         NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
         return res;
     }
+
+    @Override
+    public JSONObject markingMerge(MarkingMerge req) throws ParseException {
+        QueryWrapper<cn.staitech.anno.project.domain.Marking> markingQueryWrapper = new QueryWrapper<>();
+        markingQueryWrapper.in("marking_id", req.getMarkingIdList());
+        List<cn.staitech.anno.project.domain.Marking> markingList = markingMapperV1.selectList(markingQueryWrapper);
+        List<Geometry> geometryList = new ArrayList<>();
+        for(cn.staitech.anno.project.domain.Marking marking:markingList){
+            Geometry geometry = WKT_READER.read(WktUtil.jsonToWkt(marking.getGeometry()));
+            geometryList.add(geometry);
+        }
+        Geometry[] array2 = geometryList.toArray(new Geometry[geometryList.size()]);
+        Geometry json = MarkingUtils.unionGeometrys(array2);
+        return new JSONObject();
+
+
+
+
+    }
+
+
 
     @Override
     public String slideJsonExport(Long slideId, SysUser sysUser) throws Exception {

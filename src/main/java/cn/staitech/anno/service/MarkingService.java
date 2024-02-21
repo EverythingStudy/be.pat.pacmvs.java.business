@@ -8,12 +8,14 @@ import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.geojson.out.BatchResult;
 import cn.staitech.anno.vo.marking.Marking;
+import cn.staitech.anno.vo.marking.MarkingMerge;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.PointCount;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.system.api.domain.SysUser;
 import com.alibaba.fastjson.JSONObject;
+import com.vividsolutions.jts.io.ParseException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -124,6 +126,14 @@ public interface MarkingService {
      * @return true || false
      */
     int stickup(String markingId);
+
+    /**
+     * 多个轮廓合并
+     *
+     * @param markingId 标注id
+     * @return true || false
+     */
+    JSONObject markingMerge(MarkingMerge req) throws ParseException;
 
     /**
      * 导出json数据
