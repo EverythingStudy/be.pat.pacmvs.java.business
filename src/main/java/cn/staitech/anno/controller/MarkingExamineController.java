@@ -102,11 +102,11 @@ public class MarkingExamineController {
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "批量操作")
     @PostMapping("/batch")
-    public R<BatchResult> batch(@Validated @RequestBody MarkingExamineList list) {
+    public R<List<BatchResult>> batch(@Validated @RequestBody MarkingExamineList list) {
         if (CollectionUtils.isEmpty(list.getList())) {
             return R.fail(MessageSource.M("ARGUMENT_INVALID"));
         }
-        BatchResult result = markingExamineService.batch(list.getList());
+        List<BatchResult> result = markingExamineService.batch(list.getList());
         return R.ok(result, MessageSource.M("OPERATE_SUCCEED"));
     }
 }

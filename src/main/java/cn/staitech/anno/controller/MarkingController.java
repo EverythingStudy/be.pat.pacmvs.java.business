@@ -262,11 +262,11 @@ public class MarkingController {
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "批量操作")
     @PostMapping("/intelligentAnno/batch")
-    public R<BatchResult> batch(@Validated @RequestBody ViewAddInList list) {
+    public R<List<BatchResult>> batch(@Validated @RequestBody ViewAddInList list) {
         if (CollectionUtils.isEmpty(list.getList())) {
             return R.fail(MessageSource.M("ARGUMENT_INVALID"));
         }
-        BatchResult result = markingService.batch(list.getList());
+        List<BatchResult> result = markingService.batch(list.getList());
         return R.ok(result, MessageSource.M("OPERATE_SUCCEED"));
     }
 }

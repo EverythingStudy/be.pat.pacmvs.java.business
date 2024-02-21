@@ -5,6 +5,7 @@ import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.out.BatchResult;
 import cn.staitech.anno.vo.marking.MarkingExamineInsertVO;
+import cn.staitech.common.core.domain.R;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -66,5 +67,5 @@ public interface MarkingExamineService extends IService<MarkingExamine> {
      * @param list
      * @return
      */
-    BatchResult batch(List<MarkingExamineInsertVO> list);
+    List<BatchResult> batch(List<MarkingExamineInsertVO> list);
 }

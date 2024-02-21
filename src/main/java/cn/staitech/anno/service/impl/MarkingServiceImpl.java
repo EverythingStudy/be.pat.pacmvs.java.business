@@ -34,7 +34,6 @@ import cn.staitech.anno.vo.geojson.in.RoiIn;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.geojson.out.BatchResult;
-import cn.staitech.anno.vo.geojson.out.Message;
 import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingMerge;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
@@ -1605,34 +1604,42 @@ public class MarkingServiceImpl implements MarkingService {
      * @param list
      * @return
      */
-    public BatchResult batch(List<ViewAddIn> list) {
-        BatchResult result = new BatchResult();
+    public List<BatchResult> batch(List<ViewAddIn> list) {
+        List<BatchResult> result = new ArrayList<>(list.size());
         for (ViewAddIn dto : list) {
+            BatchResult batchResult = new BatchResult();
+            batchResult.setFront_id(dto.getFront_id());
+
             try {
                 switch (dto.getOperation()) {
                     case "INSERT":
                         String markingIdIns = insert(dto);
                         if (cn.staitech.common.core.utils.StringUtils.isNotEmpty(markingIdIns)) {
-                            result.getSuccess().add(new Message(markingIdIns, "true"));
+                            batchResult.setMarking_id(markingIdIns);
+                            break;
                         }
-                        break;
                     case "DELETE":
                         if (delete(dto.getMarking_id()) > 0) {
-                            result.getSuccess().add(new Message(dto.getMarking_id(), null));
+                            batchResult.setMarking_id(dto.getMarking_id());
                             break;
                         }
                     case "UPDATE":
                         String markingId = update(dto);
                         if (cn.staitech.common.core.utils.StringUtils.isNotEmpty(markingId)) {
-                            result.getSuccess().add(new Message(markingId, "true"));
+                            batchResult.setMarking_id(markingId);
                             break;
                         }
                     default:
                 }
+
+                batchResult.setStatus(true);
+                batchResult.setMessage(MessageSource.M("OPERATE_SUCCEED"));
             } catch (Exception e) {
-                result.getFail().add(new Message(dto.getMarking_id(), e.getMessage()));
-                break;
+                batchResult.setMarking_id(dto.getMarking_id());
+                batchResult.setMessage(e.getMessage());
+                batchResult.setStatus(false);
             }
+            result.add(batchResult);
         }
         return result;
     }

@@ -8,6 +8,9 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class ViewAddIn {
+    @ApiModelProperty(value = "front_id")
+    private String front_id;
+
     @NotNull(message = "{DescriptionUpdateVO.annotationId.isnull}")
     @ApiModelProperty(value = "标注id")
     private String marking_id;
@@ -19,7 +22,7 @@ public class ViewAddIn {
     @ApiModelProperty(value = "标注作者(绘制者)")
     private Long update_by;
 
-    @NotNull(message = "{viewAddIn.createBy.notNull}")
+    // @NotNull(message = "{viewAddIn.createBy.notNull}")
     @ApiModelProperty(value = "标注作者(绘制者)")
     private Long create_by;
 

@@ -186,12 +186,11 @@ public interface MarkingService {
      */
     R<String> roiContDel(RoiIn viewAddIns) throws Exception;
 
-
     /**
      * 批量处理
      *
      * @param list
      * @return
      */
-    BatchResult batch(List<ViewAddIn> list);
+    List<BatchResult> batch(List<ViewAddIn> list);
 }

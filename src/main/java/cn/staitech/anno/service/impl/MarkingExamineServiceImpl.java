@@ -17,7 +17,6 @@ import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.Properties;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.out.BatchResult;
-import cn.staitech.anno.vo.geojson.out.Message;
 import cn.staitech.anno.vo.marking.MarkingExamineInsertVO;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
@@ -32,6 +31,7 @@ import javax.annotation.Resource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -254,34 +254,42 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
      * @param list
      * @return
      */
-    public BatchResult batch(List<MarkingExamineInsertVO> list) {
-        BatchResult result = new BatchResult();
+    public List<BatchResult> batch(List<MarkingExamineInsertVO> list) {
+        List<BatchResult> result = new ArrayList<>(list.size());
         for (MarkingExamineInsertVO dto : list) {
+            BatchResult batchResult = new BatchResult();
+            batchResult.setFront_id(dto.getFront_id());
             try {
                 switch (dto.getOperation()) {
                     case "INSERT":
                         Long markingIdIns = insert(dto);
                         if (markingIdIns > 0) {
-                            result.getSuccess().add(new Message(markingIdIns.toString(), "true"));
+                            batchResult.setMarking_id(markingIdIns.toString());
+                            break;
                         }
-                        break;
                     case "DELETE":
                         if (delete(dto.getMarking_id()) > 0) {
-                            result.getSuccess().add(new Message(dto.getMarking_id().toString(), null));
+                            batchResult.setMarking_id(dto.getMarking_id().toString());
                             break;
                         }
                     case "UPDATE":
                         Long markingId = update(dto);
                         if (markingId > 0) {
-                            result.getSuccess().add(new Message(markingId.toString(), "true"));
+                            batchResult.setMarking_id(markingId.toString());
                             break;
                         }
                     default:
                 }
+
+                batchResult.setStatus(true);
+                batchResult.setMessage(MessageSource.M("OPERATE_SUCCEED"));
             } catch (Exception e) {
-                result.getFail().add(new Message(dto.getMarking_id().toString(), e.getMessage()));
-                break;
+                batchResult.setMarking_id(dto.getMarking_id().toString());
+                batchResult.setMessage(e.getMessage());
+                batchResult.setStatus(false);
             }
+
+            result.add(batchResult);
         }
         return result;
     }
