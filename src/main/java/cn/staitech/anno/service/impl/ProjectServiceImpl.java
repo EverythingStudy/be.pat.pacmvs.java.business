@@ -3,14 +3,8 @@ package cn.staitech.anno.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.constant.Container;
-import cn.staitech.anno.domain.Project;
-import cn.staitech.anno.domain.RecentlyVisited;
-import cn.staitech.anno.domain.Slide;
-import cn.staitech.anno.domain.SlideAnnotationResult;
-import cn.staitech.anno.mapper.ProjectMapper;
-import cn.staitech.anno.mapper.QuestionProjectRelMapper;
-import cn.staitech.anno.mapper.RecentlyVisitedMapper;
-import cn.staitech.anno.mapper.SlideMapper;
+import cn.staitech.anno.domain.*;
+import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.service.ProjectService;
 import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
@@ -53,6 +47,10 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     @Resource
     private QuestionProjectRelMapper questionProjectRelMapper;
 
+
+    @Resource
+    private AccessProjectRecordsMapper accessProjectRecordsMapper;
+
     /**
      * 根据主键查询项目详情
      *
@@ -78,6 +76,10 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     @Override
     public ProjectListVO selectProjectById(Long projectId) {
         ProjectListVO project = projectMapper.selectProjectById(projectId);
+
+        //项目访问记录
+        AccessProjectRecords record=AccessProjectRecords.builder().projectId(projectId).userId(SecurityUtils.getUserId()).build();
+        accessProjectRecordsMapper.insertSelective(record);
         return projectLanguage(project);
     }
 
