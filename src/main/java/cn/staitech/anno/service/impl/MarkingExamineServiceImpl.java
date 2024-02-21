@@ -258,7 +258,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         List<BatchResult> result = new ArrayList<>(list.size());
         for (MarkingExamineInsertVO dto : list) {
             BatchResult batchResult = new BatchResult();
-            batchResult.setFront_id(dto.getFront_id());
+            batchResult.setFront_id(dto.getMarking_id().toString());
             try {
                 switch (dto.getOperation()) {
                     case "INSERT":

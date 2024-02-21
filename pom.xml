@@ -288,6 +288,14 @@
             <artifactId>ant</artifactId>
             <version>1.9.15</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.rocksdb/rocksdbjni -->
+        <dependency>
+            <groupId>org.rocksdb</groupId>
+            <artifactId>rocksdbjni</artifactId>
+            <version>7.10.2</version>
+        </dependency>
+
     </dependencies>
 
 

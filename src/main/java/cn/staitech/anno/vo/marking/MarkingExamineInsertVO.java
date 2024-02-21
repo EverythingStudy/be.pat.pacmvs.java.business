@@ -8,14 +8,11 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class MarkingExamineInsertVO {
-    @ApiModelProperty(value = "front_id")
-    private String front_id;
-
     //@NotNull(message = "{MarkingExamineInsertVO.questionProjectId.isnull}")
     @ApiModelProperty(value = "项目题库id")
     private Long question_project_id;
 
-    //@NotNull(message = "{MarkingExamineInsertVO.questionProjectId.isnull}")
+    @NotNull(message = "{MarkingExamineInsertVO.questionProjectId.isnull}")
     @ApiModelProperty(value = "项目题库id")
     private Long marking_id;
 

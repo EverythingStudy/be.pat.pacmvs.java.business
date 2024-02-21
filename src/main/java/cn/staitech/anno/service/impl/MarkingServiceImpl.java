@@ -1608,7 +1608,7 @@ public class MarkingServiceImpl implements MarkingService {
         List<BatchResult> result = new ArrayList<>(list.size());
         for (ViewAddIn dto : list) {
             BatchResult batchResult = new BatchResult();
-            batchResult.setFront_id(dto.getFront_id());
+            batchResult.setFront_id(dto.getMarking_id());
 
             try {
                 switch (dto.getOperation()) {
