@@ -8,6 +8,8 @@ import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.MarkMeasure;
 import cn.staitech.anno.domain.Outline;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
+import cn.staitech.anno.domain.history.Session;
+import cn.staitech.anno.domain.history.Trace;
 import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.netty.websocket.NioWebSocketHandler;
 import cn.staitech.anno.project.constants.Constants;
@@ -22,6 +24,7 @@ import cn.staitech.anno.project.service.DownTaskService;
 import cn.staitech.anno.project.service.MarkingServiceV1;
 import cn.staitech.anno.project.service.SlideAttrService;
 import cn.staitech.anno.service.FileService;
+import cn.staitech.anno.service.HistoryService;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.utils.*;
 import cn.staitech.anno.vo.annotation.BroadcastVO;
@@ -134,6 +137,8 @@ public class MarkingServiceImpl implements MarkingService {
     private DownTaskService downTaskService;
     @Resource
     private RedisService redisService;
+    @Resource
+    private HistoryService historyService;
 
     private static Boolean fileExists(String filePath) throws Exception {
         File file = new File(filePath);
@@ -276,6 +281,11 @@ public class MarkingServiceImpl implements MarkingService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String insert(ViewAddIn req) throws Exception {
+
+        if(req.getSlide_id()==null){
+            return MessageSource.M("MarkingDelIn.slideId.notNull");
+        }
+
         if (req.getGeometry() != null && !req.getGeometry().isEmpty()) {
             MarkingUtils.addVerify(req.getGeometry());
         } else {
@@ -325,6 +335,19 @@ public class MarkingServiceImpl implements MarkingService {
         List<PointCount> pointCountList = updatePoint(marking.getLocation_type(), marking);
         BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, ADD_STATUS, features, pointCountList);
         NioWebSocketHandler.sendAll(req.getSlide_id(), broadcastVO);
+
+        // TODO:后续在线程池中处理
+        // 撤消,恢复历史记录
+        historyService.put(user.getUserId());
+        Trace trace = new Trace(user.getUserId(), req.getTraceId());
+        trace.getMarkingIds().add(marking.getMarking_id());
+        historyService.get(user.getUserId()).getList().add(trace);
+        // TODO数据持久化
+        // 删除token无效对应数据:遍历撤消、恢复历史记录
+        for (Map.Entry<Long, Session> entry : HistoryServiceImpl.USER_SESSION_MAP.entrySet()) {
+            log.info("------entry:{}",entry);
+        }
+
 
         // 多线程处理
         ANN_EXECUTOR.submit(new AnnCountThread(1, slideBy, marking));
@@ -589,7 +612,7 @@ public class MarkingServiceImpl implements MarkingService {
         markingQueryWrapper.in("marking_id", req.getMarkingIdList());
         List<cn.staitech.anno.project.domain.Marking> markingList = markingMapperV1.selectList(markingQueryWrapper);
         List<Geometry> geometryList = new ArrayList<>();
-        for(cn.staitech.anno.project.domain.Marking marking:markingList){
+        for (cn.staitech.anno.project.domain.Marking marking : markingList) {
             Geometry geometry = WKT_READER.read(WktUtil.jsonToWkt(marking.getGeometry()));
             geometryList.add(geometry);
         }
@@ -598,10 +621,7 @@ public class MarkingServiceImpl implements MarkingService {
         return new JSONObject();
 
 
-
-
     }
-
 
 
     @Override

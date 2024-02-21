@@ -15,6 +15,7 @@ import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.slide.SlideSelectBy;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
+import cn.staitech.common.core.utils.uuid.UUID;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.utils.SecurityUtils;
@@ -108,6 +109,7 @@ public class MarkingController {
     @ApiOperation(value = "添加标注")
     @PostMapping("/intelligentAnno/insert")
     public R<String> add(@Validated @RequestBody ViewAddIn req) throws Exception {
+        req.setTraceId(UUID.fastUUID().toString());
         String markingId = markingService.insert(req);
         return R.ok(markingId, MessageSource.M("OPERATE_SUCCEED"));
     }

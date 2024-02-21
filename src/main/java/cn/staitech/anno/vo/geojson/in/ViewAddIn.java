@@ -12,7 +12,7 @@ public class ViewAddIn {
     @ApiModelProperty(value = "标注id")
     private String marking_id;
 
-    @NotNull(message = "{MarkingDelIn.slideId.notNull}")
+    // @NotNull(message = "{MarkingDelIn.slideId.notNull}")
     @ApiModelProperty(value = "切片id")
     private Long slide_id;
 
@@ -76,4 +76,7 @@ public class ViewAddIn {
 
     @ApiModelProperty(value = "要执行的操作(UNION:相交,DIFFERENCE:相差,UPDATE:修改,DELETE:删除,添加:INSERT,null)")
     private String operation;
+
+    @ApiModelProperty(value = "接口每次请求的ID")
+    private String traceId;
 }
