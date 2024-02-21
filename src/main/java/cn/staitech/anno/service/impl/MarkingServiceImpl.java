@@ -1615,18 +1615,18 @@ public class MarkingServiceImpl implements MarkingService {
                     case "INSERT":
                         String markingIdIns = insert(dto);
                         if (cn.staitech.common.core.utils.StringUtils.isNotEmpty(markingIdIns)) {
-                            batchResult.setMarking_id(markingIdIns);
+                            batchResult.setData(markingIdIns);
                             break;
                         }
                     case "DELETE":
                         if (delete(dto.getMarking_id()) > 0) {
-                            batchResult.setMarking_id(dto.getMarking_id());
+                            batchResult.setData(dto.getMarking_id());
                             break;
                         }
                     case "UPDATE":
                         String markingId = update(dto);
                         if (cn.staitech.common.core.utils.StringUtils.isNotEmpty(markingId)) {
-                            batchResult.setMarking_id(markingId);
+                            batchResult.setData(markingId);
                             break;
                         }
                     default:
@@ -1635,7 +1635,7 @@ public class MarkingServiceImpl implements MarkingService {
                 batchResult.setStatus(true);
                 batchResult.setMessage(MessageSource.M("OPERATE_SUCCEED"));
             } catch (Exception e) {
-                batchResult.setMarking_id(dto.getMarking_id());
+                batchResult.setData(dto.getMarking_id());
                 batchResult.setMessage(e.getMessage());
                 batchResult.setStatus(false);
             }

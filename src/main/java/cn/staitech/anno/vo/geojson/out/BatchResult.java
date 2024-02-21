@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class BatchResult {
     private String front_id;
-    private String marking_id;
+    private String data;
     private String message;
     private Boolean status;
 }

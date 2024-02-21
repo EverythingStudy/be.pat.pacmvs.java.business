@@ -28,7 +28,7 @@ public class Session {
         this.userId = userId;
     }
 
-/*    public static void main(String[] args) {
+    public static void main(String[] args) {
         Long userId = 1L;
         Session session = new Session(userId);
         session.list.add(new Trace(userId, UUID.fastUUID().toString()));
@@ -46,6 +46,6 @@ public class Session {
         log.info("session {}", session);
 
 
-    }*/
+    }
 
 }

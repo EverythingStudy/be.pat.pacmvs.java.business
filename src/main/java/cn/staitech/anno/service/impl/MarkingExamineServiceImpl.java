@@ -264,18 +264,18 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
                     case "INSERT":
                         Long markingIdIns = insert(dto);
                         if (markingIdIns > 0) {
-                            batchResult.setMarking_id(markingIdIns.toString());
+                            batchResult.setData(markingIdIns.toString());
                             break;
                         }
                     case "DELETE":
                         if (delete(dto.getMarking_id()) > 0) {
-                            batchResult.setMarking_id(dto.getMarking_id().toString());
+                            batchResult.setData(dto.getMarking_id().toString());
                             break;
                         }
                     case "UPDATE":
                         Long markingId = update(dto);
                         if (markingId > 0) {
-                            batchResult.setMarking_id(markingId.toString());
+                            batchResult.setData(markingId.toString());
                             break;
                         }
                     default:
@@ -284,7 +284,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
                 batchResult.setStatus(true);
                 batchResult.setMessage(MessageSource.M("OPERATE_SUCCEED"));
             } catch (Exception e) {
-                batchResult.setMarking_id(dto.getMarking_id().toString());
+                batchResult.setData(dto.getMarking_id().toString());
                 batchResult.setMessage(e.getMessage());
                 batchResult.setStatus(false);
             }

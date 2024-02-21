@@ -28,7 +28,7 @@ public class RocksDBUtil {
     private static RocksDB rocksDB;
 
     /*
-      初始化 RocksDB
+      初始化RocksDB
      */
     static {
         try {
