@@ -283,7 +283,7 @@ public class MarkingServiceImpl implements MarkingService {
     @Transactional(rollbackFor = Exception.class)
     public String insert(ViewAddIn req) throws Exception {
 
-        if(req.getSlide_id()==null){
+        if (req.getSlide_id() == null) {
             return MessageSource.M("MarkingDelIn.slideId.notNull");
         }
 
@@ -346,7 +346,7 @@ public class MarkingServiceImpl implements MarkingService {
         // TODO数据持久化
         // 删除token无效对应数据:遍历撤消、恢复历史记录
         for (Map.Entry<Long, Session> entry : HistoryServiceImpl.USER_SESSION_MAP.entrySet()) {
-            log.info("------entry:{}",entry);
+            log.info("------entry:{}", entry);
         }
 
 
@@ -579,11 +579,19 @@ public class MarkingServiceImpl implements MarkingService {
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
-        JSONObject geometry = MarkingUtils.padding(markingBy.getGeometry());
+        JSONObject geometryJson = MarkingUtils.padding(markingBy.getGeometry());
         Marking marking = new Marking();
         marking.setMarking_id(markingId);
-        marking.setGeometry(geometry);
-        // 重新计算面积和周长
+        marking.setGeometry(geometryJson);
+        Geometry geometry = WKT_READER.read(WktUtil.jsonToWkt(marking.getGeometry()));
+        Image image = imageMapper.selectById(markingBy.getImage_id());
+        if (image.getResolutionX() != null) {
+            double resolutions = Double.parseDouble(image.getResolutionX());
+            String area = String.valueOf(geometry.getArea() * resolutions * resolutions);
+            marking.setArea(area);
+            String per = String.valueOf(geometry.getLength() * resolutions);
+            marking.setPerimeter(per);
+        }
         marking.setUpdate_time(new Date());
         marking.setUpdate_by(SecurityUtils.getUserId());
         marking.setAnnotation_update_owner(SecurityUtils.getUsername());
@@ -613,23 +621,23 @@ public class MarkingServiceImpl implements MarkingService {
         markingQueryWrapper.in("marking_id", req.getMarkingIdList()).orderByAsc("create_time");
         List<cn.staitech.anno.project.domain.Marking> markingList = markingMapperV1.selectList(markingQueryWrapper);
         List<Geometry> geometryList = new ArrayList<>();
-        for(cn.staitech.anno.project.domain.Marking marking:markingList){
+        for (cn.staitech.anno.project.domain.Marking marking : markingList) {
             Geometry geometry = WKT_READER.read(WktUtil.jsonToWkt(marking.getGeometry()));
             geometryList.add(geometry);
         }
-        if(geometryList.size() > 0){
-            if(geometryList.size() == 1){
+        if (geometryList.size() > 0) {
+            if (geometryList.size() == 1) {
                 return markingList.get(0).getGeometry();
             }
             Geometry geometry = null;
-            for(int i = 0;i < geometryList.size();i++){
-                if(i == 0){
+            for (int i = 0; i < geometryList.size(); i++) {
+                if (i == 0) {
                     geometry = geometryList.get(i);
                 }
                 Geometry geometryIntersection = geometry.intersection(geometryList.get(i));
                 if (geometryIntersection.isEmpty()) {
                     return null;
-                }else {
+                } else {
                     OverlayOp op = new OverlayOp(geometry, geometryList.get(i));
                     int code = OverlayOp.UNION;
                     geometry = op.getResultGeometry(code);
