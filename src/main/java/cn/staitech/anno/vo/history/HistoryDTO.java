@@ -18,7 +18,6 @@ public class HistoryDTO {
     @ApiModelProperty(value = "事件类型：1 undo,2 redo")
     private Integer envType;
 
-    @NotNull
     @ApiModelProperty(value = "用户ID")
     private Long userId;
 

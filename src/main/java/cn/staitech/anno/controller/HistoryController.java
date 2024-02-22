@@ -49,6 +49,9 @@ public class HistoryController {
     @Log(title = "标注编辑-历史记录", menu = "标注编辑-历史记录", subMenu = "获取撤消、恢复状态,游标可移动次数", businessType = BusinessType.QUERY)
     @PostMapping("/index")
     public R<Cursor> index(@Validated @RequestBody HistoryDTO dto) {
+        if (dto.getUserId() == null) {
+            dto.setUserId(SecurityUtils.getLoginUser().getSysUser().getUserId());
+        }
         return R.ok(historyService.getCursor(dto));
     }
 
