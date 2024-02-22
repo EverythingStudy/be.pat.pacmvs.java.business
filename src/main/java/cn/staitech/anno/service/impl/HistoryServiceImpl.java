@@ -47,12 +47,12 @@ public class HistoryServiceImpl implements HistoryService {
     /**
      * 删除Session
      *
-     * @param userId
+     * @param key
      */
     @Override
-    public void remove(Long userId) {
-        if (USER_SESSION_MAP.containsKey(userId)) {
-            USER_SESSION_MAP.remove(userId);
+    public void remove(String key) {
+        if (USER_SESSION_MAP.containsKey(key)) {
+            USER_SESSION_MAP.remove(key);
         }
     }
 

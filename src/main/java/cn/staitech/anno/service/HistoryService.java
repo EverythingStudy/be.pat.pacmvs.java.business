@@ -15,7 +15,7 @@ public interface HistoryService {
 
     Session get(Long userId, Long slideId);
 
-    void remove(Long userId);
+    void remove(String key);
 
 
     /**
