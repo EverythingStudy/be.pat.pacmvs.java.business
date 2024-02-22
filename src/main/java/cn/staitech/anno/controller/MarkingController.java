@@ -110,6 +110,8 @@ public class MarkingController {
     @PostMapping("/intelligentAnno/insert")
     public R<String> add(@Validated @RequestBody ViewAddIn req) throws Exception {
         req.setTraceId(UUID.fastUUID().toString());
+        req.setIsBatch(false);
+
         String markingId = markingService.insert(req);
         return R.ok(markingId, MessageSource.M("OPERATE_SUCCEED"));
     }

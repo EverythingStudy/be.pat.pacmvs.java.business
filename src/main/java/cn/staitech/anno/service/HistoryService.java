@@ -1,6 +1,7 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.history.Session;
+import cn.staitech.anno.vo.history.Cursor;
 import cn.staitech.anno.vo.history.HistoryDTO;
 
 /**
@@ -23,6 +24,8 @@ public interface HistoryService {
      */
     void clearSessionList(Long userId);
 
+
+    Cursor getCursor(HistoryDTO dto);
 
     void process(HistoryDTO dto);
 }

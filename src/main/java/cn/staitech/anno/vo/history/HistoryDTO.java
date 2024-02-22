@@ -3,6 +3,8 @@ package cn.staitech.anno.vo.history;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * @author: wangfeng
  * @create: 2024-02-21 18:10:43
@@ -16,6 +18,7 @@ public class HistoryDTO {
     @ApiModelProperty(value = "事件类型：1 undo,2 redo")
     private Integer envType;
 
+    @NotNull
     @ApiModelProperty(value = "用户ID")
     private Long userId;
 

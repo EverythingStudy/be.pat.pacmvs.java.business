@@ -4,6 +4,7 @@ import cn.staitech.anno.domain.MarkingExamine;
 import cn.staitech.anno.domain.QuestionBank;
 import cn.staitech.anno.domain.QuestionProjectRel;
 import cn.staitech.anno.domain.Structure;
+import cn.staitech.anno.domain.history.Session;
 import cn.staitech.anno.mapper.MarkingExamineMapper;
 import cn.staitech.anno.mapper.QuestionBankMapper;
 import cn.staitech.anno.mapper.QuestionProjectRelMapper;
@@ -32,10 +33,7 @@ import javax.annotation.Resource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static cn.staitech.anno.constant.CommonConstant.*;
 
@@ -257,7 +255,12 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
      */
     public List<BatchResult> batch(List<MarkingExamineInsertVO> list) {
         List<BatchResult> result = new ArrayList<>(list.size());
+        String uuid = UUID.randomUUID().toString();
+
         for (MarkingExamineInsertVO dto : list) {
+            dto.setTraceId(uuid);
+            dto.setIsBatch(true);
+
             BatchResult batchResult = new BatchResult();
             batchResult.setFront_id(dto.getMarking_id().toString());
             try {
@@ -297,12 +300,14 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
 
 
     @Override
-    public void undo(HistoryDTO dto) {
-
+    public Boolean undo(HistoryDTO dto) {
+        Session session = HistoryServiceImpl.USER_SESSION_MAP.get(dto.getUserId());
+        return true;
     }
 
     @Override
-    public void redo(HistoryDTO dto) {
-
+    public Boolean redo(HistoryDTO dto) {
+        Session session = HistoryServiceImpl.USER_SESSION_MAP.get(dto.getUserId());
+        return true;
     }
 }

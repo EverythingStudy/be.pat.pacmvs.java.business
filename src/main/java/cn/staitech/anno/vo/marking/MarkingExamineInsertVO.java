@@ -36,4 +36,10 @@ public class MarkingExamineInsertVO {
 
     @ApiModelProperty(value = "要执行的操作(UNION:相交,DIFFERENCE:相差,UPDATE:修改,DELETE:删除,添加:INSERT,null)")
     private String operation;
+
+    @ApiModelProperty(value = "接口每次请求的ID")
+    private String traceId;
+
+    @ApiModelProperty(value = "是否批量请求接口")
+    private Boolean isBatch = false;
 }

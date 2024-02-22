@@ -1,6 +1,5 @@
 package cn.staitech.anno.domain.history;
 
-import cn.staitech.common.core.utils.uuid.UUID;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,26 +31,39 @@ public class Session {
     /**
      * 游标
      */
-    private Integer cursor;
+    private Integer index;
 
 
     public Session(Long userId) {
         this.userId = userId;
     }
 
-    public static void main(String[] args) {
-        Long userId = 1L;
-        Session session = new Session(userId);
-        session.list.addLast(new Trace(userId, "1"));
-        session.list.addLast(new Trace(userId, "2"));
-        session.list.addLast(new Trace(userId, "3"));
-        session.list.addLast(new Trace(userId, "4"));
-        session.list.addLast(new Trace(userId, UUID.fastUUID().toString()));
+//    public static void main(String[] args) {
+//        Long userId = 1L;
+//        Session session = new Session(userId);
+//        session.list.addLast(new Trace(userId, "1", false));
+//        session.list.addLast(new Trace(userId, "2", true));
+//        session.list.addLast(new Trace(userId, UUID.fastUUID().toString(), false));
+//
+//        log.info("session {}", session);
+//
+//        session.list.removeFirst();
+//        log.info("session {}", session);
+//    }
 
-        log.info("session {}", session);
-
-        session.list.removeFirst();
-        log.info("session {}", session);
+    /**
+     * 根据traceId获取Trace
+     *
+     * @param traceId
+     * @return
+     */
+    public Trace getTraceById(String traceId) {
+        for (Trace trace : list) {
+            if (traceId.equals(trace.getTraceId())) {
+                return trace;
+            }
+        }
+        return null;
     }
 
     /**
@@ -64,32 +76,60 @@ public class Session {
             list.removeFirst();
         }
         list.addLast(trace);
+
+        // TODO：区分是原始接口，还是redo操作
+
+        // 重置游标
+        resetIndex();
     }
 
-    public Integer setUndoCursor() {
-        if (cursor >= 0 && cursor < list.size()) {
-            cursor--;
-            return cursor;
+    public Integer setUndoIndex() {
+        if (index >= 0 && index < list.size()) {
+            index--;
+            return index;
         }
         return null;
     }
 
-    public Integer setRedoCursor() {
-        if (cursor >= 0 && cursor < list.size()) {
-            cursor++;
-            return cursor;
+    public Integer setRedoIndex() {
+        if (index >= 0 && index < list.size()) {
+            index++;
+            return index;
         }
         return null;
     }
 
-    public Integer resetCursor() {
-        if (cursor >= 0 && cursor < list.size()) {
-            cursor = list.size();
-            return cursor;
+    public Integer resetIndex() {
+        if (index >= 0 && index < list.size()) {
+            index = list.size();
+            return index;
         }
         return null;
     }
 
+    /**
+     * 获取undo是否可用状态
+     *
+     * @return
+     */
+    public Boolean undoStatus() {
+        if (index > 0 && index < list.size()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 获取redo是是否可用状态
+     *
+     * @return
+     */
+    public Boolean redoStatus() {
+        if (index >= 0 && index < list.size() - 1) {
+            return true;
+        }
+        return null;
+    }
 
 
 }

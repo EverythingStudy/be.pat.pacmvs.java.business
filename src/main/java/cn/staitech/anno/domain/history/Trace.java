@@ -26,13 +26,20 @@ public class Trace {
     private String traceId;
 
     /**
+     * 是否批量接口
+     */
+    private Boolean isBatch;
+
+    /**
      * 标注ID列表
      */
-    private List<String> markingIds;
+    private List<TraceNode> nodeList;
 
-    public Trace(Long userId, String traceId) {
+
+    public Trace(Long userId, String traceId, Boolean isBatch) {
         this.userId = userId;
         this.traceId = traceId;
-        this.markingIds = new ArrayList<>();
+        this.isBatch = isBatch;
+        this.nodeList = new ArrayList<>();
     }
 }

@@ -195,7 +195,7 @@ public interface MarkingService {
      */
     List<BatchResult> batch(List<ViewAddIn> list);
 
-    void undo(HistoryDTO dto);
+    Boolean undo(HistoryDTO dto);
 
-    void redo(HistoryDTO dto);
+    Boolean redo(HistoryDTO dto);
 }

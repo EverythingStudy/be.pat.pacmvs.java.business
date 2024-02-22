@@ -8,6 +8,7 @@ import cn.staitech.anno.vo.geojson.out.BatchResult;
 import cn.staitech.anno.vo.marking.MarkingExamineInsertVO;
 import cn.staitech.anno.vo.marking.MarkingExamineList;
 import cn.staitech.common.core.domain.R;
+import cn.staitech.common.core.utils.uuid.UUID;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -53,6 +54,8 @@ public class MarkingExamineController {
     @ApiOperation(value = "添加标注")
     @PostMapping("/insert")
     public R<Long> add(@Validated @RequestBody MarkingExamineInsertVO req) throws Exception {
+        req.setTraceId(UUID.fastUUID().toString());
+        req.setIsBatch(false);
         Long markingId = markingExamineService.insert(req);
         return R.ok(markingId, MessageSource.M("OPERATE_SUCCEED"));
     }

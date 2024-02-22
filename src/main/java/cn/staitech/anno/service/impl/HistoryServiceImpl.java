@@ -4,6 +4,7 @@ import cn.staitech.anno.domain.history.Session;
 import cn.staitech.anno.service.HistoryService;
 import cn.staitech.anno.service.MarkingExamineService;
 import cn.staitech.anno.service.MarkingService;
+import cn.staitech.anno.vo.history.Cursor;
 import cn.staitech.anno.vo.history.HistoryDTO;
 import org.springframework.stereotype.Service;
 
@@ -65,6 +66,25 @@ public class HistoryServiceImpl implements HistoryService {
             USER_SESSION_MAP.get(userId).getList().clear();
         }
     }
+
+    /**
+     * 获取撤消、恢复是否可用的状态
+     *
+     * @param dto
+     */
+    @Override
+    public Cursor getCursor(HistoryDTO dto) {
+        Long userId = dto.getUserId();
+        if (USER_SESSION_MAP.containsKey(userId)) {
+            Session session = USER_SESSION_MAP.get(userId);
+            Cursor cursor = new Cursor();
+            cursor.setUndo(session.undoStatus());
+            cursor.setRedo(session.redoStatus());
+            return cursor;
+        }
+        return null;
+    }
+
 
     /**
      * 撤消

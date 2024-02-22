@@ -79,4 +79,7 @@ public class ViewAddIn {
 
     @ApiModelProperty(value = "接口每次请求的ID")
     private String traceId;
+
+    @ApiModelProperty(value = "是否批量请求接口")
+    private Boolean isBatch = false;
 }

@@ -10,6 +10,7 @@ import cn.staitech.anno.domain.Outline;
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.history.Session;
 import cn.staitech.anno.domain.history.Trace;
+import cn.staitech.anno.domain.history.TraceNode;
 import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.netty.websocket.NioWebSocketHandler;
 import cn.staitech.anno.project.constants.Constants;
@@ -24,7 +25,6 @@ import cn.staitech.anno.project.service.DownTaskService;
 import cn.staitech.anno.project.service.MarkingServiceV1;
 import cn.staitech.anno.project.service.SlideAttrService;
 import cn.staitech.anno.service.FileService;
-import cn.staitech.anno.service.HistoryService;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.utils.*;
 import cn.staitech.anno.vo.annotation.BroadcastVO;
@@ -336,22 +336,36 @@ public class MarkingServiceImpl implements MarkingService {
         BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, ADD_STATUS, features, pointCountList);
         NioWebSocketHandler.sendAll(req.getSlide_id(), broadcastVO);
 
+        {
+            String traceId = req.getTraceId();
+            // 撤消,恢复历史记录 用HistoryService会引起循环依赖！ -> 后续在线程池中处理 判断是批处理，还是单独处理
+            // 1、创建Session,并存入ConcurrentHashMap<Long, Session>
+            Session session = new Session(user.getUserId());
+            if (!HistoryServiceImpl.USER_SESSION_MAP.containsKey(user.getUserId())) {
+                HistoryServiceImpl.USER_SESSION_MAP.put(user.getUserId(), session);
+            }
+            session = HistoryServiceImpl.USER_SESSION_MAP.get(user.getUserId());
 
-        // TODO:后续在线程池中处理 判断是批处理，还是单独处理
-        // 撤消,恢复历史记录
-        if (!HistoryServiceImpl.USER_SESSION_MAP.containsKey(user.getUserId())) {
-            HistoryServiceImpl.USER_SESSION_MAP.put(user.getUserId(), new Session(user.getUserId()));
+            // 2、创建Trace,并存入Session.list,LinkedList<Trace>
+            // 单条记录
+            Trace trace = new Trace(user.getUserId(), traceId, req.getIsBatch());
+            // 批量操作
+
+            if (req.getIsBatch() && session.getTraceById(traceId) != null) {
+                // 若trace已经存在，不用再add
+                trace = session.getTraceById(traceId);
+                trace.getNodeList().add(new TraceNode(marking.getMarking_id(), "INSERT"));
+            } else {
+                trace.getNodeList().add(new TraceNode(marking.getMarking_id(), "INSERT"));
+                session.addTrace(trace);
+            }
+
+            // 3、数据持久化写入RocksDB
+            Gson gson = new Gson();
+            // 将对象转换成JSON字符串
+            String json = gson.toJson(marking);
+            RocksDBUtil.put(traceId, marking.getMarking_id(), json);
         }
-
-        Trace trace = new Trace(user.getUserId(), req.getTraceId());
-        trace.getMarkingIds().add(marking.getMarking_id());
-        HistoryServiceImpl.USER_SESSION_MAP.get(user.getUserId()).getList().add(trace);
-
-        // 数据持久化
-        Gson gson = new Gson();
-        // 将对象转换成JSON字符串
-        String json = gson.toJson(marking);
-        RocksDBUtil.put(req.getTraceId(), marking.getMarking_id(), json);
 
         // 多线程处理
         ANN_EXECUTOR.submit(new AnnCountThread(1, slideBy, marking));
@@ -1611,9 +1625,15 @@ public class MarkingServiceImpl implements MarkingService {
     @Override
     public List<BatchResult> batch(List<ViewAddIn> list) {
         List<BatchResult> result = new ArrayList<>(list.size());
+
+        String uuid = UUID.randomUUID().toString();
+
         for (ViewAddIn dto : list) {
             BatchResult batchResult = new BatchResult();
             batchResult.setFront_id(dto.getMarking_id());
+
+            dto.setTraceId(uuid);
+            dto.setIsBatch(true);
 
             try {
                 switch (dto.getOperation()) {
@@ -1650,13 +1670,57 @@ public class MarkingServiceImpl implements MarkingService {
     }
 
     @Override
-    public void undo(HistoryDTO dto) {
+    public Boolean undo(HistoryDTO dto) {
+        Session session = HistoryServiceImpl.USER_SESSION_MAP.get(dto.getUserId());
+        LinkedList<Trace> list = session.getList();
+        Integer index = session.getIndex();
+        Trace trace = list.get(index);
 
+        List<TraceNode> traceNodeList = trace.getNodeList();
+        for (TraceNode node : traceNodeList) {
+            String id = node.getId();
+
+            try {
+                switch (node.getOperation()) {
+                    case "INSERT":
+                        delete(id);
+                        break;
+
+//                    String markingIdIns = insert(dto);
+//                    if (cn.staitech.common.core.utils.StringUtils.isNotEmpty(markingIdIns)) {
+//                        // batchResult.setData(markingIdIns);
+//                        break;
+//                    }
+                    case "DELETE":
+//                    if (delete(dto.getMarking_id()) > 0) {
+//                        // batchResult.setData(dto.getMarking_id());
+//                        break;
+//                    }
+                        //insert(dto);
+                        break;
+                    case "UPDATE":
+//                    String markingId = update(dto);
+//                    if (cn.staitech.common.core.utils.StringUtils.isNotEmpty(markingId)) {
+//                        // batchResult.setData(markingId);
+//                        break;
+//                    }
+                    default:
+
+                }
+
+            } catch (Exception e) {
+
+            }
+        }
+
+
+        return true;
     }
 
     @Override
-    public void redo(HistoryDTO dto) {
-
+    public Boolean redo(HistoryDTO dto) {
+        Session session = HistoryServiceImpl.USER_SESSION_MAP.get(dto.getUserId());
+        return true;
     }
 
     class TaskGenerateJson implements Runnable {
