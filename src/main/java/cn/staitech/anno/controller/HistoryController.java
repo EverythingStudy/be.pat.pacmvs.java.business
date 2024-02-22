@@ -1,7 +1,6 @@
 package cn.staitech.anno.controller;
 
 import cn.staitech.anno.service.HistoryService;
-import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.vo.history.Cursor;
 import cn.staitech.anno.vo.history.HistoryDTO;
 import cn.staitech.common.core.domain.R;
@@ -51,9 +50,10 @@ public class HistoryController {
     @PostMapping("/index")
     public R<Cursor> index(@Validated @RequestBody HistoryDTO dto) {
         Cursor cursor = new Cursor();
+        cursor.setRedo(true);
+        cursor.setUndo(true);
         return R.ok(cursor);
     }
-
 
     /**
      * 清空

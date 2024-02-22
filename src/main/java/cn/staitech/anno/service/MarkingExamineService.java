@@ -4,6 +4,7 @@ import cn.staitech.anno.domain.MarkingExamine;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.out.BatchResult;
+import cn.staitech.anno.vo.history.HistoryDTO;
 import cn.staitech.anno.vo.marking.MarkingExamineInsertVO;
 import cn.staitech.common.core.domain.R;
 import com.alibaba.fastjson.JSONArray;
@@ -68,4 +69,8 @@ public interface MarkingExamineService extends IService<MarkingExamine> {
      * @return
      */
     List<BatchResult> batch(List<MarkingExamineInsertVO> list);
+
+    void undo(HistoryDTO dto);
+
+    void redo(HistoryDTO dto);
 }

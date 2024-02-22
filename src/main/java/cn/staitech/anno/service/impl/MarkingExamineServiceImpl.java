@@ -17,6 +17,7 @@ import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.Properties;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.out.BatchResult;
+import cn.staitech.anno.vo.history.HistoryDTO;
 import cn.staitech.anno.vo.marking.MarkingExamineInsertVO;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
@@ -292,5 +293,16 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
             result.add(batchResult);
         }
         return result;
+    }
+
+
+    @Override
+    public void undo(HistoryDTO dto) {
+
+    }
+
+    @Override
+    public void redo(HistoryDTO dto) {
+
     }
 }

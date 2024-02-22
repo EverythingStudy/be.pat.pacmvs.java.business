@@ -11,8 +11,8 @@ import lombok.Data;
 @Data
 public class Cursor {
     @ApiModelProperty(value = "undo")
-    private Integer undo;
+    private Boolean undo = false;
 
     @ApiModelProperty(value = "redo")
-    private Integer redo;
+    private Boolean redo = false;
 }

@@ -2,6 +2,7 @@ package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.history.Session;
 import cn.staitech.anno.service.HistoryService;
+import cn.staitech.anno.service.MarkingExamineService;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.vo.history.HistoryDTO;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,9 @@ public class HistoryServiceImpl implements HistoryService {
 
     @Resource
     MarkingService markingService;
+
+    @Resource
+    MarkingExamineService markingExamineService;
 
     @Override
     public void put(Long userId) {
@@ -89,6 +93,7 @@ public class HistoryServiceImpl implements HistoryService {
                 markingService.undo(dto);
                 break;
             case 2:
+                markingExamineService.undo(dto);
                 break;
             default:
         }
@@ -100,10 +105,9 @@ public class HistoryServiceImpl implements HistoryService {
                 markingService.redo(dto);
                 break;
             case 2:
+                markingExamineService.redo(dto);
                 break;
             default:
         }
     }
-
-
 }
