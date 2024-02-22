@@ -30,9 +30,6 @@ public class HistoryController {
     @Resource
     HistoryService historyService;
 
-    @Resource
-    MarkingService markingService;
-
     /**
      * 撤消、恢复 .
      */

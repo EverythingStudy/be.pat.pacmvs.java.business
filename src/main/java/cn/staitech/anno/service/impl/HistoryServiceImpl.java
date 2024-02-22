@@ -2,9 +2,11 @@ package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.history.Session;
 import cn.staitech.anno.service.HistoryService;
+import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.vo.history.HistoryDTO;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -16,6 +18,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class HistoryServiceImpl implements HistoryService {
 
     public static final ConcurrentHashMap<Long, Session> USER_SESSION_MAP = new ConcurrentHashMap<>();
+
+    @Resource
+    MarkingService markingService;
 
     @Override
     public void put(Long userId) {
@@ -81,7 +86,7 @@ public class HistoryServiceImpl implements HistoryService {
 
         switch (dto.getBizType()) {
             case 1:
-                //markingService.undo(dto);
+                markingService.undo(dto);
                 break;
             case 2:
                 break;
@@ -92,7 +97,7 @@ public class HistoryServiceImpl implements HistoryService {
     public void redo(HistoryDTO dto) {
         switch (dto.getBizType()) {
             case 1:
-                //markingService.redo(dto);
+                markingService.redo(dto);
                 break;
             case 2:
                 break;

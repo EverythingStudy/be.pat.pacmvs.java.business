@@ -65,7 +65,6 @@ import com.vividsolutions.jts.operation.overlay.OverlayOp;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.rocksdb.ColumnFamilyHandle;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -140,8 +139,6 @@ public class MarkingServiceImpl implements MarkingService {
     private DownTaskService downTaskService;
     @Resource
     private RedisService redisService;
-    @Resource
-    private HistoryService historyService;
 
     private static Boolean fileExists(String filePath) {
         File file = new File(filePath);
@@ -342,16 +339,19 @@ public class MarkingServiceImpl implements MarkingService {
 
         // TODO:后续在线程池中处理 判断是批处理，还是单独处理
         // 撤消,恢复历史记录
-        historyService.put(user.getUserId());
+        if (!HistoryServiceImpl.USER_SESSION_MAP.containsKey(user.getUserId())) {
+            HistoryServiceImpl.USER_SESSION_MAP.put(user.getUserId(), new Session(user.getUserId()));
+        }
+
         Trace trace = new Trace(user.getUserId(), req.getTraceId());
         trace.getMarkingIds().add(marking.getMarking_id());
-        historyService.get(user.getUserId()).getList().add(trace);
+        HistoryServiceImpl.USER_SESSION_MAP.get(user.getUserId()).getList().add(trace);
 
         // 数据持久化
         Gson gson = new Gson();
         // 将对象转换成JSON字符串
         String json = gson.toJson(marking);
-        RocksDBUtil.put(req.getTraceId(),marking.getMarking_id(),json);
+        RocksDBUtil.put(req.getTraceId(), marking.getMarking_id(), json);
 
         // 多线程处理
         ANN_EXECUTOR.submit(new AnnCountThread(1, slideBy, marking));
@@ -1658,6 +1658,7 @@ public class MarkingServiceImpl implements MarkingService {
     public void redo(HistoryDTO dto) {
 
     }
+
     class TaskGenerateJson implements Runnable {
 
 
