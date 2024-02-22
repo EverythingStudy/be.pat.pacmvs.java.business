@@ -340,11 +340,12 @@ public class MarkingServiceImpl implements MarkingService {
             String traceId = req.getTraceId();
             // 撤消,恢复历史记录 用HistoryService会引起循环依赖！ -> 后续在线程池中处理 判断是批处理，还是单独处理
             // 1、创建Session,并存入ConcurrentHashMap<Long, Session>
-            Session session = new Session(user.getUserId());
-            if (!HistoryServiceImpl.USER_SESSION_MAP.containsKey(user.getUserId())) {
-                HistoryServiceImpl.USER_SESSION_MAP.put(user.getUserId(), session);
+            Session session = new Session(user.getUserId(), marking.getSlide_id());
+            String key = user.getUserId() + "" + marking.getSlide_id();
+            if (!HistoryServiceImpl.USER_SESSION_MAP.containsKey(key)) {
+                HistoryServiceImpl.USER_SESSION_MAP.put(key, session);
             }
-            session = HistoryServiceImpl.USER_SESSION_MAP.get(user.getUserId());
+            session = HistoryServiceImpl.USER_SESSION_MAP.get(key);
 
             // 2、创建Trace,并存入Session.list,LinkedList<Trace>
             // 单条记录
@@ -1671,7 +1672,8 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Override
     public Boolean undo(HistoryDTO dto) {
-        Session session = HistoryServiceImpl.USER_SESSION_MAP.get(dto.getUserId());
+        String key = dto.getUserId() + "_" + dto.getSlideId();
+        Session session = HistoryServiceImpl.USER_SESSION_MAP.get(key);
         LinkedList<Trace> list = session.getList();
         Integer index = session.getIndex();
         Trace trace = list.get(index);
@@ -1725,7 +1727,8 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Override
     public Boolean redo(HistoryDTO dto) {
-        Session session = HistoryServiceImpl.USER_SESSION_MAP.get(dto.getUserId());
+        String key = dto.getUserId() + "_" + dto.getSlideId();
+        Session session = HistoryServiceImpl.USER_SESSION_MAP.get(key);
         return true;
     }
 

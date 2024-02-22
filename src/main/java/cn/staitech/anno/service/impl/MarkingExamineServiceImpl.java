@@ -301,13 +301,15 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
 
     @Override
     public Boolean undo(HistoryDTO dto) {
-        Session session = HistoryServiceImpl.USER_SESSION_MAP.get(dto.getUserId());
+        String key = dto.getUserId() + "_" + dto.getSlideId();
+        Session session = HistoryServiceImpl.USER_SESSION_MAP.get(key);
         return true;
     }
 
     @Override
     public Boolean redo(HistoryDTO dto) {
-        Session session = HistoryServiceImpl.USER_SESSION_MAP.get(dto.getUserId());
+        String key = dto.getUserId() + "_" + dto.getSlideId();
+        Session session = HistoryServiceImpl.USER_SESSION_MAP.get(key);
         return true;
     }
 }

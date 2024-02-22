@@ -11,18 +11,20 @@ import cn.staitech.anno.vo.history.HistoryDTO;
  */
 
 public interface HistoryService {
-    void put(Long userId);
+    void put(Long userId, Long slideId);
 
-    Session get(Long userId);
+    Session get(Long userId, Long slideId);
 
     void remove(Long userId);
 
+
     /**
-     * 清空Session中的列表
+     * 清空Session
      *
      * @param userId
+     * @param slideId
      */
-    void clearSessionList(Long userId);
+    void clearSessionList(Long userId, Long slideId);
 
 
     Cursor getCursor(HistoryDTO dto);

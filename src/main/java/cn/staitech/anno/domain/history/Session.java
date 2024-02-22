@@ -23,6 +23,8 @@ public class Session {
      */
     private Long userId;
 
+    private Long slideId;
+
     /**
      * 链表
      */
@@ -34,8 +36,9 @@ public class Session {
     private Integer index = 0;
 
 
-    public Session(Long userId) {
+    public Session(Long userId, Long slideId) {
         this.userId = userId;
+        this.slideId = slideId;
     }
 
 //    public static void main(String[] args) {

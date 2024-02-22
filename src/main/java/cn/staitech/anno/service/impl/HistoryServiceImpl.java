@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class HistoryServiceImpl implements HistoryService {
 
-    public static final ConcurrentHashMap<Long, Session> USER_SESSION_MAP = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, Session> USER_SESSION_MAP = new ConcurrentHashMap<>();
 
     @Resource
     MarkingService markingService;
@@ -28,16 +28,18 @@ public class HistoryServiceImpl implements HistoryService {
     MarkingExamineService markingExamineService;
 
     @Override
-    public void put(Long userId) {
-        if (!USER_SESSION_MAP.containsKey(userId)) {
-            USER_SESSION_MAP.put(userId, new Session(userId));
+    public void put(Long userId, Long slideId) {
+        String key = userId + "_" + slideId;
+        if (!USER_SESSION_MAP.containsKey(key)) {
+            USER_SESSION_MAP.put(key, new Session(userId, slideId));
         }
     }
 
     @Override
-    public Session get(Long userId) {
-        if (USER_SESSION_MAP.containsKey(userId)) {
-            return USER_SESSION_MAP.get(userId);
+    public Session get(Long userId, Long slideId) {
+        String key = userId + "_" + slideId;
+        if (USER_SESSION_MAP.containsKey(key)) {
+            return USER_SESSION_MAP.get(key);
         }
         return null;
     }
@@ -61,9 +63,10 @@ public class HistoryServiceImpl implements HistoryService {
      * @param userId
      */
     @Override
-    public void clearSessionList(Long userId) {
-        if (USER_SESSION_MAP.containsKey(userId)) {
-            USER_SESSION_MAP.get(userId).getList().clear();
+    public void clearSessionList(Long userId, Long slideId) {
+        String key = userId + "_" + slideId;
+        if (USER_SESSION_MAP.containsKey(key)) {
+            USER_SESSION_MAP.get(key).getList().clear();
         }
     }
 
@@ -74,9 +77,9 @@ public class HistoryServiceImpl implements HistoryService {
      */
     @Override
     public Cursor getCursor(HistoryDTO dto) {
-        Long userId = dto.getUserId();
-        if (USER_SESSION_MAP.containsKey(userId)) {
-            Session session = USER_SESSION_MAP.get(userId);
+        String key = dto.getUserId() + "_" + dto.getSlideId();
+        if (USER_SESSION_MAP.containsKey(key)) {
+            Session session = USER_SESSION_MAP.get(key);
             Cursor cursor = new Cursor();
             cursor.setUndo(session.undoStatus());
             cursor.setRedo(session.redoStatus());

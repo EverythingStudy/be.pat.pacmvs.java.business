@@ -61,20 +61,12 @@ public class HistoryController {
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "标注编辑-历史记录", notes = "标注编辑-历史记录 - 王峰")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId", value = "用户ID(非必传，但建议传)", required = false, dataType = "Long", paramType = "query"),
-            @ApiImplicitParam(name = "slideId", value = "切片ID(非必传，但建议传)", required = false, dataType = "Long", paramType = "query")})
+            @ApiImplicitParam(name = "slideId", value = "切片ID", required = true, dataType = "Long", paramType = "query")})
     @Log(title = "标注编辑-历史记录", menu = "标注编辑-历史记录", subMenu = "清空", businessType = BusinessType.QUERY)
     @GetMapping("/clean")
-    public R<String> clean(@RequestParam @ApiParam(name = "userId", value = "用户ID(非必传，但建议传)", required = false) Long userId,
-                           @RequestParam @ApiParam(name = "slideId", value = "切片ID(非必传，但建议传)", required = false) Long slideId) {
-
-        System.out.println("slideId = " + slideId);
-
-        if (userId == null) {
-            userId = SecurityUtils.getLoginUser().getSysUser().getUserId();
-        }
-
-        historyService.clearSessionList(userId);
+    public R<String> clean(@RequestParam @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) {
+        Long userId = SecurityUtils.getLoginUser().getSysUser().getUserId();
+        historyService.clearSessionList(userId, slideId);
         return R.ok();
     }
 }
