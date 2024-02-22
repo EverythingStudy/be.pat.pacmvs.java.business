@@ -42,7 +42,7 @@ public class HistoryController {
     }
 
     /**
-     * 获取撤消、恢复状态,游标可移动次数 .
+     * 获取撤消、恢复状态 .
      */
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "标注编辑-历史记录", notes = "标注编辑-历史记录 - 王峰")
