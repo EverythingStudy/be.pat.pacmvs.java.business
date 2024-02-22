@@ -2,6 +2,7 @@ package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.domain.history.Session;
 import cn.staitech.anno.service.HistoryService;
+import cn.staitech.anno.vo.history.HistoryDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,10 +32,73 @@ public class HistoryServiceImpl implements HistoryService {
         return null;
     }
 
+    /**
+     * 删除Session
+     *
+     * @param userId
+     */
     @Override
     public void remove(Long userId) {
         if (USER_SESSION_MAP.containsKey(userId)) {
             USER_SESSION_MAP.remove(userId);
         }
     }
+
+
+    /**
+     * 清空Session中的列表
+     *
+     * @param userId
+     */
+    @Override
+    public void clearSessionList(Long userId) {
+        if (USER_SESSION_MAP.containsKey(userId)) {
+            USER_SESSION_MAP.get(userId).getList().clear();
+        }
+    }
+
+    /**
+     * 撤消
+     *
+     * @param dto
+     */
+    @Override
+    public void process(HistoryDTO dto) {
+
+        switch (dto.getEnvType()) {
+            case 1:
+                undo(dto);
+                break;
+            case 2:
+                redo(dto);
+                break;
+            default:
+        }
+    }
+
+
+    public void undo(HistoryDTO dto) {
+
+        switch (dto.getBizType()) {
+            case 1:
+                //markingService.undo(dto);
+                break;
+            case 2:
+                break;
+            default:
+        }
+    }
+
+    public void redo(HistoryDTO dto) {
+        switch (dto.getBizType()) {
+            case 1:
+                //markingService.redo(dto);
+                break;
+            case 2:
+                break;
+            default:
+        }
+    }
+
+
 }

@@ -34,6 +34,7 @@ import cn.staitech.anno.vo.geojson.in.RoiIn;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.geojson.out.BatchResult;
+import cn.staitech.anno.vo.history.HistoryDTO;
 import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingMerge;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
@@ -54,6 +55,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MappingJsonFactory;
+import com.google.gson.Gson;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
@@ -63,6 +65,7 @@ import com.vividsolutions.jts.operation.overlay.OverlayOp;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.rocksdb.ColumnFamilyHandle;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -108,7 +111,7 @@ public class MarkingServiceImpl implements MarkingService {
     private static final ExecutorService ANN_EXECUTOR = ExecutorBuilder.create().setCorePoolSize(Runtime.getRuntime().availableProcessors()).setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2).setKeepAliveTime(0).setWorkQueue(new LinkedBlockingQueue<Runnable>(4096)).build();
     String zipFileUrl = File.separator + "zipFile";
     String jsonFileUrl = "/file/statics";
-    String fileUrl = File.separator + "zipFile";
+
     @Resource
     private SlideMapperV1 slideMapperV1;
     @Resource
@@ -140,7 +143,7 @@ public class MarkingServiceImpl implements MarkingService {
     @Resource
     private HistoryService historyService;
 
-    private static Boolean fileExists(String filePath) throws Exception {
+    private static Boolean fileExists(String filePath) {
         File file = new File(filePath);
         boolean exists = file.exists();
         if (exists) {
@@ -336,18 +339,19 @@ public class MarkingServiceImpl implements MarkingService {
         BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, ADD_STATUS, features, pointCountList);
         NioWebSocketHandler.sendAll(req.getSlide_id(), broadcastVO);
 
+
         // TODO:后续在线程池中处理 判断是批处理，还是单独处理
         // 撤消,恢复历史记录
         historyService.put(user.getUserId());
         Trace trace = new Trace(user.getUserId(), req.getTraceId());
         trace.getMarkingIds().add(marking.getMarking_id());
         historyService.get(user.getUserId()).getList().add(trace);
-        // TODO数据持久化
-        // 删除token无效对应数据:遍历撤消、恢复历史记录
-        for (Map.Entry<Long, Session> entry : HistoryServiceImpl.USER_SESSION_MAP.entrySet()) {
-            log.info("------entry:{}", entry);
-        }
 
+        // 数据持久化
+        Gson gson = new Gson();
+        // 将对象转换成JSON字符串
+        String json = gson.toJson(marking);
+        RocksDBUtil.put(req.getTraceId(),marking.getMarking_id(),json);
 
         // 多线程处理
         ANN_EXECUTOR.submit(new AnnCountThread(1, slideBy, marking));
@@ -1604,6 +1608,7 @@ public class MarkingServiceImpl implements MarkingService {
      * @param list
      * @return
      */
+    @Override
     public List<BatchResult> batch(List<ViewAddIn> list) {
         List<BatchResult> result = new ArrayList<>(list.size());
         for (ViewAddIn dto : list) {
@@ -1644,6 +1649,15 @@ public class MarkingServiceImpl implements MarkingService {
         return result;
     }
 
+    @Override
+    public void undo(HistoryDTO dto) {
+
+    }
+
+    @Override
+    public void redo(HistoryDTO dto) {
+
+    }
     class TaskGenerateJson implements Runnable {
 
 

@@ -15,6 +15,11 @@ import java.util.LinkedList;
 @Data
 public class Session {
     /**
+     * 队列元素个数最大值
+     */
+    private static final int LIST_MAX_SIZE = 20;
+
+    /**
      * 用户ID，会话id
      */
     private Long userId;
@@ -24,6 +29,12 @@ public class Session {
      */
     private LinkedList<Trace> list = new LinkedList<>();
 
+    /**
+     * 游标
+     */
+    private Integer cursor;
+
+
     public Session(Long userId) {
         this.userId = userId;
     }
@@ -31,21 +42,54 @@ public class Session {
     public static void main(String[] args) {
         Long userId = 1L;
         Session session = new Session(userId);
-        session.list.add(new Trace(userId, UUID.fastUUID().toString()));
-        session.list.add(new Trace(userId, UUID.fastUUID().toString()));
-        session.list.add(new Trace(userId, UUID.fastUUID().toString()));
-        session.list.add(new Trace(userId, UUID.fastUUID().toString()));
-        session.list.add(new Trace(userId, UUID.fastUUID().toString()));
-        session.list.add(new Trace(userId, UUID.fastUUID().toString()));
-        session.list.add(new Trace(userId, UUID.fastUUID().toString()));
+        session.list.addLast(new Trace(userId, "1"));
+        session.list.addLast(new Trace(userId, "2"));
+        session.list.addLast(new Trace(userId, "3"));
+        session.list.addLast(new Trace(userId, "4"));
+        session.list.addLast(new Trace(userId, UUID.fastUUID().toString()));
 
         log.info("session {}", session);
 
         session.list.removeFirst();
-
         log.info("session {}", session);
-
-
     }
+
+    /**
+     * 向列表中添加元素
+     *
+     * @param trace
+     */
+    public void addTrace(Trace trace) {
+        if (list.size() >= LIST_MAX_SIZE) {
+            list.removeFirst();
+        }
+        list.addLast(trace);
+    }
+
+    public Integer setUndoCursor() {
+        if (cursor >= 0 && cursor < list.size()) {
+            cursor--;
+            return cursor;
+        }
+        return null;
+    }
+
+    public Integer setRedoCursor() {
+        if (cursor >= 0 && cursor < list.size()) {
+            cursor++;
+            return cursor;
+        }
+        return null;
+    }
+
+    public Integer resetCursor() {
+        if (cursor >= 0 && cursor < list.size()) {
+            cursor = list.size();
+            return cursor;
+        }
+        return null;
+    }
+
+
 
 }

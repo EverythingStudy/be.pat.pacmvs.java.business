@@ -1,6 +1,7 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.history.Session;
+import cn.staitech.anno.vo.history.HistoryDTO;
 
 /**
  * @author: wangfeng
@@ -14,4 +15,14 @@ public interface HistoryService {
     Session get(Long userId);
 
     void remove(Long userId);
+
+    /**
+     * 清空Session中的列表
+     *
+     * @param userId
+     */
+    void clearSessionList(Long userId);
+
+
+    void process(HistoryDTO dto);
 }

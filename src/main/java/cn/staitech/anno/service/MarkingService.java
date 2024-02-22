@@ -7,6 +7,7 @@ import cn.staitech.anno.vo.geojson.in.RoiIn;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.geojson.out.BatchResult;
+import cn.staitech.anno.vo.history.HistoryDTO;
 import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingMerge;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
@@ -193,4 +194,8 @@ public interface MarkingService {
      * @return
      */
     List<BatchResult> batch(List<ViewAddIn> list);
+
+    void undo(HistoryDTO dto);
+
+    void redo(HistoryDTO dto);
 }
