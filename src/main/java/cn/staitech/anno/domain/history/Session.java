@@ -31,7 +31,7 @@ public class Session {
     /**
      * 游标
      */
-    private Integer index;
+    private Integer index = 0;
 
 
     public Session(Long userId) {

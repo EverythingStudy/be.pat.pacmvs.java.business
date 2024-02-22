@@ -1681,6 +1681,12 @@ public class MarkingServiceImpl implements MarkingService {
             String id = node.getId();
 
             try {
+
+                Gson gson = new Gson();
+                String json = RocksDBUtil.get(trace.getTraceId(), id);
+                Marking marking = gson.fromJson(json, Marking.class);
+
+
                 switch (node.getOperation()) {
                     case "INSERT":
                         delete(id);

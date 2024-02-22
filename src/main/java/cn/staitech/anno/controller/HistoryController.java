@@ -64,7 +64,13 @@ public class HistoryController {
     @GetMapping("/clean")
     public R<String> clean(@RequestParam @ApiParam(name = "userId", value = "用户ID(非必传，但建议传)", required = false) Long userId,
                            @RequestParam @ApiParam(name = "slideId", value = "切片ID(非必传，但建议传)", required = false) Long slideId) {
-        userId = userId > 0 ? userId : SecurityUtils.getLoginUser().getSysUser().getUserId();
+
+        System.out.println("slideId = " + slideId);
+
+        if (userId == null) {
+            userId = SecurityUtils.getLoginUser().getSysUser().getUserId();
+        }
+
         historyService.clearSessionList(userId);
         return R.ok();
     }
