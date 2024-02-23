@@ -451,6 +451,17 @@
             </properties>
         </profile>
         <profile>
+            <!-- 开发环境eyedevwf1 -->
+            <id>eyedevwf1</id>
+            <properties>
+                <activatedProperties>eyedevwf1</activatedProperties>
+                <nacosNamespace>28797311-64b5-4e6c-8f2a-536c1bcdd1fb</nacosNamespace>
+                <nacosAddress>http://192.168.52.108:8848</nacosAddress>
+                <nacosGroup>DEFAULT_GROUP</nacosGroup>
+                <serverAddr>192.168.52.108:8848</serverAddr>
+            </properties>
+        </profile>
+        <profile>
             <!-- 开发环境eyedevzmj -->
             <id>eyedevzmj</id>
             <properties>

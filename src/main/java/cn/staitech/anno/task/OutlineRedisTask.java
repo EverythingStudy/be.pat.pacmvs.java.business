@@ -35,7 +35,8 @@ public class OutlineRedisTask {
      * business type 1: viewer页面-吸管功能对应redis数据
      * business type 2: viewer页面-撤消、恢复历史记录数据
      */
-    @Scheduled(fixedDelay = 30000)
+    //@Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 10000)
     public void clean() {
         String rootKey = REDIS_OUTLINE_ROOT;
         String listKey = REDIS_OUTLINE_LIST;
@@ -76,9 +77,9 @@ public class OutlineRedisTask {
         // 删除token无效对应数据:遍历撤消、恢复历史记录
         for (Map.Entry<String, Session> entry : HistoryServiceImpl.USER_SESSION_MAP.entrySet()) {
 
-            log.info("---------------------------------------\n");
+            log.info("****************************************************\n");
             log.info("entry:{}", entry);
-            log.info("---------------------------------------\n");
+            log.info("****************************************************\n");
 
             String key = entry.getKey();
             Long userId = Long.valueOf(key.split("_")[0]);

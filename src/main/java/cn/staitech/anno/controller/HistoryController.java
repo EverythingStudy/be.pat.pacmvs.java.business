@@ -37,6 +37,9 @@ public class HistoryController {
     @Log(title = "标注编辑-历史记录", menu = "标注编辑-历史记录", subMenu = "撤消、恢复", businessType = BusinessType.QUERY)
     @PostMapping("/process")
     public R<String> process(@Validated @RequestBody HistoryDTO dto) {
+        if (dto.getUserId() == null) {
+            dto.setUserId(SecurityUtils.getLoginUser().getSysUser().getUserId());
+        }
         historyService.process(dto);
         return R.ok();
     }

@@ -341,7 +341,7 @@ public class MarkingServiceImpl implements MarkingService {
             // 撤消,恢复历史记录 用HistoryService会引起循环依赖！ -> 后续在线程池中处理 判断是批处理，还是单独处理
             // 1、创建Session,并存入ConcurrentHashMap<Long, Session>
             Session session = new Session(user.getUserId(), marking.getSlide_id());
-            String key = user.getUserId() + "" + marking.getSlide_id();
+            String key = user.getUserId() + "_" + marking.getSlide_id();
             if (!HistoryServiceImpl.USER_SESSION_MAP.containsKey(key)) {
                 HistoryServiceImpl.USER_SESSION_MAP.put(key, session);
             }
@@ -373,6 +373,106 @@ public class MarkingServiceImpl implements MarkingService {
 
         return marking.getMarking_id();
     }
+
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String insertByHistory(ViewAddIn req) throws Exception {
+
+        if (req.getSlide_id() == null) {
+            return MessageSource.M("MarkingDelIn.slideId.notNull");
+        }
+
+        if (req.getGeometry() != null && !req.getGeometry().isEmpty()) {
+            MarkingUtils.addVerify(req.getGeometry());
+        } else {
+            log.info("标注数据异常:" + req.getGeometry() + "------------------------------------------------->");
+            return "更新失败，轮廓数据不能为空";
+        }
+
+        //加slide缓存
+        cn.staitech.anno.project.domain.Slide slideBy = redisService.getCacheObject(CommonConstant.ANNO_SLIDE + req.getSlide_id());
+        if (null == slideBy) {
+            slideBy = slideMapperV1.selectById(req.getSlide_id());
+            redisService.setCacheObject(CommonConstant.ANNO_SLIDE + req.getSlide_id(), slideBy, CommonConstant.SLIDE_CACHE_HOURS, TimeUnit.HOURS);
+        }
+        if (slideBy == null) {
+            return MessageSource.M("NO_SLIDE_DATA");
+        }
+
+        Marking marking = trans2Marking(req);
+
+        // 获取规定的geoJson Id
+        String annotationId = CustomizationIdUtils.getSdId();
+        marking.setAnnotation_id(annotationId);
+        marking.setArea(req.getArea());
+        marking.setPerimeter(req.getPerimeter());
+        // 若未传入标注作者,使用当前登录用户为标注作者==>必传Create_by 无默认
+        marking.setCreate_by(req.getCreate_by());
+        marking.setAnnotation_type("Draw");
+        marking.setCreate_time(new Date());
+        //加用户缓存
+        SysUser user = redisService.getCacheObject(CommonConstant.SYS_USER + req.getCreate_by());
+        if (null == user) {
+            user = userMapper.selectUserById(req.getCreate_by());
+            redisService.setCacheObject(CommonConstant.SYS_USER + req.getCreate_by(), user, CommonConstant.SYS_USER_CACHE_HOURS, TimeUnit.DAYS);
+        }
+        if (user != null) {
+            marking.setAnnotation_owner(user.getUserName());
+            marking.setOrganization_id(user.getOrganizationId());
+        }
+
+        marking.setProject_id(Long.valueOf(slideBy.getProjectId()));
+        // 添加数据库，添加后返回自增id
+        markingMapper.insert(marking);
+
+        Properties properties = markingMapper.selectBy(marking.getMarking_id());
+        Features features = MarkingUtils.socketData(annotationId, marking.getGeometry(), properties);
+        // 如果是点类型，返回点的总数并返回
+        List<PointCount> pointCountList = updatePoint(marking.getLocation_type(), marking);
+        BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, ADD_STATUS, features, pointCountList);
+        NioWebSocketHandler.sendAll(req.getSlide_id(), broadcastVO);
+
+        {
+            String traceId = req.getTraceId();
+            // 撤消,恢复历史记录 用HistoryService会引起循环依赖！ -> 后续在线程池中处理 判断是批处理，还是单独处理
+            // 1、创建Session,并存入ConcurrentHashMap<Long, Session>
+            Session session = new Session(user.getUserId(), marking.getSlide_id());
+            String key = user.getUserId() + "_" + marking.getSlide_id();
+            if (!HistoryServiceImpl.USER_SESSION_MAP.containsKey(key)) {
+                HistoryServiceImpl.USER_SESSION_MAP.put(key, session);
+            }
+            session = HistoryServiceImpl.USER_SESSION_MAP.get(key);
+
+            // 2、创建Trace,并存入Session.list,LinkedList<Trace>
+            // 单条记录
+            Trace trace = new Trace(user.getUserId(), traceId, req.getIsBatch());
+            // 批量操作
+
+            if (req.getIsBatch() && session.getTraceById(traceId) != null) {
+                // 若trace已经存在，不用再add
+                trace = session.getTraceById(traceId);
+                trace.getNodeList().add(new TraceNode(marking.getMarking_id(), "INSERT"));
+            } else {
+                trace.getNodeList().add(new TraceNode(marking.getMarking_id(), "INSERT"));
+                session.addTrace(trace);
+            }
+
+            // 3、数据持久化写入RocksDB
+            Gson gson = new Gson();
+            // 将对象转换成JSON字符串
+            String json = gson.toJson(marking);
+            RocksDBUtil.put(traceId, marking.getMarking_id(), json);
+        }
+
+        // 多线程处理
+        ANN_EXECUTOR.submit(new AnnCountThread(1, slideBy, marking));
+
+        return marking.getMarking_id();
+    }
+
+
 
     /**
      * 添加标注 - 吸管
@@ -566,7 +666,7 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int delete(String markingId) throws Exception {
+    public int delete(String markingId, String traceId, Boolean isBatch, Boolean isHistory) throws Exception {
         if (!Optional.ofNullable(markingId).isPresent()) {
             throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }
@@ -1627,13 +1727,13 @@ public class MarkingServiceImpl implements MarkingService {
     public List<BatchResult> batch(List<ViewAddIn> list) {
         List<BatchResult> result = new ArrayList<>(list.size());
 
-        String uuid = UUID.randomUUID().toString();
+        String traceId = UUID.randomUUID().toString();
 
         for (ViewAddIn dto : list) {
             BatchResult batchResult = new BatchResult();
             batchResult.setFront_id(dto.getMarking_id());
 
-            dto.setTraceId(uuid);
+            dto.setTraceId(traceId);
             dto.setIsBatch(true);
 
             try {
@@ -1645,7 +1745,7 @@ public class MarkingServiceImpl implements MarkingService {
                             break;
                         }
                     case "DELETE":
-                        if (delete(dto.getMarking_id()) > 0) {
+                        if (delete(dto.getMarking_id(),traceId,true,false) > 0) {
                             batchResult.setData(dto.getMarking_id());
                             break;
                         }
@@ -1672,6 +1772,9 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Override
     public Boolean undo(HistoryDTO dto) {
+
+        String traceId = UUID.randomUUID().toString();
+
         String key = dto.getUserId() + "_" + dto.getSlideId();
         Session session = HistoryServiceImpl.USER_SESSION_MAP.get(key);
         LinkedList<Trace> list = session.getList();
@@ -1680,18 +1783,18 @@ public class MarkingServiceImpl implements MarkingService {
 
         List<TraceNode> traceNodeList = trace.getNodeList();
         for (TraceNode node : traceNodeList) {
-            String id = node.getId();
+            String markingId = node.getId();
 
             try {
 
                 Gson gson = new Gson();
-                String json = RocksDBUtil.get(trace.getTraceId(), id);
+                String json = RocksDBUtil.get(trace.getTraceId(), markingId);
                 Marking marking = gson.fromJson(json, Marking.class);
 
 
                 switch (node.getOperation()) {
                     case "INSERT":
-                        delete(id);
+                        delete(markingId,traceId,true,true);
                         break;
 
 //                    String markingIdIns = insert(dto);

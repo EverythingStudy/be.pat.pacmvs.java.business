@@ -68,6 +68,14 @@ public interface MarkingService {
      */
     String insert(ViewAddIn req) throws Exception;
 
+    /**
+     * 添加标注
+     *
+     * @param req 标注数据
+     * @return true || false
+     */
+    String insertByHistory(ViewAddIn req) throws Exception;
+
 
     /**
      * 添加标注 - 吸管
@@ -110,7 +118,7 @@ public interface MarkingService {
      * @param markingId 标注id
      * @return true || false
      */
-    int delete(String markingId) throws Exception;
+    int delete(String markingId, String traceId, Boolean isBatch, Boolean isHistory) throws Exception;
 
     /**
      * 填充标注

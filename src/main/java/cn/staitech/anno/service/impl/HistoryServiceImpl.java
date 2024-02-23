@@ -6,6 +6,7 @@ import cn.staitech.anno.service.MarkingExamineService;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.vo.history.Cursor;
 import cn.staitech.anno.vo.history.HistoryDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -16,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @create: 2024-02-20 18:11:25
  * @Description: 会话
  */
+@Slf4j
 @Service
 public class HistoryServiceImpl implements HistoryService {
 
@@ -78,14 +80,17 @@ public class HistoryServiceImpl implements HistoryService {
     @Override
     public Cursor getCursor(HistoryDTO dto) {
         String key = dto.getUserId() + "_" + dto.getSlideId();
+        Cursor cursor = new Cursor();
+        log.info("++++++++++{}\n   {}", key, USER_SESSION_MAP.containsKey(key) );
+
         if (USER_SESSION_MAP.containsKey(key)) {
+
             Session session = USER_SESSION_MAP.get(key);
-            Cursor cursor = new Cursor();
+            log.info("\n\n\nsession:{}\n\n\n", session);
             cursor.setUndo(session.undoStatus());
             cursor.setRedo(session.redoStatus());
-            return cursor;
         }
-        return null;
+        return cursor;
     }
 
 

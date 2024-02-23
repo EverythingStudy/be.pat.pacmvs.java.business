@@ -102,12 +102,8 @@ public class Session {
         return null;
     }
 
-    public Integer resetIndex() {
-        if (index >= 0 && index < list.size()) {
-            index = list.size();
-            return index;
-        }
-        return null;
+    public void resetIndex() {
+        index = list.size() - 1;
     }
 
     /**
@@ -116,7 +112,7 @@ public class Session {
      * @return
      */
     public Boolean undoStatus() {
-        if (index > 0 && index < list.size()) {
+        if (index >= 0 && index < list.size()) {
             return true;
         }
         return false;
@@ -128,11 +124,12 @@ public class Session {
      * @return
      */
     public Boolean redoStatus() {
-        if (index >= 0 && index < list.size() - 1) {
+        if (index >= 0 && index < list.size() && list.size() - index > 1) {
             return true;
         }
-        return null;
+        return false;
     }
-
-
+//index:0 1 2 3
+//size        4
+//
 }

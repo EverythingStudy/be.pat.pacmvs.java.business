@@ -65,7 +65,7 @@ public class RocksDBUtil {
                 COLUMNFAMILYHANDLE_MAP.put(cfName, columnFamilyHandle);
             }
             log.info("RocksDB init success!! path:{}", rocksDBPath);
-            log.info("cfNames:{}", COLUMNFAMILYHANDLE_MAP.keySet());
+            // log.info("cfNames:{}", COLUMNFAMILYHANDLE_MAP.keySet());
         } catch (Exception e) {
             log.error("RocksDB init failure!! error:{}", e.getMessage());
             e.printStackTrace();

@@ -111,7 +111,6 @@ public class MarkingController {
     public R<String> add(@Validated @RequestBody ViewAddIn req) throws Exception {
         req.setTraceId(UUID.fastUUID().toString());
         req.setIsBatch(false);
-
         String markingId = markingService.insert(req);
         return R.ok(markingId, MessageSource.M("OPERATE_SUCCEED"));
     }
@@ -121,7 +120,7 @@ public class MarkingController {
     @ApiImplicitParams({@ApiImplicitParam(name = "markingId", value = "标注id", required = true, dataType = "Long", paramType = "query")})
     @DeleteMapping("/intelligentAnno/delete")
     public R<String> del(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) String marking_id) throws Exception {
-        markingService.delete(marking_id);
+        markingService.delete(marking_id,UUID.fastUUID().toString(),false,false);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
@@ -129,6 +128,8 @@ public class MarkingController {
     @ApiOperation(value = "更新标注")
     @PutMapping("/intelligentAnno/update")
     public R<String> update(@Validated @RequestBody ViewAddIn req) throws Exception {
+        req.setTraceId(UUID.fastUUID().toString());
+        req.setIsBatch(false);
         markingService.update(req);
         return R.ok(req.getMarking_id(), MessageSource.M("OPERATE_SUCCEED"));
     }
