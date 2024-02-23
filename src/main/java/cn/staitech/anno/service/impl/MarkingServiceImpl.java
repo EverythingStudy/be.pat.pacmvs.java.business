@@ -702,7 +702,8 @@ public class MarkingServiceImpl implements MarkingService {
         marking.setMarking_id(markingId);
         marking.setGeometry(geometryJson);
         Geometry geometry = WKT_READER.read(WktUtil.jsonToWkt(marking.getGeometry()));
-        Image image = imageMapper.selectById(markingBy.getImage_id());
+        Slide slide = slideMapperV1.selectById(markingBy.getSlide_id());
+        Image image = imageMapper.selectById(slide.getImageId());
         if (image.getResolutionX() != null) {
             double resolutions = Double.parseDouble(image.getResolutionX());
             String area = String.valueOf(geometry.getArea() * resolutions * resolutions);

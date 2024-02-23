@@ -217,7 +217,6 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         Geometry geometry = WKT_READER.read(WktUtil.jsonToWkt(markingExamine.getGeometry()));
         QuestionProjectRel questionProjectRel = questionProjectRelMapper.selectById(markingBy.getQuestionProjectId());
         QuestionBank questionBank = questionBankMapper.selectById(questionProjectRel.getQuestionId());
-
         Image image = imageMapper.selectById(questionBank.getImageId());
         if (image.getResolutionX() != null) {
             double resolutions = Double.parseDouble(image.getResolutionX());
