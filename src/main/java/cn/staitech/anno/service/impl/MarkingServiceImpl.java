@@ -716,7 +716,7 @@ public class MarkingServiceImpl implements MarkingService {
         marking.setAnnotation_update_owner(SecurityUtils.getUsername());
         int res = markingMapper.updateById(marking);
         Properties properties = markingMapper.selectBy(markingId);
-        Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), markingBy.getGeometry(), properties);
+        Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), geometryJson, properties);
         BroadcastVO broadcastVO = SendMessage.sendOneMessagesByAnnoType(CommonConstant.ANNO_TYPE_DRAW, UPDATE_STATUS, features);
         NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
         return res;
