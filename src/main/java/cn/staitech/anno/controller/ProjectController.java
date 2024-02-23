@@ -18,6 +18,7 @@ import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.web.controller.BaseController;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
+import cn.staitech.common.security.annotation.Logical;
 import cn.staitech.common.security.annotation.RequiresPermissions;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
@@ -87,7 +88,7 @@ public class ProjectController extends BaseController {
     @SuppressWarnings("checkstyle:MissingJavadocMethod")
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "添加项目")
-    @RequiresPermissions("projectConfig:projectList:create")
+    @RequiresPermissions(value={"projectConfig:projectList:create","annoCreate:projectList:create","reviewCreate:projectList:create","annotateCreate:projectList:create","algorithmCreate:projectList:create"},logical = Logical.OR)
     @Log(title = "添加项目", menu = "专题管理", subMenu = "项目管理", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @Transactional(rollbackFor = Exception.class)
@@ -139,7 +140,7 @@ public class ProjectController extends BaseController {
 
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "编辑项目")
-    @RequiresPermissions("projectConfig:projectList:edit")
+    @RequiresPermissions(value={"projectConfig:projectList:edit","annoCreate:projectList:edit","reviewCreate:projectList:edit","annotateCreate:projectList:edit","algorithmCreate:projectList:edit"},logical = Logical.OR)
     @Log(title = "编辑项目", menu = "编辑项目", subMenu = "编辑项目", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @Transactional(rollbackFor = Exception.class)
@@ -178,7 +179,7 @@ public class ProjectController extends BaseController {
 
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "批量项目")
-    @RequiresPermissions("projectConfig:projectList:remove")
+    @RequiresPermissions(value={"projectConfig:projectList:remove","annoCreate:projectList:remove","reviewCreate:projectList:remove","annotateCreate:projectList:remove","algorithmCreate:projectList:remove"},logical =Logical.OR)
     @PostMapping(value = "/remove")
     public R remove(@RequestBody ProjectIdsVO request) {
         Integer processCount = projectService.projectRemove(request);
