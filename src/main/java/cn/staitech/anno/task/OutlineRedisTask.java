@@ -1,10 +1,13 @@
 package cn.staitech.anno.task;
 
 import cn.staitech.anno.domain.history.Session;
+import cn.staitech.anno.domain.history.Trace;
 import cn.staitech.anno.service.impl.HistoryServiceImpl;
+import cn.staitech.anno.utils.RocksDBUtil;
 import cn.staitech.common.core.constant.CacheConstants;
 import cn.staitech.common.redis.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
+import org.rocksdb.RocksDBException;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import static cn.staitech.anno.constant.CommonConstant.REDIS_OUTLINE_LIST;
@@ -84,8 +88,19 @@ public class OutlineRedisTask {
             String key = entry.getKey();
             Long userId = Long.valueOf(key.split("_")[0]);
             if (!loginMap.containsKey(userId)) {
+                Session session = entry.getValue();
+                LinkedList<Trace> tracesList = session.getList();
+                for (Trace trace : tracesList) {
+                    try {
+                        RocksDBUtil.cfDeleteIfExist(trace.getTraceId());
+                    } catch (RocksDBException e) {
+                        log.info("定时任务删除废弃rocksdb数据:{},{}", trace.getTraceId(), e);
+                    }
+                }
                 HistoryServiceImpl.USER_SESSION_MAP.remove(entry.getKey());
             }
         }
+
+
     }
 }

@@ -65,7 +65,8 @@ public class RocksDBUtil {
                 COLUMNFAMILYHANDLE_MAP.put(cfName, columnFamilyHandle);
             }
             log.info("RocksDB init success!! path:{}", rocksDBPath);
-            // log.info("cfNames:{}", COLUMNFAMILYHANDLE_MAP.keySet());
+            log.info("----------->cfNames:{}", COLUMNFAMILYHANDLE_MAP.keySet());
+            // deleteAllColumnFamily();
         } catch (Exception e) {
             log.error("RocksDB init failure!! error:{}", e.getMessage());
             e.printStackTrace();
@@ -251,5 +252,21 @@ public class RocksDBUtil {
             }
         }
         return count;
+    }
+
+    /**
+     * 删除所有列族及数据
+     */
+    public static void deleteAllColumnFamily() {
+        // 删除旧数据
+        for (String cfName : COLUMNFAMILYHANDLE_MAP.keySet()) {
+            if (!cfName.equals("default")) {
+                try {
+                    cfDeleteIfExist(cfName);
+                } catch (RocksDBException e) {
+                    log.info("初始化清空rocksdb数据:{},{}", cfName, e);
+                }
+            }
+        }
     }
 }

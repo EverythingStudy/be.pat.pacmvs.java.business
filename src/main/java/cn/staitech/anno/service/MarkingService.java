@@ -17,6 +17,7 @@ import cn.staitech.common.core.domain.R;
 import cn.staitech.system.api.domain.SysUser;
 import com.alibaba.fastjson.JSONObject;
 import com.vividsolutions.jts.io.ParseException;
+import org.rocksdb.RocksDBException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -69,12 +70,15 @@ public interface MarkingService {
     String insert(ViewAddIn req) throws Exception;
 
     /**
-     * 添加标注
+     * 撤消、恢复 - 添加标注
      *
-     * @param req 标注数据
-     * @return true || false
+     * @param marking
+     * @param traceId
+     * @param isBatch
+     * @return
+     * @throws Exception
      */
-    String insertByHistory(ViewAddIn req) throws Exception;
+    Boolean insertByHistory(Marking marking, String traceId, Boolean isBatch) throws Exception;
 
 
     /**
@@ -101,6 +105,8 @@ public interface MarkingService {
      * @return true || false
      */
     String update(ViewAddIn marking) throws Exception;
+
+    Boolean updateByHistory(Marking marking, String traceId, Boolean isBatch) throws RocksDBException;
 
     JSONObject updateOperation(UpdateOperationIn req) throws Exception;
 
