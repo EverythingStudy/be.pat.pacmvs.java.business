@@ -6,9 +6,11 @@ import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.out.BatchResult;
 import cn.staitech.anno.vo.history.HistoryDTO;
 import cn.staitech.anno.vo.marking.MarkingExamineInsertVO;
+import cn.staitech.anno.vo.marking.MarkingMerge;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.vividsolutions.jts.io.ParseException;
 
 import java.util.List;
 
@@ -44,6 +46,30 @@ public interface MarkingExamineService extends IService<MarkingExamine> {
      * @return true || false
      */
     Long update(MarkingExamineInsertVO marking) throws Exception;
+
+    /**
+     * 填充标注
+     *
+     * @param markingId 标注id
+     * @return true || false
+     */
+    int padding(String markingId) throws Exception;
+
+    /**
+     * 填充标注
+     *
+     * @param markingId 标注id
+     * @return true || false
+     */
+    int stickup(String markingId);
+
+    /**
+     * 多个轮廓合并
+     *
+     * @param markingId 标注id
+     * @return true || false
+     */
+    JSONObject markingMerge(MarkingMerge req) throws ParseException;
 
     /**
      * 合并、裁剪轮廓

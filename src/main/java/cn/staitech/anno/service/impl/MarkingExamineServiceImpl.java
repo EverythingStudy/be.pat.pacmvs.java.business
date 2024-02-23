@@ -1,14 +1,8 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.domain.MarkingExamine;
-import cn.staitech.anno.domain.QuestionBank;
-import cn.staitech.anno.domain.QuestionProjectRel;
-import cn.staitech.anno.domain.Structure;
+import cn.staitech.anno.domain.*;
 import cn.staitech.anno.domain.history.Session;
-import cn.staitech.anno.mapper.MarkingExamineMapper;
-import cn.staitech.anno.mapper.QuestionBankMapper;
-import cn.staitech.anno.mapper.QuestionProjectRelMapper;
-import cn.staitech.anno.mapper.StructureMapper;
+import cn.staitech.anno.mapper.*;
 import cn.staitech.anno.netty.websocket.NioWebSocketHandler;
 import cn.staitech.anno.project.domain.Marking;
 import cn.staitech.anno.service.MarkingExamineService;
@@ -20,12 +14,19 @@ import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.out.BatchResult;
 import cn.staitech.anno.vo.history.HistoryDTO;
 import cn.staitech.anno.vo.marking.MarkingExamineInsertVO;
+import cn.staitech.anno.vo.marking.MarkingMerge;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
+import com.vividsolutions.jts.operation.overlay.OverlayOp;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +37,6 @@ import java.nio.file.Files;
 import java.util.*;
 
 import static cn.staitech.anno.constant.CommonConstant.*;
-
 /**
  * <p>
  * 服务实现类
@@ -59,7 +59,14 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
     private StructureMapper structureMapper;
 
     @Resource
+    private ImageMapper imageMapper;
+
+    @Resource
     private QuestionBankMapper questionBankMapper;
+
+    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), 4326);
+
+    private static final WKTReader WKT_READER = new WKTReader(GEOMETRY_FACTORY);
 
     public static String getStr(File jsonFile) {
         String jsonStr;
@@ -196,6 +203,88 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         String questionProjectId = markingExamineBy.getQuestionProjectId() + GLIDE_LINE + SecurityUtils.getLoginUser().getSysUser().getUserId();
         NioWebSocketHandler.sendQuestionProject(questionProjectId, broadcastVO);
         return markingExamine.getMarkingExamineId();
+    }
+
+    @Override
+    public int padding(String markingId) throws Exception {
+        MarkingExamine markingBy = markingExamineMapper.selectById(markingId);
+        if (!Optional.ofNullable(markingBy).isPresent()) {
+            throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
+        }
+        JSONObject geometryJson = MarkingUtils.padding(markingBy.getGeometry());
+        MarkingExamine markingExamine = new MarkingExamine();
+        markingExamine.setGeometry(geometryJson);
+        Geometry geometry = WKT_READER.read(WktUtil.jsonToWkt(markingExamine.getGeometry()));
+        QuestionProjectRel questionProjectRel = questionProjectRelMapper.selectById(markingBy.getQuestionProjectId());
+        QuestionBank questionBank = questionBankMapper.selectById(questionProjectRel.getQuestionId());
+
+        Image image = imageMapper.selectById(questionBank.getImageId());
+        if (image.getResolutionX() != null) {
+            double resolutions = Double.parseDouble(image.getResolutionX());
+            String area = String.valueOf(geometry.getArea() * resolutions * resolutions);
+            markingExamine.setArea(area);
+            String per = String.valueOf(geometry.getLength() * resolutions);
+            markingExamine.setPerimeter(per);
+        }
+        markingExamine.setUpdateTime(new Date());
+        markingExamine.setUpdateBy(SecurityUtils.getUserId());
+        int res = markingExamineMapper.updateById(markingExamine);
+        Properties properties = markingExamineMapper.selectBy(markingExamine.getMarkingExamineId());
+        Features features = MarkingUtils.socketData("", geometryJson, properties);
+        BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features);
+        // 使用websocket发送数据
+        String questionProjectId = markingBy.getQuestionProjectId() + GLIDE_LINE + SecurityUtils.getLoginUser().getSysUser().getUserId();
+        NioWebSocketHandler.sendQuestionProject(questionProjectId, broadcastVO);
+        return res;
+    }
+
+    @Override
+    public int stickup(String markingId) {
+        MarkingExamine markingExamine = markingExamineMapper.selectById(markingId);
+        markingExamine.setCreateTime(new Date());
+        int res = markingExamineMapper.insert(markingExamine);
+        Properties properties = markingExamineMapper.selectBy(markingExamine.getMarkingExamineId());
+        Features features = MarkingUtils.socketData("", markingExamine.getGeometry(), properties);
+        BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features);
+        // 使用websocket发送数据
+        String questionProjectId = markingExamine.getQuestionProjectId() + GLIDE_LINE + SecurityUtils.getLoginUser().getSysUser().getUserId();
+        NioWebSocketHandler.sendQuestionProject(questionProjectId, broadcastVO);
+        return res;
+    }
+
+    @Override
+    public JSONObject markingMerge(MarkingMerge req) throws ParseException {
+        QueryWrapper<MarkingExamine> markingQueryWrapper = new QueryWrapper<>();
+        markingQueryWrapper.in("marking_id", req.getMarkingIdList());
+        List<MarkingExamine> markingList = markingExamineMapper.selectList(markingQueryWrapper);
+        List<Geometry> geometryList = new ArrayList<>();
+        for (MarkingExamine marking : markingList) {
+            Geometry geometry = WKT_READER.read(WktUtil.jsonToWkt(marking.getGeometry()));
+            geometryList.add(geometry);
+        }
+        if (geometryList.size() > 0) {
+            if (geometryList.size() == 1) {
+                return markingList.get(0).getGeometry();
+            }
+            Geometry geometry = null;
+            for (int i = 0; i < geometryList.size(); i++) {
+                if (i == 0) {
+                    geometry = geometryList.get(i);
+                }
+                Geometry geometryIntersection = geometry.intersection(geometryList.get(i));
+                if (geometryIntersection.isEmpty()) {
+                    return null;
+                } else {
+                    OverlayOp op = new OverlayOp(geometry, geometryList.get(i));
+                    int code = OverlayOp.UNION;
+                    geometry = op.getResultGeometry(code);
+//                    geometry = geometry.union(geometryList.get(i));
+                }
+            }
+            return JSONObject.parseObject(WktUtil.wktToJson(String.valueOf(geometry)));
+        } else {
+            return null;
+        }
     }
 
 

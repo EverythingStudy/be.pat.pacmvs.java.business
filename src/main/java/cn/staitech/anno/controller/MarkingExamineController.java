@@ -7,11 +7,13 @@ import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.out.BatchResult;
 import cn.staitech.anno.vo.marking.MarkingExamineInsertVO;
 import cn.staitech.anno.vo.marking.MarkingExamineList;
+import cn.staitech.anno.vo.marking.MarkingMerge;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.uuid.UUID;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import com.vividsolutions.jts.io.ParseException;
 import io.swagger.annotations.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,6 +77,41 @@ public class MarkingExamineController {
     public R<Long> update(@Validated @RequestBody MarkingExamineInsertVO req) throws Exception {
         markingExamineService.update(req);
         return R.ok(req.getMarking_id(), MessageSource.M("OPERATE_SUCCEED"));
+    }
+
+
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "填充轮廓")
+    @ApiImplicitParams({@ApiImplicitParam(name = "marking_id", value = "标注id", required = true, dataType = "Long", paramType = "query")})
+    @PostMapping("/padding")
+    public R<String> padding(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) String marking_id) throws Exception {
+        int res = markingExamineService.padding(marking_id);
+        if (res > 0) {
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+        } else {
+            return R.fail(null, MessageSource.M("OPERATE_ERROR"));
+        }
+    }
+
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "复制/粘贴轮廓")
+    @ApiImplicitParams({@ApiImplicitParam(name = "marking_id", value = "标注id", required = true, dataType = "Long", paramType = "query")})
+    @PostMapping("/stickup")
+    public R<String> stickup(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) String marking_id) {
+        int res = markingExamineService.stickup(marking_id);
+        if (res > 0) {
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+        } else {
+            return R.fail(null, MessageSource.M("OPERATE_ERROR"));
+        }
+    }
+
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "合并轮廓预览")
+    @PostMapping("/markingMerge")
+    public R<JSONObject> markingMerge(@Validated @RequestBody MarkingMerge req) throws ParseException {
+        JSONObject res = markingExamineService.markingMerge(req);
+        return R.ok(res);
     }
 
 
