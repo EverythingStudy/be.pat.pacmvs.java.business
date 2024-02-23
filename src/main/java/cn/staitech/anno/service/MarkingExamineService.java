@@ -95,7 +95,7 @@ public interface MarkingExamineService extends IService<MarkingExamine> {
      */
     List<BatchResult> batch(List<MarkingExamineInsertVO> list);
 
-    Boolean undo(HistoryDTO dto);
+    Boolean undoOrRedo(HistoryDTO dto);
 
     Boolean redo(HistoryDTO dto);
 }

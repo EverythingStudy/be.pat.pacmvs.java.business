@@ -15,4 +15,7 @@ public class Cursor {
 
     @ApiModelProperty(value = "redo")
     private Boolean redo = false;
+
+    private Integer index;
+    private Integer size;
 }

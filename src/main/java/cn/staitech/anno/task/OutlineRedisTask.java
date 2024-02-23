@@ -81,9 +81,10 @@ public class OutlineRedisTask {
         // 删除token无效对应数据:遍历撤消、恢复历史记录
         for (Map.Entry<String, Session> entry : HistoryServiceImpl.USER_SESSION_MAP.entrySet()) {
 
+            /*
             log.info("****************************************************\n");
             log.info("entry:{}", entry);
-            log.info("****************************************************\n");
+            */
 
             String key = entry.getKey();
             Long userId = Long.valueOf(key.split("_")[0]);

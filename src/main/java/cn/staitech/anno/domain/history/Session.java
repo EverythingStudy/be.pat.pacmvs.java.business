@@ -1,7 +1,9 @@
 package cn.staitech.anno.domain.history;
 
+import cn.staitech.anno.utils.RocksDBUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.rocksdb.RocksDBException;
 
 import java.util.LinkedList;
 
@@ -16,7 +18,7 @@ public class Session {
     /**
      * 队列元素个数最大值
      */
-    private static final int LIST_MAX_SIZE = 20;
+    private static final int LIST_MAX_SIZE = 5;
 
     /**
      * 用户ID，会话id
@@ -33,7 +35,7 @@ public class Session {
     /**
      * 游标
      */
-    private Integer index = 0;
+    private Integer index = -1;
 
 
     public Session(Long userId, Long slideId) {
@@ -74,20 +76,34 @@ public class Session {
      *
      * @param trace
      */
-    public void addTrace(Trace trace) {
-        if (list.size() >= LIST_MAX_SIZE) {
-            list.removeFirst();
+    public void addTrace(Trace trace, Boolean isHistory, Boolean isUndo) {
+        try {
+            // 超出最大数量删除
+            if (list.size() >= LIST_MAX_SIZE) {
+                Trace traceFirst = list.getFirst();
+                RocksDBUtil.cfDeleteIfExist(traceFirst.getTraceId());
+                list.removeFirst();
+            }
+
+            list.addLast(trace);
+            // 区分是原始接口，还是redo操作
+            if (isHistory) {
+                if (isUndo) {
+                    setUndoIndex();
+                } else {
+                    setRedoIndex();
+                }
+            } else {
+                // 重置游标
+                resetIndex();
+            }
+        } catch (RocksDBException e) {
+            log.info("addTrace:{}", e);
         }
-        list.addLast(trace);
-
-        // TODO：区分是原始接口，还是redo操作
-
-        // 重置游标
-        resetIndex();
     }
 
     public Integer setUndoIndex() {
-        if (index >= 0 && index < list.size()) {
+        if (index > -1 && index <= list.size()) {
             index--;
             return index;
         }
@@ -95,12 +111,13 @@ public class Session {
     }
 
     public Integer setRedoIndex() {
-        if (index >= 0 && index < list.size()) {
+        if (index >= -1 && index < list.size()) {
             index++;
             return index;
         }
         return null;
     }
+
 
     public void resetIndex() {
         index = list.size() - 1;
@@ -124,12 +141,21 @@ public class Session {
      * @return
      */
     public Boolean redoStatus() {
-        if (index >= 0 && index < list.size() && list.size() - index > 1) {
+        if (index > 0 && index < list.size()) {
             return true;
         }
         return false;
     }
-//index:0 1 2 3
-//size        4
-//
+
+    public void cleanList() {
+        for (Trace trace : list) {
+            try {
+                RocksDBUtil.cfDeleteIfExist(trace.getTraceId());
+            } catch (RocksDBException e) {
+                log.info("删除rocksdb数据:{},{}", trace.getTraceId(), e);
+            }
+        }
+        list.clear();
+        setIndex(-1);
+    }
 }

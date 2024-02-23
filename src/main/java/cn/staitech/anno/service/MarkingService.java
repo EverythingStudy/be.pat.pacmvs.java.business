@@ -78,7 +78,7 @@ public interface MarkingService {
      * @return
      * @throws Exception
      */
-    Boolean insertByHistory(Marking marking, String traceId, Boolean isBatch) throws Exception;
+    Boolean insertByHistory(Marking marking, String traceId, Boolean isBatch, Boolean isUndo) throws Exception;
 
 
     /**
@@ -106,7 +106,7 @@ public interface MarkingService {
      */
     String update(ViewAddIn marking) throws Exception;
 
-    Boolean updateByHistory(Marking marking, String traceId, Boolean isBatch) throws RocksDBException;
+    Boolean updateByHistory(Marking marking, String traceId, Boolean isBatch, Boolean isUndo) throws RocksDBException;
 
     JSONObject updateOperation(UpdateOperationIn req) throws Exception;
 
@@ -124,7 +124,7 @@ public interface MarkingService {
      * @param markingId 标注id
      * @return true || false
      */
-    int delete(String markingId, String traceId, Boolean isBatch, Boolean isHistory) throws Exception;
+    int delete(String markingId, String traceId, Boolean isBatch, Boolean isHistory, Boolean isUndo) throws Exception;
 
     /**
      * 填充标注
@@ -145,7 +145,7 @@ public interface MarkingService {
     /**
      * 多个轮廓合并
      *
-     * @param markingId 标注id
+     * @param req 标注id
      * @return true || false
      */
     JSONObject markingMerge(MarkingMerge req) throws ParseException;
@@ -209,7 +209,5 @@ public interface MarkingService {
      */
     List<BatchResult> batch(List<ViewAddIn> list);
 
-    Boolean undo(HistoryDTO dto);
-
-    Boolean redo(HistoryDTO dto);
+    Boolean undoOrRedo(HistoryDTO dto);
 }

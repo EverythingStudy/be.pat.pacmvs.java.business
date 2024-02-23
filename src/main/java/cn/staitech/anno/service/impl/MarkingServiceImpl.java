@@ -356,7 +356,7 @@ public class MarkingServiceImpl implements MarkingService {
                 trace.getNodeList().add(new TraceNode(marking.getMarking_id(), "INSERT"));
             } else {
                 trace.getNodeList().add(new TraceNode(marking.getMarking_id(), "INSERT"));
-                session.addTrace(trace);
+                session.addTrace(trace, false, false);
             }
 
             // 3、数据持久化写入RocksDB
@@ -375,7 +375,7 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean insertByHistory(Marking marking, String traceId, Boolean isBatch) throws Exception {
+    public Boolean insertByHistory(Marking marking, String traceId, Boolean isBatch, Boolean isUndo) throws Exception {
 
         Long slideId = marking.getSlide_id();
         Long userId = marking.getCreate_by();
@@ -419,7 +419,7 @@ public class MarkingServiceImpl implements MarkingService {
                 trace.getNodeList().add(new TraceNode(marking.getMarking_id(), "INSERT"));
             } else {
                 trace.getNodeList().add(new TraceNode(marking.getMarking_id(), "INSERT"));
-                session.addTrace(trace);
+                session.addTrace(trace, true, isUndo);
             }
 
             // 3、数据持久化写入RocksDB
@@ -594,7 +594,7 @@ public class MarkingServiceImpl implements MarkingService {
                 trace.getNodeList().add(new TraceNode(markingId, "UPDATE"));
             } else {
                 trace.getNodeList().add(new TraceNode(markingId, "UPDATE"));
-                session.addTrace(trace);
+                session.addTrace(trace, false, false);
             }
 
             // 3、数据持久化写入RocksDB
@@ -660,7 +660,7 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean updateByHistory(Marking reqMarking, String traceId, Boolean isBatch) throws RocksDBException {
+    public Boolean updateByHistory(Marking reqMarking, String traceId, Boolean isBatch, Boolean isUndo) throws RocksDBException {
 
         Long slideId = reqMarking.getSlide_id();
         Long userId = reqMarking.getCreate_by();
@@ -693,7 +693,7 @@ public class MarkingServiceImpl implements MarkingService {
                 trace.getNodeList().add(new TraceNode(markingId, "UPDATE"));
             } else {
                 trace.getNodeList().add(new TraceNode(markingId, "UPDATE"));
-                session.addTrace(trace);
+                session.addTrace(trace, true, true);
             }
 
             // 3、数据持久化写入RocksDB
@@ -739,7 +739,7 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int delete(String markingId, String traceId, Boolean isBatch, Boolean isHistory) throws Exception {
+    public int delete(String markingId, String traceId, Boolean isBatch, Boolean isHistory, Boolean isUndo) throws Exception {
         if (!Optional.ofNullable(markingId).isPresent()) {
             throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }
@@ -776,7 +776,7 @@ public class MarkingServiceImpl implements MarkingService {
                 trace.getNodeList().add(new TraceNode(markingId, "DELETE"));
             } else {
                 trace.getNodeList().add(new TraceNode(markingId, "DELETE"));
-                session.addTrace(trace);
+                session.addTrace(trace, isHistory, isUndo);
             }
 
             // 3、数据持久化写入RocksDB
@@ -1853,7 +1853,7 @@ public class MarkingServiceImpl implements MarkingService {
                             break;
                         }
                     case "DELETE":
-                        if (delete(dto.getMarking_id(), traceId, true, false) > 0) {
+                        if (delete(dto.getMarking_id(), traceId, true, false, false) > 0) {
                             batchResult.setData(dto.getMarking_id());
                             break;
                         }
@@ -1879,20 +1879,23 @@ public class MarkingServiceImpl implements MarkingService {
     }
 
     @Override
-    public Boolean undo(HistoryDTO dto) {
+    public Boolean undoOrRedo(HistoryDTO dto) {
 
         String traceId = UUID.randomUUID().toString();
+        Boolean isUndo = dto.getEnvType() == 1 ? true : false;
 
         String key = dto.getUserId() + "_" + dto.getSlideId();
         Session session = HistoryServiceImpl.USER_SESSION_MAP.get(key);
         LinkedList<Trace> list = session.getList();
         Integer index = session.getIndex();
         Trace trace = list.get(index);
+        log.info("++++++++index:{}",index);
+        log.info("++++++++list:{}",list);
         Boolean isBatch = trace.getIsBatch();
 
         List<TraceNode> traceNodeList = trace.getNodeList();
 
-        for (int i = traceNodeList.size(); i < traceNodeList.size(); i--) {
+        for (int i = traceNodeList.size() - 1; i >= 0; i--) {
             TraceNode node = traceNodeList.get(i);
             String markingId = node.getId();
             try {
@@ -1902,13 +1905,13 @@ public class MarkingServiceImpl implements MarkingService {
 
                 switch (node.getOperation()) {
                     case "INSERT":
-                        delete(markingId, traceId, isBatch, true);
+                        delete(markingId, traceId, isBatch, true, isUndo);
                         break;
                     case "DELETE":
-                        insertByHistory(marking, traceId, isBatch);
+                        insertByHistory(marking, traceId, isBatch, isUndo);
                         break;
                     case "UPDATE":
-                        updateByHistory(marking, traceId, isBatch);
+                        updateByHistory(marking, traceId, isBatch, isUndo);
                     default:
                 }
 
@@ -1917,13 +1920,9 @@ public class MarkingServiceImpl implements MarkingService {
             }
         }
 
-        return true;
-    }
-
-    @Override
-    public Boolean redo(HistoryDTO dto) {
-        String key = dto.getUserId() + "_" + dto.getSlideId();
-        Session session = HistoryServiceImpl.USER_SESSION_MAP.get(key);
+//        if (index > 0) {
+//            HistoryServiceImpl.USER_SESSION_MAP.get(key).setUndoIndex();
+//        }
         return true;
     }
 

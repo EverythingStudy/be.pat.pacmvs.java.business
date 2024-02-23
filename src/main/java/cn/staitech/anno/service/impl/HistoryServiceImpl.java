@@ -60,7 +60,7 @@ public class HistoryServiceImpl implements HistoryService {
 
 
     /**
-     * 清空Session中的列表
+     * 清空Session中的列表、游标置零、清空rocksDB中的数据
      *
      * @param userId
      */
@@ -68,7 +68,7 @@ public class HistoryServiceImpl implements HistoryService {
     public void clearSessionList(Long userId, Long slideId) {
         String key = userId + "_" + slideId;
         if (USER_SESSION_MAP.containsKey(key)) {
-            USER_SESSION_MAP.get(key).getList().clear();
+            USER_SESSION_MAP.get(key).cleanList();
         }
     }
 
@@ -81,14 +81,12 @@ public class HistoryServiceImpl implements HistoryService {
     public Cursor getCursor(HistoryDTO dto) {
         String key = dto.getUserId() + "_" + dto.getSlideId();
         Cursor cursor = new Cursor();
-        log.info("++++++++++{}\n   {}", key, USER_SESSION_MAP.containsKey(key) );
-
         if (USER_SESSION_MAP.containsKey(key)) {
-
             Session session = USER_SESSION_MAP.get(key);
-            log.info("\n\n\nsession:{}\n\n\n", session);
             cursor.setUndo(session.undoStatus());
             cursor.setRedo(session.redoStatus());
+            cursor.setIndex(session.getIndex());
+            cursor.setSize(session.getList().size());
         }
         return cursor;
     }
@@ -101,41 +99,15 @@ public class HistoryServiceImpl implements HistoryService {
      */
     @Override
     public void process(HistoryDTO dto) {
-
-        switch (dto.getEnvType()) {
-            case 1:
-                undo(dto);
-                break;
-            case 2:
-                redo(dto);
-                break;
-            default:
-        }
-    }
-
-
-    public void undo(HistoryDTO dto) {
-
         switch (dto.getBizType()) {
             case 1:
-                markingService.undo(dto);
+                markingService.undoOrRedo(dto);
                 break;
             case 2:
-                markingExamineService.undo(dto);
+                markingExamineService.undoOrRedo(dto);
                 break;
             default:
         }
     }
 
-    public void redo(HistoryDTO dto) {
-        switch (dto.getBizType()) {
-            case 1:
-                markingService.redo(dto);
-                break;
-            case 2:
-                markingExamineService.redo(dto);
-                break;
-            default:
-        }
-    }
 }

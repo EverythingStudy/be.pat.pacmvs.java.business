@@ -388,7 +388,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
 
 
     @Override
-    public Boolean undo(HistoryDTO dto) {
+    public Boolean undoOrRedo(HistoryDTO dto) {
         String key = dto.getUserId() + "_" + dto.getSlideId();
         Session session = HistoryServiceImpl.USER_SESSION_MAP.get(key);
         return true;
