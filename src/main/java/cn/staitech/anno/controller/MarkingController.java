@@ -181,7 +181,7 @@ public class MarkingController {
     @ApiOperation(value = "合并、裁剪轮廓")
     @PutMapping("/intelligentAnno/updateOperation")
     public R<JSONObject> updateOperation(@Validated @RequestBody UpdateOperationIn req) throws Exception {
-        JSONObject geoJson = markingService.updateOperation(req);
+        JSONObject geoJson = markingService.updateOperation(req, UUID.fastUUID().toString(), false);
         return R.ok(geoJson, MessageSource.M("OPERATE_SUCCEED"));
     }
 

@@ -108,7 +108,9 @@ public interface MarkingService {
 
     Boolean updateByHistory(Marking marking, String traceId, Boolean isBatch, Boolean isUndo) throws RocksDBException;
 
-    JSONObject updateOperation(UpdateOperationIn req) throws Exception;
+    JSONObject updateOperation(UpdateOperationIn req, String traceId, Boolean isBatch) throws Exception;
+
+    Boolean updateOperationByHistory(Marking marking, String traceId, Boolean isBatch, Boolean isUndo) throws Exception;
 
     /**
      * 更新标注点数
@@ -133,7 +135,7 @@ public interface MarkingService {
      * @param markingId 标注id
      * @return true || false
      */
-    int deleteByHistory(String markingId, String traceId, Boolean isBatch, Boolean isHistory, Boolean isUndo) throws Exception;
+    int deleteByHistory(String markingId, String traceId, Boolean isBatch, Boolean isUndo) throws Exception;
 
 
     /**
