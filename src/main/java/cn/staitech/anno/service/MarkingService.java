@@ -124,7 +124,17 @@ public interface MarkingService {
      * @param markingId 标注id
      * @return true || false
      */
-    int delete(String markingId, String traceId, Boolean isBatch, Boolean isHistory, Boolean isUndo) throws Exception;
+    int delete(String markingId, String traceId, Boolean isBatch) throws Exception;
+
+
+    /**
+     * 删除标注
+     *
+     * @param markingId 标注id
+     * @return true || false
+     */
+    int deleteByHistory(String markingId, String traceId, Boolean isBatch, Boolean isHistory, Boolean isUndo) throws Exception;
+
 
     /**
      * 填充标注
@@ -209,5 +219,9 @@ public interface MarkingService {
      */
     List<BatchResult> batch(List<ViewAddIn> list);
 
-    Boolean undoOrRedo(HistoryDTO dto);
+    Boolean process(HistoryDTO dto);
+
+    Boolean undo(HistoryDTO dto);
+
+    Boolean redo(HistoryDTO dto);
 }

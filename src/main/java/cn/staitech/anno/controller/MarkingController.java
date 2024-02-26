@@ -120,7 +120,7 @@ public class MarkingController {
     @ApiImplicitParams({@ApiImplicitParam(name = "markingId", value = "标注id", required = true, dataType = "Long", paramType = "query")})
     @DeleteMapping("/intelligentAnno/delete")
     public R<String> del(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) String marking_id) throws Exception {
-        markingService.delete(marking_id, UUID.fastUUID().toString(), false, false, false);
+        markingService.delete(marking_id, UUID.fastUUID().toString(), false);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 

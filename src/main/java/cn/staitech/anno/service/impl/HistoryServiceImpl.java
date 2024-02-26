@@ -83,10 +83,7 @@ public class HistoryServiceImpl implements HistoryService {
         Cursor cursor = new Cursor();
         if (USER_SESSION_MAP.containsKey(key)) {
             Session session = USER_SESSION_MAP.get(key);
-            cursor.setUndo(session.undoStatus());
-            cursor.setRedo(session.redoStatus());
-            cursor.setIndex(session.getIndex());
-            cursor.setSize(session.getList().size());
+            cursor = session.getStatus();
         }
         return cursor;
     }
@@ -101,7 +98,7 @@ public class HistoryServiceImpl implements HistoryService {
     public void process(HistoryDTO dto) {
         switch (dto.getBizType()) {
             case 1:
-                markingService.undoOrRedo(dto);
+                markingService.process(dto);
                 break;
             case 2:
                 markingExamineService.undoOrRedo(dto);

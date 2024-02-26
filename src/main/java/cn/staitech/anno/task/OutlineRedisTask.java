@@ -81,16 +81,14 @@ public class OutlineRedisTask {
         // 删除token无效对应数据:遍历撤消、恢复历史记录
         for (Map.Entry<String, Session> entry : HistoryServiceImpl.USER_SESSION_MAP.entrySet()) {
 
-            /*
             log.info("****************************************************\n");
             log.info("entry:{}", entry);
-            */
 
             String key = entry.getKey();
             Long userId = Long.valueOf(key.split("_")[0]);
             if (!loginMap.containsKey(userId)) {
                 Session session = entry.getValue();
-                LinkedList<Trace> tracesList = session.getList();
+                LinkedList<Trace> tracesList = session.getDrawList();
                 for (Trace trace : tracesList) {
                     try {
                         RocksDBUtil.cfDeleteIfExist(trace.getTraceId());

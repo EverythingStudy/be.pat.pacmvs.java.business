@@ -1,6 +1,7 @@
 package cn.staitech.anno.domain.history;
 
 import cn.staitech.anno.utils.RocksDBUtil;
+import cn.staitech.anno.vo.history.Cursor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.rocksdb.RocksDBException;
@@ -16,11 +17,6 @@ import java.util.LinkedList;
 @Data
 public class Session {
     /**
-     * 队列元素个数最大值
-     */
-    private static final int LIST_MAX_SIZE = 5;
-
-    /**
      * 用户ID，会话id
      */
     private Long userId;
@@ -28,33 +24,19 @@ public class Session {
     private Long slideId;
 
     /**
-     * 链表
+     * 全部数据列表
      */
-    private LinkedList<Trace> list = new LinkedList<>();
+    private LinkedList<Trace> drawList = new LinkedList<>();
 
     /**
-     * 游标
+     * 撤消数据列表
      */
-    private Integer index = -1;
-
+    private LinkedList<Trace> undoList = new LinkedList<>();
 
     public Session(Long userId, Long slideId) {
         this.userId = userId;
         this.slideId = slideId;
     }
-
-//    public static void main(String[] args) {
-//        Long userId = 1L;
-//        Session session = new Session(userId);
-//        session.list.addLast(new Trace(userId, "1", false));
-//        session.list.addLast(new Trace(userId, "2", true));
-//        session.list.addLast(new Trace(userId, UUID.fastUUID().toString(), false));
-//
-//        log.info("session {}", session);
-//
-//        session.list.removeFirst();
-//        log.info("session {}", session);
-//    }
 
     /**
      * 根据traceId获取Trace
@@ -63,7 +45,7 @@ public class Session {
      * @return
      */
     public Trace getTraceById(String traceId) {
-        for (Trace trace : list) {
+        for (Trace trace : drawList) {
             if (traceId.equals(trace.getTraceId())) {
                 return trace;
             }
@@ -72,90 +54,64 @@ public class Session {
     }
 
     /**
-     * 向列表中添加元素
+     * 返回undo/redo状态
+     *
+     * @return
+     */
+    public Cursor getStatus() {
+        Cursor cursor = new Cursor();
+        if (!drawList.isEmpty()) {
+            cursor.setUndo(true);
+        }
+
+        if (!undoList.isEmpty()) {
+            cursor.setRedo(true);
+        }
+        return cursor;
+    }
+
+
+    /**
+     * 添加`
      *
      * @param trace
      */
-    public void addTrace(Trace trace, Boolean isHistory, Boolean isUndo) {
-        try {
-            // 超出最大数量删除
-            if (list.size() >= LIST_MAX_SIZE) {
-                Trace traceFirst = list.getFirst();
-                RocksDBUtil.cfDeleteIfExist(traceFirst.getTraceId());
-                list.removeFirst();
-            }
-
-            list.addLast(trace);
-            // 区分是原始接口，还是redo操作
-            if (isHistory) {
-                if (isUndo) {
-                    setUndoIndex();
-                } else {
-                    setRedoIndex();
-                }
-            } else {
-                // 重置游标
-                resetIndex();
-            }
-        } catch (RocksDBException e) {
-            log.info("addTrace:{}", e);
-        }
-    }
-
-    public Integer setUndoIndex() {
-        if (index > -1 && index <= list.size()) {
-            index--;
-            return index;
-        }
-        return null;
-    }
-
-    public Integer setRedoIndex() {
-        if (index >= -1 && index < list.size()) {
-            index++;
-            return index;
-        }
-        return null;
+    public void add(Trace trace) {
+        drawList.add(trace);
+        undoList.clear();
     }
 
 
-    public void resetIndex() {
-        index = list.size() - 1;
+    /**
+     * 撤销
+     */
+    public void undo() {
+        if (!drawList.isEmpty()) {
+            undoList.add(drawList.get(drawList.size() - 1));
+            drawList.remove(drawList.size() - 1);
+        }
     }
 
     /**
-     * 获取undo是否可用状态
-     *
-     * @return
+     * 恢复
      */
-    public Boolean undoStatus() {
-        if (index >= 0 && index < list.size()) {
-            return true;
+    public void redo() {
+        if (!undoList.isEmpty()) {
+            drawList.add(undoList.get(undoList.size() - 1));
+            undoList.remove(undoList.size() - 1);
         }
-        return false;
     }
 
-    /**
-     * 获取redo是是否可用状态
-     *
-     * @return
-     */
-    public Boolean redoStatus() {
-        if (index > 0 && index < list.size()) {
-            return true;
-        }
-        return false;
-    }
 
     public void cleanList() {
-        for (Trace trace : list) {
+        for (Trace trace : drawList) {
             try {
                 RocksDBUtil.cfDeleteIfExist(trace.getTraceId());
             } catch (RocksDBException e) {
                 log.info("删除rocksdb数据:{},{}", trace.getTraceId(), e);
             }
         }
-        list.clear();
-        setIndex(-1);
+        drawList.clear();
+        undoList.clear();
     }
 }
