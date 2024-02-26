@@ -442,7 +442,25 @@ public class MarkingServiceImpl implements MarkingService {
                 }
             } else {
                 if (!undoList.isEmpty()) {
-                    drawList.add(undoList.get(undoList.size() - 1));
+
+                    Trace trace = undoList.get(undoList.size() - 1);
+                    trace.setTraceId(traceId);
+
+                    for (TraceNode traceNode : trace.getNodeList()) {
+                        if (traceNode.getId().equals(beforeMarkingId)) {
+                            traceNode.setId(marking.getMarking_id());
+                        }
+                    }
+
+                    drawList.add(trace);
+
+                    // 3、数据持久化写入RocksDB
+                    Gson gson = new Gson();
+                    // 将对象转换成JSON字符串
+                    String json = gson.toJson(marking);
+                    RocksDBUtil.put(traceId, marking.getMarking_id(), json);
+
+                    //drawList.add(undoList.get(undoList.size() - 1));
                     undoList.remove(undoList.size() - 1);
                 }
             }
