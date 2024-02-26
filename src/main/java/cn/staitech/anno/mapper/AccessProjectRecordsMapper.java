@@ -18,4 +18,11 @@ public interface AccessProjectRecordsMapper {
 
     List<AccessProjectRecordsOut> accessRecords(AccessProjectRecordsIn accessProjectRecordsIn);
 
+    /**
+     * 删除一个月前的数据
+     * */
+    int delAccessRecords(AccessProjectRecordsIn accessProjectRecordsIn);
+
+
+
 }

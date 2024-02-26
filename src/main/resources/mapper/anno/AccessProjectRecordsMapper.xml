@@ -62,4 +62,17 @@
     ) as a group by a.access_time
   </select>
 
+  <!--删除-->
+  <delete id="delAccessRecords" parameterType="cn.staitech.anno.vo.accessprojectrecords.AccessProjectRecordsIn">
+    delete from tb_access_project_records
+    <where>
+      <if test= "timeParams.beginTime != null and timeParams.beginTime != ''">
+      <!-- 开始时间检索 -->
+      and date_format(access_time,'%y%m%d') &lt; date_format(#{timeParams.beginTime},'%y%m%d')
+        </if>
+    </where>
+  </delete>
+
+
+
 </mapper>

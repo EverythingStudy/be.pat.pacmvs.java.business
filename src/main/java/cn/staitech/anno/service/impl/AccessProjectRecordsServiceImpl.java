@@ -1,11 +1,11 @@
 package cn.staitech.anno.service.impl;
 
-import cn.staitech.anno.domain.AccessProjectRecords;
 import cn.staitech.anno.mapper.AccessProjectRecordsMapper;
 import cn.staitech.anno.service.AccessProjectRecordsService;
 import cn.staitech.anno.vo.accessprojectrecords.AccessProjectRecordsIn;
 import cn.staitech.anno.vo.accessprojectrecords.AccessProjectRecordsOut;
 import cn.staitech.common.security.utils.SecurityUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
  * @author zmj
  * @date 2024-02-20
  */
+@Slf4j
 @Service
 public class AccessProjectRecordsServiceImpl implements AccessProjectRecordsService {
     @Resource
@@ -98,6 +99,28 @@ public class AccessProjectRecordsServiceImpl implements AccessProjectRecordsServ
         }
 
         return result;
+    }
+
+
+    //删除一个月以前的数据
+    public void delAccessRecords(){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar c = Calendar.getInstance();
+        // 过去一月
+        c.setTime(new Date());
+        String today = format.format(new Date());
+        c.add(Calendar.MONTH, -1);
+        Date m = c.getTime();
+        String mon = format.format(m);
+
+        //获取过去一个月的日期
+        List<String> result = getBetweenDates(mon, today, false,true);
+        Map<String, Object> timeParams=new HashMap<>();
+        timeParams.put("beginTime",result.get(0));
+        AccessProjectRecordsIn accessProjectRecordsIn= AccessProjectRecordsIn.builder().timeParams(timeParams).build();
+        accessProjectRecordsMapper.delAccessRecords(accessProjectRecordsIn);
+
+
     }
 
 }
