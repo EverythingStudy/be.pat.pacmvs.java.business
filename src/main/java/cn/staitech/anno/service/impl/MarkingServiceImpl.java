@@ -420,6 +420,24 @@ public class MarkingServiceImpl implements MarkingService {
                 if (!drawList.isEmpty()) {
                     undoList.add(drawList.get(drawList.size() - 1));
                     drawList.remove(drawList.size() - 1);
+
+/*                    Trace trace = drawList.get(drawList.size() - 1);
+                    trace.setTraceId(traceId);
+
+                    for (TraceNode traceNode : trace.getNodeList()) {
+                        if(traceNode.getOperation().equals("INSERT")){
+                            traceNode.setOperation("DELETE");
+                        }
+                    }
+                    undoList.add(trace);
+
+                    // 3、数据持久化写入RocksDB
+                    Gson gson = new Gson();
+                    // 将对象转换成JSON字符串
+                    String json = gson.toJson(marking);
+                    RocksDBUtil.put(traceId, marking.getMarking_id(), json);
+
+                    drawList.remove(drawList.size() - 1);*/
                 }
             } else {
                 if (!undoList.isEmpty()) {
@@ -874,36 +892,36 @@ public class MarkingServiceImpl implements MarkingService {
             session = HistoryServiceImpl.USER_SESSION_MAP.get(key);
 
             //if (!isUndo) {
-                // 2、创建Trace,并存入Session.list,LinkedList<Trace>
-                // 单条记录
-               // Trace trace = new Trace(userId, traceId, isBatch);
-                // 批量操作
+            // 2、创建Trace,并存入Session.list,LinkedList<Trace>
+            // 单条记录
+            // Trace trace = new Trace(userId, traceId, isBatch);
+            // 批量操作
 
-                //if (isBatch && session.getTraceById(traceId) != null) {
-                    // 若trace已经存在，不用再add
-                    //trace = session.getTraceById(traceId);
-                    //trace.getNodeList().add(new TraceNode(markingId, "DELETE"));
-                //} else {
-                    //trace.getNodeList().add(new TraceNode(markingId, "DELETE"));
+            //if (isBatch && session.getTraceById(traceId) != null) {
+            // 若trace已经存在，不用再add
+            //trace = session.getTraceById(traceId);
+            //trace.getNodeList().add(new TraceNode(markingId, "DELETE"));
+            //} else {
+            //trace.getNodeList().add(new TraceNode(markingId, "DELETE"));
 
-                    LinkedList<Trace> drawList = session.getDrawList();
-                    LinkedList<Trace> undoList = session.getUndoList();
+            LinkedList<Trace> drawList = session.getDrawList();
+            LinkedList<Trace> undoList = session.getUndoList();
 
-                    if (isUndo) {
-                        //session.add(trace);
-                        if (!drawList.isEmpty()) {
-                            undoList.add(drawList.get(drawList.size() - 1));
-                            drawList.remove(drawList.size() - 1);
-                        }
-                    } else {
-                        if (!undoList.isEmpty()) {
-                            drawList.add(undoList.get(undoList.size() - 1));
-                            undoList.remove(undoList.size() - 1);
-                        }
-                    }
+            if (isUndo) {
+                //session.add(trace);
+                if (!drawList.isEmpty()) {
+                    undoList.add(drawList.get(drawList.size() - 1));
+                    drawList.remove(drawList.size() - 1);
+                }
+            } else {
+                if (!undoList.isEmpty()) {
+                    drawList.add(undoList.get(undoList.size() - 1));
+                    undoList.remove(undoList.size() - 1);
+                }
+            }
 
-                //}
-           // }
+            //}
+            // }
 /*            // 3、数据持久化写入RocksDB
             Gson gson = new Gson();
             // 将对象转换成JSON字符串
@@ -2029,7 +2047,8 @@ public class MarkingServiceImpl implements MarkingService {
     public Boolean undo(HistoryDTO dto) {
 
         String traceId = UUID.randomUUID().toString();
-        Boolean isUndo = dto.getEnvType() == 1 ? true : false;
+        // Boolean isUndo = dto.getEnvType() == 1 ? true : false;
+        Boolean isUndo = true;
 
         String key = dto.getUserId() + "_" + dto.getSlideId();
         Session session = HistoryServiceImpl.USER_SESSION_MAP.get(key);
@@ -2078,7 +2097,8 @@ public class MarkingServiceImpl implements MarkingService {
     public Boolean redo(HistoryDTO dto) {
 
         String traceId = UUID.randomUUID().toString();
-        Boolean isUndo = dto.getEnvType() == 1 ? true : false;
+        // Boolean isUndo = dto.getEnvType() == 1 ? true : false;
+        Boolean isUndo = false;
 
         String key = dto.getUserId() + "_" + dto.getSlideId();
         Session session = HistoryServiceImpl.USER_SESSION_MAP.get(key);
@@ -2105,10 +2125,10 @@ public class MarkingServiceImpl implements MarkingService {
 
                     switch (node.getOperation()) {
                         case "INSERT":
-                            deleteByHistory(markingId, traceId, isBatch, true, isUndo);
+                            insertByHistory(marking, traceId, isBatch, isUndo);
                             break;
                         case "DELETE":
-                            insertByHistory(marking, traceId, isBatch, isUndo);
+                            deleteByHistory(markingId, traceId, isBatch, true, isUndo);
                             break;
                         case "UPDATE":
                             updateByHistory(marking, traceId, isBatch, isUndo);
