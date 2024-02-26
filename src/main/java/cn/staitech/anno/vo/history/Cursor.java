@@ -1,7 +1,10 @@
 package cn.staitech.anno.vo.history;
 
+import cn.staitech.anno.domain.history.Trace;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.LinkedList;
 
 /**
  * @author: wangfeng
@@ -15,4 +18,13 @@ public class Cursor {
 
     @ApiModelProperty(value = "redo")
     private Boolean redo = false;
+
+    private Integer undoSiz;
+
+    private Integer redoSize;
+
+    private LinkedList<Trace> drawList = new LinkedList<>();
+
+    private LinkedList<Trace> undoList = new LinkedList<>();
+
 }

@@ -641,14 +641,6 @@ public class MarkingServiceImpl implements MarkingService {
             return false;
         }
 
-        cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
-        marking.setGeometry(reqMarking.getGeometry());
-        marking.setArea(reqMarking.getArea());
-        marking.setPerimeter(reqMarking.getPerimeter());
-        marking.setUpdateBy(SecurityUtils.getUserId());
-        marking.setUpdateTime(new Date());
-        marking.setAnnotationUpdateOwner(SecurityUtils.getUsername());
-        markingMapperV1.updateById(marking);
 
         {
             String beforeMarkingId = markingBy.getMarking_id();
@@ -715,6 +707,17 @@ public class MarkingServiceImpl implements MarkingService {
                 }
             }
         }
+
+
+
+        cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
+        marking.setGeometry(reqMarking.getGeometry());
+        marking.setArea(reqMarking.getArea());
+        marking.setPerimeter(reqMarking.getPerimeter());
+        marking.setUpdateBy(SecurityUtils.getUserId());
+        marking.setUpdateTime(new Date());
+        marking.setAnnotationUpdateOwner(SecurityUtils.getUsername());
+        markingMapperV1.updateById(marking);
 
         // 更新后查询数据并返回
         Properties properties = markingMapper.selectBy(reqMarking.getMarking_id());
@@ -2275,24 +2278,18 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Override
     public Boolean redo(HistoryDTO dto) {
-
         String traceId = UUID.randomUUID().toString();
         // Boolean isUndo = dto.getEnvType() == 1 ? true : false;
         Boolean isUndo = false;
 
         String key = dto.getUserId() + "_" + dto.getSlideId();
         Session session = HistoryServiceImpl.USER_SESSION_MAP.get(key);
-
-
         LinkedList<Trace> undoList = session.getUndoList();
 
 
         if (!undoList.isEmpty()) {
             Trace trace = undoList.get(undoList.size() - 1);
-
-
             Boolean isBatch = trace.getIsBatch();
-
             List<TraceNode> traceNodeList = trace.getNodeList();
 
             for (int i = traceNodeList.size() - 1; i >= 0; i--) {
@@ -2323,8 +2320,6 @@ public class MarkingServiceImpl implements MarkingService {
 
                 }
             }
-
-            //session.;
         }
 
 

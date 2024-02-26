@@ -62,10 +62,14 @@ public class Session {
         Cursor cursor = new Cursor();
         if (!drawList.isEmpty()) {
             cursor.setUndo(true);
+            cursor.setUndoSiz(drawList.size());
+            cursor.setDrawList(drawList);
         }
 
         if (!undoList.isEmpty()) {
             cursor.setRedo(true);
+            cursor.setRedoSize(undoList.size());
+            cursor.setUndoList(undoList);
         }
         return cursor;
     }
