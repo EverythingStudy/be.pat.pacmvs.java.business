@@ -17,4 +17,9 @@ public interface AccessProjectRecordsService {
      * */
      List<AccessProjectRecordsOut> accessRecords();
 
+     /**
+      * 删除一个月前的数据
+      * */
+    void delAccessRecords();
+
 }
