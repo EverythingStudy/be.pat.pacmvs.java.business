@@ -708,8 +708,6 @@ public class MarkingServiceImpl implements MarkingService {
             }
         }
 
-
-
         cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
         marking.setGeometry(reqMarking.getGeometry());
         marking.setArea(reqMarking.getArea());

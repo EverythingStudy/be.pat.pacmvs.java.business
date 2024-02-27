@@ -743,7 +743,6 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         }
 
 
-
         Marking marking = MarkingUtils.updateVerify(markingExamineBy.getGeometry(), req.getGeometry(), req.getOperation(), req.getCheck(), req.getResolution());
         JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(marking.getMarkingId()));
         MarkingExamine markingExamine = new MarkingExamine();
@@ -766,20 +765,20 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
 
     @Override
     public JSONObject updateOperationByHistory(MarkingExamine req, String traceId, Boolean isBatch, Boolean isUndo) throws Exception {
-        MarkingExamine markingExamineBy = markingExamineMapper.selectById((req.getMarkingExamineId()));
+        Long beforeMarkingId =  req.getMarkingExamineId();
+        MarkingExamine markingExamineBy = markingExamineMapper.selectById(req.getMarkingExamineId());
         if (!Optional.ofNullable(markingExamineBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
 
         {
-            String beforeMarkingId =  markingExamineBy.getMarkingExamineId().toString();
+
             Long userId = markingExamineBy.getCreateBy();
             QuestionProjectRel questionProjectRel = questionProjectRelMapper.selectById(markingExamineBy.getQuestionProjectId());
             // 查询slideId
             Long questionId = questionProjectRel.getQuestionId();
             QuestionBank questionBank = questionBankMapper.selectById(questionId);
             Long slideId = questionBank.getSlideId();
-
 
             // 删除操作RocksDB存删除前的数据
             // 撤消,恢复历史记录 用HistoryService会引起循环依赖！ -> 后续在线程池中处理 判断是批处理，还是单独处理
@@ -799,6 +798,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
                     Trace trace = drawList.get(drawList.size() - 1);
                     trace.setTraceId(traceId);
 
+                    // 防址ID变更，更新切片ID
                     for (TraceNode traceNode : trace.getNodeList()) {
                         if (traceNode.getId().equals(beforeMarkingId.toString())) {
                             traceNode.setId(beforeMarkingId.toString());
@@ -811,7 +811,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
                     Gson gson = new Gson();
                     // 将对象转换成JSON字符串
                     String json = gson.toJson(markingExamineBy);
-                    RocksDBUtil.put(traceId, beforeMarkingId, json);
+                    RocksDBUtil.put(traceId, beforeMarkingId.toString(), json);
 
                     // undoList.add(drawList.get(drawList.size() - 1));
                     drawList.remove(drawList.size() - 1);
