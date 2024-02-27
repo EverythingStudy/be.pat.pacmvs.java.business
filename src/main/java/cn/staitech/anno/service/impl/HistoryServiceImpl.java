@@ -101,7 +101,7 @@ public class HistoryServiceImpl implements HistoryService {
                 markingService.process(dto);
                 break;
             case 2:
-                markingExamineService.undoOrRedo(dto);
+                markingExamineService.process(dto);
                 break;
             default:
         }

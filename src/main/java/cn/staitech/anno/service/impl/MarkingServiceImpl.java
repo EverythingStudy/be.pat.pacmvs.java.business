@@ -384,9 +384,7 @@ public class MarkingServiceImpl implements MarkingService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean insertByHistory(Marking marking, String traceId, Boolean isBatch, Boolean isUndo) throws Exception {
-
         String beforeMarkingId = marking.getMarking_id();
-
         Long slideId = marking.getSlide_id();
         Long userId = marking.getCreate_by();
 
@@ -419,7 +417,6 @@ public class MarkingServiceImpl implements MarkingService {
 
             if (isUndo) {
                 if (!drawList.isEmpty()) {
-
                     Trace trace = drawList.get(drawList.size() - 1);
                     trace.setTraceId(traceId);
 
@@ -464,7 +461,6 @@ public class MarkingServiceImpl implements MarkingService {
                     undoList.remove(undoList.size() - 1);
                 }
             }
-
         }
         Properties properties = markingMapper.selectBy(marking.getMarking_id());
         Features features = MarkingUtils.socketData(marking.getAnnotation_id(), marking.getGeometry(), properties);
@@ -561,22 +557,6 @@ public class MarkingServiceImpl implements MarkingService {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
 
-        // 合并 - 校验飞点 TODO: MarkingUtils.updatePolygonPoint(jsonObject);
-        cn.staitech.anno.project.domain.Marking markingBys = MarkingUtils.updateVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation(), req.getCheck(), req.getResolution());
-        // 精度保留3位小数
-        JSONObject jsonObject = MarkingUtils.updatePrecision(JSONObject.parseObject(WktUtil.wktToJson(markingBys.getMarkingId())));
-        // 校验合并后的图形是否正常
-        MarkingUtils.updatePoint(jsonObject);
-
-        cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
-        marking.setGeometry(jsonObject);
-        marking.setArea(markingBys.getArea());
-        marking.setPerimeter(markingBys.getPerimeter());
-        marking.setMarkingId(req.getMarking_id());
-        marking.setUpdateBy(SecurityUtils.getUserId());
-        marking.setUpdateTime(new Date());
-        marking.setAnnotationUpdateOwner(SecurityUtils.getUsername());
-        markingMapperV1.updateById(marking);
 
         {
             Long userId = markingBy.getCreate_by();
@@ -614,6 +594,26 @@ public class MarkingServiceImpl implements MarkingService {
             RocksDBUtil.put(traceId, markingId, json);
         }
 
+
+
+        // 合并 - 校验飞点 TODO: MarkingUtils.updatePolygonPoint(jsonObject);
+        cn.staitech.anno.project.domain.Marking markingBys = MarkingUtils.updateVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation(), req.getCheck(), req.getResolution());
+        // 精度保留3位小数
+        JSONObject jsonObject = MarkingUtils.updatePrecision(JSONObject.parseObject(WktUtil.wktToJson(markingBys.getMarkingId())));
+        // 校验合并后的图形是否正常
+        MarkingUtils.updatePoint(jsonObject);
+
+        cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
+        marking.setGeometry(jsonObject);
+        marking.setArea(markingBys.getArea());
+        marking.setPerimeter(markingBys.getPerimeter());
+        marking.setMarkingId(req.getMarking_id());
+        marking.setUpdateBy(SecurityUtils.getUserId());
+        marking.setUpdateTime(new Date());
+        marking.setAnnotationUpdateOwner(SecurityUtils.getUsername());
+        markingMapperV1.updateById(marking);
+
+
         // 更新后查询数据并返回
         Properties properties = markingMapper.selectBy(req.getMarking_id());
         Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), marking.getGeometry(), properties);
@@ -645,13 +645,13 @@ public class MarkingServiceImpl implements MarkingService {
         {
             String beforeMarkingId = markingBy.getMarking_id();
             Long userId = markingBy.getCreate_by();
-            Long SlideId = markingBy.getSlide_id();
+            Long slideId = markingBy.getSlide_id();
 
             // 删除操作RocksDB存删除前的数据
             // 撤消,恢复历史记录 用HistoryService会引起循环依赖！ -> 后续在线程池中处理 判断是批处理，还是单独处理
             // 1、创建Session,并存入ConcurrentHashMap<Long, Session>
-            Session session = new Session(userId, SlideId);
-            String key = userId + "_" + SlideId;
+            Session session = new Session(userId, slideId);
+            String key = userId + "_" + slideId;
             if (!HistoryServiceImpl.USER_SESSION_MAP.containsKey(key)) {
                 HistoryServiceImpl.USER_SESSION_MAP.put(key, session);
             }
@@ -858,7 +858,6 @@ public class MarkingServiceImpl implements MarkingService {
         }
 
         {
-
             String beforeMarkingId = marking.getMarking_id();
             // 删除操作RocksDB存删除前的数据
             // 撤消,恢复历史记录 用HistoryService会引起循环依赖！ -> 后续在线程池中处理 判断是批处理，还是单独处理
@@ -922,30 +921,6 @@ public class MarkingServiceImpl implements MarkingService {
                     undoList.remove(undoList.size() - 1);
                 }
             }
-
-
-
-//
-//            // 2、创建Trace,并存入Session.list,LinkedList<Trace>
-//            // 单条记录
-//            Trace trace = new Trace(userId, traceId, isBatch);
-//            // 批量操作
-//
-//            if (isBatch && session.getTraceById(traceId) != null) {
-//                // 若trace已经存在，不用再add
-//                trace = session.getTraceById(traceId);
-//                trace.getNodeList().add(new TraceNode(markingId, "UPDATE"));
-//            } else {
-//                trace.getNodeList().add(new TraceNode(markingId, "UPDATE"));
-//                //session.addTrace(trace, true, true);
-//                session.add(trace);
-//            }
-//
-//            // 3、数据持久化写入RocksDB
-//            Gson gson = new Gson();
-//            // 将对象转换成JSON字符串
-//            String json = gson.toJson(marking);
-//            RocksDBUtil.put(traceId, markingId, json);
         }
 
         // 只更新Geometry
@@ -1049,21 +1024,8 @@ public class MarkingServiceImpl implements MarkingService {
     @Transactional(rollbackFor = Exception.class)
     public int deleteByHistory(String markingId, String traceId, Boolean isBatch, Boolean isUndo) throws Exception {
         String beforeMarkingId = markingId;
-
-        if (!Optional.ofNullable(markingId).isPresent()) {
-            throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
-        }
-
         Marking marking = markingMapper.selectById(markingId);
-        if (!Optional.ofNullable(marking).isPresent()) {
-            throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
-        }
-
         Slide slide = slideMapperV1.selectById(marking.getSlide_id());
-        if (!Optional.ofNullable(slide).isPresent()) {
-            throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
-        }
-
         Long userId = marking.getCreate_by();
 
         {
@@ -1109,7 +1071,6 @@ public class MarkingServiceImpl implements MarkingService {
                 }
             }
         }
-
 
         Properties properties = markingMapper.selectBy(markingId);
         Features features = MarkingUtils.socketData(marking.getAnnotation_id(), marking.getGeometry(), properties);

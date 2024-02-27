@@ -67,7 +67,7 @@ public class MarkingExamineController {
     @ApiImplicitParams({@ApiImplicitParam(name = "markingId", value = "标注id", required = true, dataType = "Long", paramType = "query")})
     @DeleteMapping("/delete")
     public R<String> del(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) Long marking_id) throws Exception {
-        markingExamineService.delete(marking_id);
+        markingExamineService.delete(marking_id, UUID.fastUUID().toString(), false);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
@@ -76,7 +76,7 @@ public class MarkingExamineController {
     @PutMapping("/update")
     public R<Long> update(@Validated @RequestBody MarkingExamineInsertVO req) throws Exception {
         markingExamineService.update(req);
-        return R.ok(req.getMarking_id(), MessageSource.M("OPERATE_SUCCEED"));
+        return R.ok(Long.valueOf(req.getMarking_id()), MessageSource.M("OPERATE_SUCCEED"));
     }
 
 
@@ -119,7 +119,7 @@ public class MarkingExamineController {
     @ApiOperation(value = "合并、裁剪轮廓")
     @PutMapping("/updateOperation")
     public R<JSONObject> updateOperation(@Validated @RequestBody UpdateOperationIn req) throws Exception {
-        JSONObject geoJson = markingExamineService.updateOperation(req);
+        JSONObject geoJson = markingExamineService.updateOperation(req, UUID.fastUUID().toString(), false);
         return R.ok(geoJson, MessageSource.M("OPERATE_SUCCEED"));
     }
 

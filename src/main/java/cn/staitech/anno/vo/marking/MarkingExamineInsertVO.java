@@ -4,17 +4,19 @@ import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
-
 @Data
 public class MarkingExamineInsertVO {
     //@NotNull(message = "{MarkingExamineInsertVO.questionProjectId.isnull}")
     @ApiModelProperty(value = "项目题库id")
     private Long question_project_id;
 
-    @NotNull(message = "{MarkingExamineInsertVO.questionProjectId.isnull}")
+    //@NotNull(message = "{MarkingExamineInsertVO.questionProjectId.isnull}")
     @ApiModelProperty(value = "项目题库id")
-    private Long marking_id;
+    private String marking_id;
+
+    //@NotNull(message = "{MarkingExamineInsertVO.questionProjectId.isnull}")
+    @ApiModelProperty(value = "项目题库id")
+    private Long marking_id_long;
 
     @ApiModelProperty(value = "面积")
     private String area;
@@ -42,4 +44,7 @@ public class MarkingExamineInsertVO {
 
     @ApiModelProperty(value = "是否批量请求接口")
     private Boolean isBatch = false;
+
+    private Long slide_id;
+
 }

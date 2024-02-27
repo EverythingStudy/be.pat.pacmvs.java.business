@@ -39,6 +39,16 @@ public interface MarkingExamineService extends IService<MarkingExamine> {
      */
     Long insert(MarkingExamineInsertVO req) throws Exception;
 
+
+    /**
+     * @param req
+     * @param traceId
+     * @param isBatch
+     * @param isUndo
+     * @return
+     */
+    Long insertByHistory(MarkingExamine markingExamine, String traceId, Boolean isBatch, Boolean isUndo) throws Exception;
+
     /**
      * 删除标注
      *
@@ -46,6 +56,8 @@ public interface MarkingExamineService extends IService<MarkingExamine> {
      * @return true || false
      */
     Long update(MarkingExamineInsertVO marking) throws Exception;
+
+    Long updateByHistory(MarkingExamine markingExamine, String traceId, Boolean isBatch, Boolean isUndo) throws Exception;
 
     /**
      * 填充标注
@@ -74,8 +86,9 @@ public interface MarkingExamineService extends IService<MarkingExamine> {
     /**
      * 合并、裁剪轮廓
      */
-    JSONObject updateOperation(UpdateOperationIn req) throws Exception;
+    JSONObject updateOperation(UpdateOperationIn req, String traceId, Boolean isBatch) throws Exception;
 
+    JSONObject updateOperationByHistory(MarkingExamine req, String traceId, Boolean isBatch, Boolean isUndo) throws Exception;
 
     double operationCheck(UpdateOperationIn req) throws Exception;
 
@@ -85,7 +98,9 @@ public interface MarkingExamineService extends IService<MarkingExamine> {
      * @param markingExamineId 标注id
      * @return true || false
      */
-    int delete(Long markingExamineId) throws Exception;
+    int delete(Long markingExamineId, String traceId, Boolean isBatch) throws Exception;
+
+    int deleteByHistory(Long markingExamineId, String traceId, Boolean isBatch, Boolean isUndo) throws Exception;
 
     /**
      * 批量处理
@@ -95,7 +110,9 @@ public interface MarkingExamineService extends IService<MarkingExamine> {
      */
     List<BatchResult> batch(List<MarkingExamineInsertVO> list);
 
-    Boolean undoOrRedo(HistoryDTO dto);
+    Boolean process(HistoryDTO dto);
+
+    Boolean undo(HistoryDTO dto);
 
     Boolean redo(HistoryDTO dto);
 }
