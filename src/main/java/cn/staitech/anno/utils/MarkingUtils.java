@@ -6,10 +6,7 @@ import cn.staitech.anno.vo.geojson.Properties;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.io.WKTWriter;
 import com.vividsolutions.jts.operation.overlay.OverlayOp;
@@ -299,6 +296,38 @@ public class MarkingUtils {
             throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
         }
         return geometryJson;
+    }
+
+
+    /**
+     * 剔除不规则点：
+     *
+     * @param geometry
+     * @return
+     */
+    public static JSONObject padding(JSONObject geometry) throws Exception {
+        JSONObject geometryJson = new JSONObject();
+        try {
+            JSONArray coordinatesJsonArray1 = geometry.getJSONArray("coordinates");
+            String type = geometry.getString("type");
+            if (Objects.equals(type, "Polygon")) {
+                List<Object> list = new ArrayList<>();
+                list.add(coordinatesJsonArray1.get(0));
+                geometryJson.put("type", type);
+                geometryJson.put("coordinates", list);
+            }
+        } catch (Exception e) {
+            throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
+        }
+        return geometryJson;
+    }
+
+
+    public static Geometry unionGeometrys(Geometry[] geos){
+        GeometryFactory geometryFactory = new GeometryFactory();
+        GeometryCollection geometryCollection = geometryFactory.createGeometryCollection(geos);
+        return  geometryCollection.union();
+//        return Geometry geometry;
     }
 
     /**
