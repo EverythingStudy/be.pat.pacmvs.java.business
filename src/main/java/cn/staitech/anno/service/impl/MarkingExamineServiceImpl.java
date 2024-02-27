@@ -610,7 +610,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
 
 
     @Override
-    public int padding(String markingId) throws Exception {
+    public int padding(Long markingId) throws Exception {
         MarkingExamine markingBy = markingExamineMapper.selectById(markingId);
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
@@ -629,6 +629,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
             String per = String.valueOf(geometry.getLength() * resolutions);
             markingExamine.setPerimeter(per);
         }
+        markingExamine.setMarkingExamineId(markingId);
         markingExamine.setUpdateTime(new Date());
         markingExamine.setUpdateBy(SecurityUtils.getUserId());
         int res = markingExamineMapper.updateById(markingExamine);
@@ -648,7 +649,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         int res = markingExamineMapper.insert(markingExamine);
         Properties properties = markingExamineMapper.selectBy(markingExamine.getMarkingExamineId());
         Features features = MarkingUtils.socketData("", markingExamine.getGeometry(), properties);
-        BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features);
+        BroadcastVO broadcastVO = SendMessage.sendOneMessages(ADD_STATUS, features);
         // 使用websocket发送数据
         String questionProjectId = markingExamine.getQuestionProjectId() + GLIDE_LINE + SecurityUtils.getLoginUser().getSysUser().getUserId();
         NioWebSocketHandler.sendQuestionProject(questionProjectId, broadcastVO);

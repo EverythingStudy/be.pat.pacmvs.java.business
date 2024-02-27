@@ -84,7 +84,7 @@ public class MarkingExamineController {
     @ApiOperation(value = "填充轮廓")
     @ApiImplicitParams({@ApiImplicitParam(name = "marking_id", value = "标注id", required = true, dataType = "Long", paramType = "query")})
     @PostMapping("/padding")
-    public R<String> padding(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) String marking_id) throws Exception {
+    public R<String> padding(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) Long marking_id) throws Exception {
         int res = markingExamineService.padding(marking_id);
         if (res > 0) {
             return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));

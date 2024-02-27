@@ -65,7 +65,7 @@ public interface MarkingExamineService extends IService<MarkingExamine> {
      * @param markingId 标注id
      * @return true || false
      */
-    int padding(String markingId) throws Exception;
+    int padding(Long markingId) throws Exception;
 
     /**
      * 填充标注
