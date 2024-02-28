@@ -45,6 +45,7 @@ import cn.staitech.common.core.domain.R;
 import cn.staitech.common.redis.service.RedisService;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
+import cn.staitech.system.api.model.LoginUser;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -221,34 +222,55 @@ public class MarkingServiceImpl implements MarkingService {
         Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
         Long userId = SecurityUtils.getLoginUser().getSysUser().getUserId();
         List<Features> list = new ArrayList<Features>();
-        if (Objects.equals(projectType, "3")) {
-            //只查询自己标注的数据
-            Map<String, Object> map = new HashMap<String, Object>(16);
-            map.put("slideId", slideId);
-            map.put("createBy", userId);
-            map.put("organizationId", organizationId);
-            List<Features> selfAnnoList = markingMapper.selectListMarking(map);
-            if (CollectionUtils.isNotEmpty(selfAnnoList)) {
-                list.addAll(selfAnnoList);
-            }
-            //其它人ROA+ROE
-            //标注类型 roa+roe
-            List<String> structureList = new ArrayList<String>();
-            structureList.add(CommonConstant.STRUCTURE_ROA);
-            structureList.add(CommonConstant.STRUCTURE_ROE);
+        Set<String> permissions = SecurityUtils.getLoginUser().getPermissions();
+        boolean permissionsRes;
+        if (Objects.equals(projectType, "2")) {
+            permissionsRes = permissions.contains("smartAnno:project:slice:view:select");
+        } else {
+            permissionsRes = permissions.contains("smartReview:project:detail:view:select");
+        }
+        if (permissionsRes) {
+            if (Objects.equals(projectType, "3")) {
+                //只查询自己标注的数据
+                Map<String, Object> map = new HashMap<String, Object>(16);
+                map.put("slideId", slideId);
+                map.put("createBy", userId);
+                map.put("organizationId", organizationId);
+                List<Features> selfAnnoList = markingMapper.selectListMarking(map);
+                if (CollectionUtils.isNotEmpty(selfAnnoList)) {
+                    list.addAll(selfAnnoList);
+                }
+                //其它人ROA+ROE
+                //标注类型 roa+roe
+                List<String> structureList = new ArrayList<String>();
+                structureList.add(CommonConstant.STRUCTURE_ROA);
+                structureList.add(CommonConstant.STRUCTURE_ROE);
 
-            Map<String, Object> otherMap = new HashMap<String, Object>(16);
-            otherMap.put("slideId", slideId);
-            otherMap.put("otherCreateBy", userId);
-            otherMap.put("organizationId", organizationId);
-            otherMap.put("roaAndroeAnno", structureList);
+                Map<String, Object> otherMap = new HashMap<String, Object>(16);
+                otherMap.put("slideId", slideId);
+                otherMap.put("otherCreateBy", userId);
+                otherMap.put("organizationId", organizationId);
+                otherMap.put("roaAndroeAnno", structureList);
 
-            List<Features> otherAnnoList = markingMapper.selectListMarking(otherMap);
-            if (CollectionUtils.isNotEmpty(otherAnnoList)) {
-                list.addAll(otherAnnoList);
+                List<Features> otherAnnoList = markingMapper.selectListMarking(otherMap);
+                if (CollectionUtils.isNotEmpty(otherAnnoList)) {
+                    list.addAll(otherAnnoList);
+                }
+            } else if (Objects.equals(projectType, "2") && !project.getCreateBy().equals(userId)) {
+                //智能评审非项目创建者只查询自己标注的数据
+                Map<String, Object> map = new HashMap<String, Object>(16);
+                map.put("slideId", slideId);
+                map.put("createBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
+                map.put("organizationId", organizationId);
+                List<Features> selfAnnoList = markingMapper.selectListMarking(map);
+                if (CollectionUtils.isNotEmpty(selfAnnoList)) {
+                    list.addAll(selfAnnoList);
+                }
+            } else {
+                list = markingMapper.selectListBy(slideId);
             }
-        } else if (Objects.equals(projectType, "2") && !project.getCreateBy().equals(userId)) {
-            //智能评审非项目创建者只查询自己标注的数据
+        } else {
+            // 无权限情况下，只查询当前用户所绘标注
             Map<String, Object> map = new HashMap<String, Object>(16);
             map.put("slideId", slideId);
             map.put("createBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
@@ -257,8 +279,6 @@ public class MarkingServiceImpl implements MarkingService {
             if (CollectionUtils.isNotEmpty(selfAnnoList)) {
                 list.addAll(selfAnnoList);
             }
-        } else {
-            list = markingMapper.selectListBy(slideId);
         }
         return list;
     }
