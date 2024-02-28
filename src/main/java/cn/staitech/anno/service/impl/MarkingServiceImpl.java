@@ -225,9 +225,9 @@ public class MarkingServiceImpl implements MarkingService {
         Set<String> permissions = SecurityUtils.getLoginUser().getPermissions();
         boolean permissionsRes;
         if (Objects.equals(projectType, "2")) {
-            permissionsRes = permissions.contains("smartAnno:project:slice:view:select");
-        } else {
             permissionsRes = permissions.contains("smartReview:project:detail:view:select");
+        } else {
+            permissionsRes = permissions.contains("smartAnno:project:slice:view:select");
         }
         if (permissionsRes) {
             if (Objects.equals(projectType, "3")) {
