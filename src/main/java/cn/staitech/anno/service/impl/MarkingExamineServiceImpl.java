@@ -221,7 +221,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         // Long markingExamineId = markingExamine.getMarkingExamineId();
 
         // 更新数据 - 查新增的，取新ID
-        MarkingExamine markingExamineNew = markingExamineMapper.selectById(markingExamine.getMarkingExamineId());
+        //MarkingExamine markingExamineNew = markingExamineMapper.selectById(markingExamine.getMarkingExamineId());
 
         {
             // 删除操作RocksDB存删除前的数据
@@ -236,6 +236,8 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
 
             LinkedList<Trace> drawList = session.getDrawList();
             LinkedList<Trace> undoList = session.getUndoList();
+            refresh(drawList, beforeMarkingExamineId, markingExamine.getMarkingExamineId());
+            refresh(undoList, beforeMarkingExamineId, markingExamine.getMarkingExamineId());
 
             if (isUndo) {
                 if (!drawList.isEmpty()) {
@@ -244,7 +246,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
 
                     for (TraceNode traceNode : trace.getNodeList()) {
                         if (traceNode.getId().equals(beforeMarkingExamineId.toString())) {
-                            traceNode.setId(markingExamineNew.getMarkingExamineId().toString());
+                            traceNode.setId(markingExamine.getMarkingExamineId().toString());
                         }
                     }
 
@@ -253,8 +255,8 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
                     // 3、数据持久化写入RocksDB
                     Gson gson = new Gson();
                     // 将对象转换成JSON字符串
-                    String json = gson.toJson(markingExamineNew);
-                    RocksDBUtil.put(traceId, markingExamineNew.getMarkingExamineId().toString(), json);
+                    String json = gson.toJson(markingExamine);
+                    RocksDBUtil.put(traceId, markingExamine.getMarkingExamineId().toString(), json);
 
                     // undoList.add(drawList.get(drawList.size() - 1));
                     drawList.remove(drawList.size() - 1);
@@ -267,7 +269,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
 
                     for (TraceNode traceNode : trace.getNodeList()) {
                         if (traceNode.getId().equals(beforeMarkingExamineId.toString())) {
-                            traceNode.setId(markingExamineNew.getMarkingExamineId().toString());
+                            traceNode.setId(markingExamine.getMarkingExamineId().toString());
                         }
                     }
 
@@ -276,8 +278,8 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
                     // 3、数据持久化写入RocksDB
                     Gson gson = new Gson();
                     // 将对象转换成JSON字符串
-                    String json = gson.toJson(markingExamineNew);
-                    RocksDBUtil.put(traceId, markingExamineNew.getMarkingExamineId().toString(), json);
+                    String json = gson.toJson(markingExamine);
+                    RocksDBUtil.put(traceId, markingExamine.getMarkingExamineId().toString(), json);
 
                     //drawList.add(undoList.get(undoList.size() - 1));
                     undoList.remove(undoList.size() - 1);
@@ -285,7 +287,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
             }
         }
 
-        Properties properties = markingExamineMapper.selectBy(markingExamineNew.getMarkingExamineId());
+        Properties properties = markingExamineMapper.selectBy(markingExamine.getMarkingExamineId());
         Features features = MarkingUtils.socketData("", markingExamine.getGeometry(), properties);
         BroadcastVO broadcastVO = SendMessage.sendOneMessages(ADD_STATUS, features);
         String questionProjectId = markingExamine.getQuestionProjectId() + GLIDE_LINE + userId;
@@ -544,8 +546,6 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
             session = HistoryServiceImpl.USER_SESSION_MAP.get(key);
 
 
-
-
             LinkedList<Trace> drawList = session.getDrawList();
             LinkedList<Trace> undoList = session.getUndoList();
 
@@ -765,7 +765,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
 
     @Override
     public JSONObject updateOperationByHistory(MarkingExamine req, String traceId, Boolean isBatch, Boolean isUndo) throws Exception {
-        Long beforeMarkingId =  req.getMarkingExamineId();
+        Long beforeMarkingId = req.getMarkingExamineId();
         MarkingExamine markingExamineBy = markingExamineMapper.selectById(req.getMarkingExamineId());
         if (!Optional.ofNullable(markingExamineBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
@@ -841,7 +841,6 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
                 }
             }
         }
-
 
         MarkingExamine markingExamine = new MarkingExamine();
         markingExamine.setGeometry(req.getGeometry());
@@ -1058,4 +1057,39 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         return true;
     }
 
+
+    /**
+     * 刷新数据
+     *
+     * @param list
+     * @param oldId
+     * @param newId
+     */
+
+    public void refresh(LinkedList<Trace> list, Long oldId, Long newId) {
+        if (!list.isEmpty()) {
+
+            for (Trace trace : list) {
+                List<TraceNode> traceNodeList = trace.getNodeList();
+                for (TraceNode traceNode : traceNodeList) {
+                    String oldNodeId = traceNode.getId();
+                    try {
+                        if (oldNodeId.equals(oldId.toString())) {
+                            traceNode.setId(newId.toString());
+
+                            Gson gson = new Gson();
+                            String json = RocksDBUtil.get(trace.getTraceId(), oldNodeId);
+                            MarkingExamine markingExamine = gson.fromJson(json, MarkingExamine.class);
+                            markingExamine.setMarkingExamineId(newId);
+
+                            json = gson.toJson(markingExamine);
+                            RocksDBUtil.put(trace.getTraceId(), newId.toString(), json);
+                        }
+                    } catch (Exception e) {
+
+                    }
+                }
+            }
+        }
+    }
 }
