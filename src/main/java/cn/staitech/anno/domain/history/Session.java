@@ -82,6 +82,7 @@ public class Session {
      */
     public void add(Trace trace) {
         drawList.add(trace);
+        cleanUndoList();
         undoList.clear();
     }
 
@@ -117,5 +118,15 @@ public class Session {
         }
         drawList.clear();
         undoList.clear();
+    }
+
+    public void cleanUndoList(){
+        for (Trace trace : undoList) {
+            try {
+                RocksDBUtil.cfDeleteIfExist(trace.getTraceId());
+            } catch (RocksDBException e) {
+                log.info("删除rocksdb数据:{},{}", trace.getTraceId(), e);
+            }
+        }
     }
 }

@@ -517,9 +517,7 @@
             and t.create_by != #{otherCreateBy}
         </if>
         <if test="organizationId != null">
-        	and t.organization_id =  #{organizationId} 	
-        	and c.organization_id =  #{organizationId} 	
-        	and c2.organization_id =  #{organizationId} 	
+        	and t.organization_id =  #{organizationId}
         </if>
         <if test="roaAndroeAnno != null and roaAndroeAnno.size() >0">  
         	AND c2.type in  
