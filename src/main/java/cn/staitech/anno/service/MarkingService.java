@@ -71,14 +71,10 @@ public interface MarkingService {
 
     /**
      * 撤消、恢复 - 添加标注
-     *
      * @param marking
-     * @param traceId
-     * @param isBatch
      * @return
-     * @throws Exception
      */
-    Boolean insertByHistory(Marking marking, String traceId, Boolean isBatch, Boolean isUndo) throws Exception;
+    Marking insertByHistory(Marking marking);
 
 
     /**
@@ -106,11 +102,11 @@ public interface MarkingService {
      */
     String update(ViewAddIn marking) throws Exception;
 
-    Boolean updateByHistory(Marking marking, String traceId, Boolean isBatch, Boolean isUndo) throws RocksDBException;
+//    Marking updateByHistory(Marking marking) throws Exception;
 
     JSONObject updateOperation(UpdateOperationIn req, String traceId, Boolean isBatch) throws Exception;
 
-    Boolean updateOperationByHistory(Marking marking, String traceId, Boolean isBatch, Boolean isUndo) throws Exception;
+    Marking updateOperationByHistory(Marking marking) ;
 
     /**
      * 更新标注点数
@@ -135,7 +131,7 @@ public interface MarkingService {
      * @param markingId 标注id
      * @return true || false
      */
-    int deleteByHistory(String markingId, String traceId, Boolean isBatch, Boolean isUndo) throws Exception;
+    Marking deleteByHistory(String markingId) throws Exception;
 
 
     /**

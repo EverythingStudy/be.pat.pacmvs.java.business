@@ -29,6 +29,18 @@ public class HistoryServiceImpl implements HistoryService {
     @Resource
     MarkingExamineService markingExamineService;
 
+    public static Session refreshSession(Long userId, Long slideId) {
+        // 撤消,恢复历史记录 用HistoryService会引起循环依赖！ -> 后续在线程池中处理 判断是批处理，还是单独处理
+        // 1、创建Session,并存入ConcurrentHashMap<Long, Session>
+        Session session = new Session(userId, slideId);
+        String key = userId + "_" + slideId;
+        if (!HistoryServiceImpl.USER_SESSION_MAP.containsKey(key)) {
+            HistoryServiceImpl.USER_SESSION_MAP.put(key, session);
+        }
+        session = HistoryServiceImpl.USER_SESSION_MAP.get(key);
+        return session;
+    }
+
     @Override
     public void put(Long userId, Long slideId) {
         String key = userId + "_" + slideId;
@@ -57,7 +69,6 @@ public class HistoryServiceImpl implements HistoryService {
             USER_SESSION_MAP.remove(key);
         }
     }
-
 
     /**
      * 清空Session中的列表、游标置零、清空rocksDB中的数据
@@ -88,7 +99,6 @@ public class HistoryServiceImpl implements HistoryService {
         return cursor;
     }
 
-
     /**
      * 撤消
      *
@@ -106,5 +116,4 @@ public class HistoryServiceImpl implements HistoryService {
             default:
         }
     }
-
 }
