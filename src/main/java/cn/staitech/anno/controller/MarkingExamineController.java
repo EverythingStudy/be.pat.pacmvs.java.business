@@ -75,6 +75,8 @@ public class MarkingExamineController {
     @ApiOperation(value = "更新标注")
     @PutMapping("/update")
     public R<Long> update(@Validated @RequestBody MarkingExamineInsertVO req) throws Exception {
+        req.setTraceId(UUID.fastUUID().toString());
+        req.setIsBatch(false);
         markingExamineService.update(req);
         return R.ok(Long.valueOf(req.getMarking_id()), MessageSource.M("OPERATE_SUCCEED"));
     }

@@ -414,6 +414,8 @@ public class MarkingServiceImpl implements MarkingService {
 
             LinkedList<Trace> drawList = session.getDrawList();
             LinkedList<Trace> undoList = session.getUndoList();
+            refresh(drawList, beforeMarkingId, marking.getMarking_id());
+            refresh(undoList, beforeMarkingId, marking.getMarking_id());
 
             if (isUndo) {
                 if (!drawList.isEmpty()) {
@@ -439,7 +441,6 @@ public class MarkingServiceImpl implements MarkingService {
                 }
             } else {
                 if (!undoList.isEmpty()) {
-
                     Trace trace = undoList.get(undoList.size() - 1);
                     trace.setTraceId(traceId);
 
@@ -593,7 +594,6 @@ public class MarkingServiceImpl implements MarkingService {
             String json = gson.toJson(markingBy);
             RocksDBUtil.put(traceId, markingId, json);
         }
-
 
 
         // 合并 - 校验飞点 TODO: MarkingUtils.updatePolygonPoint(jsonObject);
@@ -866,8 +866,6 @@ public class MarkingServiceImpl implements MarkingService {
                 HistoryServiceImpl.USER_SESSION_MAP.put(key, session);
             }
             session = HistoryServiceImpl.USER_SESSION_MAP.get(key);
-
-
 
 
             LinkedList<Trace> drawList = session.getDrawList();
@@ -2280,9 +2278,43 @@ public class MarkingServiceImpl implements MarkingService {
                 }
             }
         }
-
-
         return true;
+    }
+
+
+    /**
+     * 刷新数据
+     *
+     * @param list
+     * @param oldId
+     * @param newId
+     */
+
+    public void refresh(LinkedList<Trace> list, String oldId, String newId) {
+        if (!list.isEmpty()) {
+
+            for (Trace trace : list) {
+                List<TraceNode> traceNodeList = trace.getNodeList();
+                for (TraceNode traceNode : traceNodeList) {
+                    String oldNodeId = traceNode.getId();
+                    try {
+                        if (oldNodeId.equals(oldId.toString())) {
+                            traceNode.setId(newId.toString());
+
+                            Gson gson = new Gson();
+                            String json = RocksDBUtil.get(trace.getTraceId(), oldNodeId);
+                            Marking marking = gson.fromJson(json, Marking.class);
+                            marking.setMarking_id(newId);
+
+                            json = gson.toJson(marking);
+                            RocksDBUtil.put(trace.getTraceId(), newId, json);
+                        }
+                    } catch (Exception e) {
+
+                    }
+                }
+            }
+        }
     }
 
 
