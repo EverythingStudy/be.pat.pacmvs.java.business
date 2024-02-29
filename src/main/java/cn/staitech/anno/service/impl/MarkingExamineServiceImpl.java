@@ -218,11 +218,6 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
 
         // 添加数据库，添加后返回自增id
         markingExamineMapper.insert(markingExamine);
-        // Long markingExamineId = markingExamine.getMarkingExamineId();
-
-        // 更新数据 - 查新增的，取新ID
-        //MarkingExamine markingExamineNew = markingExamineMapper.selectById(markingExamine.getMarkingExamineId());
-
         {
             // 删除操作RocksDB存删除前的数据
             // 撤消,恢复历史记录 用HistoryService会引起循环依赖！ -> 后续在线程池中处理 判断是批处理，还是单独处理
