@@ -16,6 +16,7 @@ import java.util.LinkedList;
 @Slf4j
 @Data
 public class Session {
+    private static final int LIST_MAX_SIZE = 5;
     /**
      * 用户ID，会话id
      */
@@ -76,14 +77,40 @@ public class Session {
 
 
     /**
-     * 添加`
+     * drawList添加
      *
      * @param trace
      */
-    public void add(Trace trace) {
+    public void drawListAdd(Trace trace) {
         drawList.add(trace);
-        cleanUndoList();
+        if (drawList.size() > LIST_MAX_SIZE) {
+            int dif = drawList.size() - LIST_MAX_SIZE;
+            for (int i = dif; i > 0; i--) {
+                Trace removeTrace = drawList.getFirst();
+                removeRocksTraceByTraceId(removeTrace.getTraceId());
+                drawList.removeFirst();
+            }
+        }
+        cleanUndoListRocksDB();
         undoList.clear();
+    }
+
+
+    /**
+     * undoListAdd添加
+     *
+     * @param trace
+     */
+    public void undoListAdd(Trace trace) {
+        undoList.add(trace);
+        if (undoList.size() > LIST_MAX_SIZE) {
+            int dif = undoList.size() - LIST_MAX_SIZE;
+            for (int i = dif; i > 0; i--) {
+                Trace removeTrace = undoList.getFirst();
+                removeRocksTraceByTraceId(removeTrace.getTraceId());
+                undoList.removeFirst();
+            }
+        }
     }
 
 
@@ -108,7 +135,7 @@ public class Session {
     }
 
 
-    public void cleanList() {
+    public void cleanAllList() {
         for (Trace trace : drawList) {
             try {
                 RocksDBUtil.cfDeleteIfExist(trace.getTraceId());
@@ -120,13 +147,22 @@ public class Session {
         undoList.clear();
     }
 
-    public void cleanUndoList(){
+    public void cleanUndoListRocksDB() {
         for (Trace trace : undoList) {
-            try {
-                RocksDBUtil.cfDeleteIfExist(trace.getTraceId());
-            } catch (RocksDBException e) {
-                log.info("删除rocksdb数据:{},{}", trace.getTraceId(), e);
-            }
+            removeRocksTraceByTraceId(trace.getTraceId());
+        }
+    }
+
+    /**
+     * 删除rocksDB中的Trace
+     *
+     * @param traceId
+     */
+    public void removeRocksTraceByTraceId(String traceId) {
+        try {
+            RocksDBUtil.cfDeleteIfExist(traceId);
+        } catch (RocksDBException e) {
+            log.info("删除rocksdb数据:{},{}", traceId, e);
         }
     }
 }

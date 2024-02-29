@@ -81,6 +81,7 @@
         </where>
         order by qb.create_time desc
     </select>
+
     <select id="selectQuestionListExt" parameterType="cn.staitech.anno.vo.question.in.GetQuestionsIn"
             resultType="cn.staitech.anno.vo.question.out.GetQuestionListOut">
         select p.project_name projectName,
@@ -89,6 +90,7 @@
         qb.question_id questionId,
         qb.image_code imageCode,
         qb.image_name imageName,
+        qb.image_id imageId,
         qb.size as size,
         qb.json_name jsonName,
         o.organization_name organizationName,

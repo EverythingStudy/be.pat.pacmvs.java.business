@@ -79,7 +79,7 @@ public class HistoryServiceImpl implements HistoryService {
     public void clearSessionList(Long userId, Long slideId) {
         String key = userId + "_" + slideId;
         if (USER_SESSION_MAP.containsKey(key)) {
-            USER_SESSION_MAP.get(key).cleanList();
+            USER_SESSION_MAP.get(key).cleanAllList();
         }
     }
 

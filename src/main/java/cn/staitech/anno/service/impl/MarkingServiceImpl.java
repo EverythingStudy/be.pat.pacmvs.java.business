@@ -370,7 +370,7 @@ public class MarkingServiceImpl implements MarkingService {
                 // 单条记录
                 Trace trace = new Trace(userId, traceId, false);
                 trace.getNodeList().add(new TraceNode(marking.getMarking_id(), "INSERT"));
-                session.add(trace);
+                session.drawListAdd(trace);
             }
 
             // 3、数据持久化写入RocksDB
@@ -535,7 +535,7 @@ public class MarkingServiceImpl implements MarkingService {
                 trace.getNodeList().add(new TraceNode(markingId, "UPDATEOPERATION"));
             } else {
                 trace.getNodeList().add(new TraceNode(markingId, "UPDATEOPERATION"));
-                session.add(trace);
+                session.drawListAdd(trace);
             }
 
             // 3、数据持久化写入RocksDB
@@ -653,7 +653,7 @@ public class MarkingServiceImpl implements MarkingService {
                 // 单条记录
                 Trace trace = new Trace(userId, traceId, false);
                 trace.getNodeList().add(new TraceNode(markingId, "UPDATE"));
-                session.add(trace);
+                session.drawListAdd(trace);
             }
 
             // 3、数据持久化写入RocksDB
@@ -803,7 +803,7 @@ public class MarkingServiceImpl implements MarkingService {
                 // 单条记录
                 Trace trace = new Trace(userId, traceId, false);
                 trace.getNodeList().add(new TraceNode(markingId, "DELETE"));
-                session.add(trace);
+                session.drawListAdd(trace);
             }
 
             // 3、数据持久化写入RocksDB
@@ -1887,7 +1887,7 @@ public class MarkingServiceImpl implements MarkingService {
         // 2、创建Trace,并存入Session.list,LinkedList<Trace>
         // 单条记录
         Trace trace = new Trace(userId, traceId, true);
-        session.add(trace);
+        session.drawListAdd(trace);
 
         List<BatchResult> result = new ArrayList<>(list.size());
 
@@ -2012,10 +2012,8 @@ public class MarkingServiceImpl implements MarkingService {
                         log.info("undo：{}", e);
                     }
                 }
-
                 newTrace.setTraceId(traceId);
-                undoList.add(newTrace);
-
+                session.undoListAdd(newTrace);
             } else {
                 TraceNode node = traceNodeList.get(0);
                 String markingId = node.getId();
@@ -2050,7 +2048,7 @@ public class MarkingServiceImpl implements MarkingService {
                     }
 
                     trace.setTraceId(traceId);
-                    undoList.add(trace);
+                    session.undoListAdd(trace);
                     json = gson.toJson(newMarking);
                     RocksDBUtil.put(traceId, newMarking.getMarking_id(), json);
                 } catch (Exception e) {
@@ -2114,14 +2112,6 @@ public class MarkingServiceImpl implements MarkingService {
                             default:
                         }
 
-/*
-                        for (TraceNode traceNode : trace.getNodeList()) {
-                            if (traceNode.getId().equals(beforeMarkingId)) {
-                                traceNode.setId(newMarking.getMarking_id());
-                            }
-                        }
-*/
-
                         newTrace.getNodeList().add(new TraceNode(newMarking.getMarking_id(), node.getOperation()));
                         json = gson.toJson(newMarking);
                         RocksDBUtil.put(traceId, newMarking.getMarking_id(), json);
@@ -2162,12 +2152,6 @@ public class MarkingServiceImpl implements MarkingService {
                             break;
                         default:
                     }
-
-/*                    for (TraceNode traceNode : trace.getNodeList()) {
-                        if (traceNode.getId().equals(beforeMarkingId)) {
-                            traceNode.setId(newMarking.getMarking_id());
-                        }
-                    }*/
 
                     trace.setTraceId(traceId);
                     drawList.add(trace);

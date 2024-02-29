@@ -184,7 +184,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
             } else {
                 trace.getNodeList().add(new TraceNode(markingExamineId.toString(), "INSERT"));
                 // session.addTrace(trace, false, false);
-                session.add(trace);
+                session.drawListAdd(trace);
             }
 
             // 3、数据持久化写入RocksDB
@@ -250,15 +250,13 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
                         }
                     }
 
-                    undoList.add(trace);
+                    session.undoListAdd(trace);
 
                     // 3、数据持久化写入RocksDB
                     Gson gson = new Gson();
                     // 将对象转换成JSON字符串
                     String json = gson.toJson(markingExamine);
                     RocksDBUtil.put(traceId, markingExamine.getMarkingExamineId().toString(), json);
-
-                    // undoList.add(drawList.get(drawList.size() - 1));
                     drawList.remove(drawList.size() - 1);
                 }
             } else {
@@ -352,7 +350,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
             } else {
                 trace.getNodeList().add(new TraceNode(markingExamineId.toString(), "DELETE"));
                 //session.addTrace(trace, isHistory, isUndo);
-                session.add(trace);
+                session.drawListAdd(trace);
             }
 
             // 3、数据持久化写入RocksDB
@@ -407,15 +405,13 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
                         }
                     }
 
-                    undoList.add(trace);
+                    session.undoListAdd(trace);
 
                     // 3、数据持久化写入RocksDB
                     Gson gson = new Gson();
                     // 将对象转换成JSON字符串
                     String json = gson.toJson(markingExamineBy);
                     RocksDBUtil.put(traceId, markingExamineBy.getMarkingExamineId().toString(), json);
-
-                    // undoList.add(drawList.get(drawList.size() - 1));
                     drawList.remove(drawList.size() - 1);
                 }
             } else {
@@ -481,7 +477,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
             } else {
                 trace.getNodeList().add(new TraceNode(markingId, "UPDATE"));
                 //session.addTrace(trace, false, false);
-                session.add(trace);
+                session.drawListAdd(trace);
             }
 
             // 3、数据持久化写入RocksDB
@@ -560,15 +556,13 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
                         }
                     }
 
-                    undoList.add(trace);
+                    session.undoListAdd(trace);
 
                     // 3、数据持久化写入RocksDB
                     Gson gson = new Gson();
                     // 将对象转换成JSON字符串
                     String json = gson.toJson(markingExamineBy);
                     RocksDBUtil.put(traceId, beforeMarkingId.toString(), json);
-
-                    // undoList.add(drawList.get(drawList.size() - 1));
                     drawList.remove(drawList.size() - 1);
                 }
             } else {
@@ -732,7 +726,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
                 trace.getNodeList().add(new TraceNode(markingId, "UPDATEOPERATION"));
             } else {
                 trace.getNodeList().add(new TraceNode(markingId, "UPDATEOPERATION"));
-                session.add(trace);
+                session.drawListAdd(trace);
             }
 
             // 3、数据持久化写入RocksDB
@@ -772,7 +766,6 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         }
 
         {
-
             Long userId = markingExamineBy.getCreateBy();
             QuestionProjectRel questionProjectRel = questionProjectRelMapper.selectById(markingExamineBy.getQuestionProjectId());
             // 查询slideId
@@ -805,15 +798,13 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
                         }
                     }
 
-                    undoList.add(trace);
+                    session.undoListAdd(trace);
 
                     // 3、数据持久化写入RocksDB
                     Gson gson = new Gson();
                     // 将对象转换成JSON字符串
                     String json = gson.toJson(markingExamineBy);
                     RocksDBUtil.put(traceId, beforeMarkingId.toString(), json);
-
-                    // undoList.add(drawList.get(drawList.size() - 1));
                     drawList.remove(drawList.size() - 1);
                 }
             } else {
@@ -835,8 +826,6 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
                     // 将对象转换成JSON字符串
                     String json = gson.toJson(markingExamineBy);
                     RocksDBUtil.put(traceId, beforeMarkingId.toString(), json);
-
-                    //drawList.add(undoList.get(undoList.size() - 1));
                     undoList.remove(undoList.size() - 1);
                 }
             }
