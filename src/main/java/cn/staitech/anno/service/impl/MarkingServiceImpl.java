@@ -45,7 +45,6 @@ import cn.staitech.common.core.domain.R;
 import cn.staitech.common.redis.service.RedisService;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
-import cn.staitech.system.api.model.LoginUser;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -555,6 +554,8 @@ public class MarkingServiceImpl implements MarkingService {
         MarkingUtils.updatePoint(jsonObject);
 
         cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
+        // 此处不设置ID则where id=null,不能正常执行。
+        marking.setMarkingId(req.getMarking_id());
         marking.setGeometry(jsonObject);
         marking.setArea(markingBys.getArea());
         marking.setPerimeter(markingBys.getPerimeter());
@@ -590,7 +591,7 @@ public class MarkingServiceImpl implements MarkingService {
 
         cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
         BeanUtils.copyProperties(markingBy, marking);
-
+        marking.setMarkingId(reqMarking.getMarking_id());
         marking.setGeometry(reqMarking.getGeometry());
         marking.setArea(reqMarking.getArea());
         marking.setPerimeter(reqMarking.getPerimeter());
@@ -605,7 +606,6 @@ public class MarkingServiceImpl implements MarkingService {
         BroadcastVO broadcastVO = SendMessage.sendOneMessagesByAnnoType(CommonConstant.ANNO_TYPE_DRAW, UPDATE_STATUS, features);
         NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
 
-        // markingBy.setMarking_id(marking.getMarkingId());
         return markingBy;
     }
 
@@ -1999,11 +1999,11 @@ public class MarkingServiceImpl implements MarkingService {
                             default:
                         }
 
-/*                        for (TraceNode traceNode : trace.getNodeList()) {
+                        for (TraceNode traceNode : trace.getNodeList()) {
                             if (traceNode.getId().equals(beforeMarkingId)) {
                                 traceNode.setId(newMarking.getMarking_id());
                             }
-                        }*/
+                        }
 
                         newTrace.getNodeList().add(new TraceNode(newMarking.getMarking_id(), node.getOperation()));
                         json = gson.toJson(newMarking);
@@ -2043,11 +2043,11 @@ public class MarkingServiceImpl implements MarkingService {
                         default:
                     }
 
-/*                    for (TraceNode traceNode : trace.getNodeList()) {
+                    for (TraceNode traceNode : trace.getNodeList()) {
                         if (traceNode.getId().equals(beforeMarkingId)) {
                             traceNode.setId(newMarking.getMarking_id());
                         }
-                    }*/
+                    }
 
                     trace.setTraceId(traceId);
                     undoList.add(trace);
