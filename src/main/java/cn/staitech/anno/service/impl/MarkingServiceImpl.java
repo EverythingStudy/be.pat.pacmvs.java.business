@@ -2114,11 +2114,13 @@ public class MarkingServiceImpl implements MarkingService {
                             default:
                         }
 
+/*
                         for (TraceNode traceNode : trace.getNodeList()) {
                             if (traceNode.getId().equals(beforeMarkingId)) {
                                 traceNode.setId(newMarking.getMarking_id());
                             }
                         }
+*/
 
                         newTrace.getNodeList().add(new TraceNode(newMarking.getMarking_id(), node.getOperation()));
                         json = gson.toJson(newMarking);
@@ -2127,11 +2129,11 @@ public class MarkingServiceImpl implements MarkingService {
                     } catch (Exception e) {
                         log.info("redo：{}", e);
                     }
-
-                    newTrace.setTraceId(traceId);
-                    drawList.add(newTrace);
-                    undoList.remove(undoList.size() - 1);
                 }
+
+                newTrace.setTraceId(traceId);
+                drawList.add(newTrace);
+                undoList.remove(undoList.size() - 1);
             } else {
 
                 try {

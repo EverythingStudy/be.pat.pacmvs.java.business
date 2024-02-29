@@ -36,6 +36,7 @@
         qb.question_id questionId,
         qb.image_code imageCode,
         qb.image_name imageName,
+        qb.image_id imageId,
         ti.thumb_url thumbUrl,
         qb.size as size,
         qb.json_name jsonName,
