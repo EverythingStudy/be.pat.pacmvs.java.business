@@ -918,27 +918,6 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         return result;
     }
 
-
-    @Override
-    public Boolean process(HistoryDTO dto) {
-        try {
-            switch (dto.getEnvType()) {
-                case 1:
-                    undo(dto);
-                    break;
-                case 2:
-                    redo(dto);
-                    break;
-                default:
-            }
-
-        } catch (Exception e) {
-
-        }
-        return true;
-    }
-
-
     @Override
     public Boolean undo(HistoryDTO dto) {
 

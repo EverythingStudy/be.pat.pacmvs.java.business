@@ -108,10 +108,26 @@ public class HistoryServiceImpl implements HistoryService {
     public void process(HistoryDTO dto) {
         switch (dto.getBizType()) {
             case 1:
-                markingService.process(dto);
+                switch (dto.getEnvType()) {
+                    case 1:
+                        markingService.undo(dto);
+                        break;
+                    case 2:
+                        markingService.redo(dto);
+                        break;
+                    default:
+                }
                 break;
             case 2:
-                markingExamineService.process(dto);
+                switch (dto.getEnvType()) {
+                    case 1:
+                        markingExamineService.undo(dto);
+                        break;
+                    case 2:
+                        markingExamineService.redo(dto);
+                        break;
+                    default:
+                }
                 break;
             default:
         }
