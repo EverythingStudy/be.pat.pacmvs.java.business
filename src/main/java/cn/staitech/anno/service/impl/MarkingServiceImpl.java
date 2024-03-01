@@ -111,6 +111,8 @@ public class MarkingServiceImpl implements MarkingService {
     String zipFileUrl = File.separator + "zipFile";
     String jsonFileUrl = "/file/statics";
 
+    HashSet<String> markingSet = new HashSet<>();
+
     @Resource
     private SlideMapperV1 slideMapperV1;
     @Resource
@@ -503,12 +505,16 @@ public class MarkingServiceImpl implements MarkingService {
      */
     @Override
     public JSONObject updateOperation(UpdateOperationIn req, String traceId, Boolean isBatch) throws Exception {
+        if(markingSet.contains(req.getMarking_id())){
+            throw new Exception(MessageSource.M("DATA.PROCESSING"));
+        } else {
+            markingSet.add(req.getMarking_id());
+        }
         Marking markingBy = markingMapper.selectById(req.getMarking_id());
         // 查询数据是否存在
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
-
         {
             Long userId = markingBy.getCreate_by();
             Long slideId = markingBy.getSlide_id();
@@ -545,14 +551,11 @@ public class MarkingServiceImpl implements MarkingService {
             RocksDBUtil.put(traceId, markingId, json);
         }
 
-
         // 合并 - 校验飞点 TODO: MarkingUtils.updatePolygonPoint(jsonObject);
         cn.staitech.anno.project.domain.Marking markingBys = MarkingUtils.updateVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation(), req.getCheck(), req.getResolution());
         // 精度保留3位小数
-        JSONObject jsonObject = MarkingUtils.updatePrecision(JSONObject.parseObject(WktUtil.wktToJson(markingBys.getMarkingId())));
+        JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(markingBys.getMarkingId()));
         // 校验合并后的图形是否正常
-        MarkingUtils.updatePoint(jsonObject);
-
         cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
         // 此处不设置ID则where id=null,不能正常执行。
         marking.setMarkingId(req.getMarking_id());
@@ -564,12 +567,12 @@ public class MarkingServiceImpl implements MarkingService {
         marking.setUpdateTime(new Date());
         marking.setAnnotationUpdateOwner(SecurityUtils.getUsername());
         markingMapperV1.updateById(marking);
-
         // 更新后查询数据并返回
         Properties properties = markingMapper.selectBy(req.getMarking_id());
         Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), marking.getGeometry(), properties);
         BroadcastVO broadcastVO = SendMessage.sendOneMessagesByAnnoType(CommonConstant.ANNO_TYPE_DRAW, UPDATE_STATUS, features);
         NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
+        markingSet.remove(req.getMarking_id());
         return jsonObject;
     }
 
