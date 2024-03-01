@@ -217,8 +217,6 @@ public interface MarkingService {
      */
     List<BatchResult> batch(List<ViewAddIn> list);
 
-    Boolean process(HistoryDTO dto);
-
     Boolean undo(HistoryDTO dto);
 
     Boolean redo(HistoryDTO dto);
