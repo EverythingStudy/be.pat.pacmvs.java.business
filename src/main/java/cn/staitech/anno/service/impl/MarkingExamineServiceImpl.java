@@ -733,6 +733,9 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
 
 
         Marking marking = MarkingUtils.updateVerify(markingExamineBy.getGeometry(), req.getGeometry(), req.getOperation(), req.getCheck(), req.getResolution());
+        if(marking.getException() != null){
+            throw new Exception(marking.getException());
+        }
         JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(marking.getMarkingId()));
         MarkingExamine markingExamine = new MarkingExamine();
         markingExamine.setGeometry(jsonObject);
