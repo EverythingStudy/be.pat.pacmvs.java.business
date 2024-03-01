@@ -160,6 +160,9 @@ public class Marking implements Serializable {
      */
     private Long organizationId;
 
+    @TableField(exist = false)
+    private String  exception;
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {

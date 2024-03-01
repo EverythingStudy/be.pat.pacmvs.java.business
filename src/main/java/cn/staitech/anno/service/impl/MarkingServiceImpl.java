@@ -513,6 +513,7 @@ public class MarkingServiceImpl implements MarkingService {
         Marking markingBy = markingMapper.selectById(req.getMarking_id());
         // 查询数据是否存在
         if (!Optional.ofNullable(markingBy).isPresent()) {
+            markingSet.remove(req.getMarking_id());
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
         {
@@ -553,6 +554,10 @@ public class MarkingServiceImpl implements MarkingService {
 
         // 合并 - 校验飞点 TODO: MarkingUtils.updatePolygonPoint(jsonObject);
         cn.staitech.anno.project.domain.Marking markingBys = MarkingUtils.updateVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation(), req.getCheck(), req.getResolution());
+        if(markingBys.getException() != null){
+            markingSet.remove(req.getMarking_id());
+            throw new Exception(markingBys.getException());
+        }
         // 精度保留3位小数
         JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(markingBys.getMarkingId()));
         // 校验合并后的图形是否正常

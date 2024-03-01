@@ -135,9 +135,9 @@ public class MarkingUtils {
      * @return
      * @throws Exception
      */
-    public static Marking updateVerify(JSONObject oldLocations, JSONObject newLocations, String operation, boolean check, String resolution) throws Exception {
+    public static Marking updateVerify(JSONObject oldLocations, JSONObject newLocations, String operation, boolean check, String resolution) {
+        Marking marking = new Marking();
         try {
-            Marking marking = new Marking();
             String oldLocation = WktUtil.jsonToWkt(oldLocations);
             String newLocation = WktUtil.jsonToWkt(newLocations);
             // WKT输出器，将Geometry对象写出为WKT文本
@@ -151,28 +151,32 @@ public class MarkingUtils {
                     geometry1 = WKT_READER.read(oldLocation);
                     geometry2 = WKT_READER.read(newLocation);
                 } catch (Exception e) {
-                    throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
+                    marking.setException(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
+                    return marking;
                 }
                 if (check) {
                     try {
                         // 新图形自相交
                         if (!geometry2.isSimple()) {
-                            throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
+                            marking.setException(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
+                            return marking;
                         }
                         String geometryType = geometry2.getGeometryType();
                         // 判断新增图形是否为Polygon
                         if (!"Polygon".equals(geometryType)) {
-                            throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
+                            marking.setException(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
+                            return marking;
                         }
 
                         Geometry geometryIntersection = geometry1.intersection(geometry2);
                         // 判断图形是否有交集 数据为空,两图形之间没有交集
                         if (geometryIntersection.isEmpty()) {
-                            System.out.println("两图形之间没有交集");
-                            throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
+                            marking.setException(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
+                            return marking;
                         }
                     } catch (Exception e) {
-                        throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
+                        marking.setException(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
+                        return marking;
                     }
                 }
                 OverlayOp op = new OverlayOp(geometry1, geometry2);
@@ -181,7 +185,8 @@ public class MarkingUtils {
                 if (check) {
                     if (geometry1.within(geometry2)) {
                         // 修改失败,请检查后输入
-                        throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
+                        marking.setException(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
+                        return marking;
                     }
                     // 校验标注不能过小，不能小于1000.0
 //                        if (geometry2.within(geometry1) && geometry2.getArea() < insideMaxArea) {
@@ -211,7 +216,9 @@ public class MarkingUtils {
                 // 判断合并后图形是否为复杂多边型(比如大标注嵌套小标注)
                 if (!"Polygon".equals(geometryType)) {
                     // throw new AnnoException(AnnotationResponseConstant.NEW_GRAPHICS_MARK_NOT_RULES);
-                    throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));// 新图形不符合规则
+                    // 新图形不符合规则
+                    marking.setException(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
+                    return marking;
                 }
 //            } catch (Exception e) {
 //                throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
@@ -234,7 +241,8 @@ public class MarkingUtils {
             return marking;
 
         } catch (Exception e) {
-            throw new Exception(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
+            marking.setException(MessageSource.M("GRAPHICS_MARK_NOT_RULES"));
+            return marking;
         }
 
     }
