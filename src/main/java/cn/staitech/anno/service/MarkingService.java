@@ -17,7 +17,6 @@ import cn.staitech.common.core.domain.R;
 import cn.staitech.system.api.domain.SysUser;
 import com.alibaba.fastjson.JSONObject;
 import com.vividsolutions.jts.io.ParseException;
-import org.rocksdb.RocksDBException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -71,6 +70,7 @@ public interface MarkingService {
 
     /**
      * 撤消、恢复 - 添加标注
+     *
      * @param marking
      * @return
      */
@@ -102,11 +102,9 @@ public interface MarkingService {
      */
     String update(ViewAddIn marking) throws Exception;
 
-//    Marking updateByHistory(Marking marking) throws Exception;
-
     JSONObject updateOperation(UpdateOperationIn req, String traceId, Boolean isBatch) throws Exception;
 
-    Marking updateOperationByHistory(Marking marking) ;
+    Marking updateOperationByHistory(Marking marking);
 
     /**
      * 更新标注点数
@@ -157,15 +155,6 @@ public interface MarkingService {
      * @return true || false
      */
     JSONObject markingMerge(MarkingMerge req) throws ParseException;
-
-    /**
-     * 导出json数据
-     *
-     * @param slideId
-     * @return
-     */
-//    String slideJsonExport(Long slideId) throws Exception;
-
 
     /**
      * 导出json数据

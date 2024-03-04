@@ -724,51 +724,6 @@ public class MarkingServiceImpl implements MarkingService {
         return markingBy.getMarking_id();
     }
 
-//
-//    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public Marking updateByHistory(Marking reqMarking) throws Exception {
-//        Long slideId = reqMarking.getSlide_id();
-//        String markingId = reqMarking.getMarking_id();
-//
-//        Marking oldMarking = markingMapper.selectById(markingId);
-//        if (!Optional.ofNullable(oldMarking).isPresent()) {
-//            return null;
-//        }
-//
-//        Marking marking = new Marking();
-//        BeanUtils.copyProperties(oldMarking, marking);
-//
-//        // 查询切片表中信息==》先走缓存
-//        Slide slide = redisService.getCacheObject(CommonConstant.ANNO_SLIDE + slideId);
-//        if (null == slide) {
-//            slide = slideMapperV1.selectById(slideId);
-//            redisService.setCacheObject(CommonConstant.ANNO_SLIDE + slideId, slide, CommonConstant.SLIDE_CACHE_HOURS, TimeUnit.HOURS);
-//        }
-//        if (!Optional.ofNullable(slide).isPresent()) {
-//            return null;
-//        }
-//
-//        // 只更新Geometry
-//        marking.setGeometry(reqMarking.getGeometry());
-//        markingMapper.updateById(marking);
-//
-//        Properties properties = markingMapper.selectBy(marking.getMarking_id());
-//        Features features = MarkingUtils.socketData(marking.getAnnotation_id(), marking.getGeometry(), properties);
-//        BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, UPDATE_STATUS, features, null);
-//        // 使用websocket发送数据
-//        NioWebSocketHandler.sendAll(slideId, broadcastVO);
-//        Marking markingNew = markingMapper.selectById(markingId);
-//
-//        // 线程处理无法正常返回
-//        // ANN_EXECUTOR.submit(new AnnCountThread(2, slide, markingNew));
-//
-//        // process(2, slide, markingNew);
-//
-//        return oldMarking;
-//    }
-
-
     @Override
     public int updatePointCount(Marking marking) {
         return markingMapper.updatePointCount(marking);
