@@ -90,7 +90,7 @@ public class ReviewRoundController {
         for (ReviewRoundInsertInVO vo : reviewRoundBatchInVO.getInsertList()) {
             Boolean flag = true;
             for (ReviewRound reviewRound : reviewRoundList) {
-                if (vo.getRoundId().equals(reviewRound.getRoundId()) && vo.getGroupId().equals(vo.getGroupId()) && vo.getTopicId().equals(reviewRound.getTopicId())) {
+                if (vo.getRoundId().equals(reviewRound.getRoundId()) && vo.getGroupId().equals(reviewRound.getGroupId()) && vo.getTopicId().equals(reviewRound.getTopicId())) {
                     flag = false;
                     break;
                 }
