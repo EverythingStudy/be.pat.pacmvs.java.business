@@ -38,7 +38,7 @@ public class WktUtil {
             WKTReader reader = new WKTReader();
             Geometry geometry = reader.read(wkt);
             StringWriter writer = new StringWriter();
-            GeometryJSON g = new GeometryJSON(20);
+            GeometryJSON g = new GeometryJSON(3);
             g.write(geometry, writer);
             json = writer.toString();
         } catch (Exception e) {

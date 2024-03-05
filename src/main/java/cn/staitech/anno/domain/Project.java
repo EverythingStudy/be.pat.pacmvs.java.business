@@ -16,6 +16,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -207,4 +208,8 @@ public class Project extends BaseEntity {
     @TableField(exist = false)
     @ApiModelProperty(value = "创建者名称")
     private String userName;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "创建者名称")
+    private List<String> projectTypeList;
 }

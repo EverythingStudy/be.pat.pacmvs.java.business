@@ -5,22 +5,27 @@ import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.geojson.Features;
-import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
 import cn.staitech.anno.vo.geojson.in.RoiIn;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
+import cn.staitech.anno.vo.geojson.in.ViewAddInList;
+import cn.staitech.anno.vo.geojson.out.BatchResult;
+import cn.staitech.anno.vo.marking.MarkingMerge;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.slide.SlideSelectBy;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
+import cn.staitech.common.core.utils.uuid.UUID;
 import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import com.vividsolutions.jts.io.ParseException;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -32,7 +37,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
-
 
 /**
  * @author gjt
@@ -105,6 +109,8 @@ public class MarkingController {
     @ApiOperation(value = "添加标注")
     @PostMapping("/intelligentAnno/insert")
     public R<String> add(@Validated @RequestBody ViewAddIn req) throws Exception {
+        req.setTraceId(UUID.fastUUID().toString());
+        req.setIsBatch(false);
         String markingId = markingService.insert(req);
         return R.ok(markingId, MessageSource.M("OPERATE_SUCCEED"));
     }
@@ -114,17 +120,54 @@ public class MarkingController {
     @ApiImplicitParams({@ApiImplicitParam(name = "markingId", value = "标注id", required = true, dataType = "Long", paramType = "query")})
     @DeleteMapping("/intelligentAnno/delete")
     public R<String> del(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) String marking_id) throws Exception {
-        markingService.delete(marking_id);
+        markingService.delete(marking_id, UUID.fastUUID().toString(), false);
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     @ApiOperationSupport(author = "gjt")
     @ApiOperation(value = "更新标注")
     @PutMapping("/intelligentAnno/update")
-    public R<String> update(@Validated @RequestBody MarkingUpdateIn req) throws Exception {
+    public R<String> update(@Validated @RequestBody ViewAddIn req) throws Exception {
+        req.setTraceId(UUID.fastUUID().toString());
+        req.setIsBatch(false);
         markingService.update(req);
         return R.ok(req.getMarking_id(), MessageSource.M("OPERATE_SUCCEED"));
     }
+
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "填充轮廓")
+    @ApiImplicitParams({@ApiImplicitParam(name = "marking_id", value = "标注id", required = true, dataType = "Long", paramType = "query")})
+    @PostMapping("/intelligentAnno/padding")
+    public R<String> padding(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) String marking_id) throws Exception {
+        int res = markingService.padding(marking_id);
+        if (res > 0) {
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+        } else {
+            return R.fail(null, MessageSource.M("OPERATE_ERROR"));
+        }
+    }
+
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "复制/粘贴轮廓")
+    @ApiImplicitParams({@ApiImplicitParam(name = "marking_id", value = "标注id", required = true, dataType = "Long", paramType = "query")})
+    @PostMapping("/intelligentAnno/stickup")
+    public R<String> stickup(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) String marking_id) {
+        int res = markingService.stickup(marking_id);
+        if (res > 0) {
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+        } else {
+            return R.fail(null, MessageSource.M("OPERATE_ERROR"));
+        }
+    }
+
+    @ApiOperationSupport(author = "gjt")
+    @ApiOperation(value = "合并轮廓预览")
+    @PostMapping("/intelligentAnno/markingMerge")
+    public R<JSONObject> markingMerge(@Validated @RequestBody MarkingMerge req) throws ParseException {
+        JSONObject res = markingService.markingMerge(req);
+        return R.ok(res);
+    }
+
 
     /**
      * TODO:
@@ -138,7 +181,7 @@ public class MarkingController {
     @ApiOperation(value = "合并、裁剪轮廓")
     @PutMapping("/intelligentAnno/updateOperation")
     public R<JSONObject> updateOperation(@Validated @RequestBody UpdateOperationIn req) throws Exception {
-        JSONObject geoJson = markingService.updateOperation(req);
+        JSONObject geoJson = markingService.updateOperation(req, UUID.fastUUID().toString(), false);
         return R.ok(geoJson, MessageSource.M("OPERATE_SUCCEED"));
     }
 
@@ -199,7 +242,6 @@ public class MarkingController {
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
-
     @ApiOperationSupport(author = "zmj")
     @ApiOperation(value = "添加ROI轮廓")
     @PostMapping("/intelligentAnno/insertROI")
@@ -213,6 +255,21 @@ public class MarkingController {
         return markingService.roiContDel(req);
     }
 
-
+    /**
+     * 批量操作
+     *
+     * @param list
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @ApiOperationSupport(author = "wangfeng")
+    @ApiOperation(value = "批量操作")
+    @PostMapping("/intelligentAnno/batch")
+    public R<List<BatchResult>> batch(@Validated @RequestBody ViewAddInList list) {
+        if (CollectionUtils.isEmpty(list.getList())) {
+            return R.fail(MessageSource.M("ARGUMENT_INVALID"));
+        }
+        List<BatchResult> result = markingService.batch(list.getList());
+        return R.ok(result, MessageSource.M("OPERATE_SUCCEED"));
+    }
 }
-

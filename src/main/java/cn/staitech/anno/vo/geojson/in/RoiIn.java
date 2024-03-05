@@ -28,6 +28,9 @@ public class RoiIn {
     @NotNull(message = "{SlidePredictionIn.slideId.isnull}")
     private Long slideId;
 
+    @ApiModelProperty(value = "标签id列表")
+    private List<Long> categoryIds;
+
     @ApiModelProperty(value = "标签id", hidden = true)
     private Long categoryId;
     @ApiModelProperty(value = "创建者id", hidden = true)

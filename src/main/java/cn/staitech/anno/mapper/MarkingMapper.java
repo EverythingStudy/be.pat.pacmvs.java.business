@@ -6,6 +6,7 @@ import cn.staitech.anno.project.vo.ImageAnnoStatisticsVO;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.JsonExport;
 import cn.staitech.anno.vo.geojson.Properties;
+import cn.staitech.anno.vo.geojson.in.RoiIn;
 import cn.staitech.anno.vo.labelprojectstatistics.ProjectLabelOut;
 import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
@@ -52,7 +53,7 @@ public interface MarkingMapper extends BaseMapper<Marking> {
      */
     List<Features> selectListBy(Long slideId);
 
-    List<Features> selectListBy2(Map<String, Object> map);
+    List<Features> selectListMarking(Map<String, Object> map);
 
 
     List<MarkingSelectListVO> selectUnionList(Map<String, Object> map);
@@ -129,14 +130,14 @@ public interface MarkingMapper extends BaseMapper<Marking> {
     /**
      * ROI查询
      * */
-    List<Marking> roiMarking(Integer slideId);
+    List<Marking> roiMarking(RoiIn roiIn);
 
 
 
     /**
      * ROI对measure查询
      * */
-    List<MarkMeasure>roiMeasure(Long slideId);
+    List<MarkMeasure>roiMeasure(RoiIn roiIn);
 
     int delMeasure(List<String> list);
     

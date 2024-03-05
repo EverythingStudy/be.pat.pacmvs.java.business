@@ -53,4 +53,7 @@ public class GetQuestionListOut {
 
     @ApiModelProperty(value = "创建者")
     private String createName;
+
+    @ApiModelProperty(value = "图像id")
+    private Long imageId;
 }

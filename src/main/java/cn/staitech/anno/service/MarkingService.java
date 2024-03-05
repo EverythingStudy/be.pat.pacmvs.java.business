@@ -3,17 +3,20 @@ package cn.staitech.anno.service;
 import cn.staitech.anno.domain.Outline;
 import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.anno.vo.geojson.Features;
-import cn.staitech.anno.vo.geojson.in.MarkingUpdateIn;
 import cn.staitech.anno.vo.geojson.in.RoiIn;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
+import cn.staitech.anno.vo.geojson.out.BatchResult;
+import cn.staitech.anno.vo.history.HistoryDTO;
 import cn.staitech.anno.vo.marking.Marking;
+import cn.staitech.anno.vo.marking.MarkingMerge;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.PointCount;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.system.api.domain.SysUser;
 import com.alibaba.fastjson.JSONObject;
+import com.vividsolutions.jts.io.ParseException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -65,6 +68,14 @@ public interface MarkingService {
      */
     String insert(ViewAddIn req) throws Exception;
 
+    /**
+     * 撤消、恢复 - 添加标注
+     *
+     * @param marking
+     * @return
+     */
+    Marking insertByHistory(Marking marking);
+
 
     /**
      * 添加标注 - 吸管
@@ -89,9 +100,11 @@ public interface MarkingService {
      * @param marking 标注数据
      * @return true || false
      */
-    String update(MarkingUpdateIn marking) throws Exception;
+    String update(ViewAddIn marking) throws Exception;
 
-    JSONObject updateOperation(UpdateOperationIn req) throws Exception;
+    JSONObject updateOperation(UpdateOperationIn req, String traceId, Boolean isBatch) throws Exception;
+
+    Marking updateOperationByHistory(Marking marking);
 
     /**
      * 更新标注点数
@@ -107,16 +120,41 @@ public interface MarkingService {
      * @param markingId 标注id
      * @return true || false
      */
-    int delete(String markingId) throws Exception;
+    int delete(String markingId, String traceId, Boolean isBatch) throws Exception;
+
 
     /**
-     * 导出json数据
+     * 删除标注
      *
-     * @param slideId
-     * @return
+     * @param markingId 标注id
+     * @return true || false
      */
-//    String slideJsonExport(Long slideId) throws Exception;
+    Marking deleteByHistory(String markingId) throws Exception;
 
+
+    /**
+     * 填充标注
+     *
+     * @param markingId 标注id
+     * @return true || false
+     */
+    int padding(String markingId) throws Exception;
+
+    /**
+     * 填充标注
+     *
+     * @param markingId 标注id
+     * @return true || false
+     */
+    int stickup(String markingId);
+
+    /**
+     * 多个轮廓合并
+     *
+     * @param req 标注id
+     * @return true || false
+     */
+    JSONObject markingMerge(MarkingMerge req) throws ParseException;
 
     /**
      * 导出json数据
@@ -160,4 +198,15 @@ public interface MarkingService {
      */
     R<String> roiContDel(RoiIn viewAddIns) throws Exception;
 
+    /**
+     * 批量处理
+     *
+     * @param list
+     * @return
+     */
+    List<BatchResult> batch(List<ViewAddIn> list);
+
+    Boolean undo(HistoryDTO dto);
+
+    Boolean redo(HistoryDTO dto);
 }
