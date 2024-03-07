@@ -749,8 +749,9 @@ public class MarkingServiceImpl implements MarkingService {
         NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
         int res = markingMapper.delete(markingId);
 
-        Long userId = markingBy.getCreate_by();
+
         {
+            Long userId = SecurityUtils.getLoginUser().getSysUser().getUserId();
             // 删除操作RocksDB存删除前的数据
             // 撤消,恢复历史记录 用HistoryService会引起循环依赖！ -> 后续在线程池中处理 判断是批处理，还是单独处理
             // 1、创建Session,并存入ConcurrentHashMap<Long, Session>
