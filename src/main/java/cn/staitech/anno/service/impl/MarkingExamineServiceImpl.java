@@ -604,6 +604,10 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
+
+        SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+        Long loginUserId = sysUser.getUserId();
+
         JSONObject geometryJson = MarkingUtils.padding(markingBy.getGeometry());
         MarkingExamine markingExamine = new MarkingExamine();
         markingExamine.setGeometry(geometryJson);
@@ -620,13 +624,42 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         }
         markingExamine.setMarkingExamineId(markingId);
         markingExamine.setUpdateTime(new Date());
-        markingExamine.setUpdateBy(SecurityUtils.getUserId());
+        markingExamine.setUpdateBy(loginUserId);
+
+        {
+            // 查询slideId
+            Long slideId = questionBank.getSlideId();
+            String traceId = cn.staitech.common.core.utils.uuid.UUID.fastUUID().toString();
+
+            // 删除操作RocksDB存删除前的数据
+            // 撤消,恢复历史记录 用HistoryService会引起循环依赖！ -> 后续在线程池中处理 判断是批处理，还是单独处理
+            // 1、创建Session,并存入ConcurrentHashMap<Long, Session>
+            Session session = new Session(loginUserId, slideId);
+            String key = loginUserId + "_" + slideId;
+            if (!HistoryServiceImpl.USER_SESSION_MAP.containsKey(key)) {
+                HistoryServiceImpl.USER_SESSION_MAP.put(key, session);
+            }
+            session = HistoryServiceImpl.USER_SESSION_MAP.get(key);
+
+            // 2、创建Trace,并存入Session.list,LinkedList<Trace> - 单条记录
+            Trace trace = new Trace(loginUserId, traceId, false);
+            trace.getNodeList().add(new TraceNode(markingId.toString(), "UPDATEOPERATION"));
+            session.drawListAdd(trace);
+
+            // 3、数据持久化写入RocksDB
+            Gson gson = new Gson();
+            // 将对象转换成JSON字符串
+            String json = gson.toJson(markingBy);
+            RocksDBUtil.put(traceId, markingId.toString(), json);
+        }
+
+
         int res = markingExamineMapper.updateById(markingExamine);
         Properties properties = markingExamineMapper.selectBy(markingExamine.getMarkingExamineId());
         Features features = MarkingUtils.socketData("", geometryJson, properties);
         BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features);
         // 使用websocket发送数据
-        String questionProjectId = markingBy.getQuestionProjectId() + GLIDE_LINE + SecurityUtils.getLoginUser().getSysUser().getUserId();
+        String questionProjectId = markingBy.getQuestionProjectId() + GLIDE_LINE + loginUserId;
         NioWebSocketHandler.sendQuestionProject(questionProjectId, broadcastVO);
         return res;
     }
@@ -699,7 +732,6 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
             QuestionBank questionBank = questionBankMapper.selectById(questionId);
             Long slideId = questionBank.getSlideId();
 
-
             // 删除操作RocksDB存删除前的数据
             // 撤消,恢复历史记录 用HistoryService会引起循环依赖！ -> 后续在线程池中处理 判断是批处理，还是单独处理
             // 1、创建Session,并存入ConcurrentHashMap<Long, Session>
@@ -750,7 +782,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         Properties properties = markingExamineMapper.selectBy(Long.valueOf(req.getMarking_id()));
         Features features = MarkingUtils.socketData("", markingExamine.getGeometry(), properties);
         BroadcastVO broadcastVO = SendMessage.sendOneMessages(UPDATE_STATUS, features);
-        String questionProjectId = markingExamineBy.getQuestionProjectId() + GLIDE_LINE + SecurityUtils.getLoginUser().getSysUser().getUserId();
+        String questionProjectId = markingExamineBy.getQuestionProjectId() + GLIDE_LINE + userId;
         NioWebSocketHandler.sendQuestionProject(questionProjectId, broadcastVO);
         return markingExamine.getGeometry();
     }

@@ -111,6 +111,9 @@ public class MarkingController {
     public R<String> add(@Validated @RequestBody ViewAddIn req) throws Exception {
         req.setTraceId(UUID.fastUUID().toString());
         req.setIsBatch(false);
+        if(req.getUpdate_by()==null){
+            req.setUpdate_by(SecurityUtils.getLoginUser().getSysUser().getUserId());
+        }
         String markingId = markingService.insert(req);
         return R.ok(markingId, MessageSource.M("OPERATE_SUCCEED"));
     }
@@ -130,6 +133,9 @@ public class MarkingController {
     public R<String> update(@Validated @RequestBody ViewAddIn req) throws Exception {
         req.setTraceId(UUID.fastUUID().toString());
         req.setIsBatch(false);
+        if(req.getUpdate_by()==null){
+            req.setUpdate_by(SecurityUtils.getLoginUser().getSysUser().getUserId());
+        }
         markingService.update(req);
         return R.ok(req.getMarking_id(), MessageSource.M("OPERATE_SUCCEED"));
     }
@@ -181,6 +187,9 @@ public class MarkingController {
     @ApiOperation(value = "合并、裁剪轮廓")
     @PutMapping("/intelligentAnno/updateOperation")
     public R<JSONObject> updateOperation(@Validated @RequestBody UpdateOperationIn req) throws Exception {
+        if (req.getUpdate_by() == null) {
+            req.setUpdate_by(SecurityUtils.getLoginUser().getSysUser().getUserId());
+        }
         JSONObject geoJson = markingService.updateOperation(req, UUID.fastUUID().toString(), false);
         return R.ok(geoJson, MessageSource.M("OPERATE_SUCCEED"));
     }
