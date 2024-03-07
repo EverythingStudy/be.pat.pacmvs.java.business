@@ -141,6 +141,9 @@ public class MarkingServiceImpl implements MarkingService {
     private DownTaskService downTaskService;
     @Resource
     private RedisService redisService;
+    @Resource
+    private RocksdbService rocksdbService;
+
 
     private static Boolean fileExists(String filePath) {
         File file = new File(filePath);
@@ -380,6 +383,8 @@ public class MarkingServiceImpl implements MarkingService {
             // 将对象转换成JSON字符串
             String json = gson.toJson(marking);
             RocksDBUtil.put(traceId, marking.getMarking_id(), json);
+
+            //historySerice.submitTask();
         }
 
         // 多线程处理
@@ -516,6 +521,36 @@ public class MarkingServiceImpl implements MarkingService {
             markingSet.remove(req.getMarking_id());
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
+        // TODO
+        // 合并 - 校验飞点 TODO: MarkingUtils.updatePolygonPoint(jsonObject);
+        cn.staitech.anno.project.domain.Marking markingBys = MarkingUtils.updateVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation(), req.getCheck(), req.getResolution());
+        if (markingBys.getException() != null) {
+            markingSet.remove(req.getMarking_id());
+            throw new Exception(markingBys.getException());
+        }
+        // 精度保留3位小数
+        JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(markingBys.getMarkingId()));
+        // 校验合并后的图形是否正常
+        cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
+        // 此处不设置ID则where id=null,不能正常执行。
+        marking.setMarkingId(req.getMarking_id());
+        marking.setGeometry(jsonObject);
+        marking.setArea(markingBys.getArea());
+        marking.setPerimeter(markingBys.getPerimeter());
+        marking.setMarkingId(req.getMarking_id());
+        marking.setUpdateBy(SecurityUtils.getUserId());
+        marking.setUpdateTime(new Date());
+        marking.setAnnotationUpdateOwner(SecurityUtils.getUsername());
+
+
+        markingMapperV1.updateById(marking);
+        // 更新后查询数据并返回
+        Properties properties = markingMapper.selectBy(req.getMarking_id());
+        Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), marking.getGeometry(), properties);
+        BroadcastVO broadcastVO = SendMessage.sendOneMessagesByAnnoType(CommonConstant.ANNO_TYPE_DRAW, UPDATE_STATUS, features);
+        NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
+        markingSet.remove(req.getMarking_id());
+
         {
             Long userId = req.getUpdate_by();
             Long slideId = markingBy.getSlide_id();
@@ -545,39 +580,14 @@ public class MarkingServiceImpl implements MarkingService {
                 session.drawListAdd(trace);
             }
 
-            // 3、数据持久化写入RocksDB
-            Gson gson = new Gson();
-            // 将对象转换成JSON字符串
-            String json = gson.toJson(markingBy);
-            RocksDBUtil.put(traceId, markingId, json);
+//            // 3、数据持久化写入RocksDB
+//            Gson gson = new Gson();
+//            // 将对象转换成JSON字符串
+//            String json = gson.toJson(markingBy);
+//            RocksDBUtil.put(traceId, markingId, json);
+            rocksdbService.submitTask(traceId, markingId, markingBy);
         }
 
-        // 合并 - 校验飞点 TODO: MarkingUtils.updatePolygonPoint(jsonObject);
-        cn.staitech.anno.project.domain.Marking markingBys = MarkingUtils.updateVerify(markingBy.getGeometry(), req.getGeometry(), req.getOperation(), req.getCheck(), req.getResolution());
-        if (markingBys.getException() != null) {
-            markingSet.remove(req.getMarking_id());
-            throw new Exception(markingBys.getException());
-        }
-        // 精度保留3位小数
-        JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(markingBys.getMarkingId()));
-        // 校验合并后的图形是否正常
-        cn.staitech.anno.project.domain.Marking marking = new cn.staitech.anno.project.domain.Marking();
-        // 此处不设置ID则where id=null,不能正常执行。
-        marking.setMarkingId(req.getMarking_id());
-        marking.setGeometry(jsonObject);
-        marking.setArea(markingBys.getArea());
-        marking.setPerimeter(markingBys.getPerimeter());
-        marking.setMarkingId(req.getMarking_id());
-        marking.setUpdateBy(SecurityUtils.getUserId());
-        marking.setUpdateTime(new Date());
-        marking.setAnnotationUpdateOwner(SecurityUtils.getUsername());
-        markingMapperV1.updateById(marking);
-        // 更新后查询数据并返回
-        Properties properties = markingMapper.selectBy(req.getMarking_id());
-        Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), marking.getGeometry(), properties);
-        BroadcastVO broadcastVO = SendMessage.sendOneMessagesByAnnoType(CommonConstant.ANNO_TYPE_DRAW, UPDATE_STATUS, features);
-        NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
-        markingSet.remove(req.getMarking_id());
         return jsonObject;
     }
 
@@ -664,11 +674,12 @@ public class MarkingServiceImpl implements MarkingService {
                 session.drawListAdd(trace);
             }
 
-            // 3、数据持久化写入RocksDB
-            Gson gson = new Gson();
-            // 将对象转换成JSON字符串
-            String json = gson.toJson(markingBy);
-            RocksDBUtil.put(traceId, markingId, json);
+//            // 3、数据持久化写入RocksDB
+//            Gson gson = new Gson();
+//            // 将对象转换成JSON字符串
+//            String json = gson.toJson(markingBy);
+//            RocksDBUtil.put(traceId, markingId, json);
+            rocksdbService.submitTask(traceId, markingId, markingBy);
         }
 
         // 更新前数据
@@ -770,11 +781,12 @@ public class MarkingServiceImpl implements MarkingService {
                 session.drawListAdd(trace);
             }
 
-            // 3、数据持久化写入RocksDB
-            Gson gson = new Gson();
-            // 将对象转换成JSON字符串
-            String json = gson.toJson(markingBy);
-            RocksDBUtil.put(traceId, markingId, json);
+//            // 3、数据持久化写入RocksDB
+//            Gson gson = new Gson();
+//            // 将对象转换成JSON字符串
+//            String json = gson.toJson(markingBy);
+//            RocksDBUtil.put(traceId, markingId, json);
+            rocksdbService.submitTask(traceId, markingId, markingBy);
         }
 
         updateSLide(slide.getSlideId());
@@ -854,11 +866,12 @@ public class MarkingServiceImpl implements MarkingService {
             trace.getNodeList().add(new TraceNode(markingId, "UPDATEOPERATION"));
             session.drawListAdd(trace);
 
-            // 3、数据持久化写入RocksDB
-            Gson gson = new Gson();
-            // 将对象转换成JSON字符串
-            String json = gson.toJson(markingBy);
-            RocksDBUtil.put(traceId, markingId, json);
+//            // 3、数据持久化写入RocksDB
+//            Gson gson = new Gson();
+//            // 将对象转换成JSON字符串
+//            String json = gson.toJson(markingBy);
+//            RocksDBUtil.put(traceId, markingId, json);
+            rocksdbService.submitTask(traceId, markingId, markingBy);
         }
 
         int res = markingMapper.updateById(marking);
@@ -2032,7 +2045,10 @@ public class MarkingServiceImpl implements MarkingService {
                 }
 
             }
-            drawList.remove(drawList.size() - 1);
+            // Index: -1, Size: 0
+            if(drawList.size()>0){
+                drawList.remove(drawList.size() - 1);
+            }
         }
 
         return true;
@@ -2099,7 +2115,9 @@ public class MarkingServiceImpl implements MarkingService {
 
                 newTrace.setTraceId(traceId);
                 drawList.add(newTrace);
-                undoList.remove(undoList.size() - 1);
+                if(undoList.size() >0) {
+                    undoList.remove(undoList.size() - 1);
+                }
             } else {
 
                 try {
@@ -2133,7 +2151,9 @@ public class MarkingServiceImpl implements MarkingService {
                     drawList.add(trace);
                     json = gson.toJson(newMarking);
                     RocksDBUtil.put(traceId, newMarking.getMarking_id(), json);
-                    undoList.remove(undoList.size() - 1);
+                    if(undoList.size()>0){
+                        undoList.remove(undoList.size() - 1);
+                    }
                 } catch (Exception e) {
                     log.info("redo：{}", e);
                 }

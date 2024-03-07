@@ -68,6 +68,8 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
     private ImageMapper imageMapper;
     @Resource
     private QuestionBankMapper questionBankMapper;
+    @Resource
+    private RocksdbService rocksdbService;
 
     public static String getStr(File jsonFile) {
         String jsonStr;
@@ -475,11 +477,12 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
                 session.drawListAdd(trace);
             }
 
-            // 3、数据持久化写入RocksDB
-            Gson gson = new Gson();
-            // 将对象转换成JSON字符串
-            String json = gson.toJson(markingExamineBy);
-            RocksDBUtil.put(traceId, markingId, json);
+//            // 3、数据持久化写入RocksDB
+//            Gson gson = new Gson();
+//            // 将对象转换成JSON字符串
+//            String json = gson.toJson(markingExamineBy);
+//            RocksDBUtil.put(traceId, markingId, json);
+            rocksdbService.submitTask(traceId, markingId, markingExamineBy);
         }
 
         // 查询标注表中信息
@@ -756,16 +759,17 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
                 session.drawListAdd(trace);
             }
 
-            // 3、数据持久化写入RocksDB
-            Gson gson = new Gson();
-            // 将对象转换成JSON字符串
-            String json = gson.toJson(markingExamineBy);
-            RocksDBUtil.put(traceId, markingId, json);
+//            // 3、数据持久化写入RocksDB
+//            Gson gson = new Gson();
+//            // 将对象转换成JSON字符串
+//            String json = gson.toJson(markingExamineBy);
+//            RocksDBUtil.put(traceId, markingId, json);
+            rocksdbService.submitTask(traceId, markingId, markingExamineBy);
         }
 
 
         Marking marking = MarkingUtils.updateVerify(markingExamineBy.getGeometry(), req.getGeometry(), req.getOperation(), req.getCheck(), req.getResolution());
-        if(marking.getException() != null){
+        if (marking.getException() != null) {
             throw new Exception(marking.getException());
         }
         JSONObject jsonObject = JSONObject.parseObject(WktUtil.wktToJson(marking.getMarkingId()));
