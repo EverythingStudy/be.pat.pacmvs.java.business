@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author gjt.
@@ -76,9 +77,15 @@ public class RecentlyVisitedServiceImpl extends ServiceImpl<RecentlyVisitedMappe
 
 
     @Override
-    public void selectBy(Long slideId) {
+    public void selectBy(Long slideId,String projectType) {
+        RecentlyVisited req;
         // 根据切片查询项目、图片、切片信息
-        RecentlyVisited req = recentlyVisitedMapper.selectBy(slideId);
+        if (Objects.equals(projectType, "8")){
+            req = recentlyVisitedMapper.selectSlideInfo(slideId);
+        }else{
+            req = recentlyVisitedMapper.selectBy(slideId);
+        }
+
         // 查询当前用户是否在当前项目中
         ProjectMember projectMember = new ProjectMember();
         projectMember.setUserId(SecurityUtils.getUserId());

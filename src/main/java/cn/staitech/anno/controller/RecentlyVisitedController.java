@@ -38,15 +38,16 @@ public class RecentlyVisitedController {
     }
 
     @ApiOperation(value = "访问viewer记录接口")
-    @ApiImplicitParams({@ApiImplicitParam(name = "slideId", value = "切片id", required = true, dataType = "Long", paramType = "query")})
+    @ApiImplicitParams({@ApiImplicitParam(name = "slideId", value = "切片id", required = true, dataType = "Long", paramType = "query"),
+            @ApiImplicitParam(name = "projectType", value = "项目类型", required = false, dataType = "String", paramType = "query")})
     @GetMapping("/visited")
-    public R<String> add(Long slideId) {
+    public R<String> add(Long slideId,String projectType) {
         if (!Optional.ofNullable(slideId).isPresent()) {
             return R.fail(MessageSource.M("ARGUMENT_INVALID"));
         }
         // 判断当前角色是否为admin或者超级管理员
         if (!SysUser.isAdmin(SecurityUtils.getUserId())) {
-            recentlyVisitedService.selectBy(slideId);
+            recentlyVisitedService.selectBy(slideId,projectType);
         }
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
