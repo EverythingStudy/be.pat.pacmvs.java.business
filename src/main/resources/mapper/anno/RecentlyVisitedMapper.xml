@@ -60,6 +60,9 @@
         <if test="projectType != null">
             AND project_type = #{projectType}
         </if>
+        <if test="tab != null">
+            AND tab = #{tab}
+        </if>
         order by create_time desc
     </select>
 
@@ -72,6 +75,9 @@
         </if>
         <if test="projectType != null">
             AND project_type = #{projectType}
+        </if>
+        <if test="tab != null">
+            AND tab = #{tab}
         </if>
         ORDER BY update_time desc
     </select>
@@ -100,6 +106,9 @@
         </if>
         <if test="projectType != null">
             AND project_type = #{projectType}
+        </if>
+        <if test="tab != null">
+            AND tab = #{tab}
         </if>
     </select>
 
@@ -170,6 +179,9 @@
         <if test="reviewRoundId != null">
             review_round_id,
         </if>
+        <if test="tab != null">
+            tab,
+        </if>
         create_time,
         update_time
         )values(
@@ -196,6 +208,9 @@
         </if>
         <if test="reviewRoundId != null">
             #{reviewRoundId},
+        </if>
+        <if test="tab != null">
+            #{tab},
         </if>
         sysdate(),
         sysdate()

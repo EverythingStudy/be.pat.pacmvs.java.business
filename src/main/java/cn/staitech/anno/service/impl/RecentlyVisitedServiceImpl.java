@@ -33,11 +33,14 @@ public class RecentlyVisitedServiceImpl extends ServiceImpl<RecentlyVisitedMappe
 
 
     @Override
-    public List<RecentlyVisitedSelectVO> selectList(Long projectType) {
+    public List<RecentlyVisitedSelectVO> selectList(Long projectType,String tab) {
 
         RecentlyVisited recentlyVisited = new RecentlyVisited();
         recentlyVisited.setUserId(SecurityUtils.getUserId());
         recentlyVisited.setProjectType(projectType);
+        if (Objects.equals(tab, "1")){
+            recentlyVisited.setTab(1);
+        }
         // 根据用户id查询所有的该用户的所有访问
         // 查询出时间不为空的数据
         List<RecentlyVisited> recentlyVisitedList = recentlyVisitedMapper.selectUpdateIsTrue(recentlyVisited);
@@ -77,11 +80,12 @@ public class RecentlyVisitedServiceImpl extends ServiceImpl<RecentlyVisitedMappe
 
 
     @Override
-    public void selectBy(Long slideId,String projectType) {
+    public void selectBy(Long slideId,String tab) {
         RecentlyVisited req;
         // 根据切片查询项目、图片、切片信息
-        if (Objects.equals(projectType, "8")){
+        if (Objects.equals(tab, "1")){
             req = recentlyVisitedMapper.selectSlideInfo(slideId);
+            req.setTab(1);
         }else{
             req = recentlyVisitedMapper.selectBy(slideId);
         }
@@ -119,6 +123,9 @@ public class RecentlyVisitedServiceImpl extends ServiceImpl<RecentlyVisitedMappe
             }
             // 添加之后根据用户和项目查询 如果大于十条，根据用户和项目删除数据
             recentlyVisited.setProjectType(req.getProjectType());
+            if (Objects.equals(tab, "1")){
+                recentlyVisited.setTab(1);
+            }
             List<RecentlyVisited> recentlyVisitedLists = recentlyVisitedMapper.selectSpecial(recentlyVisited);
             if (recentlyVisitedLists.size() > 10) {
                 // 找出时间最小的一条数据

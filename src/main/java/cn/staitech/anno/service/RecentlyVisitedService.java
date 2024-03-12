@@ -18,7 +18,7 @@ public interface RecentlyVisitedService extends IService<RecentlyVisited> {
      *
      * @return List
      */
-    List<RecentlyVisitedSelectVO> selectList(Long projectType);
+    List<RecentlyVisitedSelectVO> selectList(Long projectType,String tab);
 
 
     /**
@@ -27,5 +27,5 @@ public interface RecentlyVisitedService extends IService<RecentlyVisited> {
      * @param slideId 切片id
      * @return list
      */
-    void selectBy(Long slideId,String projectType);
+    void selectBy(Long slideId,String tab);
 }

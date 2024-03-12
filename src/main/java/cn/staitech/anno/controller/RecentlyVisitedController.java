@@ -33,21 +33,22 @@ public class RecentlyVisitedController {
 
     @ApiOperation(value = "查询用户最近访问信息")
     @GetMapping("/selectList")
-    public R<List<RecentlyVisitedSelectVO>> selectList(@RequestParam("projectType") @ApiParam(name = "projectType", value = "项目类型(1标注2评审3标准训练集)", required = true) Long projectType) {
-        return R.ok(recentlyVisitedService.selectList(projectType));
+    public R<List<RecentlyVisitedSelectVO>> selectList(@RequestParam("projectType") @ApiParam(name = "projectType", value = "项目类型(1标注2评审3标准训练集)", required = true) Long projectType,
+                                                       @RequestParam(value = "tab",required = false) @ApiParam(name = "tab", value = "标记默认为0，医学评审为1（区分医学评审和智能评审）") String tab) {
+        return R.ok(recentlyVisitedService.selectList(projectType,tab));
     }
 
     @ApiOperation(value = "访问viewer记录接口")
     @ApiImplicitParams({@ApiImplicitParam(name = "slideId", value = "切片id", required = true, dataType = "Long", paramType = "query"),
-            @ApiImplicitParam(name = "projectType", value = "项目类型", required = false, dataType = "String", paramType = "query")})
+    @ApiImplicitParam(name = "tab", value = "标记默认为0，医学评审为1（区分医学评审和智能评审）", dataType = "String", paramType = "query")})
     @GetMapping("/visited")
-    public R<String> add(Long slideId,String projectType) {
+    public R<String> add(Long slideId,String tab) {
         if (!Optional.ofNullable(slideId).isPresent()) {
             return R.fail(MessageSource.M("ARGUMENT_INVALID"));
         }
         // 判断当前角色是否为admin或者超级管理员
         if (!SysUser.isAdmin(SecurityUtils.getUserId())) {
-            recentlyVisitedService.selectBy(slideId,projectType);
+            recentlyVisitedService.selectBy(slideId,tab);
         }
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
