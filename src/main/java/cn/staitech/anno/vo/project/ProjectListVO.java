@@ -226,5 +226,9 @@ public class ProjectListVO extends BaseEntity {
     @ApiModelProperty(value = "病理组织英文名称")
     private String tissueNameEn;
 
-
+    /**
+     * 医学评审添加字段
+     * */
+    @ApiModelProperty(value = "评审内容id")
+    private Long contentId;
 }
