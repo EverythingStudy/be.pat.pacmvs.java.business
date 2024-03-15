@@ -33,14 +33,14 @@ public class RecentlyVisitedServiceImpl extends ServiceImpl<RecentlyVisitedMappe
 
 
     @Override
-    public List<RecentlyVisitedSelectVO> selectList(Long projectType,String tab) {
+    public List<RecentlyVisitedSelectVO> selectList(Long projectType) {
 
         RecentlyVisited recentlyVisited = new RecentlyVisited();
         recentlyVisited.setUserId(SecurityUtils.getUserId());
         recentlyVisited.setProjectType(projectType);
-        if (Objects.equals(tab, "1")){
-            recentlyVisited.setTab(1);
-        }
+//        if (Objects.equals(tab, "1")){
+//            recentlyVisited.setTab(1);
+//        }
         // 根据用户id查询所有的该用户的所有访问
         // 查询出时间不为空的数据
         List<RecentlyVisited> recentlyVisitedList = recentlyVisitedMapper.selectUpdateIsTrue(recentlyVisited);

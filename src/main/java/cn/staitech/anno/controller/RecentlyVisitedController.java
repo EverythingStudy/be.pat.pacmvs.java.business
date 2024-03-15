@@ -33,9 +33,8 @@ public class RecentlyVisitedController {
 
     @ApiOperation(value = "查询用户最近访问信息")
     @GetMapping("/selectList")
-    public R<List<RecentlyVisitedSelectVO>> selectList(@RequestParam("projectType") @ApiParam(name = "projectType", value = "项目类型(1标注2评审3标准训练集)", required = true) Long projectType,
-                                                       @RequestParam(value = "tab",required = false) @ApiParam(name = "tab", value = "标记默认为0，医学评审为1（区分医学评审和智能评审）") String tab) {
-        return R.ok(recentlyVisitedService.selectList(projectType,tab));
+    public R<List<RecentlyVisitedSelectVO>> selectList(@RequestParam("projectType") @ApiParam(name = "projectType", value = "项目类型(1标注2评审3标准训练集)", required = true) Long projectType) {
+        return R.ok(recentlyVisitedService.selectList(projectType));
     }
 
     @ApiOperation(value = "访问viewer记录接口")
