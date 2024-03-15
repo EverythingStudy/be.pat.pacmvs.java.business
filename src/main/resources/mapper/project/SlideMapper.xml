@@ -49,9 +49,12 @@
                 AND EXISTS(select u.slide_id from tb_slide_attr u where u.slide_id = s.slide_id and u.attr_type = '1'
                 and u.attr_id = #{params.annoUser})
             </if>
-            <if test="params.annoCategory!= null">
+            <if test="params.annoCategory!= null and params.annoCategory!= -1">
                 AND EXISTS(select c.slide_id from tb_slide_attr c where c.slide_id = s.slide_id and c.attr_type = '2'
                 and c.attr_id = #{params.annoCategory})
+            </if>
+            <if test="params.annoCategory!= null and params.annoCategory == -1 ">
+                AND NOT EXISTS(select c.slide_id from tb_slide_attr c where c.slide_id = s.slide_id and c.attr_type = '2')
             </if>
             <if test="params.createTimeParams != null and params.createTimeParams.beginTime != null">
                 and date_format(s.create_time,'%y%m%d') &gt;= date_format(#{params.createTimeParams.beginTime},'%y%m%d')
