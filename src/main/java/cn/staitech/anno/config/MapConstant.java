@@ -7,8 +7,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.Map;
 
-import static cn.staitech.anno.utils.RocksDBUtil.deleteAllColumnFamily;
-
 /**
  * @author: wangfeng
  * @create: 2023-09-19 14:38:24
@@ -273,6 +271,6 @@ public class MapConstant {
         STRUCTURE_MAP_EN = structureService.selectMapEn();
 
         // 清空RocksDB
-        deleteAllColumnFamily();
+        // deleteAllColumnFamily();
     }
 }
