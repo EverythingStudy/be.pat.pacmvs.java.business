@@ -378,13 +378,12 @@ public class MarkingServiceImpl implements MarkingService {
                 session.drawListAdd(trace);
             }
 
-            // 3、数据持久化写入RocksDB
-            Gson gson = new Gson();
-            // 将对象转换成JSON字符串
-            String json = gson.toJson(marking);
-            RocksDBUtil.put(traceId, marking.getMarking_id(), json);
-
-            //historySerice.submitTask();
+//            // 3、数据持久化写入RocksDB
+//            Gson gson = new Gson();
+//            // 将对象转换成JSON字符串
+//            String json = gson.toJson(marking);
+//            RocksDBUtil.put(traceId, marking.getMarking_id(), json);
+            rocksdbService.submitTask(traceId, marking.getMarking_id(), marking);
         }
 
         // 多线程处理
@@ -1995,8 +1994,9 @@ public class MarkingServiceImpl implements MarkingService {
                         }
 
                         newTrace.getNodeList().add(new TraceNode(newMarking.getMarking_id(), node.getOperation()));
-                        json = gson.toJson(newMarking);
-                        RocksDBUtil.put(traceId, newMarking.getMarking_id(), json);
+//                        json = gson.toJson(newMarking);
+//                        RocksDBUtil.put(traceId, newMarking.getMarking_id(), json);
+                        rocksdbService.submitTask(traceId, newMarking.getMarking_id(), newMarking);
                     } catch (Exception e) {
                         log.info("undo：{}", e);
                     }
@@ -2038,8 +2038,9 @@ public class MarkingServiceImpl implements MarkingService {
 
                     trace.setTraceId(traceId);
                     session.undoListAdd(trace);
-                    json = gson.toJson(newMarking);
-                    RocksDBUtil.put(traceId, newMarking.getMarking_id(), json);
+//                    json = gson.toJson(newMarking);
+//                    RocksDBUtil.put(traceId, newMarking.getMarking_id(), json);
+                    rocksdbService.submitTask(traceId, newMarking.getMarking_id(), newMarking);
                 } catch (Exception e) {
                     log.info("undo：{}", e);
                 }
@@ -2105,9 +2106,9 @@ public class MarkingServiceImpl implements MarkingService {
                         }
 
                         newTrace.getNodeList().add(new TraceNode(newMarking.getMarking_id(), node.getOperation()));
-                        json = gson.toJson(newMarking);
-                        RocksDBUtil.put(traceId, newMarking.getMarking_id(), json);
-
+//                        json = gson.toJson(newMarking);
+//                        RocksDBUtil.put(traceId, newMarking.getMarking_id(), json);
+                        rocksdbService.submitTask(traceId, newMarking.getMarking_id(), newMarking);
                     } catch (Exception e) {
                         log.info("redo：{}", e);
                     }
@@ -2149,8 +2150,9 @@ public class MarkingServiceImpl implements MarkingService {
 
                     trace.setTraceId(traceId);
                     drawList.add(trace);
-                    json = gson.toJson(newMarking);
-                    RocksDBUtil.put(traceId, newMarking.getMarking_id(), json);
+//                    json = gson.toJson(newMarking);
+//                    RocksDBUtil.put(traceId, newMarking.getMarking_id(), json);
+                    rocksdbService.submitTask(traceId, newMarking.getMarking_id(), newMarking);
                     if(undoList.size()>0){
                         undoList.remove(undoList.size() - 1);
                     }
@@ -2187,8 +2189,9 @@ public class MarkingServiceImpl implements MarkingService {
                             Marking marking = gson.fromJson(json, Marking.class);
                             marking.setMarking_id(newId);
 
-                            json = gson.toJson(marking);
-                            RocksDBUtil.put(trace.getTraceId(), newId, json);
+//                            json = gson.toJson(marking);
+//                            RocksDBUtil.put(trace.getTraceId(), newId, json);
+                            rocksdbService.submitTask(trace.getTraceId(), trace.getTraceId(), marking);
                         }
                     } catch (Exception e) {
 

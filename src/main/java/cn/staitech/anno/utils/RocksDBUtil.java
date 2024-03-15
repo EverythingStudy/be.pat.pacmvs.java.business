@@ -41,7 +41,7 @@ public class RocksDBUtil {
                 rocksDBPath = "D:\\RocksDB";
             } else {
                 // 指定linux系统下RocksDB文件目录
-                rocksDBPath = "/home/pat_saas/rocksdb";
+                rocksDBPath = "/home/pat_saas/rocksdb1";
             }
             RocksDB.loadLibrary();
             Options options = new Options();
@@ -79,16 +79,21 @@ public class RocksDBUtil {
     /**
      * 列族，创建（如果不存在）
      */
-    public static ColumnFamilyHandle cfAddIfNotExist(String cfName) throws RocksDBException {
-        ColumnFamilyHandle columnFamilyHandle;
-        if (!COLUMNFAMILYHANDLE_MAP.containsKey(cfName)) {
-            columnFamilyHandle = rocksDB.createColumnFamily(new ColumnFamilyDescriptor(cfName.getBytes(), new ColumnFamilyOptions()));
-            COLUMNFAMILYHANDLE_MAP.put(cfName, columnFamilyHandle);
-            log.info("cfAddIfNotExist success!! cfName:{}", cfName);
-        } else {
-            columnFamilyHandle = COLUMNFAMILYHANDLE_MAP.get(cfName);
+    public static ColumnFamilyHandle cfAddIfNotExist(String cfName) {
+        try {
+            ColumnFamilyHandle columnFamilyHandle;
+            if (!COLUMNFAMILYHANDLE_MAP.containsKey(cfName)) {
+                columnFamilyHandle = rocksDB.createColumnFamily(new ColumnFamilyDescriptor(cfName.getBytes(), new ColumnFamilyOptions()));
+                COLUMNFAMILYHANDLE_MAP.put(cfName, columnFamilyHandle);
+                log.info("cfAddIfNotExist success!! cfName:{}", cfName);
+            } else {
+                columnFamilyHandle = COLUMNFAMILYHANDLE_MAP.get(cfName);
+            }
+            return columnFamilyHandle;
+        } catch (RocksDBException e) {
+            log.info("cfAddIfNotExist:{}", e);
         }
-        return columnFamilyHandle;
+        return null;
     }
 
     /**
