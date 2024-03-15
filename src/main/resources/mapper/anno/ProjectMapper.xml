@@ -140,8 +140,7 @@
                m.model_name_en,
                p.tissue_id,
                a.tissue_name,
-               a.tissue_name_en,
-               p.content_id
+               a.tissue_name_en
         from tb_project p
                  left join sys_user u on p.create_by = u.user_id
                  left join tb_pathological_indicator i on p.indicator_id = i.indicator_id
@@ -322,7 +321,6 @@
                 </if>
             </if>
         </where>
-        and p.content_id is null
         order by create_time desc
     </select>
 

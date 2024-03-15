@@ -119,7 +119,6 @@
                 and date_format(m.create_time,'%y%m%d') &lt;= date_format(#{params.createTimeParams.endTime},'%y%m%d')
             </if>
         </where>
-        and p.content_id is null
         order by p.create_time desc
     </select>
 </mapper>
