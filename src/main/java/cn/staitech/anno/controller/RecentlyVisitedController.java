@@ -47,7 +47,7 @@ public class RecentlyVisitedController {
         }
         // 判断当前角色是否为admin或者超级管理员
         if (!SysUser.isAdmin(SecurityUtils.getUserId())) {
-            recentlyVisitedService.selectBy(slideId,tab);
+            recentlyVisitedService.selectBy(slideId);
         }
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
