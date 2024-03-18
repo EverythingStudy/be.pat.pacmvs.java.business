@@ -27,5 +27,5 @@ public interface RecentlyVisitedService extends IService<RecentlyVisited> {
      * @param slideId 切片id
      * @return list
      */
-    void selectBy(Long slideId);
+    void selectBy(Long slideId,String tab);
 }

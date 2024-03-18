@@ -55,5 +55,6 @@ public class RecentlyVisited {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private String updateTime;
 
-
+    @ApiModelProperty(value = "标记（默认为0，1为医学评审，用来区分医学评审和智能评审）")
+    private Integer tab;
 }

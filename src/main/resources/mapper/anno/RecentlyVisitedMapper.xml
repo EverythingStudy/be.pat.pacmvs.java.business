@@ -60,6 +60,9 @@
         <if test="projectType != null">
             AND project_type = #{projectType}
         </if>
+        <if test="tab != null">
+            AND tab = #{tab}
+        </if>
         order by create_time desc
     </select>
 
@@ -72,6 +75,9 @@
         </if>
         <if test="projectType != null">
             AND project_type = #{projectType}
+        </if>
+        <if test="tab != null">
+            AND tab = #{tab}
         </if>
         ORDER BY update_time desc
     </select>
@@ -100,6 +106,9 @@
         </if>
         <if test="projectType != null">
             AND project_type = #{projectType}
+        </if>
+        <if test="tab != null">
+            AND tab = #{tab}
         </if>
     </select>
 
@@ -170,6 +179,9 @@
         <if test="reviewRoundId != null">
             review_round_id,
         </if>
+        <if test="tab != null">
+            tab,
+        </if>
         create_time,
         update_time
         )values(
@@ -197,6 +209,9 @@
         <if test="reviewRoundId != null">
             #{reviewRoundId},
         </if>
+        <if test="tab != null">
+            #{tab},
+        </if>
         sysdate(),
         sysdate()
         )
@@ -210,4 +225,20 @@
         </set>
         where recently_visited_id = #{recentlyVisitedId}
     </update>
+
+    <!--查询医学评审切片信息-->
+    <select id="selectSlideInfo" parameterType="java.lang.Long" resultMap="RecentlyVisitedResult">
+        SELECT s.slide_id,
+               s.review_round_id,
+               i.image_name,
+               i.thumb_url,
+               p.project_id,
+               p.project_type,
+               p.project_name
+        FROM mr_slide AS s
+                 LEFT JOIN tb_image AS i ON s.image_id = i.image_id
+                 LEFT JOIN tb_project AS p ON p.project_id = s.project_id
+        where s.slide_id = #{slideId}
+    </select>
+
 </mapper>

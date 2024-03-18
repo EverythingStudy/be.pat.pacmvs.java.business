@@ -87,4 +87,9 @@ public interface RecentlyVisitedMapper extends BaseMapper<RecentlyVisited> {
      */
     int deleteSpecial(RecentlyVisited recentlyVisited);
 
+    /**
+     * 查询医学切片信息
+     * */
+    RecentlyVisited selectSlideInfo(Long slideId);
+
 }

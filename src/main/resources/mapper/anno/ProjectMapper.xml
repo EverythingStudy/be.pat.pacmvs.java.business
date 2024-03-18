@@ -52,6 +52,7 @@
         <result property="modelId" column="model_id"/>
         <result property="modelName" column="model_name"/>
         <result property="modelNameEn" column="model_name_en"/>
+        <result property="contentId" column="content_id"/>
     </resultMap>
 
     <resultMap id="SlideAnnotationResult" type="cn.staitech.anno.domain.SlideAnnotationResult">
