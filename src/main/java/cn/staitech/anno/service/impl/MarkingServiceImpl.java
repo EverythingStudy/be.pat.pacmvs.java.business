@@ -715,12 +715,6 @@ public class MarkingServiceImpl implements MarkingService {
             }
         }
         markingMapper.updateById(marking);
-        // 判断标签
-        if (req.getCategory_id() != null) {
-            if (req.getCategory_id() != 0 && !req.getCategory_id().equals(markingBy.getCategory_id())) {
-                markingBy.setCategory_id(req.getCategory_id());
-            }
-        }
         Properties properties = markingMapper.selectBy(marking.getMarking_id());
         Features features = MarkingUtils.socketData(markingBy.getAnnotation_id(), req.getGeometry(), properties);
         BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, UPDATE_STATUS, features, null);
