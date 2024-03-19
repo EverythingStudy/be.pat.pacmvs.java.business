@@ -387,7 +387,7 @@ public class MarkingServiceImpl implements MarkingService {
         }
 
         // 多线程处理
-        ANN_EXECUTOR.submit(new AnnCountThread(1, slideBy, marking));
+        ANN_EXECUTOR.submit(new AnnCountThread(1, slideBy, marking,null));
 
         return marking.getMarking_id();
     }
@@ -424,7 +424,7 @@ public class MarkingServiceImpl implements MarkingService {
         NioWebSocketHandler.sendAll(marking.getSlide_id(), broadcastVO);
 
         // 多线程处理
-        ANN_EXECUTOR.submit(new AnnCountThread(1, slideBy, marking));
+        ANN_EXECUTOR.submit(new AnnCountThread(1, slideBy, marking,null));
 
         Marking thisMarking = markingMapper.selectById(marking.getMarking_id());
         return thisMarking;
@@ -467,7 +467,7 @@ public class MarkingServiceImpl implements MarkingService {
         markingMapper.insert(marking);
 
         // 更新Slide状态及统计等
-        ANN_EXECUTOR.submit(new AnnCountThread(1, slide, marking));
+        ANN_EXECUTOR.submit(new AnnCountThread(1, slide, marking,null));
         return marking.getMarking_id();
     }
 
@@ -727,9 +727,11 @@ public class MarkingServiceImpl implements MarkingService {
         // 使用websocket发送数据
         NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
         Marking markingNew = markingMapper.selectById(req.getMarking_id());
-
+        Marking markingOld = new Marking();
+        markingOld.setCreate_by(markingBy.getCreate_by());
+        markingOld.setCategory_id(markingBy.getCategory_id());
         // 多线程处理
-        ANN_EXECUTOR.submit(new AnnCountThread(2, slide, markingNew));
+        ANN_EXECUTOR.submit(new AnnCountThread(2, slide, markingNew,markingOld));
 
         return markingBy.getMarking_id();
     }
@@ -1502,12 +1504,11 @@ public class MarkingServiceImpl implements MarkingService {
         slideMapperV1.updateById(slide);
     }
 
-    public void process(Integer type, Slide slide, Marking marking) throws Exception {
+    public void process(Integer type, Slide slide, Marking newMarking,Marking oldMarking) throws Exception {
 
-        Long slideId = marking.getSlide_id();
-        Long createBy = marking.getCreate_by();
-        Long categoryId = marking.getCategory_id();
-
+        Long slideId = newMarking.getSlide_id();
+        Long newCreateBy = newMarking.getCreate_by();
+        Long newCategoryId = newMarking.getCategory_id();
         // 判断切片状态是否是未开始
         if (Objects.equals(slide.getStatus(), "1")) {
             // 更新切片表中状态至切片中
@@ -1519,12 +1520,12 @@ public class MarkingServiceImpl implements MarkingService {
         updateSLide(slideId);
         if (type == 2) {
             //修改
-            slideAttrService.removeAnnoUsers(slideId, Collections.singletonList(createBy));
-            slideAttrService.removeAnnoCategory(slideId, Collections.singletonList(categoryId));
+            slideAttrService.removeAnnoUsers(slideId, Collections.singletonList(oldMarking.getCreate_by()));
+            slideAttrService.removeAnnoCategory(slideId, Collections.singletonList(oldMarking.getCategory_id()));
         }
-        slideAttrService.saveAnnoUsers(slideId, Collections.singletonList(createBy), SecurityUtils.getUserId());
-        if (categoryId != null) {
-            slideAttrService.saveAnnoCategory(slideId, Collections.singletonList(categoryId), SecurityUtils.getUserId());
+        slideAttrService.saveAnnoUsers(slideId, Collections.singletonList(newCreateBy), SecurityUtils.getUserId());
+        if (newCategoryId != null) {
+            slideAttrService.saveAnnoCategory(slideId, Collections.singletonList(newCategoryId), SecurityUtils.getUserId());
         } else {
             slideAttrService.saveAnnoCategory(slideId, new ArrayList<>(), SecurityUtils.getUserId());
         }
@@ -2317,19 +2318,22 @@ public class MarkingServiceImpl implements MarkingService {
         // type 1:标注保存  2：标注修改
         private final Integer type;
         private final Slide slide;
-        private final Marking marking;
+        private final Marking newMarking;
+
+        private final Marking oldMarking;
 
 
-        public AnnCountThread(Integer type, Slide slide, Marking marking) {
+        public AnnCountThread(Integer type, Slide slide, Marking newMarking, Marking oldMarking) {
             this.type = type;
             this.slide = slide;
-            this.marking = marking;
+            this.newMarking = newMarking;
+            this.oldMarking = oldMarking;
         }
 
         @Override
         public void run() {
             try {
-                process(this.type, this.slide, this.marking);
+                process(this.type, this.slide, this.newMarking,this.oldMarking);
             } catch (Exception e) {
                 e.printStackTrace();
             }
