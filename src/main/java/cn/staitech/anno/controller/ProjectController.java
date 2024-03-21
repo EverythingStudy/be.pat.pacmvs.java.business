@@ -131,7 +131,9 @@ public class ProjectController extends BaseController {
         } else {
             project.setOrganizationId(req.getOrganizationId());
         }
-
+        if (!SecurityUtils.getLoginUser().getPermissions().contains("system")) {
+            project.setPartUserId(SecurityUtils.getUserId());
+        }
         List<ProjectListVO> list = projectService.selectProjectList(project);
         PageMaster pageMaster = new PageMaster<>(list);
         return R.ok(pageMaster);
