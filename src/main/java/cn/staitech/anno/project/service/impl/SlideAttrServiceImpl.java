@@ -8,11 +8,13 @@ import cn.staitech.anno.project.service.SlideAttrService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author 86186
@@ -128,12 +130,9 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
      * @throws Exception
      */
     private Integer delete(List<SlideAttr> slideAttrs) {
-        Integer i = 0;
-        if (slideAttrs != null && !slideAttrs.isEmpty()) {
-            List<Long> ids = new ArrayList<>();
-            slideAttrs.forEach(slideAttr -> {
-                ids.add(slideAttr.getAttrId());
-            });
+        int i = 0;
+        if (CollectionUtils.isNotEmpty(slideAttrs)){
+            List<Long> ids = slideAttrs.stream().map(SlideAttr::getSlideAttrId).collect(Collectors.toList());
             i = getBaseMapper().deleteBatchIds(ids);
         }
         return i;
