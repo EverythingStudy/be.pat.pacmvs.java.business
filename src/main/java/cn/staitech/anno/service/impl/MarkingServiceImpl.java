@@ -239,22 +239,25 @@ public class MarkingServiceImpl implements MarkingService {
                 Map<String, Object> map = new HashMap<String, Object>(16);
                 map.put("slideId", slideId);
                 map.put("createBy", userId);
-                map.put("organizationId", organizationId);
+                //map.put("organizationId", organizationId);
                 List<Features> selfAnnoList = markingMapper.selectListMarking(map);
                 if (CollectionUtils.isNotEmpty(selfAnnoList)) {
                     list.addAll(selfAnnoList);
                 }
-                //其它人ROA+ROE
-                //标注类型 roa+roe
-                List<String> structureList = new ArrayList<String>();
-                structureList.add(CommonConstant.STRUCTURE_ROA);
-                structureList.add(CommonConstant.STRUCTURE_ROE);
-
+                //
+                //其它人ROA+ROE ==>通过标签集id查下所有非ROA+ROE的结构标签id
+                Map<String, Object> categoryrMap = new HashMap<String, Object>();
+                categoryrMap.put("indicatorId", project.getIndicatorId());
+                categoryrMap.put("organizationId", organizationId);
+                List<cn.staitech.anno.domain.PathologicalIndicatorCategory> categoryList = markingMapper.getCategoryByMap(categoryrMap);  
+                
                 Map<String, Object> otherMap = new HashMap<String, Object>(16);
                 otherMap.put("slideId", slideId);
                 otherMap.put("otherCreateBy", userId);
-                otherMap.put("organizationId", organizationId);
-                otherMap.put("roaAndroeAnno", structureList);
+                //otherMap.put("organizationId", organizationId);
+                if(CollectionUtils.isNotEmpty(categoryList)){
+                	otherMap.put("categoryIds", categoryList);
+                }
 
                 List<Features> otherAnnoList = markingMapper.selectListMarking(otherMap);
                 if (CollectionUtils.isNotEmpty(otherAnnoList)) {
@@ -265,7 +268,7 @@ public class MarkingServiceImpl implements MarkingService {
                 Map<String, Object> map = new HashMap<String, Object>(16);
                 map.put("slideId", slideId);
                 map.put("createBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
-                map.put("organizationId", organizationId);
+                //map.put("organizationId", organizationId);
                 List<Features> selfAnnoList = markingMapper.selectListMarking(map);
                 if (CollectionUtils.isNotEmpty(selfAnnoList)) {
                     list.addAll(selfAnnoList);
@@ -278,7 +281,7 @@ public class MarkingServiceImpl implements MarkingService {
             Map<String, Object> map = new HashMap<String, Object>(16);
             map.put("slideId", slideId);
             map.put("createBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
-            map.put("organizationId", organizationId);
+            //map.put("organizationId", organizationId);
             List<Features> selfAnnoList = markingMapper.selectListMarking(map);
             if (CollectionUtils.isNotEmpty(selfAnnoList)) {
                 list.addAll(selfAnnoList);
