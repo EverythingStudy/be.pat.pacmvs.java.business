@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.rocksdb.*;
 import org.springframework.util.ObjectUtils;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
 
 /**
  * @author: wangfeng
@@ -43,6 +45,12 @@ public class RocksDBUtil {
                 // 指定linux系统下RocksDB文件目录
                 rocksDBPath = "/home/pat_saas/rocksdb1";
             }
+
+
+            // 重启项目时先删除原有的文件
+            File file = new File(rocksDBPath);
+            FileUtils.deleteFolder(file);
+
             RocksDB.loadLibrary();
             Options options = new Options();
             options.setCreateIfMissing(true); //如果数据库不存在则创建
@@ -74,6 +82,10 @@ public class RocksDBUtil {
     }
 
     private RocksDBUtil() {
+    }
+
+    public static void init() {
+        new RocksDBUtil();
     }
 
     /**
