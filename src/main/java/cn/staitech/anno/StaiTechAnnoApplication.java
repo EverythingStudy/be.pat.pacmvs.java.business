@@ -2,6 +2,7 @@ package cn.staitech.anno;
 
 import cn.staitech.anno.netty.websocket.NioWebSocketServer;
 import cn.staitech.anno.utils.MessageSource;
+import cn.staitech.anno.utils.RocksDBUtil;
 import cn.staitech.common.security.annotation.EnableCustomConfig;
 import cn.staitech.common.security.annotation.EnableRyFeignClients;
 import cn.staitech.common.swagger.annotation.EnableCustomSwagger2;
@@ -37,6 +38,7 @@ public class StaiTechAnnoApplication {
 
     public StaiTechAnnoApplication(org.springframework.context.MessageSource messageSource) {
         MessageSource.init(messageSource);
+        RocksDBUtil.init();
     }
 
     public static void main(String[] args) {

@@ -394,4 +394,42 @@ public class FileUtils {
         int dotIndex = fileName.lastIndexOf('.');
         return dotIndex > 0 && dotIndex < fileName.length() - 1;
     }
+
+
+
+    /**
+     * 递归删除指定的文件夹（包括该文件夹下的所有子文件夹和文件）.
+     *
+     * @param folder 要删除的文件夹
+     * @return 如果文件夹删除成功，则返回true；否则返回false
+     */
+    public static boolean deleteFolder(File folder) {
+        // 检查文件夹是否存在，如果不存在，说明删除成功；如果存在，继续删除子文件夹和文件
+        if (!folder.exists()) {
+            return true;
+        }
+
+        // 如果文件夹是一个文件，直接删除它
+        if (folder.isFile()) {
+            return folder.delete();
+        }
+
+        // 如果文件夹是一个目录，遍历其下的所有子文件夹和文件，并递归地调用删除本身的方法
+        boolean result = true; // 定义布尔变量，用于判断删除是否成功
+        File[] files = folder.listFiles(); // 获取文件夹中的所有文件和子文件夹
+        if (files != null) {
+            for (File f : files) { // 遍历每个文件或子文件夹
+                if (!deleteFolder(f)) { // 对文件夹进行递归删除
+                    result = false; // 如果删除失败，设置布尔变量为false
+                }
+            }
+        }
+
+        // 删除文件夹本身
+        if (!folder.delete()) {
+            result = false;
+        }
+
+        return result;
+    }
 }
