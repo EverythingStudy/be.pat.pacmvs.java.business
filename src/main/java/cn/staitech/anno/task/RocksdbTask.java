@@ -20,7 +20,7 @@ public class RocksdbTask {
     /**
      * 定时任务：按时间执行的定时任务，在每天2:00执行一次。
      */
-    @Scheduled(cron = "0 0 2 * * ?")
+    // @Scheduled(cron = "0 0 2 * * ?")
     public void clean() {
         try {
             // 清空RocksDB

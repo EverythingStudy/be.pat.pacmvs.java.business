@@ -1,6 +1,7 @@
 package cn.staitech.anno.utils;
 
 
+import io.vertx.core.impl.ConcurrentHashSet;
 import lombok.extern.slf4j.Slf4j;
 import org.rocksdb.*;
 import org.springframework.util.ObjectUtils;
@@ -26,6 +27,7 @@ import java.util.stream.IntStream;
 public class RocksDBUtil {
     // 数据库列族(表)集合
     public static final ConcurrentMap<String, ColumnFamilyHandle> COLUMNFAMILYHANDLE_MAP = new ConcurrentHashMap<>();
+    public static final ConcurrentMap<Long, ConcurrentHashSet<String>> USER_ROCKS_MAP = new ConcurrentHashMap<>();
     public static int GET_KEYS_BATCH_SIZE = 100000;
     private static RocksDB rocksDB;
 
