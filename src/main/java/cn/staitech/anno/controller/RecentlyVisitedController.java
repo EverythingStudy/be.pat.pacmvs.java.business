@@ -38,9 +38,10 @@ public class RecentlyVisitedController {
     }
 
     @ApiOperation(value = "访问viewer记录接口")
-    @ApiImplicitParams({@ApiImplicitParam(name = "slideId", value = "切片id", required = true, dataType = "Long", paramType = "query")})
+    @ApiImplicitParams({@ApiImplicitParam(name = "slideId", value = "切片id", required = true, dataType = "Long", paramType = "query"),
+    @ApiImplicitParam(name = "tab", value = "标记默认为0，医学评审为1（区分医学评审和智能评审）", dataType = "String", paramType = "query")})
     @GetMapping("/visited")
-    public R<String> add(Long slideId) {
+    public R<String> add(Long slideId,String tab) {
         if (!Optional.ofNullable(slideId).isPresent()) {
             return R.fail(MessageSource.M("ARGUMENT_INVALID"));
         }

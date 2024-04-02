@@ -54,6 +54,8 @@ public interface MarkingMapper extends BaseMapper<Marking> {
     List<Features> selectListBy(Long slideId);
 
     List<Features> selectListMarking(Map<String, Object> map);
+    
+    List<cn.staitech.anno.domain.PathologicalIndicatorCategory> getCategoryByMap(Map<String, Object> map);
 
 
     List<MarkingSelectListVO> selectUnionList(Map<String, Object> map);

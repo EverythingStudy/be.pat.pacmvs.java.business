@@ -1,10 +1,12 @@
 package cn.staitech.anno.utils;
 
 
+import io.vertx.core.impl.ConcurrentHashSet;
 import lombok.extern.slf4j.Slf4j;
 import org.rocksdb.*;
 import org.springframework.util.ObjectUtils;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +17,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+
 /**
  * @author: wangfeng
  * @create: 2024-02-21 16:37:52
@@ -24,6 +27,7 @@ import java.util.stream.IntStream;
 public class RocksDBUtil {
     // 数据库列族(表)集合
     public static final ConcurrentMap<String, ColumnFamilyHandle> COLUMNFAMILYHANDLE_MAP = new ConcurrentHashMap<>();
+    public static final ConcurrentMap<Long, ConcurrentHashSet<String>> USER_ROCKS_MAP = new ConcurrentHashMap<>();
     public static int GET_KEYS_BATCH_SIZE = 100000;
     private static RocksDB rocksDB;
 
@@ -43,6 +47,12 @@ public class RocksDBUtil {
                 // 指定linux系统下RocksDB文件目录
                 rocksDBPath = "/home/pat_saas/rocksdb1";
             }
+
+
+            // 重启项目时先删除原有的文件
+            File file = new File(rocksDBPath);
+            FileUtils.deleteFolder(file);
+
             RocksDB.loadLibrary();
             Options options = new Options();
             options.setCreateIfMissing(true); //如果数据库不存在则创建
@@ -74,6 +84,10 @@ public class RocksDBUtil {
     }
 
     private RocksDBUtil() {
+    }
+
+    public static void init() {
+        new RocksDBUtil();
     }
 
     /**

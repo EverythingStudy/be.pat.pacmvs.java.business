@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author gjt.
@@ -37,6 +38,7 @@ public class RecentlyVisitedServiceImpl extends ServiceImpl<RecentlyVisitedMappe
         RecentlyVisited recentlyVisited = new RecentlyVisited();
         recentlyVisited.setUserId(SecurityUtils.getUserId());
         recentlyVisited.setProjectType(projectType);
+
         // 根据用户id查询所有的该用户的所有访问
         // 查询出时间不为空的数据
         List<RecentlyVisited> recentlyVisitedList = recentlyVisitedMapper.selectUpdateIsTrue(recentlyVisited);
@@ -79,6 +81,7 @@ public class RecentlyVisitedServiceImpl extends ServiceImpl<RecentlyVisitedMappe
     public void selectBy(Long slideId) {
         // 根据切片查询项目、图片、切片信息
         RecentlyVisited req = recentlyVisitedMapper.selectBy(slideId);
+
         // 查询当前用户是否在当前项目中
         ProjectMember projectMember = new ProjectMember();
         projectMember.setUserId(SecurityUtils.getUserId());

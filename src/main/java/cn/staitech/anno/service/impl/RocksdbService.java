@@ -1,11 +1,15 @@
 package cn.staitech.anno.service.impl;
 
 import cn.staitech.anno.utils.RocksDBUtil;
+import cn.staitech.common.security.utils.SecurityUtils;
 import com.google.gson.Gson;
+import io.vertx.core.impl.ConcurrentHashSet;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.*;
+
+import static cn.staitech.anno.utils.RocksDBUtil.USER_ROCKS_MAP;
 
 /**
  * @author: wangfeng
@@ -31,7 +35,7 @@ public class RocksdbService {
             new ThreadPoolExecutor.DiscardOldestPolicy());
 
 
-    public  <T> void submitTask(String cfName, String key, T obj) {
+    public <T> void submitTask(String cfName, String key, T obj) {
         rocksdbExecutorService.submit(new SaveRocksdbRunnable(cfName, key, obj));
     }
 
@@ -53,6 +57,15 @@ public class RocksdbService {
                 Gson gson = new Gson();
                 // 将对象转换成JSON字符串
                 String json = gson.toJson(obj);
+
+                if (USER_ROCKS_MAP.containsKey(SecurityUtils.getUserId())) {
+                    USER_ROCKS_MAP.get(SecurityUtils.getUserId()).add(cfName);
+                } else {
+                    ConcurrentHashSet<String> set = new ConcurrentHashSet<String>();
+                    set.add(cfName);
+                    USER_ROCKS_MAP.put(SecurityUtils.getUserId(), set);
+                }
+
                 RocksDBUtil.put(cfName, key, json);
             } catch (Exception e) {
                 log.info("saveRocksDB:{}", e);

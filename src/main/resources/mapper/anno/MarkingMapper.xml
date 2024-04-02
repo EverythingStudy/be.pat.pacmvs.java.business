@@ -507,7 +507,7 @@
     </sql>
     
     
-    <select id="selectListMarking" parameterType="map" resultMap="featuresResult">
+    <!-- <select id="selectListMarking" parameterType="map" resultMap="featuresResult">
         <include refid="selectLabelsetList"/>
         where t.slide_id = #{slideId}
         <if test="createBy != null and createBy != ''">
@@ -517,7 +517,7 @@
             and t.create_by != #{otherCreateBy}
         </if>
         <if test="organizationId != null">
-        	and t.organization_id =  #{organizationId}
+        	and c.organization_id =  #{organizationId}
         </if>
         <if test="roaAndroeAnno != null and roaAndroeAnno.size() >0">  
         	AND c2.type in  
@@ -525,8 +525,112 @@
 			      #{item}
 			 </foreach>			
 		</if>
+    </select> -->
+    
+	<select id="selectListMarking" parameterType="map" resultMap="featuresResult">
+        SELECT
+		        annotation_id,
+		        geometry,
+		        JSON_OBJECT(
+		        "annotation_type",
+		        t.annotation_type,
+		        "marking_id",
+		        t.marking_id,
+		        "area",
+		        t.area,
+		        "perimeter",
+		        t.perimeter,
+		        "description",
+		        t.description,
+		        "category_id",
+		        t.category_id,
+		        "measure_type",
+		        t.measure_type,
+		        "measure_relation",
+		        t.measure_relation,
+		        "measure_name",
+		        t.measure_name,
+		        "measure_number",
+		        t.measure_number,
+		        "radius",
+		        t.radius,
+		        "mean_distance",
+		        t.mean_distance,
+		        "max_distance",
+		        t.max_distance,
+		        "min_distance",
+		        t.min_distance,
+		        "inner_angle",
+		        t.inner_angle,
+		        "exterior_angle",
+		        t.exterior_angle,
+		        "create_by",
+		        t.create_by,
+		        "create_time",
+		        DATE_FORMAT(t.create_time, '%Y-%m-%d %H:%i:%s'),
+		        "location_type",
+		        t.location_type,
+		        "slide_id",
+		        t.slide_id,
+		        "center_point",
+		        t.center_point,
+		        "point_count",
+		        t.point_count,
+		        "annotation_owner",
+		        t.annotation_owner,
+		        "label_color",
+		        c.rgb,
+		        "label_code",
+		        c.number,
+		        "number",
+		        t.number,
+		        "label_name",
+		        c.category_name,
+		        "measure_full_name",
+		        c.category_name,
+		        "image_id",
+		        t.image_id,
+		        "update_by",
+		        t.update_by,
+		        "annotation_update_owner",
+		        t.annotation_update_owner,
+		        "project_id",
+		        t.project_id
+		        ) AS properties,
+				c.structure_id
+			 FROM tb_marking AS t
+		     LEFT JOIN tb_pathological_indicator_category AS c ON t.category_id = c.category_id
+        	where t.slide_id = #{slideId}
+	        <if test="createBy != null and createBy != ''">
+	            and t.create_by = #{createBy}
+	        </if>
+	        <if test="otherCreateBy != null and otherCreateBy != ''">
+	            and t.create_by != #{otherCreateBy}
+	        </if>
+	        <if test="categoryIds != null and categoryIds.size() >0">
+	        	and t.category_id in
+	        	<foreach collection="categoryIds" item="item" separator="," open="("  close=")">
+				      #{item.categoryId}
+				 </foreach>	
+	        </if>
     </select>
-
+    
+    <select id="getCategoryByMap" parameterType="map" resultType="cn.staitech.anno.domain.PathologicalIndicatorCategory">
+		SELECT
+			p1.*
+		FROM
+			( 
+			 SELECT t1.category_id, t1.structure_id 
+			  FROM tb_pathological_indicator_category t1 
+			  WHERE 
+			  t1.indicator_id = #{indicatorId}  
+			  AND t1.organization_id = #{organizationId}
+			  AND t1.del_flag = 0 
+            )p1
+			LEFT JOIN tb_structure t2 ON p1.structure_id = t2.structure_id
+			where t2.organization_id = #{organizationId}
+			and t2.type in ('ROA','ROE')
+    </select>
 
     <select id="selectBy" parameterType="string" resultMap="propertiesResult">
         <include refid="selectBy"/>
