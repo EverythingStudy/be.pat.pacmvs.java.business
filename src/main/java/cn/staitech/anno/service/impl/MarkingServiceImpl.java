@@ -223,8 +223,6 @@ public class MarkingServiceImpl implements MarkingService {
         Project project = projectMapperV1.selectById(slideBy.getProjectId());
         //项目类型:1标注2评审3标准训练集
         String projectType = project.getProjectType();
-        Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-        Long userId = SecurityUtils.getLoginUser().getSysUser().getUserId();
         List<Features> list = new ArrayList<Features>();
         Set<String> permissions = SecurityUtils.getLoginUser().getPermissions();
         boolean permissionsRes;
@@ -233,59 +231,14 @@ public class MarkingServiceImpl implements MarkingService {
         } else {
             permissionsRes = permissions.contains("smartAnno:project:slice:view:select");
         }
-        if (permissionsRes) {
-            if (Objects.equals(projectType, "3")) {
-                //只查询自己标注的数据
-                Map<String, Object> map = new HashMap<String, Object>(16);
-                map.put("slideId", slideId);
-                map.put("createBy", userId);
-                //map.put("organizationId", organizationId);
-                List<Features> selfAnnoList = markingMapper.selectListMarking(map);
-                if (CollectionUtils.isNotEmpty(selfAnnoList)) {
-                    list.addAll(selfAnnoList);
-                }
-                //
-                //其它人ROA+ROE ==>通过标签集id查下所有非ROA+ROE的结构标签id
-                Map<String, Object> categoryrMap = new HashMap<String, Object>();
-                categoryrMap.put("indicatorId", project.getIndicatorId());
-                categoryrMap.put("organizationId", organizationId);
-                List<cn.staitech.anno.domain.PathologicalIndicatorCategory> categoryList = markingMapper.getCategoryByMap(categoryrMap);  
-                
-                Map<String, Object> otherMap = new HashMap<String, Object>(16);
-                otherMap.put("slideId", slideId);
-                otherMap.put("otherCreateBy", userId);
-                //otherMap.put("organizationId", organizationId);
-                if(CollectionUtils.isNotEmpty(categoryList)){
-                	otherMap.put("categoryIds", categoryList);
-                }
-
-                List<Features> otherAnnoList = markingMapper.selectListMarking(otherMap);
-                if (CollectionUtils.isNotEmpty(otherAnnoList)) {
-                    list.addAll(otherAnnoList);
-                }
-            } else if (Objects.equals(projectType, "2") && !project.getCreateBy().equals(userId)) {
-                //智能评审非项目创建者只查询自己标注的数据
-                Map<String, Object> map = new HashMap<String, Object>(16);
-                map.put("slideId", slideId);
-                map.put("createBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
-                //map.put("organizationId", organizationId);
-                List<Features> selfAnnoList = markingMapper.selectListMarking(map);
-                if (CollectionUtils.isNotEmpty(selfAnnoList)) {
-                    list.addAll(selfAnnoList);
-                }
-            } else {
-                list = markingMapper.selectListBy(slideId);
-            }
-        } else {
-            // 无权限情况下，只查询当前用户所绘标注
-            Map<String, Object> map = new HashMap<String, Object>(16);
-            map.put("slideId", slideId);
+        Map<String, Object> map = new HashMap<String, Object>(16);
+        map.put("slideId", slideId);
+        if (!permissionsRes) {
             map.put("createBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
-            //map.put("organizationId", organizationId);
-            List<Features> selfAnnoList = markingMapper.selectListMarking(map);
-            if (CollectionUtils.isNotEmpty(selfAnnoList)) {
-                list.addAll(selfAnnoList);
-            }
+        }
+        List<Features> selfAnnoList = markingMapper.selectListMarking(map);
+        if (CollectionUtils.isNotEmpty(selfAnnoList)) {
+            list.addAll(selfAnnoList);
         }
         return list;
     }
@@ -390,7 +343,7 @@ public class MarkingServiceImpl implements MarkingService {
         }
 
         // 多线程处理
-        ANN_EXECUTOR.submit(new AnnCountThread(1, slideBy, marking,null));
+        ANN_EXECUTOR.submit(new AnnCountThread(1, slideBy, marking, null));
 
         return marking.getMarking_id();
     }
@@ -427,7 +380,7 @@ public class MarkingServiceImpl implements MarkingService {
         NioWebSocketHandler.sendAll(marking.getSlide_id(), broadcastVO);
 
         // 多线程处理
-        ANN_EXECUTOR.submit(new AnnCountThread(1, slideBy, marking,null));
+        ANN_EXECUTOR.submit(new AnnCountThread(1, slideBy, marking, null));
 
         Marking thisMarking = markingMapper.selectById(marking.getMarking_id());
         return thisMarking;
@@ -470,7 +423,7 @@ public class MarkingServiceImpl implements MarkingService {
         markingMapper.insert(marking);
 
         // 更新Slide状态及统计等
-        ANN_EXECUTOR.submit(new AnnCountThread(1, slide, marking,null));
+        ANN_EXECUTOR.submit(new AnnCountThread(1, slide, marking, null));
         return marking.getMarking_id();
     }
 
@@ -728,7 +681,7 @@ public class MarkingServiceImpl implements MarkingService {
         markingOld.setCreate_by(markingBy.getCreate_by());
         markingOld.setCategory_id(markingBy.getCategory_id());
         // 多线程处理
-        ANN_EXECUTOR.submit(new AnnCountThread(2, slide, markingNew,markingOld));
+        ANN_EXECUTOR.submit(new AnnCountThread(2, slide, markingNew, markingOld));
 
         return markingBy.getMarking_id();
     }
@@ -1501,7 +1454,7 @@ public class MarkingServiceImpl implements MarkingService {
         slideMapperV1.updateById(slide);
     }
 
-    public void process(Integer type, Slide slide, Marking newMarking,Marking oldMarking) throws Exception {
+    public void process(Integer type, Slide slide, Marking newMarking, Marking oldMarking) throws Exception {
 
         Long slideId = newMarking.getSlide_id();
         Long newCreateBy = newMarking.getCreate_by();
@@ -2045,7 +1998,7 @@ public class MarkingServiceImpl implements MarkingService {
 
             }
             // Index: -1, Size: 0
-            if(drawList.size()>0){
+            if (drawList.size() > 0) {
                 drawList.remove(drawList.size() - 1);
             }
         }
@@ -2114,7 +2067,7 @@ public class MarkingServiceImpl implements MarkingService {
 
                 newTrace.setTraceId(traceId);
                 drawList.add(newTrace);
-                if(undoList.size() >0) {
+                if (undoList.size() > 0) {
                     undoList.remove(undoList.size() - 1);
                 }
             } else {
@@ -2151,7 +2104,7 @@ public class MarkingServiceImpl implements MarkingService {
 //                    json = gson.toJson(newMarking);
 //                    RocksDBUtil.put(traceId, newMarking.getMarking_id(), json);
                     rocksdbService.submitTask(traceId, newMarking.getMarking_id(), newMarking);
-                    if(undoList.size()>0){
+                    if (undoList.size() > 0) {
                         undoList.remove(undoList.size() - 1);
                     }
                 } catch (Exception e) {
@@ -2330,7 +2283,7 @@ public class MarkingServiceImpl implements MarkingService {
         @Override
         public void run() {
             try {
-                process(this.type, this.slide, this.newMarking,this.oldMarking);
+                process(this.type, this.slide, this.newMarking, this.oldMarking);
             } catch (Exception e) {
                 e.printStackTrace();
             }
