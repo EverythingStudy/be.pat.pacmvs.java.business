@@ -223,6 +223,7 @@ public class MarkingServiceImpl implements MarkingService {
         Project project = projectMapperV1.selectById(slideBy.getProjectId());
         //项目类型:1标注2评审3标准训练集
         String projectType = project.getProjectType();
+        Long userId = SecurityUtils.getLoginUser().getSysUser().getUserId();
         List<Features> list = new ArrayList<Features>();
         Set<String> permissions = SecurityUtils.getLoginUser().getPermissions();
         boolean permissionsRes;
@@ -230,6 +231,24 @@ public class MarkingServiceImpl implements MarkingService {
             permissionsRes = permissions.contains("smartReview:project:detail:view:select");
         } else {
             permissionsRes = permissions.contains("smartAnno:project:slice:view:select");
+        }
+        // 标准验证集查看其他其他人ROA和ROE
+        if (Objects.equals(projectType, "3")) {
+            //其它人ROA+ROE ==>通过标签集id查下所有非ROA+ROE的结构标签id
+            Map<String, Object> categoryrMap = new HashMap<String, Object>();
+            categoryrMap.put("indicatorId", project.getIndicatorId());
+            List<cn.staitech.anno.domain.PathologicalIndicatorCategory> categoryList = markingMapper.getCategoryByMap(categoryrMap);
+
+            Map<String, Object> otherMap = new HashMap<String, Object>(16);
+            otherMap.put("slideId", slideId);
+            otherMap.put("otherCreateBy", userId);
+            if(CollectionUtils.isNotEmpty(categoryList)){
+                otherMap.put("categoryIds", categoryList);
+            }
+            List<Features> otherAnnoList = markingMapper.selectListMarking(otherMap);
+            if (CollectionUtils.isNotEmpty(otherAnnoList)) {
+                list.addAll(otherAnnoList);
+            }
         }
         Map<String, Object> map = new HashMap<String, Object>(16);
         map.put("slideId", slideId);
