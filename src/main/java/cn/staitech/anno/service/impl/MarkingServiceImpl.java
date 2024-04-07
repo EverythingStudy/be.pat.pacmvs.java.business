@@ -224,6 +224,7 @@ public class MarkingServiceImpl implements MarkingService {
         //项目类型:1标注2评审3标准训练集
         String projectType = project.getProjectType();
         Long userId = SecurityUtils.getLoginUser().getSysUser().getUserId();
+        Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
         List<Features> list = new ArrayList<Features>();
         Set<String> permissions = SecurityUtils.getLoginUser().getPermissions();
         boolean permissionsRes;
@@ -237,6 +238,7 @@ public class MarkingServiceImpl implements MarkingService {
             //其它人ROA+ROE ==>通过标签集id查下所有非ROA+ROE的结构标签id
             Map<String, Object> categoryrMap = new HashMap<String, Object>();
             categoryrMap.put("indicatorId", project.getIndicatorId());
+            categoryrMap.put("organizationId", organizationId);
             List<cn.staitech.anno.domain.PathologicalIndicatorCategory> categoryList = markingMapper.getCategoryByMap(categoryrMap);
 
             Map<String, Object> otherMap = new HashMap<String, Object>(16);
@@ -253,7 +255,7 @@ public class MarkingServiceImpl implements MarkingService {
         Map<String, Object> map = new HashMap<String, Object>(16);
         map.put("slideId", slideId);
         if (!permissionsRes) {
-            map.put("createBy", SecurityUtils.getLoginUser().getSysUser().getUserId());
+            map.put("createBy", userId);
         }
         List<Features> selfAnnoList = markingMapper.selectListMarking(map);
         if (CollectionUtils.isNotEmpty(selfAnnoList)) {
