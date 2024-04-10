@@ -172,4 +172,11 @@ public class ImageController extends BaseController {
         PageMaster<ImageListOutVO> page = imageService.choiceList(image);
         return R.ok(page);
     }
+    
+    @ApiOperation(value = "清晰度更正/清晰度还原")
+    @PostMapping("/clarityProcessing")
+    public R clarityProcessing(@Validated @RequestBody ResultCorrectionIn req) {
+    	//imageService.clarityProcessing(req);
+        return R.ok();
+    }
 }
