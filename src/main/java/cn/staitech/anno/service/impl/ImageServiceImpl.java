@@ -347,7 +347,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
             List<SlidePrediction> slidePredictionList = slidePredictionMapper.selectList(slidePredictionQueryWrapper);
 
             // 2、查询切片表中是否包含该切片,已经关联的,使用中的不可删除
-            if (slidePredictionList.size() > 0 || imageMapper.selectSlideCountByImageId(imageId) > 0) {
+            if (slidePredictionList.size() > 0 || imageMapper.selectSlideCountByImageId(imageId) > 0|| imageMapper.selectFrSlideCountByImageId(imageId)>0) {
                 forbidIds.add(imageId);
             } else {
                 Image image = imageMapper.selectById(imageId);

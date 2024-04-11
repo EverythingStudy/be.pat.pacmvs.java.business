@@ -158,6 +158,15 @@
         </where>
     </select>
 
+    <select id="selectFrSlideCountByImageId" parameterType="cn.staitech.anno.domain.Image" resultType="java.lang.Integer">
+        select count(*) from `fr_slide`
+        <where>
+            <if test="imageId != null and imageId != ''">
+                and image_id = #{imageId}
+            </if>
+        </where>
+    </select>
+
     <!-- 切片管理 - 切片列表 - 图像列表 包含选中和未选中全部的切片 -->
     <select id="selectListSlfe" parameterType="cn.staitech.anno.domain.Image" resultMap="BaseResultMap">
         select i.image_id,
