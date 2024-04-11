@@ -80,5 +80,8 @@ public class BlurImage implements Serializable {
     @ApiModelProperty(value = "是否手动修正1是2否")
     private Integer definitionStatus;
 
+    @ApiModelProperty(value = "切片是否多次模糊1是2否")
+    private Integer multipleFuzzy;
+
 
 }
