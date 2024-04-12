@@ -1,10 +1,43 @@
 package cn.staitech.anno.service.impl;
 
+import static cn.staitech.common.security.utils.SecurityUtils.isAdmin;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
+
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.constant.Container;
+import cn.staitech.anno.domain.BlurImage;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.SlidePrediction;
+import cn.staitech.anno.mapper.BlurImageMapper;
 import cn.staitech.anno.mapper.ImageMapper;
 import cn.staitech.anno.mapper.SlidePredictionMapper;
 import cn.staitech.anno.service.ImageService;
@@ -13,42 +46,18 @@ import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.LanguageUtils;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
-import cn.staitech.anno.utils.StatisticListUtils;
 import cn.staitech.anno.vo.image.ImageStatus;
-import cn.staitech.anno.vo.image.in.*;
+import cn.staitech.anno.vo.image.in.ImageBatchIdsVO;
+import cn.staitech.anno.vo.image.in.ImageListVO;
+import cn.staitech.anno.vo.image.in.ImagePreviewIn;
+import cn.staitech.anno.vo.image.in.ImageTopicBatchIdsVO;
+import cn.staitech.anno.vo.image.in.ImageTopicVO;
+import cn.staitech.anno.vo.image.in.ImageUpdateVO;
+import cn.staitech.anno.vo.image.in.ResultCorrectionIn;
 import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
-
-import static cn.staitech.common.security.utils.SecurityUtils.isAdmin;
 
 /**
  * 切片列表（原图像）服务层实现
@@ -68,6 +77,8 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 	private SlidePredictionMapper slidePredictionMapper;
 	@Resource
 	private RetryService retryService;
+	@Resource
+	private BlurImageMapper blurImageMapper;
 
 	/**
 	 * 切片状态列表 .
@@ -380,13 +391,25 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 				//TODO 删除SQL记录   如果是清晰的、不用处理，如果是模糊文件，需要把源文件拷贝到模糊文件目录下，与模糊数据组成一对+
 				if(fuzzyLevel == 1){
 					//先拷贝文件到模糊目录下
-					boolean tag = moveImageFile(imageUrl,image);
-					if(tag){
-						//TODO向振浩的表插入数据
+					moveImageFile(imageUrl,image);
+					BlurImage blurImage = new BlurImage();
+					QueryWrapper<BlurImage> blurImageQueryWrapper = new QueryWrapper<>();
+					blurImageQueryWrapper.eq("image_id", imageId);
+					List<BlurImage> blurImageList = blurImageMapper.selectList(blurImageQueryWrapper);
+					if(CollectionUtils.isNotEmpty(blurImageList)){
+						BlurImage bImage = blurImageList.get(0);
+						String jsonDataPath = bImage.getJsonPath();
+						String jsonUrlHead = getPathFromUrl(jsonDataPath);
+						//获取原图片名称
+						String subImageName = getFileNameFromUrl(imageUrl);
+						String blurDelImagePath = jsonUrlHead+subImageName;
+						blurImage.setBlurId(bImage.getBlurId());
+						blurImage.setImageUrl(blurDelImagePath);
+						blurImageMapper.updateById(blurImage);
 					}
+
 				}
 				imageMapper.deleteById(imageId);
-
 
 				// 如果只有一条记录,删除文件
 				if (imageList.size() == 1) {
@@ -488,7 +511,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 					.exists();
 			if (success) {
 				moveTag = true;
-//				System.out.println("SVS file moved successfully.");
+				//				System.out.println("SVS file moved successfully.");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -503,29 +526,64 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 	public void clarityProcessing(ResultCorrectionIn req) {
 		Long imageId = req.getImageId();
 		Image image = imageMapper.selectById(imageId);
+
+		UpdateWrapper<BlurImage> updateWrapper = Wrappers.update();
+		BlurImage entity = new BlurImage();
+		entity.setImageId(imageId.intValue());
 		//修正状态  1：修正  2：还原
 		if(req.getDefinitionStatus() == 1){
 			//是否可用0不可用1可用
 			image.setStatus(1);
 			//模糊程度 （0：初始值 1：模糊 2：不模糊）
 			image.setFuzzyLevel(2);
+			//清晰度状态（0：初始值 1：更正 2：还原)
 			image.setDefinitionStatus(1);
+			//是否手动修正1是2否
+			updateWrapper.eq("definition_status", 1);
 		}else{
 			//是否可用0不可用1可用
 			image.setStatus(0);
 			//模糊程度 （0：初始值 1：模糊 2：不模糊）
 			image.setFuzzyLevel(1);
-			image.setDefinitionStatus(req.getDefinitionStatus());
+			//清晰度状态（0：初始值 1：更正 2：还原)
+			image.setDefinitionStatus(0);
+
+			//是否手动修正1是2否
+			updateWrapper.eq("definition_status", 2);
 		}
 		imageMapper.updateById(image);
-		//TODO fr_blur_image更新
-	}
-	
-	 /*public static String geNumber(Long organizationId) {
-	        NumberFormat formatter = NumberFormat.getNumberInstance();
-	        formatter.setMinimumIntegerDigits(3);
-	        formatter.setGroupingUsed(false);
-	        return "C" + formatter.format(organizationId) + "/ImageQC/";
-	    }*/
+		blurImageMapper.update(entity, updateWrapper);
 
+	}
+
+	public  String getPathFromUrl(String url) {
+		int lastIndexOfSlash = url.lastIndexOf('/');
+		if (lastIndexOfSlash == -1) {
+			return ""; // 如果没有斜杠，返回整个URL
+		} else {
+			return url.substring(0,lastIndexOfSlash+1); // 返回最后一个斜杠后的部分
+		}
+	}
+
+	public  String getFileNameFromUrl(String url) {
+		int lastIndexOfSlash = url.lastIndexOf('/');
+		if (lastIndexOfSlash == -1) {
+			return url; // 如果没有斜杠，返回整个URL
+		} else {
+			return url.substring(lastIndexOfSlash + 1); // 返回最后一个斜杠后的部分
+		}
+	}
+
+	@Override
+	public BlurImage imagePreview(ImagePreviewIn req) {
+		// TODO Auto-generated method stub
+		QueryWrapper<BlurImage> blurImageQueryWrapper = new QueryWrapper<>();
+		blurImageQueryWrapper.eq("image_id", req.getImageId());
+		List<BlurImage> blurImageList = blurImageMapper.selectList(blurImageQueryWrapper);
+		if(CollectionUtils.isNotEmpty(blurImageList)){
+			BlurImage bImage = blurImageList.get(0);
+			return bImage;
+		}
+		return null;
+	}
 }
