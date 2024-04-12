@@ -54,6 +54,8 @@ public interface ImageMapper extends BaseMapper<Image> {
      */
     Integer selectSlideCountByImageId(Long imageId);
 
+    Integer selectFrSlideCountByImageId(Long imageId);
+
     /**
      * 标注组选片入口预览图像列表
      *

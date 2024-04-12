@@ -1,5 +1,6 @@
 package cn.staitech.anno.controller;
 
+import cn.staitech.anno.domain.BlurImage;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.utils.MessageSource;
@@ -176,7 +177,14 @@ public class ImageController extends BaseController {
     @ApiOperation(value = "清晰度更正/清晰度还原")
     @PostMapping("/clarityProcessing")
     public R clarityProcessing(@Validated @RequestBody ResultCorrectionIn req) {
-    	//imageService.clarityProcessing(req);
+    	imageService.clarityProcessing(req);
         return R.ok();
+    }
+    
+    @ApiOperation(value = "切片预览（AI矩形区域轮廓）")
+    @PostMapping("/imagePreview")
+    public R<BlurImage> imagePreview(@Validated @RequestBody ImagePreviewIn req) {
+    	BlurImage blurImage =imageService.imagePreview(req);
+        return R.ok(blurImage);
     }
 }
