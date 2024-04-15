@@ -390,7 +390,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 				}
 
 				//模糊程度 （0：初始值 1：模糊 2：不模糊）
-				int fuzzyLevel = image.getFuzzyLevel();
+				Integer fuzzyLevel = image.getFuzzyLevel();
 				String imageUrl = image.getImageUrl();
 				// 查询当前机构下相同路径的图像数量
 				QueryWrapper<Image> imageQueryWrapper = new QueryWrapper<>();
@@ -398,7 +398,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 				imageQueryWrapper.eq("organization_id", organizationId);
 				List<Image> imageList = imageMapper.selectList(imageQueryWrapper);
 				//TODO 删除SQL记录   如果是清晰的、不用处理，如果是模糊文件，需要把源文件拷贝到模糊文件目录下，与模糊数据组成一对+
-				if(fuzzyLevel == 1){
+				if(null != fuzzyLevel && fuzzyLevel == 1){
 					//先拷贝文件到模糊目录下
 					moveImageFile(imageUrl,image);
 					BlurImage blurImage = new BlurImage();
@@ -585,7 +585,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
 	@Override
 	public BlurImage imagePreview(ImagePreviewIn req) {
-		// TODO Auto-generated method stub
 		QueryWrapper<BlurImage> blurImageQueryWrapper = new QueryWrapper<>();
 		blurImageQueryWrapper.eq("image_id", req.getImageId());
 		List<BlurImage> blurImageList = blurImageMapper.selectList(blurImageQueryWrapper);

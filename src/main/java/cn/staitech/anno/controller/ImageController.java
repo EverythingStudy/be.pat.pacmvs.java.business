@@ -23,6 +23,13 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -183,8 +190,23 @@ public class ImageController extends BaseController {
     
     @ApiOperation(value = "切片预览（AI矩形区域轮廓）")
     @PostMapping("/imagePreview")
-    public R<BlurImage> imagePreview(@Validated @RequestBody ImagePreviewIn req) {
+    public R imagePreview(@Validated @RequestBody ImagePreviewIn req) {
     	BlurImage blurImage =imageService.imagePreview(req);
-        return R.ok(blurImage);
+    	String dataStr = "";
+    	if(null != blurImage){
+    		String jsonPath = blurImage.getJsonPath();
+            try (BufferedReader br = new BufferedReader(new FileReader(jsonPath))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+//                    System.out.println(line); // 输出文件的每一行
+                	dataStr = br.readLine();
+                }
+            } catch (IOException e) {
+                System.err.format("Error reading file: %s%n", e.getMessage());
+            }finally {
+				
+			}
+    	}
+        return R.ok(dataStr);
     }
 }
