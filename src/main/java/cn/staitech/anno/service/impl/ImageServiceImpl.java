@@ -549,7 +549,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 			imageInfo.setFuzzyLevel(2);
 			//清晰度状态（0：初始值 1：更正)
 			imageInfo.setDefinitionStatus(1);
-			//是否手动修正1是2否
+			//是否手动修正0:否  1是
 			
 			entity.setDefinitionStatus(1);
 		}else{
@@ -560,8 +560,8 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 			//清晰度状态（0：初始值 1：更正)
 			imageInfo.setDefinitionStatus(0);
 
-			//是否手动修正1是2否
-			entity.setDefinitionStatus(2);
+			//是否手动修正0:否  1是
+			entity.setDefinitionStatus(0);
 			
 		}
 		imageMapper.updateById(imageInfo);
