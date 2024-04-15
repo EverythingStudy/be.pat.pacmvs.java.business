@@ -537,7 +537,6 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 		//Image image = imageMapper.selectById(imageId);
 		Image imageInfo = new Image();
 		imageInfo.setImageId(imageId);
-		UpdateWrapper<BlurImage> updateWrapper = Wrappers.update();
 		BlurImage entity = new BlurImage();
 		entity.setImageId(imageId.intValue());
 		//修正状态  1：修正  2：还原
@@ -549,7 +548,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 			//清晰度状态（0：初始值 1：更正)
 			imageInfo.setDefinitionStatus(1);
 			//是否手动修正1是2否
-			updateWrapper.eq("definition_status", 1);
+			entity.setDefinitionStatus(1);
 		}else{
 			//0上传中、1上传失败、2解析中、3解析失败、4可用 5:不可用
 			imageInfo.setStatus(5);
@@ -559,10 +558,10 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 			imageInfo.setDefinitionStatus(0);
 
 			//是否手动修正1是2否
-			updateWrapper.eq("definition_status", 2);
+			entity.setDefinitionStatus(2);
 		}
 		imageMapper.updateById(imageInfo);
-		blurImageMapper.update(entity, updateWrapper);
+		blurImageMapper.updateById(entity);
 
 	}
 
