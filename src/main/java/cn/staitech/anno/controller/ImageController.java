@@ -193,27 +193,22 @@ public class ImageController extends BaseController {
     
     @ApiOperation(value = "切片预览（AI矩形区域轮廓）")
     @PostMapping("/imagePreview")
-    public R imagePreview(@Validated @RequestBody ImagePreviewIn req) {
+    public R<String> imagePreview(@Validated @RequestBody ImagePreviewIn req) {
     	BlurImage blurImage =imageService.imagePreview(req);
     	String dataStr = "";
     	if(null != blurImage){
     		String jsonPath = blurImage.getJsonPath();
-    		StringBuilder sb = new StringBuilder();
-    		try (BufferedReader reader = new BufferedReader(new FileReader(jsonPath))) {
+    		try (BufferedReader br = new BufferedReader(new FileReader(jsonPath))) {
     			String line;
-    			while ((line = reader.readLine()) != null) {
-    				// 把每行内容添加到StringBuilder对象中，但不换行
-    				sb.append(line);
+    			while ((line = br.readLine()) != null) {
+//    				System.out.println(line); // 输出文件的每一行
+    				dataStr = line;
     			}
-    		}catch (FileNotFoundException e) {
-    			e.printStackTrace();
     		} catch (IOException e) {
-    			e.printStackTrace();
+    			System.err.format("Error reading file: %s%n", e.getMessage());
     		}finally {
-    			if(StringUtils.isNotEmpty(sb.toString())){
-    				dataStr = sb.toString();
-    			}
-    		}
+				
+			}
     	}
         return R.ok(dataStr);
     }
