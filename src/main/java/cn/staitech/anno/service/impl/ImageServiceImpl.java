@@ -39,6 +39,7 @@ import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.SlidePrediction;
 import cn.staitech.anno.mapper.BlurImageMapper;
 import cn.staitech.anno.mapper.ImageMapper;
+import cn.staitech.anno.mapper.SlideMapper;
 import cn.staitech.anno.mapper.SlidePredictionMapper;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.RetryService;
@@ -71,6 +72,8 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
 	@Resource
 	private ImageMapper imageMapper;
+	@Resource
+	private SlideMapper slideMapper;
 	@Resource
 	private SlideService slideService;
 	@Resource
@@ -367,6 +370,12 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 			QueryWrapper<SlidePrediction> slidePredictionQueryWrapper = new QueryWrapper<>();
 			slidePredictionQueryWrapper.eq("image_id", imageId);
 			List<SlidePrediction> slidePredictionList = slidePredictionMapper.selectList(slidePredictionQueryWrapper);
+			
+			// 2、查询fr_slide是否有关系图像
+			Integer  frSlideCount = slideMapper.getFilmReading(imageId);
+			if(null != frSlideCount && frSlideCount > 0){
+				forbidIds.add(imageId);
+			}
 
 			// 2、查询切片表中是否包含该切片,已经关联的,使用中的不可删除
 			if (slidePredictionList.size() > 0 || imageMapper.selectSlideCountByImageId(imageId) > 0|| imageMapper.selectFrSlideCountByImageId(imageId)>0) {

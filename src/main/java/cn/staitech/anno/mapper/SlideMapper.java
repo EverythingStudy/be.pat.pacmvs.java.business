@@ -262,4 +262,10 @@ public interface SlideMapper extends BaseMapper<Slide> {
      * 眼科-查新文件夹状态
      */
     Slide selectFolderMent(Long slideId);
+    
+    /**
+     * 智能阅片统计
+     *
+     */
+    Integer getFilmReading(Long imageId);
 }
