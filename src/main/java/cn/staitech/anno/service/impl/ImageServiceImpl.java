@@ -473,7 +473,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 	@Async
 	private void removeImageFile(Image image) throws Exception {
 		//模糊程度 （0：初始值 1：模糊 2：不模糊）
-		int fuzzyLevel = image.getFuzzyLevel();
+		Integer fuzzyLevel = image.getFuzzyLevel();
 		String imagePath = image.getImagePath();
 		String imageUrl = image.getImageUrl();
 		retryService.deleteFileRetry(new File(imagePath));
@@ -488,7 +488,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 		if (StringUtils.isNotEmpty(image.getLabelUrl())) {
 			retryService.deleteFileRetry(new File(image.getLabelUrl().replace("/file/statics", "/home/pat_saas")));
 		}
-		if(fuzzyLevel != 1){
+		if(null != fuzzyLevel && fuzzyLevel != 1){
 			if (StringUtils.isNotEmpty(image.getThumbUrl())) {
 				retryService.deleteFileRetry(new File(image.getThumbUrl().replace("/file/statics", "/home/pat_saas")));
 			}
