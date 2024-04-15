@@ -534,33 +534,34 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 	@Override
 	public void clarityProcessing(ResultCorrectionIn req) {
 		Long imageId = req.getImageId();
-		Image image = imageMapper.selectById(imageId);
-
+		//Image image = imageMapper.selectById(imageId);
+		Image imageInfo = new Image();
+		imageInfo.setImageId(imageId);
 		UpdateWrapper<BlurImage> updateWrapper = Wrappers.update();
 		BlurImage entity = new BlurImage();
 		entity.setImageId(imageId.intValue());
 		//修正状态  1：修正  2：还原
 		if(req.getDefinitionStatus() == 1){
 			//0上传中、1上传失败、2解析中、3解析失败、4可用 5:不可用
-			image.setStatus(4);
+			imageInfo.setStatus(4);
 			//模糊程度 （0：初始值 1：模糊 2：不模糊）
-			image.setFuzzyLevel(2);
+			imageInfo.setFuzzyLevel(2);
 			//清晰度状态（0：初始值 1：更正)
-			image.setDefinitionStatus(1);
+			imageInfo.setDefinitionStatus(1);
 			//是否手动修正1是2否
 			updateWrapper.eq("definition_status", 1);
 		}else{
 			//0上传中、1上传失败、2解析中、3解析失败、4可用 5:不可用
-			image.setStatus(5);
+			imageInfo.setStatus(5);
 			//模糊程度 （0：初始值 1：模糊 2：不模糊）
-			image.setFuzzyLevel(1);
+			imageInfo.setFuzzyLevel(1);
 			//清晰度状态（0：初始值 1：更正)
-			image.setDefinitionStatus(0);
+			imageInfo.setDefinitionStatus(0);
 
 			//是否手动修正1是2否
 			updateWrapper.eq("definition_status", 2);
 		}
-		imageMapper.updateById(image);
+		imageMapper.updateById(imageInfo);
 		blurImageMapper.update(entity, updateWrapper);
 
 	}
