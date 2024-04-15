@@ -102,5 +102,9 @@ public class ImageListVO extends Pager implements Serializable {
     @ApiModelProperty(value = "创建人")
     @TableField(exist = false)
     private String nickName;
+    @ApiModelProperty(value = "是否条带状模糊（0：初始值 1：是 2：不是）")
+    private Integer stripFuzzy;
+    @ApiModelProperty(value = "清晰度状态（0：初始值 1：更正 2：还原）")
+    private Integer definitionStatus;
 
 }
