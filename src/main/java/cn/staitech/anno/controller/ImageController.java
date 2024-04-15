@@ -19,6 +19,8 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +28,7 @@ import javax.annotation.Resource;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -195,17 +198,22 @@ public class ImageController extends BaseController {
     	String dataStr = "";
     	if(null != blurImage){
     		String jsonPath = blurImage.getJsonPath();
-            try (BufferedReader br = new BufferedReader(new FileReader(jsonPath))) {
-                String line;
-                while ((line = br.readLine()) != null) {
-//                    System.out.println(line); // 输出文件的每一行
-                	dataStr = br.readLine();
-                }
-            } catch (IOException e) {
-                System.err.format("Error reading file: %s%n", e.getMessage());
-            }finally {
-				
-			}
+    		StringBuilder sb = new StringBuilder();
+    		try (BufferedReader reader = new BufferedReader(new FileReader(jsonPath))) {
+    			String line;
+    			while ((line = reader.readLine()) != null) {
+    				// 把每行内容添加到StringBuilder对象中，但不换行
+    				sb.append(line);
+    			}
+    		}catch (FileNotFoundException e) {
+    			e.printStackTrace();
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    		}finally {
+    			if(StringUtils.isNotEmpty(sb.toString())){
+    				dataStr = sb.toString();
+    			}
+    		}
     	}
         return R.ok(dataStr);
     }
