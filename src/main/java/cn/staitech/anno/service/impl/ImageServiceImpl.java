@@ -542,7 +542,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 		//修正状态  1：修正  2：还原
 		if(req.getDefinitionStatus() == 1){
 			//是否可用0不可用1可用
-			image.setStatus(1);
+			image.setStatus(4);
 			//模糊程度 （0：初始值 1：模糊 2：不模糊）
 			image.setFuzzyLevel(2);
 			//清晰度状态（0：初始值 1：更正 2：还原)
@@ -551,7 +551,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 			updateWrapper.eq("definition_status", 1);
 		}else{
 			//是否可用0不可用1可用
-			image.setStatus(0);
+			image.setStatus(5);
 			//模糊程度 （0：初始值 1：模糊 2：不模糊）
 			image.setFuzzyLevel(1);
 			//清晰度状态（0：初始值 1：更正 2：还原)
