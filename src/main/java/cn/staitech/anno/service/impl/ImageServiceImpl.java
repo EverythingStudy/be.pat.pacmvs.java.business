@@ -552,6 +552,8 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 			//是否手动修正0:否  1是
 			
 			entity.setDefinitionStatus(1);
+			//是否模糊1是2否
+			entity.setFuzzyLevel(2);
 		}else{
 			//0上传中、1上传失败、2解析中、3解析失败、4可用 5:不可用
 			imageInfo.setStatus(5);
@@ -562,6 +564,8 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 
 			//是否手动修正0:否  1是
 			entity.setDefinitionStatus(0);
+			//是否模糊1是2否
+			entity.setFuzzyLevel(1);
 			
 		}
 		imageMapper.updateById(imageInfo);
