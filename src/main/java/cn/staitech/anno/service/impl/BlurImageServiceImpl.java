@@ -40,8 +40,8 @@ public class BlurImageServiceImpl extends ServiceImpl<BlurImageMapper, BlurImage
         Page<BlurImage> page = PageHelper.startPage(req.getPageNum(), req.getPageSize());
         PageResponse<ImageVagueListOutVO> resp = new PageResponse<>();
         LambdaQueryWrapper<BlurImage> wrapper = new LambdaQueryWrapper<>();
-        if (StringUtil.isNotBlank(req.getImageCode())) {
-            wrapper.like(BlurImage::getImageCode, req.getImageCode());
+        if (StringUtil.isNotBlank(req.getImageName())) {
+            wrapper.like(BlurImage::getImageName, req.getImageName());
         }
         if (StringUtil.isNotBlank(req.getTopicName())) {
             wrapper.like(BlurImage::getTopicName, req.getTopicName());

@@ -16,8 +16,10 @@ public class ImageVagueListOutVO {
     private Long imageId;
     @ApiModelProperty(value = "图像预览")
     private String thumbUrl;
+//    @ApiModelProperty(value = "图片（切片）编号")
+//    private String imageCode;
     @ApiModelProperty(value = "图片（切片）编号")
-    private String imageCode;
+    private String imageName;
     @ApiModelProperty(value = "专题ID")
     private Long topicId;
     @ApiModelProperty(value = "专题名称")
