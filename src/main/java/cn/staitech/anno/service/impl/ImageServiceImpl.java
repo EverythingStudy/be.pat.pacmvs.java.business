@@ -164,6 +164,9 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 				if (slideService.selectImageExist(slide).size() > 0) {
 					out.setDeleState(1);
 				}
+				if(imageMapper.selectFrSlideCountByImageId(out.getImageId()) > 0){
+					out.setDeleState(1);
+				}
 				respList.add(out);
 			}
 		}
