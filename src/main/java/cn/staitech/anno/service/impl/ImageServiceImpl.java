@@ -400,7 +400,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 				//TODO 删除SQL记录   如果是清晰的、不用处理，如果是模糊文件，需要把源文件拷贝到模糊文件目录下，与模糊数据组成一对+
 				if(null != fuzzyLevel && fuzzyLevel == 1){
 					//先拷贝文件到模糊目录下
-					moveImageFile(imageUrl,image);
+					log.info("准备拷贝模糊不清的文件了~");
 					BlurImage blurImage = new BlurImage();
 					QueryWrapper<BlurImage> blurImageQueryWrapper = new QueryWrapper<>();
 					blurImageQueryWrapper.eq("image_id", imageId);
@@ -415,6 +415,9 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 						blurImage.setBlurId(bImage.getBlurId());
 						blurImage.setImageUrl(blurDelImagePath);
 						blurImageMapper.updateById(blurImage);
+						
+						moveImageFile(imageUrl,jsonUrlHead);
+						log.info("拷贝模糊文件结束~");
 					}
 
 				}
@@ -495,13 +498,15 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 		}
 	}
 
-	private boolean moveImageFile(String imageUrl,Image image){
+	private boolean moveImageFile(String imageUrl,String jsonUrlHead){
+		log.info("图片源路径：{},移动的目录地址是：{}",imageUrl,jsonUrlHead);
 		boolean moveTag = false;
+		
 		// 源SVS文件路径
 		Path sourceSVS = Paths.get(imageUrl);
 		// 目标路径
-		Path targetDirectory = Paths.get("C:/Users/86153/Desktop/医疗PD/0325/");
-
+		//Path targetDirectory = Paths.get("C:/Users/86153/Desktop/医疗PD/0325/");
+		Path targetDirectory = Paths.get(jsonUrlHead);
 		try {
 			// 确保目标目录存在
 			if (!Files.exists(targetDirectory)) {
@@ -512,15 +517,12 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 			Path targetPath = targetDirectory.resolve(sourceSVS.getFileName());
 
 			// 移动文件
-			//Path movePath = Files.move(sourceSVS, targetPath, StandardCopyOption.REPLACE_EXISTING);
-
 			boolean success = Files.move(sourceSVS, targetPath, StandardCopyOption.REPLACE_EXISTING)
 					.toAbsolutePath()
 					.toFile()
 					.exists();
 			if (success) {
 				moveTag = true;
-				//				System.out.println("SVS file moved successfully.");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
