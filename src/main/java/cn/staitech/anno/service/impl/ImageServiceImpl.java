@@ -362,7 +362,8 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 	 */
 	@Override
 	public List<Long> deleteBatchIds(ImageBatchIdsVO ids) throws Exception {
-		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+//		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+		Long organizationId = 1L;
 		// 不可删除的列表
 		List<Long> forbidIds = new ArrayList<>();
 		for (Long imageId : ids.getImageIdList()) {
