@@ -40,6 +40,9 @@ public class BlurImage implements Serializable {
 
     @ApiModelProperty(value = "JSON路径")
     private String jsonPath;
+    
+    @ApiModelProperty(value = "切片路径")
+    private String imageUrl;
 
     @ApiModelProperty(value = "保存目录路径")
     private String savaPath;

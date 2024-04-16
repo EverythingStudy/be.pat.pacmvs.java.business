@@ -1,5 +1,6 @@
 package cn.staitech.anno.service;
 
+import cn.staitech.anno.domain.BlurImage;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.image.ImageStatus;
@@ -87,4 +88,6 @@ public interface ImageService extends IService<Image> {
     boolean exists(Image image) throws Exception;
     
     void clarityProcessing(ResultCorrectionIn req);
+    
+    BlurImage imagePreview(ImagePreviewIn req);
 }

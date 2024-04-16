@@ -1040,5 +1040,12 @@
         from tb_slide
         where slide_id = #{slideId}
     </select>
+    
+    <!--智能阅片-切片查下-->
+    <select id="getFilmReading" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        select count(1)
+        from fr_slide
+        where image_id = #{imageId}
+    </select>
 
 </mapper>

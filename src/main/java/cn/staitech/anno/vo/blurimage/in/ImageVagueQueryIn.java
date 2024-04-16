@@ -15,7 +15,7 @@ import java.util.Map;
 @Data
 public class ImageVagueQueryIn extends PageRequest {
     @ApiModelProperty(value = "图片（切片）编号")
-    private String imageCode;
+    private String imageName;
     @ApiModelProperty(value = "专题名称")
     private String topicName;
     @ApiModelProperty("机构id")

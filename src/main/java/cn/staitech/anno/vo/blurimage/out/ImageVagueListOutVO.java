@@ -16,8 +16,10 @@ public class ImageVagueListOutVO {
     private Long imageId;
     @ApiModelProperty(value = "图像预览")
     private String thumbUrl;
+//    @ApiModelProperty(value = "图片（切片）编号")
+//    private String imageCode;
     @ApiModelProperty(value = "图片（切片）编号")
-    private String imageCode;
+    private String imageName;
     @ApiModelProperty(value = "专题ID")
     private Long topicId;
     @ApiModelProperty(value = "专题名称")
@@ -35,7 +37,7 @@ public class ImageVagueListOutVO {
     private String fuzzyProportion;
     @ApiModelProperty(value = "是否条带状模糊（0：初始值 1：是 2：不是）")
     private Integer stripFuzzy;
-    @ApiModelProperty(value = "清晰度状态（0：初始值 1：更正 2：还原）")
+    @ApiModelProperty(value = "是否手动修正（0：还原 1：修正）")
     private Integer definitionStatus;
     @ApiModelProperty(value = "模糊程度 （0：初始值 1：模糊 2：不模糊）")
     private Integer fuzzyLevel;

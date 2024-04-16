@@ -1,5 +1,6 @@
 package cn.staitech.anno.controller;
 
+import cn.staitech.anno.domain.BlurImage;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.utils.MessageSource;
@@ -18,10 +19,20 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -176,7 +187,29 @@ public class ImageController extends BaseController {
     @ApiOperation(value = "清晰度更正/清晰度还原")
     @PostMapping("/clarityProcessing")
     public R clarityProcessing(@Validated @RequestBody ResultCorrectionIn req) {
-    	//imageService.clarityProcessing(req);
+    	imageService.clarityProcessing(req);
         return R.ok();
+    }
+    
+    @ApiOperation(value = "切片预览（AI矩形区域轮廓）")
+    @PostMapping("/imagePreview")
+    public R<String> imagePreview(@Validated @RequestBody ImagePreviewIn req) {
+    	BlurImage blurImage =imageService.imagePreview(req);
+    	String dataStr = "";
+    	if(null != blurImage){
+    		String jsonPath = blurImage.getJsonPath();
+    		try (BufferedReader br = new BufferedReader(new FileReader(jsonPath))) {
+    			String line;
+    			while ((line = br.readLine()) != null) {
+//    				System.out.println(line); // 输出文件的每一行
+    				dataStr = line;
+    			}
+    		} catch (IOException e) {
+    			System.err.format("Error reading file: %s%n", e.getMessage());
+    		}finally {
+				
+			}
+    	}
+        return R.ok(dataStr);
     }
 }

@@ -2,6 +2,7 @@ package cn.staitech.anno.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.domain.BlurImage;
 import cn.staitech.anno.mapper.BlurImageMapper;
 import cn.staitech.anno.service.BlurImageService;
@@ -39,8 +40,8 @@ public class BlurImageServiceImpl extends ServiceImpl<BlurImageMapper, BlurImage
         Page<BlurImage> page = PageHelper.startPage(req.getPageNum(), req.getPageSize());
         PageResponse<ImageVagueListOutVO> resp = new PageResponse<>();
         LambdaQueryWrapper<BlurImage> wrapper = new LambdaQueryWrapper<>();
-        if (StringUtil.isNotBlank(req.getImageCode())) {
-            wrapper.like(BlurImage::getImageCode, req.getImageCode());
+        if (StringUtil.isNotBlank(req.getImageName())) {
+            wrapper.like(BlurImage::getImageName, req.getImageName());
         }
         if (StringUtil.isNotBlank(req.getTopicName())) {
             wrapper.like(BlurImage::getTopicName, req.getTopicName());
@@ -69,6 +70,10 @@ public class BlurImageServiceImpl extends ServiceImpl<BlurImageMapper, BlurImage
                 ImageVagueListOutVO outVO = new ImageVagueListOutVO();
                 BeanUtils.copyProperties(image, outVO);
                 outVO.setFuzzyProportion(image.getFuzzyChunk() + "/" + image.getFuzzyCountChunk());
+                outVO.setImageId(image.getImageId().longValue());
+                outVO.setTopicId(image.getTopicId().longValue());
+                outVO.setOrganizationId(image.getOrganizationId().longValue());
+                outVO.setOrganizationName(MapConstant.getOrganizationName(outVO.getOrganizationId()));
                 return outVO;
             }).collect(Collectors.toList());
         }

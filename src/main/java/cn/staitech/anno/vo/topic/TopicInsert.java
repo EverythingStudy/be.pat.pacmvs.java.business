@@ -4,6 +4,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Length;
+
 import java.io.Serializable;
 
 
@@ -19,6 +22,7 @@ public class TopicInsert implements Serializable {
      * 专题名称 .
      */
     @Size(min = 1, max = 100, message = "{ImageTopicBatchIdsVO.topicName.length}")
+    @Length(max = 100, message = "{ImageTopicBatchIdsVO.topicName.length}")
     @ApiModelProperty(value = "专题名称")
     private String topicName;
 }
