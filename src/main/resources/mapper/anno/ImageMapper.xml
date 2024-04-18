@@ -172,7 +172,7 @@
         select count(*) from `fr_slide`
 
         <where>
-            del_flag=0
+            del_flag='0'
             <if test="imageId != null and imageId != ''">
                 and image_id = #{imageId}
             </if>
