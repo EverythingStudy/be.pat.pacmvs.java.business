@@ -1,5 +1,7 @@
 package cn.staitech.anno.vo.reviewround;
 
+import javax.validation.constraints.Size;
+
 import lombok.Data;
 
 /**
@@ -21,6 +23,7 @@ public class ReviewRoundInVO {
     /**
      * 评审内容
      */
+    @Size(min = 0, max = 50, message = "{ReviewRoundInVO.reviewContent.length}")
     private String reviewContent;
 
     /**

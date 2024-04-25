@@ -4,6 +4,8 @@ import lombok.Data;
 
 import java.util.List;
 
+import javax.validation.constraints.Size;
+
 /**
  * @author wangf
  * @TableName tb_review_round
@@ -18,6 +20,7 @@ public class ReviewRoundBatchInVO {
     /**
      * 评审内容
      */
+    @Size(min = 0, max = 50, message = "{ReviewRoundInVO.reviewContent.length}")
     private String reviewContent;
     /**
      * 评审内容id
