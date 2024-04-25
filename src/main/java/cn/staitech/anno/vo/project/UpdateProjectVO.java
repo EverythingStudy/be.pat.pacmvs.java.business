@@ -60,7 +60,7 @@ public class UpdateProjectVO implements Serializable {
     @ApiModelProperty(value = "机构编号")
     private Long organizationId;
     @ApiModelProperty(value = "项目描述")
-    @Size(min = 0, max = 200, message = "{UpdateProjectVO.projectName.length}")
+    @Size(min = 0, max = 100, message = "{InsertProjectVO.description.length}")
     private String description;
     @ApiModelProperty("专题ID")
     private Integer topicId;
