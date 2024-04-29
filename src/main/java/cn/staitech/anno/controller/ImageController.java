@@ -117,7 +117,7 @@ public class ImageController extends BaseController {
     @ApiOperationSupport(author = "wangfeng")
     @Log(title = "删除切片", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.DELETE)
     @ApiOperation(value = "批量删除切片-物理删除")
-    @RequiresPermissions(value = {"section:ophthalmology:del", "section:ophthalmology:remove", "projectConfig:spliceImgConfig:batchDelete"}, logical = Logical.OR)
+    @RequiresPermissions(value = {"section:ophthalmology:del", "section:ophthalmology:remove", "projectConfig:spliceImgConfig:batchDelete", "section:slices:del", "section:slices:remove"}, logical = Logical.OR)
     @PostMapping("/deleteBatchIds")
     public R<List<Long>> deleteBatchIds(@Validated @RequestBody ImageBatchIdsVO request) throws Exception {
         List<Long> data = imageService.deleteBatchIds(request);
@@ -185,6 +185,7 @@ public class ImageController extends BaseController {
     }
     
     @ApiOperation(value = "清晰度更正/清晰度还原")
+    @RequiresPermissions(value = {"section:slices:correct", "section:slices:restore"}, logical = Logical.OR)
     @PostMapping("/clarityProcessing")
     public R clarityProcessing(@Validated @RequestBody ResultCorrectionIn req) {
     	imageService.clarityProcessing(req);
