@@ -1,5 +1,6 @@
 package cn.staitech.anno.controller;
 
+import cn.staitech.anno.domain.BlurImage;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.utils.MessageSource;
@@ -18,10 +19,20 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -106,7 +117,7 @@ public class ImageController extends BaseController {
     @ApiOperationSupport(author = "wangfeng")
     @Log(title = "删除切片", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.DELETE)
     @ApiOperation(value = "批量删除切片-物理删除")
-    @RequiresPermissions(value = {"section:ophthalmology:del", "section:ophthalmology:remove", "projectConfig:spliceImgConfig:batchDelete"}, logical = Logical.OR)
+    @RequiresPermissions(value = {"section:ophthalmology:del", "section:ophthalmology:remove", "projectConfig:spliceImgConfig:batchDelete", "section:slices:del", "section:slices:remove"}, logical = Logical.OR)
     @PostMapping("/deleteBatchIds")
     public R<List<Long>> deleteBatchIds(@Validated @RequestBody ImageBatchIdsVO request) throws Exception {
         List<Long> data = imageService.deleteBatchIds(request);
@@ -171,5 +182,35 @@ public class ImageController extends BaseController {
     public R<PageMaster<ImageListOutVO>> choiceList(@Validated @RequestBody ImageTopicVO image) throws ExecutionException, InterruptedException {
         PageMaster<ImageListOutVO> page = imageService.choiceList(image);
         return R.ok(page);
+    }
+    
+    @ApiOperation(value = "清晰度更正/清晰度还原")
+    @RequiresPermissions(value = {"section:slices:correct", "section:slices:restore"}, logical = Logical.OR)
+    @PostMapping("/clarityProcessing")
+    public R clarityProcessing(@Validated @RequestBody ResultCorrectionIn req) {
+    	imageService.clarityProcessing(req);
+        return R.ok();
+    }
+    
+    @ApiOperation(value = "切片预览（AI矩形区域轮廓）")
+    @PostMapping("/imagePreview")
+    public R<String> imagePreview(@Validated @RequestBody ImagePreviewIn req) {
+    	BlurImage blurImage =imageService.imagePreview(req);
+    	String dataStr = "";
+    	if(null != blurImage){
+    		String jsonPath = blurImage.getJsonPath();
+    		try (BufferedReader br = new BufferedReader(new FileReader(jsonPath))) {
+    			String line;
+    			while ((line = br.readLine()) != null) {
+//    				System.out.println(line); // 输出文件的每一行
+    				dataStr = line;
+    			}
+    		} catch (IOException e) {
+    			System.err.format("Error reading file: %s%n", e.getMessage());
+    		}finally {
+				
+			}
+    	}
+        return R.ok(dataStr);
     }
 }

@@ -61,7 +61,7 @@ public class InsertProjectVO implements Serializable {
     private Long organizationId;
 
     @ApiModelProperty(value = "项目描述")
-    @Size(min = 0, max = 200, message = "{InsertProjectVO.description.length}")
+    @Size(min = 0, max = 100, message = "{InsertProjectVO.description.length}")
     private String description;
 
     @ApiModelProperty("专题ID")

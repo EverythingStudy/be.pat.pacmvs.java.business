@@ -1,10 +1,12 @@
 package cn.staitech.anno.service;
 
+import cn.staitech.anno.domain.BlurImage;
 import cn.staitech.anno.domain.Image;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.image.ImageStatus;
 import cn.staitech.anno.vo.image.in.*;
 import cn.staitech.anno.vo.image.out.ImageListOutVO;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -84,4 +86,8 @@ public interface ImageService extends IService<Image> {
      * @return
      */
     boolean exists(Image image) throws Exception;
+    
+    void clarityProcessing(ResultCorrectionIn req);
+    
+    BlurImage imagePreview(ImagePreviewIn req);
 }

@@ -176,4 +176,25 @@ public class Image extends BaseEntity {
     @ApiModelProperty(value = "文件夹名称")
     @TableField(exist = false)
     private String folderName;
+    //智能阅片
+    @TableField(value = "strip_fuzzy")
+    @ApiModelProperty(value = "是否条带状模糊（0：初始值 1：是 2：不是）", hidden = true)
+    private Integer stripFuzzy;
+    
+    @TableField(value = "definition_status")
+    @ApiModelProperty(value = "清晰度状态（0：初始值 1：更正 2：还原）", hidden = true)
+    private Integer definitionStatus;
+    
+    @TableField(value = "fuzzy_level")
+    @ApiModelProperty(value = "模糊程度 （0：初始值 1：模糊 2：不模糊）", hidden = true)
+    private Integer fuzzyLevel;
+    
+    @TableField(value = "fuzzy_count_chunk")
+    @ApiModelProperty(value = "总块数", hidden = true)
+    private Long fuzzyCountChunk;
+    
+    @TableField(value = "fuzzy_chunk")
+    @ApiModelProperty(value = "模糊块数", hidden = true)
+    private Long fuzzyChunk;
+
 }

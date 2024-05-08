@@ -23,6 +23,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -76,13 +77,13 @@ public class ReviewRoundController {
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "添加评审轮次")
     @PostMapping("/add")
-    public R add(@RequestBody ReviewRoundBatchInVO reviewRoundBatchInVO) {
+    public R add(@Validated @RequestBody ReviewRoundBatchInVO reviewRoundBatchInVO) {
         return R.ok(reviewRoundService.saveBatchByList(reviewRoundBatchInVO));
     }
 
     @ApiOperation(value = "新添加评审轮次")
     @PostMapping("/addNew")
-    public R addNew(@RequestBody ReviewRoundBatchInVO reviewRoundBatchInVO) {
+    public R addNew(@Validated @RequestBody ReviewRoundBatchInVO reviewRoundBatchInVO) {
         //去重
         QueryWrapper<ReviewRound> queryWrapper = Wrappers.query(ReviewRound.builder().projectId(reviewRoundBatchInVO.getProjectId()).build());
         List<ReviewRound> reviewRoundList = reviewRoundService.list(queryWrapper);
@@ -132,7 +133,7 @@ public class ReviewRoundController {
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "修改评审轮次")
     @PostMapping("/edit")
-    public R edit(@RequestBody ReviewRoundInVO reviewRoundInVO) {
+    public R edit(@Validated @RequestBody ReviewRoundInVO reviewRoundInVO) {
         QueryWrapper<Slide> queryWrapper = Wrappers.query();
         queryWrapper.select("review_round_id");
         queryWrapper.eq("review_round_id", reviewRoundInVO.getReviewRoundId());
