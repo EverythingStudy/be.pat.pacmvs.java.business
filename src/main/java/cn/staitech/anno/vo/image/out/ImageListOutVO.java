@@ -93,4 +93,6 @@ public class ImageListOutVO {
     private Long fuzzyCountChunk;
     @ApiModelProperty(value = "模糊块数")
     private Long fuzzyChunk;
+    @ApiModelProperty(value = "还原清晰度按钮是否隐藏  0：不隐藏 1：隐藏")
+    private int definitionDisable;
 }
