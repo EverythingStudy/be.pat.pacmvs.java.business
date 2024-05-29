@@ -193,10 +193,10 @@ public class ImageController extends BaseController {
     }
     
     @ApiOperation(value = "批量清晰度更正")
-    @RequiresPermissions(value = {"section:slices:correct", "section:slices:restore"}, logical = Logical.OR)
+    //@RequiresPermissions(value = {"section:slices:correct", "section:slices:restore"}, logical = Logical.OR)
     @PostMapping("/batchClarityProcessing")
-    public R batchClarityProcessing(@Validated @RequestBody ResultCorrectionIn req) {
-    	imageService.clarityProcessing(req);
+    public R batchClarityProcessing(@Validated @RequestBody ResultBatchCorrectionIn req) {
+    	imageService.clarityBatchProcessing(req);
         return R.ok();
     }
     
