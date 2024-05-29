@@ -106,5 +106,7 @@ public class ImageListVO extends Pager implements Serializable {
     private Integer stripFuzzy;
     @ApiModelProperty(value = "清晰度状态（0：初始值 1：更正 2：还原）")
     private Integer definitionStatus;
+    @ApiModelProperty(value = "模糊程度 （ 1：模糊 2：不模糊）")
+    private Integer fuzzyLevel;
 
 }
