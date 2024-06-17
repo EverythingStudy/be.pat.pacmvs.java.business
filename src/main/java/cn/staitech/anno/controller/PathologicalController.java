@@ -600,6 +600,7 @@ public class PathologicalController {
         Boolean tag = true;
         String structureId = category.getStructureId();
         Long indicatorId = category.getIndicatorId();
+        Indicator indicator = indicatorService.selectIndicatorsById(indicatorId);
         //查询这一组（3条）数据
         PathologicalIndicatorCategory categoryQuery = PathologicalIndicatorCategory.builder().structureIds(structureId).indicatorId(indicatorId).delFlag(0).build();
         List<PathologicalIndicatorCategory> categoryList = pathologicalIndicatorCategoryService.selectIndicatorMessage(categoryQuery);
@@ -623,14 +624,21 @@ public class PathologicalController {
 
         //数据处理
         if (CollectionUtils.isNotEmpty(categoryList)) {
-            for (PathologicalIndicatorCategory perCategory : categoryList) {
-                PathologicalIndicatorCategory pathological = PathologicalIndicatorCategory.builder().categoryId(perCategory.getCategoryId()).delFlag(1).build();
-                //删除标注类别
-                pathologicalIndicatorCategoryService.updateByPrimaryKeySelective(pathological);
-                IndicatorReviseVO indicatorReviseVO = IndicatorReviseVO.builder().indicatorId(perCategory.getIndicatorId().intValue()).build();
-                //更新病理表数据
-                indicatorService.updateIndicator(indicatorReviseVO);
-            }
+        	for (PathologicalIndicatorCategory perCategory : categoryList) {
+        		PathologicalIndicatorCategory pathological = PathologicalIndicatorCategory.builder().categoryId(perCategory.getCategoryId()).delFlag(1).build();
+        		//删除标注类别
+        		pathologicalIndicatorCategoryService.updateByPrimaryKeySelective(pathological);
+        		IndicatorReviseVO indicatorReviseVO = IndicatorReviseVO.builder().indicatorId(perCategory.getIndicatorId().intValue()).build();
+        		//更新病理表数据
+        		indicatorService.updateIndicator(indicatorReviseVO);
+        	}
+        	//2024.06.17 增加删除结构
+        	QueryWrapper<Structure> queryWrapper = new QueryWrapper<>();
+        	queryWrapper.eq("species_id", indicator.getSpeciesId()); 
+        	queryWrapper.eq("organ_id", indicator.getOrganId()); 
+        	queryWrapper.eq("structure_id", structureId); 
+        	queryWrapper.eq("organization_id", category.getOrganizationId()); 
+        	structureService.remove(queryWrapper);
         }
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }

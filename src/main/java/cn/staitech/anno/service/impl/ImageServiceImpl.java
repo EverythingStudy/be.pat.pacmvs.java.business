@@ -452,6 +452,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 	public int updateById(ImageUpdateVO vo) throws Exception {
 		Image image = new Image();
 		BeanUtils.copyProperties(vo, image);
+		image.setFileName(StringUtils.substringBeforeLast(vo.getImageName(), "."));
 
 		// 获取当前登录用户Id
 		Long loginUser = SecurityUtils.getUserId();
