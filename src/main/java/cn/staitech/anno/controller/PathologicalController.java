@@ -633,7 +633,6 @@ public class PathologicalController {
         		indicatorService.updateIndicator(indicatorReviseVO);
         	}
         	//2024.06.17 增加删除结构
-        	structureService.removeById(structureId);
         	QueryWrapper<Structure> queryWrapper = new QueryWrapper<>();
         	queryWrapper.eq("species_id", indicator.getSpeciesId()); 
         	queryWrapper.eq("organ_id", indicator.getOrganId()); 
