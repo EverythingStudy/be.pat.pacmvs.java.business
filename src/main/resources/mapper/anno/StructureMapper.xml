@@ -32,6 +32,9 @@
             <if test="organizationId != null">
                 AND organization_id = #{organizationId}
             </if>
+            <if test="structureIds != null">
+                AND structure_id like concat('', #{structureIds}, '%')
+            </if>
         </where>
     </select>
 </mapper>
