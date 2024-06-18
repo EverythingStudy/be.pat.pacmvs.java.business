@@ -636,9 +636,19 @@ public class PathologicalController {
         	QueryWrapper<Structure> queryWrapper = new QueryWrapper<>();
         	queryWrapper.eq("species_id", indicator.getSpeciesId()); 
         	queryWrapper.eq("organ_id", indicator.getOrganId()); 
-        	queryWrapper.eq("structure_id", structureId); 
+        	queryWrapper.likeRight("structure_id", structureId); 
         	queryWrapper.eq("organization_id", category.getOrganizationId()); 
-        	structureService.remove(queryWrapper);
+        	List<Structure> delStructureList = structureService.list(queryWrapper);
+        	if(CollectionUtils.isNotEmpty(delStructureList)){
+        		for(Structure s:delStructureList){
+        			QueryWrapper<Structure> delWrapper = new QueryWrapper<>();
+        			delWrapper.eq("species_id", indicator.getSpeciesId()); 
+        			delWrapper.eq("organ_id", indicator.getOrganId()); 
+        			delWrapper.eq("structure_id", s.getStructureId()); 
+        			delWrapper.eq("organization_id", category.getOrganizationId()); 
+        			structureService.remove(queryWrapper);
+        		}
+        	}
         }
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
