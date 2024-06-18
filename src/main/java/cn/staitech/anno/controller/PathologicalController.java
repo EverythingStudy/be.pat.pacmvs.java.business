@@ -141,6 +141,14 @@ public class PathologicalController {
 			//校验structureId、structureName 是否已经存在
 			String speciesId = indicator.getSpeciesId();
 			String organId = indicator.getOrganId();
+			
+			QueryWrapper<Structure> queryExitsWrapper = new QueryWrapper<>();
+			queryExitsWrapper.eq("structure_id", structureId);
+			List<Map<String, Object>> stList = structureService.listMaps(queryExitsWrapper);
+			if (CollectionUtils.isNotEmpty(stList)) {
+				return R.fail("STRUCTUREID EXIST");
+			}
+			
 
 			QueryWrapper<Structure> queryWrapper = new QueryWrapper<>();
 			queryWrapper.eq("species_id", speciesId);
