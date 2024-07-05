@@ -47,6 +47,7 @@ import cn.staitech.system.api.domain.SysUser;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -93,6 +94,7 @@ import static cn.staitech.anno.constant.CommonConstant.*;
 
 @Service
 @Slf4j
+@DS("sharding")
 public class MarkingServiceImpl implements MarkingService {
 
     /**

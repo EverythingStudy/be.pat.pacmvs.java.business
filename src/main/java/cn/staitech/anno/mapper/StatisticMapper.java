@@ -2,6 +2,7 @@ package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.vo.statistic.*;
+import com.baomidou.dynamic.datasource.annotation.DS;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -12,6 +13,7 @@ import java.util.List;
  *
  * @author staitech
  */
+@DS("sharding")
 public interface StatisticMapper {
     /**
      * 综合统计列表: 标注数量-项目

@@ -421,7 +421,7 @@
         <include refid="selectListBy"/>
         where slide_id = #{slideId}
     </select>
-    
+
     
     
     <sql id="selectLabelsetList">
@@ -638,7 +638,7 @@
     </select>
 
     <select id="selectByIds" parameterType="string" resultMap="markingResult">
-        <include refid="selectBy"/>
+        select * from tb_marking
         where marking_id = #{markingId}
     </select>
 

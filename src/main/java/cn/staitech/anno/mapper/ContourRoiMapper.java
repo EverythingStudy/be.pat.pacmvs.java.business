@@ -1,7 +1,6 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.domain.ContourRoi;
-import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

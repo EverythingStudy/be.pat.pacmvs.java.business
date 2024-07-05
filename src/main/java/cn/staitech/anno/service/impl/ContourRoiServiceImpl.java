@@ -32,10 +32,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static cn.staitech.anno.constant.CommonConstant.ADD_STATUS;
@@ -118,6 +116,9 @@ public class ContourRoiServiceImpl extends ServiceImpl<ContourRoiMapper, Contour
         Properties properties = getProperties(contourRoiMapper.selectById(contourRoi.getContourRoiId()));
         Features features = MarkingUtils.socketData(null, JSONObject.parseObject(contourRoi.getContour()), properties);
         BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, ADD_STATUS, features, null);
+        System.out.println(req.getSlide_id());
+        System.out.println(broadcastVO);
+        System.out.println("-------------------------------------->");
         NioWebSocketHandler.sendAll(req.getSlide_id(), broadcastVO);
         return contourRoi.getContourRoiId();
     }
@@ -173,8 +174,11 @@ public class ContourRoiServiceImpl extends ServiceImpl<ContourRoiMapper, Contour
         properties.setArea(contourRoi.getArea());
         properties.setPerimeter(contourRoi.getPerimeter());
         properties.setLocation_type(contourRoi.getLocationType());
+        properties.setCreate_by(contourRoi.getCreateBy());
+        properties.setUpdate_by(contourRoi.getUpdateBy());
         properties.setAnnotation_type(contourRoi.getAnnotationType());
-        properties.setCreate_time(String.valueOf(contourRoi.getCreateTime()));
+        SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        properties.setCreate_time(sim.format(contourRoi.getCreateTime()));
         if (contourRoi.getCategoryId() != null) {
             PathologicalIndicatorCategory pathologicalIndicatorCategory = pathologicalIndicatorCategoryHashMap.get(contourRoi.getCategoryId());
             if (pathologicalIndicatorCategory == null) {

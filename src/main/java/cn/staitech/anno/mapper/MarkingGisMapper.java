@@ -1,7 +1,9 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.vo.marking.AnnotationDistance;
+import com.baomidou.dynamic.datasource.annotation.DS;
 
+@DS("slave")
 public interface MarkingGisMapper {
 
     AnnotationDistance stClosestPoint(AnnotationDistance annotation);
