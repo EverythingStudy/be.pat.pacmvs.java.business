@@ -25,20 +25,19 @@ import cn.staitech.anno.project.service.DownTaskService;
 import cn.staitech.anno.project.service.MarkingServiceV1;
 import cn.staitech.anno.project.service.SlideAttrService;
 import cn.staitech.anno.service.FileService;
+import cn.staitech.anno.service.MarkMeasureService;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.utils.*;
 import cn.staitech.anno.vo.annotation.BroadcastVO;
 import cn.staitech.anno.vo.geojson.Properties;
 import cn.staitech.anno.vo.geojson.*;
+import cn.staitech.anno.vo.geojson.in.DistanceGet;
 import cn.staitech.anno.vo.geojson.in.RoiIn;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.geojson.out.BatchResult;
 import cn.staitech.anno.vo.history.HistoryDTO;
-import cn.staitech.anno.vo.marking.Marking;
-import cn.staitech.anno.vo.marking.MarkingMerge;
-import cn.staitech.anno.vo.marking.MarkingSelectListVO;
-import cn.staitech.anno.vo.marking.PointCount;
+import cn.staitech.anno.vo.marking.*;
 import cn.staitech.anno.vo.slide.SlideRes;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
@@ -48,6 +47,7 @@ import cn.staitech.system.api.domain.SysUser;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -120,11 +120,15 @@ public class MarkingServiceImpl implements MarkingService {
     @Resource
     private SlideAttrService slideAttrService;
     @Resource
+    private MarkingGisMapper markingGisMapper;
+    @Resource
     private PathologicalIndicatorCategoryMapper pathologicalIndicatorCategoryMapper;
     @Resource
     private MarkingMapper markingMapper;
     @Resource
     private MarkingServiceV1 markingServiceV1;
+    @Resource
+    private MarkMeasureMapper markMeasureMapper;
     @Resource
     private FileService fileService;
     @Resource
@@ -209,6 +213,41 @@ public class MarkingServiceImpl implements MarkingService {
         resp.setPageSize(pageSize);
         return resp;
     }
+
+    @Override
+    public AnnotationDistanceOut getDistance(DistanceGet req){
+        AnnotationDistanceOut annotationDistanceOut = new AnnotationDistanceOut();
+        String contourOne = selectContour(req.getAnnotationIdOne(),req.getAnnotationTypeOne());
+        String contourTwo = selectContour(req.getAnnotationIdTwo(),req.getAnnotationTypeTwo());
+        AnnotationDistance annotation = new AnnotationDistance();
+        annotation.setContourOne(contourOne);
+        annotation.setContourTwo(contourTwo);
+        // 计算两个图形之间最短距离的两个点
+        AnnotationDistance annotationClosestPoint = markingGisMapper.stClosestPoint(annotation);
+        annotationDistanceOut.setContourTypeOne(JSONObject.parseObject(annotationClosestPoint.getContourOne()));
+        annotationDistanceOut.setContourTypeTwo(JSONObject.parseObject(annotationClosestPoint.getContourTwo()));
+        // 计算两个图形之间的最短距离
+        AnnotationDistance annotationMinDistance = markingGisMapper.stDistance(annotation);
+        Double minDistance = Double.parseDouble(String.format("%.3f", annotationMinDistance.getMinDistance()));
+        annotationDistanceOut.setMinDistance(minDistance);
+        // 计算两个图形之间的平均距离
+        AnnotationDistance annotationAvgDistance = markingGisMapper.avgDistance(annotation);
+        Double meanDistance = Double.parseDouble(String.format("%.3f", annotationAvgDistance.getMeanDistance()));
+        annotationDistanceOut.setMeanDistance(meanDistance);
+        return annotationDistanceOut;
+    }
+
+
+    private String selectContour(String annotationId,String annotationType) {
+        String contour = null;
+        if(Objects.equals(annotationType, "Draw") || Objects.equals(annotationType, "Ai")){
+            contour = markingMapper.selectByIds(annotationId).getGeometry().toString();
+        } else if (Objects.equals(annotationType, "Measure")) {
+            contour = markMeasureMapper.selectById(annotationId).getGeometry().toString();
+        }
+        return contour;
+    }
+
 
     @Override
     public List<Features> selectListBy(Long slideId) throws Exception {

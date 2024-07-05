@@ -65,6 +65,8 @@ public interface MarkingMapper extends BaseMapper<Marking> {
 
     Properties selectBy(String markingId);
 
+    Marking selectByIds(String markingIds);
+
     List<Properties> selectMeasureList(Long slideId);
 
     JsonExport jsonExportSelect(Long slide);

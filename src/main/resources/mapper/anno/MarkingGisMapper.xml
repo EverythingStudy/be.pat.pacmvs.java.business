@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.MarkingGisMapper">
+
+
+
+
+    <select id="stClosestPoint" parameterType="cn.staitech.anno.vo.marking.AnnotationDistance" resultType="cn.staitech.anno.vo.marking.AnnotationDistance">
+        SELECT
+            st_asgeojson ( st_closestpoint ( st_geomfromgeojson ( #{contourOne} ), st_geomfromgeojson ( #{contourTwo} ) ) ) AS contourOne,
+            st_asgeojson ( st_closestpoint ( st_geomfromgeojson ( #{contourTwo} ), st_geomfromgeojson ( #{contourOne} ) ) ) AS contourTwo
+    </select>
+
+    <select id="stDistance" parameterType="cn.staitech.anno.vo.marking.AnnotationDistance" resultType="cn.staitech.anno.vo.marking.AnnotationDistance">
+        SELECT
+            ST_Distance ( st_geomfromgeojson ( #{contourOne} ), st_geomfromgeojson ( #{contourTwo} ) ) AS minDistance
+    </select>
+
+    <select id="avgDistance" parameterType="cn.staitech.anno.vo.marking.AnnotationDistance" resultType="cn.staitech.anno.vo.marking.AnnotationDistance">
+        WITH
+            poly1_points AS (
+                SELECT (ST_DumpPoints(ST_GeomFromGeoJSON(#{contourOne}))).geom AS geom
+            ),
+            poly2_points AS (
+        SELECT (ST_DumpPoints(ST_GeomFromGeoJSON(#{contourTwo}))).geom AS geom
+                ),
+            point_distances AS (
+        SELECT AVG(ST_Distance(p1.geom, p2.geom)) AS meanDistance
+        FROM poly1_points p1
+            CROSS JOIN poly2_points p2
+            )
+        SELECT * FROM point_distances;
+    </select>
+
+
+</mapper>

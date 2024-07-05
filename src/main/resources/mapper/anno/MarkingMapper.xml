@@ -637,6 +637,11 @@
         where marking_id = #{markingId}
     </select>
 
+    <select id="selectByIds" parameterType="string" resultMap="markingResult">
+        <include refid="selectBy"/>
+        where marking_id = #{markingId}
+    </select>
+
     <select id="selectMeasureList" parameterType="long" resultMap="propertiesResult">
         <include refid="selectBy"/>
         where
