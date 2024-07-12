@@ -12,6 +12,7 @@ import cn.staitech.anno.vo.marking.Marking;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.MarkingStatisticSelectVO;
 import cn.staitech.anno.vo.marking.PointCount;
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.Map;
  *
  * @author gjt
  */
+@DS("sharding")
 public interface MarkingMapper extends BaseMapper<Marking> {
 
     /**
@@ -64,6 +66,8 @@ public interface MarkingMapper extends BaseMapper<Marking> {
     List<MarkingSelectListVO> selectPointCountList(Map<String, Object> map);
 
     Properties selectBy(String markingId);
+
+    Marking selectByIds(String markingIds);
 
     List<Properties> selectMeasureList(Long slideId);
 
@@ -142,18 +146,18 @@ public interface MarkingMapper extends BaseMapper<Marking> {
     List<MarkMeasure>roiMeasure(RoiIn roiIn);
 
     int delMeasure(List<String> list);
-    
+
     List<ProjectLabelOut> getProjectCategoryMarkingNum(Long projectId);
     List<ProjectLabelOut> getProjectCategoryImageNum(Long projectId);
-    
-    
+
+
     List<ImageAnnoStatisticsVO> getProjectAnnoMarkingNum(Long projectId);
     List<ImageAnnoStatisticsVO> getProjectAnnoImageNum(Long projectId);
-    
-    
+
+
     List<MarkingStatistic> getProjectUserLabelMarkingNum(Long projectId);
-    
-    
+
+
     List<ProjectLabelOut> getProjectMarkingNum(Long projectId);
     List<ProjectLabelOut> getProjectImageNum(Long projectId);
     

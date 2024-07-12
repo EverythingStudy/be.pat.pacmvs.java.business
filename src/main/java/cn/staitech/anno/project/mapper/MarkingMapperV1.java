@@ -1,6 +1,7 @@
 package cn.staitech.anno.project.mapper;
 
 import cn.staitech.anno.project.domain.Marking;
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
  * @createDate 2023-09-20 09:33:57
  * @Entity cn.staitech.anno.project.domain.Marking
  */
+@DS("sharding")
 public interface MarkingMapperV1 extends BaseMapper<Marking> {
 
     List<Marking> selectMarkings();
