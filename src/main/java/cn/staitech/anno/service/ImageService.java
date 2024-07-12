@@ -89,5 +89,7 @@ public interface ImageService extends IService<Image> {
     
     void clarityProcessing(ResultCorrectionIn req);
     
+    void clarityBatchProcessing(ResultBatchCorrectionIn req);
+    
     BlurImage imagePreview(ImagePreviewIn req);
 }

@@ -54,6 +54,7 @@ import cn.staitech.anno.vo.image.in.ImagePreviewIn;
 import cn.staitech.anno.vo.image.in.ImageTopicBatchIdsVO;
 import cn.staitech.anno.vo.image.in.ImageTopicVO;
 import cn.staitech.anno.vo.image.in.ImageUpdateVO;
+import cn.staitech.anno.vo.image.in.ResultBatchCorrectionIn;
 import cn.staitech.anno.vo.image.in.ResultCorrectionIn;
 import cn.staitech.anno.vo.image.out.ImageListOutVO;
 import cn.staitech.common.security.utils.SecurityUtils;
@@ -178,9 +179,13 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 				if (slideService.selectImageExist(slide).size() > 0) {
 					out.setDeleState(1);
 				}
+				
+				int definitionDisable = 0; 
 				if(imageMapper.selectFrSlideCountByImageId(out.getImageId()) > 0){
 					out.setDeleState(1);
+					definitionDisable = 1; 
 				}
+				out.setDefinitionDisable(definitionDisable);
 				respList.add(out);
 			}
 		}
@@ -401,7 +406,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 				imageQueryWrapper.eq("image_path", image.getImagePath().trim());
 				imageQueryWrapper.eq("organization_id", organizationId);
 				List<Image> imageList = imageMapper.selectList(imageQueryWrapper);
-				//TODO 删除SQL记录   如果是清晰的、不用处理，如果是模糊文件，需要把源文件拷贝到模糊文件目录下，与模糊数据组成一对+
+				//删除SQL记录   如果是清晰的、不用处理，如果是模糊文件，需要把源文件拷贝到模糊文件目录下，与模糊数据组成一对+
 				if(null != fuzzyLevel && fuzzyLevel == 1){
 					//先拷贝文件到模糊目录下
 					log.info("准备拷贝模糊不清的文件了~");
@@ -447,6 +452,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 	public int updateById(ImageUpdateVO vo) throws Exception {
 		Image image = new Image();
 		BeanUtils.copyProperties(vo, image);
+		image.setFileName(StringUtils.substringBeforeLast(vo.getImageName(), "."));
 
 		// 获取当前登录用户Id
 		Long loginUser = SecurityUtils.getUserId();
@@ -608,5 +614,49 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
 			return bImage;
 		}
 		return null;
+	}
+
+	@Override
+	public void clarityBatchProcessing(ResultBatchCorrectionIn req) {
+		List<Long>  imageIdList = req.getImageId();
+		if(CollectionUtils.isNotEmpty(imageIdList)){
+			for(Long imageId:imageIdList){
+				Image imageInfo = new Image();
+				imageInfo.setImageId(imageId);
+
+				UpdateWrapper<BlurImage> updateWrapper = new UpdateWrapper<>();
+				updateWrapper.eq("image_id", imageId);
+				BlurImage entity = new BlurImage();
+				//修正状态  1：修正  2：还原
+				if(req.getDefinitionStatus() == 1){
+					//0上传中、1上传失败、2解析中、3解析失败、4可用 5:不可用
+					imageInfo.setStatus(4);
+					//模糊程度 （0：初始值 1：模糊 2：不模糊）
+					imageInfo.setFuzzyLevel(2);
+					//清晰度状态（0：初始值 1：更正)
+					imageInfo.setDefinitionStatus(1);
+					//是否手动修正0:否  1是
+
+					entity.setDefinitionStatus(1);
+					//是否模糊1是2否
+					entity.setFuzzyLevel(2);
+				}else{
+					//0上传中、1上传失败、2解析中、3解析失败、4可用 5:不可用
+					imageInfo.setStatus(5);
+					//模糊程度 （0：初始值 1：模糊 2：不模糊）
+					imageInfo.setFuzzyLevel(1);
+					//清晰度状态（0：初始值 1：更正)
+					imageInfo.setDefinitionStatus(0);
+
+					//是否手动修正0:否  1是
+					entity.setDefinitionStatus(0);
+					//是否模糊1是2否
+					entity.setFuzzyLevel(1);
+
+				}
+				imageMapper.updateById(imageInfo);
+				blurImageMapper.update(entity, updateWrapper);
+			}
+		}
 	}
 }

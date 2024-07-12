@@ -242,6 +242,10 @@
                 <!-- 切片状态 -->
                 and i.status = #{status}
             </if>
+            <if test="fuzzyLevel != null">
+                <!-- 模糊程度 （0：初始值 1：模糊 2：不模糊） -->
+                and i.fuzzy_level = #{fuzzyLevel}
+            </if>
             <if test="organizationId != null">
                 <!-- 组织机构编号 -->
                 and i.organization_id = #{organizationId}

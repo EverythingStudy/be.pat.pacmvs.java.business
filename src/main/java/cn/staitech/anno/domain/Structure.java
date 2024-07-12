@@ -52,6 +52,10 @@ public class Structure {
 
     @ApiModelProperty(value = "RO：结构类型  ROA:标注区域 ROE:考核区域", required = true)
     private String type;
+    
+    @TableField(exist = false)
+    @ApiModelProperty(value = "指标id(模糊查询)")
+    private String structureIds;
 
     /**
      * 机构ID
