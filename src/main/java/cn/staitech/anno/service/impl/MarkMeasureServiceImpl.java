@@ -483,7 +483,7 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
         int marking = markMeasureMapper.selectCount(markingQueryWrapper);
         Properties properties = new Properties();
         properties.setPoint_count(marking);
-        properties.setMeasure_name("P");
+        properties.setMeasure_full_name("P");
         propertiesList.add(properties);
         // 生成excel文件
         ExcelTool excelTool = new ExcelTool(MessageSource.M("EXCEL_TITLE"), 20, 20);
