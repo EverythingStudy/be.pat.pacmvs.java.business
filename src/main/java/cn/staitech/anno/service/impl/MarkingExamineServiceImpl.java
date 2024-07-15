@@ -620,9 +620,9 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
         Image image = imageMapper.selectById(questionBank.getImageId());
         if (image.getResolutionX() != null) {
             double resolutions = Double.parseDouble(image.getResolutionX());
-            String area = String.valueOf(geometry.getArea() * resolutions * resolutions);
+            String area = MarkingUtils.formattedNumber(String.valueOf(geometry.getArea() * resolutions * resolutions));
             markingExamine.setArea(area);
-            String per = String.valueOf(geometry.getLength() * resolutions);
+            String per = MarkingUtils.formattedNumber(String.valueOf(geometry.getLength() * resolutions));
             markingExamine.setPerimeter(per);
         }
         markingExamine.setMarkingExamineId(markingId);
