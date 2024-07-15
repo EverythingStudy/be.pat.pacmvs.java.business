@@ -852,9 +852,9 @@ public class MarkingServiceImpl implements MarkingService {
         Image image = imageMapper.selectById(slide.getImageId());
         if (image.getResolutionX() != null) {
             double resolutions = Double.parseDouble(image.getResolutionX());
-            String area = String.valueOf(geometry.getArea() * resolutions * resolutions);
+            String area = MarkingUtils.formattedNumber(String.valueOf(geometry.getArea() * resolutions * resolutions));
             marking.setArea(area);
-            String per = String.valueOf(geometry.getLength() * resolutions);
+            String per = MarkingUtils.formattedNumber(String.valueOf(geometry.getLength() * resolutions));
             marking.setPerimeter(per);
         }
         marking.setUpdate_time(new Date());
