@@ -275,7 +275,7 @@ public class MarkingController {
      * @param list
      * @return
      */
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "批量操作")
     @PostMapping("/intelligentAnno/batch")

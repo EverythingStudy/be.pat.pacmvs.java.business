@@ -317,11 +317,11 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Override
     public Marking selectById(Long markingId) {
-        return markingMapper.selectById(markingId);
+        return markingMapper.selectByIds(String.valueOf(markingId));
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     public String insert(ViewAddIn req) throws Exception {
 
         if (req.getSlide_id() == null) {
@@ -418,7 +418,7 @@ public class MarkingServiceImpl implements MarkingService {
      * @return
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     public Marking insertByHistory(Marking marking) {
         Long slideId = marking.getSlide_id();
 
@@ -444,7 +444,7 @@ public class MarkingServiceImpl implements MarkingService {
         // 多线程处理
         ANN_EXECUTOR.submit(new AnnCountThread(1, slideBy, marking, null));
 
-        Marking thisMarking = markingMapper.selectById(marking.getMarking_id());
+        Marking thisMarking = markingMapper.selectByIds(marking.getMarking_id());
         return thisMarking;
     }
 
@@ -456,7 +456,7 @@ public class MarkingServiceImpl implements MarkingService {
      * @return true || false
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     public String insertOutline(Outline outline, cn.staitech.anno.project.domain.Slide slide, SysUser user, Long categoryId) throws Exception {
         if (outline.getGeometry() != null && !outline.getGeometry().isEmpty()) {
             MarkingUtils.addVerify(outline.getGeometry());
@@ -510,7 +510,7 @@ public class MarkingServiceImpl implements MarkingService {
      */
     @Override
     public double operationCheck(UpdateOperationIn req) throws Exception {
-        Marking markingBy = markingMapper.selectById(req.getMarking_id());
+        Marking markingBy = markingMapper.selectByIds(req.getMarking_id());
         // 查询数据是否存在
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
@@ -532,7 +532,7 @@ public class MarkingServiceImpl implements MarkingService {
         } else {
             markingSet.add(req.getMarking_id());
         }
-        Marking markingBy = markingMapper.selectById(req.getMarking_id());
+        Marking markingBy = markingMapper.selectByIds(req.getMarking_id());
         // 查询数据是否存在
         if (!Optional.ofNullable(markingBy).isPresent()) {
             markingSet.remove(req.getMarking_id());
@@ -618,7 +618,7 @@ public class MarkingServiceImpl implements MarkingService {
      */
     @Override
     public Marking updateOperationByHistory(Marking reqMarking) {
-        Marking markingBy = markingMapper.selectById(reqMarking.getMarking_id());
+        Marking markingBy = markingMapper.selectByIds(reqMarking.getMarking_id());
         // 查询数据是否存在
         if (!Optional.ofNullable(markingBy).isPresent()) {
             return null;
@@ -646,12 +646,12 @@ public class MarkingServiceImpl implements MarkingService {
 
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     public String update(ViewAddIn req) throws Exception {
         String markingId = req.getMarking_id();
         String traceId = req.getTraceId();
         Boolean isBatch = req.getIsBatch();
-        Marking markingBy = markingMapper.selectById(markingId);
+        Marking markingBy = markingMapper.selectByIds(markingId);
         Long userId = req.getUpdate_by();
         Long slideId = markingBy.getSlide_id();
 
@@ -738,7 +738,7 @@ public class MarkingServiceImpl implements MarkingService {
         BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, UPDATE_STATUS, features, null);
         // 使用websocket发送数据
         NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
-        Marking markingNew = markingMapper.selectById(req.getMarking_id());
+        Marking markingNew = markingMapper.selectByIds(req.getMarking_id());
         Marking markingOld = new Marking();
         markingOld.setCreate_by(markingBy.getCreate_by());
         markingOld.setCategory_id(markingBy.getCategory_id());
@@ -754,12 +754,12 @@ public class MarkingServiceImpl implements MarkingService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     public int delete(String markingId, String traceId, Boolean isBatch) throws Exception {
         if (!Optional.ofNullable(markingId).isPresent()) {
             throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }
-        Marking markingBy = markingMapper.selectById(markingId);
+        Marking markingBy = markingMapper.selectByIds(markingId);
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
@@ -811,9 +811,9 @@ public class MarkingServiceImpl implements MarkingService {
 
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     public Marking deleteByHistory(String markingId) throws Exception {
-        Marking marking = markingMapper.selectById(markingId);
+        Marking marking = markingMapper.selectByIds(markingId);
         Slide slide = slideMapperV1.selectById(marking.getSlide_id());
         Long userId = marking.getCreate_by();
 
@@ -833,7 +833,7 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Override
     public int padding(String markingId) throws Exception {
-        Marking markingBy = markingMapper.selectById(markingId);
+        Marking markingBy = markingMapper.selectByIds(markingId);
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
@@ -897,7 +897,7 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Override
     public int stickup(String markingId) {
-        Marking markingBy = markingMapper.selectById(markingId);
+        Marking markingBy = markingMapper.selectByIds(markingId);
         markingBy.setCreate_time(new Date());
         int res = markingMapper.insert(markingBy);
         Properties properties = markingMapper.selectBy(markingBy.getMarking_id());
