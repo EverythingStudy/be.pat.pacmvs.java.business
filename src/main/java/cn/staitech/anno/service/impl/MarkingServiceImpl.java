@@ -652,17 +652,11 @@ public class MarkingServiceImpl implements MarkingService {
         String traceId = req.getTraceId();
         Boolean isBatch = req.getIsBatch();
         Marking markingBy = markingMapper.selectByIds(markingId);
-        Long userId = req.getUpdate_by();
-        Long slideId = markingBy.getSlide_id();
-
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
-        Project project = projectMapperV1.selectById(markingBy.getProject_id());
-        //验证集项目中不能修改他人轮廓
-        if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
-            throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
-        }
+        Long userId = req.getUpdate_by();
+        Long slideId = markingBy.getSlide_id();
         // 查询切片表中信息==》先走缓存
         Slide slide = redisService.getCacheObject(CommonConstant.ANNO_SLIDE + slideId);
         if (null == slide) {
@@ -672,7 +666,13 @@ public class MarkingServiceImpl implements MarkingService {
         if (!Optional.ofNullable(slide).isPresent()) {
             throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
         }
-
+        Project project = projectMapperV1.selectById(slide.getProjectId());
+        if(project != null){
+            //验证集项目中不能修改他人轮廓
+            if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
+                throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
+            }
+        }
         {
             // 删除操作RocksDB存删除前的数据
             // 撤消,恢复历史记录 用HistoryService会引起循环依赖！ -> 后续在线程池中处理 判断是批处理，还是单独处理
