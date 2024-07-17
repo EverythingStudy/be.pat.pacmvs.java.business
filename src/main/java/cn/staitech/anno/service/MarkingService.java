@@ -3,15 +3,13 @@ package cn.staitech.anno.service;
 import cn.staitech.anno.domain.Outline;
 import cn.staitech.anno.project.domain.DownTask;
 import cn.staitech.anno.vo.geojson.Features;
+import cn.staitech.anno.vo.geojson.in.DistanceGet;
 import cn.staitech.anno.vo.geojson.in.RoiIn;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.geojson.out.BatchResult;
 import cn.staitech.anno.vo.history.HistoryDTO;
-import cn.staitech.anno.vo.marking.Marking;
-import cn.staitech.anno.vo.marking.MarkingMerge;
-import cn.staitech.anno.vo.marking.MarkingSelectListVO;
-import cn.staitech.anno.vo.marking.PointCount;
+import cn.staitech.anno.vo.marking.*;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.system.api.domain.SysUser;
@@ -30,6 +28,8 @@ public interface MarkingService {
      * @return List<Slide>
      */
     PageResponse<MarkingSelectListVO> selectList(Long slideId, Integer pageNum, Integer pageSize, String measureFullName) throws Exception;
+
+    AnnotationDistanceOut getDistance(DistanceGet distanceGet);
 
 
     List<Features> selectListBy(Long slideId) throws Exception;

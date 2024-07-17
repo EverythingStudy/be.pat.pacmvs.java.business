@@ -25,20 +25,19 @@ import cn.staitech.anno.project.service.DownTaskService;
 import cn.staitech.anno.project.service.MarkingServiceV1;
 import cn.staitech.anno.project.service.SlideAttrService;
 import cn.staitech.anno.service.FileService;
+import cn.staitech.anno.service.MarkMeasureService;
 import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.utils.*;
 import cn.staitech.anno.vo.annotation.BroadcastVO;
 import cn.staitech.anno.vo.geojson.Properties;
 import cn.staitech.anno.vo.geojson.*;
+import cn.staitech.anno.vo.geojson.in.DistanceGet;
 import cn.staitech.anno.vo.geojson.in.RoiIn;
 import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
 import cn.staitech.anno.vo.geojson.in.ViewAddIn;
 import cn.staitech.anno.vo.geojson.out.BatchResult;
 import cn.staitech.anno.vo.history.HistoryDTO;
-import cn.staitech.anno.vo.marking.Marking;
-import cn.staitech.anno.vo.marking.MarkingMerge;
-import cn.staitech.anno.vo.marking.MarkingSelectListVO;
-import cn.staitech.anno.vo.marking.PointCount;
+import cn.staitech.anno.vo.marking.*;
 import cn.staitech.anno.vo.slide.SlideRes;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
@@ -48,6 +47,8 @@ import cn.staitech.system.api.domain.SysUser;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.baomidou.dynamic.datasource.annotation.DS;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -93,6 +94,7 @@ import static cn.staitech.anno.constant.CommonConstant.*;
 
 @Service
 @Slf4j
+@DS("sharding")
 public class MarkingServiceImpl implements MarkingService {
 
     /**
@@ -120,11 +122,15 @@ public class MarkingServiceImpl implements MarkingService {
     @Resource
     private SlideAttrService slideAttrService;
     @Resource
+    private MarkingGisMapper markingGisMapper;
+    @Resource
     private PathologicalIndicatorCategoryMapper pathologicalIndicatorCategoryMapper;
     @Resource
     private MarkingMapper markingMapper;
     @Resource
     private MarkingServiceV1 markingServiceV1;
+    @Resource
+    private MarkMeasureMapper markMeasureMapper;
     @Resource
     private FileService fileService;
     @Resource
@@ -211,6 +217,41 @@ public class MarkingServiceImpl implements MarkingService {
     }
 
     @Override
+    public AnnotationDistanceOut getDistance(DistanceGet req){
+        AnnotationDistanceOut annotationDistanceOut = new AnnotationDistanceOut();
+        String contourOne = selectContour(req.getAnnotationIdOne(),req.getAnnotationTypeOne());
+        String contourTwo = selectContour(req.getAnnotationIdTwo(),req.getAnnotationTypeTwo());
+        AnnotationDistance annotation = new AnnotationDistance();
+        annotation.setContourOne(contourOne);
+        annotation.setContourTwo(contourTwo);
+        // 计算两个图形之间最短距离的两个点
+        AnnotationDistance annotationClosestPoint = markingGisMapper.stClosestPoint(annotation);
+        annotationDistanceOut.setContourTypeOne(JSONObject.parseObject(annotationClosestPoint.getContourOne()));
+        annotationDistanceOut.setContourTypeTwo(JSONObject.parseObject(annotationClosestPoint.getContourTwo()));
+        // 计算两个图形之间的最短距离
+        AnnotationDistance annotationMinDistance = markingGisMapper.stDistance(annotation);
+        Double minDistance = Double.parseDouble(String.format("%.3f", annotationMinDistance.getMinDistance()));
+        annotationDistanceOut.setMinDistance(minDistance);
+        // 计算两个图形之间的平均距离
+        AnnotationDistance annotationAvgDistance = markingGisMapper.avgDistance(annotation);
+        Double meanDistance = Double.parseDouble(String.format("%.3f", annotationAvgDistance.getMeanDistance()));
+        annotationDistanceOut.setMeanDistance(meanDistance);
+        return annotationDistanceOut;
+    }
+
+
+    private String selectContour(String annotationId,String annotationType) {
+        String contour = null;
+        if(Objects.equals(annotationType, "Draw") || Objects.equals(annotationType, "Ai")){
+            contour = markingMapper.selectByIds(annotationId).getGeometry().toString();
+        } else if (Objects.equals(annotationType, "Measure")) {
+            contour = markMeasureMapper.selectById(annotationId).getGeometry().toString();
+        }
+        return contour;
+    }
+
+
+    @Override
     public List<Features> selectListBy(Long slideId) throws Exception {
         Slide slideBy = redisService.getCacheObject(CommonConstant.ANNO_SLIDE + slideId);
         if (null == slideBy) {
@@ -276,11 +317,11 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Override
     public Marking selectById(Long markingId) {
-        return markingMapper.selectById(markingId);
+        return markingMapper.selectByIds(String.valueOf(markingId));
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     public String insert(ViewAddIn req) throws Exception {
 
         if (req.getSlide_id() == null) {
@@ -377,7 +418,7 @@ public class MarkingServiceImpl implements MarkingService {
      * @return
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     public Marking insertByHistory(Marking marking) {
         Long slideId = marking.getSlide_id();
 
@@ -403,7 +444,7 @@ public class MarkingServiceImpl implements MarkingService {
         // 多线程处理
         ANN_EXECUTOR.submit(new AnnCountThread(1, slideBy, marking, null));
 
-        Marking thisMarking = markingMapper.selectById(marking.getMarking_id());
+        Marking thisMarking = markingMapper.selectByIds(marking.getMarking_id());
         return thisMarking;
     }
 
@@ -415,7 +456,7 @@ public class MarkingServiceImpl implements MarkingService {
      * @return true || false
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     public String insertOutline(Outline outline, cn.staitech.anno.project.domain.Slide slide, SysUser user, Long categoryId) throws Exception {
         if (outline.getGeometry() != null && !outline.getGeometry().isEmpty()) {
             MarkingUtils.addVerify(outline.getGeometry());
@@ -469,7 +510,7 @@ public class MarkingServiceImpl implements MarkingService {
      */
     @Override
     public double operationCheck(UpdateOperationIn req) throws Exception {
-        Marking markingBy = markingMapper.selectById(req.getMarking_id());
+        Marking markingBy = markingMapper.selectByIds(req.getMarking_id());
         // 查询数据是否存在
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
@@ -491,7 +532,7 @@ public class MarkingServiceImpl implements MarkingService {
         } else {
             markingSet.add(req.getMarking_id());
         }
-        Marking markingBy = markingMapper.selectById(req.getMarking_id());
+        Marking markingBy = markingMapper.selectByIds(req.getMarking_id());
         // 查询数据是否存在
         if (!Optional.ofNullable(markingBy).isPresent()) {
             markingSet.remove(req.getMarking_id());
@@ -577,7 +618,7 @@ public class MarkingServiceImpl implements MarkingService {
      */
     @Override
     public Marking updateOperationByHistory(Marking reqMarking) {
-        Marking markingBy = markingMapper.selectById(reqMarking.getMarking_id());
+        Marking markingBy = markingMapper.selectByIds(reqMarking.getMarking_id());
         // 查询数据是否存在
         if (!Optional.ofNullable(markingBy).isPresent()) {
             return null;
@@ -605,23 +646,17 @@ public class MarkingServiceImpl implements MarkingService {
 
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     public String update(ViewAddIn req) throws Exception {
         String markingId = req.getMarking_id();
         String traceId = req.getTraceId();
         Boolean isBatch = req.getIsBatch();
-        Marking markingBy = markingMapper.selectById(markingId);
-        Long userId = req.getUpdate_by();
-        Long slideId = markingBy.getSlide_id();
-
+        Marking markingBy = markingMapper.selectByIds(markingId);
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
-        Project project = projectMapperV1.selectById(markingBy.getProject_id());
-        //验证集项目中不能修改他人轮廓
-        if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
-            throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
-        }
+        Long userId = req.getUpdate_by();
+        Long slideId = markingBy.getSlide_id();
         // 查询切片表中信息==》先走缓存
         Slide slide = redisService.getCacheObject(CommonConstant.ANNO_SLIDE + slideId);
         if (null == slide) {
@@ -631,7 +666,13 @@ public class MarkingServiceImpl implements MarkingService {
         if (!Optional.ofNullable(slide).isPresent()) {
             throw new Exception(MessageSource.M("NO_SLIDE_DATA"));
         }
-
+        Project project = projectMapperV1.selectById(slide.getProjectId());
+        if(project != null){
+            //验证集项目中不能修改他人轮廓
+            if (!Objects.equals(markingBy.getCreate_by(), SecurityUtils.getUserId()) && Objects.equals(project.getProjectType(), "3")) {
+                throw new Exception(MessageSource.M("MARKINGSERVICEIMPL_UPDATE_MAN"));
+            }
+        }
         {
             // 删除操作RocksDB存删除前的数据
             // 撤消,恢复历史记录 用HistoryService会引起循环依赖！ -> 后续在线程池中处理 判断是批处理，还是单独处理
@@ -697,7 +738,7 @@ public class MarkingServiceImpl implements MarkingService {
         BroadcastVO broadcastVO = SendMessage.sendListMessages(CommonConstant.ANNO_TYPE_DRAW, UPDATE_STATUS, features, null);
         // 使用websocket发送数据
         NioWebSocketHandler.sendAll(markingBy.getSlide_id(), broadcastVO);
-        Marking markingNew = markingMapper.selectById(req.getMarking_id());
+        Marking markingNew = markingMapper.selectByIds(req.getMarking_id());
         Marking markingOld = new Marking();
         markingOld.setCreate_by(markingBy.getCreate_by());
         markingOld.setCategory_id(markingBy.getCategory_id());
@@ -713,12 +754,12 @@ public class MarkingServiceImpl implements MarkingService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     public int delete(String markingId, String traceId, Boolean isBatch) throws Exception {
         if (!Optional.ofNullable(markingId).isPresent()) {
             throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
         }
-        Marking markingBy = markingMapper.selectById(markingId);
+        Marking markingBy = markingMapper.selectByIds(markingId);
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
@@ -770,9 +811,9 @@ public class MarkingServiceImpl implements MarkingService {
 
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     public Marking deleteByHistory(String markingId) throws Exception {
-        Marking marking = markingMapper.selectById(markingId);
+        Marking marking = markingMapper.selectByIds(markingId);
         Slide slide = slideMapperV1.selectById(marking.getSlide_id());
         Long userId = marking.getCreate_by();
 
@@ -792,7 +833,7 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Override
     public int padding(String markingId) throws Exception {
-        Marking markingBy = markingMapper.selectById(markingId);
+        Marking markingBy = markingMapper.selectByIds(markingId);
         if (!Optional.ofNullable(markingBy).isPresent()) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
@@ -811,9 +852,9 @@ public class MarkingServiceImpl implements MarkingService {
         Image image = imageMapper.selectById(slide.getImageId());
         if (image.getResolutionX() != null) {
             double resolutions = Double.parseDouble(image.getResolutionX());
-            String area = String.valueOf(geometry.getArea() * resolutions * resolutions);
+            String area = MarkingUtils.formattedNumber(String.valueOf(geometry.getArea() * resolutions * resolutions));
             marking.setArea(area);
-            String per = String.valueOf(geometry.getLength() * resolutions);
+            String per = MarkingUtils.formattedNumber(String.valueOf(geometry.getLength() * resolutions));
             marking.setPerimeter(per);
         }
         marking.setUpdate_time(new Date());
@@ -856,7 +897,7 @@ public class MarkingServiceImpl implements MarkingService {
 
     @Override
     public int stickup(String markingId) {
-        Marking markingBy = markingMapper.selectById(markingId);
+        Marking markingBy = markingMapper.selectByIds(markingId);
         markingBy.setCreate_time(new Date());
         int res = markingMapper.insert(markingBy);
         Properties properties = markingMapper.selectBy(markingBy.getMarking_id());

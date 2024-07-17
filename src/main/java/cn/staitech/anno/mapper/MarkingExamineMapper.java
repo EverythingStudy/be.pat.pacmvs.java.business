@@ -3,6 +3,7 @@ package cn.staitech.anno.mapper;
 import cn.staitech.anno.domain.MarkingExamine;
 import cn.staitech.anno.vo.geojson.Features;
 import cn.staitech.anno.vo.geojson.Properties;
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
  * @author gjt
  * @since 2023-09-25
  */
+@DS("sharding")
 public interface MarkingExamineMapper extends BaseMapper<MarkingExamine> {
 
     /**

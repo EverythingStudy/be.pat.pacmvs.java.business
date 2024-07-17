@@ -6,9 +6,11 @@ import cn.staitech.anno.project.vo.ImageAnnoStatisticsVO;
 import cn.staitech.anno.project.vo.ProjectMemberQuery;
 import cn.staitech.anno.project.vo.ProjectUserAnnoStatisticsVO;
 import cn.staitech.anno.project.vo.SelectProjectVO;
+import com.baomidou.dynamic.datasource.annotation.DS;
 
 import java.util.List;
 
+@DS("sharding")
 public interface ProjectMemberMapper {
     int deleteByPrimaryKey(Integer userId);
 

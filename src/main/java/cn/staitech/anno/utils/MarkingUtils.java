@@ -18,6 +18,7 @@ import org.geotools.geojson.geom.GeometryJSON;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -232,9 +233,9 @@ public class MarkingUtils {
                 if (resolution != null) {
                     double resolutions = Double.parseDouble(resolution);
                     String area = String.valueOf(geometry.getArea() * resolutions * resolutions);
-                    marking.setArea(area);
+                    marking.setArea(formattedNumber(area));
                     String per = String.valueOf(geometry.getLength() * resolutions);
-                    marking.setPerimeter(per);
+                    marking.setPerimeter(formattedNumber(per));
                 }
 
             }
@@ -245,6 +246,13 @@ public class MarkingUtils {
             return marking;
         }
 
+    }
+
+
+    public static String formattedNumber(String res) {
+        double value = Double.parseDouble(res);
+        DecimalFormat df = new DecimalFormat("0.000");
+        return df.format(value);
     }
 
     /**

@@ -6,6 +6,7 @@ import cn.staitech.anno.vo.geojson.JsonExport;
 import cn.staitech.anno.vo.geojson.Properties;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.marking.PointCount;
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Map;
  * @author wanglibei
  * @since 2023-12-05
  */
+@DS("sharding")
 public interface MarkMeasureMapper extends BaseMapper<MarkMeasure> {
     int selectListCount(Map<String, Object> map);
 

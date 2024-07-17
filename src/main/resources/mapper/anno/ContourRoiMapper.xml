@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.ContourRoiMapper">
+
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.ContourRoi">
+            <id property="contourRoiId" column="contour_roi_id" jdbcType="BIGINT"/>
+            <result property="area" column="area" jdbcType="VARCHAR"/>
+            <result property="perimeter" column="perimeter" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="categoryId" column="category_id" jdbcType="BIGINT"/>
+            <result property="locationType" column="location_type" jdbcType="VARCHAR"/>
+            <result property="annotationType" column="annotation_type" jdbcType="VARCHAR"/>
+            <result property="createBy" column="create_by" jdbcType="BIGINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="slideId" column="slide_id" jdbcType="BIGINT"/>
+            <result property="contour" column="contour" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        contour_roi_id,area,perimeter,
+        description,category_id,location_type,
+        annotation_type,create_by,create_time,
+        update_by,update_time,slide_id,
+        contour
+    </sql>
+
+
+
+    <insert id="insert1" parameterType="cn.staitech.anno.domain.ContourRoi" useGeneratedKeys="true"
+            keyProperty="contourRoiId">
+        insert into tb_contour_roi (
+        <if test="area != null and area != '' ">area,</if>
+        <if test="perimeter != null and perimeter != '' ">perimeter,</if>
+        <if test="categoryId != null">category_id,</if>
+        <if test="description != null and description != '' ">description,</if>
+        <if test="locationType != null and locationType != '' ">location_type,</if>
+        <if test="annotationType != null and annotationType != '' ">annotation_type,</if>
+        <if test="contour != null">contour,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        <if test="slideId != null and slideId != ''">slide_id,</if>
+        create_time
+        )values(
+        <if test="area != null and area != ''">#{area},</if>
+        <if test="perimeter != null and perimeter != ''">#{perimeter},</if>
+        <if test="categoryId != null">#{categoryId},</if>
+        <if test="description != null">#{description},</if>
+        <if test="locationType != null and locationType != ''">#{locationType},</if>
+        <if test="annotationType != null and annotationType != ''">#{annotationType},</if>
+        <if test="contour != null">#{contour},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        <if test="slideId != null and slideId != ''">#{slideId},</if>
+        now()
+        )
+    </insert>
+
+
+
+
+    <select id="selectBy" parameterType="cn.staitech.anno.domain.ContourRoi" resultMap="BaseResultMap">
+        select * from tb_contour_roi where contour_roi_id = #{contourRoiId}
+    </select>
+
+
+
+
+
+</mapper>

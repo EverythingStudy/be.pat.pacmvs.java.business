@@ -5,11 +5,9 @@ import cn.staitech.anno.service.MarkingService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.vo.geojson.Features;
-import cn.staitech.anno.vo.geojson.in.RoiIn;
-import cn.staitech.anno.vo.geojson.in.UpdateOperationIn;
-import cn.staitech.anno.vo.geojson.in.ViewAddIn;
-import cn.staitech.anno.vo.geojson.in.ViewAddInList;
+import cn.staitech.anno.vo.geojson.in.*;
 import cn.staitech.anno.vo.geojson.out.BatchResult;
+import cn.staitech.anno.vo.marking.AnnotationDistanceOut;
 import cn.staitech.anno.vo.marking.MarkingMerge;
 import cn.staitech.anno.vo.marking.MarkingSelectListVO;
 import cn.staitech.anno.vo.slide.SlideSelectBy;
@@ -66,6 +64,13 @@ public class MarkingController {
             return R.fail(MessageSource.M("ARGUMENT_INVALID"));
         }
         return R.ok(markingService.selectList(slideId, pageNum, pageSize, measureFullName));
+    }
+
+
+    @PostMapping("/getDistance")
+    @ApiOperation(value = "获取间距")
+    public R<AnnotationDistanceOut> getDistance(@RequestBody DistanceGet res)  {
+        return R.ok(markingService.getDistance(res));
     }
 
 
@@ -270,7 +275,7 @@ public class MarkingController {
      * @param list
      * @return
      */
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "批量操作")
     @PostMapping("/intelligentAnno/batch")

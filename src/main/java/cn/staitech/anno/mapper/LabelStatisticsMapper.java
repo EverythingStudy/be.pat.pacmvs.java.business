@@ -1,9 +1,11 @@
 package cn.staitech.anno.mapper;
 
 import cn.staitech.anno.vo.labelprojectstatistics.*;
+import com.baomidou.dynamic.datasource.annotation.DS;
 
 import java.util.List;
 
+@DS("sharding")
 public interface LabelStatisticsMapper {
     /**
      * 获取项目列表
