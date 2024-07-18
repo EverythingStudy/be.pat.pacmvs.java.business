@@ -25,6 +25,7 @@ import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.StringUtils;
 import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -320,6 +321,7 @@ public class AlgorithmAssessmentServiceImpl extends ServiceImpl<AlgorithmAssessm
 
 
     @Override
+    @DS("sharding")
     @Transactional(rollbackFor = Exception.class)
     public R createAssessment(CreateAssessmentIn req) {
         log.info("生成算法考核接口开始：");

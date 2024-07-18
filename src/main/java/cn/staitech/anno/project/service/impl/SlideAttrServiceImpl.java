@@ -5,6 +5,7 @@ import cn.staitech.anno.project.domain.SlideAttr;
 import cn.staitech.anno.project.mapper.MarkingMapperV1;
 import cn.staitech.anno.project.mapper.SlideAttrMapper;
 import cn.staitech.anno.project.service.SlideAttrService;
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -41,6 +42,7 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
     }
 
     @Transactional(rollbackFor = Exception.class)
+    @DS("sharding")
     @Override
     public Boolean removeAnnoUsers(Long slideId, List<Long> userIds) {
         QueryWrapper<Marking> queryWrapper = Wrappers.query();
@@ -61,6 +63,7 @@ public class SlideAttrServiceImpl extends ServiceImpl<SlideAttrMapper, SlideAttr
     }
 
     @Transactional(rollbackFor = Exception.class)
+    @DS("sharding")
     @Override
     public Boolean removeAnnoCategory(Long slideId, List<Long> categoryIds) {
         QueryWrapper<Marking> queryWrapper = Wrappers.query();

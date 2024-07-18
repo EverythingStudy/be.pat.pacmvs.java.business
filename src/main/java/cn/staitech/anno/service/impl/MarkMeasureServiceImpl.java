@@ -34,6 +34,7 @@ import cn.staitech.system.api.domain.SysUser;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -147,6 +148,7 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
     }
 
     @Override
+    @DS("sharding")
     @Transactional(rollbackFor = Exception.class)
     public String insert(ViewAddIn req) throws Exception {
         if (req.getGeometry() != null && !req.getGeometry().isEmpty()) {
@@ -270,6 +272,7 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
     }
 
     @Override
+    @DS("sharding")
     @Transactional(rollbackFor = Exception.class)
     public String update(MarkingUpdateIn req) throws Exception {
         // 查询标注表中信息==》先走缓存
@@ -343,6 +346,7 @@ public class MarkMeasureServiceImpl extends ServiceImpl<MarkMeasureMapper, MarkM
 
 
     @Override
+    @DS("sharding")
     @Transactional(rollbackFor = Exception.class)
     public int delete(String markingId) throws Exception {
         if (!Optional.ofNullable(markingId).isPresent()) {
