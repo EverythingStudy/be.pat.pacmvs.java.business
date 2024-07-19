@@ -19,19 +19,47 @@
     </select>
 
     <select id="avgDistance" parameterType="cn.staitech.anno.vo.marking.AnnotationDistance" resultType="cn.staitech.anno.vo.marking.AnnotationDistance">
-        WITH
-            poly1_points AS (
-                SELECT (ST_DumpPoints(ST_GeomFromGeoJSON(#{contourOne}))).geom AS geom
+        WITH polygon1 AS (
+            SELECT ST_GeomFromGeoJSON(#{contourOne}) AS geom
+        ),
+            polygon2 AS (
+                 SELECT ST_GeomFromGeoJSON(#{contourTwo}) AS geom
+             ),
+        <!-- 获取polygon1的所有顶点 -->
+            points_polygon1 AS (
+                 SELECT (ST_DumpPoints(p1.geom)).geom AS point_geom
+        FROM polygon1 p1
             ),
-            poly2_points AS (
-        SELECT (ST_DumpPoints(ST_GeomFromGeoJSON(#{contourTwo}))).geom AS geom
-                ),
-            point_distances AS (
-        SELECT AVG(ST_Distance(p1.geom, p2.geom)) AS meanDistance
-        FROM poly1_points p1
-            CROSS JOIN poly2_points p2
+        <!-- 获取polygon2的所有顶点 -->
+            points_polygon2 AS (
+        SELECT (ST_DumpPoints(p2.geom)).geom AS point_geom
+        FROM polygon2 p2
+            ),
+        <!-- 计算polygon1的每个点到polygon2的最短距离 -->
+            distances_1_to_2 AS (
+        SELECT
+            ST_Distance(points_polygon1.point_geom, p2.geom) AS distance
+        FROM
+            points_polygon1, polygon2 p2
+            ),
+        <!-- 计算polygon2的每个点到polygon1的最短距离 -->
+            distances_2_to_1 AS (
+        SELECT
+            ST_Distance(points_polygon2.point_geom, p1.geom) AS distance
+        FROM
+            points_polygon2, polygon1 p1
             )
-        SELECT * FROM point_distances;
+        <!-- # 合并两个平均距离计算 -->
+        SELECT
+            (avg_1_to_2 + avg_2_to_1) / 2 AS meanDistance
+        FROM (
+                 SELECT
+                     AVG(distance) AS avg_1_to_2,
+                     (SELECT AVG(distance) FROM distances_2_to_1) AS avg_2_to_1
+                 FROM
+                     distances_1_to_2
+             ) subquery;
+
     </select>
 
 
