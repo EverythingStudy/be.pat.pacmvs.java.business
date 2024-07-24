@@ -12,6 +12,7 @@ import cn.staitech.common.core.domain.R;
 import cn.staitech.common.core.utils.uuid.UUID;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.vividsolutions.jts.io.ParseException;
 import io.swagger.annotations.*;
@@ -141,6 +142,7 @@ public class MarkingExamineController {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
+    @DS("sharding")
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "批量操作")
     @PostMapping("/batch")

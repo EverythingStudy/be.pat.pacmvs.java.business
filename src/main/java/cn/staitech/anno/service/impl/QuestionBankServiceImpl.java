@@ -20,6 +20,7 @@ import cn.staitech.common.core.utils.bean.BeanUtils;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.RemoteLabelService;
 import com.alibaba.fastjson2.JSONObject;
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.Page;
@@ -28,6 +29,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -87,6 +89,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
      * @return
      */
     @SneakyThrows
+    @DS("sharding")
     @Transactional(rollbackFor = Exception.class)
     @Override
     public R createQuestion(CreateQuestionIn req) {
@@ -156,6 +159,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
 
     @Transactional(rollbackFor = Exception.class)
     @Override
+    @DS("sharding")
     public R createBySlide(CreateBySlideIn req) throws InterruptedException {
         log.info("根据切片生成考题接口开始：");
 

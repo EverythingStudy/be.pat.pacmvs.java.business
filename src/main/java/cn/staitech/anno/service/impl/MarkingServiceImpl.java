@@ -321,7 +321,8 @@ public class MarkingServiceImpl implements MarkingService {
     }
 
     @Override
-//    @Transactional(rollbackFor = Exception.class)
+    @DS("sharding")
+    @Transactional(rollbackFor = Exception.class)
     public String insert(ViewAddIn req) throws Exception {
 
         if (req.getSlide_id() == null) {
@@ -418,7 +419,8 @@ public class MarkingServiceImpl implements MarkingService {
      * @return
      */
     @Override
-//    @Transactional(rollbackFor = Exception.class)
+    @DS("sharding")
+    @Transactional(rollbackFor = Exception.class)
     public Marking insertByHistory(Marking marking) {
         Long slideId = marking.getSlide_id();
 
@@ -456,7 +458,8 @@ public class MarkingServiceImpl implements MarkingService {
      * @return true || false
      */
     @Override
-//    @Transactional(rollbackFor = Exception.class)
+    @DS("sharding")
+    @Transactional(rollbackFor = Exception.class)
     public String insertOutline(Outline outline, cn.staitech.anno.project.domain.Slide slide, SysUser user, Long categoryId) throws Exception {
         if (outline.getGeometry() != null && !outline.getGeometry().isEmpty()) {
             MarkingUtils.addVerify(outline.getGeometry());
@@ -646,7 +649,8 @@ public class MarkingServiceImpl implements MarkingService {
 
 
     @Override
-//    @Transactional(rollbackFor = Exception.class)
+    @DS("sharding")
+    @Transactional(rollbackFor = Exception.class)
     public String update(ViewAddIn req) throws Exception {
         String markingId = req.getMarking_id();
         String traceId = req.getTraceId();
@@ -754,7 +758,8 @@ public class MarkingServiceImpl implements MarkingService {
     }
 
     @Override
-//    @Transactional(rollbackFor = Exception.class)
+    @DS("sharding")
+    @Transactional(rollbackFor = Exception.class)
     public int delete(String markingId, String traceId, Boolean isBatch) throws Exception {
         if (!Optional.ofNullable(markingId).isPresent()) {
             throw new Exception(MessageSource.M("ARGUMENT_INVALID"));
@@ -811,7 +816,8 @@ public class MarkingServiceImpl implements MarkingService {
 
 
     @Override
-//    @Transactional(rollbackFor = Exception.class)
+    @DS("sharding")
+    @Transactional(rollbackFor = Exception.class)
     public Marking deleteByHistory(String markingId) throws Exception {
         Marking marking = markingMapper.selectByIds(markingId);
         Slide slide = slideMapperV1.selectById(marking.getSlide_id());

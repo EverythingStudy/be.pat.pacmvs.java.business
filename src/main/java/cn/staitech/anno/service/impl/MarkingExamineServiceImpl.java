@@ -22,6 +22,7 @@ import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.gson.Gson;
@@ -132,6 +133,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
     }
 
     @Override
+    @DS("sharding")
     @Transactional(rollbackFor = Exception.class)
     public Long insert(MarkingExamineInsertVO req) throws Exception {
         QuestionProjectRel questionProjectRel = questionProjectRelMapper.selectById(req.getQuestion_project_id());
@@ -293,6 +295,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
 
 
     @Override
+    @DS("sharding")
     @Transactional(rollbackFor = Exception.class)
     public int delete(Long markingExamineId, String traceId, Boolean isBatch) throws Exception {
         if (!Optional.ofNullable(markingExamineId).isPresent()) {
@@ -362,6 +365,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
 
 
     @Override
+    @DS("sharding")
     @Transactional(rollbackFor = Exception.class)
     public int deleteByHistory(Long markingExamineId, String traceId, Boolean isBatch, Boolean isUndo) throws Exception {
         Long beforeMarkingExamineId = markingExamineId;
@@ -430,6 +434,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
 
 
     @Override
+    @DS("sharding")
     @Transactional(rollbackFor = Exception.class)
     public Long update(MarkingExamineInsertVO req) throws Exception {
         String markingId = req.getMarking_id();
@@ -510,6 +515,7 @@ public class MarkingExamineServiceImpl extends ServiceImpl<MarkingExamineMapper,
 
 
     @Override
+    @DS("sharding")
     @Transactional(rollbackFor = Exception.class)
     public Long updateByHistory(MarkingExamine req, String traceId, Boolean isBatch, Boolean isUndo) throws Exception {
         Long beforeMarkingId = req.getMarkingExamineId();
