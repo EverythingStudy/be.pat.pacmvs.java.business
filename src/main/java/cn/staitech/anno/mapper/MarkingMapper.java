@@ -75,6 +75,7 @@ public interface MarkingMapper extends BaseMapper<Marking> {
 
     JsonExport reviewJsonExportSelect(Long slideId);
 
+    @DS("sharding")
     List<cn.staitech.anno.domain.PathologicalIndicatorCategory> selectCategory(Long slideId);
 
     /**

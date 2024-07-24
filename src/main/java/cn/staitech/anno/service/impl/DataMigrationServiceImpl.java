@@ -11,6 +11,7 @@ import cn.staitech.anno.service.*;
 import cn.staitech.anno.utils.StatisticListUtils;
 import cn.staitech.common.core.utils.StringUtils;
 import cn.staitech.system.api.domain.SysUser;
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -214,6 +215,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
      * @return
      */
     @Override
+    @DS("sharding")
     @Transactional(rollbackFor = Exception.class)
     public int markingData() {
         log.info("tb_marking表数据迁移开始：");

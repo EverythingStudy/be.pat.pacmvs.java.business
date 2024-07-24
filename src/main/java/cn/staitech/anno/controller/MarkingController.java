@@ -18,6 +18,7 @@ import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.vividsolutions.jts.io.ParseException;
 import io.swagger.annotations.*;
@@ -275,7 +276,9 @@ public class MarkingController {
      * @param list
      * @return
      */
-//    @Transactional(rollbackFor = Exception.class)
+
+    @DS("sharding")
+    @Transactional(rollbackFor = Exception.class)
     @ApiOperationSupport(author = "wangfeng")
     @ApiOperation(value = "批量操作")
     @PostMapping("/intelligentAnno/batch")
