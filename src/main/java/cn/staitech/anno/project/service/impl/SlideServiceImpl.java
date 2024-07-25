@@ -144,7 +144,11 @@ public class SlideServiceImpl extends ServiceImpl<SlideMapperV1, Slide>
     }
 
     private Integer getAnnoCount(Integer projectId) throws Exception {
-        List<Slide> list = getBaseMapper().selectList(Wrappers.query(Slide.builder().status("6").projectId(projectId).build()).select("slide_id"));
+        QueryWrapper<Slide> queryWrapperSlide = Wrappers.query();
+        queryWrapperSlide.eq("project_id", projectId);
+        queryWrapperSlide.in("status", Arrays.asList("7", "6"));
+        queryWrapperSlide.select("slide_id");
+        List<Slide> list = getBaseMapper().selectList(queryWrapperSlide);
         Integer count = 0;
         List<Long> slideIds = new ArrayList<>();
         if (list != null && !list.isEmpty()) {
