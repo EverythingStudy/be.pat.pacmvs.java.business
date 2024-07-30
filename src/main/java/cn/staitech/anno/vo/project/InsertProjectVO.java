@@ -28,7 +28,7 @@ public class InsertProjectVO implements Serializable {
 
     @NotBlank(message = "{InsertProjectVO.projectName.isnull}")
     @ApiModelProperty(required = true, value = "项目名称")
-    @Size(min = 0, max = 200, message = "{InsertProjectVO.projectName.length}")
+    @Size(min = 0, max = 50, message = "{InsertProjectVO.projectName.length}")
     private String projectName;
 
     /**
