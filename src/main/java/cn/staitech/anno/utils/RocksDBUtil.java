@@ -94,20 +94,17 @@ public class RocksDBUtil {
      * 列族，创建（如果不存在）
      */
     public static ColumnFamilyHandle cfAddIfNotExist(String cfName) {
-        try {
-            ColumnFamilyHandle columnFamilyHandle;
-            if (!COLUMNFAMILYHANDLE_MAP.containsKey(cfName)) {
-                columnFamilyHandle = rocksDB.createColumnFamily(new ColumnFamilyDescriptor(cfName.getBytes(), new ColumnFamilyOptions()));
-                COLUMNFAMILYHANDLE_MAP.put(cfName, columnFamilyHandle);
-                log.info("cfAddIfNotExist success!! cfName:{}", cfName);
-            } else {
-                columnFamilyHandle = COLUMNFAMILYHANDLE_MAP.get(cfName);
+        return COLUMNFAMILYHANDLE_MAP.computeIfAbsent(cfName, k -> {
+            ColumnFamilyHandle handle = null;
+            try {
+                handle = rocksDB.createColumnFamily(
+                        new ColumnFamilyDescriptor(k.getBytes(StandardCharsets.UTF_8), new ColumnFamilyOptions()));
+            } catch (RocksDBException e) {
+                log.error("Failed to add column family '{}': {}", cfName, e.getMessage(), e);
             }
-            return columnFamilyHandle;
-        } catch (RocksDBException e) {
-            log.info("cfAddIfNotExist:{}", e);
-        }
-        return null;
+            log.info("Column family added successfully: {}", k);
+            return handle;
+        });
     }
 
     /**
