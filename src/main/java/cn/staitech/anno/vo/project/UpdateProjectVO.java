@@ -29,7 +29,7 @@ public class UpdateProjectVO implements Serializable {
     private Long projectId;
     @NotBlank(message = "{InsertProjectVO.projectName.isnull}")
     @ApiModelProperty(required = true, value = "项目名称")
-    @Size(min = 0, max = 200, message = "{UpdateProjectVO.projectName.length}")
+    @Size(min = 0, max = 50, message = "{UpdateProjectVO.projectName.length}")
     private String projectName;
 
     /**
