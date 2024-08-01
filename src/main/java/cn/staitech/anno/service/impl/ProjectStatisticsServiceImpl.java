@@ -12,6 +12,7 @@ import cn.staitech.anno.vo.projectstatistics.*;
 import cn.staitech.common.core.domain.R;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -148,7 +149,7 @@ public class ProjectStatisticsServiceImpl implements ProjectStatisticsService {
      */
     @Override
     public R<PageMaster<ImageLabelOut>> imageLabel(ImageLabelIn imageLabelIn) {
-        if (imageLabelIn.getCategoryIds()==null){
+        if (CollectionUtils.isEmpty(imageLabelIn.getCategoryIds())){
             List<LabelOut> labelOuts = projectStatisticsMapper.label(imageLabelIn.getProjectId());
             LabelOut labelOut = LabelOut.builder().categoryName("无属性").categoryId(0L).build();
             labelOuts.add(labelOut);
