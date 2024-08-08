@@ -11,6 +11,7 @@ import cn.staitech.anno.vo.blurimage.in.ImageVagueQueryIn;
 import cn.staitech.anno.vo.blurimage.out.ImageVagueListOutVO;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.utils.bean.BeanUtils;
+import cn.staitech.common.security.utils.SecurityUtils;
 import com.alibaba.csp.sentinel.util.StringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -45,6 +46,9 @@ public class BlurImageServiceImpl extends ServiceImpl<BlurImageMapper, BlurImage
         }
         if (StringUtil.isNotBlank(req.getTopicName())) {
             wrapper.like(BlurImage::getTopicName, req.getTopicName());
+        }
+        if(!SecurityUtils.isAdmin(SecurityUtils.getUserId())){
+            req.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
         }
         if (ObjectUtil.isNotEmpty(req.getOrganizationId())) {
             wrapper.eq(BlurImage::getOrganizationId, req.getOrganizationId());
