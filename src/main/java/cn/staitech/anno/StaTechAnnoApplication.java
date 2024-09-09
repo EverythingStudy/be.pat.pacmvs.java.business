@@ -1,8 +1,5 @@
 package cn.staitech.anno;
 
-import cn.staitech.anno.netty.websocket.NioWebSocketServer;
-import cn.staitech.anno.utils.MessageSource;
-import cn.staitech.anno.utils.RocksDBUtil;
 import cn.staitech.common.security.annotation.EnableCustomConfig;
 import cn.staitech.common.security.annotation.EnableRyFeignClients;
 import cn.staitech.common.swagger.annotation.EnableCustomSwagger2;
@@ -14,15 +11,10 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
 import java.util.TimeZone;
 
 /**
- * 系统模块 .
- *
- * @author staitech
- * @EnableFeignClients 此注解报错：Field remoteLogService in cn.staitech.common.log.service.AsyncLogService required a bean of
- * type 'cn.staitech.system.api.RemoteLogService' that could not be found.
+ * @author 94024
  */
 @EnableRetry
 @EnableCustomConfig
@@ -32,20 +24,14 @@ import java.util.TimeZone;
 @EnableDiscoveryClient
 @EnableAsync
 @EnableTransactionManagement
-@MapperScan({"cn.staitech.anno.mapper", "cn.staitech.anno.project.mapper"})
-@EnableElasticsearchRepositories(basePackages = {"cn.staitech.common.log.elasticsearchRepositories", "cn.staitech.anno.elasticsearch"})
-public class StaiTechAnnoApplication {
-
-    public StaiTechAnnoApplication(org.springframework.context.MessageSource messageSource) {
-        MessageSource.init(messageSource);
-        RocksDBUtil.init();
-    }
+@MapperScan({"cn.staitech.anno.mapper"})
+@EnableElasticsearchRepositories(basePackages = {"cn.staitech.common.log.elasticsearchRepositories"})
+public class StaTechAnnoApplication {
 
     public static void main(String[] args) {
         //jvm参数设置时间 -Duser.timezone="Asia/Shanghai"
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Shanghai"));
-        SpringApplication.run(StaiTechAnnoApplication.class, args);
+        SpringApplication.run(StaTechAnnoApplication.class, args);
         System.out.println("标注模块启动成功");
-        new NioWebSocketServer().start();
     }
 }
