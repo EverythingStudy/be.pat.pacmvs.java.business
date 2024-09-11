@@ -4,10 +4,14 @@ import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.constant.DataConstants;
 import cn.staitech.anno.domain.Slide;
+import cn.staitech.anno.domain.image.Image;
 import cn.staitech.anno.domain.image.in.ImageBatchIdsVO;
 import cn.staitech.anno.domain.image.in.ImageListFindIn;
+import cn.staitech.anno.domain.image.in.ImageUpdateVO;
 import cn.staitech.anno.domain.image.out.ImageListFindOut;
+import cn.staitech.anno.mapper.ImageMapper;
 import cn.staitech.anno.mapper.SlideMapper;
+import cn.staitech.anno.service.ImageService;
 import cn.staitech.anno.service.SlideService;
 import cn.staitech.anno.utils.DateUtils;
 import cn.staitech.anno.utils.LanguageUtils;
@@ -16,33 +20,27 @@ import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.domain.SysUser;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import cn.staitech.anno.domain.image.Image;
-import cn.staitech.anno.service.ImageService;
-import cn.staitech.anno.mapper.ImageMapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
-* @author 94024
-* @description 针对表【tb_image】的数据库操作Service实现
-* @createDate 2024-09-10 10:21:48
-*/
+ * @author 94024
+ * @description 针对表【tb_image】的数据库操作Service实现
+ * @createDate 2024-09-10 10:21:48
+ */
 @Service
 public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image>
-    implements ImageService{
+        implements ImageService {
     @Resource
     private SlideService slideService;
     @Resource
@@ -90,6 +88,13 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image>
         return response;
     }
 
+    /***
+     * 批量删除图片（物理删除）
+     * 1、若符合删除条件，图像物理删除；
+     * 2、与切片列表有关联的不能删除；
+     * @param ids 图像ids
+     * @return 不可删除的图片ID列表
+     */
     @Override
     public List<Long> deleteBatchIds(ImageBatchIdsVO ids) {
 
@@ -98,14 +103,35 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image>
 
         for (Long imageId : ids.getImageIdList()) {
             // 查询fr_slide是否有关系图像
-            Integer  frSlideCount = imageMapper.selectFrSlideCountByImageId(imageId);
-            if(frSlideCount > 0){
+            Integer frSlideCount = imageMapper.selectFrSlideCountByImageId(imageId);
+
+            if (frSlideCount > 0) {
                 forbidIds.add(imageId);
+            } else {
+                imageMapper.deleteById(imageId);
             }
         }
 
+        return forbidIds;
+    }
 
-        return Collections.emptyList();
+    /**
+     * 关联切片与专题、组织ID，没有专题则新添加
+     *
+     * @param vo
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updateById(ImageUpdateVO vo) {
+        Image image = new Image();
+        BeanUtils.copyProperties(vo, image);
+        image.setFileName(StringUtils.substringBeforeLast(vo.getImageName(), "."));
+
+        // 获取当前登录用户Id
+        Long loginUser = SecurityUtils.getUserId();
+        image.setUpdateBy(loginUser);
+        return imageMapper.updateById(image);
     }
 
     /**

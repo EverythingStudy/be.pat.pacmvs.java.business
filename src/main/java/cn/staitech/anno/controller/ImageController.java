@@ -5,6 +5,7 @@ import cn.staitech.anno.domain.image.in.ImageListFindIn;
 import cn.staitech.anno.domain.image.in.ImageUpdateVO;
 import cn.staitech.anno.domain.image.out.ImageListFindOut;
 import cn.staitech.anno.service.ImageService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.common.core.domain.PageResponse;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.log.annotation.Log;
@@ -58,8 +59,8 @@ public class ImageController {
     @ApiOperation(value = "批量删除切片-物理删除")
     @RequiresPermissions(value = {"section:ophthalmology:del", "section:ophthalmology:remove", "projectConfig:spliceImgConfig:batchDelete", "section:slices:del", "section:slices:remove"}, logical = Logical.OR)
     @PostMapping("/deleteBatchIds")
-    public R<List<Long>> deleteBatchIds(@Validated @RequestBody ImageBatchIdsVO request) throws Exception {
-        return R.ok();
+    public R<List<Long>> deleteBatchIds(@Validated @RequestBody ImageBatchIdsVO request) {
+        return R.ok(imageService.deleteBatchIds(request));
     }
 
     /**
@@ -73,8 +74,12 @@ public class ImageController {
     @ApiOperation(value = "编辑切片信息")
     @RequiresPermissions(value = {"section:slices:edit", "section:forecast:edit", "section:ophthalmology:edit"}, logical = Logical.OR)
     @PostMapping("/update")
-    public R update(@Validated @RequestBody ImageUpdateVO request) throws Exception {
-        return R.ok();
+    public R update(@Validated @RequestBody ImageUpdateVO request) {
+        int result = imageService.updateById(request);
+        if (result > 0) {
+            return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+        }
+        return R.fail(MessageSource.M("OPERATE_ERROR"));
     }
 
 }

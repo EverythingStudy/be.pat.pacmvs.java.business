@@ -162,16 +162,6 @@ public class Image implements Serializable {
     private String imageCode;
 
     /**
-     * 专题ID
-     */
-    private Long topicId;
-
-    /**
-     * 专题名称
-     */
-    private String topicName;
-
-    /**
      * 0上传中、1上传失败、2解析中、3解析失败、4可用 5:不可用
      */
     private Integer status;
@@ -209,7 +199,7 @@ public class Image implements Serializable {
     /**
      * 专题号
      */
-    private String topicCode;
+    private String topicName;
 
     /**
      * 动物号
