@@ -197,8 +197,13 @@ public class Image implements Serializable {
     private Long fuzzyCountChunk;
 
     /**
-     * 专题号
+     * 专题id
      */
+    private Long topicId;
+
+    /**
+     * 专题号
+    */
     private String topicName;
 
     /**
@@ -217,9 +222,14 @@ public class Image implements Serializable {
     private String groupCode;
 
     /**
-     * 性别（0：M；1：F）
+     * 性别（M;F）
      */
-    private Integer sexFlag;
+    private String sexFlag;
+
+    /**
+     * 文件名解析状态（0失败1成功）
+     */
+    private Integer analyzeStatus;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

@@ -41,11 +41,13 @@
         <result property="bizType" column="biz_type" jdbcType="TINYINT"/>
         <result property="source" column="source" jdbcType="TINYINT"/>
         <result property="fuzzyCountChunk" column="fuzzy_count_chunk" jdbcType="BIGINT"/>
+        <result property="topicId" column="topic_id" jdbcType="BIGINT"/>
         <result property="topicName" column="topic_name" jdbcType="VARCHAR"/>
         <result property="animalCode" column="animal_code" jdbcType="VARCHAR"/>
         <result property="waxCode" column="wax_code" jdbcType="VARCHAR"/>
         <result property="groupCode" column="group_code" jdbcType="VARCHAR"/>
-        <result property="sexFlag" column="sex_flag" jdbcType="TINYINT"/>
+        <result property="sexFlag" column="sex_flag" jdbcType="VARCHAR"/>
+        <result property="analyzeStatus" column="analyze_status" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -61,8 +63,8 @@
         update_time,image_code,status,
         host_id,organization_id,round_id,
         biz_type,source,fuzzy_count_chunk,
-        topic_name,animal_code,wax_code,
-        group_code,sex_flag
+        topic_id,topic_name,animal_code,wax_code,
+        group_code,sex_flag,analyzeStatus
     </sql>
 
     <select id="selectFrSlideCountByImageId" parameterType="cn.staitech.anno.domain.image.Image"
