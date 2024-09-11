@@ -88,7 +88,7 @@ public class ImageListFindOut {
     @ApiModelProperty(value = "图像来源(1前端上传，2目录选片，3TCP客户端上传)")
     private Integer source;
 
-    @ApiModelProperty(value = "是否允许删除： 1 禁止选中")
+    @ApiModelProperty(value = "是否允许删除： 1 禁止选中(已被使用)")
     private Integer deleState;
 
     @ApiModelProperty(value = "添加状态：0未添加、1已添加")

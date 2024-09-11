@@ -1,6 +1,7 @@
 package cn.staitech.anno.service;
 
 import cn.staitech.anno.domain.image.Image;
+import cn.staitech.anno.domain.image.ImageStatus;
 import cn.staitech.anno.domain.image.in.ImageBatchIdsVO;
 import cn.staitech.anno.domain.image.in.ImageListFindIn;
 import cn.staitech.anno.domain.image.in.ImageUpdateVO;
@@ -17,6 +18,8 @@ import java.util.List;
  * @createDate 2024-09-10 10:21:48
  */
 public interface ImageService extends IService<Image> {
+
+    List<ImageStatus> status();
 
     PageResponse<ImageListFindOut> findImageList(ImageListFindIn findIn) throws ParseException;
 

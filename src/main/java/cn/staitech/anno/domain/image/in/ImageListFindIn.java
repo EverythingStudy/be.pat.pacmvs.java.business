@@ -16,7 +16,7 @@ public class ImageListFindIn extends PageResponse {
     private String topicName;
 
     @ApiModelProperty("切片编号")
-    private String imageCode;
+    private String imageName;
 
     @ApiModelProperty(value = "机构编号")
     private Long organizationId;

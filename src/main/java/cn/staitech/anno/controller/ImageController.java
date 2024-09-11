@@ -1,5 +1,6 @@
 package cn.staitech.anno.controller;
 
+import cn.staitech.anno.domain.image.ImageStatus;
 import cn.staitech.anno.domain.image.in.ImageBatchIdsVO;
 import cn.staitech.anno.domain.image.in.ImageListFindIn;
 import cn.staitech.anno.domain.image.in.ImageUpdateVO;
@@ -12,6 +13,7 @@ import cn.staitech.common.log.annotation.Log;
 import cn.staitech.common.log.enums.BusinessType;
 import cn.staitech.common.security.annotation.Logical;
 import cn.staitech.common.security.annotation.RequiresPermissions;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
@@ -29,11 +31,23 @@ import java.util.List;
  */
 @Api(value = "切片管理", tags = "切片管理")
 @RestController
-@RequestMapping("/study")
+@RequestMapping("/image")
 public class ImageController {
 
     @Resource
     private ImageService imageService;
+
+    /**
+     * 切片状态列表 .
+     */
+    @ApiOperationSupport(author = "wangfeng")
+    @ApiOperation(value = "切片状态列表", notes = "切片状态列表")
+    @Log(title = "切片状态列表", menu = "切片状态列表", subMenu = "切片状态列表", businessType = BusinessType.QUERY)
+    @PostMapping("/status")
+    public R<List<ImageStatus>> status() {
+        return R.ok(imageService.status());
+    }
+
 
     /**
      * 获取原始切片的分页列表
@@ -43,7 +57,7 @@ public class ImageController {
      */
     @ApiOperation(value = "原始切片列表", notes = "原始切片列表")
     @Log(title = "查询切片列表", menu = "切片管理", subMenu = "原始切片", businessType = BusinessType.QUERY)
-    @PostMapping("/pageList")
+    @PostMapping("/list")
     public R<PageResponse<ImageListFindOut>> getStudyPageList(@RequestBody ImageListFindIn findIn) throws ParseException {
         return R.ok(imageService.findImageList(findIn));
     }

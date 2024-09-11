@@ -5,6 +5,7 @@ import cn.staitech.anno.constant.Container;
 import cn.staitech.anno.constant.DataConstants;
 import cn.staitech.anno.domain.Slide;
 import cn.staitech.anno.domain.image.Image;
+import cn.staitech.anno.domain.image.ImageStatus;
 import cn.staitech.anno.domain.image.in.ImageBatchIdsVO;
 import cn.staitech.anno.domain.image.in.ImageListFindIn;
 import cn.staitech.anno.domain.image.in.ImageUpdateVO;
@@ -31,6 +32,7 @@ import javax.annotation.Resource;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -48,6 +50,23 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image>
     @Resource
     private ImageMapper imageMapper;
 
+    /**
+     * 切片状态列表 .
+     */
+    @Override
+    public List<ImageStatus> status() {
+        List<ImageStatus> list = new ArrayList<>();
+        if (LanguageUtils.isEn()) {
+            for (Map.Entry<Integer, String> entry : Container.IMAGE_STATUS_MAP_EN.entrySet()) {
+                list.add(new ImageStatus(entry.getKey(), entry.getValue()));
+            }
+        } else {
+            for (Map.Entry<Integer, String> entry : Container.IMAGE_STATUS_MAP.entrySet()) {
+                list.add(new ImageStatus(entry.getKey(), entry.getValue()));
+            }
+        }
+        return list;
+    }
 
     /**
      * 根据提供的查询条件，获取分页的图片列表
@@ -142,8 +161,8 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image>
      */
     private LambdaQueryWrapper<Image> buildQueryWrapper(ImageListFindIn findIn) throws ParseException {
         LambdaQueryWrapper<Image> wrapper = new LambdaQueryWrapper<>();
-        if (StringUtils.isNotEmpty(findIn.getImageCode())) {
-            wrapper.eq(Image::getImageCode, findIn.getImageCode());
+        if (StringUtils.isNotEmpty(findIn.getImageName())) {
+            wrapper.eq(Image::getImageName, findIn.getImageName());
         }
         if (StringUtils.isNotEmpty(findIn.getTopicName())) {
             wrapper.eq(Image::getTopicName, findIn.getTopicName());
