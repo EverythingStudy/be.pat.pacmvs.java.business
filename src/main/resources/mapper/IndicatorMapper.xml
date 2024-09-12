@@ -195,7 +195,6 @@
             
             annotation_category_total = (select count(*)from tb_pathological_indicator_category where
             indicator_id=#{indicatorId} and del_flag=0),
-            project_total =(select count(*) from tb_project where indicator_id=#{indicatorId} and del_flag=0),
             update_time = sysdate()
         </set>
         where indicator_id = #{indicatorId}
