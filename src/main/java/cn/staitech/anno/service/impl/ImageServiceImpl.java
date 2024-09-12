@@ -33,6 +33,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -203,13 +204,18 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image>
                 : Container.IMAGE_STATUS_MAP.get(image.getStatus());
         out.setFileStatus(fileStatus);
 
+        if (null != image.getAnalyzeStatus()) {
+            String analyzeStatus = Objects.equals(DataConstants.NUMBER_0, image.getAnalyzeStatus()) ? "失败" : "成功";
+            out.setAnalyzeStatusName(analyzeStatus);
+        }
+
         // 匹配并设置机构名称
         out.setOrganizationName(MapConstant.getOrganizationName(image.getOrganizationId()));
 
         // 设置删除状态
         Slide slide = new Slide();
         slide.setImageId(out.getImageId());
-        out.setDeleState(slideService.selectImageExist(slide).isEmpty() ? DataConstants.NUMBER_0 : DataConstants.NUMBER_1);
+        out.setDeleState(imageMapper.selectFrSlideCountByImageId(out.getImageId()) > 0 ? DataConstants.NUMBER_1 : DataConstants.NUMBER_0);
 
         return out;
     }

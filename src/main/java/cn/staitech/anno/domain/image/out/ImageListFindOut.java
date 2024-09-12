@@ -100,4 +100,10 @@ public class ImageListFindOut {
     @ApiModelProperty(value = "总块数")
     private Long fuzzyCountChunk;
 
+    @ApiModelProperty(value = "文件名解析状态（0失败1成功）")
+    private Integer analyzeStatus;
+
+    @ApiModelProperty(value = "文件名解析状态名称")
+    private String analyzeStatusName;
+
 }
