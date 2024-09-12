@@ -577,7 +577,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 		categoryS.setOrganizationId(organizationId);
 		List<PathologicalIndicatorCategory> listS = selectIndicatorMessage(categoryS);
 		if (listS.size() > 0) {
-			return R.fail(MessageSource.M("CATEGORY_NAME_CHECK_EXIST"));
+			return R.fail(MessageSource.M("CATEGORY_CODE_CHECK_EXIST"));
 		}
 		categoryS.setStructureId(null);
 		categoryS.setHex(hex);
@@ -585,6 +585,15 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 		List<PathologicalIndicatorCategory> listR = selectIndicatorMessage(categoryS);
 		if (listR.size() > 0) {
 			return R.fail(MessageSource.M("COLOR_NAME_CHECK_EXIST"));
+		}
+		
+		
+		categoryS.setHex(null);
+		categoryS.setCategoryName(vo.getStructureName());
+		// 验证组织名称是否已经存在
+		List<PathologicalIndicatorCategory> listN = selectIndicatorMessage(categoryS);
+		if (listN.size() > 0) {
+			return R.fail(MessageSource.M("CATEGORY_NAME_CHECK_EXIST"));
 		}
 
 		if (categoryType == 1) {
@@ -727,7 +736,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 				}
 			}
 			if (!tag) {
-				return R.fail(MessageSource.M("CATEGORY_NAME_CHECK_EXIST"));
+				return R.fail(MessageSource.M("CATEGORY_CODE_CHECK_EXIST"));
 			}
 		}
 
@@ -739,7 +748,8 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 			//判断是否是自己的，如果非本身、不允许
 			boolean tag = true;
 			for (PathologicalIndicatorCategory categoryP : listR) {
-				if (!sourcePic.getCategoryCode().equals(categoryP.getCategoryCode())) {
+				Long categoryPId = categoryP.getCategoryId();
+				if (!category.getCategoryId().equals(categoryPId)) {
 					tag = false;
 					break;
 				}
@@ -747,6 +757,27 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 			if (!tag) {
 				return R.fail(MessageSource.M("COLOR_NAME_CHECK_EXIST"));
 			}
+		}
+		
+		
+		categoryS.setHex(null);
+		categoryS.setCategoryName(category.getStructureName());
+		// 验证组织名称是否已经存在
+		List<PathologicalIndicatorCategory> listN = selectIndicatorMessage(categoryS);
+		if (listN.size() > 0) {
+			//判断是否是自己的，如果非本身、不允许
+			boolean tag = true;
+			for (PathologicalIndicatorCategory categoryP : listN) {
+				Long categoryPId = categoryP.getCategoryId();
+				if (!category.getCategoryId().equals(categoryPId)) {
+					tag = false;
+					break;
+				}
+			}
+			if (!tag) {
+				return R.fail(MessageSource.M("CATEGORY_NAME_CHECK_EXIST"));
+			}
+			
 		}
 
 		if (categoryType == 1) {

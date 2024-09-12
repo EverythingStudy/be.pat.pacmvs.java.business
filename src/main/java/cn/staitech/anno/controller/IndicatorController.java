@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.service.IndicatorService;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.indicator.IndicatorAddVO;
 import cn.staitech.anno.vo.indicator.IndicatorGetVO;
@@ -151,5 +152,19 @@ public class IndicatorController extends BaseController {
 	@PostMapping("/save")
 	public R<String> save(@Validated @RequestBody IndicatorAddVO req) {
 		return indicatorService.insertIndicator(req);
+	}
+
+	@ApiOperation(value = "病理指标查重接口", notes = "ZMJ")
+	@GetMapping("/check")
+	public R<Integer> checkEdit(@RequestParam @ApiParam(name = "indicatorId", value = "病理指标id", required = true) Long indicatorId) {
+		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+		Indicator indicator = new Indicator();
+		indicator.setOrganizationId(organizationId);
+		indicator.setIndicatorId(indicatorId);
+		Integer num = indicatorService.selectIndicatorCountByIndicator(indicator);
+		if (0 < num) {
+			return R.fail(MessageSource.M("ALREADY_BOUND"));
+		}
+		return R.ok(1);
 	}
 }

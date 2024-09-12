@@ -284,15 +284,15 @@
         <if test="structureId != null">
             AND structure_id = #{structureId,jdbcType=VARCHAR}
         </if>
-        <if test="structureIds != null  and categoryName != ''">
+        <if test="structureIds != null  and structureIds != ''">
             AND structure_id like concat(#{structureIds}, '%')
         </if>
         <if test="organizationId != null">
             AND organization_id = #{organizationId}
         </if>
-        <if test="organizationId != null">
-            AND organization_id = #{organizationId}
-        </if>
+        <if test="categoryName != null and categoryName != ''">
+             AND  category_name = #{categoryName}
+         </if>
     </select>
 
 
