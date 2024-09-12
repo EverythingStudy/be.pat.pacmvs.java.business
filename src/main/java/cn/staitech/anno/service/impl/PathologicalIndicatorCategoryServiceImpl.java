@@ -690,6 +690,15 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 
 	@Override
 	public R<String> edit(PathologicalIndicatorCategory category) {
+		//1、根据传入的categoryId查询其他两种类型categoryId 先校验
+		CategoryStatisticsIn req = new CategoryStatisticsIn();
+		req.setCategoryId(category.getCategoryId());
+		R<Boolean> r = annoService.categoryStatistics(req);
+		boolean allowDel = r.getData();
+		if (allowDel) {
+			return R.fail(MessageSource.M("CATEGORY_NO_EDIT"));
+		}
+
 		String structureId = category.getStructureId();
 		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
 		//标签类型 0:下拉筛选标签；1:自定义标签
