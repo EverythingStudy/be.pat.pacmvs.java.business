@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javax.annotation.Resource;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -55,6 +56,10 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     @Resource
     private SpeciesMapper speciesMapper;
+
+	@Resource
+	private PathologicalIndicatorCategoryMapper pathologicalIndicatorCategoryMapper;
+
     
     @Resource
 	private StructureService structureService;
@@ -255,6 +260,19 @@ public class IndicatorServiceImpl implements IndicatorService {
         }
         return list;
     }
+
+	@Override
+	public List<PathologicalIndicatorCategory> speciesCategory(String species){
+		Indicator indicator = new Indicator();
+		indicator.setSpeciesId(species);
+		indicator.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+		List<Indicator> indicatorList = selectIndicator(indicator);
+		LambdaQueryWrapper<PathologicalIndicatorCategory> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.in(PathologicalIndicatorCategory::getIndicatorId, indicatorList).eq(PathologicalIndicatorCategory::getDelFlag,0);
+		return pathologicalIndicatorCategoryMapper.selectList(queryWrapper);
+
+	}
+
 
     @Override
     public int saveCheck(IndicatorAddVO req) {

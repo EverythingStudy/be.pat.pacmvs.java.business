@@ -3,6 +3,8 @@ package cn.staitech.anno.controller;
 import static cn.staitech.common.security.utils.SecurityUtils.isAdmin;
 import java.util.List;
 import javax.annotation.Resource;
+
+import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -131,6 +133,15 @@ public class IndicatorController extends BaseController {
 			indicator.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
 		}
 		List<Indicator> list = indicatorService.selectIndicatorInformation(indicator);
+		return R.ok(list);
+	}
+
+
+
+	@ApiOperation(value = "种属关联病理指标列表", notes = "wangfeng")
+	@GetMapping("/speciesCategory")
+	public R<List<PathologicalIndicatorCategory>> speciesCategory(@Validated @RequestParam String speciesId) {
+		List<PathologicalIndicatorCategory> list = indicatorService.speciesCategory(speciesId);
 		return R.ok(list);
 	}
 

@@ -3,6 +3,7 @@ package cn.staitech.anno.service;
 import java.util.List;
 
 import cn.staitech.anno.domain.Indicator;
+import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.indicator.IndicatorAddVO;
 import cn.staitech.anno.vo.indicator.IndicatorGetVO;
@@ -105,6 +106,8 @@ public interface IndicatorService {
      * @return 结果
      */
     List<Indicator> selectIndicatorInformation(Indicator indicator);
+
+    List<PathologicalIndicatorCategory> speciesCategory(String species);
 
     int saveCheck(IndicatorAddVO req);
     
