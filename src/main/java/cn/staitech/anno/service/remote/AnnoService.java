@@ -9,17 +9,14 @@ import cn.staitech.common.core.domain.R;
 
 /**
  * 
-* @ClassName: SysUserService
-* @Description:根据userId查询用户相关信息
+* @ClassName: AnnoService
+* @Description:根据标签查询是否被使用
 * @author wanglibei
-* @date 2024年9月4日
+* @date 2024年9月12日
 * @version V1.0
  */
-@FeignClient(value = "staitech-anno", contextId = "annoService")
+@FeignClient(value = "staitech-fr", contextId = "annoService")
 public interface AnnoService {
-    /**
-     * 通过userId获取用户信息
-     */
     
 	@PostMapping("/annotation/categoryStatistics")
     R<Boolean> categoryStatistics(@RequestBody CategoryStatisticsIn req);
