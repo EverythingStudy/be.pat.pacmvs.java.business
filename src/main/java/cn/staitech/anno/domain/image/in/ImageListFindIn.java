@@ -22,7 +22,7 @@ public class ImageListFindIn extends PageResponse {
     private Long organizationId;
 
     @ApiModelProperty("上传时间")
-    private Map<String,String> createTime;
+    private Map<String,String> createTimeParams;
 
     @ApiModelProperty("0上传中、1上传失败、2解析中、3解析失败、4可用、5不可用")
     private Integer status;

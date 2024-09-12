@@ -175,10 +175,10 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image>
     private LambdaQueryWrapper<Image> buildQueryWrapper(ImageListFindIn findIn) throws ParseException {
         LambdaQueryWrapper<Image> wrapper = new LambdaQueryWrapper<>();
         if (StringUtils.isNotEmpty(findIn.getImageName())) {
-            wrapper.eq(Image::getImageName, findIn.getImageName());
+            wrapper.like(Image::getImageName, findIn.getImageName());
         }
         if (StringUtils.isNotEmpty(findIn.getTopicName())) {
-            wrapper.eq(Image::getTopicName, findIn.getTopicName());
+            wrapper.like(Image::getTopicName, findIn.getTopicName());
         }
         if (findIn.getOrganizationId() != null) {
             wrapper.eq(Image::getOrganizationId, findIn.getOrganizationId());
@@ -186,9 +186,9 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image>
         if (findIn.getStatus() != null) {
             wrapper.eq(Image::getStatus, findIn.getStatus());
         }
-        if (findIn.getCreateTime() != null && !findIn.getCreateTime().isEmpty()) {
-            String beginTime = findIn.getCreateTime().get(DataConstants.BEGIN_TIME);
-            String endTime = findIn.getCreateTime().get(DataConstants.END_TIME);
+        if (findIn.getCreateTimeParams() != null && !findIn.getCreateTimeParams().isEmpty()) {
+            String beginTime = findIn.getCreateTimeParams().get(DataConstants.BEGIN_TIME);
+            String endTime = findIn.getCreateTimeParams().get(DataConstants.END_TIME);
             if (StringUtils.isNotEmpty(beginTime)) {
                 wrapper.ge(Image::getCreateTime, DateUtils.stringToDate(beginTime, DataConstants.TIME_FORMAT));
             }
