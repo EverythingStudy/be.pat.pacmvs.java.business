@@ -155,6 +155,18 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image>
     }
 
     /**
+     * 查询单个图像信息
+     *
+     * @param image
+     * @return
+     */
+    @Override
+    public Image selectById(Long image) {
+        return imageMapper.selectById(image);
+    }
+
+
+    /**
      * 构建查询条件的包装器
      *
      * @param findIn 查询条件输入对象
