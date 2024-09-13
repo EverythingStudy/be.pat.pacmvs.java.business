@@ -214,7 +214,7 @@ public class Image implements Serializable {
     /**
      * 蜡块号
      */
-    private String waxCode;
+    private Integer waxCode;
 
     /**
      * 组别号

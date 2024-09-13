@@ -44,7 +44,7 @@
         <result property="topicId" column="topic_id" jdbcType="BIGINT"/>
         <result property="topicName" column="topic_name" jdbcType="VARCHAR"/>
         <result property="animalCode" column="animal_code" jdbcType="VARCHAR"/>
-        <result property="waxCode" column="wax_code" jdbcType="VARCHAR"/>
+        <result property="waxCode" column="wax_code" jdbcType="INTEGER"/>
         <result property="groupCode" column="group_code" jdbcType="VARCHAR"/>
         <result property="sexFlag" column="sex_flag" jdbcType="VARCHAR"/>
         <result property="analyzeStatus" column="analyze_status" jdbcType="TINYINT"/>
