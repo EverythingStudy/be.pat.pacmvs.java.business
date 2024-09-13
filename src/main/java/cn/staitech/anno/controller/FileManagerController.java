@@ -26,9 +26,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/filemanager")
 public class FileManagerController {
     /**
-     * 根目录 /home/pat_saas/Data、Slides、Upload
+     * 根目录 /home/pacmvs/Data、Slides、Upload
      */
-    private final String baseDir = "/home/pat_saas";
+    private final String baseDir = "/home/pacmvs";
 
     /**
      * 查询目录下的文件夹和文件列表

@@ -33,11 +33,11 @@ public class FilePathController {
 
         if (req.getFlag() == 1) {
             String fourNumber = StatisticListUtils.getFourNumberNoSlide(req.getOrganizationId());
-            String replace = slidePath.replace("/home/pat_saas", "/home/pat_saas/" + fourNumber);
+            String replace = slidePath.replace("/home/pacmvs", "/home/pacmvs/" + fourNumber);
             return R.ok(replace);
         } else {
             String fourNumber = StatisticListUtils.getFourNumberNoSlide(req.getOrganizationId());
-            String replace = uploadPath.replace("/home/pat_saas", "/home/pat_saas/" + fourNumber);
+            String replace = uploadPath.replace("/home/pacmvs", "/home/pacmvs/" + fourNumber);
             return R.ok(replace);
         }
 
