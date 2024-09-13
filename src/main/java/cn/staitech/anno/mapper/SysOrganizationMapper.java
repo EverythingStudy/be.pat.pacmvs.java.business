@@ -18,13 +18,4 @@ public interface SysOrganizationMapper {
      */
     List<OrganizationIdName> selectIdNameList();
 
-    /**
-     * ai拼接
-     * */
-    SysConfigOut aiMontage(String key);
-
-    /**
-     * 更新ai拼接
-     * */
-    int updateAiMontage(SysConfigOut sysConfigOut);
 }

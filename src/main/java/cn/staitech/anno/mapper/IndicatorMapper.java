@@ -1,20 +1,17 @@
 package cn.staitech.anno.mapper;
 
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.vo.indicator.IndicatorGetVO;
 import cn.staitech.anno.vo.indicator.IndicatorReviseVO;
-import cn.staitech.anno.vo.project.InsertProjectVO;
-import cn.staitech.anno.vo.statistic.StatisticIndicatorListInVO;
-import cn.staitech.anno.vo.statistic.StatisticIndicatorListOutVO;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface IndicatorMapper {
 
 
-    Long addIndicatorsName(InsertProjectVO req);
 
     /**
      * 查询单个指标信息
@@ -58,13 +55,6 @@ public interface IndicatorMapper {
      */
     int delIndicator(Long indicatorId);
 
-    /**
-     * 查询指标列表
-     *
-     * @param projectIdList 项目ID数组
-     * @return 结果
-     */
-    List<StatisticIndicatorListOutVO> selectIndicatorStatisticList(StatisticIndicatorListInVO projectIdList);
 
     /**
      * 查询指标列表

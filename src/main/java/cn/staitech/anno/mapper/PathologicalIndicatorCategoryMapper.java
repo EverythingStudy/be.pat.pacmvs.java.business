@@ -1,18 +1,16 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.PathologicalIndicatorCategory;
-import cn.staitech.anno.project.domain.Project;
-import cn.staitech.anno.vo.annotation.LabelListVO;
-import cn.staitech.anno.vo.annotation.LabelVO;
-import cn.staitech.anno.vo.geojson.GeoLabel;
-import cn.staitech.anno.vo.indicator.PathologicalIndicatorCategoryOutVO;
-import cn.staitech.anno.vo.statistic.StatisticCategoryListInVO;
-import cn.staitech.anno.vo.statistic.StatisticCategoryListOutVO;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
 import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import cn.staitech.anno.domain.PathologicalIndicatorCategory;
+import cn.staitech.anno.vo.annotation.LabelListVO;
+import cn.staitech.anno.vo.annotation.LabelVO;
+import cn.staitech.anno.vo.indicator.PathologicalIndicatorCategoryOutVO;
 
 public interface PathologicalIndicatorCategoryMapper extends BaseMapper<PathologicalIndicatorCategory> {
 
@@ -64,17 +62,8 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
      */
     List<PathologicalIndicatorCategory> selectIndicatorIdAll(Long indicatorId);
 
-    /**
-     * 根据病理指标id获取列表
-     *
-     * @param indicatorId
-     * @return
-     */
-    List<GeoLabel> selectIndicatorIdList(Long indicatorId);
 
-    List<PathologicalIndicatorCategoryOutVO> selectIndicatorList(Project project);
 
-    GeoLabel selectGeoLabel(Long categoryId);
 
     /**
      * 根据病理指标id删除标注类别
@@ -93,8 +82,6 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
      * @param indicatorProjectIdList 病例指标id列表、项目id列表
      * @return 标注集合
      */
-    List<StatisticCategoryListOutVO> selectAnnotationCategoryStatisticList(
-            StatisticCategoryListInVO indicatorProjectIdList);
 
     /**
      * 条件查询标注类别
@@ -113,21 +100,7 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
      */
     List<PathologicalIndicatorCategory> selectIndicatorMessageForUpdate(PathologicalIndicatorCategory Pathological);
 
-    /**
-     * 通过项目id统计标注类别
-     *
-     * @param projectId
-     * @return
-     */
-    List<StatisticCategoryListOutVO> selectByProjectId(Long projectId);
 
-    /**
-     * 通过项目ID查询标注类别
-     *
-     * @param projectId 项目ID
-     * @return 标注类别列表
-     */
-    List<PathologicalIndicatorCategory> selectCategoryByProjectId(Long projectId);
 
     /**
      * 查询病例指标下的标注类别数量
@@ -139,10 +112,6 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
      */
     List<PathologicalIndicatorCategory> selectProjectCategory(Long projectId);
 
-    /**
-     * 根据indicatorId查询标注类别（不包含unLabel）
-     */
-    List<LabelListVO> selectByIndicator(LabelVO labelVO);
 
     /**
      * 查询所有指标（除标注区域外）
@@ -164,4 +133,9 @@ public interface PathologicalIndicatorCategoryMapper extends BaseMapper<Patholog
     PathologicalIndicatorCategory selectProjectAndNumber(@Param("projectId") Long projectId, @Param("number") String number, @Param("organizationId") Long organizationId);
 
     String selectCategoryById(@Param("split") String[] split);
+    
+    /**
+     * 根据indicatorId查询标注类别（不包含unLabel）
+     */
+    List<LabelListVO> selectByIndicator(LabelVO labelVO);
 }

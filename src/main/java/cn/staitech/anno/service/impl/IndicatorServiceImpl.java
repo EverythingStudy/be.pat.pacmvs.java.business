@@ -1,30 +1,43 @@
 package cn.staitech.anno.service.impl;
 
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Resource;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.github.pagehelper.PageHelper;
+
 import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.Organ;
+import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.domain.Species;
 import cn.staitech.anno.mapper.IndicatorMapper;
 import cn.staitech.anno.mapper.OrganMapper;
+import cn.staitech.anno.mapper.PathologicalIndicatorCategoryMapper;
 import cn.staitech.anno.mapper.SpeciesMapper;
 import cn.staitech.anno.service.IndicatorService;
-import cn.staitech.anno.service.PathologicalIndicatorCategoryService;
+import cn.staitech.anno.service.OrganService;
+import cn.staitech.anno.service.StructureService;
 import cn.staitech.anno.utils.LanguageUtils;
+import cn.staitech.anno.utils.MessageSource;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.indicator.IndicatorAddVO;
 import cn.staitech.anno.vo.indicator.IndicatorGetVO;
 import cn.staitech.anno.vo.indicator.IndicatorReviseVO;
-import cn.staitech.anno.vo.statistic.StatisticIndicatorListInVO;
-import cn.staitech.anno.vo.statistic.StatisticIndicatorListOutVO;
+import cn.staitech.anno.vo.indicator.IndicatorVO;
+import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.github.pagehelper.PageHelper;
+import cn.staitech.system.api.domain.SysUser;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @author wangf
@@ -34,14 +47,25 @@ import java.util.List;
 public class IndicatorServiceImpl implements IndicatorService {
     @Resource
     private IndicatorMapper indicatorMapper;
+    
     @Resource
-    private PathologicalIndicatorCategoryService pathologicalIndicatorCategoryService;
+    private PathologicalIndicatorCategoryMapper categoryMapper;
 
     @Resource
     private OrganMapper organMapper;
 
     @Resource
     private SpeciesMapper speciesMapper;
+
+	@Resource
+	private PathologicalIndicatorCategoryMapper pathologicalIndicatorCategoryMapper;
+
+    
+    @Resource
+	private StructureService structureService;
+    
+    @Resource
+	private OrganService organService;
 
     /**
      * 添加病例指标
@@ -50,8 +74,49 @@ public class IndicatorServiceImpl implements IndicatorService {
      * @return 结果
      */
     @Override
-    public int insertIndicator(Indicator indicator) {
-        return indicatorMapper.insertIndicator(indicator);
+    public R<String> insertIndicator(IndicatorAddVO req) {
+    	SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
+    	Long organizationId = sysUser.getOrganizationId();
+    	int saveCheck = saveCheck(req);
+    	if (saveCheck != 0) {
+    		if (saveCheck == 1) {
+    			return R.fail(MessageSource.M("INSERTSPECIESVO.NAME.EXIST"));
+    		} else if (saveCheck == 2) {
+    			return R.fail(MessageSource.M("INSERTSPECIESVO.SPECIESID.EXIST"));
+    		} else if (saveCheck == 3) {
+    			return R.fail(MessageSource.M("InsertOrganVO.NAME.EXIST"));
+    		} else if (saveCheck == 4) {
+    			return R.fail(MessageSource.M("InsertOrganVO.ORGANID.EXIST"));
+    		}
+    	}
+    	Indicator indicator = new Indicator();
+    	indicator.setSpeciesId(req.getSpeciesId());
+    	indicator.setOrganId(req.getOrganId());
+    	indicator.setOrganizationId(organizationId);
+    	indicator.setDelFlag(0);
+    	// 查询结构指标是否存在
+    	List<Indicator> indicatorList = selectIndicator(indicator);
+    	if (!indicatorList.isEmpty()) {
+    		return R.fail(MessageSource.M("INDICATOR_EXIST"));
+    	}
+
+    	String indicatorName = MapConstant.getOrgan(organizationId + req.getSpeciesId() + req.getOrganId());
+    	if (StringUtils.isEmpty(indicatorName)) {
+    		indicatorName = req.getOrganName();
+    	}
+    	indicator.setIndicatorName(indicatorName);
+    	String indicatorNameEn = MapConstant.getOrganEn(organizationId + req.getSpeciesId() + req.getOrganId());
+    	if (StringUtils.isEmpty(indicatorNameEn)) {
+    		indicatorNameEn = req.getOrganName();
+    	}
+    	indicator.setIndicatorNameEn(indicatorNameEn);
+    	indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
+    	indicator.setCreateBy(sysUser.getUserId());
+    	indicator.setOrganizationId(organizationId);
+    	//添加结构指标
+//    	indicatorService.insertIndicator(indicator);
+    	indicatorMapper.insertIndicator(indicator);
+    	return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
 
     /**
@@ -75,7 +140,7 @@ public class IndicatorServiceImpl implements IndicatorService {
                 obj.setOrganName(MapConstant.getOrgan(obj.getOrganizationId().toString() + obj.getSpeciesId() + obj.getOrganId()));
             }
             // 查询总数
-            obj.setAnnotationCategoryTotal(pathologicalIndicatorCategoryService.selectCategoryNumber(obj.getIndicatorId()));
+            obj.setAnnotationCategoryTotal(categoryMapper.selectCategoryNumber(obj.getIndicatorId()));
         }
         return list;
     }
@@ -140,19 +205,6 @@ public class IndicatorServiceImpl implements IndicatorService {
         return indicatorMapper.delIndicator(indicatorId);
     }
 
-    /**
-     * 展示指定的统计病例指标列表
-     *
-     * @param projectIdList 项目ID数组
-     * @return 结果
-     */
-    @Override
-    public List<StatisticIndicatorListOutVO> selectIndicatorStatisticList(StatisticIndicatorListInVO projectIdList) {
-        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId())) {
-            projectIdList.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
-        }
-        return indicatorMapper.selectIndicatorStatisticList(projectIdList);
-    }
 
     /**
      * 查询指标列表
@@ -162,7 +214,7 @@ public class IndicatorServiceImpl implements IndicatorService {
      */
     @Override
     public List<Indicator> selectIndicator(Indicator indicator) {
-        return indicatorMapper.selectIndicator(indicator);
+    	return indicatorMapper.selectIndicator(indicator);
     }
 
     /**
@@ -209,6 +261,19 @@ public class IndicatorServiceImpl implements IndicatorService {
         return list;
     }
 
+	@Override
+	public List<PathologicalIndicatorCategory> speciesCategory(String species){
+		Indicator indicator = new Indicator();
+		indicator.setSpeciesId(species);
+		indicator.setOrganizationId(SecurityUtils.getLoginUser().getSysUser().getOrganizationId());
+		List<Indicator> indicatorList = selectIndicator(indicator);
+		LambdaQueryWrapper<PathologicalIndicatorCategory> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.in(PathologicalIndicatorCategory::getIndicatorId, indicatorList).eq(PathologicalIndicatorCategory::getDelFlag,0);
+		return pathologicalIndicatorCategoryMapper.selectList(queryWrapper);
+
+	}
+
+
     @Override
     public int saveCheck(IndicatorAddVO req) {
         int checkTag = 0;
@@ -248,4 +313,138 @@ public class IndicatorServiceImpl implements IndicatorService {
     public Integer selectIndicatorCountByIndicator(Indicator indicator) {
         return indicatorMapper.selectIndicatorCountByIndicator(indicator);
     }
+
+	@Override
+	public R<IndicatorVO> getInfo(Long indicatorId) {
+		// 获取病理信息
+		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+		Indicator indicatorQuery = new Indicator();
+		indicatorQuery.setOrganizationId(organizationId);
+		indicatorQuery.setIndicatorId(indicatorId);
+		indicatorQuery.setDelFlag(0);
+		List<Indicator> list = selectIndicator(indicatorQuery);
+		IndicatorVO indicatorVo = new IndicatorVO();
+		if (CollectionUtils.isNotEmpty(list)) {
+			Indicator indicator = list.get(0);
+			if (indicator != null) {
+				// 浅拷贝
+				BeanUtils.copyProperties(indicator, indicatorVo);
+			}
+			//添加关联项目
+			//indicatorVo.setProjectVo(projectService.selectProjectInfo(indicatorId));
+		}
+		return R.ok(indicatorVo);
+	}
+
+	@Override
+	public R<Integer> edit(IndicatorReviseVO req) {
+		// 和专题绑定的不能修改
+		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+		Indicator indicatorOld = selectIndicatorsById(req.getIndicatorId().longValue());
+		Indicator indicatorQuery = new Indicator();
+		indicatorQuery.setOrganizationId(organizationId);
+		indicatorQuery.setSpeciesId(indicatorOld.getSpeciesId());
+		Integer num = selectIndicatorCountByIndicator(indicatorQuery);
+		if (num > 0) {
+			return R.fail(MessageSource.M("ALREADY_BOUND"));
+		}
+
+		//标签类型 0:下拉筛选标签；1:自定义标签
+		Integer indicatorType = req.getIndicatorType();
+		if (null == indicatorType) {
+			indicatorType = 0;
+		}
+
+		Indicator indicator = new Indicator();
+		indicator.setSpeciesId(req.getSpeciesId());
+		indicator.setOrganId(req.getOrganId());
+		indicator.setOrganizationId(organizationId);
+		indicator.setDelFlag(0);
+		// 查询结构指标是否存在
+		List<Indicator> indicatorList = selectIndicator(indicator);
+		if (CollectionUtils.isNotEmpty(indicatorList)) {
+			return R.fail(MessageSource.M("InsertOrganVO.ORGANID.EXIST"));
+		}
+
+		if (indicatorType == 1) {
+			//校验脏器名称是否已经重复
+			QueryWrapper<Organ> queryNameWrapper = new QueryWrapper<>();
+			queryNameWrapper.eq("name", req.getOrganName());
+			queryNameWrapper.eq("species_code", indicatorOld.getSpeciesId());
+			queryNameWrapper.eq("organization_id", organizationId);
+			List<Organ> nameList = organMapper.selectList(queryNameWrapper);
+			if (CollectionUtils.isNotEmpty(nameList)) {
+				for(Organ organ:nameList) {
+					String organCode = organ.getOrganId();
+					if(!indicatorOld.getOrganId().equals(organCode)) {
+						return R.fail(MessageSource.M("InsertOrganVO.NAME.EXIST"));
+					}
+				}
+			}
+
+			Organ o1 = nameList.get(0);
+            UpdateWrapper<Organ> updateWrapper = new UpdateWrapper();
+            updateWrapper.eq("organ_id", o1.getOrganId());
+            updateWrapper.eq("species_code", o1.getSpeciesCode());
+            updateWrapper.eq("organization_id", organizationId);
+            updateWrapper.set("name", req.getOrganName());
+            updateWrapper.set("name_en", req.getOrganName());
+            organMapper.update(null, updateWrapper);
+
+			MapConstant.ORGAN_MAP = organService.selectMap();
+			MapConstant.ORGAN_MAP_EN = organService.selectMapEn();
+			MapConstant.STRUCTURE_MAP = structureService.selectMap();
+			MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
+		}
+
+		if (indicatorType == 0) {
+			indicator.setIndicatorName(MapConstant.getOrgan(organizationId + req.getSpeciesId() + req.getOrganId()));
+			indicator.setIndicatorNameEn(MapConstant.getOrganEn(organizationId + req.getSpeciesId() + req.getOrganId()));
+		} else {
+			req.setIndicatorName(req.getOrganName());
+		}
+		req.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
+		// 修改病理指标
+		updateIndicator(req);
+		return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+	}
+
+	@Override
+	public R<String> delIndicator(IndicatorGetVO req) {
+		if (!Optional.ofNullable(req.getIndicatorId()).isPresent()) {
+			return R.fail(MessageSource.M("INDICATOR_ID_NOTNULL"));
+		}
+		Indicator indicatorOld = selectIndicatorsById(req.getIndicatorId().longValue());
+		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
+		Indicator indicatorQuery = new Indicator();
+		indicatorQuery.setOrganizationId(organizationId);
+		indicatorQuery.setSpeciesId(indicatorOld.getSpeciesId());
+		Integer num = selectIndicatorCountByIndicator(indicatorQuery);
+		if (num > 0) {
+			return R.fail(MessageSource.M("ALREADY_BOUND_NO_DEL"));
+		}
+		//删除标注类别
+		PathologicalIndicatorCategory Pathological = PathologicalIndicatorCategory.builder().indicatorId(req.getIndicatorId().longValue()).organizationId(organizationId).delFlag(1).build();
+		categoryMapper.updateByPrimaryKeySelective(Pathological);
+		//标签类型 0:下拉筛选标签；1:自定义标签
+		if(null != indicatorOld && indicatorOld.getIndicatorType() == 1){
+			//脏器id
+			String organId = indicatorOld.getOrganId();
+			//机构id
+			Long baseOrganizationId = indicatorOld.getOrganizationId();
+			//种属
+			String speciesCode = indicatorOld.getSpeciesId();
+			//删除脏器
+			QueryWrapper<Organ> removeQueryWrapper = new QueryWrapper<>();
+			removeQueryWrapper.eq("organ_id", organId).eq("organization_id", baseOrganizationId).eq("species_code", speciesCode);
+			organService.remove(removeQueryWrapper);
+		}
+		//删除病理指标
+		delIndicator(req.getIndicatorId().longValue());
+		MapConstant.ORGAN_MAP = organService.selectMap();
+		MapConstant.ORGAN_MAP_EN = organService.selectMapEn();
+		MapConstant.STRUCTURE_MAP = structureService.selectMap();
+		MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
+		return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+	}
 }

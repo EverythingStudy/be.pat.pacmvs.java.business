@@ -19,14 +19,4 @@ public interface SysOrganizationService {
      */
     Map<Long, String> selectMap();
 
-
-    /**
-     * ai拼接
-     * */
-    SysConfigOut aiMontage(String key);
-
-    /**
-     * 更新ai拼接
-     * */
-    int updateAiMontage(SysConfigOut sysConfigOut);
 }

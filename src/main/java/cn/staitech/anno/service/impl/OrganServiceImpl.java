@@ -5,6 +5,7 @@ import cn.staitech.anno.config.MapConstant;
 import cn.staitech.anno.domain.Indicator;
 import cn.staitech.anno.domain.Organ;
 import cn.staitech.anno.domain.Structure;
+import cn.staitech.anno.mapper.IndicatorMapper;
 import cn.staitech.anno.mapper.OrganMapper;
 import cn.staitech.anno.service.IndicatorService;
 import cn.staitech.anno.service.OrganService;
@@ -43,8 +44,7 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
     private StructureService structureService;
 
     @Resource
-    private IndicatorService indicatorService;
-
+    private IndicatorMapper indicatorMapper;
 
     @Override
     public Map<String, String> selectMap() {
@@ -140,7 +140,7 @@ class OrganServiceImpl extends ServiceImpl<OrganMapper, Organ> implements OrganS
         indicator.setDelFlag(0);
         indicator.setCreateBy(SecurityUtils.getUserId());
         indicator.setCreateTime(DateUtil.date());
-        indicatorService.insertIndicator(indicator);
+        indicatorMapper.insertIndicator(indicator);
     }
 
     private void addStructure(Organ organ) {

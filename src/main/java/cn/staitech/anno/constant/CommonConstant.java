@@ -165,4 +165,14 @@ public class CommonConstant {
 
     public static final String[] PROJECT_IN_STATISTICS_VALUE = {"imageName", "nickName", "categoryName", "markingNum", "statusName"};
 
+    /**
+     * 吸管处理
+     */
+    public static final String STRAW_DRAW_SUCCESS = "strawDrawSuccess";
+    
+    public static final String STRAW_DRAW_RUN = "straw_draw_run";
+    
+    public static final String STRAW_SUCCESS = "straw_success";
+    
+    
 }

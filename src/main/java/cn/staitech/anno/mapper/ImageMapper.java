@@ -1,90 +1,19 @@
 package cn.staitech.anno.mapper;
 
-import cn.staitech.anno.domain.Image;
-import cn.staitech.anno.vo.image.in.ImageTopicBatchIdsVO;
+import cn.staitech.anno.domain.image.Image;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-import java.util.List;
-
 /**
- * 切片表（原图像表）数据层
- *
- * @author staitech
+ * @author lif
+ * @description 针对表【tb_image】的数据库操作Mapper
+ * @createDate 2024-09-10 10:21:48
+ * @Entity cn.staitech.anno.domain/image.Image
  */
 public interface ImageMapper extends BaseMapper<Image> {
 
-    /**
-     * 查询切片列表
-     *
-     * @param image
-     * @return
-     */
-    List<Image> selectListSlfe(Image image);
-
-    /**
-     * 查询未添加切片列表
-     *
-     * @param image
-     * @return
-     */
-    List<Image> selectNotChoicedList(Image image);
-
-    /**
-     * 查询已添加切片列表
-     *
-     * @param image
-     * @return
-     */
-    List<Image> selectChoicedList(Image image);
-
-
-    /**
-     * 查询单个切片信息
-     *
-     * @param imageId
-     * @return
-     */
-    Image selectById(Long imageId);
-
-    /**
-     * 通过图片ID查询切片
-     *
-     * @param imageId
-     * @return
-     */
-    Integer selectSlideCountByImageId(Long imageId);
-
     Integer selectFrSlideCountByImageId(Long imageId);
-
-    /**
-     * 标注组选片入口预览图像列表
-     *
-     * @param image
-     * @return
-     */
-    List<Image> selectImageChooseList(Image image);
-
-    /**
-     * 标注组选片入口传输图像
-     *
-     * @param imageIdList
-     * @return
-     */
-    int updateBatchIds(ImageTopicBatchIdsVO imageIdList);
-
-    /**
-     * 标注组图像列表
-     *
-     * @param image
-     * @return
-     */
-    List<Image> selectImageAnnotationList(Image image);
-
-    /**
-     * 运维图像删除
-     *
-     * @param imageId
-     * @return
-     */
-    int deleteById(Long imageId);
 }
+
+
+
+

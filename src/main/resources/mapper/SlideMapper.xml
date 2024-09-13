@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.anno.mapper.SlideMapper">
+    <resultMap id="BaseResultMap" type="cn.staitech.anno.domain.Slide">
+        <id column="slide_id" jdbcType="BIGINT" property="slideId"/>
+        <result column="project_id" jdbcType="INTEGER" property="projectId"/>
+        <result column="image_id" jdbcType="INTEGER" property="imageId"/>
+        <result column="human_annotation_total" jdbcType="INTEGER" property="humanAnnotationTotal"/>
+        <result column="algorithm_annotation_total" jdbcType="INTEGER" property="algorithmAnnotationTotal"/>
+        <result column="examination_slide_total" jdbcType="INTEGER" property="examinationSlideTotal"/>
+        <result column="process_flag" jdbcType="SMALLINT" property="processFlag"/>
+        <result column="examination_flag" jdbcType="SMALLINT" property="examinationFlag"/>
+        <result column="create_by" jdbcType="BIGINT" property="createBy"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_by" jdbcType="BIGINT" property="updateBy"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="group_id" jdbcType="INTEGER" property="groupId"/>
+        <result column="is_delete" jdbcType="INTEGER" property="isDelete"/>
+        <result column="ai_check" jdbcType="SMALLINT" property="aiCheck"/>
+        <result column="ai_analyzed" jdbcType="SMALLINT" property="aiAnalyzed"/>
+        <result column="geojson_url" jdbcType="VARCHAR" property="geojsonUrl"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="round_id" jdbcType="BIGINT" property="roundId"/>
+        <result column="review_round_id" jdbcType="BIGINT" property="reviewRoundId"/>
+        <result column="topic_id" jdbcType="BIGINT" property="topicId"/>
+        <result column="image_csv_id" jdbcType="BIGINT" property="imageCsvId"/>
+        <result column="group_name" jdbcType="VARCHAR" property="groupName"/>
+        <result column="gender" jdbcType="VARCHAR" property="gender"/>
+        <result column="species" jdbcType="VARCHAR" property="species"/>
+        <result column="product_series" jdbcType="VARCHAR" property="productSeries"/>
+        <result column="dosage" jdbcType="VARCHAR" property="dosage"/>
+        <result column="animal_source" jdbcType="VARCHAR" property="animalSource"/>
+        <result column="receiving_week" jdbcType="VARCHAR" property="receivingWeek"/>
+        <result column="dosing_cycle" jdbcType="VARCHAR" property="dosingCycle"/>
+        <result column="recovery_cycle" jdbcType="VARCHAR" property="recoveryCycle"/>
+        <result column="date_of_death" jdbcType="VARCHAR" property="dateOfDeath"/>
+        <result column="remove_reason" jdbcType="VARCHAR" property="removeReason"/>
+        <result column="organ" jdbcType="VARCHAR" property="organ"/>
+        <result column="lesion_type1" jdbcType="VARCHAR" property="lesionType1"/>
+        <result column="lesion_degree1" jdbcType="VARCHAR" property="lesionDegree1"/>
+        <result column="lesion_type2" jdbcType="VARCHAR" property="lesionType2"/>
+        <result column="lesion_degree2" jdbcType="VARCHAR" property="lesionDegree2"/>
+        <result column="topic_name" jdbcType="VARCHAR" property="topicName"/>
+        <result column="delete_flag" jdbcType="TINYINT" property="deleteFlag"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="host_id" jdbcType="TINYINT" property="hostId"/>
+        <result column="if_create_questions" jdbcType="VARCHAR" property="ifCreateQuestions"/>
+        <result column="prediction_image_id" jdbcType="BIGINT" property="predictionImageId"/>
+        <result column="folder_id" jdbcType="BIGINT" property="folderId"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        slide_id
+        ,
+        project_id,
+        image_id,
+        human_annotation_total,
+        algorithm_annotation_total,
+        examination_slide_total,
+        process_flag,
+        examination_flag,
+        create_by,
+        create_time,
+        update_by,
+        update_time,
+        description,
+        group_id,
+        is_delete,
+        ai_check,
+        ai_analyzed,
+        geojson_url,
+        remark,
+        `status`,
+        round_id,
+        review_round_id,
+        topic_id,
+        image_csv_id,
+        group_name,
+        gender,
+        species,
+        product_series,
+        dosage,
+        animal_source,
+        receiving_week,
+        dosing_cycle,
+        recovery_cycle,
+        date_of_death,
+        remove_reason,
+        organ,
+        lesion_type1,
+        lesion_degree1,
+        lesion_type2,
+        lesion_degree2,
+        topic_name,
+        delete_flag,
+        organization_id,
+        prediction_image_id,
+        host_id
+    </sql>
+
+    <resultMap type="cn.staitech.anno.domain.Slide" id="SlideResult">
+        <result property="slideId" column="slide_id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="imageId" column="image_id"/>
+        <result property="humanAnnotationTotal" column="human_annotation_total"/>
+        <result property="algorithmAnnotationTotal" column="algorithm_annotation_total"/>
+        <result property="examinationSlideTotal" column="examination_slide_total"/>
+        <result property="processFlag" column="process_flag"/>
+        <result property="examinationFlag" column="examination_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+
+    <!-- 根据项目ID、图片ID、reviewRoundId查询切片 -->
+    <select id="selectImageExist" parameterType="cn.staitech.anno.domain.Slide" resultMap="SlideResult">
+        select *
+        from tb_slide
+        <where>
+            <if test="projectId != null and projectId != ''">
+                AND project_id = #{projectId}
+            </if>
+            <if test="imageId != null and imageId != ''">
+                AND image_id = #{imageId}
+            </if>
+            <if test="reviewRoundId != null">
+                AND review_round_id = #{reviewRoundId}
+            </if>
+        </where>
+    </select>
+
+</mapper>

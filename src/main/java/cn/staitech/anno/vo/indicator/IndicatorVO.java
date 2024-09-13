@@ -1,6 +1,5 @@
 package cn.staitech.anno.vo.indicator;
 
-import cn.staitech.anno.domain.Project;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -27,8 +26,8 @@ public class IndicatorVO {
     private Integer isDeleted;
     @ApiModelProperty(value = "创建者")
     private String createBy;
-    @ApiModelProperty(value = "关联的项目")
-    private List<Project> projectVo;
+//    @ApiModelProperty(value = "关联的项目")
+//    private List<Project> projectVo;
     @ApiModelProperty(value = "标签类型 0:下拉筛选标签；1:自定义标签")
     private Integer indicatorType;
 }

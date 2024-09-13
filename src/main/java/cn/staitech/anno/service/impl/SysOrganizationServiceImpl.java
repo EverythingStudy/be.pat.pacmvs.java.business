@@ -32,23 +32,4 @@ public class SysOrganizationServiceImpl implements SysOrganizationService {
                 .collect(Collectors.toMap(OrganizationIdName::getOrganizationId, OrganizationIdName::getOrganizationName));
         return map;
     }
-
-
-    /**
-     * ai拼接
-     * */
-    @Override
-    public SysConfigOut aiMontage(String key){
-        return organizationMapper.aiMontage(key);
-    }
-
-
-    /**
-     * 更新ai拼接
-     * */
-    @Override
-    public int updateAiMontage(SysConfigOut sysConfigOut){
-        sysConfigOut.setUpdateBy(SecurityUtils.getUserId());
-        return organizationMapper.updateAiMontage(sysConfigOut);
-    }
 }

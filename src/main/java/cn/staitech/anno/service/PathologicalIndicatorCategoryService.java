@@ -1,14 +1,14 @@
 package cn.staitech.anno.service;
 
-import cn.staitech.anno.domain.PathologicalIndicatorCategory;
-import cn.staitech.anno.vo.annotation.LabelListVO;
-import cn.staitech.anno.vo.annotation.LabelVO;
-import cn.staitech.anno.vo.indicator.PathologicalIndicatorCategoryOutVO;
-import cn.staitech.anno.vo.statistic.StatisticCategoryListInVO;
-import cn.staitech.anno.vo.statistic.StatisticCategoryListOutVO;
-
 import java.text.ParseException;
 import java.util.List;
+
+import cn.staitech.anno.domain.PathologicalIndicatorCategory;
+import cn.staitech.anno.vo.annotation.CategoryVO;
+import cn.staitech.anno.vo.annotation.LabelListVO;
+import cn.staitech.anno.vo.annotation.LabelVO;
+import cn.staitech.anno.vo.indicator.PathologicalIndicatorCategoryVO;
+import cn.staitech.common.core.domain.R;
 
 
 public interface PathologicalIndicatorCategoryService {
@@ -70,13 +70,6 @@ public interface PathologicalIndicatorCategoryService {
 
     PathologicalIndicatorCategory selectCategoryAll(Long CategoryId);
 
-    /**
-     * 获取标注类别统计列表
-     *
-     * @param indicatorProjectIdList 病例指标id列表、项目id列表
-     * @return 结果
-     */
-    List<StatisticCategoryListOutVO> selectAnnotationCategoryStatisticList(StatisticCategoryListInVO indicatorProjectIdList);
 
     /**
      * 条件查询标注类别
@@ -95,21 +88,7 @@ public interface PathologicalIndicatorCategoryService {
      */
     List<PathologicalIndicatorCategory> selectIndicatorMessageForUpdate(PathologicalIndicatorCategory Pathological);
 
-    /**
-     * 通过项目id统计标注类别
-     *
-     * @param projectId
-     * @return
-     */
-    List<StatisticCategoryListOutVO> selectByProjectId(Long projectId);
 
-    /**
-     * 通过项目ID查询标注类别
-     *
-     * @param projectId 项目ID
-     * @return 标注类别列表
-     */
-    List<PathologicalIndicatorCategory> selectCategoryByProjectId(Long projectId);
 
     /**
      * 查询病例指标下的标注类别数量
@@ -120,20 +99,15 @@ public interface PathologicalIndicatorCategoryService {
      * 根据projectId查询标注类别
      */
     List<PathologicalIndicatorCategory> selectProjectCategory(Long projectId);
-
+    
+    
     /**
      * 根据indicatorId查询标注类别（不包含unLabel）
      */
     List<LabelListVO> selectByIndicator(LabelVO labelVO);
 
-    /**
-     * 根据项目id查询标签列表
-     *
-     * @param projectId 项目id
-     */
-    List<PathologicalIndicatorCategoryOutVO> selectprojectList(Long projectId);
 
-    List<PathologicalIndicatorCategoryOutVO> selectProjectListFilter(Long projectId);
+
 
     /**
      * 查询标签所属脏器系统内已有标签数量
@@ -141,4 +115,9 @@ public interface PathologicalIndicatorCategoryService {
     Integer selectLabelNumByStructureId(String structureId);
 
     void handlerCouponsUserStatusTimeOutToExpired(List<Long> list) throws ParseException;
+    
+    R<String> add(PathologicalIndicatorCategoryVO vo);
+    R<String> edit(PathologicalIndicatorCategory vo);
+    R<String> del(CategoryVO categoryVO);
+    R<PathologicalIndicatorCategory> getInfo(Long categoryId);
 }

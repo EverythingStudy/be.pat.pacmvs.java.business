@@ -1,14 +1,15 @@
 package cn.staitech.anno.service;
 
+import java.util.List;
+
 import cn.staitech.anno.domain.Indicator;
+import cn.staitech.anno.domain.PathologicalIndicatorCategory;
 import cn.staitech.anno.utils.PageMaster;
 import cn.staitech.anno.vo.indicator.IndicatorAddVO;
 import cn.staitech.anno.vo.indicator.IndicatorGetVO;
 import cn.staitech.anno.vo.indicator.IndicatorReviseVO;
-import cn.staitech.anno.vo.statistic.StatisticIndicatorListInVO;
-import cn.staitech.anno.vo.statistic.StatisticIndicatorListOutVO;
-
-import java.util.List;
+import cn.staitech.anno.vo.indicator.IndicatorVO;
+import cn.staitech.common.core.domain.R;
 
 public interface IndicatorService {
 
@@ -18,7 +19,7 @@ public interface IndicatorService {
      * @param indicator 添加的字段信息
      * @return 结果
      */
-    int insertIndicator(Indicator indicator);
+	R<String> insertIndicator(IndicatorAddVO indicator);
 
     /**
      * 展示病例指标
@@ -61,13 +62,6 @@ public interface IndicatorService {
      */
     int delIndicator(Long indicatorId);
 
-    /**
-     * 展示指定的统计病例指标列表
-     *
-     * @param projectIdList 项目ID数组
-     * @return 结果
-     */
-    List<StatisticIndicatorListOutVO> selectIndicatorStatisticList(StatisticIndicatorListInVO projectIdList);
 
 
     /**
@@ -77,6 +71,8 @@ public interface IndicatorService {
      * @return 结果
      */
     List<Indicator> selectIndicator(Indicator indicator);
+    
+    R<IndicatorVO> getInfo(Long indicatorId);
 
     /**
      * 根据病理id和名字查询信息
@@ -111,6 +107,12 @@ public interface IndicatorService {
      */
     List<Indicator> selectIndicatorInformation(Indicator indicator);
 
+    List<PathologicalIndicatorCategory> speciesCategory(String species);
+
     int saveCheck(IndicatorAddVO req);
+    
+    R<Integer> edit(IndicatorReviseVO req);
+    
+    R<String> delIndicator(IndicatorGetVO req);
 
 }
