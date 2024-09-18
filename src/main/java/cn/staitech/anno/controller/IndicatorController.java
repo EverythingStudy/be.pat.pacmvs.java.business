@@ -56,7 +56,7 @@ public class IndicatorController extends BaseController {
 	@SneakyThrows
 	@RequiresPermissions(value = {"project:pathology:define", "project:pathology:add"}, logical = Logical.OR)
 	@ApiOperation(value = "添加结构指标", notes = "wangfeng")
-	@Log(title = "添加结构指标", menu = "结构指标", subMenu = "结构指标", businessType = BusinessType.INSERT)
+	@Log(title = "添加结构指标", menu = "标签管理", subMenu = "结构指标", businessType = BusinessType.INSERT)
 	@PostMapping("/add")
 	public R<String> add(@Validated @RequestBody IndicatorAddVO req) {
 		return indicatorService.insertIndicator(req);
@@ -67,7 +67,7 @@ public class IndicatorController extends BaseController {
 	 */
 	@ApiOperation(value = "查询结构指标接口", notes = "wangfeng")
 	@RequiresPermissions("project:pathology:query")
-	@Log(title = "结构指标列表", menu = "结构指标", subMenu = "结构指标", businessType = BusinessType.QUERY)
+	@Log(title = "结构指标列表", menu = "标签管理", subMenu = "结构指标", businessType = BusinessType.QUERY)
 	@PostMapping("/allIndicator")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "pageNum", value = "当前记录起始索引", dataTypeClass = Integer.class, paramType = "query", example = "1"),
@@ -148,7 +148,7 @@ public class IndicatorController extends BaseController {
 
 	@SneakyThrows
 	@ApiOperation(value = "添加结构指标-New")
-	@Log(title = "添加结构指标", menu = "结构指标", subMenu = "结构指标", businessType = BusinessType.INSERT)
+	@Log(title = "添加结构指标", menu = "标签管理", subMenu = "结构指标", businessType = BusinessType.INSERT)
 	@PostMapping("/save")
 	public R<String> save(@Validated @RequestBody IndicatorAddVO req) {
 		return indicatorService.insertIndicator(req);
