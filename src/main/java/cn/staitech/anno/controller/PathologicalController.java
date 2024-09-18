@@ -58,7 +58,7 @@ public class PathologicalController {
 	 */
 	@ApiOperation(value = "标签添加接口", notes = "wangfeng")
 	@RequiresPermissions(value = {"project:pathology:tabadd", "project:pathology:tabdefine"}, logical = Logical.OR)
-	@Log(title = "配置标签-新增标签", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.INSERT)
+	@Log(title = "配置标签-新增标签", menu = "标签管理", subMenu = "病理指标", businessType = BusinessType.INSERT)
 	@PostMapping("/add")
 	public R<String> add(@Validated @RequestBody PathologicalIndicatorCategoryVO vo) {
 		return pathologicalIndicatorCategoryService.add(vo);
@@ -70,7 +70,7 @@ public class PathologicalController {
 	 */
 	@ApiOperation(value = "获取标注类别列表接口", notes = "wangfeng")
 	@RequiresPermissions("project:pathology:tablist")
-	@Log(title = "配置标签-标签列表", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.QUERY)
+	@Log(title = "配置标签-标签列表", menu = "标签管理", subMenu = "病理指标", businessType = BusinessType.QUERY)
 	@PostMapping("/all")
 	public R<PageMaster<LabelListVO>> list(@RequestBody LabelVO labelVO) {
 		PageHelper.startPage(labelVO.getPageNum(), labelVO.getPageSize()).setReasonable(true);
@@ -96,7 +96,7 @@ public class PathologicalController {
 	 */
 	@ApiOperation(value = "标注类别修改接口", notes = "wangfeng")
 	@RequiresPermissions("project:pathology:tabedit")
-	@Log(title = "配置标签-编辑", menu = "专题管理", subMenu = "病理指标", businessType = BusinessType.UPDATE)
+	@Log(title = "配置标签-编辑", menu = "标签管理", subMenu = "病理指标", businessType = BusinessType.UPDATE)
 	@PutMapping("/edit")
 	public R<String> edit(@Validated @RequestBody PathologicalIndicatorCategory category) {
 		return pathologicalIndicatorCategoryService.edit(category);

@@ -77,46 +77,86 @@ public class IndicatorServiceImpl implements IndicatorService {
     public R<String> insertIndicator(IndicatorAddVO req) {
     	SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
     	Long organizationId = sysUser.getOrganizationId();
-    	int saveCheck = saveCheck(req);
-    	if (saveCheck != 0) {
-    		if (saveCheck == 1) {
-    			return R.fail(MessageSource.M("INSERTSPECIESVO.NAME.EXIST"));
-    		} else if (saveCheck == 2) {
-    			return R.fail(MessageSource.M("INSERTSPECIESVO.SPECIESID.EXIST"));
-    		} else if (saveCheck == 3) {
-    			return R.fail(MessageSource.M("InsertOrganVO.NAME.EXIST"));
-    		} else if (saveCheck == 4) {
-    			return R.fail(MessageSource.M("InsertOrganVO.ORGANID.EXIST"));
-    		}
-    	}
-    	Indicator indicator = new Indicator();
-    	indicator.setSpeciesId(req.getSpeciesId());
-    	indicator.setOrganId(req.getOrganId());
-    	indicator.setOrganizationId(organizationId);
-    	indicator.setDelFlag(0);
-    	// 查询结构指标是否存在
-    	List<Indicator> indicatorList = selectIndicator(indicator);
-    	if (!indicatorList.isEmpty()) {
-    		return R.fail(MessageSource.M("INDICATOR_EXIST"));
-    	}
+        //标签类型 0:下拉筛选标签；1:自定义标签
+        Integer indicatorType = req.getIndicatorType();
+        if (null == indicatorType) {
+            indicatorType = 0;
+        }
+        Indicator indicator = new Indicator();
+        indicator.setSpeciesId(req.getSpeciesId());
+        indicator.setOrganId(req.getOrganId());
+        indicator.setOrganizationId(organizationId);
+        indicator.setDelFlag(0);
+        // 查询结构指标是否存在
+        List<Indicator> indicatorList = selectIndicator(indicator);
+        if (!indicatorList.isEmpty()) {
+            return R.fail(MessageSource.M("INDICATOR_EXIST"));
+        }
+        if (indicatorType == 1) {
+            //校验脏器名称是否已经重复
+            QueryWrapper<Organ> queryNameWrapper = new QueryWrapper<>();
+            queryNameWrapper.eq("name", req.getOrganName());
+            queryNameWrapper.eq("organization_id", organizationId);
+            List<Organ> nameList = organMapper.selectList(queryNameWrapper);
+            if (CollectionUtils.isNotEmpty(nameList)) {
+                return R.fail(MessageSource.M("InsertOrganVO.NAME.EXIST"));
+            }
 
-    	String indicatorName = MapConstant.getOrgan(organizationId + req.getSpeciesId() + req.getOrganId());
-    	if (StringUtils.isEmpty(indicatorName)) {
-    		indicatorName = req.getOrganName();
-    	}
-    	indicator.setIndicatorName(indicatorName);
-    	String indicatorNameEn = MapConstant.getOrganEn(organizationId + req.getSpeciesId() + req.getOrganId());
-    	if (StringUtils.isEmpty(indicatorNameEn)) {
-    		indicatorNameEn = req.getOrganName();
-    	}
-    	indicator.setIndicatorNameEn(indicatorNameEn);
-    	indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
-    	indicator.setCreateBy(sysUser.getUserId());
-    	indicator.setOrganizationId(organizationId);
-    	//添加结构指标
-//    	indicatorService.insertIndicator(indicator);
-    	indicatorMapper.insertIndicator(indicator);
-    	return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+            //校验脏器编码 是否已经重复
+            QueryWrapper<Organ> queryOrganIdWrapper = new QueryWrapper<>();
+            queryOrganIdWrapper.eq("organ_id", req.getOrganId());
+            queryOrganIdWrapper.eq("organization_id", organizationId);
+
+            List<Organ> organWrapperList = organMapper.selectList(queryOrganIdWrapper);
+            if (CollectionUtils.isNotEmpty(organWrapperList)) {
+                return R.fail(MessageSource.M("InsertOrganVO.ORGANID.EXIST"));
+            }
+
+            Organ organ = new Organ();
+            organ.setName(req.getOrganName());
+            organ.setNameEn(req.getOrganName());
+            organ.setOrganId(req.getOrganId());
+            organ.setSpeciesCode(req.getSpeciesId());
+            organ.setOrganizationId(organizationId);
+
+            //先查询是否有这个脏器
+            QueryWrapper<Organ> queryOrganEditWrapper = new QueryWrapper<>();
+            queryOrganEditWrapper.eq("organ_id", req.getOrganId());
+            queryOrganEditWrapper.eq("name", req.getOrganName());
+            queryOrganEditWrapper.eq("species_code", req.getSpeciesId());
+            queryOrganEditWrapper.eq("organization_id", organizationId);
+            List<Organ> organEditWrapperList = organMapper.selectList(queryOrganEditWrapper);
+            if (CollectionUtils.isNotEmpty(organEditWrapperList)) {
+
+            } else {
+                organ.setNameEn(req.getOrganName());
+                organMapper.insert(organ);
+            }
+
+
+            MapConstant.ORGAN_MAP = organService.selectMap();
+            MapConstant.ORGAN_MAP_EN = organService.selectMapEn();
+            MapConstant.STRUCTURE_MAP = structureService.selectMap();
+            MapConstant.STRUCTURE_MAP_EN = structureService.selectMapEn();
+        }
+
+        if (indicatorType == 0) {
+            indicator.setIndicatorName(MapConstant.getOrgan(organizationId + req.getSpeciesId() + req.getOrganId()));
+            indicator.setIndicatorNameEn(MapConstant.getOrganEn(organizationId + req.getSpeciesId() + req.getOrganId()));
+        } else {
+            indicator.setIndicatorName(req.getOrganName());
+            indicator.setIndicatorNameEn(req.getOrganName());
+        }
+        indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
+        indicator.setCreateBy(sysUser.getUserId());
+        indicator.setOrganizationId(organizationId);
+        indicator.setIndicatorType(indicatorType);
+        //添加结构指标
+        indicatorMapper.insertIndicator(indicator);
+        return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+    
+    
+    
     }
 
     /**
@@ -275,11 +315,12 @@ public class IndicatorServiceImpl implements IndicatorService {
 
 
     @Override
-    public int saveCheck(IndicatorAddVO req) {
+    public int saveCheck(IndicatorAddVO req,Long organizationId) {
         int checkTag = 0;
         //种属编号 重复校验
         QueryWrapper<Species> querySpeciesIdWrapper = new QueryWrapper<>();
         querySpeciesIdWrapper.eq("species_id", req.getSpeciesId());
+        querySpeciesIdWrapper.eq("organization_id", organizationId);
         List<Species> speciesIdWrapperList = speciesMapper.selectList(querySpeciesIdWrapper);
         if (CollectionUtils.isNotEmpty(speciesIdWrapperList)) {
             checkTag = 1;
@@ -287,6 +328,7 @@ public class IndicatorServiceImpl implements IndicatorService {
         //种属名称 重复校验
         QueryWrapper<Species> queryNameWrapper = new QueryWrapper<>();
         queryNameWrapper.eq("name", req.getSpeciesName());
+        queryNameWrapper.eq("organization_id", organizationId);
         List<Species> nameList = speciesMapper.selectList(queryNameWrapper);
         if (CollectionUtils.isNotEmpty(nameList)) {
             checkTag = 2;
@@ -295,6 +337,7 @@ public class IndicatorServiceImpl implements IndicatorService {
 
         QueryWrapper<Organ> queryOrganIdWrapper = new QueryWrapper<>();
         queryOrganIdWrapper.eq("organ_id", req.getOrganId());
+        queryOrganIdWrapper.eq("organization_id", organizationId);
         List<Organ> organWrapperList = organMapper.selectList(queryOrganIdWrapper);
         if (CollectionUtils.isNotEmpty(organWrapperList)) {
             checkTag = 3;
@@ -302,6 +345,7 @@ public class IndicatorServiceImpl implements IndicatorService {
         //脏器名称 重复校验
         QueryWrapper<Organ> queryOrganNameWrapper = new QueryWrapper<>();
         queryOrganNameWrapper.eq("name", req.getOrganName());
+        queryOrganNameWrapper.eq("organization_id", organizationId);
         List<Organ> organNameList = organMapper.selectList(queryOrganNameWrapper);
         if (CollectionUtils.isNotEmpty(organNameList)) {
             checkTag = 4;
@@ -338,12 +382,11 @@ public class IndicatorServiceImpl implements IndicatorService {
 
 	@Override
 	public R<Integer> edit(IndicatorReviseVO req) {
-		// 和专题绑定的不能修改
+		// 和项目绑定的不能修改
 		Long organizationId = SecurityUtils.getLoginUser().getSysUser().getOrganizationId();
-		Indicator indicatorOld = selectIndicatorsById(req.getIndicatorId().longValue());
 		Indicator indicatorQuery = new Indicator();
 		indicatorQuery.setOrganizationId(organizationId);
-		indicatorQuery.setSpeciesId(indicatorOld.getSpeciesId());
+		indicatorQuery.setIndicatorId(req.getIndicatorId().longValue());
 		Integer num = selectIndicatorCountByIndicator(indicatorQuery);
 		if (num > 0) {
 			return R.fail(MessageSource.M("ALREADY_BOUND"));
@@ -355,6 +398,7 @@ public class IndicatorServiceImpl implements IndicatorService {
 			indicatorType = 0;
 		}
 
+		SysUser sysUser = SecurityUtils.getLoginUser().getSysUser();
 		Indicator indicator = new Indicator();
 		indicator.setSpeciesId(req.getSpeciesId());
 		indicator.setOrganId(req.getOrganId());
@@ -362,34 +406,46 @@ public class IndicatorServiceImpl implements IndicatorService {
 		indicator.setDelFlag(0);
 		// 查询结构指标是否存在
 		List<Indicator> indicatorList = selectIndicator(indicator);
-		if (CollectionUtils.isNotEmpty(indicatorList)) {
-			return R.fail(MessageSource.M("InsertOrganVO.ORGANID.EXIST"));
+		if (!indicatorList.isEmpty()) {
+			boolean idCheck = true;
+			for (Indicator indicatorP : indicatorList) {
+				String organ_id = indicatorP.getOrganId();
+				if (!organ_id.equals(req.getOrganId())) {
+					idCheck = false;
+					break;
+				}
+			}
+			if (!idCheck) {
+				return R.fail(MessageSource.M("InsertOrganVO.ORGANID.EXIST"));
+			}
 		}
 
 		if (indicatorType == 1) {
-			//校验脏器名称是否已经重复
-			QueryWrapper<Organ> queryNameWrapper = new QueryWrapper<>();
-			queryNameWrapper.eq("name", req.getOrganName());
-			queryNameWrapper.eq("species_code", indicatorOld.getSpeciesId());
-			queryNameWrapper.eq("organization_id", organizationId);
-			List<Organ> nameList = organMapper.selectList(queryNameWrapper);
-			if (CollectionUtils.isNotEmpty(nameList)) {
-				for(Organ organ:nameList) {
-					String organCode = organ.getOrganId();
-					if(!indicatorOld.getOrganId().equals(organCode)) {
-						return R.fail(MessageSource.M("InsertOrganVO.NAME.EXIST"));
-					}
-				}
-			}
+			Organ organ = new Organ();
+			organ.setName(req.getOrganName());
+			organ.setOrganId(req.getOrganId());
+			organ.setSpeciesCode(req.getSpeciesId());
+			organ.setOrganizationId(organizationId);
+			//先查询是否有这个脏器
+			QueryWrapper<Organ> queryOrganEditWrapper = new QueryWrapper<>();
+			queryOrganEditWrapper.eq("organ_id", req.getOrganId());
+			queryOrganEditWrapper.eq("species_code", req.getSpeciesId());
+			queryOrganEditWrapper.eq("organization_id", organizationId);
+			List<Organ> organEditWrapperList = organMapper.selectList(queryOrganEditWrapper);
+			if (CollectionUtils.isNotEmpty(organEditWrapperList)) {
+				Organ o1 = organEditWrapperList.get(0);
+				UpdateWrapper<Organ> updateWrapper = new UpdateWrapper();
+				updateWrapper.eq("organ_id", o1.getOrganId());
+				updateWrapper.eq("species_code", o1.getSpeciesCode());
+				updateWrapper.eq("organization_id", organizationId);
+				updateWrapper.set("name", req.getOrganName());
+				updateWrapper.set("name_en", req.getOrganName());
 
-			Organ o1 = nameList.get(0);
-            UpdateWrapper<Organ> updateWrapper = new UpdateWrapper();
-            updateWrapper.eq("organ_id", o1.getOrganId());
-            updateWrapper.eq("species_code", o1.getSpeciesCode());
-            updateWrapper.eq("organization_id", organizationId);
-            updateWrapper.set("name", req.getOrganName());
-            updateWrapper.set("name_en", req.getOrganName());
-            organMapper.update(null, updateWrapper);
+				organMapper.update(null, updateWrapper);
+			} else {
+				organ.setNameEn(req.getOrganName());
+				organMapper.insert(organ);
+			}
 
 			MapConstant.ORGAN_MAP = organService.selectMap();
 			MapConstant.ORGAN_MAP_EN = organService.selectMapEn();
@@ -401,8 +457,13 @@ public class IndicatorServiceImpl implements IndicatorService {
 			indicator.setIndicatorName(MapConstant.getOrgan(organizationId + req.getSpeciesId() + req.getOrganId()));
 			indicator.setIndicatorNameEn(MapConstant.getOrganEn(organizationId + req.getSpeciesId() + req.getOrganId()));
 		} else {
+			indicator.setIndicatorName(req.getOrganName());
+			indicator.setIndicatorNameEn(req.getOrganName());
 			req.setIndicatorName(req.getOrganName());
 		}
+		indicator.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
+		indicator.setCreateBy(sysUser.getUserId());
+
 		req.setNumber(indicator.getSpeciesId().concat(indicator.getOrganId()));
 		// 修改病理指标
 		updateIndicator(req);

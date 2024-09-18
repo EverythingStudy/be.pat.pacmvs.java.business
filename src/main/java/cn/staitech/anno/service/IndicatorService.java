@@ -109,7 +109,7 @@ public interface IndicatorService {
 
     List<PathologicalIndicatorCategory> speciesCategory(String species);
 
-    int saveCheck(IndicatorAddVO req);
+    int saveCheck(IndicatorAddVO req,Long organizationId);
     
     R<Integer> edit(IndicatorReviseVO req);
     
