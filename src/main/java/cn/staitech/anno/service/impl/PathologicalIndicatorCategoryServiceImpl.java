@@ -334,7 +334,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 									picExamVo2.setCategoryName(indicator.getIndicatorName() + structureName);
 									picExamVo2.setStructureId(structureROEId);
 									picExamVo2.setNumber(structureROEId);
-									picExamVo2.setCategoryId(null);
+//									picExamVo2.setCategoryId(null);
 									picExamVo2.setCategoryCode(categoryCode);
 									picExamVo2.setGroupNumber(CommonConstant.STRUCTURE_ROE_GROUP_NUMBER);
 									//add考试
@@ -378,7 +378,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 									picExamVo2.setCategoryName(indicator.getIndicatorName() + structureName);
 									picExamVo2.setStructureId(structureROAId);
 									picExamVo2.setNumber(structureROAId);
-									picExamVo2.setCategoryId(null);
+//									picExamVo2.setCategoryId(null);
 									picExamVo2.setCategoryCode(categoryCode);
 									picExamVo2.setGroupNumber(CommonConstant.STRUCTURE_ROA_GROUP_NUMBER);
 
@@ -407,7 +407,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 							if (null != indicator) {
 								PathologicalIndicatorCategory picJGVo = new PathologicalIndicatorCategory();
 								BeanUtils.copyProperties(picVo, picJGVo);
-								picJGVo.setCategoryId(null);
+//								picJGVo.setCategoryId(null);
 								picJGVo.setStructureId(structureId);
 								String structureName = "";
 								// 获取structureName
@@ -417,7 +417,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 								}
 								picJGVo.setCategoryName(indicator.getIndicatorName() + structureName);
 								picJGVo.setNumber(structureId);
-								picJGVo.setCategoryId(null);
+//								picJGVo.setCategoryId(null);
 								picJGVo.setCategoryCode(categoryCode);
 								picJGVo.setGroupNumber(CommonConstant.STRUCTURE_RO_GROUP_NUMBER);
 								pathologicalIndicatorCategoryMapper.insert(picJGVo);
@@ -459,7 +459,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 										picExamVo2.setCategoryName(indicator.getIndicatorName() + structureNameROE);
 										picExamVo2.setStructureId(structureROEId);
 										picExamVo2.setNumber(structureROEId);
-										picExamVo2.setCategoryId(null);
+//										picExamVo2.setCategoryId(null);
 										picExamVo2.setCategoryCode(categoryCode);
 										picExamVo2.setGroupNumber(CommonConstant.STRUCTURE_ROE_GROUP_NUMBER);
 										//add考试
@@ -486,9 +486,9 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 							if (null != indicator) {
 								PathologicalIndicatorCategory picJGVo = new PathologicalIndicatorCategory();
 								BeanUtils.copyProperties(picVo, picJGVo);
-								picJGVo.setCategoryId(null);
+//								picJGVo.setCategoryId(null);
 								picJGVo.setStructureId(structureId);
-								picJGVo.setCategoryId(null);
+//								picJGVo.setCategoryId(null);
 								picJGVo.setCategoryCode(categoryCode);
 
 								String structureName = "";
@@ -516,7 +516,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 									picExamVo2.setCategoryName(indicator.getIndicatorName() + structureNameROA);
 									picExamVo2.setStructureId(structureRoaId);
 									picExamVo2.setNumber(structureRoaId);
-									picExamVo2.setCategoryId(null);
+//									picExamVo2.setCategoryId(null);
 									picExamVo2.setCategoryCode(categoryCode);
 									picExamVo2.setGroupNumber(CommonConstant.STRUCTURE_ROA_GROUP_NUMBER);
 									//add标注
@@ -590,7 +590,10 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 		}
 		
 		PathologicalIndicatorCategory categoryStructureName = new PathologicalIndicatorCategory();
-		categoryStructureName.setCategoryName(vo.getStructureName());
+		String oldStructureName = getStructureName(indicator, vo.getStructureId());
+		// 生成categoryName
+		String categoryNameStr = indicator.getIndicatorName() + oldStructureName;
+		categoryStructureName.setCategoryName(categoryNameStr);
 		categoryStructureName.setIndicatorId(indicatorId);
 		categoryStructureName.setOrganizationId(organizationId);
 		// 验证组织名称是否已经存在
@@ -623,7 +626,6 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 			if (CollectionUtils.isNotEmpty(sIdList)) {
 				return R.fail(MessageSource.M("CATEGORY_CODE_CHECK_EXIST"));
 			}
-			queryWrapper.eq("structure_id", null);
 			queryWrapper.eq("name", structureName);
 			List<Map<String, Object>> sNameList = structureService.listMaps(queryWrapper);
 			if (CollectionUtils.isNotEmpty(sNameList)) {
@@ -665,13 +667,7 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 		category.setIndicatorId(indicatorId);
 		category.setOrderNumber(orderNumber);
 
-		String structureName = "";
-		// 获取structureName
-		Structure structure = structureService.getOneStructure(indicator.getSpeciesId(), indicator.getOrganId(), currentStructureId);
-		if (structure != null) {
-			structureName = structure.getName();
-		}
-
+		String structureName = getStructureName(indicator, currentStructureId);
 		// 生成categoryName
 		String categoryName = indicator.getIndicatorName() + structureName;
 		category.setCategoryName(categoryName);
@@ -688,6 +684,17 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 		// 更新病理表数据
 		//		indicatorService.updateIndicator(indicatorReviseVO);
 		return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+	}
+	
+	
+	public String getStructureName(Indicator indicator,String structureId) {
+		String structureName = "";
+		// 获取structureName
+		Structure structure = structureService.getOneStructure(indicator.getSpeciesId(), indicator.getOrganId(), structureId);
+		if (structure != null) {
+			structureName = structure.getName();
+		}
+		return structureName;
 	}
 
 
