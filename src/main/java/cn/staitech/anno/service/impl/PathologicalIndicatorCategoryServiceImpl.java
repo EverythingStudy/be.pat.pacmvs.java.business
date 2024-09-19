@@ -579,19 +579,22 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 		if (listS.size() > 0) {
 			return R.fail(MessageSource.M("CATEGORY_CODE_CHECK_EXIST"));
 		}
-		categoryS.setStructureId(null);
-		categoryS.setHex(hex);
+		PathologicalIndicatorCategory categoryHex = new PathologicalIndicatorCategory();
+		categoryHex.setHex(hex);
+		categoryHex.setIndicatorId(indicatorId);
+		categoryHex.setOrganizationId(organizationId);
 		// 验证颜色值是否已经存在
-		List<PathologicalIndicatorCategory> listR = selectIndicatorMessage(categoryS);
+		List<PathologicalIndicatorCategory> listR = selectIndicatorMessage(categoryHex);
 		if (listR.size() > 0) {
 			return R.fail(MessageSource.M("COLOR_NAME_CHECK_EXIST"));
 		}
 		
-		
-		categoryS.setHex(null);
-		categoryS.setCategoryName(vo.getStructureName());
+		PathologicalIndicatorCategory categoryStructureName = new PathologicalIndicatorCategory();
+		categoryStructureName.setCategoryName(vo.getStructureName());
+		categoryStructureName.setIndicatorId(indicatorId);
+		categoryStructureName.setOrganizationId(organizationId);
 		// 验证组织名称是否已经存在
-		List<PathologicalIndicatorCategory> listN = selectIndicatorMessage(categoryS);
+		List<PathologicalIndicatorCategory> listN = selectIndicatorMessage(categoryStructureName);
 		if (listN.size() > 0) {
 			return R.fail(MessageSource.M("CATEGORY_NAME_CHECK_EXIST"));
 		}
@@ -727,7 +730,6 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 		}
 
 		//确认下原来的structure_id信息
-		PathologicalIndicatorCategory sourcePic = selectByPrimaryKey(category.getCategoryId());
 		PathologicalIndicatorCategory categoryS = new PathologicalIndicatorCategory();
 		categoryS.setStructureId(category.getStructureId());
 		categoryS.setIndicatorId(category.getIndicatorId());
@@ -749,10 +751,12 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 			}
 		}
 
-		categoryS.setStructureId(null);
-		categoryS.setHex(category.getHex());
+		PathologicalIndicatorCategory categoryHex = new PathologicalIndicatorCategory();
+		categoryHex.setHex(category.getHex());
+		categoryHex.setOrganizationId(organizationId);
+		categoryHex.setIndicatorId(category.getIndicatorId());
 		// 验证颜色值是否已经存在
-		List<PathologicalIndicatorCategory> listR = selectIndicatorMessage(categoryS);
+		List<PathologicalIndicatorCategory> listR = selectIndicatorMessage(categoryHex);
 		if (listR.size() > 0) {
 			//判断是否是自己的，如果非本身、不允许
 			boolean tag = true;
@@ -768,11 +772,12 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 			}
 		}
 		
-		
-		categoryS.setHex(null);
-		categoryS.setCategoryName(category.getStructureName());
+		PathologicalIndicatorCategory categoryStructureName = new PathologicalIndicatorCategory();
+		categoryStructureName.setCategoryName(category.getStructureName());
+		categoryStructureName.setOrganizationId(organizationId);
+		categoryStructureName.setIndicatorId(category.getIndicatorId());
 		// 验证组织名称是否已经存在
-		List<PathologicalIndicatorCategory> listN = selectIndicatorMessage(categoryS);
+		List<PathologicalIndicatorCategory> listN = selectIndicatorMessage(categoryStructureName);
 		if (listN.size() > 0) {
 			//判断是否是自己的，如果非本身、不允许
 			boolean tag = true;
