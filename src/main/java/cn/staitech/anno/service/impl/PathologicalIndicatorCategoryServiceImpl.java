@@ -620,16 +620,21 @@ public class PathologicalIndicatorCategoryServiceImpl implements PathologicalInd
 			QueryWrapper<Structure> queryWrapper = new QueryWrapper<>();
 			queryWrapper.eq("species_id", speciesId);
 			queryWrapper.eq("organ_id", organId);
-			queryWrapper.eq("structure_id", structureId);
 			queryWrapper.eq("organization_id", organizationId);
+			queryWrapper.eq("structure_id", structureId);
 			List<Map<String, Object>> sIdList = structureService.listMaps(queryWrapper);
 			if (CollectionUtils.isNotEmpty(sIdList)) {
 				return R.fail(MessageSource.M("CATEGORY_CODE_CHECK_EXIST"));
 			}
-			queryWrapper.eq("name", structureName);
-			List<Map<String, Object>> sNameList = structureService.listMaps(queryWrapper);
+			
+			QueryWrapper<Structure> queryWrapperName = new QueryWrapper<>();
+			queryWrapperName.eq("name", structureName);
+			queryWrapperName.eq("species_id", speciesId);
+			queryWrapperName.eq("organ_id", organId);
+			queryWrapperName.eq("organization_id", organizationId);
+			List<Map<String, Object>> sNameList = structureService.listMaps(queryWrapperName);
 			if (CollectionUtils.isNotEmpty(sNameList)) {
-				return R.fail(MessageSource.M("CATEGORY_CODE_CHECK_EXIST"));
+				return R.fail(MessageSource.M("CATEGORY_NAME_CHECK_EXIST"));
 			}
 			//structure表保存结构信息
 			String structureIdNew = structureId;
