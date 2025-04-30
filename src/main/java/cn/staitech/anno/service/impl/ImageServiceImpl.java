@@ -185,7 +185,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image>
         }
         if (findIn.getStatus() != null) {
             if (findIn.getStatus() == 5){
-                Integer[] status = {1, 3};
+                Integer[] status = {0, 1, 3};
                 wrapper.in(Image::getStatus, status);
             }else {
                 wrapper.eq(Image::getStatus, findIn.getStatus());
