@@ -184,7 +184,12 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image>
             wrapper.eq(Image::getOrganizationId, findIn.getOrganizationId());
         }
         if (findIn.getStatus() != null) {
-            wrapper.eq(Image::getStatus, findIn.getStatus());
+            if (findIn.getStatus() == 5){
+                Integer[] status = {1, 3};
+                wrapper.in(Image::getStatus, status);
+            }else {
+                wrapper.eq(Image::getStatus, findIn.getStatus());
+            }
         }
         if (findIn.getCreateTimeParams() != null && !findIn.getCreateTimeParams().isEmpty()) {
             String beginTime = findIn.getCreateTimeParams().get(DataConstants.BEGIN_TIME);
