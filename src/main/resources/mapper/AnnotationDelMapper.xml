@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.annotation.mapper.AnnotationDelMapper">
+
+    <resultMap id="BaseResultMap" type="cn.staitech.annotation.domain.AnnotationDel">
+            <id property="annotationId" column="annotation_id" jdbcType="BIGINT"/>
+            <result property="area" column="area" jdbcType="NUMERIC"/>
+            <result property="perimeter" column="perimeter" jdbcType="NUMERIC"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="categoryId" column="category_id" jdbcType="BIGINT"/>
+            <result property="contour" column="contour" jdbcType="OTHER"/>
+            <result property="locationType" column="location_type" jdbcType="VARCHAR"/>
+            <result property="annotationType" column="annotation_type" jdbcType="VARCHAR"/>
+            <result property="createBy" column="create_by" jdbcType="BIGINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="deleteBy" column="delete_by" jdbcType="BIGINT"/>
+            <result property="deleteTime" column="delete_time" jdbcType="TIMESTAMP"/>
+            <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="slideId" column="slide_id" jdbcType="BIGINT"/>
+            <result property="jsonId" column="json_id" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        annotation_id,area,perimeter,
+        description,category_id,contour,
+        location_type,annotation_type,create_by,
+        create_time,delete_by,delete_time,
+        update_by,update_time,slide_id,
+        json_id
+    </sql>
+</mapper>

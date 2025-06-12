@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
     <!-- 日志存放路径 -->
-    <property name="log.path" value="logs/staitech-anno"/>
+    <property name="log.path" value="logs/staitech-annotation"/>
     <!-- 日志输出格式 -->
     <property name="log.pattern" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} - [%method,%line] - %msg%n"/>
 
@@ -89,7 +89,9 @@
     <!--	<logger name="org.springframework" level="warn" />-->
     <logger name="org.springframework" level="info"/>
     <!--项目启动时，打印加载nacos的配置文件日志-->
-    <logger name="com.alibaba.cloud.nacos.client" level="debug"/>
+    <logger name="com.alibaba.cloud.nacos.client" level="info"/>
+    <!--springboot mvc打印debug日志-->
+    <logger name="org.springframework.web" level="debug"/>
     <!--系统操作日志-->
     <root level="info">
         <appender-ref ref="console"/>
