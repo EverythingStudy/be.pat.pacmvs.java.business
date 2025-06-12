@@ -163,16 +163,20 @@
 
         <resources>
             <resource>
+                <directory>${basedir}/src/main/resources</directory>
+                <filtering>true</filtering>
+                <excludes>
+                    <exclude>**/*.jar</exclude>
+                </excludes>
+            </resource>
+            <resource>
                 <!--需要打包的jar路径-->
                 <directory>${basedir}/src/main/resources/</directory>
                 <filtering>false</filtering>
                 <!--复制到的路径-->
                 <targetPath>BOOT-INF/</targetPath>
                 <includes>
-                    <include>*.yml</include>
                     <include>**/*.jar</include>
-                    <include>**/*.properties</include>
-                    <include>**/*.xml</include>
                 </includes>
             </resource>
         </resources>
