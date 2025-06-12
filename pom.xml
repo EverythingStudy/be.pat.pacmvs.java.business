@@ -162,13 +162,7 @@
         <finalName>${project.artifactId}</finalName>
 
         <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>**/*.*</include>
-                </includes>
-            </resource>
+
 
             <resource>
                 <directory>src/main/java</directory>
@@ -180,20 +174,13 @@
             <!-- 增加内容:MAVEN打包找不到本地LIB目录下的jar包解决办法 https://blog.csdn.net/asdfadafd/article/details/123985540  -->
             <resource>
                 <!--需要打包的jar路径-->
-                <directory>src/main/resources/lib</directory>
+                <directory>${basedir}/src/main/resources/lib</directory>
+                <filtering>false</filtering>
                 <!--复制到的路径-->
                 <targetPath>BOOT-INF/lib/</targetPath>
                 <includes>
+                    <include>**/*.yml</include>
                     <include>**/*.jar</include>
-                </includes>
-            </resource>
-            <resource>
-                <!--需要打包的jar路径-->
-                <directory>src/main/resources/template</directory>
-                <!--复制到的路径-->
-                <targetPath>BOOT-INF/template/</targetPath>
-                <includes>
-                    <include>**/*.docx</include>
                 </includes>
             </resource>
         </resources>
@@ -211,7 +198,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
+            <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <configuration>
@@ -219,7 +206,7 @@
                         <nonFilteredFileExtension>docx</nonFilteredFileExtension>
                     </nonFilteredFileExtensions>
                 </configuration>
-            </plugin>
+            </plugin>-->
 
         </plugins>
     </build>
