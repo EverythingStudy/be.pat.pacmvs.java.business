@@ -1,5 +1,3 @@
--- todo 轮廓数据迁移
-
 
 drop table if exists fr_annotation;
 create table fr_annotation
@@ -164,6 +162,76 @@ COMMENT ON COLUMN fr_measure.create_time IS '创建时间';
 COMMENT ON COLUMN fr_measure.update_by IS '更新者';
 COMMENT ON COLUMN fr_measure.update_time IS '更新时间';
 COMMENT ON COLUMN fr_measure.measure_full_name IS '标注名称';
+
+
+insert into fr_annotation(area, perimeter, description, tag_id, location_type, annotation_type,
+                          create_by, create_time, update_by, update_time, slide_id, json_id)
+select CASE
+           WHEN area ~ '^[-+]?[0-9]*\.?[0-9]+$' THEN area::DOUBLE PRECISION
+           ELSE NULL
+           END     AS area,
+
+       CASE
+           WHEN perimeter ~ '^[-+]?[0-9]*\.?[0-9]+$' THEN perimeter::DOUBLE PRECISION
+           ELSE NULL
+           END     AS perimeter,
+       description,
+       category_id as tag_id,
+       location_type,
+       annotation_type,
+       create_by,
+       create_time,
+       update_by,
+       update_time,
+       slide_id,
+       json_id
+from fr_annotation_1;
+
+insert into fr_annotation(area, perimeter, description, tag_id, location_type, annotation_type,
+                          create_by, create_time, update_by, update_time, slide_id, json_id)
+select CASE
+           WHEN area ~ '^[-+]?[0-9]*\.?[0-9]+$' THEN area::DOUBLE PRECISION
+           ELSE NULL
+           END     AS area,
+
+       CASE
+           WHEN perimeter ~ '^[-+]?[0-9]*\.?[0-9]+$' THEN perimeter::DOUBLE PRECISION
+           ELSE NULL
+           END     AS perimeter,
+       description,
+       category_id as tag_id,
+       location_type,
+       annotation_type,
+       create_by,
+       create_time,
+       update_by,
+       update_time,
+       slide_id,
+       json_id
+from fr_annotation_2;
+
+insert into fr_annotation(area, perimeter, description, tag_id, location_type, annotation_type,
+                          create_by, create_time, update_by, update_time, slide_id, json_id)
+select CASE
+           WHEN area ~ '^[-+]?[0-9]*\.?[0-9]+$' THEN area::DOUBLE PRECISION
+           ELSE NULL
+           END     AS area,
+
+       CASE
+           WHEN perimeter ~ '^[-+]?[0-9]*\.?[0-9]+$' THEN perimeter::DOUBLE PRECISION
+           ELSE NULL
+           END     AS perimeter,
+       description,
+       category_id as tag_id,
+       location_type,
+       annotation_type,
+       create_by,
+       create_time,
+       update_by,
+       update_time,
+       slide_id,
+       json_id
+from fr_annotation_3;
 
 
 
