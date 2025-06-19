@@ -57,6 +57,12 @@ public class AnnotationController {
         return annotationService.deleteAnnotation(req.getAnnotationId());
     }
 
+    @ApiOperation(value = "删除标注")
+    @PostMapping("/deleteBySlide")
+    public R<Boolean> deleteBySlide(@RequestBody List<Long> slideIds) throws Exception {
+        return R.ok(annotationService.remove(Wrappers.<Annotation>lambdaQuery().in(Annotation::getSlideId, slideIds)));
+    }
+
     @ApiOperation(value = "更新标注")
     @PostMapping("/update")
     public R<String> updateAnnotation(@Validated @RequestBody AnnotationUpdateVo req) throws Exception {
@@ -117,10 +123,26 @@ public class AnnotationController {
 
     @ApiOperation(value = "检查是否存在用户的标注数据", hidden = true)
     @PostMapping("/checkUserOperation")
-    public R<Boolean> checkUserOperation(@RequestBody CheckUserOperation req) throws Exception {
+    public R<Long> checkUserOperation(@RequestBody CheckUserOperation req) throws Exception {
         long count = annotationService.count(Wrappers.<Annotation>lambdaQuery()
                 .eq(Annotation::getCreateBy, req.getUserId())
                 .in(Annotation::getSlideId, req.getSlideId()));
+        return R.ok(count);
+    }
+
+    @ApiOperation(value = "查询切片标注数量", hidden = true)
+    @PostMapping("/countAnnoBySlide/{slideId}")
+    public R<Long> countAnnoBySlide(@PathVariable("slideId") Long slideId) throws Exception {
+        long count = annotationService.count(Wrappers.<Annotation>lambdaQuery()
+                .eq(Annotation::getSlideId, slideId));
+        return R.ok(count);
+    }
+
+    @ApiOperation(value = "查询切片标注数量", hidden = true)
+    @PostMapping("/countAnnoBySlides")
+    public R<Boolean> countAnnoBySlides(@RequestBody List<Long> slideIds) throws Exception {
+        long count = annotationService.count(Wrappers.<Annotation>lambdaQuery()
+                .in(Annotation::getSlideId, slideIds));
         return R.ok(count > 0);
     }
 
