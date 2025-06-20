@@ -72,12 +72,12 @@ public class MeasureController {
 
     @ApiOperation(value = "添加测量")
     @PostMapping("/add")
-    public R<Long> add(@Validated @RequestBody MeasureAddVo measureAddVo) throws Exception {
+    public R<String> add(@Validated @RequestBody MeasureAddVo measureAddVo) throws Exception {
         Measure measure = new Measure();
         BeanUtils.copyProperties(measure, measureAddVo);
         R<Measure> result = measureService.addMeasure(measure);
         if (result.getCode() == R.SUCCESS){
-            return R.ok(result.getData().getMeasureId());
+            return R.ok(String.valueOf(result.getData().getMeasureId()));
         }else{
             return R.fail(result.getMsg());
         }
