@@ -19,6 +19,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,6 +56,9 @@ public class MeasureController {
             }
             pageResult.setTotal(page.getTotal());
             pageResult.setRecords(measureVoList);
+        }else{
+            pageResult.setTotal(1);
+            pageResult.setRecords(Arrays.asList(MeasureVo.builder().pointCount(points).measureFullName("P").build()));
         }
         return R.ok(pageResult);
     }
