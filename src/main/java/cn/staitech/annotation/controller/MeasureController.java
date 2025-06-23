@@ -49,17 +49,20 @@ public class MeasureController {
                 .like(req.getMeasureFullName() != null, Measure::getMeasureFullName, req.getMeasureFullName())
                 .eq(Measure::getLocationType, Geometry.TYPENAME_POINT));
         CustomPage<MeasureVo> pageResult = new CustomPage<>(req);
+        List<MeasureVo> measureVoList = new ArrayList<>();
         if (page.getTotal() > 0) {
-            List<MeasureVo> measureVoList = page.getRecords().stream().map(MeasureVo::convert).collect(Collectors.toList());
+            measureVoList = page.getRecords().stream().map(MeasureVo::convert).collect(Collectors.toList());
             if (points > 0) {
                 measureVoList.add(MeasureVo.builder().pointCount(points).measureFullName("P").build());
             }
             pageResult.setTotal(page.getTotal());
             pageResult.setRecords(measureVoList);
-        }/*else{
-            pageResult.setTotal(1);
-            pageResult.setRecords(Arrays.asList(MeasureVo.builder().pointCount(points).measureFullName("P").build()));
-        }*/
+        }else{
+            if (points > 0) {
+                pageResult.setTotal(1);
+                pageResult.setRecords(Arrays.asList(MeasureVo.builder().pointCount(points).measureFullName("P").build()));
+            }
+        }
 
         return R.ok(pageResult);
     }
