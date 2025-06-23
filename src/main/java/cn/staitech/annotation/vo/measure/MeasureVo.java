@@ -5,6 +5,7 @@ import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -37,7 +38,7 @@ public class MeasureVo {
 
     @JsonProperty(value = "point_count")
     @ExcelProperty(value = "总数",  index = 8)
-    private long pointCount;
+    private Long pointCount;
 
     @JsonProperty(value =  "measure_full_name")
     @ExcelProperty(value = "名称",  index = 0)

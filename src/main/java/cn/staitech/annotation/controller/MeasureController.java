@@ -56,10 +56,11 @@ public class MeasureController {
             }
             pageResult.setTotal(page.getTotal());
             pageResult.setRecords(measureVoList);
-        }else{
+        }/*else{
             pageResult.setTotal(1);
             pageResult.setRecords(Arrays.asList(MeasureVo.builder().pointCount(points).measureFullName("P").build()));
-        }
+        }*/
+
         return R.ok(pageResult);
     }
 
