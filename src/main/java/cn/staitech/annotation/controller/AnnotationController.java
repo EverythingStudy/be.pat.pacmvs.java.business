@@ -140,10 +140,10 @@ public class AnnotationController {
 
     @ApiOperation(value = "查询切片标注数量", hidden = true)
     @PostMapping("/countAnnoBySlides")
-    public R<Boolean> countAnnoBySlides(@RequestBody List<Long> slideIds) throws Exception {
-        long count = annotationService.count(Wrappers.<Annotation>lambdaQuery()
+    public R<Long> countAnnoBySlides(@RequestBody List<Long> slideIds) throws Exception {
+        Long count = annotationService.count(Wrappers.<Annotation>lambdaQuery()
                 .in(Annotation::getSlideId, slideIds));
-        return R.ok(count > 0);
+        return R.ok(count);
     }
 
     @ApiOperation(value = "撤销")
