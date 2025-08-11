@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.locationtech.jts.geom.Geometry;
 
@@ -103,6 +104,8 @@ public class Annotation implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    private Long contourType;
 
     @Override
     public boolean equals(Object that) {

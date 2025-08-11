@@ -1,6 +1,7 @@
 package cn.staitech.annotation.vo.anno;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -17,4 +18,7 @@ public class AnnotationReq {
     @NotNull(message = "{NO_SLIDE_DATA}")
     @JsonProperty("slide_id")
     private Long slideId;
+
+    @ApiModelProperty(value = "标注类型：默认 0  1 粗轮廓 2 精细轮廓")
+    private Long contourType;
 }

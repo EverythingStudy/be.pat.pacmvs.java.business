@@ -2,6 +2,7 @@ package cn.staitech.annotation.vo.anno;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.locationtech.jts.geom.Geometry;
 
@@ -89,4 +90,7 @@ public class AnnotationAddReq {
      * geojson中数据id
      */
     private String jsonId;
+
+    @ApiModelProperty(value = "标注类型：默认 0  1 粗轮廓 2 精细轮廓")
+    private Long contourType;
 }

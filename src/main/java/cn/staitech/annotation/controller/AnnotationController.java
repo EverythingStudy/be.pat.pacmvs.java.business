@@ -8,6 +8,7 @@ import cn.staitech.annotation.netty.message.AnnotationFeature;
 import cn.staitech.annotation.service.AnnotationService;
 import cn.staitech.annotation.utils.annotation.AnnotationMessageGenerator;
 import cn.staitech.common.security.utils.SecurityUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -92,7 +93,11 @@ public class AnnotationController {
     @ApiOperation(value = "获取GeoJson数据")
     @PostMapping("/selectLists")
     public R<List<AnnotationFeature>> selectLists(@Validated @RequestBody AnnotationReq req) throws Exception {
-        List<Annotation> annotations = annotationService.list(Wrappers.<Annotation>lambdaQuery().eq(Annotation::getSlideId, req.getSlideId()));
+        LambdaQueryWrapper<Annotation> annotationLambda = Wrappers.<Annotation>lambdaQuery().eq(Annotation::getSlideId, req.getSlideId());
+        if(null != req.getContourType()) {
+            annotationLambda.eq(Annotation::getContourType, req.getContourType());
+        }
+        List<Annotation> annotations = annotationService.list();
         List<AnnotationFeature> resp = CollectionUtils.isEmpty(annotations) ? new ArrayList<>() : AnnotationMessageGenerator.generateFeatures(annotations);
         return R.ok(resp);
     }
