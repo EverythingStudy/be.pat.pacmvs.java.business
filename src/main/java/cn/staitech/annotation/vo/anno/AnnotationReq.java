@@ -19,6 +19,6 @@ public class AnnotationReq {
     @JsonProperty("slide_id")
     private Long slideId;
 
-    @ApiModelProperty(value = "标注类型：默认 0  1 粗轮廓 2 精细轮廓")
+    @ApiModelProperty(value = "脏器识别校对view页面必传参数：传递1")
     private Long contourType;
 }
