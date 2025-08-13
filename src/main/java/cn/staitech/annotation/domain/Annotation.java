@@ -105,7 +105,7 @@ public class Annotation implements Serializable {
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
-    private Long contourType;
+    private Integer contourType;
 
     @Override
     public boolean equals(Object that) {
