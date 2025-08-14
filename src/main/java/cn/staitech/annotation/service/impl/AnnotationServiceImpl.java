@@ -13,10 +13,7 @@ import cn.staitech.annotation.utils.annotation.*;
 import cn.staitech.annotation.utils.annotation.AnnotationJsonIdGenerator;
 import cn.staitech.annotation.utils.MessageSource;
 import cn.staitech.system.api.RemoteBizService;
-import cn.staitech.system.api.domain.biz.OrganTagQuery;
-import cn.staitech.system.api.domain.biz.OrganTagQueryVo;
-import cn.staitech.system.api.domain.biz.StructureTagPageQuery;
-import cn.staitech.system.api.domain.biz.StructureTagPageVo;
+import cn.staitech.system.api.domain.biz.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.staitech.annotation.domain.Annotation;
 import cn.staitech.annotation.service.AnnotationService;
@@ -206,7 +203,13 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
             undoRedoManager.addEvent(event, Constant.UNDO_REDO_STACK_SIZE);
         }
 
-        //
+        // 添加脏器
+        if (req.getContourType() != null && req.getContourType() == 1) {
+            AddSingleSlide addSingleSlide = new AddSingleSlide();
+            addSingleSlide.setSlideId(req.getSlideId());
+            addSingleSlide.setCategoryId(req.getTagId());
+            this.remoteBizService.addSingleSlide(addSingleSlide);
+        }
 
         webSocketHandler.sendMessage(AnnotationMessageGenerator.generateAnnotationMessage(req, Constant.ANNO_ACTION_ADD));
         return req;
