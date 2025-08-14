@@ -15,6 +15,7 @@ import cn.staitech.annotation.utils.MessageSource;
 import cn.staitech.system.api.RemoteBizService;
 import cn.staitech.system.api.domain.biz.*;
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.staitech.annotation.domain.Annotation;
 import cn.staitech.annotation.service.AnnotationService;
@@ -241,6 +242,25 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
                     .undoRedoDetails(Arrays.asList(UndoRedoDetail.builder().currentAnnotation(annotation).operation(Constant.ANNO_ACTION_DELETE).build())).build();
             undoRedoManager.addEvent(event, Constant.UNDO_REDO_STACK_SIZE);
         }
+
+        // 删除脏器
+        if (annotation.getContourType() != null && annotation.getContourType() == 1) {
+            // 先判断是否有相同的标注，有不删除，没有删除
+            LambdaQueryWrapper<Annotation> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(Annotation::getSlideId, annotation.getSlideId());
+            wrapper.gt(Annotation::getTagId, annotation.getTagId());
+            wrapper.eq(Annotation::getContourType, 1);
+            List<Annotation> list = this.baseMapper.selectList(wrapper);
+            if (!CollectionUtils.isEmpty(list) && list.size() == 1) {
+                DelSingleSlide addSingleSlide = new DelSingleSlide();
+                addSingleSlide.setSlideId(annotation.getSlideId());
+                addSingleSlide.setCategoryId(annotation.getTagId());
+                log.info("删除脏器入参：{}", JSON.toJSONString(addSingleSlide));
+                R<String> result = this.remoteBizService.delSingleSlide(addSingleSlide);
+                log.info("删除脏器返回：{}", JSON.toJSONString(result));
+            }
+        }
+
         webSocketHandler.sendMessage(AnnotationMessageGenerator.generateAnnotationMessage(annotation, Constant.ANNO_ACTION_DELETE));
 
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
