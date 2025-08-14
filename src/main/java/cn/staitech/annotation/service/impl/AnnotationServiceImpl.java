@@ -275,6 +275,7 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
         if (req.getAnnotationId() == null) {
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
+        Annotation history = baseMapper.selectById(req.getAnnotationId());
         if (req.getTagId() != null) {
             StructureTagPageQuery structureTagPageQuery = new StructureTagPageQuery();
             structureTagPageQuery.setStructureTagIds(Arrays.asList(req.getTagId()));
@@ -294,7 +295,7 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
         }
         req.setUpdateBy(SecurityUtils.getUserId());
         req.setUpdateTime(new Date());
-        Annotation history = baseMapper.selectById(req.getAnnotationId());
+
 
         Annotation annotation = new Annotation();
         BeanUtils.copyProperties(annotation, req);
