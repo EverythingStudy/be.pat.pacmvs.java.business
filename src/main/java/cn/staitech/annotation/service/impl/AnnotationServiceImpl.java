@@ -14,6 +14,7 @@ import cn.staitech.annotation.utils.annotation.AnnotationJsonIdGenerator;
 import cn.staitech.annotation.utils.MessageSource;
 import cn.staitech.system.api.RemoteBizService;
 import cn.staitech.system.api.domain.biz.*;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.staitech.annotation.domain.Annotation;
 import cn.staitech.annotation.service.AnnotationService;
@@ -208,7 +209,9 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
             AddSingleSlide addSingleSlide = new AddSingleSlide();
             addSingleSlide.setSlideId(req.getSlideId());
             addSingleSlide.setCategoryId(req.getTagId());
-            this.remoteBizService.addSingleSlide(addSingleSlide);
+            log.info("添加脏器入参：{}", JSON.toJSONString(addSingleSlide));
+            R<Long> result = this.remoteBizService.addSingleSlide(addSingleSlide);
+            log.info("添加脏器返回：{}", JSON.toJSONString(result));
         }
 
         webSocketHandler.sendMessage(AnnotationMessageGenerator.generateAnnotationMessage(req, Constant.ANNO_ACTION_ADD));
