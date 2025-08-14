@@ -277,10 +277,20 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
         }
         Annotation history = baseMapper.selectById(req.getAnnotationId());
         if (req.getTagId() != null) {
-            StructureTagPageQuery structureTagPageQuery = new StructureTagPageQuery();
-            structureTagPageQuery.setStructureTagIds(Arrays.asList(req.getTagId()));
-            R<List<StructureTagPageVo>> tagResp = remoteBizService.queryTag(structureTagPageQuery);
-            req.setJsonId(AnnotationJsonIdGenerator.getSdId(tagResp.getData() == null ? null : tagResp.getData().get(0)));
+            // 查询脏器标签
+            if (history.getContourType() != null && history.getContourType() == 1) {
+                OrganTagQuery organTagQuery = new OrganTagQuery();
+                organTagQuery.setOrganTagIds(Collections.singletonList(req.getTagId()));
+                R<List<OrganTagQueryVo>> result = this.remoteBizService.queryOrganTag(organTagQuery);
+                req.setJsonId(AnnotationJsonIdGenerator.getSdId(result.getData() == null ? null : result.getData().get(0)));
+            }
+            // 查询结构标签：默认逻辑
+            else {
+                StructureTagPageQuery structureTagPageQuery = new StructureTagPageQuery();
+                structureTagPageQuery.setStructureTagIds(Arrays.asList(req.getTagId()));
+                R<List<StructureTagPageVo>> tagResp = remoteBizService.queryTag(structureTagPageQuery);
+                req.setJsonId(AnnotationJsonIdGenerator.getSdId(tagResp.getData() == null ? null : tagResp.getData().get(0)));
+            }
         }
         Geometry geometry = req.getGeometry();
         if (geometry != null) {
