@@ -230,7 +230,7 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
         AnnotationDel annotationDel = new AnnotationDel();
-        BeanUtils.copyProperties(annotation, annotation);
+        BeanUtils.copyProperties(annotationDel, annotation);
         annotationDel.setDeleteBy(SecurityUtils.getUserId());
         annotationDel.setUpdateTime(new Date());
         annotationDel.setUpdateBy(SecurityUtils.getUserId());
