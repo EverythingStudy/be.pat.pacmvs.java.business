@@ -1,6 +1,7 @@
 package cn.staitech.annotation.utils.annotation;
 
 import cn.hutool.core.date.DateUtil;
+import cn.staitech.system.api.domain.biz.OrganTagQueryVo;
 import cn.staitech.system.api.domain.biz.StructureTagPageVo;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,4 +42,11 @@ public class AnnotationJsonIdGenerator {
         return CL + MEASURE_NAME + DateUtil.current() + RandomNumbers();
     }
 
+    public static String getSdId(OrganTagQueryVo tag) {
+        if (tag == null){
+            return getSdId();
+        }else{
+            return getSdId(tag.getOrganName());
+        }
+    }
 }

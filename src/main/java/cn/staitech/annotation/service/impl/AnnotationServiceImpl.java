@@ -13,6 +13,8 @@ import cn.staitech.annotation.utils.annotation.*;
 import cn.staitech.annotation.utils.annotation.AnnotationJsonIdGenerator;
 import cn.staitech.annotation.utils.MessageSource;
 import cn.staitech.system.api.RemoteBizService;
+import cn.staitech.system.api.domain.biz.OrganTagQuery;
+import cn.staitech.system.api.domain.biz.OrganTagQueryVo;
 import cn.staitech.system.api.domain.biz.StructureTagPageQuery;
 import cn.staitech.system.api.domain.biz.StructureTagPageVo;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -181,10 +183,20 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
     }
 
     private Annotation addAnnotation(AnnotationVo req, boolean isUndoRedo) throws Exception {
-        StructureTagPageQuery structureTagPageQuery = new StructureTagPageQuery();
-        structureTagPageQuery.setStructureTagIds(Arrays.asList(req.getTagId()));
-        R<List<StructureTagPageVo>> tagResp = remoteBizService.queryTag(structureTagPageQuery);
-        req.setJsonId(AnnotationJsonIdGenerator.getSdId(tagResp.getData() == null ? null : tagResp.getData().get(0)));
+        // 查询脏器标签
+        if (req.getContourType() != null && req.getContourType() == 1) {
+            OrganTagQuery organTagQuery = new OrganTagQuery();
+            organTagQuery.setOrganTagIds(Collections.singletonList(req.getTagId()));
+            R<List<OrganTagQueryVo>> result = this.remoteBizService.queryOrganTag(organTagQuery);
+            req.setJsonId(AnnotationJsonIdGenerator.getSdId(result.getData() == null ? null : result.getData().get(0)));
+        }
+        // 查询结构标签：默认逻辑
+        else {
+            StructureTagPageQuery structureTagPageQuery = new StructureTagPageQuery();
+            structureTagPageQuery.setStructureTagIds(Arrays.asList(req.getTagId()));
+            R<List<StructureTagPageVo>> tagResp = remoteBizService.queryTag(structureTagPageQuery);
+            req.setJsonId(AnnotationJsonIdGenerator.getSdId(tagResp.getData() == null ? null : tagResp.getData().get(0)));
+        }
         req.setCreateBy(SecurityUtils.getUserId());
         req.setUpdateBy(SecurityUtils.getUserId());
         baseMapper.insert(req);
@@ -193,6 +205,9 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
                     .undoRedoDetails(Arrays.asList(UndoRedoDetail.builder().currentAnnotation(req).operation(Constant.ANNO_ACTION_ADD).build())).build();
             undoRedoManager.addEvent(event, Constant.UNDO_REDO_STACK_SIZE);
         }
+
+        //
+
         webSocketHandler.sendMessage(AnnotationMessageGenerator.generateAnnotationMessage(req, Constant.ANNO_ACTION_ADD));
         return req;
     }
