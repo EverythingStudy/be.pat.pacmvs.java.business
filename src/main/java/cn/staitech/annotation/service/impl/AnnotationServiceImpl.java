@@ -226,7 +226,7 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
         // 先判断是否有相同的标注，有不添加，没有添加
         LambdaQueryWrapper<Annotation> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Annotation::getSlideId, slideId);
-        wrapper.gt(Annotation::getTagId, tagId);
+        wrapper.eq(Annotation::getTagId, tagId);
         wrapper.eq(Annotation::getContourType, 1);
         wrapper.ne(Annotation::getAnnotationId, annotationId);
         List<Annotation> list = this.baseMapper.selectList(wrapper);
@@ -288,7 +288,7 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
         // 先判断是否有相同的标注，有不删除，没有删除
         LambdaQueryWrapper<Annotation> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Annotation::getSlideId, slideId);
-        wrapper.gt(Annotation::getTagId, tagId);
+        wrapper.eq(Annotation::getTagId, tagId);
         wrapper.eq(Annotation::getContourType, 1);
         wrapper.ne(Annotation::getAnnotationId, annotationId);
         List<Annotation> list = this.baseMapper.selectList(wrapper);
