@@ -143,10 +143,23 @@ public class AnnotationMessageGenerator {
     }
 
     public static List<AnnotationProperties> generateProperties(List<Annotation> annotations) {
-
-        Map<Long,StructureTagPageVo> tagMap = getTagMap(annotations);
         Map<Long, SysUser> userMap = getUserMap();
-        return generateProperties(annotations,tagMap,userMap);
+        // 脏器标签
+        if (!CollectionUtils.isEmpty(annotations) && annotations.get(0).getContourType() != null && annotations.get(0).getContourType() == 1) {
+            List<Long> organTagIds = annotations.stream().map(Annotation::getTagId).collect(Collectors.toList());
+            OrganTagQuery organTagQuery = new OrganTagQuery();
+            organTagQuery.setOrganTagIds(organTagIds);
+            Map<Long, OrganTagQueryVo> tagMap = queryOrganTag(organTagQuery);
+
+            List<AnnotationProperties> properties = new ArrayList<>();
+            for (Annotation annotation : annotations) {
+                properties.add(generatePropertiesForOrgan(annotation, tagMap, userMap));
+            }
+            return properties;
+        } else {
+            Map<Long,StructureTagPageVo> tagMap = getTagMap(annotations);
+            return generateProperties(annotations, tagMap, userMap);
+        }
     }
 
     public static List<AnnotationProperties> generateProperties(List<Annotation> annotations,Map<Long,StructureTagPageVo> tagMap,Map<Long, SysUser> userMap) {
