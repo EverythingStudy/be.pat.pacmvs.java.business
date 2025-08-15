@@ -205,18 +205,41 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
             undoRedoManager.addEvent(event, Constant.UNDO_REDO_STACK_SIZE);
         }
 
-        // 添加脏器
-        if (req.getContourType() != null && req.getContourType() == 1) {
-            AddSingleSlide addSingleSlide = new AddSingleSlide();
-            addSingleSlide.setSlideId(req.getSlideId());
-            addSingleSlide.setCategoryId(req.getTagId());
-            log.info("添加脏器入参：{}", JSON.toJSONString(addSingleSlide));
-            R<Long> result = this.remoteBizService.addSingleSlide(addSingleSlide);
-            log.info("添加脏器返回：{}", JSON.toJSONString(result));
+        // 添加脏器：粗轮廓、标签id非空不为0
+        if (req.getContourType() != null && req.getContourType() == 1 && req.getTagId() != null && !req.getTagId().equals(0L)) {
+            // 添加脏器
+            this.addSingleSlide(req.getSlideId(), req.getTagId(), req.getAnnotationId());
         }
 
         webSocketHandler.sendMessage(AnnotationMessageGenerator.generateAnnotationMessage(req, Constant.ANNO_ACTION_ADD));
         return req;
+    }
+
+    /**
+     * 添加脏器
+     *
+     * @param slideId      切片ID
+     * @param tagId        标签ID
+     * @param annotationId 需要排除的annotationId
+     */
+    private void addSingleSlide(Long slideId, Long tagId, Long annotationId) throws Exception {
+        // 先判断是否有相同的标注，有不添加，没有添加
+        LambdaQueryWrapper<Annotation> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Annotation::getSlideId, slideId);
+        wrapper.gt(Annotation::getTagId, tagId);
+        wrapper.eq(Annotation::getContourType, 1);
+        wrapper.ne(Annotation::getAnnotationId, annotationId);
+        List<Annotation> list = this.baseMapper.selectList(wrapper);
+        if (CollectionUtils.isEmpty(list)) {
+            AddSingleSlide addSingleSlide = new AddSingleSlide();
+            addSingleSlide.setSlideId(slideId);
+            addSingleSlide.setCategoryId(tagId);
+            log.info("添加脏器入参：{}", JSON.toJSONString(addSingleSlide));
+            R<Long> result = this.remoteBizService.addSingleSlide(addSingleSlide);
+            log.info("添加脏器返回：{}", JSON.toJSONString(result));
+        } else {
+            log.info("存在相同标签的标注，不用添加脏器：slideId={}，tagId={}", slideId, tagId);
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -243,27 +266,42 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
             undoRedoManager.addEvent(event, Constant.UNDO_REDO_STACK_SIZE);
         }
 
-        // 删除脏器
-        if (annotation.getContourType() != null && annotation.getContourType() == 1) {
-            // 先判断是否有相同的标注，有不删除，没有删除
-            LambdaQueryWrapper<Annotation> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(Annotation::getSlideId, annotation.getSlideId());
-            wrapper.gt(Annotation::getTagId, annotation.getTagId());
-            wrapper.eq(Annotation::getContourType, 1);
-            List<Annotation> list = this.baseMapper.selectList(wrapper);
-            if (!CollectionUtils.isEmpty(list) && list.size() == 1) {
-                DelSingleSlide addSingleSlide = new DelSingleSlide();
-                addSingleSlide.setSlideId(annotation.getSlideId());
-                addSingleSlide.setCategoryId(annotation.getTagId());
-                log.info("删除脏器入参：{}", JSON.toJSONString(addSingleSlide));
-                R<String> result = this.remoteBizService.delSingleSlide(addSingleSlide);
-                log.info("删除脏器返回：{}", JSON.toJSONString(result));
-            }
+        // 删除脏器：粗轮廓、标签id非空不为0
+        if (annotation.getContourType() != null && annotation.getContourType() == 1 && annotation.getTagId() != null && !annotation.getTagId().equals(0L)) {
+            // 删除脏器
+            this.delSingleSlide(annotation.getSlideId(), annotation.getTagId(), id);
         }
 
         webSocketHandler.sendMessage(AnnotationMessageGenerator.generateAnnotationMessage(annotation, Constant.ANNO_ACTION_DELETE));
 
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
+    }
+
+    /**
+     * 删除脏器
+     *
+     * @param slideId      切片ID
+     * @param tagId        标签ID
+     * @param annotationId 需要排除的annotationId
+     */
+    private void delSingleSlide(Long slideId, Long tagId, Long annotationId) throws Exception {
+        // 先判断是否有相同的标注，有不删除，没有删除
+        LambdaQueryWrapper<Annotation> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Annotation::getSlideId, slideId);
+        wrapper.gt(Annotation::getTagId, tagId);
+        wrapper.eq(Annotation::getContourType, 1);
+        wrapper.ne(Annotation::getAnnotationId, annotationId);
+        List<Annotation> list = this.baseMapper.selectList(wrapper);
+        if (CollectionUtils.isEmpty(list)) {
+            DelSingleSlide addSingleSlide = new DelSingleSlide();
+            addSingleSlide.setSlideId(slideId);
+            addSingleSlide.setCategoryId(tagId);
+            log.info("删除脏器入参：{}", JSON.toJSONString(addSingleSlide));
+            R<String> result = this.remoteBizService.delSingleSlide(addSingleSlide);
+            log.info("删除脏器返回：{}", JSON.toJSONString(result));
+        } else {
+            log.info("存在相同标签的标注，不用删除脏器：slideId={}，tagId={}", slideId, tagId);
+        }
     }
 
     @Override
@@ -316,6 +354,47 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
                     .undoRedoDetails(Arrays.asList(UndoRedoDetail.builder().currentAnnotation(annotation).historyAnnotation( history).operation(Constant.ANNO_ACTION_UPDATE).build())).build();
             undoRedoManager.addEvent(event, Constant.UNDO_REDO_STACK_SIZE);
         }
+
+        // 更新脏器
+        if (history.getContourType() != null && history.getContourType() == 1) {
+            // 原来有标签
+            if (history.getTagId() != null && !history.getTagId().equals(0L)) {
+                // 现在有标签
+                if (req.getTagId() != null && !req.getTagId().equals(0L)) {
+                    // 标签相同：不做处理
+                    if (history.getTagId().equals(req.getTagId())) {
+                        log.info("原来有标签tagId={}，现在有标签tagId={}，标签相同：不用处理", history.getTagId(), req.getTagId());
+                    }
+                    // 标签不同：删除原来的，新增现在的
+                    else {
+                        log.info("原来有标签tagId={}，现在有标签tagId={}，标签不同：需要处理", history.getTagId(), req.getTagId());
+                        // 删除原来的
+                        this.delSingleSlide(history.getSlideId(), history.getTagId(), req.getAnnotationId());
+                        // 新增现在的
+                        this.addSingleSlide(history.getSlideId(), req.getTagId(), req.getAnnotationId());
+                    }
+                }
+                // 现在没有标签：删除脏器
+                else {
+                    log.info("原来有标签tagId={}，现在没有标签：删除脏器", history.getTagId());
+                    this.delSingleSlide(history.getSlideId(), history.getTagId(), req.getAnnotationId());
+                }
+            }
+            // 原来没有标签
+            else {
+                // 现在有标签：新增现在的
+                if (req.getTagId() != null && !req.getTagId().equals(0L)) {
+                    log.info("原来没有标签，现在有标签tagId={}：新增脏器", req.getTagId());
+                    // 新增现在的
+                    this.addSingleSlide(history.getSlideId(), req.getTagId(), req.getAnnotationId());
+                }
+                // 现在没有标签
+                else {
+                    log.info("原来没有标签，现在没有标签：不用处理");
+                }
+            }
+        }
+
         webSocketHandler.sendMessage(AnnotationMessageGenerator.generateAnnotationMessage(annotation, Constant.ANNO_ACTION_UPDATE));
         return R.ok(null, MessageSource.M("OPERATE_SUCCEED"));
     }
