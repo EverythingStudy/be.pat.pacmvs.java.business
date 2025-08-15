@@ -12,6 +12,8 @@ import cn.staitech.annotation.netty.message.AnnotationProperties;
 import cn.staitech.system.api.RemoteBizService;
 import cn.staitech.system.api.RemoteUserService;
 import cn.staitech.system.api.domain.SysUser;
+import cn.staitech.system.api.domain.biz.OrganTagQuery;
+import cn.staitech.system.api.domain.biz.OrganTagQueryVo;
 import cn.staitech.system.api.domain.biz.StructureTagPageQuery;
 import cn.staitech.system.api.domain.biz.StructureTagPageVo;
 import org.apache.commons.collections4.CollectionUtils;
@@ -49,14 +51,71 @@ public class AnnotationMessageGenerator {
         return feature;
     }
 
-    public static List<AnnotationFeature> generateFeatures(List<Annotation> annotations){
-        Map<Long,StructureTagPageVo> tagMap = getTagMap(annotations);
+    public static List<AnnotationFeature> generateFeatures(List<Annotation> annotations,Integer contourType) {
+        List<AnnotationFeature> features = null;
         Map<Long, SysUser> userMap = getUserMap();
-        List<AnnotationFeature> features = CollectionUtils.isEmpty(annotations) ? new ArrayList<>() : annotations.stream().map(annotation -> {
-            AnnotationFeature feature = generateFeatures(annotation, generateProperties(annotation, tagMap, userMap));
-            return feature;
-        }).collect(Collectors.toList());
+        // 粗轮廓：查询脏器标签
+        if (contourType != null && contourType == 1) {
+            Map<Long, OrganTagQueryVo> tagMap = new HashMap<>(16);
+            if (!CollectionUtils.isEmpty(annotations)) {
+                List<Long> organTagIds = annotations.stream().map(Annotation::getTagId).collect(Collectors.toList());
+                OrganTagQuery organTagQuery = new OrganTagQuery();
+                organTagQuery.setOrganTagIds(organTagIds);
+                tagMap = queryOrganTag(organTagQuery);
+            }
+            Map<Long, OrganTagQueryVo> finalTagMap = tagMap;
+            features = CollectionUtils.isEmpty(annotations) ? new ArrayList<>() : annotations.stream().map(annotation -> {
+                AnnotationFeature feature = generateFeatures(annotation, generatePropertiesForOrgan(annotation, finalTagMap, userMap));
+                return feature;
+            }).collect(Collectors.toList());
+        }
+        // 其他：默认查询结构标签
+        else {
+            Map<Long, StructureTagPageVo> tagMap = getTagMap(annotations);
+            features = CollectionUtils.isEmpty(annotations) ? new ArrayList<>() : annotations.stream().map(annotation -> {
+                AnnotationFeature feature = generateFeatures(annotation, generateProperties(annotation, tagMap, userMap));
+                return feature;
+            }).collect(Collectors.toList());
+        }
         return features;
+    }
+
+    private static AnnotationProperties generatePropertiesForOrgan(Annotation annotation, Map<Long, OrganTagQueryVo> tagMap, Map<Long, SysUser> userMap) {
+        AnnotationProperties properties = new AnnotationProperties();
+        properties.setA0(String.valueOf(annotation.getAnnotationId()));
+        properties.setA1(annotation.getLocationType());
+        properties.setA2(annotation.getAnnotationType());
+        properties.setA3(annotation.getTagId());
+        properties.setA6(formatBigDecimal(annotation.getPerimeter()));
+        properties.setA7(formatBigDecimal(annotation.getArea()));
+        properties.setA8(annotation.getDescription());
+        properties.setA11(annotation.getCreateBy());
+        properties.setA12(DateUtil.format(annotation.getCreateTime(), DatePattern.NORM_DATETIME_PATTERN));
+        properties.setA13(annotation.getUpdateBy());
+
+        OrganTagQueryVo tag = tagMap.get(annotation.getTagId());
+        if (tag != null) {
+            properties.setA4(tag.getRgb());
+            properties.setA5(tag.getOrganName());
+        }
+
+        setUserInfo(properties, annotation.getCreateBy(), userMap, true);
+        setUserInfo(properties, annotation.getUpdateBy(), userMap, false);
+        return properties;
+    }
+
+    private static Map<Long, OrganTagQueryVo> queryOrganTag(OrganTagQuery organTagQuery) {
+        Map<Long, OrganTagQueryVo> map = new HashMap<>(16);
+        try {
+            RemoteBizService remoteBizService = SpringUtil.getBean(RemoteBizService.class);
+            R<List<OrganTagQueryVo>> result = remoteBizService.queryOrganTag(organTagQuery);
+            if (result != null && !CollectionUtils.isEmpty(result.getData())) {
+                map = result.getData().stream().collect(Collectors.toMap(OrganTagQueryVo::getOrganTagId, organTagQueryVo -> organTagQueryVo, (existing, replacement) -> existing));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return map;
     }
 
     public static AnnotationFeature generateFeatures(Annotation annotation, AnnotationProperties properties){

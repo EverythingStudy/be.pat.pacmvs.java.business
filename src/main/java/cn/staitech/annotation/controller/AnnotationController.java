@@ -98,7 +98,7 @@ public class AnnotationController {
             annotationLambda.eq(Annotation::getContourType, req.getContourType());
         }
         List<Annotation> annotations = annotationService.list();
-        List<AnnotationFeature> resp = CollectionUtils.isEmpty(annotations) ? new ArrayList<>() : AnnotationMessageGenerator.generateFeatures(annotations);
+        List<AnnotationFeature> resp = CollectionUtils.isEmpty(annotations) ? new ArrayList<>() : AnnotationMessageGenerator.generateFeatures(annotations, req.getContourType());
         return R.ok(resp);
     }
 
