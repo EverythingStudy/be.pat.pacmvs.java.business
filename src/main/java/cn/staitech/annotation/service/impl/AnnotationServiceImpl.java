@@ -187,7 +187,7 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
             OrganTagQuery organTagQuery = new OrganTagQuery();
             organTagQuery.setOrganTagIds(Collections.singletonList(req.getTagId()));
             R<List<OrganTagQueryVo>> result = this.remoteBizService.queryOrganTag(organTagQuery);
-            req.setJsonId(AnnotationJsonIdGenerator.getSdId(result.getData() == null ? null : result.getData().get(0)));
+            req.setJsonId(AnnotationJsonIdGenerator.getSdId(CollectionUtils.isEmpty(result.getData()) ? null : result.getData().get(0)));
         }
         // 查询结构标签：默认逻辑
         else {
