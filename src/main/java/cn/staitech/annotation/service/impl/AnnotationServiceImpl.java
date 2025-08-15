@@ -355,42 +355,44 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
             undoRedoManager.addEvent(event, Constant.UNDO_REDO_STACK_SIZE);
         }
 
-        // 更新脏器
-        if (history.getContourType() != null && history.getContourType() == 1) {
-            // 原来有标签
-            if (history.getTagId() != null && !history.getTagId().equals(0L)) {
-                // 现在有标签
-                if (req.getTagId() != null && !req.getTagId().equals(0L)) {
-                    // 标签相同：不做处理
-                    if (history.getTagId().equals(req.getTagId())) {
-                        log.info("原来有标签tagId={}，现在有标签tagId={}，标签相同：不用处理", history.getTagId(), req.getTagId());
+        if (req.getTagId() != null) {
+            // 更新脏器
+            if (history.getContourType() != null && history.getContourType() == 1) {
+                // 原来有标签
+                if (history.getTagId() != null && !history.getTagId().equals(0L)) {
+                    // 现在有标签
+                    if (!req.getTagId().equals(0L)) {
+                        // 标签相同：不做处理
+                        if (history.getTagId().equals(req.getTagId())) {
+                            log.info("原来有标签tagId={}，现在有标签tagId={}，标签相同：不用处理", history.getTagId(), req.getTagId());
+                        }
+                        // 标签不同：删除原来的，新增现在的
+                        else {
+                            log.info("原来有标签tagId={}，现在有标签tagId={}，标签不同：需要处理", history.getTagId(), req.getTagId());
+                            // 删除原来的
+                            this.delSingleSlide(history.getSlideId(), history.getTagId(), req.getAnnotationId());
+                            // 新增现在的
+                            this.addSingleSlide(history.getSlideId(), req.getTagId(), req.getAnnotationId());
+                        }
                     }
-                    // 标签不同：删除原来的，新增现在的
+                    // 现在没有标签：删除脏器
                     else {
-                        log.info("原来有标签tagId={}，现在有标签tagId={}，标签不同：需要处理", history.getTagId(), req.getTagId());
-                        // 删除原来的
+                        log.info("原来有标签tagId={}，现在没有标签：删除脏器", history.getTagId());
                         this.delSingleSlide(history.getSlideId(), history.getTagId(), req.getAnnotationId());
+                    }
+                }
+                // 原来没有标签
+                else {
+                    // 现在有标签：新增现在的
+                    if (!req.getTagId().equals(0L)) {
+                        log.info("原来没有标签，现在有标签tagId={}：新增脏器", req.getTagId());
                         // 新增现在的
                         this.addSingleSlide(history.getSlideId(), req.getTagId(), req.getAnnotationId());
                     }
-                }
-                // 现在没有标签：删除脏器
-                else {
-                    log.info("原来有标签tagId={}，现在没有标签：删除脏器", history.getTagId());
-                    this.delSingleSlide(history.getSlideId(), history.getTagId(), req.getAnnotationId());
-                }
-            }
-            // 原来没有标签
-            else {
-                // 现在有标签：新增现在的
-                if (req.getTagId() != null && !req.getTagId().equals(0L)) {
-                    log.info("原来没有标签，现在有标签tagId={}：新增脏器", req.getTagId());
-                    // 新增现在的
-                    this.addSingleSlide(history.getSlideId(), req.getTagId(), req.getAnnotationId());
-                }
-                // 现在没有标签
-                else {
-                    log.info("原来没有标签，现在没有标签：不用处理");
+                    // 现在没有标签
+                    else {
+                        log.info("原来没有标签，现在没有标签：不用处理");
+                    }
                 }
             }
         }
