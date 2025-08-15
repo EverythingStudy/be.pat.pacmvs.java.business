@@ -94,8 +94,10 @@ public class AnnotationController {
     @PostMapping("/selectLists")
     public R<List<AnnotationFeature>> selectLists(@Validated @RequestBody AnnotationReq req) throws Exception {
         LambdaQueryWrapper<Annotation> annotationLambda = Wrappers.<Annotation>lambdaQuery().eq(Annotation::getSlideId, req.getSlideId());
-        if(null != req.getContourType()) {
+        if (null != req.getContourType()) {
             annotationLambda.eq(Annotation::getContourType, req.getContourType());
+        } else {
+            annotationLambda.eq(Annotation::getContourType, 0);
         }
         List<Annotation> annotations = annotationService.list(annotationLambda);
         List<AnnotationFeature> resp = CollectionUtils.isEmpty(annotations) ? new ArrayList<>() : AnnotationMessageGenerator.generateFeatures(annotations, req.getContourType());
