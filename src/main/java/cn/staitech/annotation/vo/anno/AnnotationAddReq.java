@@ -92,5 +92,6 @@ public class AnnotationAddReq {
     private String jsonId;
 
     @ApiModelProperty(value = "脏器识别校对view页面必传参数：传递1")
+    @JsonProperty("contour_type")
     private Integer contourType;
 }
