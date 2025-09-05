@@ -1,6 +1,7 @@
 package cn.staitech.annotation.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -40,7 +41,8 @@ public class AnnotationSd implements Serializable {
     /**
      * 轮廓坐标625
      */
-    private Geometry contour;
+    @TableField("contour")
+    private Geometry geometry;
     /**
      * 轮廓类型
      */

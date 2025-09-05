@@ -1,12 +1,13 @@
 package cn.staitech.annotation.controller;
 
+import cn.staitech.annotation.domain.Annotation;
+import cn.staitech.annotation.netty.message.AnnotationFeature;
+import cn.staitech.annotation.service.AnnotationSdService;
+import cn.staitech.annotation.service.AnnotationService;
+import cn.staitech.annotation.utils.annotation.AnnotationMessageGenerator;
 import cn.staitech.annotation.utils.annotation.UndoRedoReq;
 import cn.staitech.annotation.vo.anno.*;
 import cn.staitech.common.core.domain.R;
-import cn.staitech.annotation.domain.Annotation;
-import cn.staitech.annotation.netty.message.AnnotationFeature;
-import cn.staitech.annotation.service.AnnotationService;
-import cn.staitech.annotation.utils.annotation.AnnotationMessageGenerator;
 import cn.staitech.common.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -35,6 +36,8 @@ public class AnnotationController {
 
     @Resource
     private AnnotationService annotationService;
+    @Resource
+    private AnnotationSdService annotationSdService;
 
     @ApiOperation(value = "添加标注")
     @PostMapping("/insert")
@@ -101,6 +104,17 @@ public class AnnotationController {
         }
         List<Annotation> annotations = annotationService.list(annotationLambda);
         List<AnnotationFeature> resp = CollectionUtils.isEmpty(annotations) ? new ArrayList<>() : AnnotationMessageGenerator.generateFeatures(annotations, req.getContourType());
+        return R.ok(resp);
+    }
+
+    /**
+     * 获取筛差数据
+     */
+    @ApiOperation(value = "获取筛差数据")
+    @PostMapping("/selectSdLists")
+    public R<List<AnnotationFeature>> selectSdLists(@Validated @RequestBody AnnotationSdReq req) throws Exception {
+        List<Annotation> annotations = this.annotationSdService.selectLists(req);
+        List<AnnotationFeature> resp = CollectionUtils.isEmpty(annotations) ? new ArrayList<>() : AnnotationMessageGenerator.generateFeatures(annotations, null);
         return R.ok(resp);
     }
 
