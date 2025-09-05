@@ -15,5 +15,5 @@ public class AnnotationSdReq {
      */
     @NotNull(message = "单切片id不能为空")
     @ApiModelProperty(value = "单切片id", required = true)
-    private Long singleSlideId;
+    private Long singleId;
 }
