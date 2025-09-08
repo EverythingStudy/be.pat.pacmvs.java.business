@@ -3,6 +3,8 @@ package cn.staitech.annotation.utils.annotation;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.extra.spring.SpringUtil;
+import cn.staitech.annotation.netty.message.AnnotationSdFeature;
+import cn.staitech.annotation.vo.anno.AnnotationSdVo;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.annotation.constant.Constant;
 import cn.staitech.annotation.domain.Annotation;
@@ -16,6 +18,7 @@ import cn.staitech.system.api.domain.biz.OrganTagQuery;
 import cn.staitech.system.api.domain.biz.OrganTagQueryVo;
 import cn.staitech.system.api.domain.biz.StructureTagPageQuery;
 import cn.staitech.system.api.domain.biz.StructureTagPageVo;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.math.BigDecimal;
@@ -122,6 +125,14 @@ public class AnnotationMessageGenerator {
 
         AnnotationFeature feature = new AnnotationFeature();
         feature.setGeometry(annotation.getGeometry());
+        feature.setId(annotation.getJsonId());
+        feature.setProperties(properties);
+        return feature;
+    }
+
+    public static AnnotationSdFeature generateSdFeatures(AnnotationSdVo annotation, AnnotationProperties properties) {
+        AnnotationSdFeature feature = new AnnotationSdFeature();
+        feature.setGeometry(JSONObject.parseObject(annotation.getContour()));
         feature.setId(annotation.getJsonId());
         feature.setProperties(properties);
         return feature;
@@ -257,6 +268,38 @@ public class AnnotationMessageGenerator {
     }
 
     /**
+     * 根据 Annotation 列表生成标签字典
+     *
+     * @param annotations
+     * @return
+     */
+    private static Map<Long, StructureTagPageVo> getSdTagMap(List<AnnotationSdVo> annotations) {
+        Map<Long, StructureTagPageVo> tagMap = new HashMap<>();
+        try {
+            List<Long> tagIds = CollectionUtils.isEmpty(annotations) ? new ArrayList<>() : annotations.stream()
+                    .map(Annotation::getTagId)
+                    .collect(Collectors.toList());
+            StructureTagPageQuery query = new StructureTagPageQuery();
+            query.setStructureTagIds(tagIds);
+            RemoteBizService remoteBizService = SpringUtil.getBean(RemoteBizService.class);
+            R<List<StructureTagPageVo>> tagResp = remoteBizService.queryTag(query);
+            if (tagResp.getCode() == 200) {
+                List<StructureTagPageVo> tags = tagResp == null ? null : tagResp.getData();
+                tagMap = tags == null ? new HashMap<>() : tags.stream()
+                        .collect(Collectors.toMap(
+                                StructureTagPageVo::getStructureTagId,
+                                tag -> tag,
+                                (existing, replacement) -> existing // 遇到重复 key 保留第一个
+                        ));
+            } else {
+                throw new RuntimeException(tagResp.getMsg());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return tagMap;
+    }
+    /**
      * 获取用户字典
      * @return
      */
@@ -272,6 +315,24 @@ public class AnnotationMessageGenerator {
                         (existing, replacement) -> existing // 遇到重复 key 保留第一个
                 ));
         return userMap;
+    }
+
+    /**
+     * 获取筛差数据
+     */
+    public static List<AnnotationSdFeature> generateFeatures(List<AnnotationSdVo> annotations) {
+        List<AnnotationSdFeature> features = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(annotations)) {
+            // 获取用户字典
+            Map<Long, SysUser> userMap = getUserMap();
+            // 查询结构标签
+            Map<Long, StructureTagPageVo> tagMap = getSdTagMap(annotations);
+            features = annotations.stream().map(annotation -> {
+                AnnotationSdFeature feature = generateSdFeatures(annotation, generateProperties(annotation, tagMap, userMap));
+                return feature;
+            }).collect(Collectors.toList());
+        }
+        return features;
     }
 }
 

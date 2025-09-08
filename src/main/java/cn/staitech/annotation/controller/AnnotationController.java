@@ -2,6 +2,7 @@ package cn.staitech.annotation.controller;
 
 import cn.staitech.annotation.domain.Annotation;
 import cn.staitech.annotation.netty.message.AnnotationFeature;
+import cn.staitech.annotation.netty.message.AnnotationSdFeature;
 import cn.staitech.annotation.service.AnnotationSdService;
 import cn.staitech.annotation.service.AnnotationService;
 import cn.staitech.annotation.utils.annotation.AnnotationMessageGenerator;
@@ -112,9 +113,9 @@ public class AnnotationController {
      */
     @ApiOperation(value = "获取筛差数据")
     @PostMapping("/selectSdLists")
-    public R<List<AnnotationFeature>> selectSdLists(@Validated @RequestBody AnnotationSdReq req) throws Exception {
-        List<Annotation> annotations = this.annotationSdService.selectLists(req);
-        List<AnnotationFeature> resp = CollectionUtils.isEmpty(annotations) ? new ArrayList<>() : AnnotationMessageGenerator.generateFeatures(annotations, null);
+    public R<List<AnnotationSdFeature>> selectSdLists(@Validated @RequestBody AnnotationSdReq req) throws Exception {
+        List<AnnotationSdVo> annotations = this.annotationSdService.selectLists(req);
+        List<AnnotationSdFeature> resp = CollectionUtils.isEmpty(annotations) ? new ArrayList<>() : AnnotationMessageGenerator.generateFeatures(annotations);
         return R.ok(resp);
     }
 

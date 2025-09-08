@@ -1,8 +1,8 @@
 package cn.staitech.annotation.service;
 
-import cn.staitech.annotation.domain.Annotation;
 import cn.staitech.annotation.domain.AnnotationSd;
 import cn.staitech.annotation.vo.anno.AnnotationSdReq;
+import cn.staitech.annotation.vo.anno.AnnotationSdVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -17,5 +17,5 @@ public interface AnnotationSdService extends IService<AnnotationSd> {
      * @param req 获取筛差数据
      * @return 获取筛差数据
      */
-    List<Annotation> selectLists(AnnotationSdReq req);
+    List<AnnotationSdVo> selectLists(AnnotationSdReq req);
 }

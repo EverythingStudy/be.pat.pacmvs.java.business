@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.staitech.annotation.mapper.AnnotationSdMapper">
+    <select id="selectLists" resultType="cn.staitech.annotation.vo.anno.AnnotationSdVo">
+        SELECT
+            annotation_id AS annotationId,
+            area AS area,
+            perimeter AS perimeter,
+            description AS description,
+            tag_id AS tagId,
+            contour AS geometry,
+            ST_AsGeoJSON(contour) as contour,
+            location_type AS locationType,
+            annotation_type AS annotationType,
+            create_by AS createBy,
+            create_time AS createTime,
+            update_by AS updateBy,
+            update_time AS updateTime,
+            slide_id AS slideId,
+            json_id AS jsonId,
+            single_slide_id AS singleSlideId
+        FROM fr_annotation_sd
+        WHERE single_slide_id = #{singleId}
+    </select>
+</mapper>
