@@ -30,7 +30,7 @@ public class AnnotationSdServiceImpl extends ServiceImpl<AnnotationSdMapper, Ann
     public List<Annotation> selectLists(AnnotationSdReq req) {
         List<Annotation> list = new ArrayList<>();
         LambdaQueryWrapper<AnnotationSd> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(AnnotationSd::getSingleSlideId, req.getSingleSlideId());
+        queryWrapper.eq(AnnotationSd::getSingleSlideId, req.getSingleId());
         List<AnnotationSd> annotationSds = this.list(queryWrapper);
         for (AnnotationSd sd : annotationSds) {
             Annotation annotation = new Annotation();
