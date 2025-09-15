@@ -19,6 +19,7 @@ import cn.staitech.system.api.domain.biz.OrganTagQueryVo;
 import cn.staitech.system.api.domain.biz.StructureTagPageQuery;
 import cn.staitech.system.api.domain.biz.StructureTagPageVo;
 import com.alibaba.fastjson.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.math.BigDecimal;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
  * @description
  * @date 2025/5/22 13:53:05
  */
+@Slf4j
 public class AnnotationMessageGenerator {
 
     public static AnnotationMessage generateAnnotationMessage(Annotation annotation, String action){
@@ -249,7 +251,9 @@ public class AnnotationMessageGenerator {
             StructureTagPageQuery query = new StructureTagPageQuery();
             query.setStructureTagIds(tagIds);
             RemoteBizService remoteBizService = SpringUtil.getBean(RemoteBizService.class);
+            log.info("查询结构标签信息参数：{}", JSONObject.toJSONString(query));
             R<List<StructureTagPageVo>> tagResp = remoteBizService.queryTag(query);
+            log.info("查询结构标签信息返回：{}", JSONObject.toJSONString(tagResp));
             if (tagResp.getCode() == 200){
                 List<StructureTagPageVo> tags = tagResp == null ? null : tagResp.getData();
                 tagMap = tags == null ? new HashMap<>() : tags.stream()
@@ -276,13 +280,15 @@ public class AnnotationMessageGenerator {
     private static Map<Long, StructureTagPageVo> getSdTagMap(List<AnnotationSdVo> annotations) {
         Map<Long, StructureTagPageVo> tagMap = new HashMap<>();
         try {
-            List<Long> tagIds = CollectionUtils.isEmpty(annotations) ? new ArrayList<>() : annotations.stream()
+            Set<Long> tagIds = CollectionUtils.isEmpty(annotations) ? new HashSet<>() : annotations.stream()
                     .map(Annotation::getTagId)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
             StructureTagPageQuery query = new StructureTagPageQuery();
-            query.setStructureTagIds(tagIds);
+            query.setStructureTagIds(new ArrayList<>(tagIds));
             RemoteBizService remoteBizService = SpringUtil.getBean(RemoteBizService.class);
+            log.info("查询结构标签信息参数：{}", JSONObject.toJSONString(query));
             R<List<StructureTagPageVo>> tagResp = remoteBizService.queryTag(query);
+            log.info("查询结构标签信息返回：{}", JSONObject.toJSONString(tagResp));
             if (tagResp.getCode() == 200) {
                 List<StructureTagPageVo> tags = tagResp == null ? null : tagResp.getData();
                 tagMap = tags == null ? new HashMap<>() : tags.stream()
