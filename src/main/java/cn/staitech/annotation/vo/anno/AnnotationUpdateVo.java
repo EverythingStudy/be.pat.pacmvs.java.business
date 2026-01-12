@@ -1,5 +1,7 @@
 package cn.staitech.annotation.vo.anno;
 
+import cn.staitech.annotation.netty.message.AnnotationFeature;
+import cn.staitech.sft.logaudit.req.LogAuditBaseReq;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.locationtech.jts.geom.Geometry;
@@ -15,7 +17,7 @@ import java.util.Date;
  * @date 2025/5/22 09:40:28
  */
 @Data
-public class AnnotationUpdateVo {
+public class AnnotationUpdateVo extends LogAuditBaseReq<AnnotationFeature> {
 
     /**
      * 主键id

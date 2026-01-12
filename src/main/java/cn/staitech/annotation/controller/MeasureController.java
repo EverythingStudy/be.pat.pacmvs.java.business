@@ -4,9 +4,7 @@ import cn.staitech.annotation.domain.Measure;
 import cn.staitech.annotation.netty.message.AnnotationFeature;
 import cn.staitech.annotation.service.MeasureService;
 import cn.staitech.annotation.utils.measure.MeasureMessageGenerator;
-import cn.staitech.annotation.vo.measure.MeasureAddVo;
-import cn.staitech.annotation.vo.measure.MeasureReq;
-import cn.staitech.annotation.vo.measure.MeasureVo;
+import cn.staitech.annotation.vo.measure.*;
 import cn.staitech.common.core.domain.CustomPage;
 import cn.staitech.common.core.domain.R;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -78,7 +76,7 @@ public class MeasureController {
         return R.ok(featureList);
     }
 
-    @ApiOperation(value = "添加测量")
+    @ApiOperation(value = "添加测量",tags = "I18n")
     @PostMapping("/add")
     public R<String> add(@Validated @RequestBody MeasureAddVo measureAddVo) throws Exception {
         Measure measure = new Measure();
@@ -91,17 +89,17 @@ public class MeasureController {
         }
     }
 
-    @ApiOperation(value = "删除测量")
+    @ApiOperation(value = "删除测量",tags = "I18n")
     @PostMapping("/del")
-    public R<String> del(@RequestParam(value = "marking_id") @ApiParam(name = "marking_id", value = "标注id", required = true) Long measureId) throws Exception {
-        return measureService.delete(measureId);
+    public R<String> del(@RequestBody DelMeasureReq req) throws Exception {
+        return measureService.delete(req.getMarking_id());
     }
 
 
-    @ApiOperation(value = "标注测量excel导出")
-    @GetMapping("/export")
-    public void export(@RequestParam(value = "slideId") @ApiParam(name = "slideId", value = "切片ID", required = true) Long slideId) throws Exception {
-        measureService.export(slideId);
+    @ApiOperation(value = "标注测量excel导出",tags = "I18n")
+    @PostMapping("/export")
+    public void export(@RequestBody ExportSlideReq req) throws Exception {
+        measureService.export(req.getSlideId());
     }
 
 }

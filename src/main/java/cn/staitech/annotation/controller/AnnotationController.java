@@ -10,6 +10,7 @@ import cn.staitech.annotation.utils.annotation.UndoRedoReq;
 import cn.staitech.annotation.vo.anno.*;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
+import cn.staitech.sft.logaudit.annotation.EncryptResponse;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.swagger.annotations.Api;
@@ -40,7 +41,7 @@ public class AnnotationController {
     @Resource
     private AnnotationSdService annotationSdService;
 
-    @ApiOperation(value = "添加标注")
+    @ApiOperation(value = "添加标注", tags = "I18n")
     @PostMapping("/insert")
     public R<String> addAnnotation(@Validated @RequestBody AnnotationAddReq annotationAddVo) throws Exception {
         AnnotationVo req = new AnnotationVo();
@@ -56,7 +57,7 @@ public class AnnotationController {
     }
 
 
-    @ApiOperation(value = "删除标注")
+    @ApiOperation(value = "删除标注",tags = "I18n")
     @PostMapping("/delete")
     public R<String> deleteAnnotation(@RequestBody AnnotationVo req) throws Exception {
         return annotationService.deleteAnnotation(req.getAnnotationId());
@@ -68,7 +69,7 @@ public class AnnotationController {
         return R.ok(annotationService.remove(Wrappers.<Annotation>lambdaQuery().in(Annotation::getSlideId, slideIds)));
     }
 
-    @ApiOperation(value = "更新标注")
+    @ApiOperation(value = "更新标注", tags = "I18n")
     @PostMapping("/update")
     public R<String> updateAnnotation(@Validated @RequestBody AnnotationUpdateVo req) throws Exception {
         return annotationService.updateAnnotation(req);
@@ -94,8 +95,9 @@ public class AnnotationController {
         return annotationService.mergePreview(annotationIds);
     }
 
-    @ApiOperation(value = "获取GeoJson数据")
+    @ApiOperation(value = "获取GeoJson数据",tags = "I18n")
     @PostMapping("/selectLists")
+    @EncryptResponse
     public R<List<AnnotationFeature>> selectLists(@Validated @RequestBody AnnotationReq req) throws Exception {
         LambdaQueryWrapper<Annotation> annotationLambda = Wrappers.<Annotation>lambdaQuery().eq(Annotation::getSlideId, req.getSlideId());
         if (null != req.getContourType()) {

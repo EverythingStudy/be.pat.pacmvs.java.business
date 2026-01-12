@@ -2,21 +2,35 @@ package cn.staitech.annotation.service.impl;
 
 import cn.staitech.annotation.constant.Constant;
 import cn.staitech.annotation.netty.websocket.NioWebSocketHandler;
+import cn.staitech.annotation.utils.LanguageUtils;
 import cn.staitech.annotation.utils.MessageSource;
 import cn.staitech.annotation.utils.measure.MeasureMessageGenerator;
+import cn.staitech.annotation.vo.measure.MeasureEnVo;
 import cn.staitech.annotation.vo.measure.MeasureVo;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.system.api.RemoteUserService;
 import cn.staitech.system.api.domain.SysUser;
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.metadata.Head;
+import com.alibaba.excel.write.handler.AbstractRowWriteHandler;
+import com.alibaba.excel.write.handler.RowWriteHandler;
+import com.alibaba.excel.write.handler.WriteHandler;
+import com.alibaba.excel.write.metadata.WriteSheet;
+import com.alibaba.excel.write.metadata.WriteTable;
+import com.alibaba.excel.write.metadata.holder.WriteSheetHolder;
+import com.alibaba.excel.write.metadata.holder.WriteTableHolder;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.staitech.annotation.domain.Measure;
 import cn.staitech.annotation.service.MeasureService;
 import cn.staitech.annotation.mapper.MeasureMapper;
+import jdk.javadoc.internal.doclets.toolkit.taglets.SnippetTaglet;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.locationtech.jts.geom.Geometry;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -99,8 +113,19 @@ public class MeasureServiceImpl extends ServiceImpl<MeasureMapper, Measure>
         response.setCharacterEncoding("utf-8");
         String exportName = URLEncoder.encode(MessageSource.M("EXCEL_TITLE"), "UTF-8");
         response.setHeader("Content-disposition", "attachment;filename=" + exportName + ".xlsx");
-        // 使用EasyExcel写入数据
-        EasyExcel.write(response.getOutputStream(), MeasureVo.class).sheet(exportName).doWrite(measureVoList);
+
+        if(LanguageUtils.isEn()){
+            List<MeasureEnVo> excelModels = measureVoList.stream()
+                    .map(user -> {
+                        MeasureEnVo model = new MeasureEnVo();
+                        BeanUtils.copyProperties(user, model);
+                        return model;
+                    })
+                    .collect(Collectors.toList());
+            EasyExcel.write(response.getOutputStream(), MeasureEnVo.class).sheet(exportName).doWrite(excelModels);
+        } else {
+            EasyExcel.write(response.getOutputStream(), MeasureVo.class).sheet(exportName).doWrite(measureVoList);
+        }
     }
 
     private MeasureVo renderUser(MeasureVo measureVo){

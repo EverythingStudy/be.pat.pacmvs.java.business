@@ -1,5 +1,6 @@
 package cn.staitech.annotation.vo.anno;
 
+import cn.staitech.sft.logaudit.req.LogAuditBaseReq;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
@@ -17,7 +18,7 @@ import java.util.Date;
  * @date 2025/5/22 09:40:28
  */
 @Data
-public class AnnotationAddReq {
+public class AnnotationAddReq extends LogAuditBaseReq {
 
     /**
      * 面积

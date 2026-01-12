@@ -37,7 +37,7 @@ public class MeasureVo {
     private String createUserName;
 
     @JsonProperty(value = "point_count")
-    @ExcelProperty(value = "总数",  index = 8)
+    @ExcelProperty(value = "点数(个)",  index = 8)
     private Long pointCount;
 
     @JsonProperty(value =  "measure_full_name")
@@ -64,13 +64,13 @@ public class MeasureVo {
     /**
      * 面积
      */
-    @ExcelProperty(value = "面积",  index = 2)
+    @ExcelProperty(value = "面积(um²)",  index = 2)
     private String area;
 
     /**
      * 周长
      */
-    @ExcelProperty(value = "周长/长度",  index = 1)
+    @ExcelProperty(value = "长度/周长(um)",  index = 1)
     private String perimeter;
 
     /**
@@ -107,35 +107,35 @@ public class MeasureVo {
      * 平均间距
      */
     @JsonProperty(value = "mean_distance")
-    @ExcelProperty(value = "平均间距",  index = 5)
+    @ExcelProperty(value = "平均间距(um)",  index = 5)
     private Double meanDistance;
 
     /**
      * 最大间距
      */
     @JsonProperty(value =  "max_distance")
-    @ExcelProperty(value = "最大间距",  index = 7)
+//    @ExcelProperty(value = "最大间距",  index = 7)
     private Double maxDistance;
 
     /**
      * 最小间距
      */
     @JsonProperty(value =  "min_distance")
-    @ExcelProperty(value = "最小间距",  index = 6)
+    @ExcelProperty(value = "最小间距(um)",  index = 6)
     private Double minDistance;
 
     /**
      * 内角
      */
     @JsonProperty(value = "inner_angle")
-    @ExcelProperty(value = "内角",  index = 3)
+    @ExcelProperty(value = "内角(°)",  index = 3)
     private String innerAngle;
 
     /**
      * 外角
      */
     @JsonProperty(value = "exterior_angle")
-    @ExcelProperty(value = "外角",  index = 4)
+    @ExcelProperty(value = "外角(°)",  index = 4)
     private String exteriorAngle;
 
     /**
@@ -173,7 +173,7 @@ public class MeasureVo {
      * 创建时间
      */
     @JsonProperty(value = "create_time")
-    @ExcelProperty(value = "创建时间",  index = 10)
+    @ExcelProperty(value = "操作时间",  index = 10)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
