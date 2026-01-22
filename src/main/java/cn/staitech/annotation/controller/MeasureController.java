@@ -7,6 +7,7 @@ import cn.staitech.annotation.utils.measure.MeasureMessageGenerator;
 import cn.staitech.annotation.vo.measure.*;
 import cn.staitech.common.core.domain.CustomPage;
 import cn.staitech.common.core.domain.R;
+import cn.staitech.sft.logaudit.annotation.LogAudit;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
@@ -78,6 +79,7 @@ public class MeasureController {
 
     @ApiOperation(value = "添加测量",tags = "I18n")
     @PostMapping("/add")
+    @LogAudit
     public R<String> add(@Validated @RequestBody MeasureAddVo measureAddVo) throws Exception {
         Measure measure = new Measure();
         BeanUtils.copyProperties(measure, measureAddVo);
@@ -91,6 +93,7 @@ public class MeasureController {
 
     @ApiOperation(value = "删除测量",tags = "I18n")
     @PostMapping("/del")
+    @LogAudit(deleteBusiness = false)
     public R<String> del(@RequestBody DelMeasureReq req) throws Exception {
         return measureService.delete(req.getMarking_id());
     }
@@ -98,6 +101,7 @@ public class MeasureController {
 
     @ApiOperation(value = "标注测量excel导出",tags = "I18n")
     @PostMapping("/export")
+    @LogAudit
     public void export(@RequestBody ExportSlideReq req) throws Exception {
         measureService.export(req.getSlideId());
     }

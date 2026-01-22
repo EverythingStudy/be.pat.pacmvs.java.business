@@ -1,5 +1,6 @@
 package cn.staitech.annotation.netty.message;
 
+import cn.staitech.sft.logaudit.annotation.IgnoreLogField;
 import lombok.Data;
 import org.locationtech.jts.geom.Geometry;
 
@@ -12,12 +13,20 @@ import org.locationtech.jts.geom.Geometry;
 @Data
 public class AnnotationFeature {
 
+    @IgnoreLogField
     private String id;
-
+    @IgnoreLogField
     private String type = "Feature";
-
+    @IgnoreLogField
     private Geometry geometry;
-
+    @IgnoreLogField
     private AnnotationProperties properties;
+
+    /**
+     * 记录日志
+     */
+    private String descriptionLog;
+    private String tagNameLog;
+    private String encrypt;
 
 }

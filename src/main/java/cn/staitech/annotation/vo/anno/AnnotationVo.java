@@ -1,6 +1,7 @@
 package cn.staitech.annotation.vo.anno;
 
 import cn.staitech.annotation.domain.Annotation;
+import cn.staitech.sft.logaudit.annotation.IgnoreLogField;
 import cn.staitech.sft.logaudit.req.LogAuditBaseReq;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -25,23 +26,26 @@ public class AnnotationVo extends LogAuditBaseReq {
     /**
      * 主键id
      */
-    @TableId()
     @JsonProperty("marking_id")
+    @IgnoreLogField
     private Long annotationId;
 
     /**
      * 面积
      */
+    @IgnoreLogField
     private BigDecimal area;
 
     /**
      * 周长
      */
+    @IgnoreLogField
     private BigDecimal perimeter;
 
     /**
      * 轮廓描述
      */
+    @IgnoreLogField
     private String description;
 
     /**
@@ -50,9 +54,12 @@ public class AnnotationVo extends LogAuditBaseReq {
     @JsonProperty("category_id")
     private Long tagId;
 
+    private String tagIdLog;
+
     /**
      * 轮廓坐标625
      */
+    @IgnoreLogField
     @NotNull(message = "{ARGUMENT_INVALID}")
     @TableField("contour")
     private Geometry geometry;
@@ -61,32 +68,38 @@ public class AnnotationVo extends LogAuditBaseReq {
      * 轮廓类型
      */
     @JsonProperty("location_type")
+    @IgnoreLogField
     private String locationType;
 
     /**
      * 标注类型(AI表示AI算出的标注，Draw表示前端绘制的标注，Measure表示测量数据)
      */
     @JsonProperty("annotation_type")
+    @IgnoreLogField
     private String annotationType;
 
     /**
      * 标注创建者
      */
+    @IgnoreLogField
     private Long createBy;
 
     /**
      * 创建时间
      */
+    @IgnoreLogField
     private Date createTime;
 
     /**
      * 更新者
      */
+    @IgnoreLogField
     private Long updateBy;
 
     /**
      * 更新时间
      */
+    @IgnoreLogField
     private Date updateTime;
 
     /**
@@ -94,6 +107,7 @@ public class AnnotationVo extends LogAuditBaseReq {
      */
     @NotNull(message = "{MarkingDelIn.slideId.notNull}")
     @JsonProperty("slide_id")
+    @IgnoreLogField
     private Long slideId;
 
     /**

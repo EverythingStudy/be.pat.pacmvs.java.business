@@ -1,5 +1,7 @@
 package cn.staitech.annotation.vo.anno;
 
+import cn.staitech.sft.logaudit.annotation.IgnoreLogField;
+import cn.staitech.sft.logaudit.req.LogAuditBaseReq;
 import lombok.Data;
 
 import java.util.List;
@@ -11,7 +13,10 @@ import java.util.List;
  * @date 2025/6/6 16:36:41
  */
 @Data
-public class AnnotationMergePreviewReq {
+public class AnnotationMergePreviewReq extends LogAuditBaseReq {
+
+
     private List<Long> markingIdList;
+    @IgnoreLogField
     private Long slideId;
 }

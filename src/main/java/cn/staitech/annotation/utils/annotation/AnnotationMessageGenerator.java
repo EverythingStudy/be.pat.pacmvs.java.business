@@ -126,6 +126,8 @@ public class AnnotationMessageGenerator {
     public static AnnotationFeature generateFeatures(Annotation annotation, AnnotationProperties properties){
 
         AnnotationFeature feature = new AnnotationFeature();
+        feature.setDescriptionLog(annotation.getDescription());
+        feature.setTagNameLog(properties.getA5());
         feature.setGeometry(annotation.getGeometry());
         feature.setId(annotation.getJsonId());
         feature.setProperties(properties);

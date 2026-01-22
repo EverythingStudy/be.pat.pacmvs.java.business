@@ -1,6 +1,8 @@
 package cn.staitech.annotation.vo.anno;
 
 import cn.staitech.annotation.netty.message.AnnotationFeature;
+import cn.staitech.sft.logaudit.annotation.IgnoreLogField;
+import cn.staitech.sft.logaudit.annotation.LogFieldDBConvert;
 import cn.staitech.sft.logaudit.req.LogAuditBaseReq;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -24,21 +26,25 @@ public class AnnotationUpdateVo extends LogAuditBaseReq<AnnotationFeature> {
      */
     @NotNull(message = "{NO_ANNOTATION_DATA}")
     @JsonProperty("marking_id")
+    @IgnoreLogField
     private Long annotationId;
 
     /**
      * 面积
      */
+    @IgnoreLogField
     private BigDecimal area;
 
     /**
      * 周长
      */
+    @IgnoreLogField
     private BigDecimal perimeter;
 
     /**
      * 轮廓描述
      */
+    @IgnoreLogField
     private String description;
 
     /**
@@ -47,40 +53,48 @@ public class AnnotationUpdateVo extends LogAuditBaseReq<AnnotationFeature> {
     @JsonProperty("category_id")
     private Long tagId;
 
+    private String tagNameLog;
+
     /**
      * 轮廓
      */
+    @IgnoreLogField
     private Geometry geometry;
 
     /**
      * 轮廓类型
      */
+    @IgnoreLogField
     private String locationType;
 
     /**
      * 标注类型(AI表示AI算出的标注，Draw表示前端绘制的标注)
      */
+    @IgnoreLogField
     @JsonProperty("annotation_type")
     private String annotationType;
 
     /**
      * 更新者
      */
+    @IgnoreLogField
     private Long updateBy;
 
     /**
      * 更新时间
      */
+    @IgnoreLogField
     private Date updateTime;
 
     /**
      * 切片id
      */
+    @IgnoreLogField
     @JsonProperty("slide_id")
     private Long slideId;
 
     /**
      * geojson中数据id
-     */
+     */@IgnoreLogField
     private String jsonId;
 }

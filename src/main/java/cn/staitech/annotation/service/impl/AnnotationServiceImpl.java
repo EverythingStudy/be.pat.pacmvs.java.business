@@ -2,6 +2,7 @@ package cn.staitech.annotation.service.impl;
 
 import cn.staitech.annotation.domain.Measure;
 import cn.staitech.annotation.mapper.MeasureMapper;
+import cn.staitech.annotation.utils.LanguageUtils;
 import cn.staitech.annotation.vo.anno.*;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
@@ -178,6 +179,17 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
 
     @Override
     public Annotation addAnnotation(AnnotationVo req) throws Exception {
+        OrganTagQuery organTagQuery = new OrganTagQuery();
+        organTagQuery.setOrganTagIds(Collections.singletonList(req.getTagId()));
+        R<List<OrganTagQueryVo>> result = this.remoteBizService.queryOrganTag(organTagQuery);
+        if(!CollectionUtils.isEmpty(result.getData())) {
+            req.setTagId(req.getTagId());
+            if(LanguageUtils.isEn()) {
+                req.setTagIdLog(result.getData().get(0).getOrganEn());
+            } else {
+                req.setTagIdLog(result.getData().get(0).getOrganName());
+            }
+        }
         return addAnnotation(req, false);
     }
 
@@ -198,10 +210,12 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
         }
         req.setCreateBy(SecurityUtils.getUserId());
         req.setUpdateBy(SecurityUtils.getUserId());
-        baseMapper.insert(req);
+        Annotation annotation = new Annotation();
+        BeanUtils.copyProperties(req, annotation);
+        baseMapper.insert(annotation);
         if (!isUndoRedo) {
             UndoRedoEvent event = UndoRedoEvent.builder().slideId(req.getSlideId()).userId(SecurityUtils.getUserId())
-                    .undoRedoDetails(Arrays.asList(UndoRedoDetail.builder().currentAnnotation(req).operation(Constant.ANNO_ACTION_ADD).build())).build();
+                    .undoRedoDetails(Arrays.asList(UndoRedoDetail.builder().currentAnnotation(annotation).operation(Constant.ANNO_ACTION_ADD).build())).build();
             undoRedoManager.addEvent(event, Constant.UNDO_REDO_STACK_SIZE);
         }
 
@@ -211,8 +225,8 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
             this.addSingleSlide(req.getSlideId(), req.getTagId(), req.getAnnotationId());
         }
 
-        webSocketHandler.sendMessage(AnnotationMessageGenerator.generateAnnotationMessage(req, Constant.ANNO_ACTION_ADD));
-        return req;
+        webSocketHandler.sendMessage(AnnotationMessageGenerator.generateAnnotationMessage(annotation, Constant.ANNO_ACTION_ADD));
+        return annotation;
     }
 
     /**
@@ -306,6 +320,8 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
 
     @Override
     public R updateAnnotation(AnnotationUpdateVo req) throws Exception {
+        OrganTagQuery organTagQuery = new OrganTagQuery();
+        organTagQuery.setOrganTagIds(Collections.singletonList(req.getTagId()));
         return updateAnnotation(req, false);
     }
 
@@ -321,6 +337,7 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
                 organTagQuery.setOrganTagIds(Collections.singletonList(req.getTagId()));
                 R<List<OrganTagQueryVo>> result = this.remoteBizService.queryOrganTag(organTagQuery);
                 req.setJsonId(AnnotationJsonIdGenerator.getSdId(CollectionUtils.isEmpty(result.getData()) ? null : result.getData().get(0)));
+                req.setTagNameLog(CollectionUtils.isEmpty(result.getData()) ? null : result.getData().get(0).getOrganName()); //修改后的tagName记录日志
             }
             // 查询结构标签：默认逻辑
             else {
@@ -328,6 +345,7 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
                 structureTagPageQuery.setStructureTagIds(Arrays.asList(req.getTagId()));
                 R<List<StructureTagPageVo>> tagResp = remoteBizService.queryTag(structureTagPageQuery);
                 req.setJsonId(AnnotationJsonIdGenerator.getSdId(tagResp.getData() == null ? null : tagResp.getData().get(0)));
+                req.setTagNameLog(tagResp.getData() == null ? null : tagResp.getData().get(0).getStructureTagName());//修改后的tagName记录日志
             }
         }
         Geometry geometry = req.getGeometry();

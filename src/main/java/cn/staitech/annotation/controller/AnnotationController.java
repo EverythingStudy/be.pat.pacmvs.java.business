@@ -11,10 +11,12 @@ import cn.staitech.annotation.vo.anno.*;
 import cn.staitech.common.core.domain.R;
 import cn.staitech.common.security.utils.SecurityUtils;
 import cn.staitech.sft.logaudit.annotation.EncryptResponse;
+import cn.staitech.sft.logaudit.annotation.LogAudit;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.java.Log;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.locationtech.jts.geom.Geometry;
@@ -43,6 +45,7 @@ public class AnnotationController {
 
     @ApiOperation(value = "添加标注", tags = "I18n")
     @PostMapping("/insert")
+    @LogAudit
     public R<String> addAnnotation(@Validated @RequestBody AnnotationAddReq annotationAddVo) throws Exception {
         AnnotationVo req = new AnnotationVo();
         BeanUtils.copyProperties(req, annotationAddVo);
@@ -59,7 +62,8 @@ public class AnnotationController {
 
     @ApiOperation(value = "删除标注",tags = "I18n")
     @PostMapping("/delete")
-    public R<String> deleteAnnotation(@RequestBody AnnotationVo req) throws Exception {
+    @LogAudit(deleteBusiness = true)
+    public R<String> deleteAnnotation(@RequestBody DeleteAnnotationReq req) throws Exception {
         return annotationService.deleteAnnotation(req.getAnnotationId());
     }
 
@@ -71,6 +75,7 @@ public class AnnotationController {
 
     @ApiOperation(value = "更新标注", tags = "I18n")
     @PostMapping("/update")
+    @LogAudit(compareField = true)
     public R<String> updateAnnotation(@Validated @RequestBody AnnotationUpdateVo req) throws Exception {
         return annotationService.updateAnnotation(req);
     }
@@ -90,6 +95,7 @@ public class AnnotationController {
 
     @ApiOperation(value = "轮廓合并预览")
     @PostMapping("/mergePreview")
+    @LogAudit(compareField = false)
     public R<Geometry> mergePreview(@RequestBody AnnotationMergePreviewReq req) throws Exception {
         List<Long> annotationIds = req.getMarkingIdList();
         return annotationService.mergePreview(annotationIds);
