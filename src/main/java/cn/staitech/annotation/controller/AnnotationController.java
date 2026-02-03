@@ -80,20 +80,22 @@ public class AnnotationController {
         return annotationService.updateAnnotation(req);
     }
 
-    @ApiOperation(value = "填充轮廓")
+    @ApiOperation(value = "填充轮廓", tags = "I18n")
     @PostMapping("/padding")
+    @LogAudit(compareField = true)
     public R<String> padding(@Validated @RequestBody AnnotationUpdateVo req) throws Exception {
         return annotationService.padding(req);
     }
 
-    @ApiOperation(value = "复制/粘贴轮廓")
+    @ApiOperation(value = "复制/粘贴轮廓", tags = "I18n")
     @PostMapping("/stickup")
+    @LogAudit(compareField = true)
     public R<String> stickup(@Validated @RequestBody AnnotationUpdateVo req) throws Exception {
         return annotationService.stickup(req);
     }
 
 
-    @ApiOperation(value = "轮廓合并预览")
+    @ApiOperation(value = "轮廓合并预览", tags = "I18n")
     @PostMapping("/mergePreview")
     @LogAudit(compareField = false)
     public R<Geometry> mergePreview(@RequestBody AnnotationMergePreviewReq req) throws Exception {
