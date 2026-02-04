@@ -13,10 +13,10 @@ import java.util.List;
  * @date 2025/6/6 16:36:41
  */
 @Data
-public class AnnotationMergePreviewReq extends LogAuditBaseReq {
+public class AnnotationMergePreviewReq  {
 
 
     private List<Long> markingIdList;
-    @IgnoreLogField
+
     private Long slideId;
 }

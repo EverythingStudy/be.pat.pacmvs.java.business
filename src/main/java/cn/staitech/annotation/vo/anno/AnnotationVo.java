@@ -2,9 +2,12 @@ package cn.staitech.annotation.vo.anno;
 
 import cn.staitech.annotation.domain.Annotation;
 import cn.staitech.sft.logaudit.annotation.IgnoreLogField;
+import cn.staitech.sft.logaudit.annotation.LogFieldDBConvert;
+import cn.staitech.sft.logaudit.mapper.LogAuditAddMapper;
 import cn.staitech.sft.logaudit.req.LogAuditBaseReq;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.locationtech.jts.geom.Geometry;
@@ -52,8 +55,10 @@ public class AnnotationVo extends LogAuditBaseReq {
      * 标签id
      */
     @JsonProperty("category_id")
+    @IgnoreLogField
     private Long tagId;
 
+    @LogFieldDBConvert(mapper = LogAuditAddMapper.class, convertField = "tagIdLog")
     private String tagIdLog;
 
     /**

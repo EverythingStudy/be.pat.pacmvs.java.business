@@ -4,6 +4,7 @@ import cn.staitech.annotation.domain.Measure;
 import cn.staitech.annotation.netty.message.AnnotationFeature;
 import cn.staitech.annotation.service.MeasureService;
 import cn.staitech.annotation.utils.measure.MeasureMessageGenerator;
+import cn.staitech.annotation.vo.anno.ScreenshotReq;
 import cn.staitech.annotation.vo.measure.*;
 import cn.staitech.common.core.domain.CustomPage;
 import cn.staitech.common.core.domain.R;
@@ -101,9 +102,16 @@ public class MeasureController {
 
     @ApiOperation(value = "标注测量excel导出",tags = "I18n")
     @PostMapping("/export")
-    @LogAudit
+    @LogAudit(compareField = false)
     public void export(@RequestBody ExportSlideReq req) throws Exception {
         measureService.export(req.getSlideId());
     }
 
+
+    @ApiOperation(value = "截图",tags = "I18n")
+    @PostMapping("/screenshot")
+    @LogAudit(compareField = false)
+    public R export(@RequestBody ScreenshotReq req) throws Exception {
+        return R.ok();
+    }
 }

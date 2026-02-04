@@ -1,5 +1,8 @@
 package cn.staitech.annotation.vo.anno;
 
+import cn.staitech.sft.logaudit.annotation.IgnoreLogField;
+import cn.staitech.sft.logaudit.annotation.LogFieldDBConvert;
+import cn.staitech.sft.logaudit.mapper.LogAuditAddMapper;
 import cn.staitech.sft.logaudit.req.LogAuditBaseReq;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,61 +26,74 @@ public class AnnotationAddReq extends LogAuditBaseReq {
     /**
      * 面积
      */
+    @IgnoreLogField
     private BigDecimal area;
 
     /**
      * 周长
      */
+    @IgnoreLogField
     private BigDecimal perimeter;
 
     /**
      * 轮廓描述
      */
+    @IgnoreLogField
     private String description;
 
     /**
      * 标签id
      */
     @JsonProperty("category_id")
+    @IgnoreLogField
     private Long tagId;
+
+    @LogFieldDBConvert(mapper = LogAuditAddMapper.class, convertField = "tagIdLog")
+    private String tagIdLog;
 
     /**
      * 轮廓坐标625
      */
     @NotNull(message = "{ARGUMENT_INVALID}")
     @TableField("contour")
+    @IgnoreLogField
     private Geometry geometry;
 
     /**
      * 轮廓类型
      */
     @JsonProperty("location_type")
+    @IgnoreLogField
     private String locationType;
 
     /**
      * 标注类型(AI表示AI算出的标注，Draw表示前端绘制的标注)
      */
     @JsonProperty("annotation_type")
+    @IgnoreLogField
     private String annotationType;
 
     /**
      * 标注创建者
-     */
+     */@IgnoreLogField
     private Long createBy;
 
     /**
      * 创建时间
      */
+    @IgnoreLogField
     private Date createTime;
 
     /**
      * 更新者
      */
+    @IgnoreLogField
     private Long updateBy;
 
     /**
      * 更新时间
      */
+    @IgnoreLogField
     private Date updateTime;
 
     /**
@@ -85,14 +101,17 @@ public class AnnotationAddReq extends LogAuditBaseReq {
      */
     @NotNull(message = "{MarkingDelIn.slideId.notNull}")
     @JsonProperty("slide_id")
+    @IgnoreLogField
     private Long slideId;
 
     /**
      * geojson中数据id
      */
+    @IgnoreLogField
     private String jsonId;
 
     @ApiModelProperty(value = "脏器识别校对view页面必传参数：传递1")
     @JsonProperty("contour_type")
+    @IgnoreLogField
     private Integer contourType;
 }

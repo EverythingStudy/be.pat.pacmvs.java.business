@@ -17,6 +17,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.locationtech.jts.geom.Geometry;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author mugw
@@ -33,6 +35,7 @@ import java.util.List;
  * @description 标注管理
  * @date 2025/5/21 14:33:43
  */
+@Slf4j
 @Api(value = "标注管理")
 @RestController
 @RequestMapping("/annotation")
@@ -50,6 +53,7 @@ public class AnnotationController {
         AnnotationVo req = new AnnotationVo();
         BeanUtils.copyProperties(req, annotationAddVo);
         Annotation annotation = annotationService.addAnnotation(req);
+        annotationAddVo.setTagIdLog(req.getTagIdLog());
         return R.ok(String.valueOf(annotation.getAnnotationId()));
     }
 
@@ -95,9 +99,8 @@ public class AnnotationController {
     }
 
 
-    @ApiOperation(value = "轮廓合并预览", tags = "I18n")
+    @ApiOperation(value = "轮廓合并预览")
     @PostMapping("/mergePreview")
-    @LogAudit(compareField = false)
     public R<Geometry> mergePreview(@RequestBody AnnotationMergePreviewReq req) throws Exception {
         List<Long> annotationIds = req.getMarkingIdList();
         return annotationService.mergePreview(annotationIds);
@@ -105,7 +108,7 @@ public class AnnotationController {
 
     @ApiOperation(value = "获取GeoJson数据",tags = "I18n")
     @PostMapping("/selectLists")
-    @EncryptResponse
+    @EncryptResponse(ignoreLogField = true)
     public R<List<AnnotationFeature>> selectLists(@Validated @RequestBody AnnotationReq req) throws Exception {
         LambdaQueryWrapper<Annotation> annotationLambda = Wrappers.<Annotation>lambdaQuery().eq(Annotation::getSlideId, req.getSlideId());
         if (null != req.getContourType()) {
@@ -140,9 +143,14 @@ public class AnnotationController {
         return annotationService.annotationOperation(req);
     }
 
-    @ApiOperation(value = "批量操作")
+    @ApiOperation(value = "批量操作",tags = "I18n")
     @PostMapping("/batch")
+    @LogAudit
     public R<List<AnnotationBatchRespVo>> batch(@Validated @RequestBody AnnotationBatchReq req) throws Exception {
+        List<AnnotationBatchVo> delete = req.getList().stream().filter(item -> "DELETE".equals(item.getOperation())).collect(Collectors.toList());
+        if(CollectionUtils.isEmpty(delete)) {
+            req.setAnnotationId(delete.stream().map(AnnotationBatchVo::getAnnotationId).map(String::valueOf).collect(Collectors.joining(";")));
+        }
         return annotationService.batch(req);
     }
 

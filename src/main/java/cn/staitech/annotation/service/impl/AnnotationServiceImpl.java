@@ -13,6 +13,7 @@ import cn.staitech.annotation.netty.websocket.NioWebSocketHandler;
 import cn.staitech.annotation.utils.annotation.*;
 import cn.staitech.annotation.utils.annotation.AnnotationJsonIdGenerator;
 import cn.staitech.annotation.utils.MessageSource;
+import cn.staitech.sft.logaudit.LogAuditAop;
 import cn.staitech.system.api.RemoteBizService;
 import cn.staitech.system.api.domain.biz.*;
 import com.alibaba.fastjson.JSON;
@@ -55,6 +56,8 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
     private UndoRedoManager undoRedoManager;
     @Resource
     private RemoteBizService remoteBizService;
+    @Resource
+    private LogAuditAop logAuditAop;
 
     private static final GeometryFactory geometryFactory = new GeometryFactory();
     private static final int SAMPLE_POINTS_COUNT = -1; // 每个几何体采样点数
@@ -179,19 +182,9 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
 
     @Override
     public Annotation addAnnotation(AnnotationVo req) throws Exception {
-        OrganTagQuery organTagQuery = new OrganTagQuery();
-        organTagQuery.setOrganTagIds(Collections.singletonList(req.getTagId()));
-        R<List<OrganTagQueryVo>> result = this.remoteBizService.queryOrganTag(organTagQuery);
-        if(!CollectionUtils.isEmpty(result.getData())) {
-            req.setTagId(req.getTagId());
-            if(LanguageUtils.isEn()) {
-                req.setTagIdLog(result.getData().get(0).getOrganEn());
-            } else {
-                req.setTagIdLog(result.getData().get(0).getOrganName());
-            }
-        }
         return addAnnotation(req, false);
     }
+
 
     private Annotation addAnnotation(AnnotationVo req, boolean isUndoRedo) throws Exception {
         // 查询脏器标签
@@ -200,6 +193,8 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
             organTagQuery.setOrganTagIds(Collections.singletonList(req.getTagId()));
             R<List<OrganTagQueryVo>> result = this.remoteBizService.queryOrganTag(organTagQuery);
             req.setJsonId(AnnotationJsonIdGenerator.getSdId(CollectionUtils.isEmpty(result.getData()) ? null : result.getData().get(0)));
+            req.setTagId(req.getTagId());
+            req.setTagIdLog(result.getData().get(0).getOrganName() +"@" + result.getData().get(0).getOrganEn());
         }
         // 查询结构标签：默认逻辑
         else {
@@ -207,11 +202,18 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
             structureTagPageQuery.setStructureTagIds(Arrays.asList(req.getTagId()));
             R<List<StructureTagPageVo>> tagResp = remoteBizService.queryTag(structureTagPageQuery);
             req.setJsonId(AnnotationJsonIdGenerator.getSdId(tagResp.getData() == null ? null : tagResp.getData().get(0)));
+            req.setTagId(req.getTagId());
+
+            if(null != tagResp.getData() && tagResp.getData().get(0).getStructureTagId().equals(0L)) {
+                req.setTagIdLog("无属性"+ "@" +"NULL");
+            } else {
+                req.setTagIdLog(tagResp.getData().get(0).getName() + "@" + tagResp.getData().get(0).getNameEn());
+            }
         }
         req.setCreateBy(SecurityUtils.getUserId());
         req.setUpdateBy(SecurityUtils.getUserId());
         Annotation annotation = new Annotation();
-        BeanUtils.copyProperties(req, annotation);
+        org.springframework.beans.BeanUtils.copyProperties(req,annotation);
         baseMapper.insert(annotation);
         if (!isUndoRedo) {
             UndoRedoEvent event = UndoRedoEvent.builder().slideId(req.getSlideId()).userId(SecurityUtils.getUserId())
@@ -337,7 +339,7 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
                 organTagQuery.setOrganTagIds(Collections.singletonList(req.getTagId()));
                 R<List<OrganTagQueryVo>> result = this.remoteBizService.queryOrganTag(organTagQuery);
                 req.setJsonId(AnnotationJsonIdGenerator.getSdId(CollectionUtils.isEmpty(result.getData()) ? null : result.getData().get(0)));
-                req.setTagNameLog(CollectionUtils.isEmpty(result.getData()) ? null : result.getData().get(0).getOrganName()); //修改后的tagName记录日志
+                req.setTagIdLog(result.getData().get(0).getOrganName() +"@" + result.getData().get(0).getOrganEn());
             }
             // 查询结构标签：默认逻辑
             else {
@@ -345,7 +347,12 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
                 structureTagPageQuery.setStructureTagIds(Arrays.asList(req.getTagId()));
                 R<List<StructureTagPageVo>> tagResp = remoteBizService.queryTag(structureTagPageQuery);
                 req.setJsonId(AnnotationJsonIdGenerator.getSdId(tagResp.getData() == null ? null : tagResp.getData().get(0)));
-                req.setTagNameLog(tagResp.getData() == null ? null : tagResp.getData().get(0).getStructureTagName());//修改后的tagName记录日志
+
+                if(null != tagResp.getData() && tagResp.getData().get(0).getStructureTagId().equals(0L)) {
+                    req.setTagIdLog("无属性"+ "@" +"NULL");
+                } else {
+                    req.setTagIdLog(tagResp.getData().get(0).getName() + "@" + tagResp.getData().get(0).getNameEn());
+                }
             }
         }
         Geometry geometry = req.getGeometry();

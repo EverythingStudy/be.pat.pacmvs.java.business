@@ -3,6 +3,7 @@ package cn.staitech.annotation.vo.anno;
 import cn.staitech.annotation.netty.message.AnnotationFeature;
 import cn.staitech.sft.logaudit.annotation.IgnoreLogField;
 import cn.staitech.sft.logaudit.annotation.LogFieldDBConvert;
+import cn.staitech.sft.logaudit.mapper.LogAuditAddMapper;
 import cn.staitech.sft.logaudit.req.LogAuditBaseReq;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -44,16 +45,16 @@ public class AnnotationUpdateVo extends LogAuditBaseReq<AnnotationFeature> {
     /**
      * 轮廓描述
      */
-    @IgnoreLogField
     private String description;
 
     /**
      * 标签id
      */
     @JsonProperty("category_id")
+    @IgnoreLogField
     private Long tagId;
-
-    private String tagNameLog;
+    @LogFieldDBConvert(mapper = LogAuditAddMapper.class, convertField = "tagIdLog")
+    private String tagIdLog;
 
     /**
      * 轮廓

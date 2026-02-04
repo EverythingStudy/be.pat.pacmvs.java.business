@@ -11,6 +11,7 @@ import cn.staitech.annotation.domain.Annotation;
 import cn.staitech.annotation.netty.message.AnnotationFeature;
 import cn.staitech.annotation.netty.message.AnnotationMessage;
 import cn.staitech.annotation.netty.message.AnnotationProperties;
+import cn.staitech.sft.logaudit.LogAuditAop;
 import cn.staitech.system.api.RemoteBizService;
 import cn.staitech.system.api.RemoteUserService;
 import cn.staitech.system.api.domain.SysUser;
@@ -39,6 +40,7 @@ public class AnnotationMessageGenerator {
     public static AnnotationMessage generateAnnotationMessage(Annotation annotation, String action){
         AnnotationProperties properties = generateProperties(annotation);
         AnnotationFeature feature = generateFeatures(annotation, properties);
+        SpringUtil.getBean(LogAuditAop.class).setEncrypt(feature, true);
         AnnotationMessage annotationMessage = new AnnotationMessage();
         annotationMessage.setType(action);
         annotationMessage.setAnnotation_type(Constant.ANNO_TYPE_DRAW);
@@ -126,8 +128,8 @@ public class AnnotationMessageGenerator {
     public static AnnotationFeature generateFeatures(Annotation annotation, AnnotationProperties properties){
 
         AnnotationFeature feature = new AnnotationFeature();
-        feature.setDescriptionLog(annotation.getDescription());
-        feature.setTagNameLog(properties.getA5());
+        feature.setDescription(annotation.getDescription());
+        feature.setTagIdLog(annotation.getTagIdLog());
         feature.setGeometry(annotation.getGeometry());
         feature.setId(annotation.getJsonId());
         feature.setProperties(properties);

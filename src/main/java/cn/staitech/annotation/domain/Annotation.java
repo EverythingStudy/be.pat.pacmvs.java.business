@@ -23,6 +23,9 @@ import javax.validation.constraints.NotNull;
 @TableName(value ="fr_annotation")
 @Data
 public class Annotation implements Serializable {
+    @TableField(exist = false)
+    private String tagIdLog;
+
     /**
      * 主键id
      */
@@ -50,6 +53,7 @@ public class Annotation implements Serializable {
      */
     @JsonProperty("category_id")
     private Long tagId;
+
 
     /**
      * 轮廓坐标625

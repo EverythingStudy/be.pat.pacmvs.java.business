@@ -25,8 +25,8 @@ public class AnnotationFeature {
     /**
      * 记录日志
      */
-    private String descriptionLog;
-    private String tagNameLog;
+    private String description;
+    private String tagIdLog;
     private String encrypt;
 
 }
