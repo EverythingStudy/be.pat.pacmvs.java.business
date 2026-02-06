@@ -20,7 +20,7 @@ import java.util.Date;
  * @date 2025/5/22 09:40:28
  */
 @Data
-public class AnnotationUpdateVo extends LogAuditBaseReq<AnnotationFeature> {
+public class AnnotationUpdateVo extends LogAuditBaseReq  {
 
     /**
      * 主键id

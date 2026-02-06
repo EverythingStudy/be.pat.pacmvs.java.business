@@ -456,6 +456,26 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
     @Override
     public R stickup(AnnotationUpdateVo req) throws Exception {
         Annotation annotation = baseMapper.selectById(req.getAnnotationId());
+        if (annotation.getTagId() != null) {
+            // 查询脏器标签
+            if (annotation.getContourType() != null && annotation.getContourType() == 1) {
+                OrganTagQuery organTagQuery = new OrganTagQuery();
+                organTagQuery.setOrganTagIds(Collections.singletonList(annotation.getTagId()));
+                R<List<OrganTagQueryVo>> result = this.remoteBizService.queryOrganTag(organTagQuery);
+                req.setTagIdLog(result.getData().get(0).getOrganName() +"@" + result.getData().get(0).getOrganEn());
+            }
+            // 查询结构标签：默认逻辑
+            else {
+                StructureTagPageQuery structureTagPageQuery = new StructureTagPageQuery();
+                structureTagPageQuery.setStructureTagIds(Arrays.asList(annotation.getTagId()));
+                R<List<StructureTagPageVo>> tagResp = remoteBizService.queryTag(structureTagPageQuery);
+                if(null != tagResp.getData() && tagResp.getData().get(0).getStructureTagId().equals(0L)) {
+                    req.setTagIdLog("无属性"+ "@" +"NULL");
+                } else {
+                    req.setTagIdLog(tagResp.getData().get(0).getName() + "@" + tagResp.getData().get(0).getNameEn());
+                }
+            }
+        }
         annotation.setAnnotationId(null);
         baseMapper.insert(annotation);
         UndoRedoEvent event = UndoRedoEvent.builder().slideId(req.getSlideId()).userId(SecurityUtils.getUserId())

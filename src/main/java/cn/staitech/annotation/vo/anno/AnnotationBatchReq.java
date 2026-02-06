@@ -1,6 +1,7 @@
 package cn.staitech.annotation.vo.anno;
 
 import cn.staitech.sft.logaudit.annotation.IgnoreLogField;
+import cn.staitech.sft.logaudit.req.LogAuditBaseReq;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -11,7 +12,7 @@ import java.util.List;
  * @author .
  */
 @Data
-public class AnnotationBatchReq{
+public class AnnotationBatchReq extends LogAuditBaseReq {
 
     @IgnoreLogField
     @NotNull(message = "{NO_SLIDE_DATA}")

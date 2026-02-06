@@ -5,6 +5,7 @@ import cn.staitech.annotation.netty.message.AnnotationFeature;
 import cn.staitech.annotation.netty.message.AnnotationSdFeature;
 import cn.staitech.annotation.service.AnnotationSdService;
 import cn.staitech.annotation.service.AnnotationService;
+import cn.staitech.annotation.utils.LanguageUtils;
 import cn.staitech.annotation.utils.annotation.AnnotationMessageGenerator;
 import cn.staitech.annotation.utils.annotation.UndoRedoReq;
 import cn.staitech.annotation.vo.anno.*;
@@ -84,9 +85,8 @@ public class AnnotationController {
         return annotationService.updateAnnotation(req);
     }
 
-    @ApiOperation(value = "填充轮廓", tags = "I18n")
+    @ApiOperation(value = "填充轮廓")
     @PostMapping("/padding")
-    @LogAudit(compareField = true)
     public R<String> padding(@Validated @RequestBody AnnotationUpdateVo req) throws Exception {
         return annotationService.padding(req);
     }
@@ -147,9 +147,15 @@ public class AnnotationController {
     @PostMapping("/batch")
     @LogAudit
     public R<List<AnnotationBatchRespVo>> batch(@Validated @RequestBody AnnotationBatchReq req) throws Exception {
-        List<AnnotationBatchVo> delete = req.getList().stream().filter(item -> "DELETE".equals(item.getOperation())).collect(Collectors.toList());
-        if(CollectionUtils.isEmpty(delete)) {
-            req.setAnnotationId(delete.stream().map(AnnotationBatchVo::getAnnotationId).map(String::valueOf).collect(Collectors.joining(";")));
+        if(CollectionUtils.isNotEmpty(req.getList())) {
+            List<AnnotationBatchVo> delete = req.getList().stream().filter(item -> "DELETE".equals(item.getOperation())).collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(delete)) {
+                if(LanguageUtils.isEn()){
+                    req.setAnnotationId(delete.stream().map(AnnotationBatchVo::getAnnotationId).map(String::valueOf).collect(Collectors.joining(",")));
+                } else {
+                    req.setAnnotationId(delete.stream().map(AnnotationBatchVo::getAnnotationId).map(String::valueOf).collect(Collectors.joining("，")));
+                }
+            }
         }
         return annotationService.batch(req);
     }
