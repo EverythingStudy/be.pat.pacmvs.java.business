@@ -22,7 +22,7 @@ public interface AnnotationService extends IService<Annotation> {
 
     R updateAnnotation(AnnotationUpdateVo req) throws Exception;
 
-    R padding(AnnotationUpdateVo req) throws Exception;
+    R padding(AnnotationUpdatePaddingVo req) throws Exception;
 
     R stickup(AnnotationUpdateVo req) throws Exception;
 

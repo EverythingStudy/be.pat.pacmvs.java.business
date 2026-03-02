@@ -427,7 +427,7 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
     }
 
     @Override
-    public R padding(AnnotationUpdateVo req) throws Exception {
+    public R padding(AnnotationUpdatePaddingVo req) throws Exception {
         Annotation annotation = baseMapper.selectById(req.getAnnotationId());
         Annotation history = new Annotation();
         BeanUtils.copyProperties(history, annotation);
