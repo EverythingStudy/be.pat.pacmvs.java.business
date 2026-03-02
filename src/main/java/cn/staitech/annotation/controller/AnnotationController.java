@@ -85,8 +85,9 @@ public class AnnotationController {
         return annotationService.updateAnnotation(req);
     }
 
-    @ApiOperation(value = "填充轮廓")
+    @ApiOperation(value = "填充轮廓", tags = "I18n")
     @PostMapping("/padding")
+    @LogAudit(compareField = true)
     public R<String> padding(@Validated @RequestBody AnnotationUpdateVo req) throws Exception {
         return annotationService.padding(req);
     }
