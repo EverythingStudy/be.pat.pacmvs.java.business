@@ -435,8 +435,10 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
             throw new Exception(MessageSource.M("NO_ANNOTATION_DATA"));
         }
         Geometry geometry = annotation.getGeometry();
-        if (geometry instanceof GeometryCollection) {
-            Geometry firstGeometry = geometry.getGeometryN(0);
+        if (geometry instanceof Polygon) {
+            Polygon polygon = (Polygon) geometry;
+            GeometryFactory factory = polygon.getFactory();
+            Polygon firstGeometry = factory.createPolygon(polygon.getExteriorRing(), new LinearRing[0]);
             annotation.setGeometry(firstGeometry);
             double area = firstGeometry.getArea();
             double length = firstGeometry.getLength();
