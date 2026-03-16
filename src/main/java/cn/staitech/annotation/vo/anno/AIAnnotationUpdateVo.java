@@ -19,7 +19,7 @@ import java.util.Date;
  * @date 2025/5/22 09:40:28
  */
 @Data
-public class AIAnnotationUpdateVo extends LogAuditBaseReq  {
+public class AIAnnotationUpdateVo   {
 
     /**
      * 主键id
