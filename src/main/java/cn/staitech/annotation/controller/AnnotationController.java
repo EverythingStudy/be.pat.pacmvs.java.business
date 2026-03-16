@@ -58,10 +58,26 @@ public class AnnotationController {
         return R.ok(String.valueOf(annotation.getAnnotationId()));
     }
 
+    @ApiOperation(value = "添加标注", tags = "I18n")
+    @PostMapping("/ai_insert")
+    public R<String> aiAddAnnotation(@Validated @RequestBody AIAnnotationAddReq annotationAddVo) throws Exception {
+        AnnotationVo req = new AnnotationVo();
+        BeanUtils.copyProperties(req, annotationAddVo);
+        Annotation annotation = annotationService.addAnnotation(req);
+        annotationAddVo.setTagIdLog(req.getTagIdLog());
+        return R.ok(String.valueOf(annotation.getAnnotationId()));
+    }
+
     @PostMapping("/getDistance")
     @ApiOperation(value = "获取间距")
     public R<AnnotationDistanceVo> getDistance(@Validated @RequestBody AnnotationDistanceReq req) throws Exception {
         return annotationService.getDistance(req);
+    }
+
+    @ApiOperation(value = "删除标注",tags = "I18n")
+    @PostMapping("/ai_delete")
+    public R<String> aiDeleteAnnotation(@RequestBody AIDeleteAnnotationReq req) throws Exception {
+        return annotationService.deleteAnnotation(req.getAnnotationId());
     }
 
 
@@ -85,6 +101,14 @@ public class AnnotationController {
         return annotationService.updateAnnotation(req);
     }
 
+    @ApiOperation(value = "更新标注", tags = "I18n")
+    @PostMapping("/ai_update")
+    public R<String> aiupdateAnnotation(@Validated @RequestBody AIAnnotationUpdateVo req) throws Exception {
+        AnnotationUpdateVo annotationUpdateVo = new AnnotationUpdateVo();
+        org.springframework.beans.BeanUtils.copyProperties(req, annotationUpdateVo);
+        return annotationService.updateAnnotation(annotationUpdateVo);
+    }
+
     @ApiOperation(value = "填充轮廓")
     @PostMapping("/padding")
     public R<String> padding(@Validated @RequestBody AnnotationUpdatePaddingVo req) throws Exception {
@@ -98,6 +122,13 @@ public class AnnotationController {
         return annotationService.stickup(req);
     }
 
+    @ApiOperation(value = "复制/粘贴轮廓", tags = "I18n")
+    @PostMapping("/ai_stickup")
+    public R<String> aistickup(@Validated @RequestBody AIAnnotationUpdateVo req) throws Exception {
+        AnnotationUpdateVo annotationUpdateVo = new AnnotationUpdateVo();
+        org.springframework.beans.BeanUtils.copyProperties(req, annotationUpdateVo);
+        return annotationService.stickup(annotationUpdateVo);
+    }
 
     @ApiOperation(value = "轮廓合并预览")
     @PostMapping("/mergePreview")
