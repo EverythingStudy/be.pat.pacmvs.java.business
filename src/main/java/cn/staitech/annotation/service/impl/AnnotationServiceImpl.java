@@ -194,7 +194,10 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
             R<List<OrganTagQueryVo>> result = this.remoteBizService.queryOrganTag(organTagQuery);
             req.setJsonId(AnnotationJsonIdGenerator.getSdId(CollectionUtils.isEmpty(result.getData()) ? null : result.getData().get(0)));
             req.setTagId(req.getTagId());
-            req.setTagIdLog(result.getData().get(0).getOrganName() +"@" + result.getData().get(0).getOrganEn());
+            // 1. 检查 result、getData() 以及列表是否为空
+            if (result.getData() != null && null != result.getData().get(0)) {
+                req.setTagIdLog(result.getData().get(0).getOrganName() + "@" + result.getData().get(0).getOrganEn());
+            }
         }
         // 查询结构标签：默认逻辑
         else {
@@ -207,7 +210,10 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
             if(null != tagResp.getData() && tagResp.getData().get(0).getStructureTagId().equals(0L)) {
                 req.setTagIdLog("无属性"+ "@" +"NULL");
             } else {
-                req.setTagIdLog(tagResp.getData().get(0).getName() + "@" + tagResp.getData().get(0).getNameEn());
+                // 1. 检查 result、getData() 以及列表是否为空
+                if (tagResp.getData() != null && null !=tagResp.getData().get(0)) {
+                    req.setTagIdLog(tagResp.getData().get(0).getName() + "@" + tagResp.getData().get(0).getNameEn());
+                }
             }
         }
         req.setCreateBy(SecurityUtils.getUserId());
@@ -339,7 +345,11 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
                 organTagQuery.setOrganTagIds(Collections.singletonList(req.getTagId()));
                 R<List<OrganTagQueryVo>> result = this.remoteBizService.queryOrganTag(organTagQuery);
                 req.setJsonId(AnnotationJsonIdGenerator.getSdId(CollectionUtils.isEmpty(result.getData()) ? null : result.getData().get(0)));
-                req.setTagIdLog(result.getData().get(0).getOrganName() +"@" + result.getData().get(0).getOrganEn());
+                // 1. 检查 result、getData() 以及列表是否为空
+                if (result.getData() != null && null != result.getData().get(0)) {
+                    req.setTagIdLog(result.getData().get(0).getOrganName() +"@" + result.getData().get(0).getOrganEn());
+                }
+
             }
             // 查询结构标签：默认逻辑
             else {
@@ -351,7 +361,10 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
                 if(null != tagResp.getData() && tagResp.getData().get(0).getStructureTagId().equals(0L)) {
                     req.setTagIdLog("无属性"+ "@" +"NULL");
                 } else {
-                    req.setTagIdLog(tagResp.getData().get(0).getName() + "@" + tagResp.getData().get(0).getNameEn());
+                    // 1. 检查 result、getData() 以及列表是否为空
+                    if (tagResp.getData() != null && null !=tagResp.getData().get(0)) {
+                        req.setTagIdLog(tagResp.getData().get(0).getName() + "@" + tagResp.getData().get(0).getNameEn());
+                    }
                 }
             }
         }
