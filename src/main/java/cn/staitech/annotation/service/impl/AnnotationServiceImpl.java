@@ -195,7 +195,7 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
             req.setJsonId(AnnotationJsonIdGenerator.getSdId(CollectionUtils.isEmpty(result.getData()) ? null : result.getData().get(0)));
             req.setTagId(req.getTagId());
             // 1. 检查 result、getData() 以及列表是否为空
-            if (result.getData() != null && null != result.getData().get(0)) {
+            if (result.getData() != null && !result.getData().isEmpty() && null != result.getData().get(0)) {
                 req.setTagIdLog(result.getData().get(0).getOrganName() + "@" + result.getData().get(0).getOrganEn());
             }
         }
@@ -207,11 +207,11 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
             req.setJsonId(AnnotationJsonIdGenerator.getSdId(tagResp.getData() == null ? null : tagResp.getData().get(0)));
             req.setTagId(req.getTagId());
 
-            if(null != tagResp.getData() && tagResp.getData().get(0).getStructureTagId().equals(0L)) {
+            if(null != tagResp.getData() && !tagResp.getData().isEmpty() && tagResp.getData().get(0).getStructureTagId().equals(0L)) {
                 req.setTagIdLog("无属性"+ "@" +"NULL");
             } else {
                 // 1. 检查 result、getData() 以及列表是否为空
-                if (tagResp.getData() != null && null !=tagResp.getData().get(0)) {
+                if (tagResp.getData() != null && !tagResp.getData().isEmpty() && null !=tagResp.getData().get(0)) {
                     req.setTagIdLog(tagResp.getData().get(0).getName() + "@" + tagResp.getData().get(0).getNameEn());
                 }
             }
@@ -346,7 +346,7 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
                 R<List<OrganTagQueryVo>> result = this.remoteBizService.queryOrganTag(organTagQuery);
                 req.setJsonId(AnnotationJsonIdGenerator.getSdId(CollectionUtils.isEmpty(result.getData()) ? null : result.getData().get(0)));
                 // 1. 检查 result、getData() 以及列表是否为空
-                if (result.getData() != null && null != result.getData().get(0)) {
+                if (result.getData() != null && !result.getData().isEmpty() && null != result.getData().get(0)) {
                     req.setTagIdLog(result.getData().get(0).getOrganName() +"@" + result.getData().get(0).getOrganEn());
                 }
 
@@ -358,11 +358,11 @@ public class AnnotationServiceImpl extends ServiceImpl<AnnotationMapper, Annotat
                 R<List<StructureTagPageVo>> tagResp = remoteBizService.queryTag(structureTagPageQuery);
                 req.setJsonId(AnnotationJsonIdGenerator.getSdId(tagResp.getData() == null ? null : tagResp.getData().get(0)));
 
-                if(null != tagResp.getData() && tagResp.getData().get(0).getStructureTagId().equals(0L)) {
+                if(null != tagResp.getData() && !tagResp.getData().isEmpty() && tagResp.getData().get(0).getStructureTagId().equals(0L)) {
                     req.setTagIdLog("无属性"+ "@" +"NULL");
                 } else {
                     // 1. 检查 result、getData() 以及列表是否为空
-                    if (tagResp.getData() != null && null !=tagResp.getData().get(0)) {
+                    if (tagResp.getData() != null && !tagResp.getData().isEmpty() && null !=tagResp.getData().get(0)) {
                         req.setTagIdLog(tagResp.getData().get(0).getName() + "@" + tagResp.getData().get(0).getNameEn());
                     }
                 }
